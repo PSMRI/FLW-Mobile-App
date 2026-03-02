@@ -37,13 +37,13 @@
         android:id="@+id/rv_any"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-           android:paddingBottom="72dp"
-            android:clipToPadding="false"
-    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    app:layout_constraintBottom_toTopOf="@id/btn_next_page"
-    app:layout_constraintTop_toBottomOf="@+id/ll_search"
-    tools:itemCount="2"
-    tools:listitem="@layout/rv_item_ben" />
+        android:paddingBottom="72dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintTop_toBottomOf="@+id/ll_search"
+        tools:itemCount="2"
+        tools:listitem="@layout/rv_item_ben" />
 
     <FrameLayout
         android:id="@+id/fl_empty"
@@ -65,6 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
+        android:text="@string/next"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 

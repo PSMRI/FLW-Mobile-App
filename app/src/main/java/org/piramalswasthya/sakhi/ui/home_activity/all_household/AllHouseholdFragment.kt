@@ -121,6 +121,7 @@ class AllHouseholdFragment : Fragment() {
                 alertBinding.rgGender.clearCheck()
                 alertBinding.linearLayout4.visibility = View.GONE
                 alertBinding.actvRth.text = null
+                alertBinding.btnOk.isEnabled = false
             }
             .create()
 

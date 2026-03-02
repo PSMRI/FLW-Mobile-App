@@ -53,6 +53,8 @@ class AshaProfileFragment : Fragment() {
     private var addBenAlertBinding: AlertNewBenBinding? = null
 
 
+
+
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
