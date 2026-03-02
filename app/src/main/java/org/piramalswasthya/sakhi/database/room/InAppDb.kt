@@ -3100,22 +3100,28 @@ abstract class InAppDb : RoomDatabase() {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
-                    val passphrase = DatabaseKeyManager.getDatabasePassphrase(appContext)
+                    val isDebug = appContext.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
 
-                    RoomDbEncryptionHelper.encryptIfNeeded(
-                        context = appContext,
-                        dbName = "Sakhi-2.0-In-app-database",
-                        passphrase = passphrase
-                    )
-
-                    val factory = SupportOpenHelperFactory(String(passphrase).toByteArray(Charsets.UTF_8))
-
-                    instance = Room.databaseBuilder(
+                    val builder = Room.databaseBuilder(
                         appContext,
                         InAppDb::class.java,
                         "Sakhi-2.0-In-app-database"
                     )
-                        .openHelperFactory(factory).addMigrations(
+
+                    if (!isDebug) {
+                        val passphrase = DatabaseKeyManager.getDatabasePassphrase(appContext)
+
+                        RoomDbEncryptionHelper.encryptIfNeeded(
+                            context = appContext,
+                            dbName = "Sakhi-2.0-In-app-database",
+                            passphrase = passphrase
+                        )
+
+                        val factory = SupportOpenHelperFactory(String(passphrase).toByteArray(Charsets.UTF_8))
+                        builder.openHelperFactory(factory)
+                    }
+
+                    instance = builder.addMigrations(
                         MIGRATION_13_14,
                         MIGRATION_14_15,
                         MIGRATION_15_16,
