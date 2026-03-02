@@ -31,6 +31,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFrag
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
+import org.piramalswasthya.sakhi.model.BenRegCache
 
 
 @AndroidEntryPoint
@@ -313,7 +314,7 @@ class AshaProfileFragment : Fragment() {
     }
 
     private data class HofContext(
-        val hof: Any?, // keep Any? because you didn't paste exact model type for hof item here
+        val hof: BenRegCache?,
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
         val isUnmarried: Boolean,
