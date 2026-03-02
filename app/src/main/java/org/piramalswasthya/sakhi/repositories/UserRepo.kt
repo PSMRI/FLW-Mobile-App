@@ -206,21 +206,21 @@ class UserRepo @Inject constructor(
                     if (userObj.has("demographics")) {
 
                         val demographics = userObj.getJSONObject("demographics")
-
                         val gender = demographics.optString("gender", "")
                         val dob = demographics.optString("dob", "")
                         val mobile = demographics.optString("mobile", "")
                         val email = demographics.optString("email", "")
-                        val supervisorName = data.optString("fullName", "")
-                        val supervisorId = data.optInt("userID", -1)
                         preferenceDao.saveUserGender(gender)
                         preferenceDao.saveUserDob(dob)
                         preferenceDao.saveUserMobile(mobile)
                         preferenceDao.saveUserEmail(email)
-                        preferenceDao.saveSupervisorName(supervisorName)
-                        preferenceDao.saveSupervisorId(supervisorId)
+
                     }
                 }
+                val supervisorName = data.optString("fullName", "")
+                val supervisorId = data.optInt("userID", -1)
+                preferenceDao.saveSupervisorName(supervisorName)
+                preferenceDao.saveSupervisorId(supervisorId)
             }
             if (data.has("facilityData")) {
 

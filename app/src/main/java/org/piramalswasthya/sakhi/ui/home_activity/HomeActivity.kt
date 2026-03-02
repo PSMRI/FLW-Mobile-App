@@ -230,7 +230,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         TapjackingProtectionHelper.enableTouchFiltering(this)
 
-        if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ANM, true) || pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_CHO, true)) {
+        if (pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ANM, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_CHO, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
             binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
         } else {
