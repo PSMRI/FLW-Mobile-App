@@ -217,7 +217,6 @@ class SignInFragment : Fragment() {
                         val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
                         startActivity(goToHome)
                     } else {
-                        Log.e("ShowROle",loggedInUser?.role.toString())
 
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {

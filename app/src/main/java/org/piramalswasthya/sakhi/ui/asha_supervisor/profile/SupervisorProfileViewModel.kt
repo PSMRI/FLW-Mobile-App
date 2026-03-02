@@ -21,7 +21,7 @@ class SupervisorProfileViewModel @Inject constructor(var preferenceDao: Preferen
     fun getUserEmail(): String? = preferenceDao.getUserEmail()
     fun getsupervisorId(): Int? = preferenceDao.getSupervisorId()
     fun getSuperVisorname(): String? = preferenceDao.getSupervisorName()
-    fun getSuperVisorSubname(): String = preferenceDao.getLoggedInUser()?.role.toString()
+    fun getSuperVisorSubname(): String = preferenceDao.getLoggedInUser()?.role ?: ""
     fun getDistrict() = preferenceDao.getSupervisorDistrict()
     fun getBlock() = preferenceDao.getSupervisorBlock()
     fun getState() = preferenceDao.getSupervisorState()
