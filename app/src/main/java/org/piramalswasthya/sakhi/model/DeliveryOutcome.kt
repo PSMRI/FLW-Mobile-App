@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.network.getLongFromDateMultipleSupport
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -66,7 +67,6 @@ data class DeliveryOutcomeCache(
 
     private fun getDateStringFromLong(dateLong: Long?): String? {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-
         dateLong?.let {
             return dateFormat.format(dateLong)
         } ?: run {
@@ -152,7 +152,7 @@ data class DeliveryOutcomePost(
             id = id,
             benId = benId,
             isActive = isActive,
-            dateOfDelivery = getLongFromDate(dateOfDelivery),
+            dateOfDelivery = getLongFromDateMultipleSupport(dateOfDelivery),
             timeOfDelivery = timeOfDelivery,
             placeOfDelivery = placeOfDelivery,
             typeOfDelivery = typeOfDelivery,
@@ -164,14 +164,14 @@ data class DeliveryOutcomePost(
             deliveryOutcome = deliveryOutcome,
             liveBirth = liveBirth,
             stillBirth = stillBirth,
-            dateOfDischarge = getLongFromDate(dateOfDischarge),
+            dateOfDischarge = getLongFromDateMultipleSupport(dateOfDischarge),
             timeOfDischarge = timeOfDischarge,
             isJSYBenificiary = isJSYBenificiary,
             processed = "P",
             createdBy = createdBy,
-            createdDate = getLongFromDate(createdDate),
+            createdDate = getLongFromDateMultipleSupport(createdDate) ?: System.currentTimeMillis(),
             updatedBy = updatedBy,
-            updatedDate = getLongFromDate(updatedDate),
+            updatedDate = getLongFromDateMultipleSupport(updatedDate) ?: System.currentTimeMillis(),
             syncState = SyncState.SYNCED,
             isDeath = isDeath,
             isDeathValue = isDeathValue,
