@@ -31,7 +31,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
-
+import org.piramalswasthya.sakhi.model.BenRegCache
 
 @AndroidEntryPoint
 class AllHouseholdFragment : Fragment() {
@@ -88,100 +88,61 @@ class AllHouseholdFragment : Fragment() {
     private fun buildAddBenDialog() {
         val alertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
         addBenAlertBinding = alertBinding
-        alertBinding.rgGender.setOnCheckedChangeListener { _, i ->
+        alertBinding.btnOk.isEnabled = false
+
+        alertBinding.rgGender.setOnCheckedChangeListener { _, checkedId ->
             alertBinding.btnOk.isEnabled = false
-            Timber.d("RG Gender selected id : $i")
-            val selectedGender = when (i) {
-                alertBinding.rbMale.id -> Gender.MALE
-                alertBinding.rbFemale.id -> Gender.FEMALE
-                alertBinding.rbTrans.id -> Gender.TRANSGENDER
-                else -> null
+            Timber.d("RG Gender selected id : $checkedId")
+
+            val selectedGender = genderFromRadioId(alertBinding, checkedId)
+            if (selectedGender == null) {
+                alertBinding.linearLayout4.visibility = View.GONE
+                alertBinding.actvRth.setAdapter(null)
+                return@setOnCheckedChangeListener
             }
+
             alertBinding.linearLayout4.visibility =
-                selectedGender?.let { View.VISIBLE } ?: View.GONE
+                if (selectedGender != null) View.VISIBLE else View.GONE
+
             alertBinding.actvRth.text = null
 
-            val hof =
-                viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
-            val hofFatherRegistered =
-                viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
-            val hofMotherRegistered =
-                viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
-            val isHoFUnmarried =
-                hof?.let {
-                    (it.genDetails?.maritalStatusId == 1)
-                } ?: false
-            val isHoFMarried =
-                hof?.let {
-                    (it.genDetails?.maritalStatusId == 2)
-                } ?: false
-            val dropdownList = when (selectedGender) {
-                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                else -> null
-            }
-            val filteredDropdownList =
-                dropdownList?.takeIf { hof != null }?.toMutableList()?.apply {
-                    if (hofFatherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[1])
-                    if (hofMotherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[0])
-                    if (isHoFUnmarried)
-                        removeAll(
-                            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter)
-                                .toSet()
-                        )
-                    else {
-                        if (!isHoFMarried) {
-                            remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
-                            remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
+            val ctx = computeHofContext()
+            val baseList = baseRelationDropdown(selectedGender)
+            val filteredList = filterRelations(selectedGender, baseList, ctx)
 
-                        }
-
-                    }
-                    if (hof?.gender == Gender.MALE && selectedGender == Gender.MALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
-                    else if (hof?.gender == Gender.FEMALE && selectedGender == Gender.FEMALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
-                } ?: dropdownList?.toList()
-            filteredDropdownList?.let {
-                alertBinding.actvRth.setAdapter(
-                    ArrayAdapter(
-                        requireContext(), android.R.layout.simple_spinner_dropdown_item,
-                        it,
-                    )
-                )
-            }
+            applyRelationAdapter(alertBinding, filteredList)
         }
+
         alertBinding.actvRth.setOnItemClickListener { _, _, i, _ ->
             Timber.d("item clicked index : $i")
             alertBinding.btnOk.isEnabled = true
         }
 
-
-        val alert = MaterialAlertDialogBuilder(requireContext()).setView(alertBinding.root)
+        val alert = MaterialAlertDialogBuilder(requireContext())
+            .setView(alertBinding.root)
             .setOnCancelListener {
                 viewModel.resetSelectedHouseholdId()
                 alertBinding.rgGender.clearCheck()
                 alertBinding.linearLayout4.visibility = View.GONE
                 alertBinding.actvRth.text = null
-            }.create()
+            }
+            .create()
+
         addBenAlert = alert
 
         alertBinding.btnOk.setOnClickListener {
             val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
                 .indexOf(alertBinding.actvRth.text.toString())
-            val gender = when (alertBinding.rgGender.checkedRadioButtonId) {
-                alertBinding.rbMale.id -> 1
-                alertBinding.rbFemale.id -> 2
-                alertBinding.rbTrans.id -> 3
-                else -> 0
-            }
+
+            val gender = genderIntFromRadioId(alertBinding)
+
             if (relIndex < 0 || gender == 0) {
-                if (relIndex < 0) alertBinding.actvRth.error = resources.getString(R.string.relation_with_hof)
+                if (relIndex < 0) {
+                    alertBinding.actvRth.error = resources.getString(R.string.relation_with_hof)
+                }
                 return@setOnClickListener
             }
+
             findNavController().navigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
                     hhId = viewModel.selectedHouseholdId,
@@ -189,15 +150,16 @@ class AllHouseholdFragment : Fragment() {
                     gender = gender
                 )
             )
+
             viewModel.resetSelectedHouseholdId()
             alert.cancel()
         }
+
         alertBinding.btnCancel.setOnClickListener {
             alert.cancel()
             viewModel.resetSelectedHouseholdId()
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -335,6 +297,83 @@ class AllHouseholdFragment : Fragment() {
         addBenAlert = null
         addBenAlertBinding = null
         _binding = null
+    }
+
+    private fun genderFromRadioId(alertBinding: AlertNewBenBinding, checkedId: Int): Gender? {
+        return when (checkedId) {
+            alertBinding.rbMale.id -> Gender.MALE
+            alertBinding.rbFemale.id -> Gender.FEMALE
+            alertBinding.rbTrans.id -> Gender.TRANSGENDER
+            else -> null
+        }
+    }
+
+    private fun genderIntFromRadioId(alertBinding: AlertNewBenBinding): Int {
+        return when (alertBinding.rgGender.checkedRadioButtonId) {
+            alertBinding.rbMale.id -> 1
+            alertBinding.rbFemale.id -> 2
+            alertBinding.rbTrans.id -> 3
+            else -> 0
+        }
+    }
+
+    private fun baseRelationDropdown(selectedGender: Gender?): List<String> {
+        val arr = when (selectedGender) {
+            Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+            Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
+            Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+            else -> null
+        }
+        return arr?.toList().orEmpty()
+    }
+
+    private data class HofContext(
+        val hof: BenRegCache?,
+        val fatherRegistered: Boolean,
+        val motherRegistered: Boolean,
+        val unmarried: Boolean,
+        val married: Boolean
+    )
+
+    private fun computeHofContext(): HofContext {
+        val hof = viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
+        val fatherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
+        val motherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
+        val unmarried = hof?.genDetails?.maritalStatusId == 1
+        val married = hof?.genDetails?.maritalStatusId == 2
+
+        return HofContext(hof, fatherRegistered, motherRegistered, unmarried, married)
+    }
+
+    private fun filterRelations(selectedGender: Gender?, baseList: List<String>, ctx: HofContext): List<String> {
+        if (ctx.hof == null) return baseList
+
+        val list = baseList.toMutableList()
+        val common = resources.getStringArray(R.array.nbr_relationship_to_head)
+        val unmarriedFilter =
+            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
+
+        if (ctx.fatherRegistered) list.remove(common[1])
+        if (ctx.motherRegistered) list.remove(common[0])
+
+        if (ctx.unmarried) {
+            list.removeAll(unmarriedFilter)
+        } else if (!ctx.married) {
+            list.remove(common[5])
+            list.remove(common[4])
+        }
+
+        val hofGender = ctx.hof.gender
+        if (hofGender == Gender.MALE && selectedGender == Gender.MALE) list.remove(common[5])
+        if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) list.remove(common[4])
+
+        return list
+    }
+
+    private fun applyRelationAdapter(alertBinding: AlertNewBenBinding, items: List<String>) {
+        alertBinding.actvRth.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+        )
     }
 
 }
