@@ -358,7 +358,7 @@ class AllHouseholdFragment : Fragment() {
             list.remove(common[5])
             list.remove(common[4])
         }
-        val hofGender = ctx.hof?.gender
+        val hofGender = ctx.hof.gender
 
         if (hofGender == Gender.MALE && selectedGender == Gender.MALE) {
             list.remove(common[5])
