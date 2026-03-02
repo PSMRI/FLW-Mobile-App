@@ -83,4 +83,16 @@
     <color name="default_incentive_background">#fcc930</color>
     <color name="default_incentive_no_ben_background">#f7e64d</color>
 
+    <!-- Chat colors -->
+    <color name="colorPrimary">#006496</color>
+    <color name="colorPrimaryLight">#CCE5FF</color>
+    <color name="colorSurfaceVariant">#DEE3EB</color>
+    <color name="colorError">#BA1A1A</color>
+    <color name="colorErrorBg">#FFDAD6</color>
+    <color name="colorWarning">#E65100</color>
+    <color name="colorWarningBg">#FFF3E0</color>
+    <color name="colorInfoBg">#E3F2FD</color>
+    <color name="colorInfoText">#0D47A1</color>
+    <color name="colorRecording">#D32F2F</color>
+
 </resources>

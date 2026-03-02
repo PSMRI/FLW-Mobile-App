@@ -18,7 +18,7 @@
  const char* M_BASE_ABHA_URL = "https://abhasbx.abdm.gov.in/abha/api/";
  const char* M_ABHA_TOKEN_URL = "https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions";
  const char* M_ABHA_AUTH_URL = "https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate";
- const char* M_CHAT_URL = "https://piramalvoicebot.yugasa.org/";
+ const char* M_CHAT_URL = "https://api.chatbot.artpark.in/v1/";
 // ================== Production Constants (from Environment) ================== //
  #else
  const char* M_ENCRYPTED_PASS_KEY = ENCRYPTED_PASS_KEY;
