@@ -322,29 +322,21 @@ class AshaProfileFragment : Fragment() {
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
         val isUnmarried: Boolean,
-        val isMarried: Boolean,
-        val hofGender: Gender?
+        val isMarried: Boolean
     )
 
     private fun computeHofContext(): HofContext {
         val hof = viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
-
         val fatherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
         val motherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
 
-        val isUnmarried = hof?.genDetails?.maritalStatusId == 1
-        val isMarried = hof?.genDetails?.maritalStatusId == 2
-
-        // hof.gender is already Gender in your code (you used hof?.gender == Gender.MALE)
-        val hofGender = hof?.gender
-
+        val maritalId = hof?.genDetails?.maritalStatusId
         return HofContext(
             hof = hof,
             fatherRegistered = fatherRegistered,
             motherRegistered = motherRegistered,
-            isUnmarried = isUnmarried,
-            isMarried = isMarried,
-            hofGender = hofGender
+            isUnmarried = maritalId == 1,
+            isMarried = maritalId == 2
         )
     }
 
@@ -362,7 +354,7 @@ class AshaProfileFragment : Fragment() {
         baseList: MutableList<String>,
         ctx: HofContext
     ): List<String> {
-        if (ctx.hof == null) return baseList
+        val hof = ctx.hof ?: return baseList
 
         val common = resources.getStringArray(R.array.nbr_relationship_to_head)
 
@@ -374,14 +366,13 @@ class AshaProfileFragment : Fragment() {
                 resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
             baseList.removeAll(unmarriedFilter)
         } else if (!ctx.isMarried) {
-            // your original "else { if (!isHoFMarried) remove [5] & [4] }"
             baseList.remove(common[5])
             baseList.remove(common[4])
         }
 
-        // your original same-gender spouse restrictions
-        if (ctx.hofGender == Gender.MALE && selectedGender == Gender.MALE) baseList.remove(common[5])
-        if (ctx.hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) baseList.remove(common[4])
+        val hofGender = hof.gender
+        if (hofGender == Gender.MALE && selectedGender == Gender.MALE) baseList.remove(common[5])
+        if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) baseList.remove(common[4])
 
         return baseList
     }
