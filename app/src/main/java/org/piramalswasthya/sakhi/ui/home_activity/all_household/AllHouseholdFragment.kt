@@ -94,18 +94,14 @@ class AllHouseholdFragment : Fragment() {
             alertBinding.btnOk.isEnabled = false
             Timber.d("RG Gender selected id : $checkedId")
 
-            val selectedGender = genderFromRadioId(alertBinding, checkedId)
-            if (selectedGender == null) {
+            val selectedGender: Gender = genderFromRadioId(alertBinding, checkedId) ?: run {
                 alertBinding.linearLayout4.visibility = View.GONE
                 alertBinding.actvRth.setAdapter(null)
                 return@setOnCheckedChangeListener
             }
 
-            alertBinding.linearLayout4.visibility =
-                if (selectedGender != null) View.VISIBLE else View.GONE
-
+            alertBinding.linearLayout4.visibility = View.VISIBLE
             alertBinding.actvRth.text = null
-
             val ctx = computeHofContext()
             val baseList = baseRelationDropdown(selectedGender)
             val filteredList = filterRelations(selectedGender, baseList, ctx)
@@ -362,11 +358,15 @@ class AllHouseholdFragment : Fragment() {
             list.remove(common[5])
             list.remove(common[4])
         }
+        val hofGender = ctx.hof?.gender
 
-        val hofGender = ctx.hof.gender
-        if (hofGender == Gender.MALE && selectedGender == Gender.MALE) list.remove(common[5])
-        if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) list.remove(common[4])
+        if (hofGender == Gender.MALE && selectedGender == Gender.MALE) {
+            list.remove(common[5])
+        }
 
+        if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
+            list.remove(common[4])
+        }
         return list
     }
 
