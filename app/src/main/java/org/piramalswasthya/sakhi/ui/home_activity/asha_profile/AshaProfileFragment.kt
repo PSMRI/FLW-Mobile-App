@@ -276,116 +276,180 @@ class AshaProfileFragment : Fragment() {
     private fun buildAddBenDialog() {
         val alertBinding = AlertNewBenBinding.inflate(layoutInflater, binding.root, false)
         addBenAlertBinding = alertBinding
-        alertBinding.rgGender.setOnCheckedChangeListener { _, i ->
-            alertBinding.btnOk.isEnabled = false
-            Timber.d("RG Gender selected id : $i")
-            val selectedGender = when (i) {
-                alertBinding.rbMale.id -> Gender.MALE
-                alertBinding.rbFemale.id -> Gender.FEMALE
-                alertBinding.rbTrans.id -> Gender.TRANSGENDER
-                else -> null
-            }
-            alertBinding.linearLayout4.visibility =
-                selectedGender?.let { View.VISIBLE } ?: View.GONE
-            alertBinding.actvRth.text = null
+        alertBinding.btnOk.isEnabled = false
 
-            val hof =
-                viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
-            val hofFatherRegistered =
-                viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
-            val hofMotherRegistered =
-                viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
-            val isHoFUnmarried =
-                hof?.let {
-                    (it.genDetails?.maritalStatusId == 1)
-                } ?: false
-            val isHoFMarried =
-                hof?.let {
-                    (it.genDetails?.maritalStatusId == 2)
-                } ?: false
-            val dropdownList = when (selectedGender) {
-                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                else -> null
-            }
-            val filteredDropdownList =
-                dropdownList?.takeIf { hof != null }?.toMutableList()?.apply {
-                    if (hofFatherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[1])
-                    if (hofMotherRegistered)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[0])
-                    if (isHoFUnmarried)
-                        removeAll(
-                            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter)
-                                .toSet()
-                        )
-                    else {
-                        if (!isHoFMarried) {
-                            remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
-                            remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
+        setupGenderListener(alertBinding)
+        setupRelationClickListener(alertBinding)
 
-                        }
-
-                    }
-                    if (hof?.gender == Gender.MALE && selectedGender == Gender.MALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[5])
-                    else if (hof?.gender == Gender.FEMALE && selectedGender == Gender.FEMALE)
-                        remove(resources.getStringArray(R.array.nbr_relationship_to_head)[4])
-                } ?: dropdownList?.toList()
-            filteredDropdownList?.let {
-                alertBinding.actvRth.setAdapter(
-                    ArrayAdapter(
-                        requireContext(), android.R.layout.simple_spinner_dropdown_item,
-                        it,
-                    )
-                )
-            }
-        }
-        alertBinding.actvRth.setOnItemClickListener { _, _, i, _ ->
-            Timber.d("item clicked index : $i")
-            alertBinding.btnOk.isEnabled = true
-        }
-
-
-        val alert = MaterialAlertDialogBuilder(requireContext()).setView(alertBinding.root)
-            .setOnCancelListener {
-                viewModel.resetSelectedHouseholdId()
-                alertBinding.rgGender.clearCheck()
-                alertBinding.linearLayout4.visibility = View.GONE
-                alertBinding.actvRth.text = null
-            }.create()
+        val alert = createAddBenDialog(alertBinding)
         addBenAlert = alert
 
+        setupAddBenButtons(alertBinding, alert)
+    }
 
-        alertBinding.btnOk.setOnClickListener {
-            val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
-                .indexOf(alertBinding.actvRth.text.toString())
-            val gender = when (alertBinding.rgGender.checkedRadioButtonId) {
-                alertBinding.rbMale.id -> 1
-                alertBinding.rbFemale.id -> 2
-                alertBinding.rbTrans.id -> 3
-                else -> 0
+    private fun setupGenderListener(binding: AlertNewBenBinding) {
+        binding.rgGender.setOnCheckedChangeListener { _, checkedId ->
+            binding.btnOk.isEnabled = false
+
+            val selectedGender = genderFromCheckedId(binding, checkedId)
+            if (selectedGender == null) {
+                binding.linearLayout4.visibility = View.GONE
+                binding.actvRth.text = null
+                binding.actvRth.setAdapter(null)
+                return@setOnCheckedChangeListener
             }
-            if (relIndex < 0 || gender == 0) {
-                if (relIndex < 0) alertBinding.actvRth.error = resources.getString(R.string.relation_with_hof)
+
+            binding.linearLayout4.visibility = View.VISIBLE
+            binding.actvRth.text = null
+
+            val ctx = computeHofContext()
+            val baseList = baseRelations(selectedGender)
+            val filtered = filterRelations(selectedGender, baseList, ctx)
+
+            binding.actvRth.setAdapter(
+                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, filtered)
+            )
+        }
+    }
+
+    private data class HofContext(
+        val hof: Any?, // keep Any? because you didn't paste exact model type for hof item here
+        val fatherRegistered: Boolean,
+        val motherRegistered: Boolean,
+        val isUnmarried: Boolean,
+        val isMarried: Boolean,
+        val hofGender: Gender?
+    )
+
+    private fun computeHofContext(): HofContext {
+        val hof = viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
+
+        val fatherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
+        val motherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
+
+        val isUnmarried = hof?.genDetails?.maritalStatusId == 1
+        val isMarried = hof?.genDetails?.maritalStatusId == 2
+
+        // hof.gender is already Gender in your code (you used hof?.gender == Gender.MALE)
+        val hofGender = hof?.gender
+
+        return HofContext(
+            hof = hof,
+            fatherRegistered = fatherRegistered,
+            motherRegistered = motherRegistered,
+            isUnmarried = isUnmarried,
+            isMarried = isMarried,
+            hofGender = hofGender
+        )
+    }
+
+    private fun baseRelations(selectedGender: Gender): MutableList<String> {
+        val arr = when (selectedGender) {
+            Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+            Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
+            Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+        }
+        return arr.toMutableList()
+    }
+
+    private fun filterRelations(
+        selectedGender: Gender,
+        baseList: MutableList<String>,
+        ctx: HofContext
+    ): List<String> {
+        if (ctx.hof == null) return baseList
+
+        val common = resources.getStringArray(R.array.nbr_relationship_to_head)
+
+        if (ctx.fatherRegistered) baseList.remove(common[1])
+        if (ctx.motherRegistered) baseList.remove(common[0])
+
+        if (ctx.isUnmarried) {
+            val unmarriedFilter =
+                resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
+            baseList.removeAll(unmarriedFilter)
+        } else if (!ctx.isMarried) {
+            // your original "else { if (!isHoFMarried) remove [5] & [4] }"
+            baseList.remove(common[5])
+            baseList.remove(common[4])
+        }
+
+        // your original same-gender spouse restrictions
+        if (ctx.hofGender == Gender.MALE && selectedGender == Gender.MALE) baseList.remove(common[5])
+        if (ctx.hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) baseList.remove(common[4])
+
+        return baseList
+    }
+
+    private fun setupRelationClickListener(binding: AlertNewBenBinding) {
+        binding.actvRth.setOnItemClickListener { _, _, _, _ ->
+            binding.btnOk.isEnabled = true
+        }
+    }
+
+    private fun createAddBenDialog(binding: AlertNewBenBinding): AlertDialog {
+        return MaterialAlertDialogBuilder(requireContext())
+            .setView(binding.root)
+            .setOnCancelListener {
+                viewModel.resetSelectedHouseholdId()
+                binding.btnOk.isEnabled = false
+                binding.rgGender.clearCheck()
+                binding.linearLayout4.visibility = View.GONE
+                binding.actvRth.text = null
+                binding.actvRth.setAdapter(null)
+            }
+            .create()
+    }
+
+    private fun setupAddBenButtons(binding: AlertNewBenBinding, alert: AlertDialog) {
+        binding.btnOk.setOnClickListener {
+            val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
+                .indexOf(binding.actvRth.text.toString())
+
+            val genderInt = genderIntFromRadio(binding)
+
+            if (relIndex < 0 || genderInt == 0) {
+                if (relIndex < 0) binding.actvRth.error = resources.getString(R.string.relation_with_hof)
                 return@setOnClickListener
             }
+
             findNavController().navigate(
                 AshaProfileFragmentDirections.actionAshaProfileFragmentToNewBenRegFragment(
                     hhId = viewModel.selectedHouseholdId,
                     relToHeadId = relIndex,
-                    gender = gender
+                    gender = genderInt
                 )
             )
+
             viewModel.resetSelectedHouseholdId()
             alert.cancel()
         }
-        alertBinding.btnCancel.setOnClickListener {
+
+        binding.btnCancel.setOnClickListener {
             alert.cancel()
             viewModel.resetSelectedHouseholdId()
         }
     }
+
+    private fun genderFromCheckedId(binding: AlertNewBenBinding, checkedId: Int): Gender? {
+        return when (checkedId) {
+            binding.rbMale.id -> Gender.MALE
+            binding.rbFemale.id -> Gender.FEMALE
+            binding.rbTrans.id -> Gender.TRANSGENDER
+            else -> null
+        }
+    }
+
+    private fun genderIntFromRadio(binding: AlertNewBenBinding): Int {
+        return when (binding.rgGender.checkedRadioButtonId) {
+            binding.rbMale.id -> 1
+            binding.rbFemale.id -> 2
+            binding.rbTrans.id -> 3
+            else -> 0
+        }
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
