@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
+import io.noties.markwon.Markwon
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.ItemChatMessageAssistantBinding
 import org.piramalswasthya.sakhi.databinding.ItemChatMessageUserBinding
@@ -15,6 +16,8 @@ import org.piramalswasthya.sakhi.model.chat.ChatMessage
 class ChatMessageAdapter(
     private val onFaqClick: (String) -> Unit
 ) : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DIFF) {
+
+    private var markwon: Markwon? = null
 
     companion object {
         private const val TYPE_USER = 0
@@ -34,6 +37,9 @@ class ChatMessageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
+        if (markwon == null) {
+            markwon = Markwon.create(parent.context)
+        }
         return when (viewType) {
             TYPE_USER -> UserViewHolder(
                 ItemChatMessageUserBinding.inflate(inflater, parent, false)
@@ -64,7 +70,8 @@ class ChatMessageAdapter(
         private val binding: ItemChatMessageAssistantBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: ChatMessage) {
-            binding.tvMessage.text = message.content
+            markwon?.setMarkdown(binding.tvMessage, message.content)
+                ?: run { binding.tvMessage.text = message.content }
 
             val metadata = message.metadata
 
