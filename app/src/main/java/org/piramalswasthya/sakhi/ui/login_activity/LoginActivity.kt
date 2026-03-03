@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
+import androidx.core.view.WindowCompat
 
 
 @AndroidEntryPoint
@@ -63,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        window.setDecorFitsSystemWindows(false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
         requestNotificationPermission()
