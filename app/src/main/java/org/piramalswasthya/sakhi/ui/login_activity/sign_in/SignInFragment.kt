@@ -38,6 +38,8 @@ import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 
 @AndroidEntryPoint
@@ -110,6 +112,13 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val imeHeight = insets.getInsets(
+                WindowInsetsCompat.Type.ime()
+            ).bottom
+            binding.root.setPadding(0, 0, 0, imeHeight)
+            insets
+        }
         binding.btnLogin.setOnClickListener {
             view.findFocus()?.let { view ->
                 val imm =
