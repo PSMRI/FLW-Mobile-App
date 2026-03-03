@@ -63,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        window.setDecorFitsSystemWindows(false)
         TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
         requestNotificationPermission()
