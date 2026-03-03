@@ -281,9 +281,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         askForPermissions()
 
         if (isChatSupportEnabled) {
-            binding.addFab.visibility = View.VISIBLE
             binding.addFab.setOnClickListener {
                 startActivity(Intent(this, ChatActivity::class.java))
+            }
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                binding.addFab.visibility =
+                    if (destination.id == R.id.homeFragment) View.VISIBLE else View.GONE
             }
         } else {
             binding.addFab.visibility = View.GONE

@@ -52,6 +52,7 @@ data class CreateSessionData(
 
 @JsonClass(generateAdapter = true)
 data class CreateSessionRequest(
+    @Json(name = "user_id") val userId: String,
     @Json(name = "language") val language: String
 )
 
@@ -60,7 +61,7 @@ data class CreateSessionRequest(
 @JsonClass(generateAdapter = true)
 data class ChatMessage(
     @Json(name = "message_id") val messageId: String,
-    @Json(name = "role") val role: String,
+    @Json(name = "role") val role: String? = null,
     @Json(name = "content") val content: String,
     @Json(name = "content_type") val contentType: String? = "text",
     @Json(name = "language") val language: String? = null,

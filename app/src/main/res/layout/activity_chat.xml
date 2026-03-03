@@ -162,69 +162,64 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Session drawer -->
-    <com.google.android.material.navigation.NavigationView
+    <LinearLayout
         android:id="@+id/nav_sessions"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:fitsSystemWindows="true">
+        android:background="?android:colorBackground"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
+        <!-- Drawer header -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-            <!-- Drawer header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/chat_history"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_new_chat"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="@string/new_chat"
-                    android:textSize="12sp"
-                    app:icon="@drawable/baseline_add_24"
-                    app:iconSize="16dp" />
-            </LinearLayout>
-
-            <!-- Session list -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_sessions"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:clipToPadding="false"
-                android:padding="4dp"
-                tools:listitem="@layout/item_chat_session" />
-
-            <!-- Empty sessions state -->
             <TextView
-                android:id="@+id/tv_no_sessions"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/no_chat_sessions"
-                android:textColor="?android:textColorSecondary"
-                android:visibility="gone" />
+                android:text="@string/chat_history"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_new_chat"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="@string/new_chat"
+                android:textSize="12sp"
+                app:icon="@drawable/baseline_add_24"
+                app:iconSize="16dp" />
         </LinearLayout>
-    </com.google.android.material.navigation.NavigationView>
+
+        <!-- Session list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sessions"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:padding="4dp"
+            tools:listitem="@layout/item_chat_session" />
+
+        <!-- Empty sessions state -->
+        <TextView
+            android:id="@+id/tv_no_sessions"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/no_chat_sessions"
+            android:textColor="?android:textColorSecondary"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

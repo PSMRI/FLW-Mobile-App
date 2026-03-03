@@ -240,14 +240,13 @@ object AppModule {
     @Provides
     @Named(CHAT_CLIENT)
     fun provideChatHttpClient(
-        preferenceDao: PreferenceDao,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
-            .addInterceptor(ChatAuthInterceptor(preferenceDao))
+            .addInterceptor(ChatAuthInterceptor())
             .addInterceptor(ContentTypeInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()

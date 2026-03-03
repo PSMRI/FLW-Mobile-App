@@ -277,5 +277,8 @@ dependencies {
 
     implementation "net.zetetic:sqlcipher-android:4.13.0"
     implementation "androidx.sqlite:sqlite:2.4.0"
+
+    // Markdown rendering for chat
+    implementation 'io.noties.markwon:core:4.6.2'
 }
 

@@ -28,10 +28,16 @@ class ChatRepository @Inject constructor(
 
     private fun currentLanguage(): String = preferenceDao.getCurrentLanguage().symbol
 
+    private fun currentUserId(): String =
+        preferenceDao.getLoggedInUser()?.userId?.toString() ?: "unknown"
+
     suspend fun getSessions(page: Int = 1): NetworkResponse<SessionsData> =
         withContext(Dispatchers.IO) {
             try {
-                val response = chatApiService.getSessions(page = page)
+                val response = chatApiService.getSessions(
+                    userId = currentUserId(),
+                    page = page
+                )
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.status == "success" && body.data != null) {
@@ -72,7 +78,9 @@ class ChatRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val lang = language ?: currentLanguage()
-                val response = chatApiService.createSession(CreateSessionRequest(lang))
+                val response = chatApiService.createSession(
+                    CreateSessionRequest(userId = currentUserId(), language = lang)
+                )
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.status == "success" && body.data != null) {
@@ -109,7 +117,12 @@ class ChatRepository @Inject constructor(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body?.status == "success" && body.data != null) {
-                    NetworkResponse.Success(body.data)
+                    // Send response doesn't include role — assign from field names
+                    val data = body.data.copy(
+                        userMessage = body.data.userMessage.copy(role = "user"),
+                        assistantMessage = body.data.assistantMessage.copy(role = "assistant")
+                    )
+                    NetworkResponse.Success(data)
                 } else {
                     NetworkResponse.Error(body?.error?.message ?: "Failed to send message")
                 }
