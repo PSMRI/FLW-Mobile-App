@@ -14,6 +14,24 @@
         android:text="@string/view_household_information"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        style="@style/CustomSwitchStyle"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/btn_household_details" />
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/switchButton" />
+
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,20 +39,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/btn_household_details"
+        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintTop_toBottomOf="@+id/ll_search"
         tools:itemCount="2"
-        tools:layout_editor_absoluteX="0dp"
-        tools:listitem="@layout/rv_item_ben">
+        tools:listitem="@layout/rv_item_ben"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    </androidx.recyclerview.widget.RecyclerView>
+
     <FrameLayout
         android:id="@+id/fl_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_household_details">
+        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintTop_toBottomOf="@+id/ll_search">
 
-        <TextView
+
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -42,5 +62,25 @@
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
     </FrameLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_next_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_member"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_circle"
+        app:backgroundTint="?attr/colorPrimary"
+        app:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
