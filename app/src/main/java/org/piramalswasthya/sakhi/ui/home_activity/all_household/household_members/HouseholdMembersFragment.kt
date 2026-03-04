@@ -100,9 +100,16 @@ class HouseholdMembersFragment : Fragment() {
             ?: return list
 
         applyParentFilters(list)
+        val isUnmarried = !hof.isMarried
+        val isMarried = hof.isMarried
 
-        if (!hof.isMarried) {
+
+        if (isUnmarried) {
             applyUnmarriedFilters(list)
+        } else if (!isMarried) {
+            val relations = resources.getStringArray(R.array.nbr_relationship_to_head)
+            list.remove(relations[5])
+            list.remove(relations[4])
         }
 
         applySameGenderSpouseFilter(list, hof, selectedGender)
