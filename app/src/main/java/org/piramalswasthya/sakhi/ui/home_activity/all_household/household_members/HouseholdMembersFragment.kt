@@ -292,26 +292,8 @@ class HouseholdMembersFragment : Fragment() {
                             )
                         }
 
-                        isAsha && viewModel.isFromDisease != 0 &&
-                                viewModel.diseaseType == IconDataset.Disease.MALARIA.toString() &&
-                                canNavigate -> {
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
-                                    benId = benId,
-                                )
-
-                            )
-                        }
-
-                        isAsha && viewModel.isFromDisease != 0 &&
-                                viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString() &&
-                                canNavigate -> {
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
-                                    benId = benId,
-                                )
-
-                            )
+                        isAsha && viewModel.isFromDisease != 0 && canNavigate -> {
+                            navigateToDiseaseForm(benId)
                         }
                     }
 
@@ -338,28 +320,9 @@ class HouseholdMembersFragment : Fragment() {
 
                         prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) &&
                                 !item.isDeactivate &&
-                                viewModel.isFromDisease != 0 &&
-                                viewModel.diseaseType == IconDataset.Disease.MALARIA.toString() -> {
+                                viewModel.isFromDisease != 0 -> {
 
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections
-                                    .actionHouseholdMembersFragmentToMalariaFormFragment(
-                                        benId = benId
-                                    )
-                            )
-                        }
-
-                        prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) &&
-                                !item.isDeactivate &&
-                                viewModel.isFromDisease != 0 &&
-                                viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString() -> {
-
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections
-                                    .actionHouseholdMembersFragmentToKalaAzarFormFragment(
-                                        benId = benId
-                                    )
-                            )
+                            navigateToDiseaseForm(benId)
                         }
 
                         else -> {
@@ -381,21 +344,7 @@ class HouseholdMembersFragment : Fragment() {
                                     relToHeadId = HelperUtil.getMaleRelationId(relToHeadId)
                                 )
                             )
-                        } else {
-                            if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
-                                findNavController().navigate(
-                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
-                                        benId = benId
-                                    )
-                                )
-                            } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
-                                findNavController().navigate(
-                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
-                                        benId = benId
-                                    )
-                                )
-                            }
-                        }
+                        } else {navigateToDiseaseForm(benId) }
                     }
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
@@ -414,19 +363,7 @@ class HouseholdMembersFragment : Fragment() {
                                 )
                             )
                         } else {
-                            if (viewModel.diseaseType == IconDataset.Disease.MALARIA.toString()) {
-                                findNavController().navigate(
-                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToMalariaFormFragment(
-                                        benId = benId
-                                    )
-                                )
-                            } else if (viewModel.diseaseType == IconDataset.Disease.KALA_AZAR.toString()) {
-                                findNavController().navigate(
-                                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToKalaAzarFormFragment(
-                                        benId = benId
-                                    )
-                                )
-                            }
+                            navigateToDiseaseForm(benId)
                         }
                     }
                 },
@@ -554,6 +491,27 @@ class HouseholdMembersFragment : Fragment() {
 
     private fun checkAndGenerateABHA(benId: Long) {
         viewModel.fetchAbha(benId)
+    }
+    private fun navigateToDiseaseForm(benId: Long) {
+        when (viewModel.diseaseType) {
+            IconDataset.Disease.MALARIA.toString() -> {
+                findNavController().navigate(
+                    HouseholdMembersFragmentDirections
+                        .actionHouseholdMembersFragmentToMalariaFormFragment(
+                            benId = benId
+                        )
+                )
+            }
+
+            IconDataset.Disease.KALA_AZAR.toString() -> {
+                findNavController().navigate(
+                    HouseholdMembersFragmentDirections
+                        .actionHouseholdMembersFragmentToKalaAzarFormFragment(
+                            benId = benId
+                        )
+                )
+            }
+        }
     }
 
     override fun onDestroyView() {
