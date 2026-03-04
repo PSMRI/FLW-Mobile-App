@@ -867,7 +867,7 @@ class EligibleCoupleTrackingDataset(
         maxDays: Int
     ): Pair<String, String> {
         return try {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date = sdf.parse(injectionDate ?: "") ?: return "" to ""
 
             val cal = Calendar.getInstance()
@@ -893,7 +893,7 @@ class EligibleCoupleTrackingDataset(
             return "Dose-1"
         }
 
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
         val last = sdf.parse(lastDate) ?: return "Dose-1"
         val visit = sdf.parse(visitDate) ?: return "Dose-1"

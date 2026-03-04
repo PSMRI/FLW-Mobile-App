@@ -9,9 +9,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
+import org.piramalswasthya.sakhi.ui.getTitle
+import org.piramalswasthya.sakhi.ui.getTitleRes
 
 
 class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao,private val isSoftDeleteEnabled:Boolean = false, private val clickListener: HouseholdClickListener) :
@@ -57,7 +60,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
 
             if (isDisease) {
                 binding.button4.visibility = View.GONE
-                if (diseaseType == "FILARIA") {
+                if (diseaseType == IconDataset.Disease.FILARIA.getTitle(binding.root.context) ) {
                     binding.btnMda.visibility = View.VISIBLE
                 } else {
                     binding.btnMda.visibility = View.GONE

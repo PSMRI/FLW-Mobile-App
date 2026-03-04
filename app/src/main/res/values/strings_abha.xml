@@ -37,6 +37,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="submit">SUBMIT</string>
+    <string name="submitted">SUBMITTED</string>
     <string name="enter_mobile_number">Enter Mobile Number</string>
     <string name="enter_number_for_abha">Aadhaar Number for ABHA Registration</string>
     <string name="aadhaar_linked_mobile">Aadhaar linked mobile number or other mobile number</string>

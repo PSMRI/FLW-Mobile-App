@@ -45,7 +45,8 @@ class PwAncFormViewModel @Inject constructor(
     private var lastDocumentFormId: Int = 0
 
     val benId = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
-    val hhID = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId.toString()
+    var hhID = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
+        private set
     val fromPmsma = PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).fromPmsma
     private val visitNumber =
         PwAncFormFragmentArgs.fromSavedStateHandle(savedStateHandle).visitNumber
@@ -85,6 +86,9 @@ class PwAncFormViewModel @Inject constructor(
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
                 _benAgeGender.value = "${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}"
+                if (hhID.isNullOrBlank()) {
+                    hhID = ben.householdId.toString()
+                }
                 ancCache = PregnantWomanAncCache(
                     benId = ben.beneficiaryId,
                     visitNumber = visitNumber,
