@@ -45,6 +45,7 @@ class AshaProfileFragment : Fragment() {
     private val viewModel: AshaProfileViewModel by viewModels()
 
     private var latestTmpUri: Uri? = null
+    private lateinit var formAdapter: FormInputAdapter
 
     @Inject
     lateinit var prefDao: PreferenceDao
@@ -61,10 +62,7 @@ class AshaProfileFragment : Fragment() {
                 latestTmpUri?.let { uri ->
                     viewModel.setImageUriToFormElement(uri)
 
-                    binding.form.rvInputForm.apply {
-                        val adapter = this.adapter as FormInputAdapter
-                        adapter.notifyItemChanged(0)
-                    }
+                    formAdapter.notifyItemChanged(0)
                     Timber.d("Image saved at @ $uri")
                 }
             }
@@ -81,43 +79,33 @@ class AshaProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         buildAddBenDialog()
         binding.pbForm.visibility = View.VISIBLE
+        formAdapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                viewModel.updateListOnValueChanged(formId, index)
+                hardCodedListUpdate(formId)
+            },
+            imageClickListener = FormInputAdapter.ImageClickListener {
+                viewModel.setCurrentImageFormId(it)
+                takeImage()
+            },
+            isEnabled = true
+        )
+
+        binding.form.rvInputForm.adapter = formAdapter
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.householdList.collect { list ->
-                            binding.addHousehold.visibility =
-                                if (recordExists && list.isEmpty()) View.VISIBLE else View.GONE
-                        }
-                    }
-                }
-                binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
-                val adapter = FormInputAdapter(
-                    formValueListener = FormInputAdapter.FormValueListener { formId, index ->
-                        viewModel.updateListOnValueChanged(formId, index)
-                        hardCodedListUpdate(formId)
-                    },
-                    imageClickListener = FormInputAdapter.ImageClickListener {
-                        viewModel.setCurrentImageFormId(it)
-                        takeImage()
-                    },
-                     isEnabled = !recordExists,
-
-                )
-                binding.form.rvInputForm.adapter = adapter
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.formList.collect { list ->
-                            if (list.isNotEmpty()) adapter.submitList(list)
-                            binding.llContent.visibility = View.VISIBLE
-                            binding.pbForm.visibility = View.GONE
-                            binding.textError.visibility = View.GONE
-                        }
-                    }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.formList.collect { list ->
+                    if (list.isNotEmpty()) formAdapter.submitList(list)
+                    binding.llContent.visibility = View.VISIBLE
+                    binding.pbForm.visibility = View.GONE
+                    binding.textError.visibility = View.GONE
                 }
             }
         }
