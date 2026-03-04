@@ -85,8 +85,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
 
         fun dateFormate(dateStr: String): String? {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
             val dateResponse = inputFormat.parse(dateStr)
             return outputFormat.format(dateResponse!!)
@@ -98,8 +98,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (dateStr.isEmpty()) return null
 
             return try {
-                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                 
                 val dateResponse = inputFormat.parse(dateStr) ?: return null
                 outputFormat.format(dateResponse)
@@ -1098,6 +1098,33 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             Log.w("Dataset", "Entry '$entry' not found in localized array for ID $arrayId")
             null
         }
+    }
+
+    fun getEnglishCheckboxValues(arrayId: Int, indexValues: String?): String? {
+        if (indexValues.isNullOrEmpty()) return null
+        val englishArray = englishResources.getStringArray(arrayId)
+        return indexValues.split("|")
+            .mapNotNull { it.trim().toIntOrNull() }
+            .filter { it in englishArray.indices }
+            .joinToString("|") { englishArray[it] }
+            .ifEmpty { null }
+    }
+
+    fun getCheckboxIndexesFromValues(arrayId: Int, storedValues: String?): String? {
+        if (storedValues.isNullOrEmpty()) return null
+        val parts = storedValues.split("|")
+        if (parts.all { it.trim().toIntOrNull() != null }) return storedValues
+        val englishArray = englishResources.getStringArray(arrayId)
+        val localizedArray = resources.getStringArray(arrayId)
+        return parts.mapNotNull { value ->
+            val trimmed = value.trim()
+            val englishIdx = englishArray.indexOf(trimmed)
+            if (englishIdx >= 0) englishIdx
+            else {
+                val localIdx = localizedArray.indexOf(trimmed)
+                if (localIdx >= 0) localIdx else null
+            }
+        }.sorted().joinToString("|") { it.toString() }.ifEmpty { null }
     }
 
     fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {

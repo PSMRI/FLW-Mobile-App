@@ -171,7 +171,6 @@
         android:background="@android:color/holo_orange_light"
         android:padding="@dimen/padding_small"
         app:layout_constraintTop_toBottomOf="@+id/from_to_date_range">
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
             android:layout_width="wrap_content"
@@ -184,14 +183,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.45" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline75"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="307dp" />
+            app:layout_constraintGuide_percent="0.6" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline90"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
         <TextView
             android:id="@+id/tvHeaderSerialNo"
@@ -240,12 +246,26 @@
             android:id="@+id/tvHeaderAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Amount claimed (Rs.)"
-            android:textStyle="bold"
             android:gravity="center"
             android:paddingEnd="@dimen/_5sdp"
+            android:text="Amount claimed (Rs.)"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline90"
             app:layout_constraintStart_toStartOf="@id/guideline75"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvHeaderDoc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Doc"
+            android:textStyle="bold"
+            android:gravity="center"
+
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:layout_constraintStart_toEndOf="@id/guideline90"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

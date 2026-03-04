@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -261,14 +262,27 @@ class DeliveryOutcomeRepo @Inject constructor(
     }
 
     private suspend fun saveDeliveryOutcomeCacheFromResponse(dataObj: String): List<DeliveryOutcomePost> {
-        var deliveryOutcomeList =
+        val deliveryOutcomeList =
             Gson().fromJson(dataObj, Array<DeliveryOutcomePost>::class.java).toList()
         deliveryOutcomeList.forEach { deliveryOutcome ->
             deliveryOutcome.createdDate?.let {
-                var deliveryOutcomeCache: DeliveryOutcomeCache? =
-                    deliveryOutcomeDao.getDeliveryOutcome(deliveryOutcome.benId)
-                if (deliveryOutcomeCache == null) {
-                    deliveryOutcomeDao.saveDeliveryOutcome(deliveryOutcome.toDeliveryCache())
+                try {
+                    if (deliveryOutcome.benId <= 0) {
+                        Timber.w("Skipping delivery outcome with invalid benId: ${deliveryOutcome.benId}")
+                        return@let
+                    }
+                    val ben = benDao.getBen(deliveryOutcome.benId)
+                    if (ben == null) {
+                        Timber.w("Skipping delivery outcome for benId ${deliveryOutcome.benId} - beneficiary not found locally")
+                        return@let
+                    }
+                    val deliveryOutcomeCache =
+                        deliveryOutcomeDao.getDeliveryOutcome(deliveryOutcome.benId)
+                    if (deliveryOutcomeCache == null) {
+                        deliveryOutcomeDao.saveDeliveryOutcome(deliveryOutcome.toDeliveryCache())
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to save delivery outcome for benId: ${deliveryOutcome.benId}")
                 }
             }
         }

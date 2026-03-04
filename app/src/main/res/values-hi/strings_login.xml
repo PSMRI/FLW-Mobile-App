@@ -15,6 +15,9 @@
     <string name="btn_login_text">लॉग इन करें</string>
     <string name="login_diff_user">आप पहले @username के रूप में @ मितानिन से लॉगिन हैं, क्या आप किसी और यूज़र से लॉगिन करना चाहते हैं?</string>
     <string name="unsync_record_count">नमस्ते! @count रिकॉर्ड अभी सिंक नहीं हुए हैं, कृपया सभी रिकॉर्ड सिंक होने तक प्रतीक्षा करें</string>
+    <string name="account_deactivated_title">खाता निष्क्रिय</string>
+    <string name="session_expired_title">सत्र समाप्त</string>
+    <string name="session_expired_message">आपका सत्र समाप्त हो गया है। कृपया पुनः लॉग इन करें।</string>
 
 
 </resources>

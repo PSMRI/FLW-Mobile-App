@@ -45,6 +45,9 @@ import java.util.Date
 import java.util.Locale
 
 
+fun IconDataset.Disease.getTitle(context: Context): String {
+    return context.getString(getTitleRes())
+}
 @StringRes
 fun IconDataset.Disease.getTitleRes(): Int {
     return when (this) {
@@ -100,7 +103,7 @@ fun Button.setVaccineState(syncState: VaccineState?) {
 @BindingAdapter("formattedDate")
 fun setFormattedDate(view: TextView, timestamp: Long?) {
     timestamp?.let {
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         view.text = sdf.format(Date(it))
     }
 }
@@ -109,7 +112,7 @@ fun setFormattedDate(view: TextView, timestamp: Long?) {
 @BindingAdapter("formattedDatewitheMonth")
 fun setFormattedDateWithMonth(view: TextView, timestamp: Long?) {
     timestamp?.let {
-        val sdf = SimpleDateFormat("dd-MM-yyyy , MMM", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy , MMM", Locale.ENGLISH)
         view.text = sdf.format(Date(it))
     }
 }
@@ -502,13 +505,13 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
     val date = Date(timestamp)
     val formatType = textView.tag as? String ?: "default"
 
-    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val format = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
     val formattedDate = format.format(date)
 
     textView.text = when (formatType) {
         "default" -> textView.context.getString(R.string.session_date_format, formattedDate)
         "monthYear" -> {
-            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
+            val monthFormat = SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH)
             val monthYear = monthFormat.format(date)
             textView.context.getString(R.string.uwin_session_format, monthYear)
         }
@@ -532,4 +535,13 @@ fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStat
                 isDeath.equals("false", ignoreCase = true)
 
     visibility = if (shouldShow) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("dynamicBackground")
+fun setDynamicBackground(view: View, isEligible: Boolean) {
+    if (isEligible) {
+        view.setBackgroundResource(R.color.md_theme_light_error)
+    } else {
+        view.background = null
+    }
 }
