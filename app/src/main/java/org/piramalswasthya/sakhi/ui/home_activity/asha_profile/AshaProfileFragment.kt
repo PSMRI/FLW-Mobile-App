@@ -82,14 +82,17 @@ class AshaProfileFragment : Fragment() {
         buildAddBenDialog()
         binding.pbForm.visibility = View.VISIBLE
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
-
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
-                lifecycleScope.launch {
-                    viewModel.householdList.collect { list ->
-                        binding.addHousehold.visibility =
-                            if (recordExists && list.isEmpty()) View.VISIBLE else View.GONE
+                binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.householdList.collect { list ->
+                            binding.addHousehold.visibility =
+                                if (recordExists && list.isEmpty()) View.VISIBLE else View.GONE
+                        }
                     }
                 }
                 binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
@@ -106,14 +109,14 @@ class AshaProfileFragment : Fragment() {
 
                 )
                 binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
-                    viewModel.formList.collect {
-                        if (it.isNotEmpty())
-                            adapter.submitList(it)
-                        binding.llContent.visibility = View.VISIBLE
-                        binding.pbForm.visibility = View.GONE
-                        binding.textError.visibility = View.GONE
-
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.formList.collect { list ->
+                            if (list.isNotEmpty()) adapter.submitList(list)
+                            binding.llContent.visibility = View.VISIBLE
+                            binding.pbForm.visibility = View.GONE
+                            binding.textError.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -161,7 +164,6 @@ class AshaProfileFragment : Fragment() {
 
             }))
         binding.rvAny.adapter = householdAdapter
-
 
 
         viewLifecycleOwner.lifecycleScope.launch {

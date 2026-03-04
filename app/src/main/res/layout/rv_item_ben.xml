@@ -602,13 +602,12 @@
             <LinearLayout
                 android:id="@+id/ll_add_spouse_btn"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:visibility="gone"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/padding_normal"
-                app:layout_constraintTop_toBottomOf="@id/ll_ben_details_4"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/ll_ben_details_4">
                 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_add_children"
