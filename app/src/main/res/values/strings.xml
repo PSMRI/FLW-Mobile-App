@@ -76,13 +76,11 @@
     <string name="str_leprosy_status">Leprosy Status</string>
     <string name="irs_submitted">IRS Form submitted</string>
 
-
     <string name="ben_marked_death">Beneficiary marked as Deceased.</string>
     <string name="kala_submitted">Kala Azar Form submitted</string>
     <string name="isrefer">REFER</string>
     <string name="ncd_refer_alert">Do you want to refer to HWC facility?</string>
     <string name="cbac_screening_submitted">CBAC Screening submitted</string>
-
 
     <!--    HBNC-->
     <string name="hbnc_baby_dead_alert">Cause of death to be reported to ANM/MPW/PHC for infant death review.</string>
@@ -102,7 +100,6 @@
     <string name="hbnc_baby_eye_pus_alert">If there is pus in the eye then antibiotic ointment can be applied.</string>
     <string name="hbnc_baby_weight_1_8_alert">Refer the baby to Sick New born care unit at the nearest health facility and also conduct extra home visits as per the high risk baby form. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
     <string name="hbnc_baby_weight_2_5_alert">Advise the mother to provide extra warmth to the baby and feed the baby more frequently. If the baby (low birth weight or normal) is not gaining weight then refer to SNCU at the nearest health facility.</string>
-
 
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="title_activity_supervisor" translatable="false">SupervisorActivity</string>
@@ -149,12 +146,11 @@
     <string name="chat_error">There is some error in loading your chat bot</string>
     <string name="help_and_support">Help &amp; Support</string>
 
-
     <string name="version">2.0.0</string>
 
     <string name="evac_patient_info">Patient Information </string>
 
-    <string name="immunization_dosage_count">%d/%d</string>
+    <string name="immunization_dosage_count">%1$d/%2$d</string>
     <string name="select_death_type">Select Beneficiary Death Type</string>
     <string name="death_type_cdr">CDR (Child Death Review)</string>
     <string name="maternal_deaths">Maternal Deaths (MDSR)</string>
@@ -218,7 +214,6 @@
         <item>Govt. Medical College</item>
     </string-array>
 
-
     <string-array name="yes_no_options">
         <item>Yes</item>
         <item>No</item>
@@ -230,7 +225,6 @@
         <item>Community center</item>
     </string-array>
 
-
     <string-array name="temp_array">
         <item>Item 1</item>
         <item>Item 2</item>
@@ -239,7 +233,6 @@
         <item>Item 5</item>
         <item>Item 6</item>
     </string-array>
-
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
@@ -272,23 +265,20 @@
     <string name="form_input_alphabet_space_only_error">Only Alphabets and whitespace allowed!</string>
     <string name="form_input_alphabet_special_only_error">Only Alphabets and special characters allowed!</string>
     <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
-    <string name="form_input_min_limit_error">%1s should be greater than or equal to %2d</string>
+    <string name="form_input_min_limit_error">%1$s should be greater than or equal to %2$d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="abha_number_digit">ABHA number should be 14-digit long</string>
     <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
-    <string name="form_input_min_limit_error_decimal">%1s should be greater than or equal to %2.1f</string>
-    <string name="form_input_max_limit_error">%1s should be lesser than or equal to %2d</string>
-    <string name="form_input_max_limit_error_decimal">%1s should be lesser than or equal to %2.1f</string>
+    <string name="form_input_min_limit_error_decimal">%1$s should be greater than or equal to %2$.1f</string>
+    <string name="form_input_max_limit_error">%1$s should be lesser than or equal to %2$d</string>
+    <string name="form_input_max_limit_error_decimal">%1$s should be lesser than or equal to %2$.1f</string>
     <string name="form_input_error_invalid_mobile">Invalid Mobile Number !</string>
     <string name="form_input_error_invalid_rch">Invalid RCH ID !</string>
     <string name="form_input_error_invalid_mcp">Invalid MCP Number !</string>
     <string name="form_input_error_invalid_aadhar">Invalid Aadhaar Number !</string>
-    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
-    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
-    <string name="try_again">Try Again!</string>
-    <string name="version_2_0_0">APK Version 2.0.0</string>
+<string name="version_2_0_0">APK Version 2.0.0</string>
     <string name="file_size">File size should be less than or equals to 5 MB.</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="sync_in_progress">Sync in progress ...</string>
@@ -614,7 +604,6 @@
         <item>HR NonPreg Track</item>
     </string-array>
 
-
     <string-array name="place_array">
         <item>HWC</item>
         <item>Anganwadi Centre</item>
@@ -626,7 +615,6 @@
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>
     </string-array>
-
 
     <string name="str_subcenter_name">Subcenter name</string>
     <string name="str_primary_health_center_name">Primary Health Center Name </string>
@@ -650,7 +638,6 @@
     <string name="str_supervisor_from_block">Supervisor from block/district/state level in last on</string>
     <string name="str_ors_in_last_one_month">ORS in last one month Packet shortage</string>
     <string name="str_ifa_last_month">IFA in last one month Decreased syrup</string>
-
 
     <!-- HBNCDataSet -->
 
@@ -854,7 +841,6 @@
         <item>Private Hospital</item>
         <item>Other Place</item>
     </string-array>
-
 
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 Month</item>
@@ -1170,7 +1156,6 @@
         <item>5</item>
         <item>6</item>
 
-
     </string-array>
 
     <string-array name="side_effect_of_medicine">
@@ -1207,6 +1192,9 @@
     <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sync_dashboard_no_log_files">No log files to export</string>
     <string name="form_name">Form Name</string>
+    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
+    <string name="try_again">Try Again!</string>
 
 </resources>
 

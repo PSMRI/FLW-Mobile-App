@@ -57,13 +57,11 @@
     <string name="title_new_ben_reg_hof">HoF Registration</string>
     <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
 
-
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">পুৰুষ</item>
         <item name="nbr_gender_2">মহিলা</item>
         <item name="nbr_gender_3">ট্ৰান্সজেন্ডাৰ</item>
     </string-array>
-
 
     <string-array name="nbr_reproductive_status_array1">
         <item>Adolescent Girl</item>
@@ -195,7 +193,6 @@
         <item>অন্যান্য</item>
     </string-array>
 
-
     <string-array name="community_array">
         <item>সাধাৰণ</item>
         <item>এছি</item>
@@ -291,4 +288,26 @@
         <item>Importance of small family and regular health check-ups</item>
 
     </string-array>
+
+    <string name="age_at_marriagee">বিবাহৰ সময়ত আপোনাৰ বয়স</string>
+    <string name="nbr_abortion_image">গৰ্ভপাত ডিচ্চাৰ্জ</string>
+    <string name="nbr_image_cam_gal">কেমেৰা/গেলেৰী ব্যৱহাৰ কৰিবলৈ টেপ কৰক</string>
+    <string name="vhnd_date">VHND তাৰিখ</string>
+    <string name="vhnc_date">VHSNC সভাৰ তাৰিখ</string>
+    <string name="phc_review_meeting_date">সভাৰ তাৰিখ</string>
+    <string name="nbr_child_first_name">শিশুৰ নাম</string>
+    <string name="other_place_of_death">মৃত্যুৰ অন্য স্থান</string>
+    <string name="deworming_done">কৃমিনাশক চক্ৰ সম্পূৰ্ণ হৈছে নেকি?</string>
+    <string name="deworming_date">কৃমিনাশকৰ তাৰিখ</string>
+    <string name="deworming_location">কৃমিনাশকৰ স্থান</string>
+    <string name="age_group">বয়সৰ গোট</string>
+    <string name="deworming_title">ৰাষ্ট্ৰীয় কৃমিনাশক দিৱস ফৰ্ম</string>
+    <string name="deworming_list_title">ৰাষ্ট্ৰীয় কৃমিনাশক দিৱস ফৰ্ম তালিকা</string>
+    <string name="ndd_list_title">NDD ফৰ্ম</string>
+    <string name="dd_ec">যোগ্য দম্পতী</string>
+    <string name="dd_pw">গৰ্ভৱতী মহিলা</string>
+    <string name="dd_pm">প্ৰসৱোত্তৰ মাতৃ</string>
+    <string name="dd_ew">বয়স্ক মহিলা</string>
+    <string name="dd_ag">কিশোৰী ছোৱালী</string>
+    <string name="dd_ps">স্থায়ী বন্ধ্যাকৰণ কৰা</string>
 </resources>
