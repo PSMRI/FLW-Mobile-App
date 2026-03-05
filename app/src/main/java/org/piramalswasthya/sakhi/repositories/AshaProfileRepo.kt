@@ -137,11 +137,23 @@ class AshaProfileRepo @Inject constructor(
             profileDao.getProfileActivityById(id)
         }
     }
+
+    suspend fun saveRecord(profileActivityCache: ProfileActivityCache) {
+        withContext(Dispatchers.IO) {
+            profileDao.insert(profileActivityCache)
+        }
+    }
     private suspend fun saveProfileData(dataObj: String) {
 
         val activitiesCache =
             Gson().fromJson(dataObj, ProfileActivityCache::class.java) as ProfileActivityCache
         if (activitiesCache != null) {
+            // Preserve local profileImage — server stores the URI string which is
+            // only meaningful on this device, so always prefer the local file.
+            val existingRecord = profileDao.getProfileActivityById(activitiesCache.employeeId.toLong())
+            if (existingRecord != null && existingRecord.profileImage.isNotEmpty()) {
+                activitiesCache.profileImage = existingRecord.profileImage
+            }
             profileDao.insert(activitiesCache)
         }
 
