@@ -59,7 +59,7 @@ object Konstants {
     const val minWeekToShowDelivered = 23
 
 
-    const val babyLowWeight: Double = 2.5
+    const val babyLowWeight: Double = 2500.0
 
 
     //PNC-EC cycle
