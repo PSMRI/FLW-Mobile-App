@@ -61,4 +61,11 @@
     <string name="ecrdset_9_age_yrs">নৱম শিশু বয়স ( বছৰত)</string>
     <string name="ecrdset_9_child_sex">৯ম শিশুৰ যৌন সম্পৰ্ক</string>
     <string name="ecrdset_gap_8_9_child">৮ম শিশু আৰু ৯ম শিশুৰ মাজৰ ব্যৱধান</string>
+    <string name="ecrdset_reg_children_15_below">১৫ বছৰৰ তলৰ শিশুৰ পঞ্জীয়ন</string>
+    <string name="childrens">আপোনাৰ সন্তান আছে নেকি?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover">নয়ী পহল কিট দম্পতীক প্ৰদান কৰা হৈছে নেকি?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover_date">নয়ী পহল কিট প্ৰদানৰ তাৰিখ</string>
+    <string name="asha_photo">নয়ী পহল কিট প্ৰদান কৰাৰ সময়ত দম্পতীৰ সৈতে আশাৰ ফটো</string>
+    <string name="asha_photo_one">আশা ফটো এক</string>
+    <string name="asha_photo_two">আশা ফটো দুই</string>
 </resources>

@@ -189,6 +189,10 @@
     <string name="sputum_test_result">बलगम जांच का परिणाम</string>
     <string name="referred_to_facility">स्वास्थ्य केंद्र को भेजा गया</string>
     <string name="facility_referral_follow_ups">स्वास्थ्य केंद्र रेफरल का फॉलो-अप</string>
+    <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
+    <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
+    <string name="cbac_is_leprosy_suspected">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
+    <string name="refer_to_hwc_facility_alert">क्या आप HWC सुविधा में रेफर करना चाहते हैं?</string>
 
 </resources>
 
