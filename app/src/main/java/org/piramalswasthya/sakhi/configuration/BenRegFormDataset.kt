@@ -1858,36 +1858,65 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //                )
 
                 if (benIfDataExist != null || !isAddSpouse) {
-                    gender.value = null
-                    relationToHead.value = null
-                    maritalStatus.value = null
-                    reproductiveStatus.value = null
+                    if (benIfDataExist != null) {
+                        // EDITING: preserve gender, maritalStatus, relationToHead values
+                        // Only reset reproductiveStatus (it depends on new age)
+                        reproductiveStatus.value = null
 
-                    maritalStatus.inputType = DROPDOWN
-                    reproductiveStatus.inputType = DROPDOWN
-                    relationToHead.inputType = DROPDOWN
+                        // Use preserved gender to determine correct entries
+                        val genderIndex = when (gender.value) {
+                            gender.entries?.get(0) -> 0  // Male
+                            gender.entries?.get(1) -> 1  // Female
+                            else -> 2                     // Transgender/Other
+                        }
 
-                    maritalStatus.entries = when (index) {
-                        1 -> maritalStatusFemale
-                        else -> maritalStatusMale
-                    }
+                        maritalStatus.entries = when (genderIndex) {
+                            1 -> maritalStatusFemale
+                            else -> maritalStatusMale
+                        }
+                        maritalStatus.arrayId = when (genderIndex) {
+                            1 -> R.array.nbr_marital_status_female_array
+                            else -> R.array.nbr_marital_status_male_array
+                        }
+                        relationToHead.entries = when (genderIndex) {
+                            0 -> relationToHeadListMale
+                            1 -> relationToHeadListFemale
+                            else -> relationToHeadListDefault
+                        }
+                        relationToHead.arrayId = when (genderIndex) {
+                            0 -> R.array.nbr_relationship_to_head_male
+                            1 -> R.array.nbr_relationship_to_head_female
+                            else -> R.array.nbr_relationship_to_head
+                        }
+                    } else {
+                        // NEW registration: reset all values (existing behavior)
+                        gender.value = null
+                        relationToHead.value = null
+                        maritalStatus.value = null
+                        reproductiveStatus.value = null
 
-                    maritalStatus.arrayId = when (index) {
-                        1 -> R.array.nbr_marital_status_female_array
-                        else -> R.array.nbr_marital_status_male_array
+                        maritalStatus.inputType = DROPDOWN
+                        reproductiveStatus.inputType = DROPDOWN
+                        relationToHead.inputType = DROPDOWN
 
-                    }
-
-                    relationToHead.entries = when (index) {
-                        0 -> relationToHeadListMale
-                        1 -> relationToHeadListFemale
-                        else -> relationToHeadListDefault
-                    }
-
-                    relationToHead.arrayId = when (index) {
-                        0 -> R.array.nbr_relationship_to_head_male
-                        1 -> R.array.nbr_relationship_to_head_female
-                        else -> R.array.nbr_relationship_to_head
+                        maritalStatus.entries = when (index) {
+                            1 -> maritalStatusFemale
+                            else -> maritalStatusMale
+                        }
+                        maritalStatus.arrayId = when (index) {
+                            1 -> R.array.nbr_marital_status_female_array
+                            else -> R.array.nbr_marital_status_male_array
+                        }
+                        relationToHead.entries = when (index) {
+                            0 -> relationToHeadListMale
+                            1 -> relationToHeadListFemale
+                            else -> relationToHeadListDefault
+                        }
+                        relationToHead.arrayId = when (index) {
+                            0 -> R.array.nbr_relationship_to_head_male
+                            1 -> R.array.nbr_relationship_to_head_female
+                            else -> R.array.nbr_relationship_to_head
+                        }
                     }
                 }
 
