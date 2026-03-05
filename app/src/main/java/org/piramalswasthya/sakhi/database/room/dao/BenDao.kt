@@ -941,10 +941,23 @@ interface BenDao {
     @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 1 and isDeactivate=0 and gender = 'FEMALE' and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1);")
     fun getAllHRPTrackingNonPregListCount(villageId: Int): Flow<Int>
 
-    @Query("select count(*) from INFANT_REG inf join ben_basic_cache ben on ben.benId = inf.motherBenId where isActive = 1 and ben.isDeactivate=0 and weight < :lowWeightLimit and  ben.villageId = :villageId")
+    @Query(
+        """
+        SELECT count(*) FROM INFANT_REG inf
+        JOIN ben_basic_cache ben ON ben.benId = inf.motherBenId
+        JOIN delivery_outcome do ON do.benId = inf.motherBenId AND do.isActive = 1
+        WHERE inf.isActive = 1
+        AND ben.isDeactivate = 0
+        AND inf.weight < :lowWeightLimit
+        AND ben.villageId = :villageId
+        AND do.dateOfDelivery IS NOT NULL
+        AND (strftime('%s','now') * 1000) - do.dateOfDelivery <= :maxAgeMillis
+        """
+    )
     fun getLowWeightBabiesCount(
         villageId: Int,
-        lowWeightLimit: Double = Konstants.babyLowWeight
+        lowWeightLimit: Double = Konstants.babyLowWeight,
+        maxAgeMillis: Long = Konstants.pncEcGap * 24 * 60 * 60 * 1000
     ): Flow<Int>
 
     // Pregnancy Death
