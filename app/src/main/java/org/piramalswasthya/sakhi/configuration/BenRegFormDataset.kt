@@ -3149,7 +3149,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         )
 
                     } else {
-                        maritalStatus.value = null
+                        if (benIfDataExist == null) {
+                            maritalStatus.value = null
+                        }
                         triggerDependants(
                             source = gender,
                             removeItems = listOf(birthCertificateNumber, placeOfBirth),
