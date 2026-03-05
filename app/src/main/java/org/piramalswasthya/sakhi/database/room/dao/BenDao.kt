@@ -699,15 +699,17 @@ interface BenDao {
     fun getAllAbortionWomenListCount(selectedVillage: Int): Flow<Int>
 
     @Query("""
-    SELECT COUNT(DISTINCT b.benId)
-    FROM BEN_BASIC_CACHE b
-    INNER JOIN pregnancy_register pwr ON pwr.benId = b.benId
-    INNER JOIN PREGNANCY_ANC a ON b.benId = a.benId
-    WHERE b.villageId = :selectedVillage
-      AND pwr.active = 1
-      AND b.reproductiveStatusId = 2
-      AND isDeactivate=0
-      AND (a.anyHighRisk = 1 OR a.placeOfAncId = 3)
+    SELECT COUNT(DISTINCT ben.benId)
+    FROM BEN_BASIC_CACHE ben
+    INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
+    WHERE pwr.active = 1
+      AND ben.reproductiveStatusId = 2
+      AND ben.isDeactivate = 0
+      AND ben.villageId = :selectedVillage
+      AND (ben.isDeath = 0 OR ben.isDeath IS NULL OR ben.isDeath = 'undefined')
+      AND (ben.benId IN (SELECT benId FROM PMSMA WHERE highriskSymbols = 1)
+           OR ben.benId IN (SELECT benId FROM PREGNANCY_ANC WHERE anyHighRisk = 1))
+      AND ben.benId NOT IN (SELECT benId FROM PREGNANCY_ANC WHERE maternalDeath = 1)
 """)
     fun getHighRiskWomenCount(selectedVillage: Int): Flow<Int>
 
