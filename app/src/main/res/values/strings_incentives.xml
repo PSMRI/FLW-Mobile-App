@@ -5,7 +5,7 @@
     <string name="incentive_processed">Processed \nTotal : ₹ %1d</string>
     <string name="incentive_pending">Pending \nTotal : ₹ %1d</string>
     <string name="incentive_amount">₹ %1d</string>
-    <string name="incentive_ben_details">Ben ID: %1d\nName: %2s</string>
+    <string name="incentive_ben_details">Ben ID: %1$d\nName: %2$s</string>
     <string name="incentive_activity_details">Activity: %1s</string>
     <string name="incentive_rch_id_details">RCH ID: %1s</string>
     <string name="incentive_abha_id_details">ABHA Number: %1s</string>

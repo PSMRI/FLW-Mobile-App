@@ -150,7 +150,7 @@ data class BenWithEcTrackingCache(
         return BenWithEctListDomain(
 //            ecBenId,
             ben.asBasicDomainModel(),
-            ecr.noOfLiveChildren.toString(),
+            ben.noOfAliveChildren.toString(),
             allowFill,
             ectDate = recentFill?.visitDate ?: 0L,
             lmpDate = recentFill?.lmpDate ?: 0L,
