@@ -1923,6 +1923,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ?.let {
 
                         validateEmptyOnEditText(ageAtMarriage)
+                        ageAtMarriage.max = currentAge.toLong()
                         validateIntMinMax(ageAtMarriage)
 
                         val enteredAgeAtMarriage = ageAtMarriage.value!!.toIntOrNull() ?: return@let
