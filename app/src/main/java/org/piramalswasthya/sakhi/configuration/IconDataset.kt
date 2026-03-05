@@ -646,12 +646,12 @@ class IconDataset @Inject constructor(
     }
 
     fun getNCDDataset(resources: Resources) = listOf(
-        Icon(
-            R.drawable.ic__ncd_list,
-            resources.getString(R.string.icon_title_ncd_list),
-            recordsRepo.ncdListCount,
-            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
-        ),
+//        Icon(
+//            R.drawable.ic__ncd_list,
+//            resources.getString(R.string.icon_title_ncd_list),
+//            recordsRepo.ncdListCount,
+//            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
+//        ),
         Icon(
             R.drawable.ic__ncd_eligibility,
             resources.getString(R.string.icon_title_ncd_eligible_list),
