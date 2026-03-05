@@ -241,6 +241,18 @@ class HouseholdMembersFragment : Fragment() {
         _binding = FragmentHouseholdMembersBinding.inflate(inflater, container, false)
         return binding.root
     }
+    private fun isAsha(): Boolean =
+        prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true)
+    private fun canProceed(item: BenBasicDomain): Boolean =
+        isAsha() && !item.isDeactivate
+    private inline fun routeBenFlow(
+        item: BenBasicDomain,
+        benId: Long,
+        normalFlow: () -> Unit
+    ){
+        if (!canProceed(item)) return
+        if (viewModel.isFromDisease == 0) normalFlow() else navigateToDiseaseForm(benId)
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -276,108 +288,65 @@ class HouseholdMembersFragment : Fragment() {
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item, hhId, benId, relToHeadId ->
-                    val isAsha = prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true)
-                    val canNavigate = !item.isDeactivate
-                    when {
-                        isAsha && viewModel.isFromDisease == 0 && canNavigate -> {
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                                    hhId = hhId,
-                                    benId = benId,
-                                    gender = 0,
-                                    isAddSpouse = 0,
-                                    relToHeadId = relToHeadId
-                                )
-
+                    routeBenFlow(item, benId) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                gender = 0,
+                                isAddSpouse = 0,
+                                relToHeadId = relToHeadId
                             )
-                        }
-
-                        isAsha && viewModel.isFromDisease != 0 && canNavigate -> {
-                            navigateToDiseaseForm(benId)
-                        }
+                        )
                     }
-
                 },
                 clickedWifeBen = { item, hhId, benId, relToHeadId ->
-
-                    when {
-                        prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) &&
-                                !item.isDeactivate &&
-                                viewModel.isFromDisease == 0 -> {
-
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections
-                                    .actionHouseholdMembersFragmentToNewBenRegFragment(
-                                        hhId = hhId,
-                                        benId = 0,
-                                        gender = 2,
-                                        selectedBenId = benId,
-                                        isAddSpouse = 1,
-                                        relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
-                                    )
+                    routeBenFlow(item, benId) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                gender = 2,
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+                                relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
                             )
-                        }
-
-                        prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) &&
-                                !item.isDeactivate &&
-                                viewModel.isFromDisease != 0 -> {
-
-                            navigateToDiseaseForm(benId)
-                        }
-
-                        else -> {
-                            // No action required
-                        }
+                        )
                     }
 
                 },clickedHusbandBen = { item, hhId, benId, relToHeadId ->
-                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true)) {
-
-                        if (viewModel.isFromDisease == 0) {
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
-                                    hhId = hhId,
-                                    benId = 0,
-                                    gender = 1,
-                                    selectedBenId = benId,
-                                    isAddSpouse = 1,
-                                    relToHeadId = HelperUtil.getMaleRelationId(relToHeadId)
-                                )
+                    routeBenFlow(item, benId) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                gender = 1,
+                                selectedBenId = benId,
+                                isAddSpouse = 1,
+                                relToHeadId = HelperUtil.getMaleRelationId(relToHeadId)
                             )
-                        } else {navigateToDiseaseForm(benId) }
+                        )
                     }
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
-
-                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true)) {
-
-                        if (viewModel.isFromDisease == 0) {
-                            findNavController().navigate(
-                                HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
-                                    hhId = hhId,
-                                    benId = 0,
-                                    gender = 0,
-                                    selectedBenId = benId,
-                                    isAddSpouse = 0,
-                                    relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
-                                )
+                    routeBenFlow(item, benId) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
+                                hhId = hhId,
+                                benId = 0,
+                                gender = 0,
+                                selectedBenId = benId,
+                                isAddSpouse = 0,
+                                relToHeadId = HelperUtil.getFemaleRelationId(relToHeadId)
                             )
-                        } else {
-                            navigateToDiseaseForm(benId)
-                        }
+                        )
                     }
                 },
                 { item, hhid->
 
                 },
                 { item, benId, hhId ->
-                    if (!item.isDeactivate && prefDao.getLoggedInUser()?.role.equals(
-                            RoleConstants.ROLE_ASHA,
-                            true
-                        )
-                    ) {
-                        checkAndGenerateABHA(benId)
-                    }
+                    if (canProceed(item)) checkAndGenerateABHA(benId)
                 },
                 { item,benId, hhId, isViewMode, isIFA ->
                 },
