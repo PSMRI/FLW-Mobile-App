@@ -1360,8 +1360,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         minAgeYear = minAge
         firstName.value =
             when (benGender) {
-                MALE -> hoF.fatherName?.also { firstName.inputType = TEXT_VIEW }
-                FEMALE -> hoF.motherName?.also { firstName.inputType = TEXT_VIEW }
+                MALE -> hoF.fatherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
+                FEMALE -> hoF.motherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
                 else -> null
             }
         if (benGender == MALE) wifeName.value = hof?.motherName
@@ -1373,7 +1373,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.inputType = TEXT_VIEW
         }
 
-        lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
+        lastName.value = hoF.lastName?.also { lastName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
 

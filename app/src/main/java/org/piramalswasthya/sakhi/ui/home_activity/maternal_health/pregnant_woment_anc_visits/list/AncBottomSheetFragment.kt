@@ -60,7 +60,7 @@ class AncBottomSheetFragment : BottomSheetDialogFragment() {
                     SOURCE_ANC -> {
                         findNavController().navigate(
                             PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                                benId, null, visitNumber, isLast
+                                benId, null, visitNumber, false,isLast
                             )
                         )
                     }
@@ -68,7 +68,7 @@ class AncBottomSheetFragment : BottomSheetDialogFragment() {
                     SOURCE_PMSMA -> {
                         findNavController().navigate(
                             PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
-                                benId, null, visitNumber, isLast
+                                benId, null, visitNumber, true,isLast
                             )
                         )
                     }
