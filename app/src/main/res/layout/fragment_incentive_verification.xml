@@ -6,14 +6,12 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Main Content -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -26,7 +24,6 @@
             app:title="Incentive Verification"
             app:titleTextColor="@android:color/white"/>
 
-        <!-- Supervisor Info Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/supervisorCard"
             android:layout_width="match_parent"
@@ -48,7 +45,6 @@
                     android:id="@+id/tvSupervisorName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Supervisor: Ramesh Kumar"
                     android:textColor="#333333"
                     android:textSize="14sp"/>
 
@@ -57,14 +53,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Supervisor ID: SUP-0142"
                     android:textColor="#666666"
                     android:textSize="14sp"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Search Bar -->
         <androidx.cardview.widget.CardView
             android:id="@+id/searchCard"
             android:layout_width="match_parent"
@@ -81,11 +75,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 app:iconifiedByDefault="false"
-                app:queryHint="Search ASHA...."/>
+                app:queryHint="@string/search_asha"/>
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Monthly Detail Header Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/monthlyDetailCard"
             android:layout_width="match_parent"
@@ -103,7 +96,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Title Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -114,7 +106,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="ASHA Monthly Detail"
+                        android:text="@string/asha_monthly_detail"
                         android:textColor="#333333"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -123,20 +115,18 @@
                         android:id="@+id/tvMonth"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jan, 2026"
+                        android:text="@string/jan_2026"
                         android:textColor="#666666"
                         android:textSize="14sp"/>
 
                 </LinearLayout>
 
-                <!-- Status Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:orientation="horizontal">
 
-                    <!-- Verified -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -154,13 +144,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Verified: 0"
+                            android:text="@string/verified_0"
                             android:textColor="#333333"
                             android:textSize="14sp"/>
 
                     </LinearLayout>
-
-                    <!-- Pending -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -178,13 +166,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Pending: 0"
+                            android:text="@string/pending_0"
                             android:textColor="#333333"
                             android:textSize="14sp"/>
 
                     </LinearLayout>
-
-                    <!-- Rejected -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -202,7 +188,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Rejected: 0"
+                            android:text="@string/rejected_0"
                             android:textColor="#333333"
                             android:textSize="14sp"/>
 
@@ -212,7 +198,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAshaWorkers"
             android:layout_width="match_parent"
@@ -229,7 +214,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Loader -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

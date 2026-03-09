@@ -22,7 +22,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="Supervisor: Ramesh Kumar"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +32,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="Supervisor ID: SUP-0142"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSupervisorName"/>
@@ -69,7 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="Total ASHAs"
+                        android:text="@string/total_ashas"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/imgAsha"
@@ -79,7 +77,7 @@
                         android:id="@+id/tvTotalAshasCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="48"
+                        android:text="0"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="@id/tvTotalAshasLabel"
@@ -94,13 +92,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="Incentive Verification:"
+                android:text="@string/incentive_verification"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardTotalAshas"/>
 
-            <!-- ✅ Sirf TextInputLayout — no submit button -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilMonthYear"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -108,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
-                android:hint="Select Month"
+                android:hint="@string/select_month"
                 app:layout_constraintStart_toEndOf="@id/tvIncentiveTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tvIncentiveTitle"
@@ -159,7 +156,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/verifiedIcon"
-                            android:text="Verified"
+                            android:text="@string/verified"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
                     </RelativeLayout>
@@ -168,7 +165,6 @@
                         android:id="@+id/tvVerifiedCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="32"
                         android:textSize="26sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -208,7 +204,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/pendingIcon"
-                            android:text="Pending"
+                            android:text="@string/pending"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
                     </RelativeLayout>
@@ -217,7 +213,6 @@
                         android:id="@+id/tvPendingCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="16"
                         android:textSize="26sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -250,7 +245,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_overdue"
-                            android:tint="@color/holo_red_light"/>
+                            app:tint="@color/holo_red_light" />
 
                         <TextView
                             android:id="@+id/tvOverdueLabel"
@@ -258,7 +253,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/overDueIcon"
-                            android:text="OverDue"
+                            android:text="@string/overdue"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
                     </RelativeLayout>
@@ -267,7 +262,6 @@
                         android:id="@+id/tvOverdueCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
                         android:textSize="26sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -306,7 +300,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/rejectedIcon"
-                            android:text="Rejected"
+                            android:text="@string/rejected"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
                     </RelativeLayout>
@@ -315,7 +309,6 @@
                         android:id="@+id/tvRejectedCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
                         android:textSize="26sp"
                         android:textStyle="bold"/>
                 </LinearLayout>

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -19,7 +18,6 @@
         app:title="Sunita Devi"
         app:titleTextColor="@android:color/white"/>
 
-    <!-- Loader -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -30,7 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Main Content -->
     <ScrollView
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
@@ -45,7 +42,6 @@
             android:orientation="vertical"
             android:paddingBottom="100dp">
 
-            <!-- Worker Info Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +61,7 @@
                         android:id="@+id/tvWorkerInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ASH124 · Rampur · Jan 2026"
+                        android:text=""
                         android:textColor="#666666"
                         android:textSize="14sp"/>
 
@@ -74,21 +70,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Supervisor ID: SUP-0142"
+                        android:text="@string/supervisor_id"
                         android:textColor="#666666"
                         android:textSize="14sp"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Empty State -->
+
             <TextView
                 android:id="@+id/tvEmptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:gravity="center"
-                android:text="No activities found"
+                android:text="@string/no_activities_found"
                 android:textColor="#999999"
                 android:textSize="16sp"
                 android:visibility="gone"/>
@@ -125,7 +121,7 @@
                     android:id="@+id/tvHeaderActivity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Activity"
+                    android:text="@string/activity"
                     android:textStyle="bold"
                     android:ellipsize="end"
                     android:singleLine="true"
@@ -140,7 +136,7 @@
                     android:id="@+id/tvHeaderAmount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Amount (Rs.)"
+                    android:text="@string/amount_rs"
                     android:textStyle="bold"
                     android:gravity="end|center_vertical"
                     android:singleLine="true"
@@ -186,7 +182,7 @@
                         android:id="@+id/cbVerifyDocuments"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="I have verified supporting documents on ASHA's device"
+                        android:text="@string/i_have_verified_supporting_documents_on_asha_s_device"
                         android:textColor="#333333"
                         android:textSize="14sp"/>
 
@@ -203,7 +199,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_weight="1"
                             android:background="@drawable/bg_button_verify"
-                            android:text="✓ Verify"
+                            android:text="@string/verify"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
                             android:textStyle="bold"/>
@@ -215,7 +211,7 @@
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
                             android:background="@drawable/bg_button_reject"
-                            android:text="✕ Reject"
+                            android:text="@string/reject"
                             android:textColor="#E57373"
                             android:textSize="16sp"
                             android:textStyle="bold"/>
@@ -227,7 +223,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Rejection Bottom Sheet -->
     <FrameLayout
         android:id="@+id/bottomSheetContainer"
         android:layout_width="match_parent"
@@ -261,7 +256,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Reason for Rejection"
+                        android:text="@string/reason_for_rejection"
                         android:textColor="#333333"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
@@ -312,7 +307,7 @@
                     android:layout_height="48dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_button_confirm"
-                    android:text="Confirm Rejection"
+                    android:text="@string/confirm_rejection"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
