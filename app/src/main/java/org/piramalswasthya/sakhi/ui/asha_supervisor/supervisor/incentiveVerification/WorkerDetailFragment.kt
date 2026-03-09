@@ -4,171 +4,101 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.ActivityAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityDetail
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityStatus
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.WorkerDetailInfo
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveRecordUI
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
+import java.util.Calendar
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WorkerDetailFragment : Fragment() {
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var tvWorkerInfo: TextView
-    private lateinit var tvSupervisorInfo: TextView
-    private lateinit var rvActivities: RecyclerView
-    private lateinit var cbVerifyDocuments: CheckBox
-    private lateinit var btnVerify: Button
-    private lateinit var imgCancel: ImageView
-    private lateinit var btnReject: Button
-    private lateinit var bottomSheetContainer: FrameLayout
-    private lateinit var rvRejectionReasons: RecyclerView
-    private lateinit var otherReasonContainer: View
-    private lateinit var etOtherReason: EditText
-    private lateinit var btnConfirmRejection: Button
+    private var _binding: FragmentWorkerDetailBinding? = null
+    private val binding get() = _binding!!
+
+    @Inject
+    lateinit var preferenceDao: PreferenceDao
+
+    private val viewModel: WorkerDetailViewModel by viewModels()
 
     private lateinit var activityAdapter: ActivityAdapter
     private lateinit var rejectionReasonAdapter: RejectionReasonAdapter
 
-    private var workerInfo: WorkerDetailInfo? = null
     private var rejectionReasons = mutableListOf<RejectionReason>()
     private var otherReasonSelected = false
+    private var currentRecords: List<IncentiveRecordUI> = emptyList()
+
+    private val workerId by lazy {
+        arguments?.getString("worker_id")?.toIntOrNull() ?: 0
+    }
+    private val workerName by lazy {
+        arguments?.getString("worker_name") ?: ""
+    }
+    private val scName by lazy {
+        arguments?.getString("sc_name") ?: ""
+    }
+    private val selectedMonth by lazy {
+        arguments?.getInt("selected_month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+    }
+    private val selectedYear by lazy {
+        arguments?.getInt("selected_year") ?: Calendar.getInstance().get(Calendar.YEAR)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_worker_detail, container, false)
+    ): View {
+        _binding = FragmentWorkerDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViews(view)
-        setupToolbar()
-        setupActivitiesRecyclerView()
-        setupRejectionReasonsRecyclerView()
+        setupRecyclerViews()
+        setupRejectionReasons()
         setupClickListeners()
-        loadData()
+        observeViewModel()
+
+        val user = preferenceDao.getLoggedInUser()
+        val monthNames = resources.getStringArray(R.array.months)
+        val monthName = monthNames[selectedMonth - 1]
+
+        binding.tvWorkerInfo.text = "AshaId: $workerId , $scName , $monthName $selectedYear"
+        binding.tvSupervisorInfo.text = "Supervisor ID: ${user?.userId}"
+
+        viewModel.init(workerId, selectedMonth, selectedYear)
     }
 
-    private fun initViews(view: View) {
-        toolbar = view.findViewById(R.id.toolbar)
-        tvWorkerInfo = view.findViewById(R.id.tvWorkerInfo)
-        tvSupervisorInfo = view.findViewById(R.id.tvSupervisorInfo)
-        rvActivities = view.findViewById(R.id.rvActivities)
-        cbVerifyDocuments = view.findViewById(R.id.cbVerifyDocuments)
-        btnVerify = view.findViewById(R.id.btnVerify)
-        imgCancel = view.findViewById(R.id.imgCancel)
-        btnReject = view.findViewById(R.id.btnReject)
-        bottomSheetContainer = view.findViewById(R.id.bottomSheetContainer)
-        rvRejectionReasons = view.findViewById(R.id.rvRejectionReasons)
-        otherReasonContainer = view.findViewById(R.id.otherReasonContainer)
-        etOtherReason = view.findViewById(R.id.etOtherReason)
-        btnConfirmRejection = view.findViewById(R.id.btnConfirmRejection)
-    }
-
-    private fun setupToolbar() {
-        toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
-        }
-    }
-
-    private fun setupActivitiesRecyclerView() {
+    private fun setupRecyclerViews() {
         activityAdapter = ActivityAdapter()
-        rvActivities.layoutManager = LinearLayoutManager(requireContext())
-        rvActivities.adapter = activityAdapter
-    }
+        binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvActivities.adapter = activityAdapter
 
-    private fun setupRejectionReasonsRecyclerView() {
         rejectionReasonAdapter = RejectionReasonAdapter { reason, isChecked ->
             onReasonCheckChanged(reason, isChecked)
         }
-        rvRejectionReasons.layoutManager = LinearLayoutManager(requireContext())
-        rvRejectionReasons.adapter = rejectionReasonAdapter
+        binding.rvRejectionReasons.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvRejectionReasons.adapter = rejectionReasonAdapter
     }
 
-    private fun setupClickListeners() {
-        btnVerify.setOnClickListener {
-            onVerifyClicked()
-        }
-
-        btnReject.setOnClickListener {
-            showRejectionBottomSheet()
-        }
-
-        bottomSheetContainer.setOnClickListener {
-            hideRejectionBottomSheet()
-        }
-        imgCancel.setOnClickListener {
-            hideRejectionBottomSheet()
-        }
-
-        btnConfirmRejection.setOnClickListener {
-            onConfirmRejectionClicked()
-        }
-    }
-
-    private fun loadData() {
-        // Load worker info
-        workerInfo = WorkerDetailInfo(
-            workerName = "Sunita Devi",
-            ashaId = "ASH124",
-            serviceCenter = "Rampur",
-            month = "Jan 2026",
-            supervisorId = "SUP-0142",
-            activities = listOf(
-                ActivityDetail(
-                    id = "1",
-                    name = "ANC Check-up",
-                    amount = 2350,
-                    activityDate = "Jan 15, 2026",
-                    submittedOn = "Jan 16, 2026",
-                    status = ActivityStatus.PENDING,
-                    statusMessage = "Status: Pending with Supervisor"
-                ),
-                ActivityDetail(
-                    id = "2",
-                    name = "PNC Visit",
-                    amount = 150,
-                    activityDate = "Jan 10, 2026",
-                    submittedOn = "Jan 11, 2026",
-                    status = ActivityStatus.PENDING,
-                    statusMessage = "Status: Pending with Supervisor"
-                ),
-                ActivityDetail(
-                    id = "3",
-                    name = "Village Health & Nutrition Day Meeting",
-                    amount = 100,
-                    activityDate = "Jan 6, 2026",
-                    submittedOn = "Jan 7, 2026",
-                    status = ActivityStatus.PENDING,
-                    statusMessage = "Status: Pending with Supervisor"
-                )
-            )
-        )
-
-        // Update UI
-        toolbar.title = workerInfo?.workerName
-        tvWorkerInfo.text = "${workerInfo?.ashaId} · ${workerInfo?.serviceCenter} · ${workerInfo?.month}"
-        tvSupervisorInfo.text = "Supervisor ID: ${workerInfo?.supervisorId}"
-        activityAdapter.submitList(workerInfo?.activities)
-
-        // Load rejection reasons
+    private fun setupRejectionReasons() {
         rejectionReasons = mutableListOf(
             RejectionReason("1", "Incomplete documentation"),
             RejectionReason("2", "Incorrect data (system error)"),
@@ -182,98 +112,197 @@ class WorkerDetailFragment : Fragment() {
         rejectionReasonAdapter.submitList(rejectionReasons)
     }
 
-    private fun onVerifyClicked() {
-        if (!cbVerifyDocuments.isChecked) {
-            Toast.makeText(
-                requireContext(),
-                "Please verify documents before approving",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
+    private fun observeViewModel() {
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            if (_binding == null) return@observe
+            when (state) {
+                is WorkerDetailUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.contentLayout.visibility = View.GONE
+                }
+                is WorkerDetailUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+                    currentRecords = state.records
+
+                    if (state.records.isEmpty()) {
+                        binding.tvEmptyState.visibility = View.VISIBLE
+                        binding.rvActivities.visibility = View.GONE
+                        binding.llHeader.visibility = View.GONE
+                        binding.cbVerifyDocuments.visibility = View.GONE
+                        binding.btnVerify.visibility = View.GONE
+                        binding.btnReject.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyState.visibility = View.GONE
+                        binding.rvActivities.visibility = View.VISIBLE
+                        binding.llHeader.visibility = View.VISIBLE
+                        activityAdapter.submitList(mapToActivityDetail(state.records))
+
+                        val allVerified = state.records.all { it.approvalStatus == 101 }
+                        if (allVerified) {
+                            binding.cbVerifyDocuments.visibility = View.GONE
+                            binding.cvMain.visibility = View.GONE
+                        } else {
+                            binding.cbVerifyDocuments.visibility = View.VISIBLE
+                            binding.cvMain.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                is WorkerDetailUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
-        // Process verification
-        Toast.makeText(
-            requireContext(),
-            "Activities verified successfully",
-            Toast.LENGTH_SHORT
-        ).show()
+        viewModel.actionState.observe(viewLifecycleOwner) { state ->
+            if (_binding == null) return@observe
+            when (state) {
+                is ActionState.Loading -> {
+                    binding.btnVerify.isEnabled = false
+                    binding.btnReject.isEnabled = false
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                is ActionState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnVerify.isEnabled = true
+                    binding.btnReject.isEnabled = true
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    hideRejectionBottomSheet()
+                    requireActivity().onBackPressed()
+                }
+                is ActionState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnVerify.isEnabled = true
+                    binding.btnReject.isEnabled = true
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
-        // Navigate back or update UI
-        requireActivity().onBackPressed()
+    private fun mapToActivityDetail(records: List<IncentiveRecordUI>): List<ActivityDetail> {
+        return records.map { record ->
+            ActivityDetail(
+                id = record.id.toString(),
+                groupName = record.activityDec ?: "Activity ${record.activityId}",
+                name = record.groupName ?: "Activity ${record.activityId}",
+                amount = record.amount.toInt(),
+                activityDate = record.startDate ?: "",
+                submittedOn = record.createdDate ?: "",
+                status = mapStatus(record.approvalStatus),
+                statusMessage = "Status: ${getStatusText(record.approvalStatus)}"
+            )
+        }
+    }
+
+    private fun mapStatus(code: Int?): ActivityStatus = when (code) {
+        101 -> ActivityStatus.VERIFIED
+        102 -> ActivityStatus.PENDING
+        103 -> ActivityStatus.REJECTED
+        else -> ActivityStatus.PENDING
+    }
+
+    private fun getStatusText(code: Int?): String = when (code) {
+        101 -> "Verified"
+        102 -> "Pending with Supervisor"
+        103 -> "Rejected"
+        104 -> "Overdue"
+        else -> "Pending"
+    }
+
+    private fun setupClickListeners() {
+        binding.toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        binding.btnVerify.setOnClickListener { onVerifyClicked() }
+        binding.btnReject.setOnClickListener { showRejectionBottomSheet() }
+        binding.bottomSheetContainer.setOnClickListener { hideRejectionBottomSheet() }
+        binding.imgCancel.setOnClickListener { hideRejectionBottomSheet() }
+        binding.btnConfirmRejection.setOnClickListener { onConfirmRejectionClicked() }
+    }
+
+    private fun onVerifyClicked() {
+        if (!binding.cbVerifyDocuments.isChecked) {
+            Toast.makeText(requireContext(), "Please verify documents before approving", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (currentRecords.isEmpty()) {
+            Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
+            return
+        }
+        viewModel.verifyActivities(
+            ashaId = workerId,
+            incentiveIds = currentRecords.map { it.id }
+        )
     }
 
     private fun showRejectionBottomSheet() {
-        bottomSheetContainer.visibility = View.VISIBLE
+        binding.bottomSheetContainer.visibility = View.VISIBLE
     }
 
     private fun hideRejectionBottomSheet() {
-        bottomSheetContainer.visibility = View.GONE
-        // Reset selections
+        binding.bottomSheetContainer.visibility = View.GONE
         rejectionReasons.forEach { it.isSelected = false }
         rejectionReasonAdapter.notifyDataSetChanged()
-        otherReasonContainer.visibility = View.GONE
-        etOtherReason.text?.clear()
+        binding.otherReasonContainer.visibility = View.GONE
+        binding.etOtherReason.text?.clear()
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {
         reason.isSelected = isChecked
-
-        // Show/hide "Other" text field
         if (reason.id == "other") {
             otherReasonSelected = isChecked
-            otherReasonContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
+            binding.otherReasonContainer.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
         }
     }
 
     private fun onConfirmRejectionClicked() {
         val selectedReasons = rejectionReasons.filter { it.isSelected }
-
         if (selectedReasons.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "Please select at least one rejection reason",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), "Please select at least one rejection reason", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (otherReasonSelected && binding.etOtherReason.text.toString().trim().isEmpty()) {
+            Toast.makeText(requireContext(), "Please provide the reason for 'Other'", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (otherReasonSelected && etOtherReason.text.toString().trim().isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "Please provide the reason for 'Other'",
-                Toast.LENGTH_SHORT
-            ).show()
+        val reason = selectedReasons
+            .filter { it.id != "other" }
+            .joinToString(", ") { it.reason }
+
+        val otherReason = if (otherReasonSelected) {
+            binding.etOtherReason.text.toString().trim()
+        } else ""
+
+        if (currentRecords.isEmpty()) {
+            Toast.makeText(requireContext(), "No records to reject", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Build rejection message
-        val reasonsText = selectedReasons.joinToString(", ") { reason ->
-            if (reason.id == "other") {
-                etOtherReason.text.toString().trim()
-            } else {
-                reason.reason
-            }
-        }
-
-        // Process rejection
-        Toast.makeText(
-            requireContext(),
-            "Activities rejected: $reasonsText",
-            Toast.LENGTH_LONG
-        ).show()
-
-        hideRejectionBottomSheet()
-        requireActivity().onBackPressed()
+        viewModel.rejectActivities(
+            ashaId = workerId,
+            incentiveIds = currentRecords.map { it.id },
+            reason = reason,
+            otherReason = otherReason
+        )
     }
 
     override fun onStart() {
         super.onStart()
         activity?.let {
             (it as SupervisorActivity).updateActionBar(
-                R.drawable.ic__incentive,
-                getString(R.string.incentive_verification)
+                R.drawable.logo_circle,
+                workerName
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -483,4 +483,21 @@ interface AmritApiService {
     @Multipart
     @POST("flw-api/campaign/filariasis/campaign/saveAll")
     suspend fun saveFilariaMdaCampaign( @Part campaignData: List<MultipartBody.Part>): Response<ResponseBody>
+
+
+    @POST("flw-api/ashaSupervisor/dashboard")
+    suspend fun getAshaSupervisorDashboard(
+        @Body body: Map<String, Int>
+    ): Response<ResponseBody>
+
+
+    @POST("flw-api/ashaSupervisor/getAshaListByFacility")
+    suspend fun getAshaListByFacility(
+        @Body body: Map<String, Int>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/ashaSupervisor/updateApprovalStatus")
+    suspend fun updateApprovalStatus(
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
 }

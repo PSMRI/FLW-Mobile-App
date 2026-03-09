@@ -1,178 +1,128 @@
+// IncentiveVerificationFragment.kt
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.FragmentIncentiveVerificationBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.AshaWorkerAdapter
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.MonthlyDetail
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.Supervisor
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveVerificationViewModel
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.VerificationUiState
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class IncentiveVerificationFragment : Fragment() {
 
-    private lateinit var adapter: AshaWorkerAdapter
-    private lateinit var rvAshaWorkers: RecyclerView
-    private lateinit var searchView: SearchView
-    private lateinit var tvSupervisorName: TextView
-    private lateinit var tvSupervisorId: TextView
-    private lateinit var tvMonthlyDetailTitle: TextView
-    private lateinit var tvMonth: TextView
-    private lateinit var tvVerifiedCount: TextView
-    private lateinit var tvPendingCount: TextView
-    private lateinit var tvRejectedCount: TextView
+    private var _binding: FragmentIncentiveVerificationBinding? = null
+    private val binding get() = _binding!!
 
-    private var allWorkers = mutableListOf<AshaWorker>()
-    private var filteredWorkers = mutableListOf<AshaWorker>()
+    @Inject
+    lateinit var preferenceDao: PreferenceDao
+
+    private val viewModel: IncentiveVerificationViewModel by viewModels()
+    private lateinit var adapter: AshaWorkerAdapter
+
+    private val args: IncentiveVerificationFragmentArgs by navArgs()
+
+    private val selectedMonth by lazy { args.selectedMonth }
+    private val selectedYear by lazy { args.selectedYear }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_incentive_verification, container, false)
+    ): View {
+        _binding = FragmentIncentiveVerificationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViews(view)
         setupRecyclerView()
         setupSearchView()
-        loadData()
+        observeViewModel()
+
+        val user = preferenceDao.getLoggedInUser()
+        binding.tvSupervisorName.text = "Supervisor: ${user?.userName}"
+        binding.tvSupervisorId.text = "Supervisor ID: ${user?.userId}"
+
+        viewModel.init(args.status, args.facilityId, selectedMonth, selectedYear)
+
+        val monthNames = resources.getStringArray(R.array.months)
+        binding.tvMonth.text = "${monthNames[selectedMonth - 1]}, $selectedYear"
     }
 
-    private fun initViews(view: View) {
-        rvAshaWorkers = view.findViewById(R.id.rvAshaWorkers)
-        searchView = view.findViewById(R.id.searchView)
-        tvSupervisorName = view.findViewById(R.id.tvSupervisorName)
-        tvSupervisorId = view.findViewById(R.id.tvSupervisorId)
-        tvMonthlyDetailTitle = view.findViewById(R.id.tvMonthlyDetailTitle)
-        tvMonth = view.findViewById(R.id.tvMonth)
-        tvVerifiedCount = view.findViewById(R.id.tvVerifiedCount)
-        tvPendingCount = view.findViewById(R.id.tvPendingCount)
-        tvRejectedCount = view.findViewById(R.id.tvRejectedCount)
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 
     private fun setupRecyclerView() {
         adapter = AshaWorkerAdapter { worker ->
-            onWorkerClick(worker)
+            val bundle = Bundle().apply {
+                putString("worker_id", worker.id)
+                putString("worker_name", worker.name)
+                putString("sc_name", worker.serviceCenter)
+                putInt("selected_month", selectedMonth)
+                putInt("selected_year", selectedYear)
+            }
+            findNavController().navigate(R.id.workerDetailFragment, bundle)
         }
-
-        rvAshaWorkers.layoutManager = LinearLayoutManager(requireContext())
-        rvAshaWorkers.adapter = adapter
+        binding.rvAshaWorkers.layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        binding.rvAshaWorkers.adapter = adapter
     }
 
     private fun setupSearchView() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
-                filterWorkers(newText ?: "")
+                viewModel.search(newText ?: "")
                 return true
             }
         })
     }
 
-    private fun filterWorkers(query: String) {
-        filteredWorkers = if (query.isEmpty()) {
-            allWorkers.toMutableList()
-        } else {
-            allWorkers.filter { worker ->
-                worker.name.contains(query, ignoreCase = true) ||
-                        worker.ashaId.contains(query, ignoreCase = true) ||
-                        worker.serviceCenter.contains(query, ignoreCase = true)
-            }.toMutableList()
+    private fun observeViewModel() {
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            if (_binding == null) return@observe
+            when (state) {
+                is VerificationUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.contentLayout.visibility = View.GONE
+                }
+                is VerificationUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+
+                    val summary = state.summary
+                    binding.tvVerifiedCount.text = "Verified: ${summary.verified}"
+                    binding.tvPendingCount.text = "Pending: ${summary.pending}"
+                    binding.tvRejectedCount.text = "Rejected: ${summary.rejected}"
+
+                    adapter.submitList(state.workers)
+                }
+                is VerificationUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-        adapter.submitList(filteredWorkers)
     }
 
-    private fun loadData() {
-        // Load supervisor info
-        val supervisor = Supervisor(
-            name = "Ramesh Kumar",
-            id = "SUP-0142"
-        )
-        tvSupervisorName.text = "Supervisor: ${supervisor.name}"
-        tvSupervisorId.text = "Supervisor ID: ${supervisor.id}"
-
-        // Load monthly detail
-        val monthlyDetail = MonthlyDetail(
-            month = "Jan",
-            year = 2026,
-            serviceCenter = "Rampur SC",
-            verifiedCount = 2,
-            pendingCount = 2,
-            rejectedCount = 0
-        )
-        tvMonthlyDetailTitle.text = "ASHA Monthly Detail – ${monthlyDetail.serviceCenter}"
-        tvMonth.text = "${monthlyDetail.month}, ${monthlyDetail.year}"
-        tvVerifiedCount.text = "Verified: ${monthlyDetail.verifiedCount}"
-        tvPendingCount.text = "Pending: ${monthlyDetail.pendingCount}"
-        tvRejectedCount.text = "Rejected: ${monthlyDetail.rejectedCount}"
-
-        // Load ASHA workers data
-        allWorkers = mutableListOf(
-            AshaWorker(
-                id = "1",
-                name = "Sunita Devi",
-                ashaId = "ASH124",
-                serviceCenter = "Rampur SC",
-                amount = 2390,
-                totalIncentive = 390,
-                status = VerificationStatus.PENDING
-            ),
-            AshaWorker(
-                id = "2",
-                name = "Pooja Kumari",
-                ashaId = "ASH125",
-                serviceCenter = "Rampur SC",
-                amount = 1700,
-                totalIncentive = 170,
-                status = VerificationStatus.PENDING
-            ),
-            AshaWorker(
-                id = "3",
-                name = "Kavita Singh",
-                ashaId = "ASH128",
-                serviceCenter = "Rampur SC",
-                amount = 1700,
-                totalIncentive = 170,
-                status = VerificationStatus.VERIFIED
-            ),
-            AshaWorker(
-                id = "4",
-                name = "Anita Sharma",
-                ashaId = "ASH108",
-                serviceCenter = "Rampur SC",
-                amount = 1700,
-                totalIncentive = 250,
-                status = VerificationStatus.VERIFIED
-            )
-        )
-
-        filteredWorkers = allWorkers.toMutableList()
-        adapter.submitList(filteredWorkers)
-    }
-
-    private fun onWorkerClick(worker: AshaWorker) {
-        val bundle = Bundle().apply {
-            putString("worker_id", worker.id)
-            putString("worker_name", worker.name)
-        }
-        findNavController().navigate(R.id.workerDetailFragment,bundle)
-    }
     override fun onStart() {
         super.onStart()
         activity?.let {
@@ -181,5 +131,10 @@ class IncentiveVerificationFragment : Fragment() {
                 getString(R.string.incentive_verification)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,29 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="4dp">
+    android:layout_marginTop="4dp"
+    android:padding="4dp">
+
     <ImageView
         android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:contentDescription="@string/str_subcenter"
-        android:tint="@color/md_theme_dark_inversePrimary"
         android:src="@drawable/baseline_location_on_24"
-        app:layout_constraintTop_toTopOf="parent"
+        android:tint="@color/md_theme_dark_inversePrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/subCenterName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/str_subcenter"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvAshaCount"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvAshaCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginStart="3dp"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="4dp"
+        android:text="ASHAs: 0"
+        android:textSize="14sp"
+        android:textColor="@color/md_theme_dark_inversePrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/str_subcenter" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

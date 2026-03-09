@@ -32,7 +32,7 @@
             android:textColor="#333333"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tvActivityAmount"
+            app:layout_constraintEnd_toEndOf="@+id/tvActivityDate"
             app:layout_constraintStart_toEndOf="@id/ivActivityIcon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="ANC Check-up" />
@@ -45,7 +45,8 @@
             android:textColor="#333333"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/statusBadge"
+            app:layout_constraintStart_toStartOf="@+id/statusBadge"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="₹ 2,350" />
 
@@ -86,6 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="#666666"
+            android:visibility="gone"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvActivityDate"
