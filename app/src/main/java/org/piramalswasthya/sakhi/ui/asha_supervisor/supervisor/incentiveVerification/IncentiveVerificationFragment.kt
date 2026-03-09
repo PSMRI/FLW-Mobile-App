@@ -1,4 +1,3 @@
-// IncentiveVerificationFragment.kt
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
 import android.os.Bundle
@@ -19,6 +18,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.AshaWorkerAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveVerificationViewModel
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.VerificationUiState
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,8 +35,16 @@ class IncentiveVerificationFragment : Fragment() {
 
     private val args: IncentiveVerificationFragmentArgs by navArgs()
 
-    private val selectedMonth by lazy { args.selectedMonth }
-    private val selectedYear by lazy { args.selectedYear }
+    private val selectedMonth by lazy {
+        args.selectedMonth.takeIf { it in 1..12 }
+            ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
+    }
+    private val selectedYear by lazy {
+        args.selectedYear.takeIf { it > 0 }
+            ?: Calendar.getInstance().get(Calendar.YEAR)
+    }
+
+    private var isFirstResume = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +63,8 @@ class IncentiveVerificationFragment : Fragment() {
         observeViewModel()
 
         val user = preferenceDao.getLoggedInUser()
-        binding.tvSupervisorName.text = "Supervisor: ${user?.userName}"
-        binding.tvSupervisorId.text = "Supervisor ID: ${user?.userId}"
+        binding.tvSupervisorName.text = "Supervisor: ${user?.userName ?: "-"}"
+        binding.tvSupervisorId.text = "Supervisor ID: ${user?.userId ?: "-"}"
 
         viewModel.init(args.status, args.facilityId, selectedMonth, selectedYear)
 
@@ -66,6 +74,10 @@ class IncentiveVerificationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (isFirstResume) {
+            isFirstResume = false
+            return
+        }
         viewModel.refresh()
     }
 

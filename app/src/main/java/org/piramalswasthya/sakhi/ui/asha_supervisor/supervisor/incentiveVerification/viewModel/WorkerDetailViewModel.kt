@@ -1,4 +1,3 @@
-// WorkerDetailViewModel.kt
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel
 
 import androidx.lifecycle.LiveData
@@ -17,6 +16,7 @@ import org.piramalswasthya.sakhi.network.AmritApiService
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +39,7 @@ class WorkerDetailViewModel @Inject constructor(
         SimpleDateFormat("MMM dd, yyyy h:mm:ss aa", Locale.ENGLISH),
         SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.ENGLISH)
     )
+
     fun init(userId: Int, month: Int, year: Int) {
         filterMonth = month
         filterYear = year
@@ -68,23 +69,32 @@ class WorkerDetailViewModel @Inject constructor(
                     return@launch
                 }
 
-                val calendar = Calendar.getInstance()
+                // ✅ UTC timezone set karo — false Z marker fix
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }
+
+                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                 calendar.set(Calendar.MONTH, filterMonth - 1)
                 calendar.set(Calendar.YEAR, filterYear)
 
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
-
+                // ✅ fromDate — month start, millisecond 0
                 calendar.set(Calendar.DAY_OF_MONTH, 1)
                 calendar.set(Calendar.HOUR_OF_DAY, 0)
                 calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 1)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
                 val fromDate = sdf.format(calendar.time)
 
+                // ✅ toDate — month end, millisecond 999
                 calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
                 calendar.set(Calendar.HOUR_OF_DAY, 23)
                 calendar.set(Calendar.MINUTE, 59)
                 calendar.set(Calendar.SECOND, 59)
+                calendar.set(Calendar.MILLISECOND, 999)
                 val toDate = sdf.format(calendar.time)
+
+                android.util.Log.d("WorkerDetailVM", "userId=$userId month=$filterMonth year=$filterYear fromDate=$fromDate toDate=$toDate")
 
                 val requestBody = IncentiveRecordListRequest(
                     userId = userId,
@@ -101,6 +111,7 @@ class WorkerDetailViewModel @Inject constructor(
                         _uiState.value = WorkerDetailUiState.Error("Empty response")
                         return@launch
                     }
+
                     val jsonObj = JSONObject(json)
                     val statusCode = jsonObj.getInt("statusCode")
 
@@ -118,6 +129,11 @@ class WorkerDetailViewModel @Inject constructor(
                                         cal.get(Calendar.YEAR) == filterYear
                             }
 
+                            android.util.Log.d(
+                                "WorkerDetailVM",
+                                "Total: ${allRecords.size}, Filtered: ${filteredRecords.size}"
+                            )
+
                             _uiState.value = WorkerDetailUiState.Success(filteredRecords)
                         }
                         5000 -> {
@@ -133,6 +149,7 @@ class WorkerDetailViewModel @Inject constructor(
                     _uiState.value = WorkerDetailUiState.Error("Server error: ${response.code()}")
                 }
             } catch (e: Exception) {
+                android.util.Log.e("WorkerDetailVM", "Error: ${e.message}", e)
                 _uiState.value = WorkerDetailUiState.Error(e.message ?: "Unknown error")
             }
         }
@@ -142,6 +159,11 @@ class WorkerDetailViewModel @Inject constructor(
         ashaId: Int,
         incentiveIds: List<Long>
     ) {
+        // ✅ empty guard
+        if (incentiveIds.isEmpty()) {
+            _actionState.value = ActionState.Error("No records to verify")
+            return
+        }
         viewModelScope.launch {
             _actionState.value = ActionState.Loading
             try {
@@ -169,6 +191,7 @@ class WorkerDetailViewModel @Inject constructor(
                     _actionState.value = ActionState.Error("Server error: ${response.code()}")
                 }
             } catch (e: Exception) {
+                android.util.Log.e("WorkerDetailVM", "Verify error: ${e.message}", e)
                 _actionState.value = ActionState.Error(e.message ?: "Unknown error")
             }
         }
@@ -180,6 +203,11 @@ class WorkerDetailViewModel @Inject constructor(
         reason: String,
         otherReason: String
     ) {
+        // ✅ empty guard
+        if (incentiveIds.isEmpty()) {
+            _actionState.value = ActionState.Error("No records to reject")
+            return
+        }
         viewModelScope.launch {
             _actionState.value = ActionState.Loading
             try {

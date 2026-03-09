@@ -13,7 +13,6 @@ import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.DashboardData
 import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.DashboardResponse
 import java.net.SocketTimeoutException
-import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,15 +25,8 @@ class IncentiveDashboardViewModel @Inject constructor(
     private val _dashboardData = MutableLiveData<DashboardUiState>()
     val dashboardData: LiveData<DashboardUiState> = _dashboardData
 
-    init {
-        val calendar = Calendar.getInstance()
-        fetchDashboard(
-            month = calendar.get(Calendar.MONTH) + 1,
-            year = calendar.get(Calendar.YEAR)
-        )
-    }
-
-    fun fetchDashboard(month: Int, year: Int) {
+    // ✅ sirf ek baar retry allowed
+    fun fetchDashboard(month: Int, year: Int, isRetry: Boolean = false) {
         viewModelScope.launch {
             _dashboardData.value = DashboardUiState.Loading
             try {
@@ -57,8 +49,9 @@ class IncentiveDashboardViewModel @Inject constructor(
                             _dashboardData.value = DashboardUiState.Success(parsed.data)
                         }
                         parsed?.statusCode == 401 || parsed?.statusCode == 5002 -> {
-                            if (userRepo.refreshTokenTmc(user.userName, user.password)) {
-                                throw SocketTimeoutException("Refreshed Token")
+                            // ✅ sirf ek baar retry
+                            if (!isRetry && userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                fetchDashboard(month, year, isRetry = true)
                             } else {
                                 _dashboardData.value = DashboardUiState.Error("Session expired, please login again")
                             }
@@ -70,19 +63,16 @@ class IncentiveDashboardViewModel @Inject constructor(
                         }
                     }
                 } else {
-                    if (response.code() == 401) {
+                    if (response.code() == 401 && !isRetry) {
                         if (userRepo.refreshTokenTmc(user.userName, user.password)) {
-                            throw SocketTimeoutException("Refreshed Token")
+                            fetchDashboard(month, year, isRetry = true)
+                            return@launch
                         }
                     }
                     _dashboardData.value = DashboardUiState.Error("Server error: ${response.code()}")
                 }
             } catch (e: SocketTimeoutException) {
-                if (e.message == "Refreshed Token") {
-                    fetchDashboard(month, year)
-                } else {
-                    _dashboardData.value = DashboardUiState.Error("Timeout error, please try again")
-                }
+                _dashboardData.value = DashboardUiState.Error("Timeout error, please try again")
             } catch (e: Exception) {
                 _dashboardData.value = DashboardUiState.Error(
                     e.message ?: "Unknown error occurred"

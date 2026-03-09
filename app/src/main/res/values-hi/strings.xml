@@ -420,6 +420,26 @@
     <string name="follow_up_date">फॉलो-अप तिथि</string>
     <string name="follow_up_history">फॉलो-अप रिकॉर्ड </string>
     <string name="incentive_verification">Incentive Verification</string>
+    <string name="no_activities_found">No activities found</string>
+    <string name="supervisor_id">Supervisor ID:</string>
+    <string name="activity">Activity</string>
+    <string name="amount_rs">Amount (Rs.)</string>
+    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
+    <string name="verify">✓ Verify</string>
+    <string name="reject">✕ Reject</string>
+    <string name="reason_for_rejection">Reason for Rejection</string>
+    <string name="confirm_rejection">Confirm Rejection</string>
+    <string name="search_asha">Search ASHA....</string>
+    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
+    <string name="jan_2026">Jan, 2026</string>
+    <string name="verified_0">Verified: 0</string>
+    <string name="pending_0">Pending: 0</string>
+    <string name="rejected_0">Rejected: 0</string>
+    <string name="total_ashas">Total ASHAs</string>
+    <string name="select_month">Select Month</string>
+    <string name="pending">Pending</string>
+    <string name="overdue">OverDue</string>
+    <string name="rejected">Rejected</string>
 
 
     <string-array name="leprosy_status">
