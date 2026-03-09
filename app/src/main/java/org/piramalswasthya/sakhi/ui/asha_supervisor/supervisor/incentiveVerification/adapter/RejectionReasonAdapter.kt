@@ -37,23 +37,18 @@ class RejectionReasonAdapter(
         private val cbReason: CheckBox = itemView.findViewById(R.id.cbReason)
 
         fun bind(reason: RejectionReason, onReasonSelected: (RejectionReason, Boolean) -> Unit) {
-            // First, remove any existing listeners
             cbReason.setOnCheckedChangeListener(null)
             cbReason.setOnClickListener(null)
             itemView.setOnClickListener(null)
-
-            // Set the state
             cbReason.text = reason.reason
             cbReason.isChecked = reason.isSelected
 
-            // Set click listener on checkbox
             cbReason.setOnClickListener {
                 val newState = cbReason.isChecked
                 reason.isSelected = newState
                 onReasonSelected(reason, newState)
             }
 
-            // Also make the whole item clickable
             itemView.setOnClickListener {
                 cbReason.performClick()
             }

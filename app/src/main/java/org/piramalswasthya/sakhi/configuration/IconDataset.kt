@@ -284,12 +284,6 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.sup_tb_cases),
             recordsRepo.tbSuspectedListCount,
             SupervisorFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
-        ),
-        Icon(
-            R.drawable.ic__incentive,
-            resources.getString(R.string.incentive_verification),
-            null,
-            SupervisorFragmentDirections.actionNavSupervisorToIncentiveVerificationFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->

@@ -37,8 +37,8 @@ class ActivityAdapter : ListAdapter<ActivityDetail, ActivityAdapter.ActivityView
         fun bind(activity: ActivityDetail) {
             tvActivityName.text = activity.name
             tvActivityAmount.text = formatAmount(activity.amount)
-            tvActivityDate.text = "Activity Date: ${activity.activityDate}"
-            tvSubmittedOn.text = "Submitted On: ${activity.submittedOn}"
+            tvActivityDate.text = "${activity.groupName}"
+//            tvSubmittedOn.text = "Submitted On: ${activity.submittedOn}"
             tvStatusMessage.text = activity.statusMessage
 
             // Set status badge
