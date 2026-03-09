@@ -165,8 +165,8 @@ class SupervisorFragment : Fragment() {
         viewModel.state.observe(this) {
             it?.let {
                 when (it) {
-                    ServiceTypeViewModel.State.IDLE -> {}//TODO()
-                    ServiceTypeViewModel.State.LOADING -> {}//TODO()
+                    ServiceTypeViewModel.State.IDLE -> {}
+                    ServiceTypeViewModel.State.LOADING -> {}
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
                         binding.tietVillage.apply {
