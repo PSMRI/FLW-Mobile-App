@@ -119,9 +119,18 @@
     <string name="leprosy_title">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
     <string name="no_of_individuals">Number of Individuals</string>
     <string name="no_of_familes">Number of Families</string>
-
-
-
-
+<string name="icon_title_ncd_tb_confirmed">पुष्टि किए गए टीबी मामले</string>
+    <string name="place_of_vhnd">VHND सत्र का स्थान</string>
+    <string name="total_no_pw_attended">ANC जांच के लिए उपस्थित गर्भवती महिलाओं की संख्या</string>
+    <string name="total_no_lacting_mother_attended">PNC जांच के लिए उपस्थित स्तनपान कराने वाली माताओं की संख्या</string>
+    <string name="total_no_children_attended">टीकाकरण के लिए उपस्थित बच्चों की संख्या</string>
+    <string name="health_nutrition">स्वास्थ्य एवं पोषण शिक्षा (गर्भवती महिलाओं, स्तनपान कराने वाली माताओं, किशोरी बालिकाओं पर ध्यान)</string>
+    <string name="know_balance_diet">संतुलित आहार का ज्ञान</string>
+    <string name="care_d_pregnancy">गर्भावस्था और प्रसव के दौरान देखभाल</string>
+    <string name="family_planning_title">परिवार नियोजन और स्वास्थ्य देखभाल</string>
+    <string name="hygiene_title">स्वच्छता और साफ-सफाई</string>
+    <string name="com_feeding_title">पूरक आहार</string>
+    <string name="imp_brestfeeding_title">स्तनपान का महत्व</string>
+    <string name="cluster_review">क्लस्टर बैठकें</string>
 
 </resources>

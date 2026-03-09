@@ -169,7 +169,7 @@ class IncentivesFragment : Fragment() {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
                     val hasValidBen = records.any { it.record.benId != 0L }
-                    val allNotEligible = records.all { it.record.isEligible == false } && !isMitaninVariant
+                    val allNotEligible = records.any { it.record.isEligible == false } && !isMitaninVariant
 
                     if (hasValidBen || allNotEligible) {
 
