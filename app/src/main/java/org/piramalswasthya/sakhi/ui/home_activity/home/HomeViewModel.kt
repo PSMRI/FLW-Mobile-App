@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.time.Instant
@@ -33,6 +34,7 @@ class HomeViewModel @Inject constructor(
     private val database: InAppDb,
     private val pref: PreferenceDao,
     private val userRepo: UserRepo,
+    private val ashaProfileRepo: AshaProfileRepo,
 ) : ViewModel() {
 
 
@@ -120,7 +122,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 currentUser?.let { user ->
-                    val profile = database.profileDao.getProfileActivityById(user.userId.toLong())
+                    var profile = database.profileDao.getProfileActivityById(user.userId.toLong())
+                    if (profile == null) {
+                        ashaProfileRepo.pullAndSaveAshaProfile(user)
+                        profile = database.profileDao.getProfileActivityById(user.userId.toLong())
+                    }
                     val persistedUri = ImageUtils.saveBenImageFromCameraToStorage(
                         context = context,
                         uriString = galleryUri.toString(),
