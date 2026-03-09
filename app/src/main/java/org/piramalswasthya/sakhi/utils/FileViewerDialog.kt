@@ -4,6 +4,7 @@ package org.piramalswasthya.sakhi.utils
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.webkit.MimeTypeMap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,19 +98,36 @@ class FileViewerDialog : BottomSheetDialogFragment() {
 
     private fun openFile(fileUri: String) {
         try {
-            val uri = Uri.parse(fileUri)
+            val parsedUri = Uri.parse(fileUri)
+            val contentUri = if (parsedUri.scheme == "file") {
+                val file = java.io.File(parsedUri.path!!)
+                androidx.core.content.FileProvider.getUriForFile(
+                    requireContext(),
+                    "${requireContext().packageName}.provider",
+                    file
+                )
+            } else {
+                parsedUri
+            }
+
+            val mimeType = requireContext().contentResolver.getType(contentUri)
+                ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    MimeTypeMap.getFileExtensionFromUrl(fileUri)
+                )
+                ?: "*/*"
+
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, requireContext().contentResolver.getType(uri))
+                setDataAndType(contentUri, mimeType)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
             startActivity(Intent.createChooser(intent, "Open file with"))
         } catch (e: Exception) {
             Timber.e(e, "Error opening file: $fileUri")
-            com.google.android.material.snackbar.Snackbar.make(
+            Snackbar.make(
                 binding.root,
                 "Unable to open file",
-                com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+                Snackbar.LENGTH_SHORT
             ).show()
         }
     }
