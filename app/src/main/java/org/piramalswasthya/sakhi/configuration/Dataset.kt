@@ -203,9 +203,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
 
                 targetSideEffect?.let { sideEffectList ->
@@ -213,7 +212,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                         it.value = null
                         it.errorText = null
                     }
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                 }
                 target.forEach {
                     it.value = null
@@ -240,15 +239,14 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
                 target.forEach {
                     it.value = null
                 }
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -303,7 +301,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
           return if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -342,7 +340,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 302
@@ -358,7 +356,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     ): Int {
 
         removeItems.forEach { it.value = null }
-        list.removeAll(removeItems)
+        removeItems.forEach { list.remove(it) }
 
         addItems.forEach {
             if (list.contains(it)) list.remove(it)
@@ -381,7 +379,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         removeItems.forEach {
             it.value = null
         }
-        list.removeAll(removeItems)
+        removeItems.forEach { list.remove(it) }
 //        list.removeAll(addItems)
         addItems.forEach {
             if (list.contains(it)) list.remove(it)
