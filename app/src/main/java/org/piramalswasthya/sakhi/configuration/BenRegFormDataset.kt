@@ -1858,12 +1858,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //                )
 
                 if (benIfDataExist != null || !isAddSpouse) {
-                    if (benIfDataExist != null) {
-                        // EDITING: preserve gender, maritalStatus, relationToHead values
-                        // Only reset reproductiveStatus (it depends on new age)
+                    if (gender.value != null) {
+                        // Gender already set (editing OR add member with pre-selected relation)
+                        // Preserve gender, maritalStatus, relationToHead; only reset reproductiveStatus
                         reproductiveStatus.value = null
 
-                        // Use preserved gender to determine correct entries
                         val genderIndex = when (gender.value) {
                             gender.entries?.get(0) -> 0  // Male
                             gender.entries?.get(1) -> 1  // Female
@@ -1889,7 +1888,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             else -> R.array.nbr_relationship_to_head
                         }
                     } else {
-                        // NEW registration: reset all values (existing behavior)
+                        // Gender not set yet: reset all values
                         gender.value = null
                         relationToHead.value = null
                         maritalStatus.value = null
@@ -3149,7 +3148,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         )
 
                     } else {
-                        if (benIfDataExist == null) {
+                        if (gender.value == null) {
                             maritalStatus.value = null
                         }
                         triggerDependants(
