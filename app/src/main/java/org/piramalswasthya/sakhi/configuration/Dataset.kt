@@ -7,6 +7,8 @@ import android.util.Range
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -119,6 +121,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
 
+    private val listMutex = Mutex()
     private val list = mutableListOf<FormElement>()
 
     private val _listFlow = MutableStateFlow<List<FormElement>>(emptyList())
@@ -156,33 +159,36 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     abstract fun mapValues(cacheModel: FormDataModel, pageNumber: Int = 0)
     protected fun getIndexOfElement(element: FormElement) = list.indexOf(element)
     suspend fun updateList(formId: Int, index: Int) {
-        list.find { it.id == formId }?.let {
-            if (it.inputType == InputType.DROPDOWN) {
-                it.errorText = null
+        listMutex.withLock {
+            list.find { it.id == formId }?.let {
+                if (it.inputType == InputType.DROPDOWN) {
+                    it.errorText = null
+                }
             }
-        }
-        val updateIndex = handleListOnValueChanged(formId, index)
-        if (updateIndex != -1) {
-            val newList = list.toMutableList()
+            val updateIndex = handleListOnValueChanged(formId, index)
+            if (updateIndex != -1) {
+                val newList = list.toMutableList()
 //            if (updateUIForCurrentElement) {
 //                Timber.d("Updating UI element ...")
 //                newList[updateIndex] = list[updateIndex].cloneForm()
 //                updateUIForCurrentElement = false
 //            }
-            Timber.d("Emitting ${newList}}")
+                Timber.d("Emitting ${newList}}")
 //            _listFlow.emit(emptyList())
-            _listFlow.emit(newList)
+                _listFlow.emit(newList)
+            }
         }
     }
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
-
-        try {
-            list.clear()
-            list.addAll(mList)
-            _listFlow.emit(list.toMutableList())
-        } catch (e: Exception) {
-            e.printStackTrace()
+        listMutex.withLock {
+            try {
+                list.clear()
+                list.addAll(mList)
+                _listFlow.emit(list.toMutableList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
