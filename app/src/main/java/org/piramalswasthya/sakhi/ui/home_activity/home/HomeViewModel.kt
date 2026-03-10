@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.home
 
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -11,14 +12,18 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.time.Instant
@@ -29,6 +34,7 @@ class HomeViewModel @Inject constructor(
     private val database: InAppDb,
     private val pref: PreferenceDao,
     private val userRepo: UserRepo,
+    private val ashaProfileRepo: AshaProfileRepo,
 ) : ViewModel() {
 
 
@@ -63,6 +69,10 @@ class HomeViewModel @Inject constructor(
     val navigateToLoginPage: MutableLiveData<Boolean>
         get() = _navigateToLoginPage
 
+    private val _restoredProfilePicUri = MutableLiveData<Uri?>()
+    val restoredProfilePicUri: LiveData<Uri?>
+        get() = _restoredProfilePicUri
+
     init {
         viewModelScope.launch {
 //            _user = pref.getLoggedInUser()!!
@@ -70,6 +80,19 @@ class HomeViewModel @Inject constructor(
                 userRepo.unProcessedRecordCount.collect { value ->
                     _unprocessedRecordsCount.value =
                         value.filter { it.syncState != SyncState.SYNCED }.sumOf { it.count }
+                }
+            }
+            launch {
+                if (pref.getProfilePicUri() == null) {
+                    currentUser?.let { user ->
+                        withContext(Dispatchers.IO) {
+                            database.profileDao.getProfileActivityById(user.userId.toLong())
+                        }?.profileImage?.takeIf { it.isNotEmpty() }?.let { imageUri ->
+                            val uri = Uri.parse(imageUri)
+                            pref.saveProfilePicUri(uri)
+                            _restoredProfilePicUri.value = uri
+                        }
+                    }
                 }
             }
         }
@@ -94,5 +117,32 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getDebMode() = pref.isDevModeEnabled
+
+    fun saveProfilePicFromGallery(context: Context, galleryUri: Uri) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                currentUser?.let { user ->
+                    var profile = database.profileDao.getProfileActivityById(user.userId.toLong())
+                    if (profile == null) {
+                        ashaProfileRepo.pullAndSaveAshaProfile(user)
+                        profile = database.profileDao.getProfileActivityById(user.userId.toLong())
+                    }
+                    val persistedUri = ImageUtils.saveBenImageFromCameraToStorage(
+                        context = context,
+                        uriString = galleryUri.toString(),
+                        benId = user.userId.toLong()
+                    )
+                    if (persistedUri != null) {
+                        val uri = Uri.parse(persistedUri)
+                        pref.saveProfilePicUri(uri)
+                        profile?.let {
+                            it.profileImage = persistedUri
+                            database.profileDao.insert(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

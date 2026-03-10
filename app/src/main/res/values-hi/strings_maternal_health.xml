@@ -95,7 +95,6 @@
         <item>OTHER</item>
     </string-array>
 
-
     <!-- PMSMA Strings -->
     <string name="pmsma_mcts_rch_number">MCTS नंबर / RCH नंबर</string>
     <string name="pmsma_have_mcp_card">क्या लाभार्थी के पास एक एमसीपी कार्ड है</string>
@@ -214,7 +213,6 @@
         <item>नहीं</item>
     </string-array>
 
-
     <!--  Post Natal Care Strings -->
     <string name="pnc_period">PNC अवधि</string>
     <string name="pnc_visit_date">PNC दौरे की तारीख</string>
@@ -288,7 +286,6 @@
         <item>परिवहन में</item>
     </string-array>
 
-
     <!--  Infant Registration  -->
     <string name="ir_baby_name">शिशु का नाम</string>
     <string name="ir_infant_term">शिशु की अवधि</string>
@@ -341,7 +338,6 @@
     <string name="general_op">सामान्य बाह्य रोगी</string>
     <string name="saving_pmsma_to_database_failed">पीएमएसएमए (PMSMA) डेटा सेव करने में विफल</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">उच्च जोखिम गर्भावस्था – नजदीकी एचडब्ल्यूसी जाएं या 104 पर कॉल करें</string>
-
 
     <string name="str_anc_period">प्रसवपूर्व देखभाल (एएनसी) अवधि</string>
     <string name="str_abortion_if_any">गर्भपात, यदि कोई हो</string>

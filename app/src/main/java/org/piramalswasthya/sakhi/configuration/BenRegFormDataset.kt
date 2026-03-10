@@ -763,7 +763,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ageAtMarriage--
         }
         Log.d("marriage age", ageAtMarriage.toString())
-        return  ageAtMarriage.takeIf { it >= 0 }
+        return  ageAtMarriage.takeIf { it >= Konstants.minAgeForMarriage }
     }
 
 
@@ -1360,8 +1360,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         minAgeYear = minAge
         firstName.value =
             when (benGender) {
-                MALE -> hoF.fatherName?.also { firstName.inputType = TEXT_VIEW }
-                FEMALE -> hoF.motherName?.also { firstName.inputType = TEXT_VIEW }
+                MALE -> hoF.fatherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
+                FEMALE -> hoF.motherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
                 else -> null
             }
         if (benGender == MALE) wifeName.value = hof?.motherName
@@ -1373,7 +1373,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.inputType = TEXT_VIEW
         }
 
-        lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
+        lastName.value = hoF.lastName?.also { lastName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
 
@@ -1921,6 +1921,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                 if (isAddSpouse) {
                     ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
+                        ?: Konstants.minAgeForMarriage.toString()
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0
                     )
@@ -1951,6 +1952,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ?.let {
 
                         validateEmptyOnEditText(ageAtMarriage)
+                        ageAtMarriage.max = currentAge.toLong()
                         validateIntMinMax(ageAtMarriage)
 
                         val enteredAgeAtMarriage = ageAtMarriage.value!!.toIntOrNull() ?: return@let

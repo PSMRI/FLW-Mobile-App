@@ -39,7 +39,6 @@
         <item>नर्स</item>
     </string-array>
 
-
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">पुरुष</item>
         <item name="nbr_gender_2">महिला</item>
@@ -193,7 +192,6 @@
         <item>नहीं दिया गया</item>
     </string-array>
 
-
     <string-array name="religion_array">
         <item>हिन्दू</item>
         <item>मुस्लिम</item>
@@ -217,7 +215,6 @@
         <item>यात्रा के दौरान</item>
         <item>अन्य मृत्यु स्थान</item>
     </string-array>
-
 
     <string-array name="yes_no_donno">
         <item>हाँ</item>
@@ -300,4 +297,25 @@
         <item>Importance of small family and regular health check-ups</item>
 
     </string-array>
+
+    <string name="age_at_marriagee">विवाह के समय आपकी आयु</string>
+    <string name="nbr_abortion_image">गर्भपात डिस्चार्ज</string>
+    <string name="nbr_image_cam_gal">कैमरा/गैलरी उपयोग करने के लिए टैप करें</string>
+    <string name="vhnd_date">VHND तारीख</string>
+    <string name="vhnc_date">VHSNC बैठक की तारीख</string>
+    <string name="phc_review_meeting_date">बैठक की तारीख</string>
+    <string name="nbr_child_first_name">बच्चे का नाम</string>
+    <string name="frag_new_ben_type_kid_text">नवजात / शिशु / बच्चा / किशोर\n( 0 - 15 वर्ष से कम आयु )</string>
+    <string name="frag_new_ben_type_adult_text">सामान्य पंजीकरण \n( 15 वर्ष और उससे अधिक )</string>
+    <string name="frag_new_ben_type_select_text">लाभार्थी प्रकार चुनें</string>
+    <string name="frag_new_ben_reg_type_title">पंजीकरण के लिए लाभार्थी प्रकार</string>
+    <string name="consent_text">सहमति:\nमुझे आशा द्वारा समझाया गया है कि मेरे से जो जानकारी और माप एकत्र की जा रही है उसका उद्देश्य क्या है, एक ऐसी भाषा में जो मैं समझती/समझता हूँ और मैं अपनी व्यक्तिगत स्वास्थ्य प्रोफाइल पर जानकारी और माप एकत्र करने के लिए अपनी सहमति देती/देता हूँ।</string>
+    <string name="other_place_of_death">मृत्यु का अन्य स्थान</string>
+    <string name="deworming_done">कृमि मुक्ति चक्र पूरा हुआ?</string>
+    <string name="deworming_date">कृमि मुक्ति की तारीख</string>
+    <string name="deworming_location">कृमि मुक्ति का स्थान</string>
+    <string name="age_group">आयु वर्ग</string>
+    <string name="deworming_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म</string>
+    <string name="deworming_list_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म सूची</string>
+    <string name="ndd_list_title">NDD फॉर्म</string>
 </resources>

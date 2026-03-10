@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="place_hwc">HWC</string>
+    <string name="place_school">বিদ্যালয়</string>
+    <string name="place_anganwadi">অংগনৱাড়ী কেন্দ্ৰ</string>
+    <string name="place_community">সামূহিক কেন্দ্ৰ</string>
+    <string name="u_win_session_date">U-WIN চেচনৰ তাৰিখ</string>
+    <string name="place_village">স্থান</string>
+    <string name="place_label">স্থান: %1$s</string>
+    <string name="participant_label">অংশগ্ৰহণকাৰী: %1$s</string>
+    <string name="no_of_participants_attended">উপস্থিত অংশগ্ৰহণকাৰীৰ সংখ্যা</string>
+    <string name="total_no_of_participants_attended">মুঠ অংশগ্ৰহণকাৰীৰ সংখ্যা</string>
 </resources>

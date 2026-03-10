@@ -18,7 +18,7 @@ class AncVisitAdapter(private val clickListener: AncVisitClickListener, private 
     private object MyDiffUtilCallBack : DiffUtil.ItemCallback<AncStatus>() {
         override fun areItemsTheSame(
             oldItem: AncStatus, newItem: AncStatus
-        ) = oldItem.benId == newItem.benId
+        ) = oldItem.benId == newItem.benId && oldItem.visitNumber == newItem.visitNumber
 
         override fun areContentsTheSame(
             oldItem: AncStatus, newItem: AncStatus

@@ -531,9 +531,9 @@ open class DeliveryOutcomeDataset(
             form.deliveryOutcome = deliveryOutcome.value?.toInt()
             form.liveBirth = liveBirth.value?.toInt()
             form.stillBirth = stillBirth.value?.toInt()
-            form.dateOfDischarge = (dateOfDischarge.value?.let {
+            form.dateOfDischarge = dateOfDischarge.value?.takeIf { it.isNotBlank() }?.let {
                 getLongFromDate(it)
-            })
+            }
             form.timeOfDischarge = timeOfDischarge.value
             form.isJSYBenificiary = isJSYBenificiary.value == "Yes"
         }

@@ -38,6 +38,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
@@ -191,14 +193,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private val imagePickerActivityResult =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-            it?.let {
-                viewModel.profilePicUri = it
-                Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            it?.let { galleryUri ->
+                viewModel.profilePicUri = galleryUri
+                viewModel.saveProfilePicFromGallery(this, galleryUri)
+                Glide.with(this).load(galleryUri)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
-//                binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic).setImageURI(it)
-//                Glide.with(this)
-//                    .load(it)
-//                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
             }
         }
 
@@ -253,6 +255,35 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
+        viewModel.restoredProfilePicUri.observe(this) { uri ->
+            uri?.let {
+                Glide.with(this).load(it)
+                    .signature(ObjectKey(System.currentTimeMillis()))
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
+                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }
+        }
+        binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
+            private var loaded = false
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                if (!loaded && slideOffset > 0.01f) {
+                    loaded = true
+                    viewModel.profilePicUri?.let {
+                        Glide.with(this@HomeActivity).load(it)
+                            .signature(ObjectKey(System.currentTimeMillis()))
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .placeholder(R.drawable.ic_person).circleCrop()
+                            .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                    }
+                }
+            }
+            override fun onDrawerClosed(drawerView: View) { loaded = false }
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
         setUpFirstTimePullWorker()
         setUpMenu()
 
@@ -610,7 +641,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
-            Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            Glide.with(this).load(it)
+                .signature(ObjectKey(System.currentTimeMillis()))
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.ic_person).circleCrop()
                 .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
         }
 //

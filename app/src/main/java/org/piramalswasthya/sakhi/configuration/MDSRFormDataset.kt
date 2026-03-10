@@ -373,7 +373,7 @@ class MDSRFormDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as MDSRCache).let { mdsrCache ->
-            mdsrCache.dateOfDeath = getLongFromDate(dateOfDeath.value!!)
+            mdsrCache.dateOfDeath = dateOfDeath.value?.let { getLongFromDate(it) }
             mdsrCache.address = address.value
             mdsrCache.husbandName = husbandName.value
             mdsrCache.mdsr1File = mdsrFileUpload1.value
