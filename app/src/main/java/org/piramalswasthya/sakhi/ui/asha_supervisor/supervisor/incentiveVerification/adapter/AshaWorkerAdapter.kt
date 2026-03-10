@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
-import org.piramalswasthya.sakhi.R
 import java.text.NumberFormat
 import java.util.*
 
@@ -42,9 +42,8 @@ class AshaWorkerAdapter(
             tvWorkerName.text = worker.name
             tvAmount.text = formatAmount(worker.amount)
             tvAshaIdCenter.text = "${worker.ashaId} · ${worker.serviceCenter}"
-            tvTotalIncentive.text = "Total Incentive: ${formatAmount(worker.totalIncentive)}"
+            tvTotalIncentive.text = "Pending: ${worker.pending} | Verified: ${worker.verified} | Rejected: ${worker.rejected}"
 
-            // Set status badge
             when (worker.status) {
                 VerificationStatus.VERIFIED -> {
                     statusBadge.text = "Verified"
@@ -58,11 +57,17 @@ class AshaWorkerAdapter(
                     statusBadge.text = "Rejected"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
                 }
+                VerificationStatus.OVERDUE -> {
+                    statusBadge.text = "Overdue"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                }
+                VerificationStatus.ALL -> {
+                    statusBadge.text = "Pending"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                }
             }
 
-            itemView.setOnClickListener {
-                onItemClick(worker)
-            }
+            itemView.setOnClickListener { onItemClick(worker) }
         }
 
         private fun formatAmount(amount: Int): String {
@@ -73,12 +78,10 @@ class AshaWorkerAdapter(
     }
 
     class AshaWorkerDiffCallback : DiffUtil.ItemCallback<AshaWorker>() {
-        override fun areItemsTheSame(oldItem: AshaWorker, newItem: AshaWorker): Boolean {
-            return oldItem.id == newItem.id
-        }
+        override fun areItemsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =
+            oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: AshaWorker, newItem: AshaWorker): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =
+            oldItem == newItem
     }
 }
