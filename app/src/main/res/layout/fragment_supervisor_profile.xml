@@ -46,7 +46,6 @@
                 android:id="@+id/subName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_small"
                 android:paddingBottom="@dimen/padding_small"
                 app:layout_constraintTop_toBottomOf="@+id/supervisor_name"
                 app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
@@ -60,7 +59,6 @@
                 android:id="@+id/supervisorId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_small"
                 android:paddingBottom="@dimen/padding_small"
                 app:layout_constraintTop_toBottomOf="@+id/subName"
                 app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
@@ -75,6 +73,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
                 android:layout_marginEnd="20dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:cardBackgroundColor="@color/md_theme_dark_inversePrimary"
                 app:layout_constraintTop_toTopOf="@+id/supervisorId">
@@ -392,6 +391,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/padding_small"
+            android:visibility="gone"
             android:paddingBottom="@dimen/padding_small"
             app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
             android:layout_marginTop="10dp"
@@ -409,6 +409,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/bankDetails"
             app:cardCornerRadius="8dp"
@@ -621,7 +622,7 @@
                     android:layout_centerVertical="true"/>
 
                 <LinearLayout
-                    android:id="@+id/SettingbottomLayout"
+                    android:id="@+id/logoutlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -652,7 +653,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/SettingbottomLayout"
+                    android:layout_alignRight="@+id/logoutlayout"
                     android:layout_below="@+id/underLineTwo"
                     android:layout_marginTop="15dp"
                     android:src="@drawable/outline_keyboard_arrow_right_24"
