@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -201,7 +202,7 @@ class SignInFragment : Fragment() {
                     binding.tvError.visibility = View.GONE
 
                     val loggedInUser = prefDao.getLoggedInUser()
-                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || loggedInUser?.role.equals(RoleConstants.ROLE_ANM, true) || loggedInUser?.role.equals(RoleConstants.ROLE_CHO, true)) {
                         val user = loggedInUser!!
                         val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
@@ -212,11 +213,11 @@ class SignInFragment : Fragment() {
                             LocationEntity(village?.id ?: 0, village?.name ?: ""),
                         )
                         prefDao.saveLocationRecord(locationRecord)
-
                         activity?.finish()
                         val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
                         startActivity(goToHome)
                     } else {
+
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {
                             if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||

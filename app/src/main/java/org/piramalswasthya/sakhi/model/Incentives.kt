@@ -120,6 +120,11 @@ data class IncentiveRecordCache(
     val createdBy: String,
     val updatedDate: Long,
     val updatedBy: String,
+    val verifiedByUserName: String,
+    val reason: String,
+    val otherReason: String,
+    val approvalStatus: Int,
+    val verifiedByUserId: Int,
 ) : Parcelable
 
 @Parcelize
@@ -136,6 +141,11 @@ data class IncentiveRecordNetwork(
     val createdBy: String,
     val updatedDate: String,
     val updatedBy: String,
+    val verifiedByUserName: String?,
+    val reason: String?,
+    val otherReason: String?,
+    val approvalStatus: Int,
+    val verifiedByUserId: Int,
 ) : Parcelable {
     fun asCacheModel(): IncentiveRecordCache {
         return IncentiveRecordCache(
@@ -151,6 +161,11 @@ data class IncentiveRecordNetwork(
             createdBy = createdBy,
             updatedDate = getLongFromDate(updatedDate),
             updatedBy = updatedBy,
+            verifiedByUserName = verifiedByUserName?:"",
+            verifiedByUserId = verifiedByUserId,
+            reason = reason?:"",
+            otherReason = otherReason?:"",
+            approvalStatus = approvalStatus
         )
     }
 }

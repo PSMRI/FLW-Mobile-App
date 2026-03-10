@@ -239,4 +239,92 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             pref.edit().putLong("last asha update timestamp ", value).apply()
         }
 
+    fun saveUserGender(gender: String) {
+        pref.edit().putString("PREF_USER_GENDER", gender).apply()
+    }
+
+    fun getUserGender(): String? {
+        return pref.getString("PREF_USER_GENDER", null)
+    }
+
+    fun saveUserDob(dob: String) {
+        pref.edit().putString("PREF_USER_DOB", dob).apply()
+    }
+
+    fun getUserDob(): String? {
+        return pref.getString("PREF_USER_DOB", null)
+    }
+
+    fun saveUserMobile(mobile: String) {
+        pref.edit().putString("PREF_USER_MOBILE", mobile).apply()
+    }
+
+    fun getUserMobile(): String? {
+        return pref.getString("PREF_USER_MOBILE", null)
+    }
+
+    fun saveUserEmail(email: String) {
+        pref.edit().putString("PREF_USER_EMAIL", email).apply()
+    }
+
+    fun getUserEmail(): String? {
+        return pref.getString("PREF_USER_EMAIL", null)
+    }
+
+    fun saveSupervisorName(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_NAME", name).apply()
+    }
+
+    fun getSupervisorName(): String? {
+        return pref.getString("PREF_SUPERVISOR_NAME", null)
+    }
+
+    fun saveSupervisorId(id: Int) {
+        pref.edit().putInt("PREF_SUPERVISOR_ID", id).apply()
+    }
+
+    fun getSupervisorId(): Int {
+        return pref.getInt("PREF_SUPERVISOR_ID", -1)
+    }
+
+    fun saveSupervisorDistrict(district: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_DISTRICT", district).apply()
+    }
+
+    fun getSupervisorDistrict(): String? {
+        return pref.getString("PREF_SUPERVISOR_DISTRICT", null)
+    }
+
+    fun saveSupervisorBlock(block: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_BLOCK", block).apply()
+    }
+
+    fun getSupervisorBlock(): String? {
+        return pref.getString("PREF_SUPERVISOR_BLOCK", null)
+    }
+
+    fun saveSupervisorState(state: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_STATE", state).apply()
+    }
+
+    fun getSupervisorState(): String? {
+        return pref.getString("PREF_SUPERVISOR_STATE", null)
+    }
+
+
+    fun saveSupervisorSubcenter(subcenter: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_SUBCENTER", subcenter).apply()
+    }
+
+    fun getSupervisorSubcenter(): String? {
+        return pref.getString("PREF_SUPERVISOR_SUBCENTER", null)
+    }
+
+    fun saveSupervisorFacilityType(type: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_FACILITY_TYPE", type).apply()
+    }
+
+    fun getSupervisorFacilityType(): String? {
+        return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", null)
+    }
 }
