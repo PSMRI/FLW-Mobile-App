@@ -127,6 +127,21 @@
            android:name="status"
            android:defaultValue=""
            app:argType="string" />
+
+       <argument
+           android:name="facilityId"
+           app:argType="integer"
+           android:defaultValue="0"/>
+
+       <argument
+           android:name="selectedMonth"
+           app:argType="integer"
+           android:defaultValue="0"/>
+       <argument
+           android:name="selectedYear"
+           app:argType="integer"
+           android:defaultValue="0"/>
+
    </fragment>
     <fragment
         android:id="@+id/workerDetailFragment"

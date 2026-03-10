@@ -290,6 +290,7 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.incentive_verification),
             null,
             SupervisorHomeFragmentDirections.actionNavSupervisorToIncentiveVerificationFragment()
+          
         )
     ).apply {
         forEachIndexed { index, icon ->

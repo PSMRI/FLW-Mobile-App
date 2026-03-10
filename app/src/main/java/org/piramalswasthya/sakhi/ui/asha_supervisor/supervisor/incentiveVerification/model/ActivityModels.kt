@@ -5,6 +5,7 @@ data class ActivityDetail(
     val name: String,
     val amount: Int,
     val activityDate: String,
+    val groupName: String,
     val submittedOn: String,
     val status: ActivityStatus,
     val statusMessage: String
