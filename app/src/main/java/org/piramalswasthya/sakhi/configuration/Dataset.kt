@@ -139,11 +139,11 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun FormElement.getStringFromPosition(position: Int): String? {
-        return if (position <= 0) null else entries?.get(position - 1)
+        return if (position <= 0) null else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getStringSpauseFromPosition(position: Int): String? {
-        return if (position <= 0) entries?.get(1) else entries?.get(position - 1)
+        return if (position <= 0) entries?.getOrNull(1) else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
