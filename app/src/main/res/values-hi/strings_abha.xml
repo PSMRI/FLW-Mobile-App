@@ -89,4 +89,22 @@
     <string name="str_aadhaar_otp_number">OTP आधार से जुड़े मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
     <string name="str_abha_otp_number">OTP ABHA से जुड़े मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
     <string name="str_otp_number_message">OTP मोबाइल संख्या (@mobileNumber पर समाप्त) पर भेजा गया</string>
+    <string name="verify_aadhaar_otp">आधार OTP सत्यापित करें</string>
+    <string name="no_records_found_hh">कोई घरेलू रिकॉर्ड नहीं मिला। कृपया नीचे दिए गए बटन पर क्लिक करके घरेलू पंजीकरण शुरू करें।</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">कुछ गलत हो गया!\nसर्वर से कनेक्ट करने में असमर्थ!\nबाद में पुनः प्रयास करें!</string>
+    <string name="try_again">पुनः प्रयास करें!</string>
+    <string name="ashaname">आशा का नाम</string>
+    <string name="verified">सत्यापित</string>
+    <string name="send_otp">OTP भेजें</string>
+    <string name="abha_id">ABHA आईडी</string>
+    <string name="linked_toO_beneficiary">लाभार्थी से जुड़ा</string>
+    <string name="submitted">जमा किया गया</string>
+    <string name="add_eye_surgery">नेत्र शल्य चिकित्सा जोड़ें</string>
+    <string name="mda_form_title">MDA फॉर्म</string>
+    <string name="view_edit_eye_surgery">नेत्र शल्य चिकित्सा देखें/संपादित करें</string>
+    <string name="eye_surgery_details_saved_successfully">नेत्र शल्य चिकित्सा विवरण सफलतापूर्वक सहेजा गया।</string>
+    <string name="failed_to_submit_form">फॉर्म जमा करने में विफल। कृपया पुनः प्रयास करें।</string>
+    <string name="data_saved_successfully">डेटा सफलतापूर्वक सहेजा गया।</string>
+    <string name="data_already_exist">डेटा पहले से मौजूद है।</string>
+    <string name="search_ben">लाभार्थी खोजें</string>
 </resources>

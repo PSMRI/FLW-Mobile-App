@@ -71,7 +71,6 @@
         <item>দিন-এইটি প্ৰতিদিন</item>
     </string-array>
 
-
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
     <string name="cbac_ask_pat">বৃদ্ধি আছে কি বারংবার যোগ কৰিছে?</string>
@@ -251,10 +250,10 @@
     <string name="refer_to_mo_or_inform_anm_mpw_to_tracing_of_all_family_members">সম্পূৰ্ণ পৰিৱাৰ সদস্যবোৰ অনুসৰণ কৰিবলৈ মও লৈ যাওক অথবা ANM/MPW লৈ জানাওক</string>
     <string name="cbac">CBAC</string>
     <string name="tb_screening">টিবি স্ক্ৰীনিং</string>
-    <string name="tb_screening_submitted">"টিবি স্ক্ৰীনিং প্ৰেৰণ কৰা হ'ল</string>
+    <string name="tb_screening_submitted">"টিবি স্ক্ৰীনিং প্ৰেৰণ কৰা হ\'ল</string>
     <string name="screen">স্ক্ৰীন</string>
     <string name="tb_suspected_sputum_test">টিবি সন্দেহভৰা গুটিৰ পৰীক্ষা</string>
-    <string name="tb_tracking_submitted">"টিবি অনুসৰণ প্ৰেৰণ কৰা হ'ল</string>
+    <string name="tb_tracking_submitted">"টিবি অনুসৰণ প্ৰেৰণ কৰা হ\'ল</string>
     <string name="tb_suspected_alert">MOলৈ গৈ স্পুতম নমুনা প্ৰাপ্ত কৰক</string>
     <string name="tb_suspected_alert_positive">MOলৈ গৈ যাওক</string>
     <string name="tb_suspected_family_alert">MOলৈ গৈ যাওক অথবা সকলো পৰিৱাৰ সদস্যৰ নমোলকৈ এএনএম/এমপিডবল জানাওক</string>
@@ -269,5 +268,7 @@
     <string name="facility_referral_follow_ups">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপন অনুসৰণ</string>
 
     <string name="none_of">এইবোৰৰ কোনোটোৱেই নহয়</string>
+    <string name="cbac_is_leprosy_suspected">কুষ্ঠ ৰোগৰ কোনো লক্ষণ আছে নেকি?</string>
+    <string name="refer_to_hwc_facility_alert">আপুনি HWC সুবিধালৈ ৰেফাৰ কৰিব বিচাৰে নেকি?</string>
 </resources>
 

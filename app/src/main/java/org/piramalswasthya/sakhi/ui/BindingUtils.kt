@@ -20,6 +20,8 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.divider.MaterialDivider
@@ -45,6 +47,9 @@ import java.util.Date
 import java.util.Locale
 
 
+fun IconDataset.Disease.getTitle(context: Context): String {
+    return context.getString(getTitleRes())
+}
 @StringRes
 fun IconDataset.Disease.getTitleRes(): Int {
     return when (this) {
@@ -366,7 +371,11 @@ fun ImageView.setSyncStateForBen(syncState: SyncState?) {
 fun ImageView.setBenImage(uriString: String?) {
     if (uriString == null) setImageResource(R.drawable.ic_person)
     else {
-        Glide.with(this).load(Uri.parse(uriString)).placeholder(R.drawable.ic_person).circleCrop()
+        Glide.with(this).load(Uri.parse(uriString))
+            .signature(ObjectKey(System.currentTimeMillis() / 1000))
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .placeholder(R.drawable.ic_person).circleCrop()
             .into(this)
     }
 }

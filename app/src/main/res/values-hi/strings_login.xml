@@ -18,6 +18,8 @@
     <string name="account_deactivated_title">खाता निष्क्रिय</string>
     <string name="session_expired_title">सत्र समाप्त</string>
     <string name="session_expired_message">आपका सत्र समाप्त हो गया है। कृपया पुनः लॉग इन करें।</string>
-
+    <string name="cd_assam_nhm_logo">असम NHM लोगो</string>
+    <string name="cd_piramal">पीरामल लोगो</string>
+    <string name="pwr_by_text">द्वारा संचालित\n <b>पीरामल फाउंडेशन</b></string>
 
 </resources>

@@ -763,7 +763,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ageAtMarriage--
         }
         Log.d("marriage age", ageAtMarriage.toString())
-        return  ageAtMarriage.takeIf { it >= 0 }
+        return  ageAtMarriage.takeIf { it >= Konstants.minAgeForMarriage }
     }
 
 
@@ -1360,8 +1360,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         minAgeYear = minAge
         firstName.value =
             when (benGender) {
-                MALE -> hoF.fatherName?.also { firstName.inputType = TEXT_VIEW }
-                FEMALE -> hoF.motherName?.also { firstName.inputType = TEXT_VIEW }
+                MALE -> hoF.fatherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
+                FEMALE -> hoF.motherName?.takeIf { it.isNotEmpty() }?.also { firstName.inputType = TEXT_VIEW }
                 else -> null
             }
         if (benGender == MALE) wifeName.value = hof?.motherName
@@ -1922,6 +1922,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (isAddSpouse) {
                     ageAtMarriage.max = getAgeFromDob(getLongFromDate(agePopup.value)).toLong()
                     ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
+                        ?: Konstants.minAgeForMarriage.toString()
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0
                     )

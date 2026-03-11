@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <string name="anc_visit_number">ANC Visit %1d</string>
     <string name="sr_no">Sr. no : %1d</string>
     <string name="date_no">Date : %1$s</string>
@@ -41,7 +40,6 @@
         <item>Negative</item>
         <item>Test Not Done</item>
     </string-array>
-
 
     <string-array name="maternal_health_past_illness">
         <item>None</item>
@@ -117,8 +115,6 @@
         <item>MiniLap</item>
         <item>Any Other Method</item>
     </string-array>
-
-
 
     <string-array name="antra_doses">
         <item>Dose-1</item>
@@ -209,12 +205,10 @@
         <item>Has the woman opted for permanent sterilization (Tubectomy)?</item>
     </string-array>
 
-
     <string-array name="anc_confirmation_array1">
         <item>No</item>
         <item>Yes</item>
     </string-array>
-
 
     <string-array name="select_high_risk_condition">
         <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
@@ -226,8 +220,6 @@
         <item>TWINS</item>
         <item>OTHER</item>
     </string-array>
-
-
 
     <!--  PMSMA  -->
     <string name="pmsma_mcts_rch_number">MCTS Number/RCH Number</string>
@@ -288,7 +280,6 @@
         <item>Positive</item>
         <item>Test Not Done</item>
     </string-array>
-
 
     <!--  Post Natal Care  -->
     <string name="pnc_period">PNC Period</string>
@@ -379,7 +370,6 @@
         <item>Transit</item>
     </string-array>
 
-
     <!--  Delivery Outcome  -->
     <string name="do_delivery_date">Date of Delivery</string>
     <string name="do_delivery_time">Time of Delivery</string>
@@ -441,7 +431,6 @@
         <item>No</item>
     </string-array>
 
-
     <!--  Infant Registration  -->
     <string name="ir_baby_name">Name of Baby</string>
     <string name="ir_infant_term">Infant Term</string>
@@ -486,7 +475,6 @@
         <item>Neural Tube Defect (Spinal Bifida)</item>
         <item>Other</item>
     </string-array>
-
 
     <string name="str_anc_period">ANC Period</string>
     <string name="str_abortion_if_any">Abortion If Any</string>

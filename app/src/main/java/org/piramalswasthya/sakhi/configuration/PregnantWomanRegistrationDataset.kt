@@ -846,12 +846,14 @@ class PregnantWomanRegistrationDataset(
                         triggerIndex = index,
                         target = otherPastIllness
                     )
-                } else triggerDependants(
-                    source = pastIllness,
-                    passedIndex = index,
-                    triggerIndex = -230,
-                    target = otherPastIllness
-                )
+                } else {
+                    triggerDependants(
+                        source = pastIllness,
+                        passedIndex = index,
+                        triggerIndex = -230,
+                        target = otherPastIllness
+                    )
+                }
             }
 
             otherPastIllness.id -> {

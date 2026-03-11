@@ -456,6 +456,9 @@ class RecordsRepo @Inject constructor(
     fun getListForInfantReg() = benDao.getListForInfantRegister(selectedVillage)
         .map { list -> list.flatMap { it.asBasicDomainModel() } }
 
+    fun getListForLowWeightInfantReg() = benDao.getListForLowWeightInfantRegister(selectedVillage)
+        .map { list -> list.flatMap { it.asBasicDomainModel() } }
+
     fun getInfantRegisterCount() = benDao.getInfantRegisterCount(selectedVillage)
 
     @OptIn(ExperimentalCoroutinesApi::class)
