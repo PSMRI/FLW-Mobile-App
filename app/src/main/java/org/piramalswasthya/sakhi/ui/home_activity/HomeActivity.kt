@@ -252,6 +252,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
+        // Hide Sync Records menu item
+       // binding.navView.menu.findItem(R.id.sync_pending_records).setVisible(false)
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()

@@ -665,6 +665,7 @@ interface BenDao {
         AND isDeath = 1
         AND  isDeactivate=0 
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
      """)
     fun getAllNonMaternalDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
@@ -676,8 +677,9 @@ interface BenDao {
         AND isDeath = 1
         AND isDeactivate=0
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
-        
+
 """)
     fun getAllGeneralDeathsCount(selectedVillage: Int): Flow<Int>
 
@@ -689,6 +691,7 @@ interface BenDao {
         AND isDeath = 1
         AND isDeactivate=0
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
 """)
     fun getAllNonMaternalDeathsCount(selectedVillage: Int): Flow<Int>
