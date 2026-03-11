@@ -1373,7 +1373,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             agePopup.inputType = TEXT_VIEW
         }
 
-        lastName.value = hoF.lastName?.also { firstName.inputType = TEXT_VIEW }
+        lastName.value = hoF.lastName?.also { lastName.inputType = TEXT_VIEW }
         ageAtMarriage.max = getAgeFromDob(hoF.dob).toLong()
     }
 
@@ -1860,8 +1860,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 if (benIfDataExist != null || !isAddSpouse) {
                     if (gender.value != null) {
                         // Gender already set (editing OR add member with pre-selected relation)
-                        // Preserve gender, maritalStatus, relationToHead; only reset reproductiveStatus
-                        reproductiveStatus.value = null
+                        // Preserve gender, maritalStatus, relationToHead
+                        // reproductiveStatus will be handled in updateReproductiveOptionsBasedOnAgeGender
 
                         val genderIndex = when (gender.value) {
                             gender.entries?.get(0) -> 0  // Male
@@ -1920,6 +1920,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
 
                 if (isAddSpouse) {
+                    ageAtMarriage.max = getAgeFromDob(getLongFromDate(agePopup.value)).toLong()
                     ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0
@@ -1951,6 +1952,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ?.let {
 
                         validateEmptyOnEditText(ageAtMarriage)
+                        ageAtMarriage.max = currentAge.toLong()
                         validateIntMinMax(ageAtMarriage)
 
                         val enteredAgeAtMarriage = ageAtMarriage.value!!.toIntOrNull() ?: return@let
@@ -2925,57 +2927,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             }
 
-//            val updatedReproductiveOptions = when {
-//                !genderIsFemale -> emptyList()
-//                age in 15..19 -> when (maritalStatus.value) {
-//                    maritalStatus.entries!![0] -> {
-//                        listOf(
-//                            "Adolescent Girl"
-//                        )
-//                    }
-//                    maritalStatus.entries!![1] -> {
-//                        listOf(
-//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                    else -> {
-//                        listOf(
-//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                }
-//
-//                age in 20..49 -> when (maritalStatus.value) {
-//                    maritalStatus.entries!![0] -> {
-//                        listOf(
-//                            "Not Applicable"
-//                        )
-//                    }
-//                    maritalStatus.entries!![1] -> {
-//                        listOf(
-//                            "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                    else -> {
-//                        listOf(
-//                            "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                }
-//
-//                age >= 50 -> listOf("Elderly Woman")
-//                else -> emptyList()
-//            }
-//
-//            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
-
+            val oldReproductiveValue = reproductiveStatus.value
             reproductiveStatus.value = null
             if (reproductiveStatus.entries?.size == 1) {
                 reproductiveStatus.value = reproductiveStatus.entries?.get(0)
+            } else if (oldReproductiveValue != null && reproductiveStatus.entries?.contains(oldReproductiveValue) == true) {
+                reproductiveStatus.value = oldReproductiveValue
             }
             if (maritalStatus.value != null) {
                 reproductiveStatus.inputType = DROPDOWN
@@ -3074,10 +3031,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             }
 
+            val oldReproductiveValue2 = reproductiveStatus.value
             reproductiveStatus.value = null
 //            reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
             if (reproductiveStatus.entries?.size == 1) {
                 reproductiveStatus.value = reproductiveStatus.entries?.get(0)
+            } else if (oldReproductiveValue2 != null && reproductiveStatus.entries?.contains(oldReproductiveValue2) == true) {
+                reproductiveStatus.value = oldReproductiveValue2
             }
             validateReproductiveStatusField(genderIsFemale, age)
 
