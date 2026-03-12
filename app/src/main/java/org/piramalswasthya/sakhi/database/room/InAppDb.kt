@@ -337,6 +337,22 @@ abstract class InAppDb : RoomDatabase() {
                           "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserId INTEGER NOT NULL DEFAULT 0"
                       )
 
+                      database.execSQL(
+                          "ALTER TABLE INCENTIVE_RECORD ADD COLUMN isClaimed INTEGER NOT NULL DEFAULT 0"
+                      )
+
+                      database.execSQL(
+                          "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalDate TEXT"
+                      )
+
+                      database.execSQL(
+                          "ALTER TABLE INCENTIVE_RECORD ADD COLUMN calimedDate TEXT"
+                      )
+
+                      database.execSQL(
+                          "ALTER TABLE INCENTIVE_RECORD ADD COLUMN supervisorRole TEXT"
+                      )
+
                   }
               }
 

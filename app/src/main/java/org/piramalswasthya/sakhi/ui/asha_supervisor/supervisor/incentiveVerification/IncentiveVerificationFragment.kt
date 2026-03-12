@@ -64,7 +64,7 @@ class IncentiveVerificationFragment : Fragment() {
 
         val user = preferenceDao.getLoggedInUser()
         binding.tvSupervisorName.text = "Supervisor: ${user?.userName ?: "-"}"
-        binding.tvSupervisorId.text = "Supervisor ID: ${user?.userId ?: "-"}"
+        binding.tvSupervisorId.text = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
 
         viewModel.init(args.status, args.facilityId, selectedMonth, selectedYear)
 
