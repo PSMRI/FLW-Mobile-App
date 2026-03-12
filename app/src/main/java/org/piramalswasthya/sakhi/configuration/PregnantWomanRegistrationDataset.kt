@@ -619,10 +619,10 @@ class PregnantWomanRegistrationDataset(
             hivTestResult.value = getLocalValueInArray(hivTestResult.arrayId, saved.hivTestResult)
             hbsAgTestResult.value =
                 getLocalValueInArray(hbsAgTestResult.arrayId, saved.hbsAgTestResult)*/
-            pastIllness.value = getCheckboxIndexesFromValues(pastIllness.arrayId, saved.pastIllness)
+            pastIllness.value = getCheckboxIndexesFromValues(pastIllness.arrayId, saved.pastIllness) ?: "0"
             otherPastIllness.value = it.otherPastIllness
-            val otherIndex = pastIllness.entries!!.lastIndex
-            val selectedIndexes = pastIllness.value?.split("|")?.mapNotNull { it.trim().toIntOrNull() }?.toSet() ?: emptySet()
+            val otherIndex = pastIllness.entries!!.size - 1
+            val selectedIndexes = pastIllness.value?.split("|")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList()
             if (selectedIndexes.contains(otherIndex))
                 list.add(list.indexOf(pastIllness) + 1, otherPastIllness)
             isFirstPregnancy.value = isFirstPregnancy.getStringFromPosition(if (it.is1st) 1 else 2)
@@ -821,7 +821,7 @@ class PregnantWomanRegistrationDataset(
             pastIllness.id -> {
                 val entries = pastIllness.entries!!
                 val noneIndex = 0
-                val otherIndex = entries.lastIndex
+                val otherIndex = entries.size - 1
                 val selectedIndexes = pastIllness.value
                     ?.split("|")
                     ?.mapNotNull { it.trim().toIntOrNull() }
@@ -829,19 +829,16 @@ class PregnantWomanRegistrationDataset(
                     ?: mutableSetOf()
 
                 if (index == noneIndex) {
-                    // "None" selected — clear all others
-                    selectedIndexes.clear()
-                    selectedIndexes.add(noneIndex)
+                    // "None" selected: clear all others, keep only None
+                    pastIllness.value = "0"
                 } else {
-                    // Non-None selected — remove "None"
+                    // Other option selected: remove None
                     selectedIndexes.remove(noneIndex)
+                    pastIllness.value =
+                        if (selectedIndexes.isEmpty()) "0"
+                        else selectedIndexes.sorted().joinToString("|")
                 }
 
-                pastIllness.value =
-                    if (selectedIndexes.isEmpty()) null
-                    else selectedIndexes.sorted().joinToString("|")
-
-                // Toggle "Other" field based on whether last entry is selected
                 if (selectedIndexes.contains(otherIndex)) {
                     triggerDependants(
                         source = pastIllness,

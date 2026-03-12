@@ -665,6 +665,7 @@ interface BenDao {
         AND isDeath = 1
         AND  isDeactivate=0 
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
      """)
     fun getAllNonMaternalDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
@@ -676,8 +677,9 @@ interface BenDao {
         AND isDeath = 1
         AND isDeactivate=0
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
-        
+
 """)
     fun getAllGeneralDeathsCount(selectedVillage: Int): Flow<Int>
 
@@ -689,6 +691,7 @@ interface BenDao {
         AND isDeath = 1
         AND isDeactivate=0
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
 """)
     fun getAllNonMaternalDeathsCount(selectedVillage: Int): Flow<Int>
@@ -961,6 +964,26 @@ interface BenDao {
         lowWeightLimit: Double = Konstants.babyLowWeight,
         maxAgeMillis: Long = Konstants.pncEcGap * 24 * 60 * 60 * 1000
     ): Flow<Int>
+
+    @Transaction
+    @Query(
+        """
+        SELECT DISTINCT ben.* FROM BEN_BASIC_CACHE ben
+        JOIN INFANT_REG inf ON ben.benId = inf.motherBenId
+        JOIN delivery_outcome do ON do.benId = inf.motherBenId AND do.isActive = 1
+        WHERE inf.isActive = 1
+        AND ben.isDeactivate = 0
+        AND inf.weight < :lowWeightLimit
+        AND ben.villageId = :villageId
+        AND do.dateOfDelivery IS NOT NULL
+        AND (strftime('%s','now') * 1000) - do.dateOfDelivery <= :maxAgeMillis
+        """
+    )
+    fun getListForLowWeightInfantRegister(
+        villageId: Int,
+        lowWeightLimit: Double = Konstants.babyLowWeight,
+        maxAgeMillis: Long = Konstants.pncEcGap * 24 * 60 * 60 * 1000
+    ): Flow<List<BenWithDoAndIrCache>>
 
     // Pregnancy Death
     @Query("SELECT COUNT(*) FROM PREGNANCY_ANC WHERE benId = :benId AND deathDate IS NOT NULL AND isAborted = 0")
