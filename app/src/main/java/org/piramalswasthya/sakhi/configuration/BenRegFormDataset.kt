@@ -637,6 +637,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
 //                reproductiveStatus.getStringFromPosition(it)
 //            }
+
+            // Restore haveChildren value for married females
+            val maritalStatusIdForChildren = saved.genDetails?.maritalStatusId
+            if (saved.genderId == 2 && maritalStatusIdForChildren != null && maritalStatusIdForChildren >= 2) {
+                haveChildren.value = if (saved.doYouHavechildren) haveChildren.entries?.get(0) else haveChildren.entries?.get(1)
+                _isAddingChildren.value = saved.doYouHavechildren
+            }
         }
 
         val maritalIndex = list.indexOf(maritalStatus)
@@ -650,6 +657,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             genderField?.let {
                 list.add(maritalIndex + 3, it)
                 list.add(maritalIndex + 4, ageAtMarriage)
+                // Add haveChildren for females (gender.entries!![1])
+                if (gender.value == gender.entries!![1]) {
+                    list.add(maritalIndex + 5, haveChildren)
+                }
             }
         } else {
             list.removeAll(
@@ -657,7 +668,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     husbandName,
                     wifeName,
                     spouseName,
-                    ageAtMarriage
+                    ageAtMarriage,
+                    haveChildren
                 )
             )
         }
@@ -1140,6 +1152,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
+            // Restore haveChildren value for married females
+            val maritalStatusId = saved.genDetails?.maritalStatusId
+            if (saved.genderId == 2 && maritalStatusId != null && maritalStatusId >= 2) {
+                haveChildren.value = if (saved.doYouHavechildren) haveChildren.entries?.get(0) else haveChildren.entries?.get(1)
+                _isAddingChildren.value = saved.doYouHavechildren
+            }
 
             relationToHead.entries = when (saved.gender) {
                 MALE -> relationToHeadListMale
@@ -1164,6 +1182,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     else -> throw IllegalStateException("Gender unspecified with non empty marital status value!")
                 }
             )
+            // Add haveChildren for females if not already in list
+            if (gender.value == gender.entries!![1] && !list.contains(haveChildren)) {
+                val ageAtMarriageIndex = list.indexOf(ageAtMarriage)
+                if (ageAtMarriageIndex >= 0) {
+                    list.add(ageAtMarriageIndex + 1, haveChildren)
+                }
+            }
 
         }
 
