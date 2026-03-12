@@ -500,4 +500,14 @@ interface AmritApiService {
     suspend fun updateApprovalStatus(
         @Body body: Map<String, @JvmSuppressWildcards Any>
     ): Response<ResponseBody>
+
+    @POST("flw-api/incentive/claimedIncentiveByUser")
+    suspend fun getClaimedIncentiveByUser(
+        @Body requestBody: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/incentive/AllIncentiveByActivityId")
+    suspend fun getActivityDetailRecords(
+        @Body requestBody: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
 }

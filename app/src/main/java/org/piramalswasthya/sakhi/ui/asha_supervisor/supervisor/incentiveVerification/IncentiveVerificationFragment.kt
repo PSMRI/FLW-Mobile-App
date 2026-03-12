@@ -89,6 +89,7 @@ class IncentiveVerificationFragment : Fragment() {
                 putString("sc_name", worker.serviceCenter)
                 putInt("selected_month", selectedMonth)
                 putInt("selected_year", selectedYear)
+                putString("status", worker.status.name)
             }
             findNavController().navigate(R.id.workerDetailFragment, bundle)
         }
