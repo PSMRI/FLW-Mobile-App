@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityDetail
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityStatus
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import java.text.NumberFormat
 import java.util.*
 
-class ActivityAdapter : ListAdapter<ActivityDetail, ActivityAdapter.ActivityViewHolder>(ActivityDiffCallback()) {
+class ActivityAdapter(
+    private val onClick: ((ClaimedIncentiveUI) -> Unit)? = null
+) : ListAdapter<ClaimedIncentiveUI, ActivityAdapter.ActivityViewHolder>(ActivityDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -22,40 +23,35 @@ class ActivityAdapter : ListAdapter<ActivityDetail, ActivityAdapter.ActivityView
     }
 
     override fun onBindViewHolder(holder: ActivityViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), position + 1, onClick)
     }
 
     class ActivityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val tvActivityName: TextView = itemView.findViewById(R.id.tvActivityName)
         private val tvActivityAmount: TextView = itemView.findViewById(R.id.tvActivityAmount)
-        private val tvActivityDate: TextView = itemView.findViewById(R.id.tvActivityDate)
-        private val tvSubmittedOn: TextView = itemView.findViewById(R.id.tvSubmittedOn)
-        private val statusBadge: TextView = itemView.findViewById(R.id.statusBadge)
-        private val tvStatusMessage: TextView = itemView.findViewById(R.id.tvStatusMessage)
+        private val tvActivityDesc: TextView = itemView.findViewById(R.id.tvActivityDesc)
+        private val tvClaimCount: TextView = itemView.findViewById(R.id.tvClaimCount)
+        private val tvSerialNo: TextView = itemView.findViewById(R.id.tvSerialNo)
+        private val clMain: View = itemView.findViewById(R.id.clMain)
 
-        fun bind(activity: ActivityDetail) {
-            tvActivityName.text = activity.name
-            tvActivityAmount.text = formatAmount(activity.amount)
-            tvActivityDate.text = "${activity.groupName}"
-//            tvSubmittedOn.text = "Submitted On: ${activity.submittedOn}"
-            tvStatusMessage.text = activity.statusMessage
+        fun bind(item: ClaimedIncentiveUI, serialNo: Int, onClick: ((ClaimedIncentiveUI) -> Unit)?) {
+            tvSerialNo.text = serialNo.toString()
+            tvActivityName.text = item.groupName ?: "Activity : ${item.activityId}"
+            tvActivityDesc.text = item.activityDec ?: ""
+            tvClaimCount.text = item.claimCount.toString()
+            tvActivityAmount.text = formatAmount(item.totalAmount)
 
-            // Set status badge
-            when (activity.status) {
-                ActivityStatus.VERIFIED -> {
-                    statusBadge.text = "Verified"
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
-                }
-                ActivityStatus.PENDING -> {
-                    statusBadge.text = "Pending"
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
-                }
-                ActivityStatus.REJECTED -> {
-                    statusBadge.text = "Rejected"
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
-                }
+            if (item.isDefaultActivity) {
+                clMain.setBackgroundColor(
+                    itemView.context.getColor(R.color.default_incentive_no_ben_background)
+                )
+                clMain.setOnClickListener(null)
+            } else {
+                clMain.setBackgroundColor(itemView.context.getColor(android.R.color.white))
+                clMain.setOnClickListener { onClick?.invoke(item) }
             }
+
         }
 
         private fun formatAmount(amount: Int): String {
@@ -65,13 +61,11 @@ class ActivityAdapter : ListAdapter<ActivityDetail, ActivityAdapter.ActivityView
         }
     }
 
-    class ActivityDiffCallback : DiffUtil.ItemCallback<ActivityDetail>() {
-        override fun areItemsTheSame(oldItem: ActivityDetail, newItem: ActivityDetail): Boolean {
-            return oldItem.id == newItem.id
-        }
+    class ActivityDiffCallback : DiffUtil.ItemCallback<ClaimedIncentiveUI>() {
+        override fun areItemsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
+            oldItem.activityId == newItem.activityId
 
-        override fun areContentsTheSame(oldItem: ActivityDetail, newItem: ActivityDetail): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
+            oldItem == newItem
     }
 }

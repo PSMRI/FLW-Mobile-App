@@ -209,6 +209,13 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     }
 
+    fun saveStateId(villageId: Int) {
+        pref.edit().putInt("PREF_VILLAGE_ID", villageId).apply()
+    }
+    fun getStateId(): Int {
+        return pref.getInt("PREF_VILLAGE_ID", -1)
+    }
+
     var isFullPullComplete: Boolean
         get() = pref.getBoolean("FIRST TIME FULL PULL DONE", false)
         set(value) {

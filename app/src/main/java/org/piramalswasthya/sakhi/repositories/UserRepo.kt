@@ -94,6 +94,7 @@ class UserRepo @Inject constructor(
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
+        preferenceDao.saveStateId(response.data.stateId)
         return user
     }
 

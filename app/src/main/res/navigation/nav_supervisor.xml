@@ -192,5 +192,9 @@
             android:id="@+id/action_nav_supervisor_to_incentiveVerificationFragment"
             app:destination="@id/incentiveVerificationFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/beneficiaryDetailFragment"
+        android:name="org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.BeneficiaryDetailFragment"
+        android:label="BeneficiaryDetailFragment" />
 
 </navigation>

@@ -1,111 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/clMain"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:background="@android:color/white"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.08" />
 
-        <!-- Info Icon -->
-        <ImageView
-            android:id="@+id/ivActivityIcon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_info"
-            android:tint="#4A6FA5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55" />
 
-        <!-- Activity Name -->
-        <TextView
-            android:id="@+id/tvActivityName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="#333333"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/tvActivityDate"
-            app:layout_constraintStart_toEndOf="@id/ivActivityIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="ANC Check-up" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline75"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
-        <!-- Amount -->
-        <TextView
-            android:id="@+id/tvActivityAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#333333"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/statusBadge"
-            app:layout_constraintStart_toStartOf="@+id/statusBadge"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="₹ 2,350" />
+    <!-- S.No -->
+    <TextView
+        android:id="@+id/tvSerialNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toStartOf="@id/guideline10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
 
-        <!-- Activity Date -->
-        <TextView
-            android:id="@+id/tvActivityDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="#666666"
-            android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@id/statusBadge"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvActivityName"
-            tools:text="Activity Date: Jan 15, 2026" />
+    <!-- Activity Name bold -->
+    <TextView
+        android:id="@+id/tvActivityName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/guideline50"
+        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="IMMUNIZATION" />
 
-        <!-- Status Badge -->
-        <TextView
-            android:id="@+id/statusBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_status_pending"
-            android:paddingStart="12dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="4dp"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvActivityAmount"
-            tools:text="Pending" />
+    <!-- Activity Desc -->
+    <TextView
+        android:id="@+id/tvActivityDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#666666"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toStartOf="@id/guideline50"
+        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityName"
+        tools:text="ASHA incentive Rs.150 per meeting for mobilizing" />
 
-        <!-- Submitted On -->
-        <TextView
-            android:id="@+id/tvSubmittedOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#666666"
-            android:visibility="gone"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvActivityDate"
-            tools:text="Submitted On: Jan 16, 2026" />
+    <!-- No of Claims -->
+    <TextView
+        android:id="@+id/tvClaimCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/statusBadge"
+        app:layout_constraintEnd_toStartOf="@id/guideline75"
+        app:layout_constraintStart_toStartOf="@id/guideline50"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
 
-        <!-- Status Message -->
-        <TextView
-            android:id="@+id/tvStatusMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_status_message"
-            android:padding="8dp"
-            android:textColor="#8B6914"
-            android:textSize="13sp"
-            app:layout_constraintTop_toBottomOf="@id/tvSubmittedOn"
-            tools:text="Status: Pending with Supervisor" />
+    <!-- Amount -->
+    <TextView
+        android:id="@+id/tvActivityAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/statusBadge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline75"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="150" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Status Badge -->
+    <TextView
+        android:id="@+id/statusBadge"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityAmount"
+        tools:text="Verified" />
 
-</androidx.cardview.widget.CardView>
+    <!-- Divider -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#E0E0E0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityDesc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

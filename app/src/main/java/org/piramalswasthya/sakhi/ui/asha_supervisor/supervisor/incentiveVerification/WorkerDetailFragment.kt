@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -15,11 +16,9 @@ import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.ActivityAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityDetail
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.ActivityStatus
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveRecordUI
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
 import java.util.Calendar
@@ -41,28 +40,25 @@ class WorkerDetailFragment : Fragment() {
 
     private var rejectionReasons = mutableListOf<RejectionReason>()
     private var otherReasonSelected = false
-    private var currentRecords: List<IncentiveRecordUI> = emptyList()
+    private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
 
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
     }
-    private val workerName by lazy {
-        arguments?.getString("worker_name") ?: ""
-    }
-    private val scName by lazy {
-        arguments?.getString("sc_name") ?: ""
-    }
+    private val workerName by lazy { arguments?.getString("worker_name") ?: "" }
+    private val scName by lazy { arguments?.getString("sc_name") ?: "" }
     private val selectedMonth by lazy {
         arguments?.getInt("selected_month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
     }
     private val selectedYear by lazy {
         arguments?.getInt("selected_year") ?: Calendar.getInstance().get(Calendar.YEAR)
     }
+    private val workerStatus by lazy {
+        arguments?.getString("status") ?: ""
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkerDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -87,7 +83,9 @@ class WorkerDetailFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        activityAdapter = ActivityAdapter()
+        activityAdapter = ActivityAdapter { activity ->
+            navigateToBeneficiaryDetail(activity)
+        }
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = activityAdapter
 
@@ -96,6 +94,18 @@ class WorkerDetailFragment : Fragment() {
         }
         binding.rvRejectionReasons.layoutManager = LinearLayoutManager(requireContext())
         binding.rvRejectionReasons.adapter = rejectionReasonAdapter
+    }
+
+    private fun navigateToBeneficiaryDetail(activity: ClaimedIncentiveUI) {
+        val bundle = Bundle().apply {
+            putInt("worker_id", workerId)
+            putInt("activity_id", activity.activityId)
+            putString("activity_name", activity.activityDec)
+            putString("group_name", activity.groupName)
+            putInt("selected_month", selectedMonth)
+            putInt("selected_year", selectedYear)
+        }
+        findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
     }
 
     private fun setupRejectionReasons() {
@@ -129,24 +139,16 @@ class WorkerDetailFragment : Fragment() {
                         binding.tvEmptyState.visibility = View.VISIBLE
                         binding.rvActivities.visibility = View.GONE
                         binding.llHeader.visibility = View.GONE
-                        binding.cbVerifyDocuments.visibility = View.GONE
-                        binding.btnVerify.visibility = View.GONE
-                        binding.btnReject.visibility = View.GONE
+                        binding.cvMain.visibility = View.GONE
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
                         binding.rvActivities.visibility = View.VISIBLE
                         binding.llHeader.visibility = View.VISIBLE
-                        activityAdapter.submitList(mapToActivityDetail(state.records))
-
-                        val allVerified = state.records.all { it.approvalStatus == 101 }
-                        if (allVerified) {
-                            binding.cbVerifyDocuments.visibility = View.GONE
-                            binding.cvMain.visibility = View.GONE
-                        } else {
-                            binding.cbVerifyDocuments.visibility = View.VISIBLE
-                            binding.cvMain.visibility = View.VISIBLE
-                        }
+                        activityAdapter.submitList(state.records)
+                        binding.cvMain.visibility = View.VISIBLE
                     }
+
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -182,40 +184,8 @@ class WorkerDetailFragment : Fragment() {
         }
     }
 
-    private fun mapToActivityDetail(records: List<IncentiveRecordUI>): List<ActivityDetail> {
-        return records.map { record ->
-            ActivityDetail(
-                id = record.id.toString(),
-                groupName = record.activityDec ?: "Activity ${record.activityId}",
-                name = record.groupName ?: "Activity ${record.activityId}",
-                amount = record.amount.toInt(),
-                activityDate = record.startDate ?: "",
-                submittedOn = record.createdDate ?: "",
-                status = mapStatus(record.approvalStatus),
-                statusMessage = "Status: ${getStatusText(record.approvalStatus)}"
-            )
-        }
-    }
-
-    private fun mapStatus(code: Int?): ActivityStatus = when (code) {
-        101 -> ActivityStatus.VERIFIED
-        102 -> ActivityStatus.PENDING
-        103 -> ActivityStatus.REJECTED
-        else -> ActivityStatus.PENDING
-    }
-
-    private fun getStatusText(code: Int?): String = when (code) {
-        101 -> "Verified"
-        102 -> "Pending with Supervisor"
-        103 -> "Rejected"
-        104 -> "Overdue"
-        else -> "Pending"
-    }
-
     private fun setupClickListeners() {
-        binding.toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
-        }
+        binding.toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
         binding.btnVerify.setOnClickListener { onVerifyClicked() }
         binding.btnReject.setOnClickListener { showRejectionBottomSheet() }
         binding.bottomSheetContainer.setOnClickListener { hideRejectionBottomSheet() }
@@ -232,9 +202,10 @@ class WorkerDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
             return
         }
+        // ✅ ClaimedIncentiveUI mein individual ids nahi — empty list pass karo
         viewModel.verifyActivities(
             ashaId = workerId,
-            incentiveIds = currentRecords.map { it.id }
+            incentiveIds = emptyList()
         )
     }
 
@@ -274,9 +245,9 @@ class WorkerDetailFragment : Fragment() {
             .filter { it.id != "other" }
             .joinToString(", ") { it.reason }
 
-        val otherReason = if (otherReasonSelected) {
+        val otherReason = if (otherReasonSelected)
             binding.etOtherReason.text.toString().trim()
-        } else ""
+        else ""
 
         if (currentRecords.isEmpty()) {
             Toast.makeText(requireContext(), "No records to reject", Toast.LENGTH_SHORT).show()
@@ -285,7 +256,7 @@ class WorkerDetailFragment : Fragment() {
 
         viewModel.rejectActivities(
             ashaId = workerId,
-            incentiveIds = currentRecords.map { it.id },
+            incentiveIds = emptyList(),
             reason = reason,
             otherReason = otherReason
         )
@@ -294,10 +265,7 @@ class WorkerDetailFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.logo_circle,
-                workerName
-            )
+            (it as SupervisorActivity).updateActionBar(R.drawable.logo_circle, workerName)
         }
     }
 
