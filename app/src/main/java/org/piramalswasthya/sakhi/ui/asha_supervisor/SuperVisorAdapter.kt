@@ -12,8 +12,8 @@ class SuperVisorAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment {
         val fragment = when (position) {
-            1 -> IncentiveDashboardFragment()
-            0 -> SupervisorFragment()
+            0 -> IncentiveDashboardFragment()
+            1 -> SupervisorFragment()
             else -> throw IllegalStateException("Index >1 called!")
 
         }

@@ -1234,6 +1234,7 @@
     <string name="pending">Pending</string>
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
+    <string name="claim">Claim</string>
 
 </resources>
 
