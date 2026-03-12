@@ -2620,8 +2620,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         return 1
     }
 
-    private fun isBenParentOfHoF() =
-        relationToHead.value == relationToHead.entries!![0] || relationToHead.value == relationToHead.entries!![1]
+    private fun isBenParentOfHoF(): Boolean {
+        val value = relationToHead.value ?: return false
+        val parentRelations = setOf(
+            relationToHeadListDefault[0],  // Mother
+            relationToHeadListDefault[1],  // Father
+            relationToHeadListDefault[10], // Grand Father
+            relationToHeadListDefault[11], // Grand Mother
+            relationToHeadListDefault[12], // Father in Law
+            relationToHeadListDefault[13], // Mother in Law
+        )
+        return value in parentRelations
+    }
 
     fun getIndexOfAgeAtMarriage() = getIndexOfElement(ageAtMarriage)
     fun getIndexOfContactNumber() = getIndexOfElement(contactNumber)
