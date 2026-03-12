@@ -58,7 +58,7 @@ object FieldValidator {
             }
 
             "date" -> {
-                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                 val valueDate = runCatching { sdf.parse(valueStr) }.getOrNull()
                     ?: return ValidationResult(false, "${field.label} date is invalid")
 
@@ -101,6 +101,6 @@ object FieldValidator {
     }
 
     private fun getToday(): String {
-        return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
+        return SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date())
     }
 }

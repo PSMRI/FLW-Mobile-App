@@ -510,9 +510,10 @@ open class DeliveryOutcomeDataset(
             form.mcp2File = mcpFileUpload2.value
             form.jsyFile = jsyFileUpload.value
             form.dateOfDeath=dateOfDeath.value
-            form.placeOfDeath=placeOfDeath.value
+            form.placeOfDeath=getEnglishValueInArray(R.array.death_place_array, placeOfDeath.value)
             form.otherPlaceOfDeath=otherPlaceOfDeath.value
-            if (complication.value.equals("Death", ignoreCase = true)){
+            val englishComplication = getEnglishValueInArray(R.array.do_complications_array, complication.value)
+            if (englishComplication.equals("Death", ignoreCase = true)){
                 form.isDeath=true
                 form.isDeathValue="Death"
             }
@@ -520,19 +521,19 @@ open class DeliveryOutcomeDataset(
                 ?.takeIf { it != -1 }
 
             form.timeOfDelivery = timeOfDelivery.value
-            form.placeOfDelivery = placeOfDelivery.value
-            form.typeOfDelivery = typeOfDelivery.value
+            form.placeOfDelivery = getEnglishValueInArray(R.array.do_place_of_delivery_array, placeOfDelivery.value)
+            form.typeOfDelivery = getEnglishValueInArray(R.array.do_type_of_delivery_array, typeOfDelivery.value)
             form.hadComplications = hadComplications.value == "Yes"
-            form.complication = complication.value
-            form.causeOfDeath = causeOfDeath.value
+            form.complication = englishComplication
+            form.causeOfDeath = getEnglishValueInArray(R.array.do_cause_of_death_array, causeOfDeath.value)
             form.otherCauseOfDeath = otherCauseOfDeath.value
             form.otherComplication = otherComplication.value
             form.deliveryOutcome = deliveryOutcome.value?.toInt()
             form.liveBirth = liveBirth.value?.toInt()
             form.stillBirth = stillBirth.value?.toInt()
-            form.dateOfDischarge = (dateOfDischarge.value?.let {
+            form.dateOfDischarge = dateOfDischarge.value?.takeIf { it.isNotBlank() }?.let {
                 getLongFromDate(it)
-            })
+            }
             form.timeOfDischarge = timeOfDischarge.value
             form.isJSYBenificiary = isJSYBenificiary.value == "Yes"
         }

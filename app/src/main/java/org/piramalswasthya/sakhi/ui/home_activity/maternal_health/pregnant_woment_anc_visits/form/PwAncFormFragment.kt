@@ -39,6 +39,7 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel.State
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -293,13 +294,32 @@ class PwAncFormFragment : Fragment() {
         toggleLoading(false)
     }
 
+//    private fun navigateToMdsr() {
+//        viewModel.hhID.let {
+//            val action = PwAncFormFragmentDirections.actionPwAncFormFragmentToMdsrObjectFragment(
+//                hhId = it.toLong(), benId = viewModel.benId
+//            )
+//            findNavController().navigate(action)
+//        }
+//    }
+
     private fun navigateToMdsr() {
-        viewModel.hhID.let {
-            val action = PwAncFormFragmentDirections.actionPwAncFormFragmentToMdsrObjectFragment(
-                hhId = it.toLong(), benId = viewModel.benId
-            )
-            findNavController().navigate(action)
+        val hhIdString = viewModel.hhID
+
+        val hhId = hhIdString?.toLongOrNull()
+        if (hhId == null) {
+            Log.e("PwAncForm", "Invalid hhID: $hhIdString")
+            return
         }
+
+        val action =
+            PwAncFormFragmentDirections
+                .actionPwAncFormFragmentToMdsrObjectFragment(
+                    hhId = hhId,
+                    benId = viewModel.benId
+                )
+
+        findNavController().navigate(action)
     }
 
     private fun viewImage(imageUri: Uri) {

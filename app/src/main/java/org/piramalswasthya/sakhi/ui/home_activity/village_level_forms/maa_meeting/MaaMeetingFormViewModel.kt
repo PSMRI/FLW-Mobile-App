@@ -36,7 +36,7 @@ class MaaMeetingFormViewModel @Inject constructor(
     private val _maaMeetings = repo.getAllMaaMeetings()
         .map { list ->
             list.sortedByDescending { item ->
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(item.meetingDate)
+                SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(item.meetingDate)
             }
         }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

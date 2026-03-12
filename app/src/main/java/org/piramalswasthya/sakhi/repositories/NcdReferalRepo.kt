@@ -29,7 +29,7 @@ class NcdReferalRepo@Inject constructor(
     }
 
     fun Long.toApiDateFormat(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
         return sdf.format(Date(this))
     }
     suspend fun pushAndUpdateNCDReferRecord() {

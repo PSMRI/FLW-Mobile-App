@@ -164,11 +164,13 @@ fun saveForm() {
 
                     val ben = maternalHealthRepo.getBenFromId(benId)
                     ben?.let {
-                        ectCache.visitDate = ancCache.dateSterilisation!!
-                        ectCache.pregnancyTestResult = "No"
-                        ectCache.usingFamilyPlanning = true
-                        ectCache.methodOfContraception = "FEMALE STERILIZATION"
-                        ecrRepo.saveEct(ectCache)
+                        ancCache.dateSterilisation?.let { sterilisationDate ->
+                            ectCache.visitDate = sterilisationDate
+                            ectCache.pregnancyTestResult = "No"
+                            ectCache.usingFamilyPlanning = true
+                            ectCache.methodOfContraception = "FEMALE STERILIZATION"
+                            ecrRepo.saveEct(ectCache)
+                        }
                     }
                 }
 

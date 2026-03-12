@@ -113,10 +113,10 @@ class FilariaMdaCampaignRepository @Inject constructor(
     private fun toYearKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy", Locale.ENGLISH)
         for (fmt in inputs) {
             try {
-                val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                val d = SimpleDateFormat(fmt, Locale.ENGLISH).parse(dateStr)
                 if (d != null) return out.format(d)
             } catch (_: Exception) {}
         }
@@ -216,7 +216,7 @@ class FilariaMdaCampaignRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markCampaignAsSynced(id, timestamp)
     }
 }

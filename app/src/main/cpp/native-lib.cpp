@@ -8,8 +8,8 @@
 // ================== Development Constants ================== //
  #ifdef IS_DEVELOPMENT
  const char* M_ENCRYPTED_PASS_KEY = "Piramal12Piramal";
- const char* M_ABHA_CLIENT_SECRET = "c3631213-60ea-4a10-8e30-43523d3e0253";
- const char* M_ABHA_CLIENT_ID = "PIRSWASTH_953256";
+ const char* M_ABHA_CLIENT_SECRET = "87b7eb89-b236-43b6-82b0-6eef154a9b90";
+ const char* M_ABHA_CLIENT_ID = "SBX_001542";
  const char* M_BASE_TMC_URL = "https://uatamrit.piramalswasthya.org/";
          //"https://amritdemo.piramalswasthya.org/";
          //"https://amritflw.piramalswasthya.org/";

@@ -160,7 +160,7 @@ class FormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
 
@@ -248,7 +248,7 @@ class FormRepository @Inject constructor(
 
 
     suspend fun markFormAsSyncedHBYC(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDaoHBYC.markAsSynced(id, timestamp)
     }
 
@@ -400,7 +400,7 @@ class FormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSyncedANC(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDaoANC.markAsSynced(id, timestamp)
     }
 
@@ -408,7 +408,7 @@ class FormRepository @Inject constructor(
         return try {
             val visits = jsonResponseDaoANC.getVisitsForBen(benId)
             visits.maxByOrNull {
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it.visitDate)?.time ?: 0L
+                SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it.visitDate)?.time ?: 0L
             }
         } catch (e: Exception) {
             null

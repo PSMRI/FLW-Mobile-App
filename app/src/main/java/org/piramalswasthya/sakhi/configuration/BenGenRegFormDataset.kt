@@ -664,6 +664,7 @@ class BenGenRegFormDataset(context: Context, language: Languages) : Dataset(cont
             ageAtMarriage.id -> age.value?.takeIf { it.isNotEmpty() && it.isDigitsOnly() && !ageAtMarriage.value.isNullOrEmpty() }
                 ?.toInt()?.let {
                     validateEmptyOnEditText(ageAtMarriage)
+                    ageAtMarriage.max = it.toLong()
                     validateIntMinMax(ageAtMarriage)
                     if (it == ageAtMarriage.value?.toInt()) {
                         val cal = Calendar.getInstance()
