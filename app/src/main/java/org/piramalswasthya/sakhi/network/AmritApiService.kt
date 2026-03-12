@@ -502,7 +502,7 @@ interface AmritApiService {
     ): Response<ResponseBody>
 
     @POST("flw-api/incentive/updateClaim")
-    suspend fun cliamAshaIncetive(
+    suspend fun claimAshaIncentive(
         @Body body: Map<String, @JvmSuppressWildcards Any>
     ): Response<ResponseBody>
 }

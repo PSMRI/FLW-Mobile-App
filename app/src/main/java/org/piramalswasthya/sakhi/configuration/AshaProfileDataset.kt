@@ -314,7 +314,7 @@ class AshaProfileDataset(
         pic.value = ashaProfile?.profileImage
         village.value = currentUser.villages[0].name
         loginuserName.value = currentUser.userName
-        userId.value = preferenceDao.getEmployeeId().toString()
+        userId.value = preferenceDao.getEmployeeId().orEmpty()
         mobileNumber.value = ashaProfile?.mobileNumber.toString()
         alternameMobileNumber.value = ashaProfile?.alternateMobileNumber.toString()
         dateOfJoining.value = ashaProfile?.dateOfJoining.toString()
