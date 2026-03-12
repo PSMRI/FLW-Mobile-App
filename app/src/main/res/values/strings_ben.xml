@@ -84,7 +84,6 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array2">
-        <item>Adolescent Girl</item>
         <item name="ec">Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
@@ -128,8 +127,6 @@
         <item>School</item>
         <item>Community center</item>
     </string-array>
-
-
 
     <string-array name="nbr_marital_status_female_array">
         <item>Unmarried</item>
@@ -339,7 +336,6 @@
         <item>Other Place of Abortion</item>
     </string-array>
 
-
     <string-array name="place_of_anc_array">
         <item>Sub-Centre</item>
         <item>VHND/VHSND</item>
@@ -399,7 +395,6 @@
     <string-array name="care_pregnancy">
         <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
 
-
     </string-array>
     <string-array name="select_all">
         <item>Select All</item>
@@ -418,8 +413,6 @@
         <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
     </string-array>
-
-
 
     <string-array name="import_brestfeeding">
         <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>

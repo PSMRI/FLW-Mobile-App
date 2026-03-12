@@ -104,7 +104,7 @@ class NewChildAsBenRegistrationFragment : Fragment() {
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
         alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
-        alertBinding.checkBox.text = resources.getString(R.string.consent_text)
+        alertBinding.scrollableText.text = resources.getString(R.string.consent_text)
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(false)

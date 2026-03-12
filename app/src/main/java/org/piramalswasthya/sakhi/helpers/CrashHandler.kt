@@ -20,7 +20,7 @@ class CrashHandler(private val context: Context) : Thread.UncaughtExceptionHandl
             val crashDir = File(context.filesDir, crashDirName)
             if (!crashDir.exists()) crashDir.mkdirs()
 
-            val time = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())
+            val time = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH).format(Date())
             val fileName = "crash_${pref.getRememberedUserName()}$time.txt"
             val crashFile = File(crashDir, fileName)
 

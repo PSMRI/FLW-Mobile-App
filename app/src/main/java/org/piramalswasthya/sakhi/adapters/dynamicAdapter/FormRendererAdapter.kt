@@ -26,9 +26,10 @@
     import kotlinx.coroutines.cancelChildren
     import kotlinx.coroutines.delay
     import kotlinx.coroutines.launch
-    import org.json.JSONArray
     import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+    import org.piramalswasthya.sakhi.utils.HelperUtil
+    import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
     import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import timber.log.Timber
     import java.io.File
@@ -591,7 +592,7 @@
 
                     "date" -> {
                         val context = itemView.context
-                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                         val today = Calendar.getInstance().time
                         val todayStr = sdf.format(today)
 
@@ -664,6 +665,11 @@
 
                         if (isFieldEditable) {
                             editText.setOnClickListener {
+                                val activity = editText.context.findFragmentActivity()
+                                    ?: return@setOnClickListener
+                                val originalLocale = Locale.getDefault()
+                                HelperUtil.setEnLocaleForDatePicker(activity)
+
                                 val calendar = Calendar.getInstance()
 
                                 var minDate: Date? = null
@@ -685,7 +691,7 @@
                                 else {
 
 
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -726,7 +732,20 @@
                                     }
                                     else{
                                         minDate = when (field.fieldId) {
-                                            "visit_date" -> null
+                                            "visit_date" -> {
+                                                if (formId == FormConstants.HBNC_FORM_ID) {
+                                                    val dueDate = getDate("due_date")
+                                                    when {
+                                                        dueDate != null && minVisitDate != null ->
+                                                            if (dueDate.after(minVisitDate)) dueDate else minVisitDate
+                                                        dueDate != null -> dueDate
+                                                        minVisitDate != null -> minVisitDate
+                                                        else -> null
+                                                    }
+                                                } else {
+                                                    null
+                                                }
+                                            }
                                             "nrc_admission_date" -> getDate("visit_date")
                                             "nrc_discharge_date" -> getDate("nrc_admission_date")
                                             "follow_up_visit_date" -> getDate("nrc_discharge_date")
@@ -740,7 +759,15 @@
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-                                        val dateStr = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+
+                                        val dateStr = String.format(
+                                            Locale.ENGLISH,
+                                            "%02d-%02d-%04d",
+                                            dayOfMonth,
+                                            month + 1,
+                                            year
+                                        )
+
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
@@ -890,6 +917,11 @@
                                     if (minDate != null && maxDate != null && minDate.after(maxDate)) {
                                         datePicker.minDate = maxDate.time
                                     }
+
+                                    setOnDismissListener {
+                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                                    }
+
                                 }.show()
                             }
                         }
@@ -908,7 +940,6 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        // Special logic for SNCU auto-selection
                         val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
                                 fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
                                 isSNCU
@@ -937,7 +968,6 @@
                                     if (isChecked && field.value != option) {
                                         field.value = option
                                         onValueChanged(field, option)
-                                        // Update UI for other radios in group
                                         for (i in 0 until radioGroup.childCount) {
                                             val child = radioGroup.getChildAt(i) as RadioButton
                                             if (child.text != option) child.isChecked = false

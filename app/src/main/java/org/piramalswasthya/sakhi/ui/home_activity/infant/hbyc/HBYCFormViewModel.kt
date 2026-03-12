@@ -250,7 +250,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
     }
 
     fun formatDate(epochMillis: Long): String {
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         return sdf.format(Date(epochMillis))
     }
 
@@ -367,7 +367,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                 val json = JSONObject(it.formDataJson)
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
-                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr) else null
+                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr) else null
             } catch (e: Exception) { null }
         }
         return if (alreadyFilledDates.contains(today)) Calendar.getInstance().apply { add(Calendar.DATE, -1) }.time else today
@@ -407,7 +407,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                 val json = JSONObject(it)
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
-                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr) else null
+                if (!dateStr.isNullOrBlank()) SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr) else null
             } catch (e: Exception) { null }
         }
     }

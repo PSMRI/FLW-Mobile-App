@@ -28,7 +28,7 @@ class BenListAdapter(
     private val role: Int? = 0,
     private val pref: PreferenceDao? = null,
     var context: FragmentActivity,
-    private val isSoftDeleteEnabled:Boolean = false,
+    private val isSoftDeleteEnabled: Boolean = false,
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
 
@@ -61,9 +61,9 @@ class BenListAdapter(
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?,
             showCall: Boolean,
-            isSoftDeleteEnabled:Boolean,
+            isSoftDeleteEnabled: Boolean,
             pref: PreferenceDao?,
-            context : FragmentActivity,
+            context: FragmentActivity,
             benIdList: List<Long>,
             childCountMap: Map<Long, Int> = emptyMap()
         ) {
@@ -102,7 +102,7 @@ class BenListAdapter(
 
             binding.executePendingBindings()
 
-           var gender = item.gender.toString()
+            var gender = item.gender.toString()
 
             if (item.relToHeadId == 19) {
                 binding.HOF.visibility = View.VISIBLE
@@ -127,9 +127,11 @@ class BenListAdapter(
                             Gender.MALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_icon_boy_ben)
                             }
+
                             Gender.FEMALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_girl)
                             }
+
                             else -> {
                                 // Intentionally left blank (no icon change)
                             }
@@ -141,9 +143,11 @@ class BenListAdapter(
                             Gender.MALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_males)
                             }
+
                             Gender.FEMALE.name -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
                             }
+
                             else -> {
                                 binding.ivHhLogo.setImageResource(R.drawable.ic_unisex)
                             }
@@ -166,6 +170,7 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + no spouse: show Add Husband only
                 item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
                     binding.btnAddChildren.visibility = View.INVISIBLE
@@ -176,11 +181,15 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + spouse added + 0 children + doYouHavechildren: Register Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        effectiveChildCount == 0  -> {
+                        item.isSpouseAdded &&
+                        item.doYouHavechildren &&
+                        effectiveChildCount == 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
+                    binding.btnAddChildren.text = context.getString(R.string.add_children)
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
                     binding.btnAddChildren.setOnClickListener {
@@ -188,19 +197,11 @@ class BenListAdapter(
                     }
                 }
 
-               /* item.gender == "FEMALE" &&
-                        item.isMarried &&
-                        !item.doYouHavechildren &&
-                        !item.isChildrenAdded -> {
-
-                    binding.btnAddChildren.visibility = View.INVISIBLE
-                    binding.btnAddSpouse.visibility = View.GONE
-                    binding.llAddSpouseBtn.visibility = View.VISIBLE
-                }*/
-
+                // FEMALE + married + spouse added + >0 children: View Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        effectiveChildCount != 0  -> {
+                        item.isSpouseAdded &&
+                        effectiveChildCount > 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)
@@ -251,17 +252,37 @@ class BenListAdapter(
                 binding.husband = false
                 binding.spouse = false
             }
-            if (item.isDeath){
-                binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_dark_outline))
-            }else{
-                binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_light_primary))
+            if (item.isDeath) {
+                binding.contentLayout.setBackgroundColor(
+                    ContextCompat.getColor(
+                        binding.contentLayout.context,
+                        R.color.md_theme_dark_outline
+                    )
+                )
+                binding.ivCall.visibility = View.GONE
+                binding.ivSyncState.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.GONE
+                binding.btnAbha.visibility = View.GONE
+                binding.ivSoftDelete.visibility = View.GONE
+            } else {
+                binding.contentLayout.setBackgroundColor(
+                    ContextCompat.getColor(
+                        binding.contentLayout.context,
+                        R.color.md_theme_light_primary
+                    )
+                )
             }
 
-            if (isSoftDeleteEnabled){
+            if (isSoftDeleteEnabled) {
                 binding.ivSoftDelete.visibility = View.VISIBLE
 
-                if (item.isDeactivate){
-                    binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.Quartenary))
+                if (item.isDeactivate) {
+                    binding.contentLayout.setBackgroundColor(
+                        ContextCompat.getColor(
+                            binding.contentLayout.context,
+                            R.color.Quartenary
+                        )
+                    )
                     binding.ivSoftDelete.visibility = View.GONE
 
                     binding.btnAbha.visibility = View.INVISIBLE
@@ -272,18 +293,30 @@ class BenListAdapter(
                     binding.llAddSpouseBtn.visibility = View.GONE
 
 
-                }else{
-                    binding.contentLayout.setBackgroundColor(ContextCompat.getColor(binding.contentLayout.context, R.color.md_theme_light_primary))
+                } else {
 
-                    binding.btnAbha.visibility = View.VISIBLE
-                    binding.tvTitleDuplicaterecord.visibility = View.GONE
-                    binding.llBenDetails4.visibility = View.VISIBLE
-                    binding.ivCall.visibility = View.VISIBLE
-                    binding.ivSyncState.visibility = View.VISIBLE
-                    binding.llAddSpouseBtn.visibility = View.VISIBLE
+                    if (!item.isDeath) {
+                        binding.contentLayout.setBackgroundColor(
+                            ContextCompat.getColor(
+                                binding.contentLayout.context,
+                                R.color.md_theme_light_primary
+                            )
+                        )
 
+                        binding.btnAbha.visibility = View.VISIBLE
+                        binding.tvTitleDuplicaterecord.visibility = View.GONE
+                        binding.llBenDetails4.visibility = View.VISIBLE
+                        binding.ivCall.visibility = View.VISIBLE
+                        binding.ivSyncState.visibility = View.VISIBLE
+                        binding.llAddSpouseBtn.visibility = View.VISIBLE
+
+                    } else {
+                        binding.ivSoftDelete.visibility = View.GONE
+
+                    }
                 }
-            }else{
+
+            } else {
                 binding.ivSoftDelete.visibility = View.GONE
             }
 
@@ -314,6 +347,7 @@ class BenListAdapter(
             benIds
         )
     }
+
     fun submitBenIds(list: List<Long>) {
         val oldIds = benIds.toSet()
         benIds.clear()
@@ -330,15 +364,14 @@ class BenListAdapter(
     }
 
 
-
     class BenClickListener(
-        private val clickedBen: (item:BenBasicDomain,hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
-        private val clickedWifeBen: (item:BenBasicDomain,hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
-        private val clickedHusbandBen: (item:BenBasicDomain,hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
-        private val clickedChildben: (item:BenBasicDomain,hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
-        private val clickedHousehold: (item:BenBasicDomain,hhId: Long) -> Unit,
-        private val clickedABHA: (item:BenBasicDomain,benId: Long, hhId: Long) -> Unit,
-        private val clickedAddAllBenBtn: (item:BenBasicDomain,benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
+        private val clickedBen: (item: BenBasicDomain, hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedWifeBen: (item: BenBasicDomain, hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedHusbandBen: (item: BenBasicDomain, hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedChildben: (item: BenBasicDomain, hhId: Long, benId: Long, relToHeadId: Int) -> Unit,
+        private val clickedHousehold: (item: BenBasicDomain, hhId: Long) -> Unit,
+        private val clickedABHA: (item: BenBasicDomain, benId: Long, hhId: Long) -> Unit,
+        private val clickedAddAllBenBtn: (item: BenBasicDomain, benId: Long, hhId: Long, isViewMode: Boolean, isIFA: Boolean) -> Unit,
         private val callBen: (ben: BenBasicDomain) -> Unit,
         private val softDeleteBen: (ben: BenBasicDomain) -> Unit
     ) {
@@ -358,7 +391,6 @@ class BenListAdapter(
         )
 
 
-
         fun onClickedHusbandBen(item: BenBasicDomain) = clickedHusbandBen(
             item,
             item.hhId,
@@ -372,9 +404,12 @@ class BenListAdapter(
             item.benId,
             item.relToHeadId
         )
-        fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item,item.hhId)
-        fun onClickABHA(item: BenBasicDomain) = clickedABHA(item,item.benId, item.hhId)
-        fun clickedAddAllBenBtn(item: BenBasicDomain, isMatched: Boolean, isIFA: Boolean) = clickedAddAllBenBtn(item,item.benId, item.hhId, isMatched,isIFA)
+
+        fun onClickedHouseHold(item: BenBasicDomain) = clickedHousehold(item, item.hhId)
+        fun onClickABHA(item: BenBasicDomain) = clickedABHA(item, item.benId, item.hhId)
+        fun clickedAddAllBenBtn(item: BenBasicDomain, isMatched: Boolean, isIFA: Boolean) =
+            clickedAddAllBenBtn(item, item.benId, item.hhId, isMatched, isIFA)
+
         fun onClickedForCall(item: BenBasicDomain) = callBen(item)
         fun onClickSoftDeleteBen(item: BenBasicDomain) = softDeleteBen(item)
     }

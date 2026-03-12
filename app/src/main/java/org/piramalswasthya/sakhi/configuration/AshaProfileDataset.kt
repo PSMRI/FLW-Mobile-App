@@ -431,7 +431,20 @@ class AshaProfileDataset(
     suspend fun mapProfileValues(cacheModel: ProfileActivityCache,context: Context){
         (cacheModel).let { dataModel ->
             dataModel.name = ashaName.value
-            dataModel.profileImage = pic.value.toString()
+            val imageUri = pic.value?.toString() ?: ""
+            val alreadyPersisted = imageUri.isNotEmpty() &&
+                    imageUri.contains(context.filesDir.absolutePath)
+            if (imageUri.isNotEmpty() && !alreadyPersisted) {
+                val persistedUri = ImageUtils.saveBenImageFromCameraToStorage(
+                    context = context,
+                    uriString = imageUri,
+                    benId = dataModel.employeeId.toLong()
+                )
+                dataModel.profileImage = persistedUri ?: imageUri
+                pic.value = dataModel.profileImage
+            } else {
+                dataModel.profileImage = imageUri
+            }
             dataModel.village = village.value.toString()
             dataModel.dob = dateReverseFormat(dob.value.toString()).toString()
             dataModel.age = ages.value!!.toInt()

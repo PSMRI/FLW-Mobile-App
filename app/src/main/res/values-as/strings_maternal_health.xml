@@ -96,7 +96,6 @@
         <item>OTHER</item>
     </string-array>
 
-
     <!--  PMSMA  -->
     <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>
     <string name="pnc_visit_number">%1d দিনত পিএনচি ভ্ৰমণ</string>
@@ -224,7 +223,6 @@
         <item>নহয়</item>
     </string-array>
 
-
     <!--  Post Natal Care -->
     <string name="pnc_period">PNC সময়</string>
     <string name="pnc_visit_date">PNC দৰ্শনীৰ তাৰিখ</string>
@@ -308,7 +306,6 @@
         <item>ৰোগ চিকিৎসা চেণ্টাৰ</item>
         <item>প্ৰবাহিত ক্ষণ</item>
     </string-array>
-
 
     <!--  Infant Registration  -->
     <string name="ir_baby_name">শিশুৰ নাম</string>

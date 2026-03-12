@@ -723,7 +723,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -881,7 +881,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1039,7 +1039,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1198,7 +1198,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1713,10 +1713,10 @@ class VLFRepo @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy", Locale.ENGLISH)
         for (fmt in inputs) {
             try {
-                val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                val d = SimpleDateFormat(fmt, Locale.ENGLISH).parse(dateStr)
                 if (d != null) return out.format(d)
             } catch (_: Exception) {}
         }
