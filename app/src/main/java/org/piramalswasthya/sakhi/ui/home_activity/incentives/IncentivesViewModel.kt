@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveDomain
@@ -21,13 +22,16 @@ import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
+import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 
 
 @HiltViewModel
 class
 IncentivesViewModel @Inject constructor(
     pref: PreferenceDao,
-    incentiveRepo: IncentiveRepo
+    incentiveRepo: IncentiveRepo,
+    var apiService: AmritApiService
 ) : ViewModel() {
 
     private val _lastUpdated: Long = pref.lastIncentivePullTimestamp
@@ -55,6 +59,8 @@ IncentivesViewModel @Inject constructor(
         setToStartOfTheDay()
     }.timeInMillis
 
+    private val _actionState = MutableLiveData<ActionState>()
+    val actionState: LiveData<ActionState> = _actionState
     private val initEnd = Calendar.getInstance().apply {
         setToStartOfTheDay()
     }.timeInMillis
@@ -169,6 +175,24 @@ IncentivesViewModel @Inject constructor(
             )
     }
 
+    fun getMonthNumber(monthName: String): Int {
+        val months = mapOf(
+            "January" to 1,
+            "February" to 2,
+            "March" to 3,
+            "April" to 4,
+            "May" to 5,
+            "June" to 6,
+            "July" to 7,
+            "August" to 8,
+            "September" to 9,
+            "October" to 10,
+            "November" to 11,
+            "December" to 12
+        )
+
+        return months[monthName] ?: 0
+    }
     fun getRecordsForActivity(activityId: Long): Flow<List<IncentiveDomain>> {
         return combine(_incentiveRepo.list, range) { cacheList, range ->
             val (from, to) = range
@@ -179,4 +203,53 @@ IncentivesViewModel @Inject constructor(
         }
     }
 
+
+    fun claimIncentive(selectedMonth: String, selectedYear: String) {
+
+        getMonthNumber(selectedMonth)
+
+        viewModelScope.launch {
+            _actionState.value = ActionState.Loading
+
+            try {
+
+                val response = apiService.cliamAshaIncetive(
+                    mapOf(
+                        "month" to getMonthNumber(selectedMonth),
+                        "year" to selectedYear.toInt(),
+                        "claimed" to true
+
+                    )
+                )
+
+                if (response.isSuccessful) {
+
+                    val json = response.body()?.string()
+                    val jsonObj = JSONObject(json ?: "{}")
+
+                    if (jsonObj.optInt("statusCode", 0) == 200) {
+
+                        val updated = jsonObj.optInt("updatedRecords", 0)
+
+                        _actionState.value =
+                            ActionState.Success("Successfully claimed $updated records")
+                        pullIncentives()
+                    } else {
+                        _actionState.value =
+                            ActionState.Error(jsonObj.optString("errorMessage", "Claim failed"))
+                    }
+
+                } else {
+                    _actionState.value =
+                        ActionState.Error("Server error: ${response.code()}")
+                }
+
+            } catch (e: Exception) {
+
+                _actionState.value =
+                    ActionState.Error(e.message ?: "Unknown error")
+
+            }
+        }
+    }
 }

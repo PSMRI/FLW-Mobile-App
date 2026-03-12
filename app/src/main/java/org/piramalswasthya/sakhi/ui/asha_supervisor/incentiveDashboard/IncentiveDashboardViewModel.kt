@@ -25,7 +25,6 @@ class IncentiveDashboardViewModel @Inject constructor(
     private val _dashboardData = MutableLiveData<DashboardUiState>()
     val dashboardData: LiveData<DashboardUiState> = _dashboardData
 
-    // ✅ sirf ek baar retry allowed
     fun fetchDashboard(month: Int, year: Int, isRetry: Boolean = false) {
         viewModelScope.launch {
             _dashboardData.value = DashboardUiState.Loading

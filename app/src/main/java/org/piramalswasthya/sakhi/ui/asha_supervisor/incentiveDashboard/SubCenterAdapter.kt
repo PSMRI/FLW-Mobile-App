@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.LayoutListItemBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.Facility
 
-class SubCenterAdapter : ListAdapter<Facility, SubCenterAdapter.SubCenterViewHolder>(DiffCallback()) {
+class SubCenterAdapter(private val onSubCenterClick: (Facility) -> Unit) : ListAdapter<Facility, SubCenterAdapter.SubCenterViewHolder>(DiffCallback()) {
 
     inner class SubCenterViewHolder(private val binding: LayoutListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -16,6 +16,9 @@ class SubCenterAdapter : ListAdapter<Facility, SubCenterAdapter.SubCenterViewHol
         fun bind(facility: Facility) {
             binding.subCenterName.text = facility.facilityName
             binding.tvAshaCount.text = "ASHAs: ${facility.ashaCount}"
+            binding.subCenterName.setOnClickListener {
+                onSubCenterClick(facility)
+            }
         }
     }
 
