@@ -25,7 +25,6 @@ class IncentiveDashboardViewModel @Inject constructor(
     private val _dashboardData = MutableLiveData<DashboardUiState>()
     val dashboardData: LiveData<DashboardUiState> = _dashboardData
 
-    // ✅ sirf ek baar retry allowed
     fun fetchDashboard(month: Int, year: Int, isRetry: Boolean = false) {
         viewModelScope.launch {
             _dashboardData.value = DashboardUiState.Loading
@@ -49,7 +48,6 @@ class IncentiveDashboardViewModel @Inject constructor(
                             _dashboardData.value = DashboardUiState.Success(parsed.data)
                         }
                         parsed?.statusCode == 401 || parsed?.statusCode == 5002 -> {
-                            // ✅ sirf ek baar retry
                             if (!isRetry && userRepo.refreshTokenTmc(user.userName, user.password)) {
                                 fetchDashboard(month, year, isRetry = true)
                             } else {

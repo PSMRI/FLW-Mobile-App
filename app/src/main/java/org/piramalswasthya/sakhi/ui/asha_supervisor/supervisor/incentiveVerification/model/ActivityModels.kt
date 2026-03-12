@@ -4,11 +4,14 @@ data class ActivityDetail(
     val id: String,
     val name: String,
     val amount: Int,
+    val claimCount: Int,
     val activityDate: String,
+    val isDefaultActivity: Boolean,
     val groupName: String,
+    val activityDec: String,
     val submittedOn: String,
     val status: ActivityStatus,
-    val statusMessage: String
+//    val statusMessage: String
 )
 
 enum class ActivityStatus {
