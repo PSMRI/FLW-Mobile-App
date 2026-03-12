@@ -61,7 +61,7 @@ class SupervisorProfileFragment : Fragment()  {
         super.onViewCreated(view, savedInstanceState)
         binding.tvValue.setText(viewModel.getUserMobile())
         binding.emailtvValue.setText(viewModel.getUserEmail())
-        binding.supervisorId.setText("ID : ${ viewModel.getsupervisorId().toString()}")
+        binding.supervisorId.setText("EMP. ID : ${ viewModel.getEmpId().toString()}")
         binding.supervisorName.setText(viewModel.getSuperVisorname())
         binding.subName.setText(viewModel.getSuperVisorSubname())
         binding.districtvValue.text = viewModel.getDistrict()

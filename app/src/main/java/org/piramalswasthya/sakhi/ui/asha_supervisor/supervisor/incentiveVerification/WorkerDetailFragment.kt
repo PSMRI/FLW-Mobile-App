@@ -77,7 +77,7 @@ class WorkerDetailFragment : Fragment() {
         val monthName = monthNames[selectedMonth - 1]
 
         binding.tvWorkerInfo.text = "AshaId: $workerId , $scName , $monthName $selectedYear"
-        binding.tvSupervisorInfo.text = "Supervisor ID: ${user?.userId ?: "-"}"
+        binding.tvSupervisorInfo.text = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
 
         viewModel.init(workerId, selectedMonth, selectedYear)
     }

@@ -1,4 +1,3 @@
-// IncentiveVerificationViewModel.kt
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel
 
 import androidx.lifecycle.LiveData
@@ -60,7 +59,7 @@ class IncentiveVerificationViewModel @Inject constructor(
             VerificationStatus.PENDING  -> 102
             VerificationStatus.REJECTED -> 103
             VerificationStatus.OVERDUE  -> 104
-            VerificationStatus.ALL      -> 102
+            VerificationStatus.ALL      -> 0
         }
 
         viewModelScope.launch {
