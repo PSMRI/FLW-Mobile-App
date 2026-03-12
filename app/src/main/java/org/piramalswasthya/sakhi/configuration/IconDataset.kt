@@ -309,7 +309,7 @@ class IconDataset @Inject constructor(
     fun getVLFDataset(resources: Resources): List<Icon> {
 
         val phcReviewIcon = Icon(
-            R.drawable.phc_review,
+            R.drawable.phc_meeting_s2,
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
                 resources.getString(R.string.cluster_review)
             else
@@ -328,7 +328,7 @@ class IconDataset @Inject constructor(
                     .actionVillageLevelFormsFragmentToVHNDListFragement()
             ),
             Icon(
-                R.drawable.vhnc,
+                R.drawable.ic__vhnsc,
                 resources.getString(R.string.vnhc),
                 null,
                 VillageLevelFormsFragmentDirections
@@ -350,28 +350,28 @@ class IconDataset @Inject constructor(
                     .actionVillageLevelFormsFragmentToDewormingListFragment()
             ),
             Icon(
-                R.drawable.dewarming,
+                R.drawable.ic__maa_meeting,
                 resources.getString(R.string.maa_meeting),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
             ),
             Icon(
-                R.drawable.dewarming,
+                R.drawable.u_win_s1,
                 resources.getString(R.string.u_win_session),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
             ),
             Icon(
-                R.drawable.dewarming,
+                R.drawable.ic__pulse_polio,
                 resources.getString(R.string.pulse_polio_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
             ),
             Icon(
-                R.drawable.dewarming,
+                R.drawable.ic__ors,
                 resources.getString(R.string.ors_distribution_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
@@ -563,19 +563,19 @@ class IconDataset @Inject constructor(
             DeathReportsFragmentDirections.actionDeathReportsFragmentToGdrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.maternal_death_s1,
             resources.getString(R.string.maternal_deaths),
             recordsRepo.getMaternalDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToMdsrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.non_maternal_death_s1,
             resources.getString(R.string.non_maternal_deaths),
             recordsRepo.getNonMaternalDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToNmdsrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.ic__child_death,
             resources.getString(R.string.child_deaths),
             recordsRepo.getChildDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToCdrListFragment()
