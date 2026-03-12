@@ -121,8 +121,8 @@ class SupervisorHomeFragment : Fragment() {
         binding.vp2Home.adapter = SuperVisorAdapter(this)
         TabLayoutMediator(binding.tlHomeViewpager, binding.vp2Home) { tab, position ->
             tab.text = when (position) {
-                0 -> requireActivity().getString(R.string.facilitator)
-                1 -> requireActivity().getString(R.string.incentive_dashboard)
+                1 -> requireActivity().getString(R.string.facilitator)
+                0 -> requireActivity().getString(R.string.incentive_dashboard)
                 else -> "NA"
             }
             if (position == 1) {

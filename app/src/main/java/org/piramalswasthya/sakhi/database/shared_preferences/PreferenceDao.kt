@@ -263,6 +263,14 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         return pref.getString("PREF_USER_MOBILE", null)
     }
 
+    fun saveEmployeeId(mobile: String) {
+        pref.edit().putString("PREF_EMPID", mobile).apply()
+    }
+
+    fun getEmployeeId(): String? {
+        return pref.getString("PREF_EMPID", null)
+    }
+
     fun saveUserEmail(email: String) {
         pref.edit().putString("PREF_USER_EMAIL", email).apply()
     }
@@ -326,5 +334,20 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     fun getSupervisorFacilityType(): String? {
         return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", null)
+    }
+
+    fun saveDesignationId(designationId: Int) {
+        pref.edit().putInt("designation_id", designationId).apply()
+    }
+
+    fun getDesignationId(): Int {
+        return pref.getInt("designation_id", -1)
+    }
+    fun saveLocationType(locationType: String) {
+        pref.edit().putString("location_type", locationType).apply()
+    }
+
+    fun getLocationType(): String {
+        return pref.getString("location_type", "") ?: ""
     }
 }

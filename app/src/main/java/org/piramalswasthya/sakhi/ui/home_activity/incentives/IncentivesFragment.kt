@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -42,26 +43,16 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
 import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
+import org.piramalswasthya.sakhi.databinding.LayoutRejectedDialogBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
-import org.piramalswasthya.sakhi.helpers.Konstants.additionalIncentivetoAshaSGovt
-import org.piramalswasthya.sakhi.helpers.Konstants.adolescentHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.antaraProg
-import org.piramalswasthya.sakhi.helpers.Konstants.ashaIncetiveJSY
-import org.piramalswasthya.sakhi.helpers.Konstants.ashaMonthlyRActivity
-import org.piramalswasthya.sakhi.helpers.Konstants.childHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.familyPlanning
-import org.piramalswasthya.sakhi.helpers.Konstants.immunization
-import org.piramalswasthya.sakhi.helpers.Konstants.maternalHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.ncd
-import org.piramalswasthya.sakhi.helpers.Konstants.umbrellaProgrames
 import org.piramalswasthya.sakhi.helpers.setToEndOfTheDay
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomainDTO
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.drawMultilineText
 import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
@@ -103,6 +94,53 @@ class IncentivesFragment : Fragment() {
     }
 
     private var isChhattisgarhVariant: Boolean = false
+
+    fun showRejectedDialog(
+        status: Int,
+        rejectedBy: String,
+        rejectedReason: String,
+        rejectedDate: String,
+        claimDate: String
+    ) {
+
+        val binding = LayoutRejectedDialogBinding.inflate(layoutInflater)
+
+        binding.tvRejectedBy.text = rejectedBy
+        binding.tvRejectedReason.text = rejectedReason
+        binding.tvRejectedDate.text = rejectedDate
+        binding.tvClaimDate.text = claimDate
+        if (rejectedDate.isEmpty()) {
+            binding.date.visibility = View.GONE
+        } else {
+            binding.date.visibility = View.VISIBLE
+        }
+
+        when (status) {
+
+            101 -> {
+                binding.tvTitle.text = "Verified By"
+                binding.date.text = "Verified Date"
+                binding.tvRejectedReason.visibility = View.GONE
+                binding.rejectedTitle.visibility = View.GONE
+            }
+
+            103 -> {
+                binding.tvTitle.text = "Rejected By"
+                binding.date.text = "Rejected Date"
+                binding.tvRejectedReason.text = rejectedReason
+                binding.tvRejectedReason.visibility = View.VISIBLE
+                binding.rejectedTitle.visibility = View.VISIBLE
+            }
+        }
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+        dialog.show()
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -235,6 +273,7 @@ class IncentivesFragment : Fragment() {
                 binding.tvLastupdated.text =
                     getString(R.string.incentive_last_updated, viewModel.lastUpdated)
 
+
             }
 
 
@@ -249,6 +288,9 @@ class IncentivesFragment : Fragment() {
         }
 
         binding.fetchData.setOnClickListener {
+            binding.claimlayout.visibility = View.VISIBLE
+
+
             val calendar = Calendar.getInstance()
             calendar.set(
                 Calendar.MONTH,
@@ -264,9 +306,123 @@ class IncentivesFragment : Fragment() {
             calendar.setToEndOfTheDay()
             val lastDay = calendar.timeInMillis
             viewModel.setRange(firstDay, lastDay)
+            binding.claimbtn.setOnClickListener {
+                viewModel.claimIncentive(selectedMonth,selectedYear)
+            }
+
+            if (incentiveRecordList.isNotEmpty()) {
+                if (incentiveRecordList.get(0).record.isClaimed) {
+                    binding.claimbtn.text = "Claimed"
+                    binding.claimbtn.isClickable = false
+                    binding.claimStatus.visibility = View.VISIBLE
+                    binding.approved.text = ""
+                    binding.approved.setOnClickListener {
+                        showRejectedDialog(
+                            incentiveRecordList.get(0).record.approvalStatus,
+                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})" ,
+                            incentiveRecordList.get(0).record.reason,
+                            incentiveRecordList.get(0).record.approvalDate,
+                            incentiveRecordList.get(0).record.calimedDate,
+                        )
+                    }
+                    when (incentiveRecordList.get(0).record.approvalStatus) {
+                        101 ->  {
+                            binding.approved.text = "Verified"
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
+                            )
+                        }
+                        102 ->  {
+                            binding.approved.text = "Pending"
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
+                            )
+                        }
+                        103 -> {
+                            binding.approved.text = "Rejected"
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
+                            )
+                        }
+
+                    }
+                } else {
+                    binding.claimbtn.text = "Claim"
+                    binding.claimbtn.isClickable = true
+                    binding.claimStatus.visibility = View.GONE
+                }
+
+            }
         }
 
 
+        viewModel.actionState.observe(viewLifecycleOwner) { state ->
+
+            when (state) {
+
+                is ActionState.Loading -> {
+
+                }
+
+                is ActionState.Success -> {
+
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+
+                    binding.claimbtn.text = "Claimed"
+//                    binding.claimbtn.isEnabled = false
+//                    binding.claimbtn.isClickable = false
+                    binding.claimStatus.visibility = View.VISIBLE
+                    if (incentiveRecordList.isNotEmpty()) {
+                        if (incentiveRecordList.get(0).record.isClaimed) {
+                            binding.claimbtn.text = "Claimed"
+                            binding.claimbtn.isClickable = false
+                            binding.claimStatus.visibility = View.VISIBLE
+                            binding.approved.text = ""
+                            binding.approved.setOnClickListener {
+                                showRejectedDialog(
+                                    incentiveRecordList.get(0).record.approvalStatus,
+                                    "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})" ,
+                                    incentiveRecordList.get(0).record.reason,
+                                    incentiveRecordList.get(0).record.approvalDate,
+                                    incentiveRecordList.get(0).record.calimedDate,
+                                )
+                            }
+                            when (incentiveRecordList.get(0).record.approvalStatus) {
+                                101 ->  {
+                                    binding.approved.text = "Verified"
+                                    binding.approved.setBackgroundColor(
+                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
+                                    )
+                                }
+                                102 ->  {
+                                    binding.approved.text = "Pending"
+                                    binding.approved.setBackgroundColor(
+                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
+                                    )
+                                }
+                                103 -> {
+                                    binding.approved.text = "Rejected"
+                                    binding.approved.setBackgroundColor(
+                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
+                                    )
+                                }
+
+                            }
+                        } else {
+                            binding.claimbtn.text = "Claim"
+                            binding.claimbtn.isClickable = true
+                            binding.claimStatus.visibility = View.GONE
+                        }
+
+                    }
+
+                }
+
+                is ActionState.Error -> {
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.tvTotalPending.setOnClickListener {
             if (isMitaninVariant || isChhattisgarhVariant) {
@@ -1138,6 +1294,7 @@ class IncentivesFragment : Fragment() {
     }
 
 }
+
 
 private fun getCurrentDateString(): String {
     val calendar = Calendar.getInstance()

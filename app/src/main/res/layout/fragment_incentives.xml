@@ -161,8 +161,53 @@
                 >
             </com.google.android.material.button.MaterialButton>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/claimlayout"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:paddingVertical="@dimen/padding_normal"
+            android:layout_marginStart="5dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/claimbtn"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_height="wrap_content"
+                android:text="Claim"
+                >
+            </com.google.android.material.button.MaterialButton>
+        </LinearLayout>
     </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/claimStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_small"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/from_to_date_range"
+        >
+        <TextView
+            android:id="@+id/claimedStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Incentive claimed status"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/approved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text=''
+            android:textColor="@color/md_theme_light_onPrimary"
+            android:background='@color/holo_green_dark'
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
@@ -170,7 +215,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/holo_orange_light"
         android:padding="@dimen/padding_small"
-        app:layout_constraintTop_toBottomOf="@+id/from_to_date_range">
+        app:layout_constraintTop_toBottomOf="@+id/claimStatus">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"

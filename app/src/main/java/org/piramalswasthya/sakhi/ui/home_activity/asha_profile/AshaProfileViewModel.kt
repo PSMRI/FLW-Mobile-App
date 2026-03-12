@@ -65,7 +65,7 @@ class AshaProfileViewModel @Inject constructor(
         get() = _recordExists
 
     private val dataset =
-        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo)
+        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo,preferenceDao)
     val formList = dataset.listFlow
 
     var isPregnant: Boolean = false
