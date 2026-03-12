@@ -176,7 +176,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_height="wrap_content"
-                android:text="Claim"
+                android:text="@string/claim"
                 >
             </com.google.android.material.button.MaterialButton>
         </LinearLayout>

@@ -213,7 +213,7 @@ IncentivesViewModel @Inject constructor(
 
             try {
 
-                val response = apiService.cliamAshaIncetive(
+                val response = apiService.claimAshaIncentive(
                     mapOf(
                         "month" to getMonthNumber(selectedMonth),
                         "year" to selectedYear.toInt(),

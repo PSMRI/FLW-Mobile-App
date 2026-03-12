@@ -124,6 +124,13 @@ class IncentivesFragment : Fragment() {
                 binding.rejectedTitle.visibility = View.GONE
             }
 
+            101 -> {
+                binding.tvTitle.text = "Claim Status"
+                binding.date.visibility = View.GONE
+                binding.tvRejectedReason.visibility = View.GONE
+                binding.rejectedTitle.visibility = View.GONE
+            }
+
             103 -> {
                 binding.tvTitle.text = "Rejected By"
                 binding.date.text = "Rejected Date"
@@ -361,7 +368,8 @@ class IncentivesFragment : Fragment() {
             when (state) {
 
                 is ActionState.Loading -> {
-
+                    binding.claimbtn.isEnabled = false
+                    binding.claimbtn.text = "Claiming..."
                 }
 
                 is ActionState.Success -> {
