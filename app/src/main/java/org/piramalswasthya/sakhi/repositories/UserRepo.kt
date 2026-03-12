@@ -194,15 +194,24 @@ class UserRepo @Inject constructor(
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()
-
+            val designationId = data.optInt("designationID", -1)
+            preferenceDao.saveDesignationId(designationId)
             if (data.has("facilityData")) {
 
                 val facilityData = data.getJSONObject("facilityData")
 
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+                    val locationType = location.optString("locationType", "")
+                    preferenceDao.saveLocationType(locationType)
+
+
+                }
                 if (facilityData.has("user")) {
 
                     val userObj = facilityData.getJSONObject("user")
-
+                    val employeeId = userObj.optString("employeeId", "")
+                    preferenceDao.saveEmployeeId(employeeId)
                     if (userObj.has("demographics")) {
 
                         val demographics = userObj.getJSONObject("demographics")

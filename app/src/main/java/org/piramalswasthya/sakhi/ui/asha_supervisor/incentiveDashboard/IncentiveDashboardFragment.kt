@@ -45,7 +45,9 @@ class IncentiveDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = SubCenterAdapter()
+        val adapter = SubCenterAdapter{
+            facility -> navigateToVerification(facility.facilityId,"")
+        }
         binding.subCenterRV.adapter = adapter
 
         updateMonthYearText()
@@ -105,14 +107,14 @@ class IncentiveDashboardFragment : Fragment() {
                     facilityId = data.facilities.firstOrNull()?.facilityId ?: 0
 
                     binding.tvSupervisorName.text = "Supervisor: ${data.supervisor.fullName}"
-                    binding.tvSupervisorId.text = "Supervisor ID: ${data.supervisor.userId}"
+                    binding.tvSupervisorId.text = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
                     binding.tvTotalAshasCount.text = data.totalAshaCount.toString()
 
                     binding.tvVerifiedCount.text = summary.verified.toString()
                     binding.tvPendingCount.text = summary.pending.toString()
                     binding.tvOverdueCount.text = summary.overDue.toString()
                     binding.tvRejectedCount.text = summary.rejected.toString()
-
+                    binding.tvSubCentreTitle.text = "${resources.getString(R.string.sub_center_under_you_4)} ${data.facilities.size}"
                     adapter.submitList(data.facilities)
                 }
                 is DashboardUiState.Error -> {
@@ -125,13 +127,26 @@ class IncentiveDashboardFragment : Fragment() {
     }
 
     private fun setClickListeners() {
-        binding.cardVerified.setOnClickListener { navigateToVerification("verified") }
-        binding.cardPending.setOnClickListener { navigateToVerification("pending") }
-        binding.cardOverdue.setOnClickListener { navigateToVerification("overdue") }
-        binding.cardRejected.setOnClickListener { navigateToVerification("rejected") }
+        binding.cardVerified.setOnClickListener { navigateToVerification(
+            0,
+            "verified"
+        ) }
+        binding.cardPending.setOnClickListener { navigateToVerification(
+            0,
+            "pending"
+        ) }
+        binding.cardOverdue.setOnClickListener { navigateToVerification(
+            0,
+            "overdue"
+        ) }
+        binding.cardRejected.setOnClickListener { navigateToVerification(
+            0,
+            "rejected"
+        ) }
+        binding.cardTotalAshas.setOnClickListener { navigateToVerification(0, "") }
     }
 
-    private fun navigateToVerification(status: String) {
+    private fun navigateToVerification(facilityId: Int, status: String) {
         val action = SupervisorHomeFragmentDirections
             .actionSupervisorHomeFragmentToIncentiveVerificationFragment(
                 status = status,

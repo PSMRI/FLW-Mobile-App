@@ -159,7 +159,7 @@ class WorkerDetailViewModel @Inject constructor(
         ashaId: Int,
         incentiveIds: List<Long>
     ) {
-        // ✅ empty guard
+
         if (incentiveIds.isEmpty()) {
             _actionState.value = ActionState.Error("No records to verify")
             return
