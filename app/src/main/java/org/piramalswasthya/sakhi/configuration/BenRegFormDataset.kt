@@ -663,15 +663,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 }
             }
         } else {
-            list.removeAll(
-                listOf(
+            listOf(
                     husbandName,
                     wifeName,
                     spouseName,
-                    ageAtMarriage,
-                    haveChildren
-                )
-            )
+                    ageAtMarriage
+                ).forEach { list.remove(it) }
         }
 
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
@@ -728,8 +725,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (hasThirdPage()) list.add(reproductiveStatus)
 
         if (isKid()) {
-            list.removeAll(
-                listOf(
+            listOf(
                     maritalStatus,
                     husbandName,
                     wifeName,
@@ -737,8 +733,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ageAtMarriage,
                     dateOfMarriage,
                     reproductiveStatus
-                )
-            )
+                ).forEach { list.remove(it) }
             list.addAll(
                 listOf(
                     birthCertificateNumber,
@@ -1286,8 +1281,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ageAtMarriage.max = getAgeFromDob(it.dob).toLong()
         }
         if (isKid()) {
-            list.removeAll(
-                listOf(
+            listOf(
                     maritalStatus,
                     husbandName,
                     wifeName,
@@ -1295,8 +1289,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     ageAtMarriage,
                     dateOfMarriage,
                     reproductiveStatus
-                )
-            )
+                ).forEach { list.remove(it) }
             list.addAll(
                 listOf(
                     birthCertificateNumber,
@@ -1805,9 +1798,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (whoConductedDelivery.value == whoConductedDelivery.entries!!.last()) list.add(
             list.indexOf(whoConductedDelivery) + 1, otherWhoConductedDelivery
         )
-        if (complicationsDuringDelivery.value == complicationsDuringDelivery.entries!![4]) list.removeAll(
-            deathRemoveList
-        )
+        if (complicationsDuringDelivery.value == complicationsDuringDelivery.entries!![4]) deathRemoveList.forEach { list.remove(it) }
 
         setUpPage(list)
     }

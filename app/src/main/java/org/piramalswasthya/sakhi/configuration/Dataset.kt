@@ -7,6 +7,8 @@ import android.util.Range
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -119,6 +121,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
 
+    private val listMutex = Mutex()
     private val list = mutableListOf<FormElement>()
 
     private val _listFlow = MutableStateFlow<List<FormElement>>(emptyList())
@@ -136,11 +139,11 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun FormElement.getStringFromPosition(position: Int): String? {
-        return if (position <= 0) null else entries?.get(position - 1)
+        return if (position <= 0) null else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getStringSpauseFromPosition(position: Int): String? {
-        return if (position <= 0) entries?.get(1) else entries?.get(position - 1)
+        return if (position <= 0) entries?.getOrNull(1) else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
@@ -156,33 +159,36 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     abstract fun mapValues(cacheModel: FormDataModel, pageNumber: Int = 0)
     protected fun getIndexOfElement(element: FormElement) = list.indexOf(element)
     suspend fun updateList(formId: Int, index: Int) {
-        list.find { it.id == formId }?.let {
-            if (it.inputType == InputType.DROPDOWN) {
-                it.errorText = null
+        listMutex.withLock {
+            list.find { it.id == formId }?.let {
+                if (it.inputType == InputType.DROPDOWN) {
+                    it.errorText = null
+                }
             }
-        }
-        val updateIndex = handleListOnValueChanged(formId, index)
-        if (updateIndex != -1) {
-            val newList = list.toMutableList()
+            val updateIndex = handleListOnValueChanged(formId, index)
+            if (updateIndex != -1) {
+                val newList = list.toMutableList()
 //            if (updateUIForCurrentElement) {
 //                Timber.d("Updating UI element ...")
 //                newList[updateIndex] = list[updateIndex].cloneForm()
 //                updateUIForCurrentElement = false
 //            }
-            Timber.d("Emitting ${newList}}")
+                Timber.d("Emitting ${newList}}")
 //            _listFlow.emit(emptyList())
-            _listFlow.emit(newList)
+                _listFlow.emit(newList)
+            }
         }
     }
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
-
-        try {
-            list.clear()
-            list.addAll(mList)
-            _listFlow.emit(list.toMutableList())
-        } catch (e: Exception) {
-            e.printStackTrace()
+        listMutex.withLock {
+            try {
+                list.clear()
+                list.addAll(mList)
+                _listFlow.emit(list.toMutableList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -203,9 +209,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
 
                 targetSideEffect?.let { sideEffectList ->
@@ -213,7 +218,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                         it.value = null
                         it.errorText = null
                     }
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                 }
                 target.forEach {
                     it.value = null
@@ -240,15 +245,14 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
                 target.forEach {
                     it.value = null
                 }
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -303,7 +307,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
           return if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -342,7 +346,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 302
@@ -358,7 +362,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     ): Int {
 
         removeItems.forEach { it.value = null }
-        list.removeAll(removeItems)
+        removeItems.forEach { list.remove(it) }
 
         addItems.forEach {
             if (list.contains(it)) list.remove(it)
@@ -381,7 +385,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         removeItems.forEach {
             it.value = null
         }
-        list.removeAll(removeItems)
+        removeItems.forEach { list.remove(it) }
 //        list.removeAll(addItems)
         addItems.forEach {
             if (list.contains(it)) list.remove(it)
