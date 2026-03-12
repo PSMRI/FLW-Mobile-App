@@ -232,19 +232,7 @@ class EligibleCoupleTrackingDataset(
             isPregnancyTestDone,
         )
 
-        // Add FP question (Q1)
-        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            list.add(usingFamilyPlanning)
-            list.remove(usingFamilyPlanningMitanin)
-        } else {
-            list.add(usingFamilyPlanningMitanin)
-            list.remove(usingFamilyPlanning)
-        }
-
         if (saved == null) {
-
-            // -------- NEW ENTRY --------
-
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
             dateOfVisit.value?.let {
                 financialYear.value = getFinancialYear(it)
@@ -423,7 +411,7 @@ class EligibleCoupleTrackingDataset(
                 if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
-                        removeItems = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
+                        removeItems = listOf(isPregnant,usingFamilyPlanning,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2),
                         addItems = listOf(pregnancyTestResult)
                     )
                 }
@@ -431,13 +419,13 @@ class EligibleCoupleTrackingDataset(
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         triggerDependants(
                             source = isPregnancyTestDone,
-                            removeItems = listOf(isPregnant,pregnancyTestResult),
+                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2),
                             addItems = listOf(usingFamilyPlanning)
                         )
                     }else{
                         triggerDependants(
                             source = isPregnancyTestDone,
-                            removeItems = listOf(isPregnant,pregnancyTestResult),
+                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2,wantToUseFamilyPlanning),
                             addItems = listOf(usingFamilyPlanningMitanin)
                         )
                     }
@@ -458,14 +446,14 @@ class EligibleCoupleTrackingDataset(
                             passedIndex = index,
                             triggerIndex = 0,
                             target = isPregnant,
-                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod)
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                         triggerforHide(
                             source = pregnancyTestResult,
                             passedIndex = index,
                             triggerIndex = 1,
                             target = usingFamilyPlanning,
-                            targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
+                            targetSideEffect = listOf(usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                     }else{
 
@@ -474,19 +462,19 @@ class EligibleCoupleTrackingDataset(
                             passedIndex = index,
                             triggerIndex = 0,
                             target = isPregnant,
-                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,methodOfContraception, anyOtherMethod)
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                         triggerforHide(
                             source = pregnancyTestResult,
                             passedIndex = index,
                             triggerIndex = 1,
                             target = usingFamilyPlanningMitanin,
-                            targetSideEffect = listOf(usingFamilyPlanningMitanin,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod)
+                            targetSideEffect = listOf(usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                     }
                 }
                 else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
-                    isPregnant.isEnabled = true
+                    isPregnant.isEnabled = false
                     isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
 
 
@@ -496,14 +484,14 @@ class EligibleCoupleTrackingDataset(
                             passedIndex = index,
                             triggerIndex = 1,
                             target = isPregnant,
-                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanning,methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
                             triggerIndex = 1,
                             target = usingFamilyPlanning,
-                            targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                            targetSideEffect = listOf(methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                     }else{
 
@@ -512,14 +500,14 @@ class EligibleCoupleTrackingDataset(
                             passedIndex = index,
                             triggerIndex = 1,
                             target = isPregnant,
-                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                            targetSideEffect = listOf(isPregnant,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
                             triggerIndex = 1,
                             target = usingFamilyPlanningMitanin,
-                            targetSideEffect = listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                            targetSideEffect = listOf(wantToUseFamilyPlanning,methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                         )
 
                     }
@@ -538,9 +526,9 @@ class EligibleCoupleTrackingDataset(
                 antraDoses.value = antraDoseValue
                 var list1: List<Any> = emptyList()
                 if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                    list1=listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1)
+                    list1=listOf(methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
                 }else{
-                    list1= listOf(methodOfContraception, anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection)
+                    list1= listOf(methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,wantToUseFamilyPlanning,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
 
                 }
                 if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
@@ -623,11 +611,10 @@ class EligibleCoupleTrackingDataset(
                 else{
                     triggerDependants(
                         source = usingFamilyPlanning,
-                        removeItems = listOf(methodOfContraception,dateOfSterilisation,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1),
+                        removeItems = listOf(methodOfContraception,dateOfSterilisation,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,deliveryDischargeSummary1,deliveryDischargeSummary2),
                         addItems = emptyList()
                     )
                 }
-//
 
             }
 
@@ -658,7 +645,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = methodOfContraception,
                             addItems = listOf(anyOtherMethod),
-                            removeItems = listOf(antraDoses,deliveryDischargeSummary1,
+                            removeItems = listOf(antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,deliveryDischargeSummary1,
                                 deliveryDischargeSummary2,mpaFileUpload1,dateOfSterilisation),
                             position = getIndexById(methodOfContraception.id) + 1
                         )
@@ -768,7 +755,6 @@ class EligibleCoupleTrackingDataset(
                         addItems = listOf(methodOfContraception)
                     )
                 } else {
-                    // NO → END FLOW
                     triggerDependants(
                         source = wantToUseFamilyPlanning,
                         removeItems = listOf(
@@ -778,6 +764,7 @@ class EligibleCoupleTrackingDataset(
                             dueDateOfAntraInjection,
                             anyOtherMethod,
                             mpaFileUpload1,
+                            dateOfSterilisation,
                             deliveryDischargeSummary1,
                             deliveryDischargeSummary2
                         ),
@@ -906,7 +893,5 @@ class EligibleCoupleTrackingDataset(
         val next = doseNum + 1
         return if (next in 1..10) "Dose-$next" else "No More Doses"
     }
-
-
 
 }

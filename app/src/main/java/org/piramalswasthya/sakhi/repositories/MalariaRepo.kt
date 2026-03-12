@@ -116,7 +116,7 @@ class MalariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -210,7 +210,7 @@ class MalariaRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                val errorMessage = jsonObj.getString("errorMessage")
+//                                val errorMessage = jsonObj.optString("errorMessage", "")
 //                                if (errorMessage == "No record found") return@withContext 0
                                 return@withContext 0
                             }
@@ -236,8 +236,15 @@ class MalariaRepo @Inject constructor(
 
     private suspend fun saveMalariaScreeningCacheFromResponse(dataObj: String): MutableList<MalariaScreeningCache> {
         val malariaScreeningList = mutableListOf<MalariaScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
-        requestDTO?.malariaLists?.forEach { malariaScreeningDTO ->
+        val malariaLists: List<MalariaScreeningDTO> = try {
+            // Try parsing as object first (MalariaScreeningRequestDTO)
+            val requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
+            requestDTO?.malariaLists ?: emptyList()
+        } catch (e: Exception) {
+            // Server returns array directly
+            Gson().fromJson(dataObj, Array<MalariaScreeningDTO>::class.java)?.toList() ?: emptyList()
+        }
+        malariaLists.forEach { malariaScreeningDTO ->
             malariaScreeningDTO.caseDate?.let {
                 var tbScreeningCache: MalariaScreeningCache? =
                     malariaDao.getMalariaScreening(
@@ -296,7 +303,7 @@ class MalariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit malaria confirmed data : $responseStatusCode")
                         when (responseStatusCode) {

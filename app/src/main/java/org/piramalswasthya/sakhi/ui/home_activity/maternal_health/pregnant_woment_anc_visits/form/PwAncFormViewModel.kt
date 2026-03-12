@@ -76,6 +76,11 @@ class PwAncFormViewModel @Inject constructor(
     private lateinit var ancCache: PregnantWomanAncCache
     private lateinit var registerRecord: PregnantWomanRegistrationCache
 
+    // Original values from DB to detect actual changes during edit
+    private var originalDelivered: Boolean? = null
+    private var originalAborted: Boolean = false
+    private var originalMaternalDeath: Boolean? = null
+
     fun getIndexOfMCPCardFront() = dataset.getIndexOfMCPCardFrontPath()
     fun getIndexOfMCPCardBack() = dataset.getIndexOfMCPCardBackPath()
 
@@ -102,6 +107,9 @@ class PwAncFormViewModel @Inject constructor(
             registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
             maternalHealthRepo.getSavedAncRecord(benId, visitNumber)?.let {
                 ancCache = it
+                originalDelivered = it.pregnantWomanDelivered
+                originalAborted = it.isAborted
+                originalMaternalDeath = it.maternalDeath
                 _recordExists.value = true
             } ?: run {
                 _recordExists.value = false
@@ -152,20 +160,28 @@ class PwAncFormViewModel @Inject constructor(
 
                     dataset.mapValues(ancCache, 1)
 
+                    Timber.d("ANC_EDIT_DEBUG benId=${ancCache.benId} visit=${ancCache.visitNumber} " +
+                            "isAborted=${ancCache.isAborted} maternalDeath=${ancCache.maternalDeath} " +
+                            "pregnantWomanDelivered=${ancCache.pregnantWomanDelivered} " +
+                            "isActive=${ancCache.isActive} processed=${ancCache.processed}")
+
+                    if (ancCache.processed != "N") ancCache.processed = "U"
+                    ancCache.syncState = SyncState.UNSYNCED
+
                     maternalHealthRepo.persistAncRecord(ancCache)
 
                     if (registerRecord.syncState == SyncState.UNSYNCED) {
                         maternalHealthRepo.persistRegisterRecord(registerRecord)
                     }
 
-                    if (ancCache.pregnantWomanDelivered == true) {
+                    if (ancCache.pregnantWomanDelivered == true && originalDelivered != true) {
                         maternalHealthRepo.getBenFromId(benId)?.let {
                             dataset.updateBenRecordToDelivered(it)
                             benRepo.updateRecord(it)
                         }
                     }
 
-                    if (ancCache.isAborted) {
+                    if (ancCache.isAborted && !originalAborted) {
                         maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
                             it.active = false
                             if (it.processed != "N") it.processed = "U"
@@ -198,7 +214,7 @@ class PwAncFormViewModel @Inject constructor(
 
                     val shouldNavigateToMdsr = ancCache.maternalDeath ?: false
 
-                    if (ancCache.maternalDeath == true) {
+                    if (ancCache.maternalDeath == true && originalMaternalDeath != true) {
                         maternalHealthRepo.getSavedRegistrationRecord(benId)?.let {
                             it.active = false
                             if (it.processed != "N") it.processed = "U"

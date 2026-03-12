@@ -31,37 +31,41 @@
             android:title="@string/sync_records" />
     </group>
 
-    <group>
-        <item
-            android:id="@+id/syncDashboardFragment"
-            android:checkable="false"
-            android:icon="@drawable/ic_syncing"
-            android:title="@string/sync_dashboard" />
-    </group>
-
     <!--        <item-->
     <!--            android:id="@+id/dashboardFragment"-->
     <!--            android:icon="@drawable/ic_dashboard"-->
     <!--            android:title="Dashboard" />-->
-    <group>
+<!--    <group>-->
+<!--        <item-->
+<!--            android:id="@+id/abha_id_activity"-->
+<!--            android:checkable="false"-->
+<!--            android:icon="@drawable/ic_completed_tasks"-->
+<!--            android:title="@string/create_abha_number" />-->
+<!--    </group>-->
+
+    <group
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/abha_id_activity"
             android:checkable="false"
             android:icon="@drawable/ic_completed_tasks"
             android:title="@string/create_abha_number" />
-    </group>
-
-    <group
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/incentivesFragment"
-            android:icon="@drawable/ic__incentive"
-            android:title="@string/incentive_fragment_title" />
         <item
             android:id="@+id/ChatFragment"
             android:icon="@drawable/baseline_chat_24"
             android:visible="true"
             android:title="@string/help_and_support" />
+        <item
+            android:id="@+id/incentivesFragment"
+            android:icon="@drawable/ic__incentive"
+            android:title="@string/incentive_fragment_title" />
+
+        <item
+            android:id="@+id/menu_support"
+            android:checkable="false"
+            android:icon="@drawable/ic_support"
+            android:title="@string/support" />
     </group>
 
 
@@ -88,11 +92,6 @@
 
         android:id="@+id/menu_group_bottom"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/menu_delete_account"
-            android:checkable="false"
-            android:icon="@drawable/ic_delete_account"
-            android:title="@string/delete_my_account" />
 
         <item
             android:id="@+id/menu_report_crash"
@@ -100,11 +99,20 @@
             android:icon="@drawable/ic_crash"
             android:title="Report Crash" />
 
+
+
         <item
-            android:id="@+id/menu_support"
+            android:id="@+id/syncDashboardFragment"
             android:checkable="false"
-            android:icon="@drawable/ic_support"
-            android:title="@string/support" />
+            android:icon="@drawable/ic_syncing"
+            android:title="@string/sync_dashboard" />
+
+        <item
+            android:id="@+id/menu_delete_account"
+            android:checkable="false"
+            android:icon="@drawable/ic_delete_account"
+            android:title="@string/delete_my_account" />
+
         <item
             android:id="@+id/menu_logout"
             android:checkable="false"
