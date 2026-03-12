@@ -252,8 +252,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
-        // Hide Sync Records menu item
-       // binding.navView.menu.findItem(R.id.sync_pending_records).setVisible(false)
+        // Hide non-functional menu items
+        binding.navView.menu.findItem(R.id.sync_pending_records)?.isVisible = false
+        binding.navView.menu.findItem(R.id.ChatFragment)?.isVisible = false
+        binding.navView.menu.findItem(R.id.menu_report_crash)?.isVisible = false
+        binding.navView.menu.findItem(R.id.menu_support)?.isVisible = false
 
         setContentView(binding.root)
         setUpActionBar()
