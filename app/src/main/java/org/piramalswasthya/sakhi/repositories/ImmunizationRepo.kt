@@ -51,7 +51,7 @@ class ImmunizationRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit child immunization data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -99,8 +99,24 @@ class ImmunizationRepo @Inject constructor(
     }
 
     private suspend fun saveImmunizationCacheFromResponse(dataObj: String): List<ImmunizationPost> {
-        val immunizationList =
+        val immunizationList: List<ImmunizationPost> = try {
             Gson().fromJson(dataObj, Array<ImmunizationPost>::class.java).toList()
+        } catch (e: Exception) {
+            // Server may return an object wrapper instead of array directly
+            val jsonElement = Gson().fromJson(dataObj, com.google.gson.JsonElement::class.java)
+            if (jsonElement.isJsonObject) {
+                val jsonObject = jsonElement.asJsonObject
+                // Try extracting array from known keys
+                val arrayElement = jsonObject.entrySet().firstOrNull { it.value.isJsonArray }?.value
+                if (arrayElement != null) {
+                    Gson().fromJson(arrayElement, Array<ImmunizationPost>::class.java).toList()
+                } else {
+                    listOf(Gson().fromJson(dataObj, ImmunizationPost::class.java))
+                }
+            } else {
+                emptyList()
+            }
+        }
         immunizationList.forEach { immunizationDTO ->
             val immunization: ImmunizationCache? =
                 immunizationDao.getImmunizationRecord(
@@ -223,7 +239,7 @@ class ImmunizationRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit child vaccine data : $responseStatusCode")
                         when (responseStatusCode) {

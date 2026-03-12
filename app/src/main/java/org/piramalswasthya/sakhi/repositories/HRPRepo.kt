@@ -182,7 +182,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit micro birth plan data: $responseStatusCode")
                         when (responseStatusCode) {
@@ -249,7 +249,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -304,6 +304,10 @@ class HRPRepo @Inject constructor(
         for (dto in entries) {
             try {
                 val entry = Gson().fromJson(dto.toString(), HighRiskAssessDTO::class.java)
+                if (entry.benId <= 0) {
+                    Timber.d("Skipping HRP assess entry with invalid benId=${entry.benId}")
+                    continue
+                }
                 entry.createdDate?.let {
                     val hrpPregnantAssessCache = database
                         .hrpDao.getPregnantAssess(entry.benId)
@@ -352,6 +356,10 @@ class HRPRepo @Inject constructor(
         for (dto in entries) {
             try {
                 val entry = Gson().fromJson(dto.toString(), HRPMicroBirthPlanDTO::class.java)
+                if (entry.benId <= 0) {
+                    Timber.d("Skipping HRP micro birth plan entry with invalid benId=${entry.benId}")
+                    continue
+                }
                 entry.nearestSc?.let {
                     val hrpMicroBirthPlanCache = database.hrpDao.getMicroBirthPlan(entry.benId)
                     if (hrpMicroBirthPlanCache == null) {
@@ -431,7 +439,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -486,6 +494,10 @@ class HRPRepo @Inject constructor(
         for (dto in entries) {
             try {
                 val entry = Gson().fromJson(dto.toString(), HRPPregnantAssessDTO::class.java)
+                if (entry.benId <= 0) {
+                    Timber.d("Skipping HRP pregnant assess entry with invalid benId=${entry.benId}")
+                    continue
+                }
                 entry.visitDate?.let {
                     val hrpPregnantAssessCache = database
                         .hrpDao.getPregnantAssess(entry.benId)
@@ -520,7 +532,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp track data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -616,7 +628,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from Amrit hrp non pregnant Assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -704,7 +716,7 @@ class HRPRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit non hrp track data : $responseStatusCode")
                         when (responseStatusCode) {

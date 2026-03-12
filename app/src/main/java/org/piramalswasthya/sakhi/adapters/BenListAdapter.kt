@@ -170,6 +170,7 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + no spouse: show Add Husband only
                 item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
                     binding.btnAddChildren.visibility = View.INVISIBLE
@@ -180,11 +181,15 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + spouse added + 0 children + doYouHavechildren: Register Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
+                        item.isSpouseAdded &&
+                        item.doYouHavechildren &&
                         effectiveChildCount == 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
+                    binding.btnAddChildren.text = context.getString(R.string.add_children)
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
                     binding.btnAddChildren.setOnClickListener {
@@ -192,19 +197,11 @@ class BenListAdapter(
                     }
                 }
 
-                /* item.gender == "FEMALE" &&
-                         item.isMarried &&
-                         !item.doYouHavechildren &&
-                         !item.isChildrenAdded -> {
-
-                     binding.btnAddChildren.visibility = View.INVISIBLE
-                     binding.btnAddSpouse.visibility = View.GONE
-                     binding.llAddSpouseBtn.visibility = View.VISIBLE
-                 }*/
-
+                // FEMALE + married + spouse added + >0 children: View Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        effectiveChildCount != 0 -> {
+                        item.isSpouseAdded &&
+                        effectiveChildCount > 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)
