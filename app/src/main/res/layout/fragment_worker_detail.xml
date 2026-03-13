@@ -98,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/holo_orange_light"
                 android:padding="@dimen/padding_small"
+                android:layout_marginTop="10dp"
                 app:layout_constraintTop_toBottomOf="@+id/from_to_date_range">
 
                 <androidx.constraintlayout.widget.Guideline
@@ -112,14 +113,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
+                    app:layout_constraintGuide_percent="0.3" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline75"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_begin="307dp" />
+                    app:layout_constraintGuide_begin="250dp" />
 
                 <TextView
                     android:id="@+id/tvHeaderSerialNo"
@@ -325,6 +326,7 @@
                         android:background="@drawable/bg_edit_text"
                         android:hint="Please provide the reason"
                         android:minHeight="48dp"
+                        android:maxLength="250"
                         android:padding="12dp"
                         android:textColor="#333333"
                         android:textColorHint="#999999"

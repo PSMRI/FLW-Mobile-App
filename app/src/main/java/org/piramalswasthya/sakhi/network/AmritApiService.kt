@@ -508,7 +508,8 @@ interface AmritApiService {
 
     @POST("flw-api/incentive/AllIncentiveByActivityId")
     suspend fun getActivityDetailRecords(
-        @Body requestBody: Map<String, @JvmSuppressWildcards Any>
+        @Body requestBody: Map<String, @JvmSuppressWildcards Any>): Response<ResponseBody>
+
     @POST("flw-api/incentive/updateClaim")
     suspend fun claimAshaIncentive(
         @Body body: Map<String, @JvmSuppressWildcards Any>
