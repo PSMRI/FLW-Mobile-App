@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -240,6 +242,7 @@ class WorkerDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Please provide the reason for 'Other'", Toast.LENGTH_SHORT).show()
             return
         }
+
 
         val reason = selectedReasons
             .filter { it.id != "other" }

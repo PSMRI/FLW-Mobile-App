@@ -128,6 +128,31 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/overduelayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_overdue"
+                            />
+
+                        <TextView
+                            android:id="@+id/overDueCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/verified_0"
+                            android:textColor="#333333"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/verifiedlayput"
+
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -150,6 +175,8 @@
 
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/pendingLayout"
+
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -172,6 +199,8 @@
 
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/rejectedlayout"
+
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

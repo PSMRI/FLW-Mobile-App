@@ -36,30 +36,45 @@ class AshaWorkerAdapter(
         private val tvAmount: TextView = itemView.findViewById(R.id.tvAmount)
         private val tvAshaIdCenter: TextView = itemView.findViewById(R.id.tvAshaIdCenter)
         private val statusBadge: TextView = itemView.findViewById(R.id.statusBadge)
-        private val tvTotalIncentive: TextView = itemView.findViewById(R.id.tvTotalIncentive)
+        private val tvStatusDate: TextView = itemView.findViewById(R.id.tvStatusDate)
+        private val tvRejectedReason: TextView = itemView.findViewById(R.id.tvRejectedReason)
+        private val tvStatusBy: TextView = itemView.findViewById(R.id.tvStatusBy)
 
         fun bind(worker: AshaWorker) {
             tvWorkerName.text = worker.name
             tvAmount.text = formatAmount(worker.amount)
             tvAshaIdCenter.text = "${worker.ashaId} · ${worker.serviceCenter}"
-            tvTotalIncentive.text = "Pending: ${worker.pending} | Verified: ${worker.verified} | Rejected: ${worker.rejected}"
 
             when (worker.status) {
                 VerificationStatus.VERIFIED -> {
                     statusBadge.text = "Verified"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    tvStatusDate.text = "Verified Date: ${worker.verified}"
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.text = "By: ${worker.name}"
                 }
                 VerificationStatus.PENDING -> {
                     statusBadge.text = "Pending"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    tvStatusDate.visibility = View.GONE
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.visibility = View.GONE
                 }
                 VerificationStatus.REJECTED -> {
                     statusBadge.text = "Rejected"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    tvRejectedReason.visibility = View.VISIBLE
+                    tvStatusDate.text = "Rejected Date: ${worker.status}"
+
+                    tvRejectedReason.text = "Reason: ${worker.status}"
+                    tvStatusBy.text = "By: ${worker.name}"
                 }
                 VerificationStatus.OVERDUE -> {
                     statusBadge.text = "Overdue"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    tvStatusDate.visibility = View.GONE
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.visibility = View.GONE
                 }
                 VerificationStatus.ALL -> {
                     statusBadge.text = "Pending"

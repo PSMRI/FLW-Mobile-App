@@ -121,9 +121,23 @@ class IncentiveVerificationFragment : Fragment() {
                     binding.contentLayout.visibility = View.VISIBLE
 
                     val summary = state.summary
-                    binding.tvVerifiedCount.text = "Verified: ${summary.verified}"
-                    binding.tvPendingCount.text = "Pending: ${summary.pending}"
-                    binding.tvRejectedCount.text = "Rejected: ${summary.rejected}"
+                    if (args.status.equals("overdue")) {
+                        binding.verifiedlayput.visibility = View.GONE
+                        binding.overduelayout.visibility = View.VISIBLE
+                        binding.pendingLayout.visibility = View.GONE
+                        binding.rejectedlayout.visibility = View.GONE
+                        binding.overDueCount.text = "Overdue: 0"
+
+                    } else {
+                        binding.verifiedlayput.visibility = View.VISIBLE
+                        binding.overduelayout.visibility = View.GONE
+                        binding.pendingLayout.visibility = View.VISIBLE
+                        binding.rejectedlayout.visibility = View.VISIBLE
+                        binding.tvVerifiedCount.text = "Verified: ${summary.verified}"
+                        binding.tvPendingCount.text = "Pending: ${summary.pending}"
+                        binding.tvRejectedCount.text = "Rejected: ${summary.rejected}"
+                    }
+
 
                     adapter.submitList(state.workers)
                 }
