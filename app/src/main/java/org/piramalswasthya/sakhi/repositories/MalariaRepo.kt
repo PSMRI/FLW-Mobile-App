@@ -187,6 +187,7 @@ class MalariaRepo @Inject constructor(
                         val jsonObj = JSONObject(responseString)
 
                         val responseStatusCode = jsonObj.getInt("statusCode")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
@@ -210,9 +211,7 @@ class MalariaRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                val errorMessage = jsonObj.optString("errorMessage", "")
-//                                if (errorMessage == "No record found") return@withContext 0
-                                return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {

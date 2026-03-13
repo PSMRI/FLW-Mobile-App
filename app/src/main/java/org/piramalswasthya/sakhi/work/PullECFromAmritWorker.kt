@@ -41,11 +41,9 @@ class PullECFromAmritWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Eligible Couple Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e("FgLW", "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -105,7 +103,7 @@ class PullECFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = ecrRepo.pullAndPersistEcrRecord()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
@@ -117,7 +115,7 @@ class PullECFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = ecrRepo.pullAndPersistEctRecord()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
