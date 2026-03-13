@@ -150,8 +150,13 @@ class LeprosyRepo @Inject constructor(
 
     private suspend fun saveTBScreeningCacheFromResponse(dataObj: String): MutableList<LeprosyScreeningCache> {
         val leprosyScreeningList = mutableListOf<LeprosyScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, LeprosyScreeningRequestDTO::class.java)
-        requestDTO?.leprosyLists?.forEach { leprosyScreeningDTO ->
+        val leprosyLists: List<LeprosyScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<LeprosyScreeningDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, LeprosyScreeningRequestDTO::class.java)
+            requestDTO?.leprosyLists ?: emptyList()
+        }
+        leprosyLists.forEach { leprosyScreeningDTO ->
             leprosyScreeningDTO.homeVisitDate?.let {
                 var tbScreeningCache: LeprosyScreeningCache? =
                     leprosyDao.getLeprosyScreening(
@@ -659,8 +664,11 @@ class LeprosyRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }
