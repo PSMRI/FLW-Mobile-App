@@ -733,4 +733,8 @@
     <string name="str_date_of_mother_referral">माता के रेफरल की तारीख</string>
     <string name="str_place_of_mother_referral">माता के रेफरल का स्थान</string>
     <string name="str_other_place_of_mother_referral">अन्य - माता के रेफरल का स्थान</string>
+    <string name="no_of_childrens">No of children</string>
+    <string name="marriage_date">Marriage Date</string>
+    <string name="children_details">Children Details</string>
+    <string name="bank_details">Bank Details</string>
 </resources>

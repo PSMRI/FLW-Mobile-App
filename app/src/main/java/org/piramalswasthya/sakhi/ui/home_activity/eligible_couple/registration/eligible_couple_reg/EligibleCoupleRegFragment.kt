@@ -251,6 +251,19 @@ class EligibleCoupleRegFragment : Fragment() {
             binding.tvNoChild.text = it.toString()
         }
 
+        viewModel.benName.observe(viewLifecycleOwner) {
+            binding.tvBenName.text = it
+        }
+        binding.husbandNameLl.visibility = View.VISIBLE
+        binding.marriageLl.visibility = View.VISIBLE
+        viewModel.husbandName.observe(viewLifecycleOwner) {
+            binding.tvHusbandname.text = it ?: ""
+        }
+
+        viewModel.marriageDate.observe(viewLifecycleOwner) {
+            binding.tvMarriageDate.text = it ?: ""
+        }
+
 
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
