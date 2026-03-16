@@ -855,4 +855,8 @@
     <string name="view_home_visits">ঘৰ ভিজিট চাওক</string>
     <string name="screening">স্ক্ৰীনিং</string>
     <string name="suspected">সন্দেহজনক</string>
+    <string name="no_of_childrens">No of children</string>
+    <string name="marriage_date">Marriage Date</string>
+    <string name="children_details">Children Details</string>
+    <string name="bank_details">Bank Details</string>
 </resources>
