@@ -328,8 +328,8 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToVHNDListFragement()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.ic__vhnsc,
                 resources.getString(R.string.vnhc),
                 null,
@@ -350,43 +350,42 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToDewormingListFragment()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.ic__maa_meeting,
                 resources.getString(R.string.maa_meeting),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.u_win_s1,
                 resources.getString(R.string.u_win_session),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.ic__pulse_polio,
                 resources.getString(R.string.pulse_polio_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.ic__ors,
                 resources.getString(R.string.ors_distribution_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
-            )
-            ,Icon(
+            ))
+            add(Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
-            )
-
+            ))
         }
     }
 
