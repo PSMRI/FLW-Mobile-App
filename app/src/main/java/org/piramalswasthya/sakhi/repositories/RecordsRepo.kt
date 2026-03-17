@@ -15,6 +15,8 @@ import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
@@ -431,6 +433,31 @@ class RecordsRepo @Inject constructor(
 
     fun getRegisteredPregnantWomanNonFollowUpListCount() =
         getRegisteredPregnantWomanNonFollowUpList().map { it.size }
+
+    fun getDuePregnantWomanList() =
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+            .map { list ->
+                list.filter { benWithAnc ->
+                    // Exclude maternal deaths
+                    if (benWithAnc.savedAncRecords.any { it.maternalDeath == true }) return@filter false
+                    // Exclude delivered women
+                    if (benWithAnc.savedAncRecords.any { it.pregnantWomanDelivered == true }) return@filter false
+
+                    val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return@filter false
+                    val ancRecords = benWithAnc.savedAncRecords
+
+                    if (ancRecords.isEmpty()) {
+                        // First ANC: due if >= minAnc1Week weeks from LMP
+                        TimeUnit.MILLISECONDS.toDays(getTodayMillis() - activePwr.lmpDate) >= Konstants.minAnc1Week * 7
+                    } else {
+                        val lastAncRecord = ancRecords.maxBy { it.visitNumber }
+                        // Subsequent ANCs: due if EDD > lastAnc+28days, visitNumber < 4, and > 28 days since last ANC
+                        (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
+                                lastAncRecord.visitNumber < 4 &&
+                                TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lastAncRecord.ancDate) > 28
+                    }
+                }.map { it.asDomainModel() }
+            }
 
     val hrpCases = benDao.getHrpCases(selectedVillage)
         .map { list -> list.distinctBy { it.benId }.map { it.asBasicDomainModel() } }
