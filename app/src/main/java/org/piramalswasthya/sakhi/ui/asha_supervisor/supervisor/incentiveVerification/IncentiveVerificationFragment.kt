@@ -121,7 +121,7 @@ class IncentiveVerificationFragment : Fragment() {
                     binding.contentLayout.visibility = View.VISIBLE
 
                     val summary = state.summary
-                    if (args.status.equals("overdue")) {
+                    if (args.status.equals("overdue",ignoreCase = true)) {
                         binding.verifiedlayput.visibility = View.GONE
                         binding.overduelayout.visibility = View.VISIBLE
                         binding.pendingLayout.visibility = View.GONE
