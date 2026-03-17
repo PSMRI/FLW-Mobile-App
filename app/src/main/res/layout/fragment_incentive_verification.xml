@@ -145,7 +145,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="@string/verified_0"
+                            android:text="@string/overdue_0"
                             android:textColor="#333333"
                             android:textSize="14sp"/>
 

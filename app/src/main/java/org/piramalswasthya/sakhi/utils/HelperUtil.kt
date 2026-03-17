@@ -42,6 +42,7 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -851,6 +852,7 @@ object HelperUtil {
             val date = inputFormat.parse(dateString ?: "")
             outputFormat.format(date!!)
         } catch (e: Exception) {
+            Timber.w(e, "Failed to parse date: $dateString")
             ""
         }
     }

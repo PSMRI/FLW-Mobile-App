@@ -1229,6 +1229,7 @@
     <string name="verified_0">Verified: 0</string>
     <string name="pending_0">Pending: 0</string>
     <string name="rejected_0">Rejected: 0</string>
+    <string name="overdue_0">Overdue: 0</string>
     <string name="total_ashas">Total ASHAs</string>
     <string name="select_month">Select Month</string>
     <string name="pending">Pending</string>
