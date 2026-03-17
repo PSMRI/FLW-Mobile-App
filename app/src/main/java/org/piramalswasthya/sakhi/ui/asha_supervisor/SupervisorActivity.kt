@@ -365,6 +365,8 @@ class SupervisorActivity : AppCompatActivity() {
                 val langMenu = menu.findItem(R.id.toolbar_menu_language)
                 homeMenu.isVisible = showMenuHome
                 langMenu.isVisible = !showMenuHome
+                val syncMenu = menu.findItem(R.id.sync_status)
+                syncMenu.isVisible = false
 
             }
 
