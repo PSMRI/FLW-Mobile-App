@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AshaWorkerAdapter(
@@ -26,6 +28,7 @@ class AshaWorkerAdapter(
     override fun onBindViewHolder(holder: AshaWorkerViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
+
 
     class AshaWorkerViewHolder(
         itemView: View,
@@ -49,10 +52,11 @@ class AshaWorkerAdapter(
                 VerificationStatus.VERIFIED -> {
                     statusBadge.text = "Verified"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
-                    tvStatusDate.text = "Verified Date: ${worker.verified}"
+                    tvStatusDate.text = "Verified Date: ${HelperUtil.formatDate(worker.approvalDate)}"
                     tvRejectedReason.visibility = View.GONE
-                    tvStatusBy.text = "By: ${worker.name}"
+                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
                 }
+
                 VerificationStatus.PENDING -> {
                     statusBadge.text = "Pending"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
@@ -60,15 +64,17 @@ class AshaWorkerAdapter(
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.visibility = View.GONE
                 }
+
                 VerificationStatus.REJECTED -> {
                     statusBadge.text = "Rejected"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
                     tvRejectedReason.visibility = View.VISIBLE
-                    tvStatusDate.text = "Rejected Date: ${worker.status}"
+                    tvStatusDate.text = "Rejected Date: ${HelperUtil.formatDate(worker.approvalDate)}"
+                    tvRejectedReason.text = "Reason: ${worker.reason} ${worker.OtherReason}"
+                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
 
-                    tvRejectedReason.text = "Reason: ${worker.status}"
-                    tvStatusBy.text = "By: ${worker.name}"
                 }
+
                 VerificationStatus.OVERDUE -> {
                     statusBadge.text = "Overdue"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
@@ -76,6 +82,7 @@ class AshaWorkerAdapter(
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.visibility = View.GONE
                 }
+
                 VerificationStatus.ALL -> {
                     statusBadge.text = "Pending"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
@@ -99,4 +106,6 @@ class AshaWorkerAdapter(
         override fun areContentsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =
             oldItem == newItem
     }
+
 }
+

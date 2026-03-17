@@ -843,6 +843,17 @@ object HelperUtil {
         }.time
     }
 
+    fun formatDate(dateString: String?): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+
+            val date = inputFormat.parse(dateString ?: "")
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            ""
+        }
+    }
 
 
 }

@@ -101,6 +101,10 @@ class IncentiveVerificationViewModel @Inject constructor(
                             pending       = worker.pending ?: 0,
                             verified      = worker.verified ?: 0,
                             rejected      = worker.rejected ?: 0,
+                            role          = worker.role ?:"" ,
+                            approvalDate  = worker.approvalDate ?:"",
+                            reason        = worker.reason ?: "",
+                            OtherReason   = worker.otherReason ?: "",
                             status        = mapStatus(worker.approvalStatus)
                         )
                     } ?: emptyList()
