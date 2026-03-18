@@ -484,6 +484,37 @@ interface AmritApiService {
     @POST("flw-api/campaign/filariasis/campaign/saveAll")
     suspend fun saveFilariaMdaCampaign( @Part campaignData: List<MultipartBody.Part>): Response<ResponseBody>
 
+
+    @POST("flw-api/ashaSupervisor/dashboard")
+    suspend fun getAshaSupervisorDashboard(
+        @Body body: Map<String, Int>
+    ): Response<ResponseBody>
+
+
+    @POST("flw-api/ashaSupervisor/getAshaListByFacility")
+    suspend fun getAshaListByFacility(
+        @Body body: Map<String, Int>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/ashaSupervisor/updateApprovalStatus")
+    suspend fun updateApprovalStatus(
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/incentive/claimedIncentiveByUser")
+    suspend fun getClaimedIncentiveByUser(
+        @Body requestBody: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/incentive/AllIncentiveByActivityId")
+    suspend fun getActivityDetailRecords(
+        @Body requestBody: Map<String, @JvmSuppressWildcards Any>): Response<ResponseBody>
+
+    @POST("flw-api/incentive/updateClaim")
+    suspend fun claimAshaIncentive(
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ): Response<ResponseBody>
+
     @Multipart
     @POST("flw-api/incentive/update")
     suspend fun uploadIncentiveDocuments(
