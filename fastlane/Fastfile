@@ -73,10 +73,25 @@ platform :android do
       file.write("VERSION=#{version_name}\nVERSIONCODE=#{new_version_code}")
     end
 
-    # Build the debug variant
-    gradle(
-      task: "clean assemble#{flavor}Debug"
-    )
+    # Build the debug variant with consistent signing key
+    debug_keystore = File.expand_path('../debug-keystore.jks')
+    if File.exist?(debug_keystore)
+      UI.message "Using shared debug keystore: #{debug_keystore}"
+      gradle(
+        task: "clean assemble#{flavor}Debug",
+        properties: {
+          "android.injected.signing.store.file" => debug_keystore,
+          "android.injected.signing.store.password" => "android",
+          "android.injected.signing.key.alias" => "debugkey",
+          "android.injected.signing.key.password" => "android",
+        }
+      )
+    else
+      UI.message "No shared debug keystore found, using default"
+      gradle(
+        task: "clean assemble#{flavor}Debug"
+      )
+    end
 
     # Distribute to Firebase App Distribution (universal APK for all device architectures)
     firebase_app_distribution(
