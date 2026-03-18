@@ -19,7 +19,6 @@
     <string name="mother_s_name">Mother\'s Name</string>
     <string name="mobile_number_of">Mobile Number Of</string>
     <string name="other_mobile_number_of">Other - Mobile Number of</string>
-    <string name="form_name">Form Name</string>
     <string name="rch_id_ben">RCH ID</string>
     <string name="nbr_age">Age</string>
     <string name="nbr_dob">Date of Birth</string>
@@ -85,7 +84,6 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array2">
-        <item>Adolescent Girl</item>
         <item name="ec">Eligible Couple</item>
         <item>Pregnant Woman</item>
         <item>Postnatal Mother</item>
@@ -129,8 +127,6 @@
         <item>School</item>
         <item>Community center</item>
     </string-array>
-
-
 
     <string-array name="nbr_marital_status_female_array">
         <item>Unmarried</item>
@@ -340,7 +336,6 @@
         <item>Other Place of Abortion</item>
     </string-array>
 
-
     <string-array name="place_of_anc_array">
         <item>Sub-Centre</item>
         <item>VHND/VHSND</item>
@@ -400,7 +395,6 @@
     <string-array name="care_pregnancy">
         <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
 
-
     </string-array>
     <string-array name="select_all">
         <item>Select All</item>
@@ -419,8 +413,6 @@
         <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
     </string-array>
-
-
 
     <string-array name="import_brestfeeding">
         <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>

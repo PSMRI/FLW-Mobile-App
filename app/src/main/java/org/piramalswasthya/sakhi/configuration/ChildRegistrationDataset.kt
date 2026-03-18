@@ -244,14 +244,22 @@ class ChildRegistrationDataset(
                 fatherName.value = it
             } ?: run {
                 fatherName.inputType = InputType.EDIT_TEXT
+                fatherName.isEnabled = true
             }
             motherName.value = "${it.firstName} ${it.lastName ?: ""}"
             mobileNumberOf.value = mobileNumberOf.entries?.first()
             mobileNumber.value = it.contactNumber.toString()
             rchIdMother.value = it.rchId
+        } ?: run {
+            motherName.isEnabled = true
+            fatherName.isEnabled = true
+            mobileNumber.isEnabled = true
+            mobileNumberOf.isEnabled = true
         }
         deliveryOutcomeCache?.dateOfDelivery?.let {
             dob.value = getDateFromLong(it)
+        } ?: run {
+            dob.isEnabled = true
         }
         deliveryOutcomeCache?.placeOfDelivery?.let {
             placeOfBirth.value = it
@@ -261,7 +269,11 @@ class ChildRegistrationDataset(
             weightAtBirth.value =formatWeightInGrams(infant.weight)
             infant.gender?.let {
                 childGender.value = childGender.entries?.get(it.ordinal)
+            } ?: run {
+                childGender.isEnabled = true
             }
+        } ?: run {
+            childGender.isEnabled = true
         }
 
 

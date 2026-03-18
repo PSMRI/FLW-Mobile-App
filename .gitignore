@@ -3,8 +3,13 @@
 /.gradle/
 *.bin
 *.lock
+!Gemfile.lock
 /app/build/*
 /app/release/*
 /local.properties
 /secrets.properties
 **/google-services.json
+app/src/main/res/raw/wildcard.crt
+keystore.properties
+app/keystore/*
+keystore.properties

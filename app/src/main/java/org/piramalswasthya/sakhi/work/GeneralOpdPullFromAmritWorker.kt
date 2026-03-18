@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.work
 
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.core.app.NotificationCompat
@@ -39,14 +41,14 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
     private var page2: Int = 0
     private var page3: Int = 0
     private var page4: Int = 0
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         return try {
             try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Filaria Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.d("FgLW", "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -62,6 +64,8 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
                     } while (numPages == -2)
                     if (numPages == 0)
                         return@withContext Result.success()
+                    if (numPages == -1)
+                        return@withContext Result.failure(workDataOf("worker_name" to "GeneralOpdPullFromAmritWorker", "error" to "Initial page fetch failed"))
                     val result1 =
                         awaitAll(
                             async { getBeneficiariesFromServerForWorker(numPages, 0, startPage) },
@@ -77,18 +81,18 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
                     if (result1.all { it }) {
                         return@withContext Result.success()
                     }
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "GeneralOpdPullFromAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-                    return@withContext Result.failure()
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    return@withContext Result.failure(workDataOf("worker_name" to "GeneralOpdPullFromAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
 
-            Result.failure()
+            Result.failure(workDataOf("worker_name" to "GeneralOpdPullFromAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 
@@ -105,7 +109,11 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(1003, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1003, notification)
+        }
     }
 
 
@@ -136,7 +144,7 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
 
                 }
             } catch (e: SQLiteConstraintException) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
             true
         }

@@ -67,9 +67,9 @@ interface MosquitoNetFormResponseDao {
             val inputFormats = listOf("yyyy-MM-dd", "dd-MM-yyyy")
             for (fmt in inputFormats) {
                 try {
-                    val parsed = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                    val parsed = SimpleDateFormat(fmt, Locale.ENGLISH).parse(dateStr)
                     if (parsed != null) {
-                        return SimpleDateFormat("yyyy", Locale.getDefault()).format(parsed)
+                        return SimpleDateFormat("yyyy", Locale.ENGLISH).format(parsed)
                     }
                 } catch (_: Exception) {}
             }

@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.helpers
 import android.app.Activity
+import org.piramalswasthya.sakhi.BuildConfig
 import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +13,8 @@ object TapjackingProtectionHelper {
      * Call this in Activity.onCreate() BEFORE setContentView()
      */
     fun applyWindowSecurity(activity: Activity) {
+        // Skip screenshot prevention in debug builds to allow demos/screen recording
+        if (BuildConfig.DEBUG) return
 
         // Prevent screenshot + some overlays
         activity.window.setFlags(

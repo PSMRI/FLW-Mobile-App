@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.work
 
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.core.app.NotificationCompat
@@ -7,6 +9,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -34,14 +37,14 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
     }
 
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         return try {
             try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Filaria Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.d("FgLW", "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -67,18 +70,18 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
                     if (result1.all { it }) {
                         return@withContext Result.success()
                     }
-                    return@withContext Result.failure()
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullLeprosyFormAmritWorker", "error" to "Pull operation returned incomplete results"))
                 } catch (e: SQLiteConstraintException) {
-                    Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
-                    return@withContext Result.failure()
+                    Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                    return@withContext Result.failure(workDataOf("worker_name" to "PullLeprosyFormAmritWorker", "error" to "SQLite constraint: ${e.message}"))
                 }
 
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.d("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
 
-            Result.failure()
+            Result.failure(workDataOf("worker_name" to "PullLeprosyFormAmritWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 
@@ -95,7 +98,11 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(1003, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1003, notification)
+        }
     }
 
 
@@ -103,11 +110,11 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = leprosyRepo.getLeprosyScreeningDetailsFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
-            true
+            false
         }
     }
 
@@ -116,14 +123,14 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         {
             try{
                 val res = leprosyRepo.getAllLeprosyDataFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             }
             catch (e: Exception)
             {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
 
             }
-            true
+            false
         }
     }
 
@@ -131,14 +138,14 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         return  withContext(Dispatchers.IO){
             try {
                 val res = leprosyRepo.getAllLeprosyFollowUpDataFromServer()
-                return@withContext res ==1
+                return@withContext res == 1 || res == 0
             }
             catch (e: Exception)
             {
-                Timber.d("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
 
             }
-            true
+            false
         }
     }
 

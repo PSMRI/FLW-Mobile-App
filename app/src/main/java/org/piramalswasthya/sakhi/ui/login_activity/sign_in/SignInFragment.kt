@@ -39,6 +39,9 @@ import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 
 @AndroidEntryPoint
@@ -111,6 +114,22 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val initialLeft = binding.root.paddingLeft
+        val initialTop = binding.root.paddingTop
+        val initialRight = binding.root.paddingRight
+        val initialBottom = binding.root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val systemBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.updatePadding(
+                left = initialLeft,
+                top = initialTop,
+                right = initialRight,
+                bottom = initialBottom + maxOf(imeBottom, systemBottom)
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
         binding.btnLogin.setOnClickListener {
             view.findFocus()?.let { view ->
                 val imm =
@@ -220,34 +239,34 @@ class SignInFragment : Fragment() {
 
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
-                                //Below ServiceMapId are form Indian Oil Project
-                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
+//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
+//                                //Below ServiceMapId are form Indian Oil Project
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            } else {
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-                            }
+//                            } else {
+//                                binding.clContent.visibility = View.VISIBLE
+//                                binding.pbSignIn.visibility = View.GONE
+//                                binding.tvError.visibility = View.GONE
+//                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+//                            }
 
                         } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
+                           // if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            } else {
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-                            }
+//                            } else {
+//                                binding.clContent.visibility = View.VISIBLE
+//                                binding.pbSignIn.visibility = View.GONE
+//                                binding.tvError.visibility = View.GONE
+//                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+//                            }
 
                         } else {
                             findNavController().navigate(

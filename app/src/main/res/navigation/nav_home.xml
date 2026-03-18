@@ -1167,6 +1167,10 @@
         android:id="@+id/infantRegListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.infant_reg.list.InfantRegListFragment"
         android:label="@string/infant_reg_list">
+        <argument
+            android:name="onlyLowBirthWeight"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_infantRegListFragment_to_infantRegFragment"
             app:destination="@id/infantRegFragment" />
@@ -2194,6 +2198,10 @@
             app:destination="@id/filariaMdaCampaignFormFragment" />
     </fragment>
 
-
+    <fragment
+        android:id="@+id/syncDashboardFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.sync_dashboard.SyncDashboardFragment"
+        android:label="@string/sync_dashboard"
+        tools:layout="@layout/fragment_sync_dashboard" />
 
 </navigation>

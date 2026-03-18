@@ -514,4 +514,18 @@ interface AmritApiService {
     suspend fun claimAshaIncentive(
         @Body body: Map<String, @JvmSuppressWildcards Any>
     ): Response<ResponseBody>
+
+    @Multipart
+    @POST("flw-api/incentive/update")
+    suspend fun uploadIncentiveDocuments(
+        @Part("id") id: RequestBody,
+        @Part("userId") userId: RequestBody,
+        @Part("moduleName") moduleName: RequestBody,
+        @Part("activityName") activityName : RequestBody,
+        @Part images: List<MultipartBody.Part>
+
+
+    ): Response<UploadResponse>
+
+
 }

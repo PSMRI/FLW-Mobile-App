@@ -25,7 +25,6 @@
     <string name="str_hospital">Hospital</string>
     <string name="str_transit">In transit</string>
 
-
     <string name="maternal_death">Maternal Deaths</string>
     <string name="general_deaths">General Deaths</string>
     <string name="non_maternal_deaths">Non-Maternal Deaths</string>

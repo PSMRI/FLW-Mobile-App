@@ -21,5 +21,6 @@ interface AesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAESScreening(malariaScreeningCache: AESScreeningCache)
 
-
+    @Query("UPDATE AES_SCREENING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

@@ -51,7 +51,7 @@ class ImmunizationRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit child immunization data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -87,11 +87,11 @@ class ImmunizationRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_child_immunization error : $e")
+                Timber.e("get_child_immunization error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_child_immunization error : $e")
+                Timber.e("get_child_immunization error : $e")
                 return@withContext -1
             }
             -1
@@ -99,8 +99,24 @@ class ImmunizationRepo @Inject constructor(
     }
 
     private suspend fun saveImmunizationCacheFromResponse(dataObj: String): List<ImmunizationPost> {
-        val immunizationList =
+        val immunizationList: List<ImmunizationPost> = try {
             Gson().fromJson(dataObj, Array<ImmunizationPost>::class.java).toList()
+        } catch (e: Exception) {
+            // Server may return an object wrapper instead of array directly
+            val jsonElement = Gson().fromJson(dataObj, com.google.gson.JsonElement::class.java)
+            if (jsonElement.isJsonObject) {
+                val jsonObject = jsonElement.asJsonObject
+                // Try extracting array from known keys
+                val arrayElement = jsonObject.entrySet().firstOrNull { it.value.isJsonArray }?.value
+                if (arrayElement != null) {
+                    Gson().fromJson(arrayElement, Array<ImmunizationPost>::class.java).toList()
+                } else {
+                    listOf(Gson().fromJson(dataObj, ImmunizationPost::class.java))
+                }
+            } else {
+                emptyList()
+            }
+        }
         immunizationList.forEach { immunizationDTO ->
             val immunization: ImmunizationCache? =
                 immunizationDao.getImmunizationRecord(
@@ -116,6 +132,11 @@ class ImmunizationRepo @Inject constructor(
         return immunizationList
     }
 
+    // RECORD-LEVEL ISOLATION: Immunization records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
     suspend fun pushUnSyncedChildImmunizationRecords(): Boolean {
 
         return withContext(Dispatchers.IO) {
@@ -126,62 +147,64 @@ class ImmunizationRepo @Inject constructor(
             val immunizationCacheList: List<ImmunizationCache> =
                 immunizationDao.getUnsyncedImmunization(SyncState.UNSYNCED)
 
-            val immunizationDTOs = mutableListOf<ImmunizationPost>()
-            immunizationCacheList.forEach { cache ->
-                var immunizationDTO = cache.asPostModel()
-                val vaccine = immunizationDao.getVaccineById(cache.vaccineId)!!
-                immunizationDTO.vaccineName = vaccine.vaccineName
-                immunizationDTOs.add(immunizationDTO)
-            }
-            if (immunizationDTOs.isEmpty()) return@withContext true
-            try {
-                val response = tmcNetworkApiService.postChildImmunizationDetails(immunizationDTOs)
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (immunizationCacheList.isEmpty()) return@withContext true
 
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to Amrit Child Immunization data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusImmunization(immunizationCacheList)
-                                    return@withContext true
-                                } catch (e: Exception) {
-                                    Timber.d("Child Immunization entries not synced $e")
+            // Chunk records to prevent all-or-nothing batch failure
+            val CHUNK_SIZE = 20
+            val chunks = immunizationCacheList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { cache ->
+                        val immunizationDTO = cache.asPostModel()
+                        val vaccine = immunizationDao.getVaccineById(cache.vaccineId)!!
+                        immunizationDTO.vaccineName = vaccine.vaccineName
+                        immunizationDTO
+                    }
+
+                    val response = tmcNetworkApiService.postChildImmunizationDetails(chunkDtos)
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit Child Immunization chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusImmunization(chunk)
+                                    successCount += chunk.size
+                                }
+
+                                401, 5002 -> {
+                                    // Token expired — try refreshing for subsequent chunks
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
+
+                                else -> {
+                                    Timber.e("Immunization chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
                                 }
                             }
-
-                           401, 5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext false
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
-                            }
                         }
+                    } else {
+                        Timber.e("Immunization chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "Immunization chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("save_child_immunization error : $e")
-                return@withContext pushUnSyncedChildImmunizationRecords()
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("save_child_immunization error : $e")
-                return@withContext false
             }
-            false
+
+            Timber.d("Immunization push complete: $successCount succeeded, $failCount failed out of ${immunizationCacheList.size}")
+            // Worker succeeds — failed records stay UNSYNCED for next cycle
+            return@withContext true
         }
     }
 
@@ -216,7 +239,7 @@ class ImmunizationRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit child vaccine data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -252,11 +275,11 @@ class ImmunizationRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_child_vaccines error : $e")
+                Timber.e("get_child_vaccines error : $e")
                 getVaccineDetailsFromServer()
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_child_vaccines error : $e")
+                Timber.e("get_child_vaccines error : $e")
                 return@withContext -1
             }
             -1

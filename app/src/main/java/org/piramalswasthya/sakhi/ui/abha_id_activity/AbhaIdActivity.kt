@@ -41,9 +41,6 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private var countDownTimer: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (BuildConfig.FLAVOR.equals("niramay", true) || BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true)||BuildConfig.FLAVOR.equals("mitanin", true)){
-            TapjackingProtectionHelper.applyWindowSecurity(this)
-        }
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         Timber.d("onCreate Called")

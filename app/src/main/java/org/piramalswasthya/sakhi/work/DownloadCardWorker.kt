@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.work
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.content.Context
 import android.content.Intent
 import android.media.MediaScannerConnection
@@ -12,6 +14,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -38,15 +41,15 @@ class DownloadCardWorker @AssistedInject constructor(
         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val channelId = "download abha card"
 
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
+
     override suspend fun doWork(): Result {
         val fileName = inputData.getString(file_name)
         return try {
             try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.d(throwable.message, "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val response = abhaIdRepo.downloadPdfCard()
@@ -82,7 +85,7 @@ class DownloadCardWorker @AssistedInject constructor(
                 return@withContext Result.success()
             }
         } catch (e: java.lang.Exception) {
-            return Result.failure()
+            return Result.failure(workDataOf("worker_name" to "DownloadCardWorker", "error" to (e.message ?: "Unknown error")))
         }
     }
 
@@ -95,7 +98,11 @@ class DownloadCardWorker @AssistedInject constructor(
             .setProgress(100, 0, true)
             .build()
 
-        return ForegroundInfo(0, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(1003, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            ForegroundInfo(1003, notification)
+        }
     }
 
     private fun showDownload(fileName: String, uri: Uri) {

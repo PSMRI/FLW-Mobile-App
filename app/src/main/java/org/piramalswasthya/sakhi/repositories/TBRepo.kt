@@ -134,11 +134,11 @@ class TBRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -223,11 +223,11 @@ class TBRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -2
 
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
+                Timber.e("get_tb error : $e")
                 return@withContext -1
             }
             -1
@@ -360,13 +360,27 @@ class TBRepo @Inject constructor(
     }
 
 
+    // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
+    // WorkManager worker succeeds. Each sub-method handles its own failures
+    // independently — failed records stay UNSYNCED and retry on next sync cycle.
+    // Previously, if any sub-method failed, the coordinator returned false which
+    // could cause the worker to be marked as failed.
     suspend fun pushUnSyncedRecords(): Boolean {
         val screeningResult = pushUnSyncedRecordsTBScreening()
         val suspectedResult = pushUnSyncedRecordsTBSuspected()
         val confirmedResult = pushUnSyncedRecordsTBConfirmed()
-        return (screeningResult == 1) && (suspectedResult == 1) && (confirmedResult == 1)
+        Timber.d("TB push results: screening=$screeningResult, suspected=$suspectedResult, confirmed=$confirmedResult")
+        // Worker succeeds — failed records stay UNSYNCED for next cycle
+        return true
     }
 
+    // RECORD-LEVEL ISOLATION: TB Screening records are now sent in
+    // chunks of 20 instead of one giant batch. Previously, if ANY record in
+    // the batch was malformed, the ENTIRE batch failed and ALL records stayed
+    // UNSYNCED. Now each chunk is independent — one bad chunk doesn't affect
+    // the others. Failed chunks' records stay UNSYNCED for the next sync cycle.
+    // Also removed dangerous recursive retry on SocketTimeoutException that
+    // could cause infinite recursion and stack overflow.
     private suspend fun pushUnSyncedRecordsTBScreening(): Int {
 
         return withContext(Dispatchers.IO) {
@@ -376,69 +390,69 @@ class TBRepo @Inject constructor(
 
             val tbsnList: List<TBScreeningCache> = tbDao.getTBScreening(SyncState.UNSYNCED)
 
-            val tbsnDtos = mutableListOf<TBScreeningDTO>()
-            tbsnList.forEach { cache ->
-                tbsnDtos.add(cache.toDTO())
-            }
-            if (tbsnDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveTBScreeningData(
-                    TBScreeningRequestDTO(
-                        userId = user.userId,
-                        tbScreeningList = tbsnDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (tbsnList.isEmpty()) return@withContext 1
 
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusScreening(tbsnList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+            // Chunk records to prevent all-or-nothing batch failure
+            val CHUNK_SIZE = 20
+            val chunks = tbsnList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveTBScreeningData(
+                        TBScreeningRequestDTO(
+                            userId = user.userId,
+                            tbScreeningList = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit TB Screening chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusScreening(chunk)
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    // Token expired — try refreshing for subsequent chunks
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, TB Screening chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                val errorMessage = jsonObj.getString("errorMessage")
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("TB Screening chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("TB Screening chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "TB Screening chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("TB Screening push complete: $successCount succeeded, $failCount failed out of ${tbsnList.size}")
+            // Worker succeeds — failed records stay UNSYNCED for next cycle
+            return@withContext 1
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Same chunking pattern as TB Screening.
+    // Records sent in chunks of 20 with per-chunk error isolation.
     private suspend fun pushUnSyncedRecordsTBSuspected(): Int {
         return withContext(Dispatchers.IO) {
             val user =
@@ -447,69 +461,66 @@ class TBRepo @Inject constructor(
 
             val tbspList: List<TBSuspectedCache> = tbDao.getTbSuspected(SyncState.UNSYNCED)
 
-            val tbspDtos = mutableListOf<TBSuspectedDTO>()
-            tbspList.forEach { cache ->
-                tbspDtos.add(cache.toDTO())
-            }
-            if (tbspDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveTBSuspectedData(
-                    TBSuspectedRequestDTO(
-                        userId = user.userId,
-                        tbSuspectedList = tbspDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (tbspList.isEmpty()) return@withContext 1
 
-                        val errorMessage = jsonObj.getString("errorMessage")
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusSuspected(tbspList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+            val CHUNK_SIZE = 20
+            val chunks = tbspList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveTBSuspectedData(
+                        TBSuspectedRequestDTO(
+                            userId = user.userId,
+                            tbSuspectedList = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit TB Suspected chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusSuspected(chunk)
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, TB Suspected chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            401,5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("TB Suspected chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("TB Suspected chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "TB Suspected chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
+
+            Timber.d("TB Suspected push complete: $successCount succeeded, $failCount failed out of ${tbspList.size}")
+            return@withContext 1
         }
     }
 
+    // RECORD-LEVEL ISOLATION: Same chunking pattern as TB Screening.
+    // Records sent in chunks of 20 with per-chunk error isolation.
     private suspend fun pushUnSyncedRecordsTBConfirmed(): Int {
         return withContext(Dispatchers.IO) {
             val user =
@@ -518,68 +529,62 @@ class TBRepo @Inject constructor(
 
             val tbspList: List<TBConfirmedTreatmentCache> = tbDao.getTbConfirmed(SyncState.UNSYNCED)
 
-            val tbspDtos = mutableListOf<TBConfirmedTreatmentDTO>()
-            tbspList.forEach { cache ->
-                tbspDtos.add(cache.toDTO())
-            }
-            if (tbspDtos.isEmpty()) return@withContext 1
-            try {
-                val response = tmcNetworkApiService.saveTBConfirmedData(
-                    TBConfirmedRequestDTO(
-                        userId = user.userId,
-                        tbConfirmedList = tbspDtos
-                    )
-                )
-                val statusCode = response.code()
-                if (statusCode == 200) {
-                    val responseString = response.body()?.string()
-                    if (responseString != null) {
-                        val jsonObj = JSONObject(responseString)
+            if (tbspList.isEmpty()) return@withContext 1
 
-                        val errorMessage = jsonObj.getString("errorMessage")
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Push to amrit tb screening data : $responseStatusCode")
-                        when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    updateSyncStatusConfirmed(tbspList)
-                                    return@withContext 1
-                                } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+            val CHUNK_SIZE = 20
+            val chunks = tbspList.chunked(CHUNK_SIZE)
+            var successCount = 0
+            var failCount = 0
+
+            for (chunk in chunks) {
+                try {
+                    val chunkDtos = chunk.map { it.toDTO() }
+
+                    val response = tmcNetworkApiService.saveTBConfirmedData(
+                        TBConfirmedRequestDTO(
+                            userId = user.userId,
+                            tbConfirmedList = chunkDtos
+                        )
+                    )
+                    val statusCode = response.code()
+                    if (statusCode == 200) {
+                        val responseString = response.body()?.string()
+                        if (responseString != null) {
+                            val jsonObj = JSONObject(responseString)
+                            val responseStatusCode = jsonObj.getInt("statusCode")
+                            Timber.d("Push to Amrit TB Confirmed chunk: $responseStatusCode")
+                            when (responseStatusCode) {
+                                200 -> {
+                                    updateSyncStatusConfirmed(chunk)
+                                    successCount += chunk.size
                                 }
 
-                            }
+                                401, 5002 -> {
+                                    if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                        Timber.d("Token refreshed, TB Confirmed chunk will retry next cycle")
+                                    }
+                                    failCount += chunk.size
+                                }
 
-                            5002 -> {
-                                if (userRepo.refreshTokenTmc(
-                                        user.userName, user.password
-                                    )
-                                ) throw SocketTimeoutException("Refreshed Token!")
-                                else throw IllegalStateException("User Logged out!!")
-                            }
-
-                            5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
-                            }
-
-                            else -> {
-                                throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
+                                else -> {
+                                    Timber.e("TB Confirmed chunk failed with statusCode: $responseStatusCode")
+                                    failCount += chunk.size
+                                }
                             }
                         }
+                    } else {
+                        Timber.e("TB Confirmed chunk HTTP error: $statusCode")
+                        failCount += chunk.size
                     }
+                } catch (e: Exception) {
+                    Timber.e(e, "TB Confirmed chunk push failed: ${chunk.size} records")
+                    failCount += chunk.size
                 }
-
-            } catch (e: SocketTimeoutException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -2
-
-            } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_tb error : $e")
-                return@withContext -1
             }
-            -1
-        }
 
+            Timber.d("TB Confirmed push complete: $successCount succeeded, $failCount failed out of ${tbspList.size}")
+            return@withContext 1
+        }
     }
 
 

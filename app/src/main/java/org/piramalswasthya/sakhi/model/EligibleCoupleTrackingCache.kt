@@ -136,7 +136,7 @@ data class BenWithEcTrackingCache(
         }
     }
 
-    fun asDomainModel(): BenWithEctListDomain {
+    fun asDomainModel(childCount: Int? = null): BenWithEctListDomain {
         val recentFill = savedECTRecords.maxByOrNull { it.visitDate }
         val allowFill = recentFill?.let {
             val cal = Calendar.getInstance()
@@ -150,7 +150,7 @@ data class BenWithEcTrackingCache(
         return BenWithEctListDomain(
 //            ecBenId,
             ben.asBasicDomainModel(),
-            ecr.noOfLiveChildren.toString(),
+            (childCount ?: ben.noOfAliveChildren).toString(),
             allowFill,
             ectDate = recentFill?.visitDate ?: 0L,
             lmpDate = recentFill?.lmpDate ?: 0L,

@@ -10,9 +10,8 @@
     <string name="rv_item_hh_ph_3">Surname : </string>
     <string name="hh_members_text">Members : %1d</string>
     <string name="btn_rv_item_hh_add_ben">Add Beneficiary</string>
-    <string name="str_duplicate_record">Duplicate Record</string>
+    <string name="str_duplicate_record">Deleted Record</string>
     <string name="add_mda">Add MDA</string>
-
 
     <string name="frag_nhhr_title">New Household Registration</string>
 
@@ -147,6 +146,5 @@
     <string name="add_asha_head">ASHA Household Registration</string>
     <string name="hh_no_members">Household EMPTY!</string>
     <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a HoF Beneficiary ?</string>
-
 
 </resources>
