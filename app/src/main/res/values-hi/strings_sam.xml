@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_new_visit">नई विजिट जोड़ें</string>
+    <string name="visit">विजिट %1$d</string>
+    <string name="visit_2">विजिट देखें या जोड़ें</string>
+    <string name="check_sam_">SAM जांचें</string>
+    <string name="severe_acute_malnutrition">गंभीर तीव्र कुपोषण</string>
+    <string name="sam_form">SAM फॉर्म</string>
+    <string name="ors_form">ORS फॉर्म</string>
+    <string name="oral_rehydration_solution">ओरल रिहाइड्रेशन सॉल्यूशन</string>
+    <string name="ifa_form">IFA फॉर्म</string>
+    <string name="iron_folic_acid">आयरन फोलिक एसिड</string>
+    <string name="sam_form_">SAM फॉर्म</string>
+    <string name="take_photo">फोटो लें</string>
+    <string name="select_image">छवि चुनें</string>
+    <string name="choose_from_gallery">गैलरी से चुनें</string>
+    <string name="invalid_visit_date">अमान्य विजिट तारीख</string>
+    <string name="delivery_date_is_missing">प्रसव की तारीख गायब है</string>
+    <string name="visit_date_cannot_be_after_today_s_date">विजिट की तारीख आज की तारीख के बाद नहीं हो सकती</string>
+    <string name="visit_date_cannot_be_before_delivery_date">विजिट की तारीख प्रसव की तारीख से पहले नहीं हो सकती</string>
+    <string name="visit_date_must_be_after_previous_visit">विजिट की तारीख पिछली विजिट (%1$s) के बाद होनी चाहिए</string>
+    <string name="visit_already_exists_for_this_date">इस तारीख के लिए विजिट पहले से मौजूद है: %1$s</string>
+    <string name="visit_date_must_be_greater_then_the_last_visit_dates">विजिट की तारीख अंतिम विजिट की तारीख से बाद होनी चाहिए</string>
+    <string name="visit_date_must_be_after_all_existing_visit_dates">विजिट की तारीख सभी मौजूदा विजिट तारीखों के बाद होनी चाहिए</string>
+    <string name="is_child_referred_nrc">क्या बच्चे को NRC में रेफर किया गया</string>
+    <string name="is_child_admitted_nrc">क्या बच्चे को NRC में भर्ती किया गया</string>
+    <string name="is_child_discharged_nrc">क्या बच्चे को NRC से छुट्टी मिली</string>
+    <string name="sam_status">SAM स्थिति</string>
+    <string name="follow_up_sam">SAM फॉलो अप</string>
+    <string name="nrc_admitted">NRC में भर्ती</string>
+    <string name="referred_to_nrc">NRC में रेफर किया गया</string>
+    <string name="visit_date_cannot_be_more_than_2_months_old">विजिट की तारीख 2 महीने से अधिक पुरानी नहीं हो सकती</string>
+    <string name="only_one_visit_per_month_allowed">प्रति माह केवल एक विजिट की अनुमति है</string>
+    <string name="bottle_count">बोतल गणना</string>
+</resources>
