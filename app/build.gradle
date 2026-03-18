@@ -50,6 +50,15 @@ android {
     }
 
     signingConfigs {
+        debug {
+            def debugKeystoreFile = rootProject.file("debug-keystore.jks")
+            if (debugKeystoreFile.exists()) {
+                storeFile debugKeystoreFile
+                storePassword "android"
+                keyAlias "debugkey"
+                keyPassword "android"
+            }
+        }
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
@@ -69,7 +78,7 @@ android {
         }
 
         debug {
-            // uses default debug keystore; no changes needed
+            signingConfig signingConfigs.debug
         }
     }
     flavorDimensions "default"
