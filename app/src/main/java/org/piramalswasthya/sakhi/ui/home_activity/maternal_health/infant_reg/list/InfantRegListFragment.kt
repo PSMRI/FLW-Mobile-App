@@ -93,10 +93,14 @@ class InfantRegListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val title = if (viewModel.onlyLowBirthWeight)
+            getString(R.string.low_birth_weight_babies)
+        else
+            getString(R.string.infant_reg_list)
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__infant_registration,
-                getString(R.string.infant_reg_list)
+                title
             )
         }
     }

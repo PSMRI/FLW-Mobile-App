@@ -150,7 +150,7 @@ class DewormingDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as DewormingCache).let { form ->
-            val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val currentDate = formatter.format(Date())
             form.dewormingDone = dewormingDone.value!!
             form.dewormingDate = dewormingDate.value

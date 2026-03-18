@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.work.dynamicWoker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -18,45 +17,29 @@ import timber.log.Timber
 class AncHomeVisitPushWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val preferenceDao: PreferenceDao,
+    override val preferenceDao: PreferenceDao,
     private val repository: FormRepository
-) : CoroutineWorker(context, workerParams) {
+) : BaseDynamicWorker(context, workerParams) {
 
+    override val workerName = "AncHomeVisitPushWorker"
 
-    override suspend fun doWork(): Result {
+    override suspend fun doSyncWork(): Result {
+        val user = preferenceDao.getLoggedInUser()
+            ?: throw IllegalStateException("No user logged in")
 
-
-        return try {
-
-            val user = preferenceDao.getLoggedInUser()
-                ?: throw IllegalStateException("No user logged in")
-
-
-            val unsyncedFormsANC = repository.getUnsyncedFormsANC()
-            for (form in unsyncedFormsANC) {
-                if ((form.benId ?: -1) < 0) continue
-                try {
-                    val success = repository.syncFormToServerANC(form)
-                    if (success) repository.markFormAsSyncedANC(form.id)
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to sync ANC form ${form.id}")
-                }
+        val unsyncedFormsANC = repository.getUnsyncedFormsANC()
+        for (form in unsyncedFormsANC) {
+            if ((form.benId ?: -1) < 0) continue
+            try {
+                val success = repository.syncFormToServerANC(form)
+                if (success) repository.markFormAsSyncedANC(form.id)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to sync ANC form ${form.id}")
             }
-
-            Result.success()
-        } catch (e: IllegalStateException) {
-            Timber.e(e, "FormSyncWorker failed: No user logged in")
-            Result.failure()
-        } catch (e: java.net.UnknownHostException) {
-            Timber.w(e, "FormSyncWorker: Network unavailable, will retry")
-            Result.retry()
-        } catch (e: Exception) {
-            Timber.e(e, "FormSyncWorker failed with unexpected error")
-            if (runAttemptCount < 3) Result.retry() else Result.failure()
         }
 
+        return Result.success()
     }
-
 
     companion object {
         fun enqueue(context: Context) {

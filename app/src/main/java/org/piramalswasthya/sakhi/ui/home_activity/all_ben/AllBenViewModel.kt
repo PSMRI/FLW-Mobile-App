@@ -9,12 +9,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -26,60 +34,32 @@ import javax.inject.Inject
 @HiltViewModel
 class AllBenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo,
+    private val recordsRepo: RecordsRepo,
     abhaGenratedRepo: ABHAGenratedRepo,
     private val benRepo: BenRepo
 ) : ViewModel() {
 
     private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
-    private val allBenList = when (sourceFromArgs) {
-        1 -> {
-            recordsRepo.allBenWithAbhaList
-        }
-        2 -> {
-            recordsRepo.allBenWithRchList
-        }
-        3 -> {
-            recordsRepo.allBenAboveThirtyList
-        }
-        4 -> {
-            recordsRepo.allBenWARAList
-        }
-        else -> {
-            recordsRepo.allBenList.map { list ->
-                list.map { ben ->
-                    val count =
-                        benRepo.getChildBenListFromHousehold(
-                            ben.hhId,
-                            ben.benId,
-                            ben.benName
-                        ).size
-
-                    ben.copy(noOfChildren = count)
-                }
-            }
-        }
-    }
-
     private val filterOrg = MutableStateFlow("")
     private val kindOrg = MutableStateFlow(0)
 
-    val benList = allBenList.combine(kindOrg) { list, kind ->
-        filterBenList(list, kind)
-    }.combine(filterOrg) { list, filter ->
-        filterBenList(list, filter)
-            .sortedWith(
-                compareBy<BenBasicDomain> {
-                    when {
-                        !it.isDeath && !it.isDeactivate -> 0
-                        it.isDeath && !it.isDeactivate -> 1
-                        it.isDeactivate -> 2
-                        else -> 4
-                    }
-                }
-            )
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val benList: Flow<PagingData<BenBasicDomain>> = combine(filterOrg, kindOrg) { text, kind ->
+        Pair(text, kind)
+    }.debounce { (text, _) ->
+        if (text.isEmpty()) 0L else 300L
+    }.flatMapLatest { (text, kind) ->
+        Pager(
+            config = PagingConfig(pageSize = 30, prefetchDistance = 10)
+        ) {
+            recordsRepo.searchBenPagedSource(text, kind, sourceFromArgs)
+        }.flow.map { pagingData ->
+            pagingData.map { it.asBasicDomainModel() }
+        }
     }
+
+    val childCounts: Flow<Map<Long, Int>> = recordsRepo.childCountsByBen
 
     private val _abha = MutableLiveData<String?>()
     val abha: LiveData<String?>
@@ -130,7 +110,18 @@ class AllBenViewModel @Inject constructor(
         _benRegId.value = null
     }
 
-    fun createCsvFile(context: Context, users: List<BenBasicDomain>): File? {
+    fun downloadCsv(context: Context) {
+        viewModelScope.launch {
+            val users = recordsRepo.searchBenOnce(filterOrg.value, kindOrg.value, sourceFromArgs)
+            if (users.isNotEmpty()) {
+                createCsvFile(context, users)
+            } else {
+                Toast.makeText(context, "No data to export", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun createCsvFile(context: Context, users: List<BenBasicDomain>): File? {
         return try {
             val fileName = "ABHAUsers_${System.currentTimeMillis()}.csv"
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)

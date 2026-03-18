@@ -108,7 +108,7 @@ private fun getNextFollowUpMinDate(): String {
     }
 
     val nextDate =
-        SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(cal.time)
+        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
 
     return nextDate
 }
@@ -116,19 +116,19 @@ private fun getNextFollowUpMinDate(): String {
 
     private fun parseDbDate(dateStr: String?): Date? {
         if (dateStr.isNullOrBlank()) return null
-        return try { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateStr) } catch (_: Exception) { null }
+        return try { SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateStr) } catch (_: Exception) { null }
     }
 
     private fun parseUiDate(dateStr: String?): Date? {
         if (dateStr.isNullOrBlank()) return null
-        return try { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr) } catch (_: Exception) { null }
+        return try { SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr) } catch (_: Exception) { null }
     }
 
 
 
     private fun formatDateForSave(input: String?): String {
         val date = parseUiDate(input) ?: return ""
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+        return SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(date)
     }
 
     fun loadFormSchema(benId: Long) {
@@ -302,7 +302,7 @@ private fun getNextFollowUpMinDate(): String {
     private fun parseUiDateStrict(dateStr: String?): Date? {
         if (dateStr.isNullOrBlank()) return null
         return try {
-            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).apply { isLenient = false }.parse(dateStr)
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).apply { isLenient = false }.parse(dateStr)
         } catch (e: Exception) {
             Log.d("FollowUpCheck", "Failed to parse UI date: $dateStr, ${e.message}")
             null
@@ -311,7 +311,7 @@ private fun getNextFollowUpMinDate(): String {
     private fun parseDbDateStrict(dateStr: String?): Date? {
         if (dateStr.isNullOrBlank()) return null
         return try {
-            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply { isLenient = false }.parse(dateStr)
+            SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).apply { isLenient = false }.parse(dateStr)
         } catch (e: Exception) {
             null
         }

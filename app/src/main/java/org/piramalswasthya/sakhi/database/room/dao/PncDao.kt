@@ -31,4 +31,7 @@ interface PncDao {
 
     @Query("SELECT * FROM PNC_VISIT WHERE benId = :benId")
     suspend fun getPncVisitsByBenId(benId: Long): List<PNCVisitCache>
+
+    @Query("UPDATE PNC_VISIT SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

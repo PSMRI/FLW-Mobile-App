@@ -99,7 +99,7 @@ class BenIfaFormRepository @Inject constructor(
         val jsonList = jsonResponseDao.getFormJsonList(benId, FormConstants.IFA_DISTRIBUTION_FORM_ID)
         if (jsonList.isEmpty()) return true
 
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val currentCal = Calendar.getInstance()
         val currentMonth = currentCal.get(Calendar.MONTH)
         val currentYear = currentCal.get(Calendar.YEAR)
@@ -128,7 +128,7 @@ class BenIfaFormRepository @Inject constructor(
         val jsonList = jsonResponseDao.getFormJsonList(benId, formId)
 
         val result = mutableListOf<BottleItem>()
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
         jsonList.forEachIndexed { index, formJson ->
             try {
@@ -244,7 +244,7 @@ class BenIfaFormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
 }

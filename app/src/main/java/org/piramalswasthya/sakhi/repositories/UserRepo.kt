@@ -60,7 +60,7 @@ class UserRepo @Inject constructor(
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+                    return@withContext NetworkResponse.Error(message = ie.message ?: "Something went wrong... Try again later")
 
             }
         }
@@ -84,7 +84,7 @@ class UserRepo @Inject constructor(
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+                    return@withContext NetworkResponse.Error(message = ie.message ?: "Something went wrong... Try again later")
 
             }
         }
@@ -151,14 +151,14 @@ class UserRepo @Inject constructor(
                     return@withContext true
                 } else {
                     val errorMessage = responseBody.getString("errorMessage")
-                    Timber.d("Error Message $errorMessage")
+                    Timber.e("Error Message $errorMessage")
                     return@withContext false
                 }
 
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
             } catch (e: HttpException) {
-                Timber.d("Auth Failed!")
+                Timber.e("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
                 return@withContext true
@@ -182,7 +182,9 @@ class UserRepo @Inject constructor(
                     ?: throw IllegalStateException("Response success but data missing @ $response")
             )
             val statusCode = responseBody.getInt("statusCode")
-            if (statusCode == 5002||statusCode == 401)
+            if (statusCode == 5002)
+                throw IllegalStateException("Login failed")
+            if (statusCode == 401)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
             val token = data.getString("key")

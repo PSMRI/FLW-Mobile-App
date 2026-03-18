@@ -41,4 +41,6 @@ interface SaasBahuSammelanDao {
     @Query("DELETE FROM SAAS_BAHU_ACTIVITY")
     suspend fun clearAll()
 
+    @Query("UPDATE SAAS_BAHU_ACTIVITY SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

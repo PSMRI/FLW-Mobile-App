@@ -290,7 +290,7 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.incentive_verification),
             null,
             SupervisorHomeFragmentDirections.actionNavSupervisorToIncentiveVerificationFragment()
-          
+
         )
     ).apply {
         forEachIndexed { index, icon ->
@@ -316,7 +316,7 @@ class IconDataset @Inject constructor(
     fun getVLFDataset(resources: Resources): List<Icon> {
 
         val phcReviewIcon = Icon(
-            R.drawable.phc_review,
+            R.drawable.phc_meeting_s2,
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
                 resources.getString(R.string.cluster_review)
             else
@@ -326,72 +326,75 @@ class IconDataset @Inject constructor(
                 .actionVillageLevelFormsFragmentToPHCReviewListFragement()
         )
 
-        return listOf(
-            Icon(
-                R.drawable.ic__assess_high_risk,
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+        return buildList {
+            add(Icon(
+                R.drawable.icon_vhnd,
                 resources.getString(R.string.vhnd),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToVHNDListFragement()
-            ),
-            Icon(
-                R.drawable.vhnc,
+            ))
+            add(Icon(
+                R.drawable.ic__vhnsc,
                 resources.getString(R.string.vnhc),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToVHNCListFragement()
-            ),
-            phcReviewIcon,
-            Icon(
-                R.drawable.ahd,
+            ))
+            add(phcReviewIcon)
+            add(Icon(
+                R.drawable.icon_ahd,
                 resources.getString(R.string.ahd),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToAHDListFragment()
-            ),
-            Icon(
+            ))
+            add(Icon(
                 R.drawable.dewarming,
                 resources.getString(R.string.national_deworming_day),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToDewormingListFragment()
-            ),
-            Icon(
-                R.drawable.dewarming,
+            ))
+            add(Icon(
+                R.drawable.ic__maa_meeting,
                 resources.getString(R.string.maa_meeting),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-            ),
-            Icon(
-                R.drawable.dewarming,
+            ))
+            add(Icon(
+                R.drawable.u_win_s1,
                 resources.getString(R.string.u_win_session),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToUwinListFragment()
-            ),
-            Icon(
-                R.drawable.dewarming,
+            ))
+            add(Icon(
+                R.drawable.ic__pulse_polio,
                 resources.getString(R.string.pulse_polio_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
-            ),
-            Icon(
-                R.drawable.dewarming,
+            ))
+            add(Icon(
+                R.drawable.ic__ors,
                 resources.getString(R.string.ors_distribution_campaign),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
+            ))
+            add(Icon(
             ), Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
-            )
-
-        )
+            ))
+        }
     }
 
 
@@ -522,8 +525,7 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.KALA_AZAR.toString()
-            )
+                resources.getString(Disease.KALA_AZAR.getTitleRes()))
         ),
 
         Icon(
@@ -531,15 +533,14 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_aes),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.AES_JE.toString()
-            )
+                resources.getString(Disease.AES_JE.getTitleRes()))
         ),
         Icon(
             R.drawable.filaria,
             resources.getString(R.string.icon_title_filaria),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.FILARIA.toString()
+                resources.getString(Disease.FILARIA.getTitleRes())
             )
         ),
         Icon(
@@ -570,19 +571,19 @@ class IconDataset @Inject constructor(
             DeathReportsFragmentDirections.actionDeathReportsFragmentToGdrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.maternal_death_s1,
             resources.getString(R.string.maternal_deaths),
             recordsRepo.getMaternalDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToMdsrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.non_maternal_death_s1,
             resources.getString(R.string.non_maternal_deaths),
             recordsRepo.getNonMaternalDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToNmdsrListFragment()
         ),
         Icon(
-            R.drawable.ic__death,
+            R.drawable.ic__child_death,
             resources.getString(R.string.child_deaths),
             recordsRepo.getChildDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToCdrListFragment()
@@ -651,12 +652,12 @@ class IconDataset @Inject constructor(
     }
 
     fun getNCDDataset(resources: Resources) = listOf(
-        Icon(
-            R.drawable.ic__ncd_list,
-            resources.getString(R.string.icon_title_ncd_list),
-            recordsRepo.ncdListCount,
-            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
-        ),
+//        Icon(
+//            R.drawable.ic__ncd_list,
+//            resources.getString(R.string.icon_title_ncd_list),
+//            recordsRepo.ncdListCount,
+//            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
+//        ),
         Icon(
             R.drawable.ic__ncd_eligibility,
             resources.getString(R.string.icon_title_ncd_eligible_list),
@@ -746,6 +747,7 @@ class IconDataset @Inject constructor(
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.MALARIA.toString()
             )
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),

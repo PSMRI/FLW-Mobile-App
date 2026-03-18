@@ -895,10 +895,15 @@ data class BenBasicDomain(
 
 ) : Parcelable{
     val dobString: String
-        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
             .format(java.util.Date(dob))
 }
 
+
+data class BenChildCount(
+    val benId: Long,
+    val childCount: Int
+)
 
 data class BenBasicDomainForForm(
     val benId: Long,

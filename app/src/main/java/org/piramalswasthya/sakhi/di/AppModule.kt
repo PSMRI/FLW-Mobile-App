@@ -56,8 +56,10 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenAuthenticator
@@ -85,12 +87,16 @@ object AppModule {
     @Singleton
     @Provides
     @Named(AUTH_CLIENT)
-    fun provideAuthClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideAuthClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        accountDeactivationInterceptor: AccountDeactivationInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(accountDeactivationInterceptor)
             .build()
     }
 
@@ -117,13 +123,15 @@ object AppModule {
         apiAnalyticsInterceptor: ApiAnalyticsInterceptor,
         tokenInsertTmcInterceptor: TokenInsertTmcInterceptor,
         tokenAuthenticator: TokenAuthenticator,
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        accountDeactivationInterceptor: AccountDeactivationInterceptor
     ): OkHttpClient {
         return baseClient
             .newBuilder()
             .addInterceptor(tokenInsertTmcInterceptor)
             .addInterceptor(apiAnalyticsInterceptor)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(accountDeactivationInterceptor)
             .authenticator(tokenAuthenticator) // attach authenticator for 401 handling
             .build()
     }
@@ -160,9 +168,10 @@ object AppModule {
     @Provides
     fun provideTokenAuthenticator(
         pref: PreferenceDao,
-        @Named(AUTH_API) authApi: AmritApiService
+        @Named(AUTH_API) authApi: AmritApiService,
+        tokenExpiryManager: TokenExpiryManager
     ): TokenAuthenticator {
-        return TokenAuthenticator(pref, authApi)
+        return TokenAuthenticator(pref, authApi, tokenExpiryManager)
     }
 
     @Singleton
@@ -171,9 +180,6 @@ object AppModule {
     fun provideAbhaHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
             .addInterceptor(TokenInsertAbhaInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
@@ -196,6 +202,9 @@ object AppModule {
 
     private val baseClient =
         OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(ContentTypeInterceptor())
             .build()
 
