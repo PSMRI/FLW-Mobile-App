@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.network.getLongFromDateMultipleSupport
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -421,7 +422,7 @@ data class PregnantWomanAncCache(
             isPaiucdId = isPaiucdId,
             isPaiucd = isPaiucd,
             isYesOrNo = isYesOrNo,
-            dateSterilisation = getDateStringFromLong(dateSterilisation),
+            dateSterilisation = dateSterilisation?.let { getDateStringFromLong(it) },
             remarks = remarks,
             abortionImg1 = abortionImg1,
             abortionImg2 = abortionImg2,
@@ -534,8 +535,8 @@ data class ANCPost(
             id = id,
             benId = benId,
 
-            lmpDate = getLongFromDate(lmpDate),
-            visitDate = getLongFromDate(visitDate),
+            lmpDate = getLongFromDateMultipleSupport(lmpDate),
+            visitDate = getLongFromDateMultipleSupport(visitDate),
             weekOfPregnancy = weekOfPregnancy,
             serialNo = serialNo,
             methodOfTermination = methodOfTermination,
@@ -545,7 +546,7 @@ data class ANCPost(
             isPaiucdId = isPaiucdId,
             isPaiucd = isPaiucd,
             isYesOrNo = isYesOrNo,
-            dateSterilisation = getLongFromDate(dateSterilisation),
+            dateSterilisation = getLongFromDateMultipleSupport(dateSterilisation),
             remarks = remarks,
             abortionImg1 = abortionImg1,
             abortionImg2 = abortionImg2,
@@ -564,7 +565,7 @@ data class ANCPost(
 //            abortionTypeId =
             abortionFacility = abortionFacility,
 //            abortionFacilityId
-            abortionDate = getLongFromDate(abortionDate),
+            abortionDate = getLongFromDateMultipleSupport(abortionDate),
             weight = weightOfPW,
             bpSystolic = bpSystolic,
             bpDiastolic = bpDiastolic,
@@ -590,7 +591,7 @@ data class ANCPost(
             maternalDeathProbableCause = probableCauseOfDeath,
 //            maternalDeathProbableCauseId
             otherMaternalDeathProbableCause = otherCauseOfDeath,
-            deathDate = getLongFromDate(deathDate),
+            deathDate = getLongFromDateMultipleSupport(deathDate),
             pregnantWomanDelivered = isBabyDelivered,
             processed = "P",
             createdBy = createdBy,

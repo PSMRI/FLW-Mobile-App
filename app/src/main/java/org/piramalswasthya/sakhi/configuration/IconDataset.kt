@@ -376,8 +376,8 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
-            )
-            ,Icon(
+            ))
+            add(Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
@@ -520,8 +520,7 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.KALA_AZAR.toString()
-            )
+                resources.getString(Disease.KALA_AZAR.getTitleRes()))
         ),
 
         Icon(
@@ -529,15 +528,14 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_aes),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.AES_JE.toString()
-            )
+                resources.getString(Disease.AES_JE.getTitleRes()))
         ),
         Icon(
             R.drawable.filaria,
             resources.getString(R.string.icon_title_filaria),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.FILARIA.toString()
+                resources.getString(Disease.FILARIA.getTitleRes())
             )
         ),
         Icon(
@@ -649,12 +647,12 @@ class IconDataset @Inject constructor(
     }
 
     fun getNCDDataset(resources: Resources) = listOf(
-        Icon(
-            R.drawable.ic__ncd_list,
-            resources.getString(R.string.icon_title_ncd_list),
-            recordsRepo.ncdListCount,
-            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
-        ),
+//        Icon(
+//            R.drawable.ic__ncd_list,
+//            resources.getString(R.string.icon_title_ncd_list),
+//            recordsRepo.ncdListCount,
+//            NcdFragmentDirections.actionNcdFragmentToNcdListFragment()
+//        ),
         Icon(
             R.drawable.ic__ncd_eligibility,
             resources.getString(R.string.icon_title_ncd_eligible_list),
@@ -741,7 +739,7 @@ class IconDataset @Inject constructor(
             R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
-            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(Disease.MALARIA.toString())
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),

@@ -477,7 +477,7 @@ class EcrRepo @Inject constructor(
                     ),
                     lmpDate =
                     if (ecrJson.has("lmpDate")) {
-                        getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                        getLongFromLmpDateOrNull(ecrJson.getString("lmpDate")) ?: 0L
                     } else {
                         0L
                     },
@@ -489,7 +489,7 @@ class EcrRepo @Inject constructor(
 //                    noOfLiveChildren = if (ecrJson.has("noOfLiveChildren")) ecrJson.getInt("noOfLiveChildren") else 0,
 //                    noOfMaleChildren = if (ecrJson.has("noOfMaleChildren")) ecrJson.getInt("noOfMaleChildren") else 0,
 //                    noOfFemaleChildren = if (ecrJson.has("noOfFemaleChildren")) ecrJson.getInt("noOfFemaleChildren") else 0,
-                    dob1 = if (ecrJson.has("dob1")) getLongFromDate(ecrJson.getString("dob1")) else null,
+                    dob1 = if (ecrJson.has("dob1")) getLongFromDateOrNull(ecrJson.getString("dob1")) else null,
                     age1 = if (ecrJson.has("age1")) ecrJson.getInt("age1") else null,
                     gender1 = if (ecrJson.has("gender1")) ecrJson.getString("gender1")
                         .uppercase()
@@ -500,7 +500,7 @@ class EcrRepo @Inject constructor(
                     marriageFirstChildGap = if (ecrJson.has("marriageFirstChildGap")) ecrJson.getInt(
                         "marriageFirstChildGap"
                     ) else null,
-                    dob2 = if (ecrJson.has("dob2")) getLongFromDate(ecrJson.getString("dob2")) else null,
+                    dob2 = if (ecrJson.has("dob2")) getLongFromDateOrNull(ecrJson.getString("dob2")) else null,
                     age2 = if (ecrJson.has("age2")) ecrJson.getInt("age2") else null,
                     gender2 = if (ecrJson.has("gender2")) ecrJson.getString("gender2")
                         .uppercase()
@@ -511,7 +511,7 @@ class EcrRepo @Inject constructor(
                     firstAndSecondChildGap = if (ecrJson.has("firstAndSecondChildGap")) ecrJson.getInt(
                         "firstAndSecondChildGap"
                     ) else null,
-                    dob3 = if (ecrJson.has("dob3")) getLongFromDate(ecrJson.getString("dob3")) else null,
+                    dob3 = if (ecrJson.has("dob3")) getLongFromDateOrNull(ecrJson.getString("dob3")) else null,
                     age3 = if (ecrJson.has("age3")) ecrJson.getInt("age3") else null,
                     gender3 = if (ecrJson.has("gender3")) ecrJson.getString("gender3")
                         .uppercase()
@@ -522,7 +522,7 @@ class EcrRepo @Inject constructor(
                     secondAndThirdChildGap = if (ecrJson.has("secondAndThirdChildGap")) ecrJson.getInt(
                         "secondAndThirdChildGap"
                     ) else null,
-                    dob4 = if (ecrJson.has("dob4")) getLongFromDate(ecrJson.getString("dob4")) else null,
+                    dob4 = if (ecrJson.has("dob4")) getLongFromDateOrNull(ecrJson.getString("dob4")) else null,
                     age4 = if (ecrJson.has("age4")) ecrJson.getInt("age4") else null,
                     gender4 = if (ecrJson.has("gender4")) ecrJson.getString("gender4")
                         .uppercase()
@@ -533,7 +533,7 @@ class EcrRepo @Inject constructor(
                     thirdAndFourthChildGap = if (ecrJson.has("thirdAndFourthChildGap")) ecrJson.getInt(
                         "thirdAndFourthChildGap"
                     ) else null,
-                    dob5 = if (ecrJson.has("dob5")) getLongFromDate(ecrJson.getString("dob5")) else null,
+                    dob5 = if (ecrJson.has("dob5")) getLongFromDateOrNull(ecrJson.getString("dob5")) else null,
                     age5 = if (ecrJson.has("age5")) ecrJson.getInt("age5") else null,
                     gender5 = if (ecrJson.has("gender5")) ecrJson.getString("gender5")
                         .uppercase()
@@ -544,7 +544,7 @@ class EcrRepo @Inject constructor(
                     fourthAndFifthChildGap = if (ecrJson.has("fourthAndFifthChildGap")) ecrJson.getInt(
                         "fourthAndFifthChildGap"
                     ) else null,
-                    dob6 = if (ecrJson.has("dob6")) getLongFromDate(ecrJson.getString("dob6")) else null,
+                    dob6 = if (ecrJson.has("dob6")) getLongFromDateOrNull(ecrJson.getString("dob6")) else null,
                     age6 = if (ecrJson.has("age6")) ecrJson.getInt("age6") else null,
                     gender6 = if (ecrJson.has("gender6")) ecrJson.getString("gender6")
                         .uppercase()
@@ -555,7 +555,7 @@ class EcrRepo @Inject constructor(
                     fifthANdSixthChildGap = if (ecrJson.has("fifthANdSixthChildGap")) ecrJson.getInt(
                         "fifthANdSixthChildGap"
                     ) else null,
-                    dob7 = if (ecrJson.has("dob7")) getLongFromDate(ecrJson.getString("dob7")) else null,
+                    dob7 = if (ecrJson.has("dob7")) getLongFromDateOrNull(ecrJson.getString("dob7")) else null,
                     age7 = if (ecrJson.has("age7")) ecrJson.getInt("age7") else null,
                     gender7 = if (ecrJson.has("gender7")) ecrJson.getString("gender7")
                         .uppercase()
@@ -566,7 +566,7 @@ class EcrRepo @Inject constructor(
                     sixthAndSeventhChildGap = if (ecrJson.has("sixthAndSeventhChildGap")) ecrJson.getInt(
                         "sixthAndSeventhChildGap"
                     ) else null,
-                    dob8 = if (ecrJson.has("dob8")) getLongFromDate(ecrJson.getString("dob8")) else null,
+                    dob8 = if (ecrJson.has("dob8")) getLongFromDateOrNull(ecrJson.getString("dob8")) else null,
                     age8 = if (ecrJson.has("age8")) ecrJson.getInt("age8") else null,
                     gender8 = if (ecrJson.has("gender8")) ecrJson.getString("gender8")
                         .uppercase()
@@ -577,7 +577,7 @@ class EcrRepo @Inject constructor(
                     seventhAndEighthChildGap = if (ecrJson.has("seventhAndEighthChildGap")) ecrJson.getInt(
                         "seventhAndEighthChildGap"
                     ) else null,
-                    dob9 = if (ecrJson.has("dob9")) getLongFromDate(ecrJson.getString("dob9")) else null,
+                    dob9 = if (ecrJson.has("dob9")) getLongFromDateOrNull(ecrJson.getString("dob9")) else null,
                     age9 = if (ecrJson.has("age9")) ecrJson.getInt("age9") else null,
                     gender9 = if (ecrJson.has("gender9")) ecrJson.getString("gender9")
                         .uppercase()
@@ -640,7 +640,7 @@ class EcrRepo @Inject constructor(
                 benId = ecrJson.getLong("benId"),
                 lmpDate =
                 if (ecrJson.has("lmpDate")) {
-                    getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                    getLongFromLmpDateOrNull(ecrJson.getString("lmpDate")) ?: 0L
                 } else {
                     0L
                 },
@@ -738,17 +738,35 @@ class EcrRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
             val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
 
+        private fun getLongFromDateOrNull(dateString: String?): Long? {
+            if (dateString.isNullOrBlank()) return null
+            return try {
+                val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
+                f.parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         private fun getLongFromLmpDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
             val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+
+        private fun getLongFromLmpDateOrNull(dateString: String?): Long? {
+            if (dateString.isNullOrBlank()) return null
+            return try {
+                val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                f.parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
         }
 
         private fun getStringToDate(dateString: String?): String? {

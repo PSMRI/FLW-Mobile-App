@@ -7,6 +7,7 @@ import okhttp3.Response
 import okhttp3.Route
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.TmcRefreshTokenRequest
 import timber.log.Timber
@@ -15,14 +16,15 @@ import javax.inject.Named
 
 class TokenAuthenticator @Inject constructor(
     private val pref: PreferenceDao,
-    @Named("authApi") private val authApi: AmritApiService
+    @Named("authApi") private val authApi: AmritApiService,
+    private val tokenExpiryManager: TokenExpiryManager
 ) : Authenticator {
 
     private val refreshLock = Any()
 
     override fun authenticate(route: Route?, response: Response): Request? {
 
-        if (responseCount(response) >= 2) return null
+        if (responseCount(response) >= 3) return null
         if (response.request.header("No-Auth") == "true") return null
 
         val oldJwt = response.request.header("Jwttoken")
@@ -44,26 +46,33 @@ class TokenAuthenticator @Inject constructor(
                         Timber.w(
                             "Token refresh failed: HTTP ${resp.code()}"
                         )
+                        tokenExpiryManager.onRefreshFailed()
                         return@runBlocking null
                     }
 
                     val body = resp.body()?.string().orEmpty()
-                    if (body.isEmpty()) return@runBlocking null
+                    if (body.isEmpty()) {
+                        tokenExpiryManager.onRefreshFailed()
+                        return@runBlocking null
+                    }
 
                     val json = JSONObject(body)
                     val jwt = json.optString("jwtToken", "")
                     val newRefresh = json.optString("refreshToken", refreshToken)
 
                     if (jwt.isBlank()) {
+                        tokenExpiryManager.onRefreshFailed()
                         null
                     } else {
                         pref.registerJWTAmritToken(jwt)
                         pref.registerRefreshToken(newRefresh)
+                        tokenExpiryManager.onRefreshSuccess()
                         jwt
                     }
 
                 } catch (e: Exception) {
                     Timber.e(e, "Token refresh failed")
+                    tokenExpiryManager.onRefreshFailed()
                     null
                 }
             }

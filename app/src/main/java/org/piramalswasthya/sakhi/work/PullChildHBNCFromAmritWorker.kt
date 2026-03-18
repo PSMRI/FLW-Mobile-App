@@ -41,9 +41,9 @@ class PullChildHBNCFromAmritWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             try {
-                setForeground(createForegroundInfo("Downloading Child HBNC Data"))
-            } catch (throwable: Throwable) {
-                Timber.e("error", "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
@@ -101,7 +101,7 @@ class PullChildHBNCFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = hbncRepo.getHBNCDetailsFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }

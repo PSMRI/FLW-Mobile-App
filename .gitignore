@@ -3,6 +3,7 @@
 /.gradle/
 *.bin
 *.lock
+!Gemfile.lock
 /app/build/*
 /app/release/*
 /local.properties
@@ -12,3 +13,4 @@ app/src/main/res/raw/wildcard.crt
 keystore.properties
 app/keystore/*
 keystore.properties
+debug-keystore.jks

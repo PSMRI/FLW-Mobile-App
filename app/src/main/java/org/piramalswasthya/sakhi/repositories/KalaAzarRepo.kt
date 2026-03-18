@@ -76,7 +76,7 @@ class KalaAzarRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -125,8 +125,13 @@ class KalaAzarRepo @Inject constructor(
 
     private suspend fun saveKalaAzarScreeningCacheFromResponse(dataObj: String): MutableList<KalaAzarScreeningCache> {
         val kalaAzarScreeningList = mutableListOf<KalaAzarScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, KalaAzarScreeningRequestDTO::class.java)
-        requestDTO?.kalaAzarLists?.forEach { kalaAzarScreeningDTO ->
+        val kalaAzarLists: List<KALAZARScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<KALAZARScreeningDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, KalaAzarScreeningRequestDTO::class.java)
+            requestDTO?.kalaAzarLists ?: emptyList()
+        }
+        kalaAzarLists.forEach { kalaAzarScreeningDTO ->
             kalaAzarScreeningDTO.visitDate?.let {
                 var kalaAzarScreeningCache: KalaAzarScreeningCache? =
                     kalaAzarDao.getKalaAzarScreening(
@@ -247,9 +252,11 @@ class KalaAzarRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }

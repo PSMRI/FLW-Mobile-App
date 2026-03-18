@@ -23,10 +23,6 @@
     <string name="str_hospital">अस्पताल</string>
     <string name="str_transit">यात्रा के दौरान</string>
 
-
-
-
-
     <string name="general_deaths">सामान्य मृत्यु</string>
     <string name="maternal">मातृ</string>
     <string name="non_maternal">गैर मातृ</string>
@@ -59,9 +55,7 @@
     <string name="timing_of_informing">सूचना देने का समय</string>
     <string name="date_of_notification">सूचना की तिथि</string>
     <string name="cdr_form_from_anm">एएनएम से सीडीआर फॉर्म</string>
-    <string name="cdr_form">सीडीआर फॉर्म</string>
     <string name="death_certificate">मृत्यु प्रमाणपत्र</string>
     <string name="death_certificate_duplicate">मृत्यु प्रमाणपत्र</string>
-
 
 </resources>

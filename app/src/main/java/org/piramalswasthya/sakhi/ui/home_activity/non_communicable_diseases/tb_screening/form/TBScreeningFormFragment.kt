@@ -119,7 +119,7 @@ class TBScreeningFormFragment : Fragment() {
             ?.savedStateHandle
             ?.getLiveData<String>("REFERRAL_DONE")
             ?.observe(viewLifecycleOwner) { typeName ->
-
+                if (typeName.isNullOrBlank()) return@observe
                 val type = TBScreeningFormViewModel.ReferralType.valueOf(typeName)
                 viewModel.markReferralCompleted(type)
                 viewModel.saveForm()
@@ -130,6 +130,7 @@ class TBScreeningFormFragment : Fragment() {
             ?.savedStateHandle
             ?.getLiveData<String>("REFERRAL_RESULT")
             ?.observe(viewLifecycleOwner) { json ->
+                if (json.isNullOrBlank()) return@observe
                 val referral = Gson().fromJson(json, ReferalCache::class.java)
                 viewModel.addReferral(referral)
                 findNavController().currentBackStackEntry?.savedStateHandle?.set("REFERRAL_RESULT",null)

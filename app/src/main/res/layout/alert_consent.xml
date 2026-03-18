@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:maxHeight="500dp"
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_wide">
 
@@ -16,34 +15,32 @@
         android:padding="@dimen/padding_normal"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="?attr/colorOnPrimary" />
 
     <LinearLayout
         android:id="@+id/consentContainer"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/textView4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <CheckBox
             android:id="@+id/checkBox"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="top|start" />
 
         <ScrollView
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            tools:ignore="NestedWeights">
 
             <TextView
                 android:id="@+id/scrollableText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:scrollbars="vertical"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:text="@string/consent_text"
@@ -52,6 +49,7 @@
         </ScrollView>
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
@@ -60,10 +58,6 @@
         android:gravity="center"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/consentContainer"
         android:layout_marginTop="15dp">
 
         <com.google.android.material.button.MaterialButton

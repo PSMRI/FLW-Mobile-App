@@ -136,7 +136,8 @@ class PregnancyRegistrationFormFragment : Fragment() {
                 }
 
                 21 -> {
-                   notifyDataSetChanged()
+                    binding.form.rvInputForm.findFocus()?.clearFocus()
+                    notifyDataSetChanged()
                 }
 
                 19 -> {
