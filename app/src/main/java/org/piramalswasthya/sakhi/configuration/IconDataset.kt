@@ -376,8 +376,8 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
-            ))
-            add(Icon(
+            ),
+            Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
