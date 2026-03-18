@@ -61,7 +61,7 @@ class AESRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit AES screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -110,8 +110,13 @@ class AESRepo @Inject constructor(
 
     private suspend fun saveAESScreeningCacheFromResponse(dataObj: String): MutableList<AESScreeningCache> {
         val aesScreeningList = mutableListOf<AESScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, AESScreeningRequestDTO::class.java)
-        requestDTO?.aesJeLists?.forEach { aesScreeningDTO ->
+        val aesJeLists: List<AESScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<AESScreeningDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, AESScreeningRequestDTO::class.java)
+            requestDTO?.aesJeLists ?: emptyList()
+        }
+        aesJeLists.forEach { aesScreeningDTO ->
             aesScreeningDTO.visitDate.let {
                 var aesScreeningCache: AESScreeningCache? =
                     aesDao.getAESScreening(
@@ -230,9 +235,11 @@ class AESRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }

@@ -10,16 +10,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterEcTrackingList
-import org.piramalswasthya.sakhi.model.BenWithEctListDomain
-import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 class EligibleCoupleTrackingListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo,
-    benRepo: BenRepo
+    recordsRepo: RecordsRepo
 ) : ViewModel() {
 
     private var sourceFromArgs = EligibleCoupleTrackingListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
@@ -36,31 +33,6 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
 
-    private val childrenCountMap =
-        MutableStateFlow<Map<Long, String>>(emptyMap())
-    init {
-        viewModelScope.launch {
-            allBenList.collect { list ->
-                val map = mutableMapOf<Long, String>()
-
-                list.forEach { item ->
-                    val ben = item.ben
-
-                    val count = benRepo
-                        .getChildBenListFromHousehold(
-                            ben.hhId,
-                            ben.benId,
-                            ben.benName
-                        ).size
-
-                    map[ben.benId] = count.toString()
-                }
-
-                childrenCountMap.emit(map)
-            }
-        }
-    }
-
     val benList =
         allBenList
             .combine(filter) { list, filter ->
@@ -69,17 +41,6 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
                         list,
                         filter
                     ).map { it.ben.benId }
-                }
-            }
-            .combine(
-                childrenCountMap
-            ) { list: List<BenWithEctListDomain>,
-                countMap: Map<Long, String> ->
-
-                list.map { item ->
-                    item.copy(
-                        numChildren = countMap[item.ben.benId] ?: "0"
-                    )
                 }
             }
 

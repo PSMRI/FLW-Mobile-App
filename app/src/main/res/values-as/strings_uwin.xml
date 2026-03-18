@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="no_u_win_sessions_found">কোনো U-WIN চেচন পোৱা নগ\'ল।</string>
+    <string name="add_new_u_win_entry">নতুন U-WIN এণ্ট্ৰি যোগ কৰক</string>
+    <string name="u_win_session_list">U-win চেচন তালিকা</string>
+    <string name="u_win_session_detail">U-win চেচন বিৱৰণ</string>
+    <string name="do_you_want_to_upload_uwin_form_immunization_page_section_photo_copy_to_claim_your_incentive">আপোনাৰ প্ৰণোদনা দাবী কৰিবলৈ Uwin ফৰ্ম - টীকাকৰণ পৃষ্ঠা/অংশৰ ফটোকপি আপলোড কৰিব বিচাৰে নেকি</string>
 </resources>

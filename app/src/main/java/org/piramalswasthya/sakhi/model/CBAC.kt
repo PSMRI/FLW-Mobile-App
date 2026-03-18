@@ -892,7 +892,7 @@ data class CbacVisitDetails(
 fun String?.toMillisOrNull(pattern: String = "MMM dd, yyyy, h:mm:ss a"): Long? {
     if (this.isNullOrBlank()) return null
     return try {
-        val format = SimpleDateFormat(pattern, Locale.getDefault())
+        val format = SimpleDateFormat(pattern, Locale.ENGLISH)
         format.timeZone = TimeZone.getTimeZone("UTC")
         format.parse(this)?.time
     } catch (e: Exception) {

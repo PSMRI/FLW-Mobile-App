@@ -61,5 +61,12 @@
     <string name="ecrdset_9_age_yrs">नौवें बच्चे की उम्र (वर्ष में)</string>
     <string name="ecrdset_9_child_sex">नौवें बच्चे का लिंग</string>
     <string name="ecrdset_gap_8_9_child">आठवें और नौवें बच्चे के बीच का अंतर</string>
+    <string name="ecrdset_reg_children_15_below">15 वर्ष से कम आयु के बच्चों का पंजीकरण</string>
+    <string name="childrens">क्या आपके बच्चे हैं?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover">क्या नई पहल किट दंपत्ति को सौंपी गई है?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover_date">नई पहल किट सौंपने की तारीख</string>
+    <string name="asha_photo">नई पहल किट सौंपते समय दंपत्ति के साथ आशा की फोटो</string>
+    <string name="asha_photo_one">आशा फोटो एक</string>
+    <string name="asha_photo_two">आशा फोटो दो</string>
 
 </resources>

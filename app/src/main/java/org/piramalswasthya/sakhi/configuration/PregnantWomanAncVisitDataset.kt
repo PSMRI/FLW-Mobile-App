@@ -504,7 +504,7 @@ class PregnantWomanAncVisitDataset(
         setUpTdX()
         ben?.let {
             ancDate.min =
-                regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.minAnc1Week.toLong() + 1)
+                regis.lmpDate + TimeUnit.DAYS.toMillis(7 * Konstants.minAnc1Week.toLong())
             ancVisit.entries = arrayOf("1", "2", "3", "4", "5", "6", "7", "8","9")
             lastAnc?.let { last ->
                 ancDate.min = last.ancDate + TimeUnit.DAYS.toMillis(4 * 7)
@@ -519,7 +519,7 @@ class PregnantWomanAncVisitDataset(
 
             /*This change is done to test working as per Madhava*/
             ancDate.max =
-                getANCMaxFromLmp(regis.lmpDate) //minOf(getEddFromLmp(regis.lmpDate),System.currentTimeMillis())
+                minOf(getANCMaxFromLmp(regis.lmpDate), System.currentTimeMillis())
 
 //          ancDate.value = getDateFromLong(ancDate.max!!)
             maternalDateOfDeath.min =

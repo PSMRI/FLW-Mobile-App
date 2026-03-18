@@ -76,7 +76,7 @@ class SchedulerFragment : Fragment() {
             }
         }
         binding.cvAnc.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
         }
 
         binding.cvImm.setOnClickListener {
@@ -89,7 +89,7 @@ class SchedulerFragment : Fragment() {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
         }
         binding.cvLwb.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
         }
         binding.cvAbha.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))

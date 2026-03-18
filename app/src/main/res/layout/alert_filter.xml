@@ -18,27 +18,15 @@
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_rch"
         android:layout_width="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="end|center_vertical"
-        android:includeFontPadding="false"
-        android:maxLines="2"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
         android:text="@string/ben_with_rch_id"
-        android:textAlignment="gravity"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_header" />
 
@@ -46,82 +34,67 @@
         android:id="@+id/cb_rch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
-        android:includeFontPadding="false"
-        android:paddingEnd="32dp"
-        android:layout_marginStart="18dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
         android:text="@string/rch_id"
+        android:contentDescription="@string/rch_id"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_rch"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/tv_rch" />
+        app:layout_constraintTop_toBottomOf="@id/tv_rch" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_abha"
         android:layout_width="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="end|center_vertical"
-        android:includeFontPadding="false"
-        android:maxLines="2"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
         android:text="@string/abha_id"
-        android:textAlignment="gravity"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_rch" />
+        app:layout_constraintTop_toBottomOf="@+id/cb_rch"
+        />
 
     <RadioGroup
         android:id="@+id/rgAbha"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:gravity="start|center_vertical"
-        android:includeFontPadding="false"
-        android:paddingEnd="32dp"
-        android:layout_marginTop="-16dp"
-        android:layout_marginStart="18dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/tv_abha">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_abha">
 
         <RadioButton
             android:id="@+id/rbAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/all"
-            android:checked="true"
-            android:includeFontPadding="false"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/rbWith"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/with_abha"
-            android:includeFontPadding="false"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+            android:text="@string/with_abha"/>
 
         <RadioButton
             android:id="@+id/rbWithout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/without_abha"
-            android:includeFontPadding="false"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+            android:text="@string/without_abha"/>
 
         <RadioButton
             android:id="@+id/rbAgeAboveThirty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/age_above_30_years"
-            android:includeFontPadding="false"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+            android:text="@string/age_above_30_years"/>
+
     </RadioGroup>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_ok"

@@ -70,13 +70,15 @@ import org.piramalswasthya.sakhi.model.InputType.TIME_PICKER
 import org.piramalswasthya.sakhi.model.InputType.values
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.AgePickerDialog
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
-import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Locale
 
 
 class FormInputAdapter(
@@ -293,8 +295,18 @@ class FormInputAdapter(
                     imm!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                 }
             }
+            binding.et.setOnEditorActionListener { v, actionId, _ ->
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE ||
+                    actionId == android.view.inputmethod.EditorInfo.IME_ACTION_NEXT) {
+                    v.clearFocus()
+                    val imm = v.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                    true
+                } else false
+            }
             binding.et.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER && (event.action == KeyEvent.ACTION_UP || event.action == KeyEvent.ACTION_DOWN)) {
+                    v.clearFocus()
                     return@OnKeyListener true
                 }
                 false
@@ -692,6 +704,11 @@ class FormInputAdapter(
             item.errorText?.also { binding.tilEditText.error = it }
                 ?: run { binding.tilEditText.error = null }
             binding.et.setOnClickListener {
+                val activity = binding.et.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                HelperUtil.setEnLocaleForDatePicker(activity)
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -716,11 +733,14 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
+                datePickerDialog.setOnDismissListener {
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                }
             }
             binding.executePendingBindings()
 
@@ -887,6 +907,11 @@ class FormInputAdapter(
             item.errorText?.also { binding.tilEditTextDate.error = it }
                 ?: run { binding.tilEditTextDate.error = null }
             binding.etDate.setOnClickListener {
+                val activity = binding.etDate.context.findFragmentActivity()
+                    ?: return@setOnClickListener
+                val originalLocale = Locale.getDefault()
+                HelperUtil.setEnLocaleForDatePicker(activity)
+
                 item.value?.let { value ->
                     thisYear = value.substring(6).toInt()
                     thisMonth = value.substring(3, 5).trim().toInt() - 1
@@ -915,11 +940,14 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                datePickerDialog.datePicker.maxDate = item.max ?: 0
-                datePickerDialog.datePicker.minDate = item.min ?: 0
+                item.min?.let { datePickerDialog.datePicker.minDate = it }
+                item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
+                datePickerDialog.setOnDismissListener {
+                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                }
             }
             binding.executePendingBindings()
 

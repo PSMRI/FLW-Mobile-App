@@ -237,7 +237,7 @@ class MosquitoNetFormViewModel @Inject constructor(
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else null
             } catch (e: Exception) {
                 null
