@@ -310,6 +310,11 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+
+            }*/
 
             val MIGRATION_56_57 = object : Migration(56, 57) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -694,6 +699,41 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_55_56 = object : Migration(55, 56) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserName TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN reason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN otherReason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalStatus INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserId INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN isClaimed INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN calimedDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN supervisorRole TEXT"
+                    )
 
                     database.execSQL(
                         """
@@ -701,9 +741,9 @@ abstract class InAppDb : RoomDatabase() {
             ADD COLUMN isEligible INTEGER NOT NULL DEFAULT 0
             """.trimIndent()
                     )
+
                 }
             }
-
 
             val MIGRATION_54_55 = object : Migration(54, 55) {
                 override fun migrate(database: SupportSQLiteDatabase) {

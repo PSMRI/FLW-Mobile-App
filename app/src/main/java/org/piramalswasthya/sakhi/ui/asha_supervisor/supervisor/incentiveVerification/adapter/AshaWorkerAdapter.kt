@@ -1,0 +1,111 @@
+package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
+class AshaWorkerAdapter(
+    private val onItemClick: (AshaWorker) -> Unit
+) : ListAdapter<AshaWorker, AshaWorkerAdapter.AshaWorkerViewHolder>(AshaWorkerDiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AshaWorkerViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_asha_worker, parent, false)
+        return AshaWorkerViewHolder(view, onItemClick)
+    }
+
+    override fun onBindViewHolder(holder: AshaWorkerViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+
+    class AshaWorkerViewHolder(
+        itemView: View,
+        private val onItemClick: (AshaWorker) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val tvWorkerName: TextView = itemView.findViewById(R.id.tvWorkerName)
+        private val tvAmount: TextView = itemView.findViewById(R.id.tvAmount)
+        private val tvAshaIdCenter: TextView = itemView.findViewById(R.id.tvAshaIdCenter)
+        private val statusBadge: TextView = itemView.findViewById(R.id.statusBadge)
+        private val tvStatusDate: TextView = itemView.findViewById(R.id.tvStatusDate)
+        private val tvRejectedReason: TextView = itemView.findViewById(R.id.tvRejectedReason)
+        private val tvStatusBy: TextView = itemView.findViewById(R.id.tvStatusBy)
+
+        fun bind(worker: AshaWorker) {
+            tvWorkerName.text = worker.name
+            tvAmount.text = formatAmount(worker.amount)
+            tvAshaIdCenter.text = "${worker.ashaId} · ${worker.serviceCenter}"
+
+            when (worker.status) {
+                VerificationStatus.VERIFIED -> {
+                    statusBadge.text = "Verified"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    tvStatusDate.text = "Verified Date: ${HelperUtil.formatDate(worker.approvalDate)}"
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+                }
+
+                VerificationStatus.PENDING -> {
+                    statusBadge.text = "Pending"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    tvStatusDate.visibility = View.GONE
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.visibility = View.GONE
+                }
+
+                VerificationStatus.REJECTED -> {
+                    statusBadge.text = "Rejected"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    tvRejectedReason.visibility = View.VISIBLE
+                    tvStatusDate.text = "Rejected Date: ${HelperUtil.formatDate(worker.approvalDate)}"
+                    tvRejectedReason.text = "Reason: ${worker.reason} ${worker.OtherReason}"
+                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+
+                }
+
+                VerificationStatus.OVERDUE -> {
+                    statusBadge.text = "Overdue"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    tvStatusDate.visibility = View.GONE
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.visibility = View.GONE
+                }
+
+                VerificationStatus.ALL -> {
+                    statusBadge.text = "Pending"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                }
+            }
+
+            itemView.setOnClickListener { onItemClick(worker) }
+        }
+
+        private fun formatAmount(amount: Int): String {
+            val formatter = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
+            formatter.maximumFractionDigits = 0
+            return formatter.format(amount)
+        }
+    }
+
+    class AshaWorkerDiffCallback : DiffUtil.ItemCallback<AshaWorker>() {
+        override fun areItemsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =
+            oldItem == newItem
+    }
+
+}
+
