@@ -47,11 +47,9 @@ class DownloadCardWorker @AssistedInject constructor(
         val fileName = inputData.getString(file_name)
         return try {
             try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e(throwable.message, "Something bad happened", throwable)
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
             }
             withContext(Dispatchers.IO) {
                 val response = abhaIdRepo.downloadPdfCard()

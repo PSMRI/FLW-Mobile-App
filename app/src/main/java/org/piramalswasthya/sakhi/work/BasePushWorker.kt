@@ -48,14 +48,13 @@ abstract class BasePushWorker(
                 KEY_ERROR to "Max retries ($MAX_RETRY_COUNT) exceeded"
             ))
         }
-        try {
-            setForeground(createForegroundInfo("Syncing $workerName..."))
-        } catch (e: Throwable) {
-            // Foreground may fail if app is in background on some OEMs — continue anyway
-            Timber.w(e, "[$workerName] Could not set foreground notification")
-        }
         initTokens()
         return try {
+            try {
+                setForeground(createForegroundInfo("Syncing data..."))
+            } catch (_: Throwable) {
+                // Expedited work handles foreground promotion; ignore failures here
+            }
             doSyncWork()
         } catch (e: SocketTimeoutException) {
             Timber.e("[$workerName] Socket timeout, will retry")

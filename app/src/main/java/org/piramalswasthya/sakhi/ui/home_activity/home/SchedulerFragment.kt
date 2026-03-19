@@ -76,7 +76,7 @@ class SchedulerFragment : Fragment() {
             }
         }
         binding.cvAnc.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
         }
 
         binding.cvImm.setOnClickListener {
