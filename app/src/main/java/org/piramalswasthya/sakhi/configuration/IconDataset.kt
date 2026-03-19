@@ -387,7 +387,6 @@ class IconDataset @Inject constructor(
                     .actionVillageLevelFormsFragmentToORSCampaignListFragment()
             ))
             add(Icon(
-            ), Icon(
                 R.drawable.filaria,
                 resources.getString(R.string.mda_title),
                 null,
@@ -746,8 +745,8 @@ class IconDataset @Inject constructor(
             recordsRepo.tbScreeningListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
                 Disease.MALARIA.toString()
-            )
-            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
+            ),
+//            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),
