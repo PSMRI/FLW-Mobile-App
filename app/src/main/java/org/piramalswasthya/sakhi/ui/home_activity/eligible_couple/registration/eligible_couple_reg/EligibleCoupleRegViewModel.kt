@@ -50,6 +50,12 @@ class EligibleCoupleRegViewModel @Inject constructor(
     val benName: LiveData<String>
         get() = _benName
 
+    private val _husbandName = MutableLiveData<String?>()
+    val husbandName: LiveData<String?> get() = _husbandName
+
+    private val _marriageDate = MutableLiveData<String?>()
+    val marriageDate: LiveData<String?> get() = _marriageDate
+
     private val _childCount = MutableLiveData<Int>()
     val childCount: LiveData<Int>
         get() = _childCount
@@ -116,6 +122,11 @@ class EligibleCoupleRegViewModel @Inject constructor(
                         Calendar.getInstance()
                     )
                 } ${ben.ageUnit?.name} | ${ben.gender?.name}"
+                _husbandName.value = ben.genDetails?.spouseName
+                _marriageDate.value = ben.genDetails?.marriageDate?.let { date ->
+                    java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+                        .format(java.util.Date(date))
+                }
                 ecrForm = EligibleCoupleRegCache(
                     benId = ben.beneficiaryId,
                     syncState = SyncState.UNSYNCED,
