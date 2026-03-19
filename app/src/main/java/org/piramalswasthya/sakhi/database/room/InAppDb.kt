@@ -310,8 +310,12 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
 
-            val MIGRATION_56_57 = object : Migration(56, 57) {
+
+            }*/
+               val MIGRATION_56_57 = object : Migration(56, 57) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     val householdLocColumns = listOf(
                         "loc_country_id INTEGER NOT NULL DEFAULT 0",
@@ -337,7 +341,7 @@ abstract class InAppDb : RoomDatabase() {
                     )
                     for (column in householdLocColumns) {
                         val columnName = column.split(" ")[0]
-                        if (!columnExists(database, "HOUSEHOLD", columnName)) {
+                             f (!columnExists(database, "HOUSEHOLD", columnName)) {
                             database.execSQL("ALTER TABLE HOUSEHOLD ADD COLUMN $column")
                         }
                     }
@@ -692,18 +696,53 @@ abstract class InAppDb : RoomDatabase() {
                 }
             }
 
-            val MIGRATION_55_56 = object : Migration(55, 56) {
+             val MIGRATION_55_56 = object : Migration(55, 56) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserName TEXT NOT NULL DEFAULT ''"
+                    )
 
                     database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN reason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN otherReason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalStatus INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserId INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN isClaimed INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN calimedDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN supervisorRole TEXT"
+                    )
+
+                          database.execSQL(
                         """
             ALTER TABLE INCENTIVE_RECORD
             ADD COLUMN isEligible INTEGER NOT NULL DEFAULT 0
             """.trimIndent()
                     )
+
                 }
             }
-
 
             val MIGRATION_54_55 = object : Migration(54, 55) {
                 override fun migrate(database: SupportSQLiteDatabase) {

@@ -3,7 +3,7 @@
 <domain-config>
 <domain includeSubdomains="true">piramalswasthya.org</domain>
 <trust-anchors>
-<certificates src="@raw/wildcard"/>
+<certificates src="@raw/phantom"/>
 </trust-anchors>
 </domain-config>
 </network-security-config>

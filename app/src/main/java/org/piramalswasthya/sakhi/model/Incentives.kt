@@ -121,7 +121,16 @@ data class IncentiveRecordCache(
     val updatedDate: Long,
     val updatedBy: String,
     @ColumnInfo(defaultValue = "0")
-    val isEligible : Boolean
+    val isEligible : Boolean,
+    val verifiedByUserName: String,
+    val reason: String,
+    val otherReason: String,
+    val approvalStatus: Int,
+    val verifiedByUserId: Int,
+    val isClaimed: Boolean,
+    val approvalDate: String,
+    val calimedDate: String,
+    val supervisorRole: String,
 ) : Parcelable
 
 @Parcelize
@@ -138,7 +147,16 @@ data class IncentiveRecordNetwork(
     val createdBy: String,
     val updatedDate: String,
     val updatedBy: String,
-    val isEligible : Boolean
+    val isEligible : Boolean,
+    val verifiedByUserName: String?,
+    val reason: String?,
+    val otherReason: String?,
+    val approvalStatus: Int,
+    val verifiedByUserId: Int,
+    val isClaimed: Boolean,
+    val approvalDate: String?,
+    val calimedDate: String?,
+    val supervisorRole: String?,
 ) : Parcelable {
     fun asCacheModel(): IncentiveRecordCache {
         return IncentiveRecordCache(
@@ -154,7 +172,16 @@ data class IncentiveRecordNetwork(
             createdBy = createdBy,
             updatedDate = getLongFromDate(updatedDate),
             updatedBy = updatedBy,
-            isEligible = isEligible
+            isEligible = isEligible,
+            verifiedByUserName = verifiedByUserName?:"",
+            verifiedByUserId = verifiedByUserId,
+            reason = reason?:"",
+            otherReason = otherReason?:"",
+            approvalStatus = approvalStatus,
+            isClaimed = isClaimed,
+            approvalDate = approvalDate?:"",
+            calimedDate = calimedDate?:"",
+            supervisorRole = supervisorRole?:""
         )
     }
 }
