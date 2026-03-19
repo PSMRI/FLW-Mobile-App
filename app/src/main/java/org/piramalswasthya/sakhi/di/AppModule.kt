@@ -155,10 +155,10 @@ object AppModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
-                if (BuildConfig.DEBUG)
+                //if (BuildConfig.DEBUG)
                     HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
+                //else
+                    //HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
