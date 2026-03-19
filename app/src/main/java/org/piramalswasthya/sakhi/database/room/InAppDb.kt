@@ -341,9 +341,9 @@ abstract class InAppDb : RoomDatabase() {
                     )
                     for (column in householdLocColumns) {
                         val columnName = column.split(" ")[0]
-                             f (!columnExists(database, "HOUSEHOLD", columnName)) {
+                             if (!columnExists(database, "HOUSEHOLD", columnName)) {
                             database.execSQL("ALTER TABLE HOUSEHOLD ADD COLUMN $column")
-                        }
+                        }   
                     }
                     if (!columnExists(database, "HOUSEHOLD", "isDeactivate")) {
                         database.execSQL("ALTER TABLE HOUSEHOLD ADD COLUMN isDeactivate INTEGER NOT NULL DEFAULT 0")
