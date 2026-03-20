@@ -109,9 +109,9 @@ class AntenatalCounsellingFragment : Fragment() {
         val currentLang = pref.getCurrentLanguage()
         langCode = currentLang.symbol
         val todayDate: String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH))
         } else {
-            SimpleDateFormat("dd-MM-yyyy").format(Date())
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date())
         }
 
         isReturningFromReferral = savedInstanceState?.getBoolean("isReturningFromReferral", false) ?: false
