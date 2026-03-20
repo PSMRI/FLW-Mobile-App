@@ -391,6 +391,7 @@ fun filterBenFormList(
 }
 
 
+@JvmName("filterChildRegList")
 fun filterBenFormList(
     list: List<ChildRegDomain>,
     text: String

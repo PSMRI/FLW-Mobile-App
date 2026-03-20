@@ -225,6 +225,12 @@ class TBConfirmedDataset(
                 ?.takeIf { it > 0 }
                 ?: getOneYearBeforeCurrentDate()
 
+            // Enable follow-up date since treatment start date is pre-filled
+            treatmentStartDateValue = System.currentTimeMillis()
+            treatmentStartDateLong = System.currentTimeMillis()
+            followUpDate.min = System.currentTimeMillis()
+            followUpDate.isEnabled = true
+
 
         } else
         {
