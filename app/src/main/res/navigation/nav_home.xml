@@ -607,7 +607,11 @@
         android:id="@+id/ncdPriorityListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_priority_list.NcdPriorityListFragment"
         android:label="@string/ncd_priority_list"
-        tools:layout="@layout/fragment_ncd_priority_list" />
+        tools:layout="@layout/fragment_ncd_priority_list">
+        <action
+            android:id="@+id/action_ncdPriorityListFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/surveyRegisterFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.survey_register.SurveyRegisterFragment"
@@ -764,6 +768,9 @@
         <action
             android:id="@+id/action_householdMembersFragment_to_kalaAzarFormFragment"
             app:destination="@id/kalaAzarFormFragment" />
+        <action
+            android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
