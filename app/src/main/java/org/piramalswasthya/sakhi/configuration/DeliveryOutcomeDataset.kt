@@ -63,7 +63,7 @@ open class DeliveryOutcomeDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.do_delivery_place),
         entries = resources.getStringArray(R.array.do_place_of_delivery_array),
-        required = false,
+        required = true,
         hasDependants = false
     )
 

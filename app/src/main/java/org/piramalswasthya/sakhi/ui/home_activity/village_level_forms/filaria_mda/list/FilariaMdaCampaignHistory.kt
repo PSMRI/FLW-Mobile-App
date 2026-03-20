@@ -64,6 +64,7 @@ class FilariaMdaCampaignHistory : Fragment() {
                 )
             })
         binding.rvAny.adapter = pHCAdapter
+        binding.btnNextPage.visibility = View.VISIBLE
         binding.btnNextPage.text = resources.getString(R.string.add_mda_filaria_form_title)
         binding.btnNextPage.setOnClickListener {
             findNavController().navigate(R.id.action_mdaCampagaignHisoryFragment_to_mdaFormCampaign)

@@ -450,6 +450,19 @@ interface BenDao {
     """)
     fun getChildCountsForAllBen(selectedVillage: Int): Flow<List<BenChildCount>>
 
+    @Query("""
+        SELECT COUNT(child.beneficiaryId)
+        FROM BENEFICIARY parent
+        LEFT JOIN BENEFICIARY child
+            ON child.householdId = parent.householdId
+            AND child.beneficiaryId != parent.beneficiaryId
+            AND (parent.firstName IS NULL OR parent.firstName = '' OR child.motherName LIKE parent.firstName || '%')
+        WHERE parent.beneficiaryId = :benId
+            AND parent.isDraft = 0
+            AND parent.isDeactivate = 0
+    """)
+    suspend fun getChildCountForBen(benId: Long): Int
+
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE hhId = :hhId")
     fun getAllBasicBenForHousehold(hhId: Long): Flow<List<BenBasicCache>>
 
