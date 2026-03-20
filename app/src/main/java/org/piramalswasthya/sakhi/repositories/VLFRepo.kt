@@ -1476,7 +1476,7 @@ class VLFRepo @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun isFormFilledForCurrentMonth(): Flow<Map<String, Boolean>> {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
         val currentYearMonth = YearMonth.now()
         val startDate = currentYearMonth.atDay(1).format(formatter)
         val endDate = currentYearMonth.atEndOfMonth().format(formatter)
