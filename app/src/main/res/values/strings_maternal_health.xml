@@ -112,7 +112,7 @@
         <item>ECP</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
-        <item>MiniLap</item>
+<!--        <item>MiniLap</item>-->
         <item>Any Other Method</item>
     </string-array>
 

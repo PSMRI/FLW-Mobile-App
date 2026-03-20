@@ -197,6 +197,10 @@ class BenRepo @Inject constructor(
 
     }
 
+    suspend fun getChildCountForBen(benId: Long): Int {
+        return benDao.getChildCountForBen(benId)
+    }
+
     suspend fun getChildBenListFromHousehold(
         hhId: Long,
         selectedbenIdFromArgs: Long,
