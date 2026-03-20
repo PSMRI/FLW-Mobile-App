@@ -226,9 +226,15 @@ class TBConfirmedDataset(
                 ?: getOneYearBeforeCurrentDate()
 
             // Enable follow-up date since treatment start date is pre-filled
-            treatmentStartDateValue = System.currentTimeMillis()
-            treatmentStartDateLong = System.currentTimeMillis()
-            followUpDate.min = System.currentTimeMillis()
+            val todayStart = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+            treatmentStartDateValue = todayStart
+            treatmentStartDateLong = todayStart
+            followUpDate.min = todayStart
             followUpDate.isEnabled = true
 
 
