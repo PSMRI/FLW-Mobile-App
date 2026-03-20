@@ -38,14 +38,11 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-
-
         try {
-            setForeground(createForegroundInfo("Downloading UWIN Session Data"))
-        } catch (t: Throwable) {
-            Timber.w(t, "⚠️ Foreground notification setup failed")
+            setForeground(createForegroundInfo("Syncing data..."))
+        } catch (_: Throwable) {
+            // Expedited work handles foreground promotion; ignore failures here
         }
-
         return withContext(Dispatchers.IO) {
             val startTime = System.currentTimeMillis()
             try {

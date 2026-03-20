@@ -38,6 +38,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
@@ -58,6 +60,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -111,6 +114,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var accountDeactivationManager: AccountDeactivationManager
+
+    @Inject
+    lateinit var tokenExpiryManager: TokenExpiryManager
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -187,14 +193,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private val imagePickerActivityResult =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-            it?.let {
-                viewModel.profilePicUri = it
-                Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            it?.let { galleryUri ->
+                viewModel.profilePicUri = galleryUri
+                viewModel.saveProfilePicFromGallery(this, galleryUri)
+                Glide.with(this).load(galleryUri)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
-//                binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic).setImageURI(it)
-//                Glide.with(this)
-//                    .load(it)
-//                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
             }
         }
 
@@ -246,9 +252,44 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
+        // Hide non-functional menu items
+        binding.navView.menu.findItem(R.id.sync_pending_records)?.isVisible = false
+        binding.navView.menu.findItem(R.id.ChatFragment)?.isVisible = false
+        binding.navView.menu.findItem(R.id.menu_report_crash)?.isVisible = false
+     //   binding.navView.menu.findItem(R.id.menu_support)?.isVisible = false
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
+        viewModel.restoredProfilePicUri.observe(this) { uri ->
+            uri?.let {
+                Glide.with(this).load(it)
+                    .signature(ObjectKey(System.currentTimeMillis()))
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
+                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }
+        }
+        binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
+            private var loaded = false
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                if (!loaded && slideOffset > 0.01f) {
+                    loaded = true
+                    viewModel.profilePicUri?.let {
+                        Glide.with(this@HomeActivity).load(it)
+                            .signature(ObjectKey(System.currentTimeMillis()))
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .placeholder(R.drawable.ic_person).circleCrop()
+                            .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                    }
+                }
+            }
+            override fun onDrawerClosed(drawerView: View) { loaded = false }
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
         setUpFirstTimePullWorker()
         setUpMenu()
 
@@ -317,6 +358,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
         observeAccountDeactivation()
+        observeTokenExpiry()
 
     }
 
@@ -336,6 +378,31 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                         }
                         .create()
                     deactivationDialog?.show()
+                }
+            }
+        }
+    }
+
+    private var sessionExpiredDialog: AlertDialog? = null
+
+    private fun observeTokenExpiry() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                tokenExpiryManager.forceLogoutEvent.collect {
+                    if (sessionExpiredDialog?.isShowing == true) return@collect
+                    sessionExpiredDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.session_expired_title))
+                        .setMessage(getString(R.string.session_expired_message))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                            pref.deleteForLogout()
+                            WorkerUtils.cancelAllWork(this@HomeActivity)
+                            startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
+                            finish()
+                        }
+                        .create()
+                    sessionExpiredDialog?.show()
                 }
             }
         }
@@ -580,7 +647,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
-            Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            Glide.with(this).load(it)
+                .signature(ObjectKey(System.currentTimeMillis()))
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.ic_person).circleCrop()
                 .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
         }
 //

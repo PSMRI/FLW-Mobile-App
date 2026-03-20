@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
+import org.piramalswasthya.sakhi.model.ChildRegDomain
 import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
@@ -389,6 +390,28 @@ fun filterBenFormList(
     }
 }
 
+
+fun filterBenFormList(
+    list: List<ChildRegDomain>,
+    text: String
+): List<ChildRegDomain> {
+    if (text == "")
+        return list
+    else {
+        val filterText = text.lowercase()
+        return list.filter {
+            it.motherBen.benId.toString().contains(filterText) ||
+                    it.motherBen.benName.lowercase().contains(filterText) ||
+                    it.motherBen.benSurname?.lowercase()?.contains(filterText) == true ||
+                    it.motherBen.familyHeadName.lowercase().contains(filterText) ||
+                    it.motherBen.age.lowercase().contains(filterText) ||
+                    it.motherBen.mobileNo.lowercase().contains(filterText) ||
+                    it.motherBen.rchId?.contains(filterText) == true ||
+                    it.childBen?.benName?.lowercase()?.contains(filterText) == true ||
+                    it.childBen?.benId?.toString()?.contains(filterText) == true
+        }
+    }
+}
 
 fun filterBenHRPFormList(
     list: List<BenWithHRPADomain>,

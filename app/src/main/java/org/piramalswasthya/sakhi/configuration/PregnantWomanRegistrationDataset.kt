@@ -218,7 +218,7 @@ class PregnantWomanRegistrationDataset(
         arrayId = R.array.maternal_health_past_illness,
         entries = resources.getStringArray(R.array.maternal_health_past_illness),
         required = true,
-        value = resources.getStringArray(R.array.maternal_health_past_illness).first(),
+        value = "0",
         hasDependants = true
     )
 
@@ -619,9 +619,11 @@ class PregnantWomanRegistrationDataset(
             hivTestResult.value = getLocalValueInArray(hivTestResult.arrayId, saved.hivTestResult)
             hbsAgTestResult.value =
                 getLocalValueInArray(hbsAgTestResult.arrayId, saved.hbsAgTestResult)*/
-            pastIllness.value = getLocalValueInArray(pastIllness.arrayId, saved.pastIllness)
+            pastIllness.value = getCheckboxIndexesFromValues(pastIllness.arrayId, saved.pastIllness) ?: "0"
             otherPastIllness.value = it.otherPastIllness
-            if (pastIllness.value == pastIllness.entries!!.last())
+            val otherIndex = pastIllness.entries!!.size - 1
+            val selectedIndexes = pastIllness.value?.split("|")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList()
+            if (selectedIndexes.contains(otherIndex))
                 list.add(list.indexOf(pastIllness) + 1, otherPastIllness)
             isFirstPregnancy.value = isFirstPregnancy.getStringFromPosition(if (it.is1st) 1 else 2)
             if (isFirstPregnancy.value == isFirstPregnancy.entries!!.last()) {
@@ -818,25 +820,40 @@ class PregnantWomanRegistrationDataset(
 
             pastIllness.id -> {
                 val entries = pastIllness.entries!!
-                pastIllness.value?.takeIf { it.isNotEmpty() }?.let {
-                    if (index == 0) pastIllness.value = pastIllness.entries!!.first()
-                    else pastIllness.value = it.replace(entries.first(), "")
-                } ?: run {
-                    pastIllness.value = pastIllness.entries!!.first()
+                val noneIndex = 0
+                val otherIndex = entries.size - 1
+                val selectedIndexes = pastIllness.value
+                    ?.split("|")
+                    ?.mapNotNull { it.trim().toIntOrNull() }
+                    ?.toMutableSet()
+                    ?: mutableSetOf()
+
+                if (index == noneIndex) {
+                    // "None" selected: clear all others, keep only None
+                    pastIllness.value = "0"
+                } else {
+                    // Other option selected: remove None
+                    selectedIndexes.remove(noneIndex)
+                    pastIllness.value =
+                        if (selectedIndexes.isEmpty()) "0"
+                        else selectedIndexes.sorted().joinToString("|")
                 }
-                if (pastIllness.value?.contains(entries.last()) == true) {
+
+                if (selectedIndexes.contains(otherIndex)) {
                     triggerDependants(
                         source = pastIllness,
                         passedIndex = index,
                         triggerIndex = index,
                         target = otherPastIllness
                     )
-                } else triggerDependants(
-                    source = pastIllness,
-                    passedIndex = index,
-                    triggerIndex = -230,
-                    target = otherPastIllness
-                )
+                } else {
+                    triggerDependants(
+                        source = pastIllness,
+                        passedIndex = index,
+                        triggerIndex = -230,
+                        target = otherPastIllness
+                    )
+                }
             }
 
             otherPastIllness.id -> {
@@ -988,7 +1005,7 @@ class PregnantWomanRegistrationDataset(
             form.dateOfHbsAgTest =
                 dateOfhbsAgTestDone.value?.let { getLongFromDate(dateOfhbsAgTestDone.value) }*/
             form.pastIllness =
-                getEnglishValueInArray(R.array.maternal_health_past_illness, pastIllness.value)
+                getEnglishCheckboxValues(R.array.maternal_health_past_illness, pastIllness.value)
             form.otherPastIllness = otherPastIllness.value
             form.is1st = isFirstPregnancy.value == isFirstPregnancy.entries!!.first()
             form.numPrevPregnancy = totalNumberOfPreviousPregnancy.value?.toInt()

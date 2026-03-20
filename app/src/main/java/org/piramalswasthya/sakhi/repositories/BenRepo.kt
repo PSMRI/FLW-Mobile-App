@@ -365,7 +365,7 @@ class BenRepo @Inject constructor(
             val responseString = response.body()?.string()
             if (responseString != null) {
                 val jsonObj = JSONObject(responseString)
-                val errorMessage = jsonObj.getString("errorMessage")
+                val errorMessage = jsonObj.optString("errorMessage", "")
                 val responseStatusCode: Int = jsonObj.getInt("statusCode")
                 if (responseStatusCode == 200) {
                     val jsonObjectData: JSONObject = jsonObj.getJSONObject("data")
@@ -507,7 +507,7 @@ class BenRepo @Inject constructor(
                 if (responseString != null) {
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
-                    val errorMessage = jsonObj.getString("errorMessage")
+                    val errorMessage = jsonObj.optString("errorMessage", "")
                     if (responseStatusCode == 200) {
                         Timber.d("response : $jsonObj")
                         val benToUpdateList =
@@ -575,7 +575,7 @@ class BenRepo @Inject constructor(
                 if (responseString != null) {
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
-                    val errorMessage = jsonObj.getString("errorMessage")
+                    val errorMessage = jsonObj.optString("errorMessage", "")
                     if (responseStatusCode == 200) {
                         Timber.d("response : $jsonObj")
                         WorkerUtils.triggerAmritPullWorker(context)
@@ -634,7 +634,7 @@ class BenRepo @Inject constructor(
                 if (responseString != null) {
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
-                    val errorMessage = jsonObj.getString("errorMessage")
+                    val errorMessage = jsonObj.optString("errorMessage", "")
                     if (responseStatusCode == 200) {
                         Timber.d("response : $jsonObj")
                         WorkerUtils.triggerAmritPullWorker(context)
@@ -690,7 +690,7 @@ class BenRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit page $pageNumber response status : $responseStatusCode")
                         when (responseStatusCode) {
@@ -778,7 +778,7 @@ class BenRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         if (responseStatusCode == 200) {
                             val dataObj = jsonObj.getJSONObject("data")
@@ -935,23 +935,23 @@ class BenRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
-                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
+                        if (!jsonObj.has("statusCode")) {
+                            Timber.e("GeneralOPD response missing statusCode. Raw response: $responseString")
+                            return@withContext -1
+                        }
+                        val responseStatusCode = jsonObj.optInt("statusCode", -1)
                         Timber.d("Pull from amrit page $pageNumber response status : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
-
-
                                 try {
                                     val dataObj = jsonObj.getJSONObject("data")
                                     val entriesArray = dataObj.getJSONArray("entries")
                                     saveGeneralOPDData(entriesArray)
                                 } catch (e: Exception) {
-                                    Timber.d("Incentive master data not synced $e")
+                                    Timber.d("GeneralOPD data not synced $e")
                                     return@withContext 0
                                 }
-
-//
 
                                 return@withContext 1
                             }
@@ -965,12 +965,11 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                //  HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
-
-                                if (errorMessage == "No record found") return@withContext 0
+                                return@withContext 0
                             }
 
                             else -> {
+                                Timber.e("GeneralOPD unexpected statusCode: $responseStatusCode, response: $responseString")
                                 throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
                             }
                         }
@@ -980,9 +979,14 @@ class BenRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 Timber.e("get_ben error : $e")
                 return@withContext -2
-
+            } catch (e: JSONException) {
+                Timber.e("JSON parsing error for GeneralOPD data: $e")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
                 Timber.e("get_ben error : $e")
+                return@withContext -1
+            } catch (e: Exception) {
+                Timber.e("get_general_opd unexpected error : $e")
                 return@withContext -1
             }
             -1
@@ -1027,6 +1031,11 @@ class BenRepo @Inject constructor(
                         if (jsonObject.has("benficieryid")) jsonObject.getLong("benficieryid") else -1L
                     val hhId =
                         if (jsonObject.has("houseoldId")) jsonObject.getLong("houseoldId") else -1L
+
+                    if(benId == 700623622919L){
+                        Timber.d("====5224::BenPull benId=$benId | benExists=${benDao.getBen(hhId, benId) != null} | has doYouHavechildren=${jsonObject.has("doYouHavechildren")} val=${jsonObject.optBoolean("doYouHavechildren")} | has isMarried=${jsonObject.has("isMarried")} val=${jsonObject.optBoolean("isMarried")} | has isSpouseAdded=${jsonObject.has("isSpouseAdded")} val=${jsonObject.optBoolean("isSpouseAdded")} | has isChildrenAdded=${jsonObject.has("isChildrenAdded")} val=${jsonObject.optBoolean("isChildrenAdded")} | has noOfchildren=${jsonObject.has("noOfchildren")} val=${jsonObject.optInt("noOfchildren")}")
+                    }
+
                     if (benId == -1L || hhId == -1L) continue
                     val benExists = benDao.getBen(hhId, benId) != null
 

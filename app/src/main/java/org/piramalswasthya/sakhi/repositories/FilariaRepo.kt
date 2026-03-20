@@ -74,7 +74,7 @@ class FilariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit Filaria screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -163,7 +163,7 @@ class FilariaRepo @Inject constructor(
                      if (responseString != null) {
                          val jsonObj = JSONObject(responseString)
 
-                         val errorMessage = jsonObj.getString("errorMessage")
+                         val errorMessage = jsonObj.optString("errorMessage", "")
                          val responseStatusCode = jsonObj.getInt("statusCode")
                          Timber.d("Pull from amrit tb suspected data : $responseStatusCode")
                          when (responseStatusCode) {
@@ -338,7 +338,7 @@ class FilariaRepo @Inject constructor(
                      if (responseString != null) {
                          val jsonObj = JSONObject(responseString)
 
-                         val errorMessage = jsonObj.getString("errorMessage")
+                         val errorMessage = jsonObj.optString("errorMessage", "")
                          val responseStatusCode = jsonObj.getInt("statusCode")
                          Timber.d("Push to amrit tb screening data : $responseStatusCode")
                          when (responseStatusCode) {

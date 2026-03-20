@@ -17,6 +17,10 @@ import java.util.Locale
 class SyncLogAdapter :
     ListAdapter<SyncLogEntry, SyncLogAdapter.ViewHolder>(DiffCallback) {
 
+    companion object {
+        private const val MAX_DISPLAY_LENGTH = 500
+    }
+
     private object DiffCallback : DiffUtil.ItemCallback<SyncLogEntry>() {
         override fun areItemsTheSame(oldItem: SyncLogEntry, newItem: SyncLogEntry) =
             oldItem.id == newItem.id
@@ -48,7 +52,10 @@ class SyncLogAdapter :
             binding.tvLevel.background = bg
 
             binding.tvTimestamp.text = "${timeFormat.format(Date(item.timestamp))}  ${item.tag}"
-            binding.tvMessage.text = item.message
+            binding.tvMessage.text = if (item.message.length > MAX_DISPLAY_LENGTH)
+                item.message.substring(0, MAX_DISPLAY_LENGTH) + "…"
+            else
+                item.message
             binding.tvMessage.setTextColor(textColor)
         }
     }
