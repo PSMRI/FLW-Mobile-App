@@ -276,7 +276,7 @@ class HouseholdMembersFragment : Fragment() {
         }
 
         binding.fabAddMember.visibility = if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) && viewModel.isFromDisease == 0) {
-            View.VISIBLE
+            View.GONE
         } else {
             View.GONE
         }
