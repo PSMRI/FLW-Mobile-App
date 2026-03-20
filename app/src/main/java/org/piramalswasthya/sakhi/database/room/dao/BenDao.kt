@@ -666,6 +666,7 @@ interface BenDao {
         AND isDeath = 1
         and isDeactivate=0 
         AND (reasonOfDeath IS NULL OR reasonOfDeath != 'Maternal Death')
+        AND isMdsr = 0
         AND villageId = :selectedVillage
 """)
     fun getAllGeneralDeathsList(selectedVillage: Int): Flow<List<BenBasicCache>>
