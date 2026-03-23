@@ -106,6 +106,7 @@ class AshaProfileViewModel @Inject constructor(
                 }
 
             } ?: run {
+                profileActivityCache = ProfileActivityCache(id = asha.userId.toLong(), employeeId = asha.userId)
                 _recordExists.value = false
 
             }
