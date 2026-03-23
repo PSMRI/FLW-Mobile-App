@@ -204,7 +204,7 @@ class AllHouseholdFragment : Fragment() {
                 }
             }
         }, {
-            if (!it.isDeactivate){
+            if (!it.isDeactivate && findNavController().currentDestination?.id == R.id.allHouseholdFragment){
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
                         it.hhId,0,"No"
