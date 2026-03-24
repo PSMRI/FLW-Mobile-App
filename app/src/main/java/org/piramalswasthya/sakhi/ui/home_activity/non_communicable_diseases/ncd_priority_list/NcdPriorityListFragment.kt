@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import androidx.navigation.fragment.findNavController
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -66,21 +65,14 @@ class NcdPriorityListFragment : Fragment() {
                 clickedChildben = { _, _, _, _ -> },
                 { _, _ -> },
                 { _, _, _ -> },
-                { _, benId, hhId, isViewMode, _ ->
-                    findNavController().navigate(
-                        NcdPriorityListFragmentDirections.actionNcdPriorityListFragmentToEyeSurgeryFormFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            isViewMode = isViewMode,
-                        )
-                    )
-                },
+                { _, _, _, _, _ -> },
                 { },
                 { },
             ),
             showBeneficiaries = true,
             pref = prefDao,
-            context = requireActivity()
+            context = requireActivity(),
+            showActionButtons = false
         )
         binding.rvAny.adapter = benAdapter
 

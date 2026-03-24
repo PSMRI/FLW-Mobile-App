@@ -52,7 +52,8 @@ class NcdNonEligibleListFragment : Fragment() {
         val benAdapter = BenListAdapter(
             showBeneficiaries = true,
             pref = prefDao,
-            context = requireActivity()
+            context = requireActivity(),
+            showActionButtons = false
         )
         binding.rvAny.adapter = benAdapter
 
