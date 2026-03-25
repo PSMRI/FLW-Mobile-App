@@ -14,7 +14,7 @@
     <string name="wife_s_name">पत्नी का नाम</string>
     <string name="spouse_s_name">पति / पत्नी का नाम</string>
     <string name="age_at_marriage">विवाह की आयु</string>
-    <string name="date_of_marriage">विवाह की तारीख</string>
+    <string name="date_of_marriage">विवाह की तिथि</string>
     <string name="father_s_name">पिता का नाम</string>
     <string name="mother_s_name">मां का नाम</string>
     <string name="mobile_number_of">किसका मोबाइल नंबर</string>
@@ -30,7 +30,7 @@
     <string name="nbr_nb_first_name">पहला नाम</string>
     <string name="nbr_nb_last_name">अंतिम नाम / उपनाम</string>
     <string name="title_new_ben_reg_hof">HoF Registration</string>
-    <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
+    <string name="title_new_ben_reg_non_hof">परिवार सदस्य पंजीकरण</string>
     <string name="icon_title_abortion">गर्भपात सूची</string>
     <string name="icon_title_pmsma">e-PMSMA List</string>
     <string name="mother_rch_id">मां की RCH आईडी</string>
@@ -267,19 +267,7 @@
     <string-array name="select_all">
         <item>Select All</item>
     </string-array>
-    <string-array name="maa_breastfeeding">
-        <item>Select All</item>
-        <item>The baby should be breastfed immediately within the first hour of birth</item>
-        <item>The baby should be given only mother’s milk for the first 6 months.</item>
-        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
-        <item>Breastfeeding should be continued for 2 years or more.</item>
-        <item>The family should support and encourage the mother.</item>
-        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
-        <item>Breastfeeding protects the baby from many diseases.</item>
-        <item>Mother’s milk is the best for the complete development of the baby.</item>
-        <item>Information was given about KMC (Kangaroo Mother Care).</item>
 
-    </string-array>
 
     <string-array name="import_brestfeeding">
         <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
@@ -298,12 +286,25 @@
 
     </string-array>
 
+    <string-array name="maa_breastfeeding">
+        <item>सभी चुनें</item>
+        <item>शिशु को जन्म के पहले घंटे में तुरंत स्तनपान कराना चाहिए</item>
+        <item>पहले 6 महीने शिशु को केवल मां का दूध देना चाहिए</item>
+        <item>6 महीने के बाद मां के दूध के साथ पौष्टिक अनुपूरक आहार दिया जाना चाहिए</item>
+        <item>स्तनपान 2 साल या उससे अधिक समय तक जारी रहना चाहिए</item>
+        <item>परिवार को मां का समर्थन और प्रोत्साहन देना चाहिए</item>
+        <item>पहले 6 महीने शिशु को शहद, पानी या घुट्टी (हर्बल मिश्रण) नहीं देना चाहिए</item>
+        <item>स्तनपान शिशु को कई रोगों से बचाता है</item>
+        <item>मां का दूध शिशु के संपूर्ण विकास के लिए सर्वोत्तम है</item>
+        <item>केएमसी (कंगारू मदर केयर) के बारे में जानकारी दी गई</item>
+    </string-array>
+
     <string name="age_at_marriagee">विवाह के समय आपकी आयु</string>
     <string name="nbr_abortion_image">गर्भपात डिस्चार्ज</string>
     <string name="nbr_image_cam_gal">कैमरा/गैलरी उपयोग करने के लिए टैप करें</string>
-    <string name="vhnd_date">VHND तारीख</string>
-    <string name="vhnc_date">VHSNC बैठक की तारीख</string>
-    <string name="phc_review_meeting_date">बैठक की तारीख</string>
+    <string name="vhnd_date">वीएचएनडी तिथि</string>
+    <string name="vhnc_date">वीएचएसएनसी बैठक की तिथि</string>
+    <string name="phc_review_meeting_date">बैठक की तिथि</string>
     <string name="nbr_child_first_name">बच्चे का नाम</string>
     <string name="frag_new_ben_type_kid_text">नवजात / शिशु / बच्चा / किशोर\n( 0 - 15 वर्ष से कम आयु )</string>
     <string name="frag_new_ben_type_adult_text">सामान्य पंजीकरण \n( 15 वर्ष और उससे अधिक )</string>
@@ -318,4 +319,46 @@
     <string name="deworming_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म</string>
     <string name="deworming_list_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म सूची</string>
     <string name="ndd_list_title">NDD फॉर्म</string>
+
+    <string-array name="mitanin_array">
+        <item>मितानिन</item>
+        <item>MT</item>
+        <item>ANM/ RHO</item>
+    </string-array>
+
+    <string-array name="activity_checklist">
+        <item>सभी चुनें</item>
+        <item>स्वास्थ्य विभाग द्वारा जारी नई योजनाओं या दिशानिर्देशों की जानकारी साझा की गई।</item>
+        <item>डेटा रजिस्टर और रिकॉर्ड जांचे गए।</item>
+        <item>प्रशिक्षण और क्षमता निर्माण पर चर्चा की गई।</item>
+        <item>दवा पेटी (मेडिसिन किट) की समीक्षा।</item>
+        <item>सामग्री वितरण और संबंधित गतिविधियाँ की गईं।</item>
+        <item>गर्भवती और स्तनपान कराने वाली माताओं की प्रगति पर चर्चा की गई।</item>
+        <item>विशेष मामलों (गंभीर मरीजों) के रेफरल पर चर्चा की गई।</item>
+        <item>बच्चों के टीकाकरण पर अपडेट दी गई।</item>
+    </string-array>
+
+    <string-array name="ahd_health_status_array">
+        <item>स्वस्थ</item>
+        <item>रक्ताल्पता (एनीमिया)</item>
+        <item>कुपोषित</item>
+    </string-array>
+
+    <string-array name="ahd_place_array">
+        <item>घर</item>
+        <item>सामुदायिक केंद्र</item>
+        <item>स्कूल</item>
+        <item>उप-स्वास्थ्य केंद्र</item>
+    </string-array>
+
+    <string-array name="ahd_counseling_type_array">
+        <item>व्यक्तिगत</item>
+        <item>समूह</item>
+    </string-array>
+
+    <string-array name="ahd_referral_status_array">
+        <item>लंबित</item>
+        <item>पूर्ण</item>
+    </string-array>
+
 </resources>
