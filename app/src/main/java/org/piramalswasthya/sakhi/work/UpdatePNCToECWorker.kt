@@ -39,13 +39,7 @@ class UpdatePNCToECWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
-    override suspend fun doWork(): Result {
-        try {
-            setForeground(createForegroundInfo())
-        } catch (_: Throwable) {
-            // Expedited work handles foreground promotion; ignore failures here
-        }
-        val eligBenIds = deliveryOutcomeRepo.getExpiredRecords()
+    override suspend fun doWork(): Result {        val eligBenIds = deliveryOutcomeRepo.getExpiredRecords()
         setRecordsToInactive(eligBenIds)
         updateBen(eligBenIds)
         WorkerUtils.triggerAmritPushWorker(appContext)

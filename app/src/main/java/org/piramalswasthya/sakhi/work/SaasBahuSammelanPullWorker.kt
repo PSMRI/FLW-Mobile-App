@@ -33,13 +33,7 @@ class SaasBahuSammelanPullWorker  @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                setForeground(createForegroundInfo())
-            } catch (_: Throwable) {
-                // Expedited work handles foreground promotion; ignore failures here
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 saasBahuSammelanRepo.SaasBahuSamelanGettDataFromServer()
             }
             Result.success()

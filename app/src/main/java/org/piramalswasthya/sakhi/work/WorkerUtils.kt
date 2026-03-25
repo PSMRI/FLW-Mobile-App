@@ -12,7 +12,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
-import androidx.work.OutOfQuotaPolicy
+
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkContinuation
 import androidx.work.WorkManager
@@ -47,10 +47,9 @@ object WorkerUtils {
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
-    /** Standard builder: network constraint + expedited + exponential backoff (30s → 60s → 120s …). */
+    /** Standard builder: network constraint + exponential backoff (30s → 60s → 120s …). */
     private inline fun <reified W : androidx.work.ListenableWorker> syncRequestBuilder(
     ) = OneTimeWorkRequestBuilder<W>()
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         .setConstraints(networkOnlyConstraint)
         .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
 
