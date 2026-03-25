@@ -50,11 +50,6 @@ abstract class BasePushWorker(
         }
         initTokens()
         return try {
-            try {
-                setForeground(createForegroundInfo("Syncing data..."))
-            } catch (_: Throwable) {
-                // Expedited work handles foreground promotion; ignore failures here
-            }
             doSyncWork()
         } catch (e: SocketTimeoutException) {
             Timber.e("[$workerName] Socket timeout, will retry")
