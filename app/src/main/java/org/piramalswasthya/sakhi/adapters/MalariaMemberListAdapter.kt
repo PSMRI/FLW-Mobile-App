@@ -53,7 +53,7 @@ class MalariaMemberListAdapter(
             binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
             try {
                 if (item.tb == null) {
-                    binding.btnFormTb.text =  "Screening"
+                    binding.btnFormTb.text = binding.root.resources.getString(R.string.screening)
                     binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_dark))
 
                 } else {
@@ -63,19 +63,19 @@ class MalariaMemberListAdapter(
                         if (item.tb.caseStatus == "Confirmed") {
                             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
                             Glide.with(binding.ivSyncState).load(R.drawable.mosquito).into(binding.ivMalariaStatus)
-                            binding.btnFormTb.text =  "Confirmed"
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_confirmed)
                         } else if (item.tb.caseStatus == "Suspected") {
                             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_orange_light))
                             Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
-                            binding.btnFormTb.text =  "Suspected"
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.suspected)
                         }else if (item.tb.caseStatus == "Not Confirmed") {
                             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.tertiary_text_light))
                             Glide.with(binding.ivSyncState).load(R.drawable.ic_check_circle).into(binding.ivMalariaStatus)
-                            binding.btnFormTb.text =  "Not Confirmed"
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_not_confirmed)
                         } else if (item.tb.caseStatus == "Treatment Started"){
                             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_purple))
                             Glide.with(binding.ivSyncState).load(R.drawable.pill).into(binding.ivMalariaStatus)
-                            binding.btnFormTb.text =  "Treatment Started"
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_treatment_started)
 
                         } else {
                             Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
@@ -84,7 +84,7 @@ class MalariaMemberListAdapter(
                     } else {
 
                         binding.ivMalariaStatus.visibility =  View.INVISIBLE
-                        binding.btnFormTb.text =  "View"
+                        binding.btnFormTb.text = binding.root.resources.getString(R.string.view)
                         binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
 
                     }
