@@ -37,13 +37,7 @@ class PullUwinFromAmritWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
-    override suspend fun doWork(): Result {
-        try {
-            setForeground(createForegroundInfo("Syncing data..."))
-        } catch (_: Throwable) {
-            // Expedited work handles foreground promotion; ignore failures here
-        }
-        return withContext(Dispatchers.IO) {
+    override suspend fun doWork(): Result {        return withContext(Dispatchers.IO) {
             val startTime = System.currentTimeMillis()
             try {
 
