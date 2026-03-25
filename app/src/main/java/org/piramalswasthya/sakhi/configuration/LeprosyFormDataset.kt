@@ -275,7 +275,7 @@ class LeprosyFormDataset(
         id = 14,
         inputType = InputType.RADIO,
         arrayId = R.array.yes_no,
-        title = "Any Leprosy Symptoms Present?",
+        title = resources.getString(R.string.any_leprosy_symptoms_present),
         entries = resources.getStringArray(R.array.yes_no),
         hasDependants = true,
         required = true,
@@ -285,7 +285,7 @@ class LeprosyFormDataset(
     private val visitLabel = FormElement(
         id = 15,
         inputType = InputType.TEXT_VIEW,
-        title = "Visit",
+        title = resources.getString(R.string.visit_leprosy),
         required = true,
         isEnabled = false
     )
@@ -315,14 +315,14 @@ class LeprosyFormDataset(
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
-            visitLabel.value = "Visit -1"
+            visitLabel.value = resources.getString(R.string.visit_number_label, 1)
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
         } else {
             dateOfCase.value = getDateFromLong(saved.homeVisitDate)
             val symptomsPosition = saved.leprosySymptomsPosition ?: 1
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                 ?: resources.getStringArray(R.array.yes_no)[1]
-            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            visitLabel.value = resources.getString(R.string.visit_number_label, saved?.currentVisitNumber ?: 1)
             leprosyStatus.value =
                 getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
@@ -446,7 +446,7 @@ class LeprosyFormDataset(
                 if (leprosySymptoms.value == resources.getStringArray(R.array.yes_no)[0]) {
 
                     leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
-                    visitLabel.value = "Visit -1"
+                    visitLabel.value = resources.getString(R.string.visit_number_label, 1)
 
                     triggerDependants(
                         source = leprosySymptoms,
@@ -723,7 +723,7 @@ class LeprosyFormDataset(
 
         if (anyYes){
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[3]
-            visitLabel.value = "Visit -1"
+            visitLabel.value = resources.getString(R.string.visit_number_label, 1)
 
             triggerDependants(
                 source = leprosySymptoms,

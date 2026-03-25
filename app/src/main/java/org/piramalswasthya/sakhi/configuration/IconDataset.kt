@@ -687,10 +687,10 @@ class IconDataset @Inject constructor(
         }
     }
 
-    fun getImmunizationDataset() = listOf(
+    fun getImmunizationDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.ic_vaccines,
-            "Child Immunization",
+            resources.getString(R.string.child_immunization),
             recordsRepo.childrenImmunizationListCount,
             ImmunizationDueTypeFragmentDirections.actionImmunizationDueTypeFragmentToChildImmunizationListFragment()
         ),
@@ -744,9 +744,8 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.MALARIA.toString()
+                resources.getString(Disease.MALARIA.getTitleRes())
             ),
-//            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),
