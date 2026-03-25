@@ -319,7 +319,7 @@ class IconDataset @Inject constructor(
                 .actionVillageLevelFormsFragmentToPHCReviewListFragement()
         )
 
-        return listOf(
+        val list = mutableListOf(
             Icon(
                 R.drawable.ic__vhnd_s1,
                 resources.getString(R.string.vhnd),
@@ -341,51 +341,70 @@ class IconDataset @Inject constructor(
                 null,
                 VillageLevelFormsFragmentDirections
                     .actionVillageLevelFormsFragmentToAHDListFragment()
-            ),
-            Icon(
-                R.drawable.ic__national_deworming_s1,
-                resources.getString(R.string.national_deworming_day),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToDewormingListFragment()
-            ),
-            Icon(
-                R.drawable.ic__maa_meeting_1,
-                resources.getString(R.string.maa_meeting),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
-            ),
-            Icon(
-                R.drawable.ic__u_win,
-                resources.getString(R.string.u_win_session),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToUwinListFragment()
-            ),
-            Icon(
-                R.drawable.ic__pulse_polio,
-                resources.getString(R.string.pulse_polio_campaign),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
-            ),
-            Icon(
-                R.drawable.ic__ors,
-                resources.getString(R.string.ors_distribution_campaign),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToORSCampaignListFragment()
-            ),
-            Icon(
-                R.drawable.filaria,
-                resources.getString(R.string.mda_title),
-                null,
-                VillageLevelFormsFragmentDirections
-                    .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
             )
+        )
 
-        ).apply {
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.add(
+                Icon(
+                    R.drawable.ic__ahd,
+                    resources.getString(R.string.saas_samelan),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToSaasBahuListFragment()
+                )
+            )
+        }
+
+
+        list.addAll(
+            listOf(
+                Icon(
+                    R.drawable.ic__national_deworming_s1,
+                    resources.getString(R.string.national_deworming_day),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToDewormingListFragment()
+                ),
+                Icon(
+                    R.drawable.ic__maa_meeting_1,
+                    resources.getString(R.string.maa_meeting),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
+                ),
+                Icon(
+                    R.drawable.ic__u_win,
+                    resources.getString(R.string.u_win_session),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToUwinListFragment()
+                ),
+                Icon(
+                    R.drawable.ic__pulse_polio,
+                    resources.getString(R.string.pulse_polio_campaign),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToPulsePolioCampaignListFragment()
+                ),
+                Icon(
+                    R.drawable.ic__ors,
+                    resources.getString(R.string.ors_distribution_campaign),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToORSCampaignListFragment()
+                ),
+                Icon(
+                    R.drawable.filaria,
+                    resources.getString(R.string.mda_title),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToFilariaMdaCampaignHistoryFragment()
+                )
+            )
+        )
+
+        return list.apply {
             forEachIndexed { index, icon ->
                 icon.colorPrimary = index % 2 == 0
             }

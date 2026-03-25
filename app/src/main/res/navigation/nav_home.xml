@@ -343,6 +343,9 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_filariaMdaCampaignHistoryFragment"
             app:destination="@id/filariaMdaCampaignHistory" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_saasBahuListFragment"
+            app:destination="@id/saasBahuSammelanListFragment" />
     </fragment>
 
     <fragment
@@ -2210,5 +2213,13 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.sync_dashboard.SyncDashboardFragment"
         android:label="@string/sync_dashboard"
         tools:layout="@layout/fragment_sync_dashboard" />
+    <fragment
+        android:id="@+id/saasBahuSammelanListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSammelanListFragment"
+        android:label="SaasBahuSammelanListFragment" >
 
+        <action
+            android:id="@+id/action_saasBahuSamelanList_to_saasbahuFormFragment"
+            app:destination="@id/saasBahuSamelanFragment" />
+    </fragment>
 </navigation>
