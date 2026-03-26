@@ -46,11 +46,14 @@ interface EyeSurgeryFormResponseJsonDao {
     @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId ORDER BY visitMonth DESC LIMIT 1")
     suspend fun getLatestForBenForm(benId: Long, formId: String): EyeSurgeryFormResponseJsonEntity?
 
-    // NEW: eye side based query
-    @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND eyeSide = :eyeSide LIMIT 1")
-    suspend fun getByBenAndEye(benId: Long, eyeSide: String): EyeSurgeryFormResponseJsonEntity?
 
-    // NEW: all visits for a ben ordered by date
+    @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId AND eyeSide = :eyeSide LIMIT 1")
+    suspend fun getByBenAndEye(
+        benId: Long,
+        formId: String,
+        eyeSide: String
+    ): EyeSurgeryFormResponseJsonEntity?
+
     @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId ORDER BY createdAt ASC")
     suspend fun getAllVisitsByBenId(benId: Long): List<EyeSurgeryFormResponseJsonEntity>
 
@@ -61,10 +64,9 @@ interface EyeSurgeryFormResponseJsonDao {
         insertFormResponse(toSave)
     }
 
-    // NEW: upsert by eye side
     @Transaction
     suspend fun upsertByEye(entity: EyeSurgeryFormResponseJsonEntity) {
-        val existing = getByBenAndEye(entity.benId, entity.eyeSide)
+        val existing = getByBenAndEye(entity.benId, entity.formId, entity.eyeSide)
         val toSave = existing?.let { entity.copy(id = it.id) } ?: entity
         insertFormResponse(toSave)
     }
