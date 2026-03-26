@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.model
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -15,7 +16,15 @@ import java.util.Locale
 
 
 
-@Entity(tableName = "DewormingMeeting")
+@Entity(
+    tableName = "DewormingMeeting",
+    indices = [
+        Index(
+            value = ["dewormingDate"],
+            unique = true
+        )
+    ]
+)
 data class DewormingCache(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
@@ -31,7 +40,7 @@ data class DewormingCache(
 ) : FormDataModel {
     
     fun toDTO(): DewormingDTO {
-        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val currentDate = formatter.format(Date())
         return DewormingDTO(
             id = id,
@@ -46,7 +55,7 @@ data class DewormingCache(
     }
 
     fun toDewormingCache(): DewormingCache {
-        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val currentDate = formatter.format(Date())
         return DewormingCache(
             id = id,

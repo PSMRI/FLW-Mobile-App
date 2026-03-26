@@ -213,6 +213,7 @@ class BenIfaFormFragment : Fragment() {
             isViewOnly = isViewMode,
             minVisitDate = minVisitDate,
             maxVisitDate = maxVisitDate,
+            formId= FormConstants.IFA_DISTRIBUTION_FORM_ID,
             onValueChanged =
                 { field, value ->
                     if (value == "pick_image") {
@@ -233,7 +234,7 @@ class BenIfaFormFragment : Fragment() {
         val previousVisitDate = viewModel.previousVisitDate
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.forEach { section ->

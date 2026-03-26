@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
 import android.content.Context
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,7 +41,7 @@ class CUFYFormRepository @Inject constructor(
         var result: FormSchemaDto? = null
 
         try {
-            val response = amritApiService.fetchFormSchema(formId,"en")
+            val response = amritApiService.fetchFormSchema(formId,pref.getCurrentLanguage().symbol)
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()
@@ -182,13 +181,6 @@ class CUFYFormRepository @Inject constructor(
         }
     }
 
-
-   /* suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
-        val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
-        val updated = existing?.let { entity.copy(id = it.id) } ?: entity
-        jsonResponseDao.insertFormResponse(updated)
-    }*/
-
     suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
 
         val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
@@ -319,7 +311,7 @@ class CUFYFormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
 

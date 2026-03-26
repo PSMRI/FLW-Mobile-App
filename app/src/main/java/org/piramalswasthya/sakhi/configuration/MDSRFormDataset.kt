@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.widget.LinearLayout
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -300,6 +301,13 @@ class MDSRFormDataset(
 //            blockMOSign,
 
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(mdsrFileUpload1)
+            list.remove(mdsrFileUpload2)
+            list.remove(mdsrDeathFileUpload)
+        }
+
         this.address.value = address
         husbandName.value = ben.genDetails?.spouseName
         val user = preferences.getLoggedInUser()
@@ -365,7 +373,7 @@ class MDSRFormDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as MDSRCache).let { mdsrCache ->
-            mdsrCache.dateOfDeath = getLongFromDate(dateOfDeath.value!!)
+            mdsrCache.dateOfDeath = dateOfDeath.value?.let { getLongFromDate(it) }
             mdsrCache.address = address.value
             mdsrCache.husbandName = husbandName.value
             mdsrCache.mdsr1File = mdsrFileUpload1.value

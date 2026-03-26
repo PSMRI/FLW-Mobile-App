@@ -654,7 +654,7 @@ data class BenWithCbacCache(
 
 
 data class BenWithCbacAndReferalCache(
-    @Embedded val ben: BenBasicCache,
+    @Embedded val referral: ReferalCache,
     @Relation(
         parentColumn = "benId",
         entityColumn = "benId"
@@ -664,11 +664,12 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val referralList: ReferalCache
+    val ben: BenBasicCache
+
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referralList
+            ben.asBasicDomainModel(), cbacList,referral
         )
     }
 }
@@ -891,7 +892,7 @@ data class CbacVisitDetails(
 fun String?.toMillisOrNull(pattern: String = "MMM dd, yyyy, h:mm:ss a"): Long? {
     if (this.isNullOrBlank()) return null
     return try {
-        val format = SimpleDateFormat(pattern, Locale.getDefault())
+        val format = SimpleDateFormat(pattern, Locale.ENGLISH)
         format.timeZone = TimeZone.getTimeZone("UTC")
         format.parse(this)?.time
     } catch (e: Exception) {

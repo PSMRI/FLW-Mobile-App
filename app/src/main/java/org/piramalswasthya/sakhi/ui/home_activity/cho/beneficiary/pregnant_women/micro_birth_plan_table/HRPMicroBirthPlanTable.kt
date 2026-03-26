@@ -259,7 +259,7 @@ class HRPMicroBirthPlanTable : Fragment() {
             intent.putExtra(Intent.EXTRA_TEXT, captionText)
             intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
             intent.setPackage("com.whatsapp")
-            intent.setType("image/png")
+            intent.setType("image/*")
             startActivity(intent)
 
         } else {

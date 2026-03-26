@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemLeprosyMemberListBinding
 import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
@@ -109,23 +110,23 @@ class LeprosyMemberListAdapter(
             val (text, colorRes) = when {
 
                 item.leprosy == null -> {
-                    "Screening" to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_green_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 1 -> {
-                    "Screening" to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_green_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
-                    "Follow Up" to android.R.color.holo_red_dark
+                    R.string.follow_up to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 -> {
-                    "Suspected" to android.R.color.holo_red_dark
+                  R.string.suspected to android.R.color.holo_red_dark
                 }
                 else -> {
-                    "View" to android.R.color.holo_green_dark
+                    R.string.view to android.R.color.holo_green_dark
                 }
             }
 
-            binding.btnFormTb.text = text
+            binding.btnFormTb.text = binding.root.context.getString(text)
             binding.btnFormTb.setBackgroundColor(
                 binding.root.resources.getColor(colorRes, binding.root.context.theme)
             )

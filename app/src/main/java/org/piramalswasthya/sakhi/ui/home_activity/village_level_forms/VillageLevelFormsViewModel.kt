@@ -2,12 +2,10 @@ package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms
 
 import android.content.res.Resources
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -36,7 +34,9 @@ class VillageLevelFormsViewModel @Inject constructor(
         "PHC Review Meeting" to "phc_review",
         "AHD" to "ahd",
         "National Deworming Day" to "deworming",
-        "U-win Sessions" to "uwin"
+        "U-win Sessions" to "uwin",
+        "Pulse Polio Campaign" to "pulse_polio_campaign_form",
+        "ORS Distribution Campaign" to "ors_campaign_form"
     )
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -44,7 +44,7 @@ class VillageLevelFormsViewModel @Inject constructor(
         viewModelScope.launch {
             val icons = iconDataset.getVLFDataset(resources)
             val currentDate = LocalDate.now()
-            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
 
             val result = icons.map { icon ->
                 val formId = formIdMap[icon.title]

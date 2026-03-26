@@ -1,11 +1,15 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@drawable/bg_login"
     tools:context=".ui.login_activity.sign_in.SignInFragment">
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/ll_logo"
@@ -59,17 +63,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_wide">
-
-                <!--                    <com.google.android.material.textview.MaterialTextView-->
-                <!--                        android:id="@+id/tv_title"-->
-                <!--                        android:layout_width="match_parent"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:paddingTop="@dimen/padding_normal"-->
-                <!--                        android:paddingBottom="@dimen/padding_normal"-->
-                <!--                        android:text="@string/tv_text_welcome"-->
-                <!--                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_sign_in"
@@ -286,4 +279,5 @@
         app:layout_constraintStart_toStartOf="parent" />
 <!--    app:layout_constraintTop_toBottomOf="@+id/cv_login_item_container"-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

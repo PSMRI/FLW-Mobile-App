@@ -29,7 +29,7 @@ class NcdReferalRepo@Inject constructor(
     }
 
     fun Long.toApiDateFormat(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
         return sdf.format(Date(this))
     }
     suspend fun pushAndUpdateNCDReferRecord() {
@@ -48,7 +48,6 @@ class NcdReferalRepo@Inject constructor(
 
             response?.body()?.string()?.let { body ->
                 val jsonBody = JSONObject(body)
-                val array = jsonBody.getJSONObject("data")
                 val isSuccess = jsonBody.getString("status") == "Success"
 
                 if (isSuccess) {

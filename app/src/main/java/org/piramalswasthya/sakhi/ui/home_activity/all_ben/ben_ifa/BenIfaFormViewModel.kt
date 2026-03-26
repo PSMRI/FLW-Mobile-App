@@ -249,7 +249,7 @@ class BenIfaFormViewModel @Inject constructor(
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else null
             } catch (e: Exception) {
                 null
@@ -262,12 +262,9 @@ class BenIfaFormViewModel @Inject constructor(
         }
     }
 
-    fun getMinVisitDate(): Date? {
-        return previousVisitDate?.let {
-            Calendar.getInstance().apply {
-                time = it
-                add(Calendar.DATE, 1)
-            }.time
-        }
+    fun getMinVisitDate(): Date {
+        return Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
+        }.time
     }
 }

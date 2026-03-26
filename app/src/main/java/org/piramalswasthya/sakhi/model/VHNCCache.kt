@@ -19,6 +19,13 @@ data class VHNCCache(
     var noOfBeneficiariesAttended: Int? = null,
     var image1: String? = null,
     var image2: String? = null,
+    var villageName: String? = null,
+    var anm: Int? = 0,
+    var aww: Int? = 0,
+    var noOfPragnentWoment: Int? = 0,
+    var noOfLactingMother: Int? = 0,
+    var noOfCommittee: Int? = 0,
+    var followupPrevius: Boolean? = null,
     var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
     fun toDTO(): VHNCDTO {
@@ -28,7 +35,15 @@ data class VHNCCache(
             place = place,
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             Image1 = image1,
-            Image2 = image2
+            Image2 = image2,
+            villageName = villageName,
+            anm = anm,
+            aww = aww,
+            noOfPragnentWoment = noOfPragnentWoment,
+            noOfLactingMother = noOfLactingMother,
+            noOfCommittee = noOfCommittee,
+            followupPrevius = followupPrevius,
+
         )
     }
 
@@ -39,7 +54,14 @@ data class VHNCCache(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image2 = image1,
             image1 = image2,
-            vhncDate = (vhncDate)
+            vhncDate = (vhncDate),
+            villageName = villageName,
+            anm = anm,
+            aww = aww,
+            noOfPragnentWoment = noOfPragnentWoment,
+            noOfLactingMother = noOfLactingMother,
+            noOfCommittee = noOfCommittee,
+            followupPrevius = followupPrevius,
         )
     }
 }

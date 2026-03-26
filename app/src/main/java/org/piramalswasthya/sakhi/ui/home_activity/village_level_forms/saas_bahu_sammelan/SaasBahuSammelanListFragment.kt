@@ -47,8 +47,8 @@ class SaasBahuSammelanListFragment : Fragment() {
 
         val ahdAdapter = SaasBahuSammelanAdapter(
             clickListener = SaasBahuSammelanAdapter.SaasBahuSammelanAdapterClickListener { id ->
-                findNavController().navigate(
-                    SaasBahuSammelanListFragmentDirections.actionSaasBahuSammelanListFragmentToSaasBahuSammelanFormFrag(
+             findNavController().navigate(
+                    SaasBahuSammelanListFragmentDirections.actionSaasBahuSamelanListToSaasbahuFormFragment(
                         id
                     )
                 )
@@ -83,7 +83,7 @@ class SaasBahuSammelanListFragment : Fragment() {
 
 
         binding.btnNextPage.setOnClickListener {
-            findNavController().navigate(R.id.action_saasBahuSammelanListFragment_to_saasBahuSammelanFormFrag)
+            findNavController().navigate(R.id.action_saasBahuSamelanList_to_saasbahuFormFragment)
         }
 
 

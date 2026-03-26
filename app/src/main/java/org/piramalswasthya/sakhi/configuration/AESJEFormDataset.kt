@@ -7,7 +7,6 @@ import org.piramalswasthya.sakhi.model.AESScreeningCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
-import org.piramalswasthya.sakhi.model.TBScreeningCache
 
 class AESJEFormDataset(
     context: Context, currentLanguage: Languages
@@ -324,7 +323,7 @@ class AESJEFormDataset(
     fun updateBen(benRegCache: BenRegCache) {
         benRegCache.genDetails?.let {
             it.reproductiveStatus =
-                englishResources.getStringArray(R.array.nbr_reproductive_status_array)[1]
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[1]
             it.reproductiveStatusId = 2
         }
         if (benRegCache.processed != "N") benRegCache.processed = "U"

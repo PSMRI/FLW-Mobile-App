@@ -75,41 +75,55 @@ class EcrRepo @Inject constructor(
             val ecrList = database.ecrDao.getAllUnprocessedECR()
             val ecrPostList = mutableSetOf<EcrPost>()
 
+            // RECORD-LEVEL ISOLATION: Each ECR record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ecrList.forEach {
-                ecrPostList.clear()
-                val ben = database.benDao.getBen(it.benId)
-                    ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
+                try {
+                    ecrPostList.clear()
+                    val ben = database.benDao.getBen(it.benId)
+                        ?: throw IllegalStateException("No beneficiary exists for benId: ${it.benId}!!")
 
-                val ecrPost = it.asPostModel(context)
-                val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
-                cache?.let {
-                    ecrPost.misCarriage = cache.misCarriage
-                    ecrPost.homeDelivery = cache.homeDelivery
-                    ecrPost.medicalIssues = cache.medicalIssues
-                    ecrPost.pastCSection = cache.pastCSection
-                    ecrPost.isHighRisk = cache.isHighRisk
-                }
+                    val ecrPost = it.asPostModel(context)
+                    val cache = database.hrpDao.getNonPregnantAssess(ben.beneficiaryId)
+                    cache?.let {
+                        ecrPost.misCarriage = cache.misCarriage
+                        ecrPost.homeDelivery = cache.homeDelivery
+                        ecrPost.medicalIssues = cache.medicalIssues
+                        ecrPost.pastCSection = cache.pastCSection
+                        ecrPost.isHighRisk = cache.isHighRisk
+                    }
 
-                ecrPostList.add(ecrPost)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.update(it)
-                val uploadDone = postECRDataToAmritServer(ecrPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                    ecrPostList.add(ecrPost)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.update(it)
+                    val uploadDone = postECRDataToAmritServer(ecrPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.update(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECR push failed for benId: ${it.benId}")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.update(it)
+                    failCount++
                 }
-                database.ecrDao.update(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECR push complete: $successCount succeeded, $failCount failed out of ${ecrList.size}")
             return@withContext true
         }
     }
 
-    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>): Boolean {
+    suspend fun postECRDataToAmritServer(ecrPostList: MutableSet<EcrPost>, retryCount: Int = 3): Boolean {
         if (ecrPostList.isEmpty()) return false
 
         val user =
@@ -159,10 +173,12 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ecrPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postECRDataToAmritServer(ecrPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postECRDataToAmritServer(ecrPostList, retryCount - 1)
+            Timber.e("postECRDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
@@ -176,28 +192,42 @@ class EcrRepo @Inject constructor(
 
             val ectPostList = mutableSetOf<EligibleCoupleTrackingCache>()
 
+            // RECORD-LEVEL ISOLATION: Each ECT record is processed
+            // independently. If one record fails, remaining records continue.
+            // Failed records stay UNSYNCED and retry on next sync cycle.
+            var successCount = 0
+            var failCount = 0
+
             ectList.forEach {
-                ectPostList.clear()
-                ectPostList.add(it)
-                it.syncState = SyncState.SYNCING
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                val uploadDone = postECTDataToAmritServer(ectPostList)
-                if (uploadDone) {
-                    it.processed = "P"
-                    it.syncState = SyncState.SYNCED
-                } else {
+                try {
+                    ectPostList.clear()
+                    ectPostList.add(it)
+                    it.syncState = SyncState.SYNCING
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    val uploadDone = postECTDataToAmritServer(ectPostList)
+                    if (uploadDone) {
+                        it.processed = "P"
+                        it.syncState = SyncState.SYNCED
+                        successCount++
+                    } else {
+                        it.syncState = SyncState.UNSYNCED
+                        failCount++
+                    }
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                } catch (e: Exception) {
+                    Timber.e(e, "ECT push failed for record")
                     it.syncState = SyncState.UNSYNCED
+                    database.ecrDao.updateEligibleCoupleTracking(it)
+                    failCount++
                 }
-                database.ecrDao.updateEligibleCoupleTracking(it)
-                if (!uploadDone)
-                    return@withContext false
             }
 
+            Timber.d("ECT push complete: $successCount succeeded, $failCount failed out of ${ectList.size}")
             return@withContext true
         }
     }
 
-    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>): Boolean {
+    private suspend fun postECTDataToAmritServer(ectPostList: MutableSet<EligibleCoupleTrackingCache>, retryCount: Int = 3): Boolean {
         if (ectPostList.isEmpty()) return false
 
         val user =
@@ -247,15 +277,17 @@ class EcrRepo @Inject constructor(
             Timber.w("Bad Response from server, need to check $ectPostList $response ")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.d("Caught exception $e here")
-            return postECTDataToAmritServer(ectPostList)
+            Timber.e("Caught exception $e here")
+            if (retryCount > 0) return postECTDataToAmritServer(ectPostList, retryCount - 1)
+            Timber.e("postECTDataToAmritServer: max retries exhausted")
+            return false
         } catch (e: JSONException) {
-            Timber.d("Caught exception $e here")
+            Timber.e("Caught exception $e here")
             return false
         }
     }
 
-    suspend fun pullAndPersistEcrRecord(): Int {
+    suspend fun pullAndPersistEcrRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -340,11 +372,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
-                pullAndPersistEcrRecord()
-
+                Timber.e("get_ect error : $e")
+                if (retryCount > 0) return@withContext pullAndPersistEcrRecord(retryCount - 1)
+                Timber.e("pullAndPersistEcrRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1
@@ -352,7 +385,7 @@ class EcrRepo @Inject constructor(
     }
 
 
-    suspend fun pullAndPersistEctRecord(): Int {
+    suspend fun pullAndPersistEctRecord(retryCount: Int = 3): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
                 ?: throw IllegalStateException("No user logged in!!")
@@ -412,11 +445,12 @@ class EcrRepo @Inject constructor(
                 }
 
             } catch (e: SocketTimeoutException) {
-                Timber.d("get_ect error : $e")
-                pullAndPersistEctRecord()
-
+                Timber.e("get_ect error : $e")
+                if (retryCount > 0) return@withContext pullAndPersistEctRecord(retryCount - 1)
+                Timber.e("pullAndPersistEctRecord: max retries exhausted")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
-                Timber.d("get_ect error : $e")
+                Timber.e("get_ect error : $e")
                 return@withContext -1
             }
             -1
@@ -443,7 +477,7 @@ class EcrRepo @Inject constructor(
                     ),
                     lmpDate =
                     if (ecrJson.has("lmpDate")) {
-                        getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                        getLongFromLmpDateOrNull(ecrJson.getString("lmpDate")) ?: 0L
                     } else {
                         0L
                     },
@@ -455,7 +489,7 @@ class EcrRepo @Inject constructor(
 //                    noOfLiveChildren = if (ecrJson.has("noOfLiveChildren")) ecrJson.getInt("noOfLiveChildren") else 0,
 //                    noOfMaleChildren = if (ecrJson.has("noOfMaleChildren")) ecrJson.getInt("noOfMaleChildren") else 0,
 //                    noOfFemaleChildren = if (ecrJson.has("noOfFemaleChildren")) ecrJson.getInt("noOfFemaleChildren") else 0,
-                    dob1 = if (ecrJson.has("dob1")) getLongFromDate(ecrJson.getString("dob1")) else null,
+                    dob1 = if (ecrJson.has("dob1")) getLongFromDateOrNull(ecrJson.getString("dob1")) else null,
                     age1 = if (ecrJson.has("age1")) ecrJson.getInt("age1") else null,
                     gender1 = if (ecrJson.has("gender1")) ecrJson.getString("gender1")
                         .uppercase()
@@ -466,7 +500,7 @@ class EcrRepo @Inject constructor(
                     marriageFirstChildGap = if (ecrJson.has("marriageFirstChildGap")) ecrJson.getInt(
                         "marriageFirstChildGap"
                     ) else null,
-                    dob2 = if (ecrJson.has("dob2")) getLongFromDate(ecrJson.getString("dob2")) else null,
+                    dob2 = if (ecrJson.has("dob2")) getLongFromDateOrNull(ecrJson.getString("dob2")) else null,
                     age2 = if (ecrJson.has("age2")) ecrJson.getInt("age2") else null,
                     gender2 = if (ecrJson.has("gender2")) ecrJson.getString("gender2")
                         .uppercase()
@@ -477,7 +511,7 @@ class EcrRepo @Inject constructor(
                     firstAndSecondChildGap = if (ecrJson.has("firstAndSecondChildGap")) ecrJson.getInt(
                         "firstAndSecondChildGap"
                     ) else null,
-                    dob3 = if (ecrJson.has("dob3")) getLongFromDate(ecrJson.getString("dob3")) else null,
+                    dob3 = if (ecrJson.has("dob3")) getLongFromDateOrNull(ecrJson.getString("dob3")) else null,
                     age3 = if (ecrJson.has("age3")) ecrJson.getInt("age3") else null,
                     gender3 = if (ecrJson.has("gender3")) ecrJson.getString("gender3")
                         .uppercase()
@@ -488,7 +522,7 @@ class EcrRepo @Inject constructor(
                     secondAndThirdChildGap = if (ecrJson.has("secondAndThirdChildGap")) ecrJson.getInt(
                         "secondAndThirdChildGap"
                     ) else null,
-                    dob4 = if (ecrJson.has("dob4")) getLongFromDate(ecrJson.getString("dob4")) else null,
+                    dob4 = if (ecrJson.has("dob4")) getLongFromDateOrNull(ecrJson.getString("dob4")) else null,
                     age4 = if (ecrJson.has("age4")) ecrJson.getInt("age4") else null,
                     gender4 = if (ecrJson.has("gender4")) ecrJson.getString("gender4")
                         .uppercase()
@@ -499,7 +533,7 @@ class EcrRepo @Inject constructor(
                     thirdAndFourthChildGap = if (ecrJson.has("thirdAndFourthChildGap")) ecrJson.getInt(
                         "thirdAndFourthChildGap"
                     ) else null,
-                    dob5 = if (ecrJson.has("dob5")) getLongFromDate(ecrJson.getString("dob5")) else null,
+                    dob5 = if (ecrJson.has("dob5")) getLongFromDateOrNull(ecrJson.getString("dob5")) else null,
                     age5 = if (ecrJson.has("age5")) ecrJson.getInt("age5") else null,
                     gender5 = if (ecrJson.has("gender5")) ecrJson.getString("gender5")
                         .uppercase()
@@ -510,7 +544,7 @@ class EcrRepo @Inject constructor(
                     fourthAndFifthChildGap = if (ecrJson.has("fourthAndFifthChildGap")) ecrJson.getInt(
                         "fourthAndFifthChildGap"
                     ) else null,
-                    dob6 = if (ecrJson.has("dob6")) getLongFromDate(ecrJson.getString("dob6")) else null,
+                    dob6 = if (ecrJson.has("dob6")) getLongFromDateOrNull(ecrJson.getString("dob6")) else null,
                     age6 = if (ecrJson.has("age6")) ecrJson.getInt("age6") else null,
                     gender6 = if (ecrJson.has("gender6")) ecrJson.getString("gender6")
                         .uppercase()
@@ -521,7 +555,7 @@ class EcrRepo @Inject constructor(
                     fifthANdSixthChildGap = if (ecrJson.has("fifthANdSixthChildGap")) ecrJson.getInt(
                         "fifthANdSixthChildGap"
                     ) else null,
-                    dob7 = if (ecrJson.has("dob7")) getLongFromDate(ecrJson.getString("dob7")) else null,
+                    dob7 = if (ecrJson.has("dob7")) getLongFromDateOrNull(ecrJson.getString("dob7")) else null,
                     age7 = if (ecrJson.has("age7")) ecrJson.getInt("age7") else null,
                     gender7 = if (ecrJson.has("gender7")) ecrJson.getString("gender7")
                         .uppercase()
@@ -532,7 +566,7 @@ class EcrRepo @Inject constructor(
                     sixthAndSeventhChildGap = if (ecrJson.has("sixthAndSeventhChildGap")) ecrJson.getInt(
                         "sixthAndSeventhChildGap"
                     ) else null,
-                    dob8 = if (ecrJson.has("dob8")) getLongFromDate(ecrJson.getString("dob8")) else null,
+                    dob8 = if (ecrJson.has("dob8")) getLongFromDateOrNull(ecrJson.getString("dob8")) else null,
                     age8 = if (ecrJson.has("age8")) ecrJson.getInt("age8") else null,
                     gender8 = if (ecrJson.has("gender8")) ecrJson.getString("gender8")
                         .uppercase()
@@ -543,7 +577,7 @@ class EcrRepo @Inject constructor(
                     seventhAndEighthChildGap = if (ecrJson.has("seventhAndEighthChildGap")) ecrJson.getInt(
                         "seventhAndEighthChildGap"
                     ) else null,
-                    dob9 = if (ecrJson.has("dob9")) getLongFromDate(ecrJson.getString("dob9")) else null,
+                    dob9 = if (ecrJson.has("dob9")) getLongFromDateOrNull(ecrJson.getString("dob9")) else null,
                     age9 = if (ecrJson.has("age9")) ecrJson.getInt("age9") else null,
                     gender9 = if (ecrJson.has("gender9")) ecrJson.getString("gender9")
                         .uppercase()
@@ -574,10 +608,7 @@ class EcrRepo @Inject constructor(
                     syncState = SyncState.SYNCED,
                     isKitHandedOver = ecrJson.optBoolean("isKitHandedOver",false),
                     kitHandedOverDate = getLongFromDate(
-                        if (ecrJson.has("updatedDate")) ecrJson.optString(
-                            "updatedDate"
-                        ) else ecrJson.optString("updatedDate")
-                    ),
+                        if (ecrJson.has("updatedDate")) ecrJson.getString("updatedDate") else ecrJson.getString("createdDate")                    ),
                     kitPhoto1 = ecrJson.optString("kitPhoto1",""),
                     kitPhoto2 = ecrJson.optString("kitPhoto2",""),
                     lmp_date = getLongFromDate(
@@ -609,7 +640,7 @@ class EcrRepo @Inject constructor(
                 benId = ecrJson.getLong("benId"),
                 lmpDate =
                 if (ecrJson.has("lmpDate")) {
-                    getLongFromLmpDate(ecrJson.getString("lmpDate"))
+                    getLongFromLmpDateOrNull(ecrJson.getString("lmpDate")) ?: 0L
                 } else {
                     0L
                 },
@@ -707,17 +738,35 @@ class EcrRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
             val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
 
+        private fun getLongFromDateOrNull(dateString: String?): Long? {
+            if (dateString.isNullOrBlank()) return null
+            return try {
+                val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
+                f.parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         private fun getLongFromLmpDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
             val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val date = f.parse(dateString)
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+        }
+
+        private fun getLongFromLmpDateOrNull(dateString: String?): Long? {
+            if (dateString.isNullOrBlank()) return null
+            return try {
+                val f = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                f.parse(dateString)?.time
+            } catch (e: Exception) {
+                null
+            }
         }
 
         private fun getStringToDate(dateString: String?): String? {

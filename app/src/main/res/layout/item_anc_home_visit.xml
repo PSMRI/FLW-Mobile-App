@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="visit"
+            type="org.piramalswasthya.sakhi.model.HomeVisitDomain" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.AncHomeVisitAdapter.HomeVisitClickListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_visit_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:text="@{@string/home_visit_number(visit.visitNumber)}"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            tools:text="Home Visit 1" />
+
+        <TextView
+            android:id="@+id/tv_visit_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:visibility="gone"
+            android:text="@{visit.visitDateString}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            tools:text="12 Dec 2023" />
+
+        <androidx.legacy.widget.Space
+            android:layout_width="30dp"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimary"
+            android:text="@string/view"
+            android:textColor="?attr/colorOnPrimary" />
+
+        <androidx.legacy.widget.Space
+            android:layout_width="30dp"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_sync_state"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/sync_status"
+            syncState="@{visit.syncState}"
+            tools:src="@drawable/ic_synced" />
+
+    </LinearLayout>
+
+</layout>

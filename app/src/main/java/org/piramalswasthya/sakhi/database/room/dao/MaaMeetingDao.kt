@@ -30,6 +30,7 @@ interface MaaMeetingDao {
 
     @Query("delete from MAA_MEETING")
     fun clearAll()
+
+    @Query("UPDATE MAA_MEETING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }
-
-

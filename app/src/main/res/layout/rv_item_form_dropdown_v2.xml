@@ -34,6 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
                 android:paddingLeft="@dimen/_20sdp"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
@@ -48,7 +51,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -60,6 +62,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{form.value}"
+                android:inputType="none"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
                 android:paddingLeft="@dimen/_20sdp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />

@@ -7,5 +7,6 @@ data class ChildOption(
     val isViewMode: Boolean = false,
     val visitDay: String? = null,
     val formDataJson: String? = null,
-    val recordId: Int? = null
+    val recordId: Int? = null,
+    val isIFA : Boolean? = false
 )

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
+import org.piramalswasthya.sakhi.utils.StringMappingUtil
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -64,12 +65,13 @@ interface MosquitoNetFormResponseDao {
     suspend fun getFormJsonList(hhId: Long): List<String>
     private fun extractYear(dateStr: String): String {
         return try {
+            val englishDateStr = StringMappingUtil.convertDigits(dateStr)
             val inputFormats = listOf("yyyy-MM-dd", "dd-MM-yyyy")
             for (fmt in inputFormats) {
                 try {
-                    val parsed = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                    val parsed = SimpleDateFormat(fmt, Locale.ENGLISH).parse(englishDateStr)
                     if (parsed != null) {
-                        return SimpleDateFormat("yyyy", Locale.getDefault()).format(parsed)
+                        return SimpleDateFormat("yyyy", Locale.ENGLISH).format(parsed)
                     }
                 } catch (_: Exception) {}
             }

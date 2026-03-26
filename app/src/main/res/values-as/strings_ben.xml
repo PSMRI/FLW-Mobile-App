@@ -57,18 +57,36 @@
     <string name="title_new_ben_reg_hof">HoF Registration</string>
     <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
 
-
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">পুৰুষ</item>
         <item name="nbr_gender_2">মহিলা</item>
         <item name="nbr_gender_3">ট্ৰান্সজেন্ডাৰ</item>
     </string-array>
-    <string-array name="nbr_reproductive_status_array">
-        <item>যোগ্য জন্য জুতি দিব যোৱা জন</item>
-        <item>গৰ্ভবতী মহিলা</item>
-        <item>পষ্টুতা কৰা মহিলা</item>
-        <item>বৃদ্ধা মহিলা</item>
-        <item>কিশোৰী</item>
+
+    <string-array name="nbr_reproductive_status_array1">
+        <item>Adolescent Girl</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
+        <item>Not Applicable</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>Eligible Couple</item>
+        <item>Pregnant Woman</item>
+        <item>Postnatal Mother</item>
+        <item>Permanently Sterilised</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>Elderly Woman</item>
     </string-array>
 
     <string-array name="nbr_marital_status_male_array">
@@ -77,6 +95,13 @@
         <item>তালাকপ্ৰাপ্ত</item>
         <item>পৃথিবীৰ সালুৱা</item>
         <item>বিধবা</item>
+    </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>Anganwadi Centre</item>
+        <item>HWC</item>
+        <item>School</item>
+        <item>Community center</item>
     </string-array>
 
     <string-array name="nbr_marital_status_female_array">
@@ -162,11 +187,11 @@
         <item>জীয়ৰী</item>
         <item>আইতা</item>
         <item>শাহুআই</item>
-        <item>নাতিনী</item>
+        <item>নাতিনী/নাতিনীয়েক</item>
         <item>বোৱাৰী</item>
+        <item>নবৌ/নন্দ</item>
         <item>অন্যান্য</item>
     </string-array>
-
 
     <string-array name="community_array">
         <item>সাধাৰণ</item>
@@ -222,4 +247,67 @@
     <string name="day">দিন</string>
     <string name="days">দিন</string>
     <string name="mother_rch_id">মা RCH ID</string>
+    <string-array name="diet_plane">
+    <item>What to eat, what to avoid, importance of dietary diversity.</item>
+
+    </string-array>
+    <string-array name="care_pregnancy">
+        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+
+    </string-array>
+    <string-array name="select_all">
+        <item>Select All</item>
+    </string-array>
+    <string-array name="maa_breastfeeding">
+        <item>Select All</item>
+        <item>The baby should be breastfed immediately within the first hour of birth</item>
+        <item>The baby should be given only mother’s milk for the first 6 months.</item>
+        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
+        <item>Breastfeeding should be continued for 2 years or more.</item>
+        <item>The family should support and encourage the mother.</item>
+        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
+        <item>Breastfeeding protects the baby from many diseases.</item>
+        <item>Mother’s milk is the best for the complete development of the baby.</item>
+        <item>Information was given about KMC (Kangaroo Mother Care).</item>
+
+    </string-array>
+
+    <string-array name="import_brestfeeding">
+        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
+    </string-array>
+
+    <string-array name="complementary_feeding">
+        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+
+    </string-array>
+    <string-array name="hygiene_senetigation">
+        <item>Maintaining cleanliness while preparing and feeding food</item>
+
+    </string-array>
+    <string-array name="family_planning_health">
+        <item>Importance of small family and regular health check-ups</item>
+
+    </string-array>
+
+    <string name="age_at_marriagee">বিবাহৰ সময়ত আপোনাৰ বয়স</string>
+    <string name="nbr_abortion_image">গৰ্ভপাত ডিচ্চাৰ্জ</string>
+    <string name="nbr_image_cam_gal">কেমেৰা/গেলেৰী ব্যৱহাৰ কৰিবলৈ টেপ কৰক</string>
+    <string name="vhnd_date">VHND তাৰিখ</string>
+    <string name="vhnc_date">VHSNC সভাৰ তাৰিখ</string>
+    <string name="phc_review_meeting_date">সভাৰ তাৰিখ</string>
+    <string name="nbr_child_first_name">শিশুৰ নাম</string>
+    <string name="other_place_of_death">মৃত্যুৰ অন্য স্থান</string>
+    <string name="deworming_done">কৃমিনাশক চক্ৰ সম্পূৰ্ণ হৈছে নেকি?</string>
+    <string name="deworming_date">কৃমিনাশকৰ তাৰিখ</string>
+    <string name="deworming_location">কৃমিনাশকৰ স্থান</string>
+    <string name="age_group">বয়সৰ গোট</string>
+    <string name="deworming_title">ৰাষ্ট্ৰীয় কৃমিনাশক দিৱস ফৰ্ম</string>
+    <string name="deworming_list_title">ৰাষ্ট্ৰীয় কৃমিনাশক দিৱস ফৰ্ম তালিকা</string>
+    <string name="ndd_list_title">NDD ফৰ্ম</string>
+    <string name="dd_ec">যোগ্য দম্পতী</string>
+    <string name="dd_pw">গৰ্ভৱতী মহিলা</string>
+    <string name="dd_pm">প্ৰসৱোত্তৰ মাতৃ</string>
+    <string name="dd_ew">বয়স্ক মহিলা</string>
+    <string name="dd_ag">কিশোৰী ছোৱালী</string>
+    <string name="dd_ps">স্থায়ী বন্ধ্যাকৰণ কৰা</string>
 </resources>

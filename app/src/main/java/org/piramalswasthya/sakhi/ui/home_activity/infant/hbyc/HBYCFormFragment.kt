@@ -47,7 +47,7 @@ class HBYCFormFragment : Fragment() {
     private lateinit var adapter: FormRendererAdapter
     private var currentImageField: FormField? = null
     private var tempCameraUri: Uri? = null
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
     @Inject
     lateinit var pref: PreferenceDao
     var langCode=""
@@ -149,7 +149,8 @@ class HBYCFormFragment : Fragment() {
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
                     }
-                },)
+                }, formId = HBYC_FORM_ID
+                    )
 
                 recyclerView.adapter = adapter
                 saveButton.visibility = if (isViewMode) View.GONE else View.VISIBLE
@@ -189,11 +190,11 @@ class HBYCFormFragment : Fragment() {
         val currentVisitDay = viewModel.visitMonth
         val previousVisitDate = viewModel.previousVisitDate
         val deliveryDate = dob ?: return
-        val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(deliveryDate))
+        val dobString = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(deliveryDate))
         if (currentVisitDay.isBlank()) return
 
         val updatedFields = adapter.getUpdatedFields()
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         val today = Date()
 
         currentSchema.sections.orEmpty().forEach { section ->

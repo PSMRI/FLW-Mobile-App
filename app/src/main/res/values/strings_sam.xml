@@ -2,6 +2,7 @@
 <resources>
     <string name="add_new_visit">Add New Visit</string>
     <string name="visit">Visit %1$d</string>
+    <string name="visit_2">View or Add Visit</string>
     <string name="check_sam_">Check SAM</string>
     <string name="severe_acute_malnutrition">Severe Acute Malnutrition</string>
     <string name="sam_form">SAM Form</string>
@@ -28,4 +29,7 @@
     <string name="follow_up_sam">Follow up SAM</string>
     <string name="nrc_admitted">NRC Admitted</string>
     <string name="referred_to_nrc">Referred to NRC</string>
+    <string name="visit_date_cannot_be_more_than_2_months_old">Visit date cannot be more than 2 months old</string>
+    <string name="only_one_visit_per_month_allowed">Only one visit per month is allowed</string>
+    <string name="bottle_count">Bottle Count</string>
 </resources>

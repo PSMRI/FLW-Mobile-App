@@ -34,7 +34,6 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormFragmentDirections
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.io.File
 
@@ -92,8 +91,8 @@ class DeliveryOutcomeFragment : Fragment() {
                         hardCodedListUpdate(formId)
                     },
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
                     },
                     viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
                         if (recordExists) viewDocuments(formId) else {

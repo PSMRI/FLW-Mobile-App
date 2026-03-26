@@ -81,7 +81,6 @@
     <string name="assessment_form_filled_successfully">Assessment form filled successfully</string>
     <string name="visit_on">"Visit On "</string>
     <string name="follow_up">Follow Up</string>
-<!--    <string name="follow_up_date">Follow Up Date</string>-->
     <string name="supervisor_visit_date">Date of Visit by Supervisor</string>
     <string name="test_up_date">Date of Test</string>
     <string name="history">History</string>
@@ -119,8 +118,6 @@
     <string name="b_age"><b>Age :</b></string>
     <string name="c_no"><b>Contact no :\n1 -</b></string>
     <string name="b_blood_donor"><b>Blood donor identified\n1 -</b></string>
-
-
 
     <string name="help_support">Help &amp; Support</string>
     <string name="user_guide">User Guide</string>

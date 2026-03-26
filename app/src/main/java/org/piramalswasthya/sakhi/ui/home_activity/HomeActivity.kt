@@ -6,11 +6,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.os.SystemClock
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.webkit.PermissionRequest
@@ -37,6 +38,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
@@ -44,21 +47,27 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
+import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
-import org.piramalswasthya.sakhi.helpers.CrashEmailSender
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
@@ -68,7 +77,6 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.io.File
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
@@ -84,6 +92,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     private lateinit var inAppUpdateHelper: InAppUpdateHelper
 
     var lastClickTime: Long = 0L
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -99,6 +111,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var pref: PreferenceDao
+
+    @Inject
+    lateinit var accountDeactivationManager: AccountDeactivationManager
+
+    @Inject
+    lateinit var tokenExpiryManager: TokenExpiryManager
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -175,14 +193,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private val imagePickerActivityResult =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-            it?.let {
-                viewModel.profilePicUri = it
-                Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            it?.let { galleryUri ->
+                viewModel.profilePicUri = galleryUri
+                viewModel.saveProfilePicFromGallery(this, galleryUri)
+                Glide.with(this).load(galleryUri)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
-//                binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic).setImageURI(it)
-//                Glide.with(this)
-//                    .load(it)
-//                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
             }
         }
 
@@ -207,14 +225,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
         }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
         FirebaseMessaging.getInstance().subscribeToTopic("All")
@@ -222,6 +241,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        TapjackingProtectionHelper.enableTouchFiltering(this)
 
         if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
@@ -231,9 +252,44 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(true)
         }
 
+        // Hide non-functional menu items
+        binding.navView.menu.findItem(R.id.sync_pending_records)?.isVisible = true
+        binding.navView.menu.findItem(R.id.ChatFragment)?.isVisible = false
+        binding.navView.menu.findItem(R.id.menu_report_crash)?.isVisible = false
+     //   binding.navView.menu.findItem(R.id.menu_support)?.isVisible = false
+
         setContentView(binding.root)
         setUpActionBar()
         setUpNavHeader()
+        viewModel.restoredProfilePicUri.observe(this) { uri ->
+            uri?.let {
+                Glide.with(this).load(it)
+                    .signature(ObjectKey(System.currentTimeMillis()))
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.ic_person).circleCrop()
+                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }
+        }
+        binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
+            private var loaded = false
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                if (!loaded && slideOffset > 0.01f) {
+                    loaded = true
+                    viewModel.profilePicUri?.let {
+                        Glide.with(this@HomeActivity).load(it)
+                            .signature(ObjectKey(System.currentTimeMillis()))
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .placeholder(R.drawable.ic_person).circleCrop()
+                            .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                    }
+                }
+            }
+            override fun onDrawerClosed(drawerView: View) { loaded = false }
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
         setUpFirstTimePullWorker()
         setUpMenu()
 
@@ -275,9 +331,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         viewModel.unprocessedRecordsCount.observe(this) {
-            if (it>0) {
-                if (isInternetAvailable(this)){
-                    WorkerUtils.triggerAmritPushWorker(this)
+            if (it > 0) {
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
@@ -297,6 +357,55 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        observeAccountDeactivation()
+        observeTokenExpiry()
+
+    }
+
+    private var deactivationDialog: AlertDialog? = null
+
+    private fun observeAccountDeactivation() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                accountDeactivationManager.deactivationEvent.collect { errorMessage ->
+                    if (deactivationDialog?.isShowing == true) return@collect
+                    deactivationDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.account_deactivated_title))
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                    deactivationDialog?.show()
+                }
+            }
+        }
+    }
+
+    private var sessionExpiredDialog: AlertDialog? = null
+
+    private fun observeTokenExpiry() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                tokenExpiryManager.forceLogoutEvent.collect {
+                    if (sessionExpiredDialog?.isShowing == true) return@collect
+                    sessionExpiredDialog = MaterialAlertDialogBuilder(this@HomeActivity)
+                        .setTitle(getString(R.string.session_expired_title))
+                        .setMessage(getString(R.string.session_expired_message))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                            dialog.dismiss()
+                            pref.deleteForLogout()
+                            WorkerUtils.cancelAllWork(this@HomeActivity)
+                            startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
+                            finish()
+                        }
+                        .create()
+                    sessionExpiredDialog?.show()
+                }
+            }
+        }
     }
 
     fun askForPermissions() {
@@ -425,17 +534,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
 
-
+    override fun onPause() {
+        super.onPause()
+        window.decorView.alpha = 0f
+    }
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals("niramay", true) ||BuildConfig.FLAVOR.equals("xushrukha", true) || BuildConfig.FLAVOR.equals("saksham", true))  {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
         super.onResume()
+        window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
@@ -541,7 +647,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //                resources.getString(R.string.nav_item_3_text, it.userId)
         }
         viewModel.profilePicUri?.let {
-            Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
+            Glide.with(this).load(it)
+                .signature(ObjectKey(System.currentTimeMillis()))
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.ic_person).circleCrop()
                 .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
         }
 //
@@ -566,6 +676,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
+
+        binding.navView.menu.findItem(R.id.incentivesFragment)?.let { incentivesMenuItem ->
+            val titleRes =
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    R.string.monthly_claim_summary
+                } else {
+                    R.string.incentive_fragment_title
+                }
+            incentivesMenuItem.title = getString(titleRes)
+        }
+
         binding.navView.menu.findItem(R.id.homeFragment).setOnMenuItemClickListener {
             navController.popBackStack(R.id.homeFragment, false)
             binding.drawerLayout.close()
@@ -589,8 +710,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         }
 
+        binding.navView.menu.findItem(R.id.syncDashboardFragment).setOnMenuItemClickListener {
+            navController.navigate(R.id.syncDashboardFragment)
+            binding.drawerLayout.close()
+            true
+        }
+
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-//            navController.popBackStack(R.id.lmsFragment, false)
             navController.navigate(R.id.lmsFragment)
 
             binding.drawerLayout.close()

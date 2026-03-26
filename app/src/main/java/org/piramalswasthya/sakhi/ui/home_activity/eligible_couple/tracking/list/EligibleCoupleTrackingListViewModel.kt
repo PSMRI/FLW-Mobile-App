@@ -11,14 +11,12 @@ import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.helpers.filterEcTrackingList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListFragmentArgs
 import javax.inject.Inject
 
 @HiltViewModel
 class EligibleCoupleTrackingListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    recordsRepo: RecordsRepo,
-//    private var ecrRepo: EcrRepo
+    recordsRepo: RecordsRepo
 ) : ViewModel() {
 
     private var sourceFromArgs = EligibleCoupleTrackingListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
@@ -34,14 +32,17 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
 
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
-    val benList = allBenList.combine(filter) { list, filter ->
-        list.filter { domainList ->
-            domainList.ben.benId in filterEcTrackingList(
-                list,
-                filter
-            ).map { it.ben.benId }
-        }
-    }
+
+    val benList =
+        allBenList
+            .combine(filter) { list, filter ->
+                list.filter { domainList ->
+                    domainList.ben.benId in filterEcTrackingList(
+                        list,
+                        filter
+                    ).map { it.ben.benId }
+                }
+            }
 
     val bottomSheetList = allBenList.combineTransform(selectedBenId) { list, benId ->
         if (benId != 0L) {

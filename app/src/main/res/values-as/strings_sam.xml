@@ -1,2 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="add_new_visit">নতুন ভিজিট যোগ কৰক</string>
+    <string name="visit">ভিজিট %1$d</string>
+    <string name="visit_2">ভিজিট চাওক বা যোগ কৰক</string>
+    <string name="check_sam_">SAM পৰীক্ষা কৰক</string>
+    <string name="severe_acute_malnutrition">গুৰুতৰ তীব্ৰ অপুষ্টি</string>
+    <string name="sam_form">SAM ফৰ্ম</string>
+    <string name="ors_form">ORS ফৰ্ম</string>
+    <string name="oral_rehydration_solution">মুখেৰে পুনৰ্জলীকৰণ দ্ৰৱণ</string>
+    <string name="ifa_form">IFA ফৰ্ম</string>
+    <string name="iron_folic_acid">আইৰন ফলিক এচিড</string>
+    <string name="sam_form_">SAM ফৰ্ম</string>
+    <string name="take_photo">ফটো তুলক</string>
+    <string name="select_image">ছবি বাছনি কৰক</string>
+    <string name="choose_from_gallery">গেলেৰীৰ পৰা বাছনি কৰক</string>
+    <string name="invalid_visit_date">অবৈধ ভিজিটৰ তাৰিখ</string>
+    <string name="delivery_date_is_missing">প্ৰসৱৰ তাৰিখ নাই</string>
+    <string name="visit_date_cannot_be_after_today_s_date">ভিজিটৰ তাৰিখ আজিৰ তাৰিখৰ পিছত হ\'ব নোৱাৰে</string>
+    <string name="visit_date_cannot_be_before_delivery_date">ভিজিটৰ তাৰিখ প্ৰসৱৰ তাৰিখৰ আগত হ\'ব নোৱাৰে</string>
+    <string name="visit_date_must_be_after_previous_visit">ভিজিটৰ তাৰিখ পূৰ্বৰ ভিজিটৰ (%1$s) পিছত হ\'ব লাগিব</string>
+    <string name="visit_already_exists_for_this_date">এই তাৰিখৰ বাবে ভিজিট ইতিমধ্যে আছে: %1$s</string>
+    <string name="visit_date_must_be_greater_then_the_last_visit_dates">ভিজিটৰ তাৰিখ শেষ ভিজিটৰ তাৰিখতকৈ পিছত হ\'ব লাগিব</string>
+    <string name="visit_date_must_be_after_all_existing_visit_dates">ভিজিটৰ তাৰিখ সকলো বৰ্তমান ভিজিটৰ তাৰিখৰ পিছত হ\'ব লাগিব</string>
+    <string name="is_child_referred_nrc">শিশুক NRC লৈ ৰেফাৰ কৰা হৈছে নেকি</string>
+    <string name="is_child_admitted_nrc">শিশুক NRC ত ভৰ্তি কৰা হৈছে নেকি</string>
+    <string name="is_child_discharged_nrc">শিশুক NRC ৰ পৰা ডিচ্চাৰ্জ কৰা হৈছে নেকি</string>
+    <string name="sam_status">SAM অৱস্থা</string>
+    <string name="follow_up_sam">SAM ফল\' আপ</string>
+    <string name="nrc_admitted">NRC ত ভৰ্তি</string>
+    <string name="referred_to_nrc">NRC লৈ ৰেফাৰ কৰা হৈছে</string>
+    <string name="visit_date_cannot_be_more_than_2_months_old">ভিজিটৰ তাৰিখ ২ মাহতকৈ পুৰণি হ\'ব নোৱাৰে</string>
+    <string name="only_one_visit_per_month_allowed">প্ৰতি মাহত কেৱল এটা ভিজিটৰ অনুমতি আছে</string>
+    <string name="bottle_count">বটলৰ সংখ্যা</string>
+</resources>

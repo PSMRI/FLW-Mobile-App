@@ -83,8 +83,6 @@ class HBNCFormViewModel @Inject constructor(
 //    fun triggerNavigate() {
 //        _navigateToCdsr.value = true
 //    }
-
-
     fun loadFormSchema(
         benId: Long,
         formId: String,
@@ -363,7 +361,7 @@ class HBNCFormViewModel @Inject constructor(
         }
     }
     fun formatDate(epochMillis: Long): String {
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         return sdf.format(Date(epochMillis))
     }
     private suspend fun getLastVisit(benId: Long): FormResponseJsonEntity? {
@@ -389,7 +387,7 @@ class HBNCFormViewModel @Inject constructor(
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else {
                     null
                 }
@@ -419,7 +417,7 @@ class HBNCFormViewModel @Inject constructor(
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else null
             } catch (e: Exception) {
                 null

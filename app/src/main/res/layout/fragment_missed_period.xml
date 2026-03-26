@@ -24,21 +24,6 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <!--        <com.google.android.material.textfield.TextInputLayout-->
-            <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:hint="SELECT DATE">-->
-
-            <!--            <com.google.android.material.textfield.TextInputEditText-->
-            <!--                android:id="@+id/et_mainDate"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:drawableEnd="@drawable/ic_calendar"-->
-            <!--                android:drawablePadding="10dp"-->
-            <!--                android:focusable="false" />-->
-            <!--        </com.google.android.material.textfield.TextInputLayout>-->
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,10 +37,6 @@
                 android:paddingVertical="@dimen/padding_wide"
                 android:visibility="gone"
                 android:orientation="horizontal">
-<!--                <androidx.legacy.widget.Space-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"/>-->
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_anc1"
@@ -96,11 +77,6 @@
                             tools:text="45" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
-
-<!--                <androidx.legacy.widget.Space-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"/>-->
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_imm"

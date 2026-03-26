@@ -46,4 +46,7 @@ interface CbacDao {
 
     @Query("UPDATE cbac SET isReffered = :status WHERE benId = :benId")
     suspend fun updateReferralStatus(benId: Long, status: Boolean)
+
+    @Query("UPDATE CBAC SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

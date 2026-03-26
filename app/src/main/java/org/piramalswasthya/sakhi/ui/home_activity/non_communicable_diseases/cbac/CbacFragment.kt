@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,23 +13,32 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
+import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.form.LeprosyFormViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.form.NCDReferDialogViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormViewModel
+import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.findFragmentActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.jvm.java
 
 
 @AndroidEntryPoint
@@ -38,26 +48,24 @@ class CbacFragment : Fragment() {
     private val binding by lazy { FragmentCbacBinding.inflate(layoutInflater) }
 
     private val viewModel: CbacViewModel by viewModels()
+    val referViewModel: NCDReferDialogViewModel by viewModels()
 
     private val isInFillMode: Boolean by lazy {
         viewModel.cbacId == 0
     }
 
-    private var isnoneOfThese = false
-
-    private var totalScorePopupShown: Boolean = false
-
-    private var ed1PopupShown: Boolean = false
-
-    private var ed2PopupShown: Boolean = false
 
     private var isSuspected: Boolean = false
 
     private val viewModelTbScreening: TBScreeningFormViewModel by viewModels()
+    private val viewModelLeprosyScreening: LeprosyFormViewModel by viewModels()
 
     private val alertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
+    private var isReferralDialogShown = false
+    var referralForReason = "Suspected NCD Case"
+    var referType = "NCD"
 
     private val raAlertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
@@ -73,14 +81,27 @@ class CbacFragment : Fragment() {
             .create()
     }
 
-    private val asreferAlertDialog by lazy {
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.isrefer))
-            .setMessage(resources.getString(R.string.ncd_refer_alert))
-            .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ -> dialog.dismiss()
-            findNavController().navigate(CbacFragmentDirections.actionCbacFragmentToNcdReferForm(viewModel.benId, cbacId = viewModel.cbacId))
+    private var asreferAlertDialog: AlertDialog? = null
+
+    private fun buildAsReferAlertDialog(): AlertDialog {
+        return AlertDialog.Builder(requireContext())
+            .setTitle(referType)
+            .setMessage(getString(R.string.ncd_refer_alert))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                dialog.dismiss()
+                showReferralDialog(
+                    fragment = this,
+                    type = referType,
+                    reason = referralForReason,
+                    benId = viewModel.benId,
+                    cbacId = viewModel.cbacId.toLong(),
+                    cbacViewModel = viewModel
+                )
             }
-            .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }
             .create()
     }
 
@@ -90,6 +111,7 @@ class CbacFragment : Fragment() {
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
             .create()
     }
+
     private val ast0AlertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
             .setMessage(
@@ -104,17 +126,58 @@ class CbacFragment : Fragment() {
     ): View {
         return binding.root
     }
-
+    private var dialogAlreadyShown = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
+            if (suspected && isInFillMode &&
+                !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY) &&
+                !dialogAlreadyShown
+            ) {
+                dialogAlreadyShown = true
+                viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
+                referralForReason = "Suspected Leprosy case"
+                referType = "LEPROSY"
+                asreferAlertDialog = buildAsReferAlertDialog()
+                asreferAlertDialog?.show()
+
+
+            } else {
+//                asreferAlertDialog = buildAsReferAlertDialog()
+                asreferAlertDialog?.dismiss()
+
+            }
+        }
+
+        findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("REFERRAL_DONE")
+            ?.observe(viewLifecycleOwner) { typeName ->
+
+                val type = CbacViewModel.ReferralType.valueOf(typeName)
+                viewModel.markReferralCompleted(type)
+            }
 
         findNavController().currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<String>("REFERRAL_RESULT")
             ?.observe(viewLifecycleOwner) { json ->
+
                 val referral = Gson().fromJson(json, ReferalCache::class.java)
-                viewModel.setReferral(referral)
+                viewModel.addReferral(referral)
+
             }
+
+
+        viewModel.showReferralDialog.observe(viewLifecycleOwner) { shouldShow ->
+            if (shouldShow  && !isReferralDialogShown) {
+                isReferralDialogShown = true
+                showDialog()
+            }
+        }
+
         viewModelTbScreening.state.observe(viewLifecycleOwner) {
             when (it) {
                 TBScreeningFormViewModel.State.SAVE_SUCCESS -> {
@@ -208,12 +271,21 @@ class CbacFragment : Fragment() {
         viewModel.raPaScore.observe(viewLifecycleOwner) {
             binding.ddPaScore.text = it
         }
+
         viewModel.raFhScore.observe(viewLifecycleOwner) {
             binding.ddFhScore.text = it
+            val totalScore = viewModel.raTotalScore.value
+                ?.substringAfter(": ")
+                ?.toIntOrNull() ?: 0
+            referralForReason = "Suspected NCD Case"
+            referType = "NCD"
+
+            handleNcdSusBottomInfoDisplay(totalScore)
+
         }
+
         viewModel.raTotalScore.observe(viewLifecycleOwner) {
             val score = it.substring(it.lastIndexOf(' ') + 1).toInt()
-            handleNcdSusBottomInfoDisplay(score)
             handleRaScoreAlert(score)
             binding.cbacTvRaTotalScore.text = it
         }
@@ -233,8 +305,6 @@ class CbacFragment : Fragment() {
                 viewModel.setLsWt(2)
                 binding.cbacNtswets.rbNo.isChecked = true
                 viewModel.setNtSwets(2)
-
-
                 binding.cbacRecurrentUlceration.rbNo.isChecked = true
                 viewModel.setRecurrentUlceration(2)
                 binding.cbacRecurrentCloudy.rbNo.isChecked = true
@@ -430,7 +500,7 @@ class CbacFragment : Fragment() {
                     resources.getString(R.string.refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority)
                 )
             }
-            raAlertDialog.show()
+//            raAlertDialog.show()
         }
 
     }
@@ -491,10 +561,17 @@ class CbacFragment : Fragment() {
                 binding.cbacNtswets.rbYes.isChecked
             ) {
                 isSuspected = true
-                ast1AlertDialog.setMessage(
+               /* ast1AlertDialog.setMessage(
                     resources.getString(R.string.refer_to_mo_and_collect_the_sputum_sample)
                 )
-                ast1AlertDialog.show()
+                ast1AlertDialog.show()*/
+                if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
+                    referralForReason = "Suspected TB case"
+                    referType = "TB"
+                    asreferAlertDialog = buildAsReferAlertDialog()
+                    asreferAlertDialog?.show()
+                }
+
             } else {
                 isSuspected = false
             }
@@ -534,8 +611,9 @@ class CbacFragment : Fragment() {
             binding.ncdSusValidDisplay.visibility = View.VISIBLE
             viewModel.setFlagForNcd(true)
             if (score > 4) {
-                if (isInFillMode && viewModel.referralCache == null)
-                asreferAlertDialog.show()
+                if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.NCD))
+                    asreferAlertDialog = buildAsReferAlertDialog()
+                asreferAlertDialog?.show()
             }
         } else {
             if (binding.ncdSusValidDisplay.visibility != View.GONE) {
@@ -589,6 +667,10 @@ class CbacFragment : Fragment() {
         val thisMonth = today.get(Calendar.MONTH)
         val thisDay = today.get(Calendar.DAY_OF_MONTH)
         binding.etDate.setOnClickListener {
+            val activity = binding.etDate.context.findFragmentActivity()
+                ?: return@setOnClickListener
+            val originalLocale = Locale.getDefault()
+            HelperUtil.setEnLocaleForDatePicker(activity)
 
             val datePickerDialog = DatePickerDialog(
                 it.context, { _, year, month, day ->
@@ -604,6 +686,9 @@ class CbacFragment : Fragment() {
 
             }
             datePickerDialog.show()
+            datePickerDialog.setOnDismissListener {
+                HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+            }
         }
         setupRaFill()
         setupEdFill()
@@ -724,49 +809,49 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setFhTb(1)
                 R.id.rb_no -> viewModel.setFhTb(2)
             }
-            handleAst2Alert()
+//            handleAst2Alert()
         }
         binding.cbacTakingTbDrug.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTakingTbDrug(1)
                 R.id.rb_no -> viewModel.setTakingTbDrug(2)
             }
-            handleAst2Alert()
+//            handleAst2Alert()
         }
         binding.cbacHistb.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setHisTb(1)
                 R.id.rb_no -> viewModel.setHisTb(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
         }
         binding.cbacCoughing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setCoughing(1)
                 R.id.rb_no -> viewModel.setCoughing(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
         }
         binding.cbacBlsputum.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setBloodSputum(1)
                 R.id.rb_no -> viewModel.setBloodSputum(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
         }
         binding.cbacFeverwks.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setFeverWks(1)
                 R.id.rb_no -> viewModel.setFeverWks(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
         }
         binding.cbacLsweight.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setLsWt(1)
                 R.id.rb_no -> viewModel.setLsWt(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
         }
         binding.cbacNtswets.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -781,6 +866,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setRecurrentUlceration(1)
                 R.id.rb_no -> viewModel.setRecurrentUlceration(2)
             }
+
         }
         binding.cbacRecurrentCloudy.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -890,18 +976,21 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setNumb(1)
                 R.id.rb_no -> viewModel.setNumb(2)
             }
+
         }
         binding.cbacClawingOfFingers.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setClaw(1)
                 R.id.rb_no -> viewModel.setClaw(2)
             }
+
         }
         binding.cbacTinglingOrNumbness.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setTingNumb(1)
                 R.id.rb_no -> viewModel.setTingNumb(2)
             }
+
         }
         binding.cbacInabilityCloseEyelid.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -914,17 +1003,18 @@ class CbacFragment : Fragment() {
                 R.id.rb_yes -> viewModel.setHoldObj(1)
                 R.id.rb_no -> viewModel.setHoldObj(2)
             }
+
         }
         binding.cbacWeeknessInFeet.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setWeakFeet(1)
                 R.id.rb_no -> viewModel.setWeakFeet(2)
             }
+            viewModel.checkLeprosySymptoms()
         }
         binding.cbacLumpbrest.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> {
-                   showDialog()
                     viewModel.setLumpB(1)
 
                 }
@@ -935,7 +1025,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setNipple(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setNipple(2)
             }
@@ -944,7 +1033,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBreast(1)
-                    showDialog()
 
                 }
                 R.id.rb_no -> viewModel.setBreast(2)
@@ -954,7 +1042,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlP(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setBlP(2)
             }
@@ -966,7 +1053,6 @@ class CbacFragment : Fragment() {
                     alertDialog.setTitle(resources.getString(R.string.alert))
                     alertDialog.setMessage(resources.getString(R.string.inform_asha_facilitator))
                     alertDialog.show()
-                    showDialog()
                     binding.tvBlMenopause.visibility = View.VISIBLE
                 }
 
@@ -980,7 +1066,7 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes -> {
                     viewModel.setBlI(1)
-                    showDialog()
+
                 }
                 R.id.rb_no -> viewModel.setBlI(2)
             }
@@ -989,7 +1075,6 @@ class CbacFragment : Fragment() {
             when (id) {
                 R.id.rb_yes ->  {
                     viewModel.setFoulD(1)
-                    showDialog()
                 }
                 R.id.rb_no -> viewModel.setFoulD(2)
             }
@@ -1121,9 +1206,20 @@ class CbacFragment : Fragment() {
 
                 )
         )
-        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ -> viewModel.setFuelType(i) }
+        binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setFuelType(i)
+
+        }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
+            referralForReason = "Suspected COPD case"
+            referType = "COPD"
+            if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
+                asreferAlertDialog = buildAsReferAlertDialog()
+                asreferAlertDialog?.show()
+
+            }
+
         }
     }
 
@@ -1151,8 +1247,11 @@ class CbacFragment : Fragment() {
         viewModel.phq2TotalScore.observe(viewLifecycleOwner) {
             if (it.substring(it.lastIndexOf(' ') + 1).toInt() > 3) {
                 binding.tvTbMoicVisit.visibility = View.VISIBLE
-                if (viewModel.referralCache == null) {
-                    asreferAlertDialog.show()
+                if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.GERIATRIC)) {
+                    referralForReason = "further assessment for depression"
+                    referType = "GERIATRIC"
+                    asreferAlertDialog = buildAsReferAlertDialog()
+                    asreferAlertDialog?.show()
                 }
                 viewModel.setFlagForPhQ2(true)
             } else {
@@ -1193,15 +1292,101 @@ class CbacFragment : Fragment() {
     }
 
     fun showDialog() {
-        viewModel.raTotalScore.observe(viewLifecycleOwner) {
-            if (isInFillMode && viewModel.referralCache == null)
-                asreferAlertDialog.show()
 
-        }
+            if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.HRP))
+                referralForReason = "Part B2: Women Only – Symptom Present"
+                referType = "HRP"
+        asreferAlertDialog = buildAsReferAlertDialog()
+        asreferAlertDialog?.show()
+
+
     }
     override fun onDestroy() {
         super.onDestroy()
-
+        referViewModel.resetState()
     }
+
+
+
+    fun showReferralDialog(
+        fragment: Fragment,
+        type: String,
+        reason: String,
+        benId: Long,
+        cbacId: Long,
+        cbacViewModel: CbacViewModel
+    ) {
+        val dialog = Dialog(fragment.requireContext(), R.style.FullScreenDialog)
+        val binding = FragmentNewFormBinding.inflate(fragment.layoutInflater)
+        dialog.setContentView(binding.root)
+        dialog.setCancelable(true)
+
+
+        referViewModel.initFromArgs(
+            benId = benId,
+            referralReason = reason,
+            cbacId = cbacId,
+            referralType = type
+        )
+
+
+        binding.benId.text = benId.toString()
+
+        referViewModel.benName.observe(fragment.viewLifecycleOwner) {
+            binding.tvBenName.text = it
+        }
+
+        referViewModel.benAgeGender.observe(fragment.viewLifecycleOwner) {
+            binding.tvAgeGender.text = it
+        }
+
+        val adapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                referViewModel.updateListOnValueChanged(formId, index)
+                binding.form.rvInputForm.adapter?.notifyDataSetChanged()
+
+
+
+            }, isEnabled = true
+
+        )
+
+        binding.form.rvInputForm.adapter = adapter
+
+        fragment.lifecycleScope.launch {
+            fragment.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                referViewModel.formList.collect {
+                    adapter.submitList(it)
+                }
+            }
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            referViewModel.saveForm()
+        }
+
+        referViewModel.state.observe(fragment.viewLifecycleOwner) {
+            if (it == NCDReferDialogViewModel.State.SAVE_SUCCESS) {
+
+                val referral = referViewModel.referalCache
+                cbacViewModel.addReferral(referral)
+
+                val referralType = CbacViewModel.ReferralType.valueOf(type)
+                cbacViewModel.markReferralCompleted(referralType)
+
+                Toast.makeText(
+                    fragment.requireContext(),
+                    fragment.getString(R.string.submit),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+
+
+
 
 }

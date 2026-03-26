@@ -1,40 +1,39 @@
 package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.AESScreeningCache
+import org.piramalswasthya.sakhi.model.AHDCache
+import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.model.DewormingCache
+import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.HRPMicroBirthPlanCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
-import org.piramalswasthya.sakhi.model.TBScreeningCache
-import org.piramalswasthya.sakhi.model.TBSuspectedCache
-import org.piramalswasthya.sakhi.utils.KeyUtils
-import java.text.SimpleDateFormat
-import java.util.Locale
-import kotlinx.parcelize.Parcelize
-import org.piramalswasthya.sakhi.model.DewormingCache
-import org.piramalswasthya.sakhi.model.AHDCache
-import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
-import org.piramalswasthya.sakhi.model.VHNCCache
-import org.piramalswasthya.sakhi.model.VHNDCache
-
-import org.piramalswasthya.sakhi.model.AESScreeningCache
-import org.piramalswasthya.sakhi.model.AdolescentHealthCache
-import org.piramalswasthya.sakhi.model.FilariaScreeningCache
 import org.piramalswasthya.sakhi.model.IRSRoundScreening
 import org.piramalswasthya.sakhi.model.KalaAzarScreeningCache
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.MalariaConfirmedCasesCache
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
-import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
-import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.PHCReviewMeetingCache
 import org.piramalswasthya.sakhi.model.ReferalCache
-import org.piramalswasthya.sakhi.model.Gender
-import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
-import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
+import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
+import org.piramalswasthya.sakhi.model.TBScreeningCache
+import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.VHNCCache
+import org.piramalswasthya.sakhi.model.VHNDCache
+import org.piramalswasthya.sakhi.model.getDateTimeStringFromLong
+import org.piramalswasthya.sakhi.utils.KeyUtils
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @JsonClass(generateAdapter = true)
 data class D2DAuthUserRequest(
@@ -419,8 +418,8 @@ data class ABHAProfile(
     val dob: String="",
     val gender: String="",
     val photo: String="",
-    val mobile: String="",
-    val email: String="",
+    val mobile: String?="",
+    val email: String?="",
     val phrAddress:List<String>?= listOf<String>(),
     val address: String="",
     val districtCode: String="",
@@ -934,6 +933,17 @@ data class VHNDDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var vhndPlaceId: Int? = 0,
+    var pregnantWomenAnc: String? = null,
+    var lactatingMothersPnc: String? = null,
+    var childrenImmunization: String? = null,
+    var knowledgeBalancedDiet: String? = null,
+    var careDuringPregnancy: String? = null,
+    var importanceBreastfeeding: String? = null,
+    var complementaryFeeding: String? = null,
+    var hygieneSanitation: String? = null,
+    var familyPlanningHealthcare: String? = null,
+    var selectAllEducation: Boolean? = false,
 ) {
     fun toCache(): VHNDCache {
         return VHNDCache(
@@ -943,6 +953,16 @@ data class VHNDDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            vhndPlaceId = vhndPlaceId,
+            pregnantWomenAnc = pregnantWomenAnc,
+            lactatingMothersPnc = lactatingMothersPnc,
+            childrenImmunization = childrenImmunization,
+            knowledgeBalancedDiet = knowledgeBalancedDiet,
+            careDuringPregnancy = careDuringPregnancy,
+            importanceBreastfeeding = importanceBreastfeeding,
+            complementaryFeeding = complementaryFeeding,
+            hygieneSanitation = hygieneSanitation,
+            familyPlanningHealthcare = familyPlanningHealthcare,
             syncState = SyncState.SYNCED
         )
     }
@@ -955,6 +975,13 @@ data class VHNCDTO(
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
     var Image2: String? = null,
+    var villageName: String? = null,
+    var anm: Int? = 0,
+    var aww: Int? = 0,
+    var noOfPragnentWoment: Int? = 0,
+    var noOfLactingMother: Int? = 0,
+    var noOfCommittee: Int? = 0,
+    var followupPrevius: Boolean? = null,
 ) {
     fun toCache(): VHNCCache {
         return VHNCCache(
@@ -964,6 +991,13 @@ data class VHNCDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
+            villageName = villageName,
+            anm = anm,
+            aww = aww,
+            noOfPragnentWoment = noOfPragnentWoment,
+            noOfLactingMother = noOfLactingMother,
+            noOfCommittee = noOfCommittee,
+            followupPrevius = followupPrevius,
             syncState = SyncState.SYNCED
         )
     }
@@ -971,11 +1005,15 @@ data class VHNCDTO(
 
 data class PHCReviewDTO(
     val id: Int = 0,
+    var placeId : Int? = 0 ,
     var phcReviewDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
     var Image1: String? = null,
-    var Image2: String? = null
+    var Image2: String? = null,
+    var villageName: String? = null,
+    var mitaninHistory: String? = null,
+    var mitaninActivityCheckList: String? = null,
 ) {
     fun toCache(): PHCReviewMeetingCache {
         return PHCReviewMeetingCache(
@@ -985,7 +1023,11 @@ data class PHCReviewDTO(
             noOfBeneficiariesAttended = noOfBeneficiariesAttended,
             image1 = Image1,
             image2 = Image2,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            villageName = villageName,
+            mitaninHistory = mitaninHistory,
+            mitaninActivityCheckList = mitaninActivityCheckList,
+            placeId = placeId
         )
     }
 }
@@ -1049,7 +1091,18 @@ data class TBScreeningDTO(
     var nightSweats: Boolean?,
     var historyOfTb: Boolean?,
     var takingAntiTBDrugs: Boolean?,
-    var familySufferingFromTB: Boolean?
+    var familySufferingFromTB: Boolean?,
+    var riseOfFever: Boolean? = null,
+    var lossOfAppetite: Boolean? = null,
+    var age: Boolean? = null,
+    var diabetic: Boolean? = null,
+    var tobaccoUser: Boolean? = null,
+    var bmi: Boolean? = null,
+    var contactWithTBPatient: Boolean? = null,
+    var historyOfTBInLastFiveYrs: Boolean? = null,
+    var sympotomatic :String?=null,
+    var asymptomatic  :String?=null,
+    var recommandateTest  :String?=null,
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1063,6 +1116,17 @@ data class TBScreeningDTO(
             historyOfTb = historyOfTb,
             takingAntiTBDrugs = takingAntiTBDrugs,
             familySufferingFromTB = familySufferingFromTB,
+            riseOfFever = riseOfFever,
+            lossOfAppetite = lossOfAppetite,
+            age = age,
+            diabetic = diabetic,
+            tobaccoUser = tobaccoUser,
+            bmi = bmi,
+            contactWithTBPatient = contactWithTBPatient,
+            historyOfTBInLastFiveYrs = historyOfTBInLastFiveYrs,
+            sympotomatic = sympotomatic,
+            asymptomatic = asymptomatic,
+            recommandateTest = recommandateTest,
             syncState = SyncState.SYNCED
         )
     }
@@ -1151,8 +1215,19 @@ data class TBSuspectedDTO(
     val nikshayId: String?,
     val sputumTestResult: String?,
     val referred: Boolean?,
-    val followUps: String?
-) {
+    val followUps: String?,
+    var visitLabel: String?,
+    var typeOfTBCase: String? = null,
+    var reasonForSuspicion: String? = null,
+    var hasSymptoms: Boolean? = null,
+    var isChestXRayDone: Boolean? = null,
+    var chestXRayResult: String? = null,
+    var referralFacility: String? = null,
+    var isTBConfirmed: Boolean? = null,
+    var isDRTBConfirmed: Boolean? = null,
+    var isConfirmed: Boolean = false,
+
+    ) {
     fun toCache(): TBSuspectedCache {
         return TBSuspectedCache(
             benId = benId,
@@ -1163,10 +1238,68 @@ data class TBSuspectedDTO(
             sputumTestResult = sputumTestResult,
             referred = referred,
             followUps = followUps,
+            visitLabel= visitLabel,
+            typeOfTBCase = typeOfTBCase,
+            reasonForSuspicion = reasonForSuspicion,
+            hasSymptoms = hasSymptoms ?: false,
+            isChestXRayDone = isChestXRayDone,
+            chestXRayResult = chestXRayResult,
+            referralFacility = referralFacility,
+            isTBConfirmed = isTBConfirmed,
+            isDRTBConfirmed = isDRTBConfirmed,
+            isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )
     }
 }
+
+data class TBConfirmedTreatmentDTO(
+    val id: Long,
+    val benId: Long,
+    val regimenType: String?,
+    val treatmentStartDate: String?,
+    val expectedTreatmentCompletionDate: String?,
+    val followUpDate: String?,
+    val monthlyFollowUpDone: String?,
+    val adherenceToMedicines: String?,
+    val anyDiscomfort: Boolean?,
+    val treatmentCompleted: Boolean?,
+    val actualTreatmentCompletionDate: String?,
+    val treatmentOutcome: String?,
+    val dateOfDeath: String?,
+    val placeOfDeath: String?,
+    val reasonForDeath: String?,
+    val reasonForNotCompleting: String?
+) {
+
+    fun toCache(): TBConfirmedTreatmentCache {
+        return TBConfirmedTreatmentCache(
+            benId = benId,
+            regimenType = regimenType,
+            treatmentStartDate = getLongFromDateMultipleSupport(treatmentStartDate) ?: System.currentTimeMillis(),
+            expectedTreatmentCompletionDate = getLongFromDateMultipleSupport(expectedTreatmentCompletionDate),
+            followUpDate = getLongFromDateMultipleSupport(followUpDate),
+            monthlyFollowUpDone = monthlyFollowUpDone,
+            adherenceToMedicines = adherenceToMedicines,
+            anyDiscomfort = anyDiscomfort,
+            treatmentCompleted = treatmentCompleted,
+            actualTreatmentCompletionDate = getLongFromDateMultipleSupport(actualTreatmentCompletionDate),
+            treatmentOutcome = treatmentOutcome,
+            dateOfDeath = getLongFromDateMultipleSupport(dateOfDeath),
+            placeOfDeath = placeOfDeath,
+            reasonForDeath = reasonForDeath ?: "Tuberculosis",
+            reasonForNotCompleting = reasonForNotCompleting,
+            syncState = SyncState.SYNCED
+        )
+    }
+}
+
+data class TBConfirmedRequestDTO(
+    @SerializedName("userId")
+    val userId: Int,
+    @SerializedName("tbConfirmedCases")
+    val tbConfirmedList: List<TBConfirmedTreatmentDTO>
+)
 
 data class TBSuspectedRequestDTO(
     val userId: Int,
@@ -1316,7 +1449,7 @@ data class AESScreeningDTO(
     var diseaseTypeID: Int ? = 0,
     var createdDate: String,
     var createdBy: String ? = null,
-    var followUpPoint: Int ? = 0,
+    var followUpPoint: Int ? = 1,
     var syncState: SyncState = SyncState.UNSYNCED,
 
     ) {
@@ -1363,6 +1496,8 @@ data class NCDReferalDTO(
     val visitCode: Long?,
     val providerServiceMapID: Int?,
     val createdBy: String?,
+    var type: String?,
+
     val isSpecialist: Boolean? = false,
     var syncState: SyncState = SyncState.UNSYNCED,
 
@@ -1384,7 +1519,8 @@ data class NCDReferalDTO(
             beneficiaryRegID =  beneficiaryRegID,
             referralReason = referralReason,
             parkingPlaceID = parkingPlaceID,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            type = type
 
 
 
@@ -1392,6 +1528,7 @@ data class NCDReferalDTO(
         )
     }
 }
+
 
 
 data class LeprosyScreeningDTO(
@@ -1431,6 +1568,30 @@ data class LeprosyScreeningDTO(
     val createdDate:String,
     val modifiedBy: String,
     val lastModDate: String,
+    var recurrentUlceration: String? = null,
+    var recurrentUlcerationId: Int? = 1,
+    var recurrentTingling: String? = null,
+    var recurrentTinglingId: Int? = 1,
+    var hypopigmentedPatch: String? = null,
+    var hypopigmentedPatchId: Int? = 1,
+    var thickenedSkin: String? = null,
+    var thickenedSkinId: Int? = 1,
+    var skinNodules: String? = null,
+    var skinNodulesId: Int? = 1,
+    var skinPatchDiscoloration: String? = null,
+    var skinPatchDiscolorationId: Int? = 1,
+    var recurrentNumbness: String? = null,
+    var recurrentNumbnessId: Int? = 1,
+    var clawingFingers: String? = null,
+    var clawingFingersId: Int? = 1,
+    var tinglingNumbnessExtremities: String? = null,
+    var tinglingNumbnessExtremitiesId: Int? = 1,
+    var inabilityCloseEyelid: String? = null,
+    var inabilityCloseEyelidId: Int? = 1,
+    var difficultyHoldingObjects: String? = null,
+    var difficultyHoldingObjectsId: Int? = 1,
+    var weaknessFeet: String? = null,
+    var weaknessFeetId: Int? = 1,
 ) {
     fun toCache(): LeprosyScreeningCache {
         return LeprosyScreeningCache(
@@ -1469,7 +1630,31 @@ data class LeprosyScreeningDTO(
             createdDate = getLongFromDate(createdDate),
             modifiedBy = modifiedBy,
             lastModDate =getLongFromDate(lastModDate),
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            recurrentUlceration = recurrentUlceration,
+            recurrentUlcerationId = recurrentUlcerationId,
+            recurrentTingling = recurrentTingling,
+            recurrentTinglingId = recurrentTinglingId,
+            hypopigmentedPatchId = hypopigmentedPatchId,
+            hypopigmentedPatch = hypopigmentedPatch,
+            thickenedSkin = thickenedSkin,
+            thickenedSkinId = thickenedSkinId,
+            skinNodules = skinNodules,
+            skinNodulesId = skinNodulesId,
+            skinPatchDiscoloration = skinPatchDiscoloration,
+            skinPatchDiscolorationId = skinPatchDiscolorationId,
+            recurrentNumbness = recurrentNumbness,
+            recurrentNumbnessId = recurrentNumbnessId,
+            clawingFingers = clawingFingers,
+            clawingFingersId = clawingFingersId,
+            tinglingNumbnessExtremities = tinglingNumbnessExtremities,
+            tinglingNumbnessExtremitiesId = tinglingNumbnessExtremitiesId,
+            inabilityCloseEyelid = inabilityCloseEyelid,
+            inabilityCloseEyelidId = inabilityCloseEyelidId,
+            difficultyHoldingObjects = difficultyHoldingObjects,
+            difficultyHoldingObjectsId = difficultyHoldingObjectsId,
+            weaknessFeet = weaknessFeet,
+            weaknessFeetId = weaknessFeetId,
         )
     }
 }
@@ -1637,4 +1822,28 @@ fun getLongFromDate(dateString: String?): Long {
     val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
     val date = dateString?.let { f.parse(it) }
     return date?.time ?: 0L
+}
+
+fun getLongFromDateMultipleSupport(dateStr: String?): Long? {
+    if (dateStr.isNullOrBlank() || dateStr == "1970-01-01") return null
+
+    val formats = listOf(
+        "yyyy-MM-dd",
+        "yyyy-MM-dd HH:mm:ss",
+        "MMM dd, yyyy hh:mm:ss a",
+        "MMM dd, yyyy",
+        "dd/MM/yyyy"
+    )
+
+    for (format in formats) {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.ENGLISH)
+            sdf.isLenient = false
+            return sdf.parse(dateStr)?.time
+        } catch (e: Exception) {
+        }
+    }
+
+    Timber.e("Date parsing failed for: $dateStr")
+    return null
 }

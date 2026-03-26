@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.helpers.getDateString
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.helpers.getWeeksOfPregnancy
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.network.getLongFromDateMultipleSupport
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDateStringFromLong
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -68,7 +69,9 @@ data class AncStatus(
     val benId: Long,
     val visitNumber: Int,
     val filledWeek: Int,
-    val syncState: SyncState? = null
+    val syncState: SyncState? = null,
+    val anyHighRisk: Boolean?,
+    val placeOfAncId: Int?
 )
 
 
@@ -333,6 +336,7 @@ data class PregnantWomanAncCache(
     var isActive: Boolean = true,
     var ancDate: Long = 0L,
 
+
     var lmpDate: Long? = null,
     var visitDate: Long? = null,
     var weekOfPregnancy: Int? = null,
@@ -340,8 +344,13 @@ data class PregnantWomanAncCache(
     var serialNo: String? = null,
     var methodOfTermination: String? = null,
     var methodOfTerminationId: Int? = 0,
+
     var terminationDoneBy: String? = null,
     var terminationDoneById: Int? = 0,
+
+    var placeOfAnc: String? = null,
+    var placeOfAncId: Int? = 0,
+
     var isPaiucdId: Int? = 0,
     var isYesOrNo: Boolean? = false,
     var isPaiucd: String? = null,
@@ -408,10 +417,12 @@ data class PregnantWomanAncCache(
             methodOfTerminationId = methodOfTerminationId,
             terminationDoneBy = terminationDoneBy,
             terminationDoneById = terminationDoneById,
+            placeOfAnc=placeOfAnc,
+            placeOfAncId=placeOfAncId,
             isPaiucdId = isPaiucdId,
             isPaiucd = isPaiucd,
             isYesOrNo = isYesOrNo,
-            dateSterilisation = getDateStringFromLong(dateSterilisation),
+            dateSterilisation = dateSterilisation?.let { getDateStringFromLong(it) },
             remarks = remarks,
             abortionImg1 = abortionImg1,
             abortionImg2 = abortionImg2,
@@ -470,6 +481,8 @@ data class ANCPost(
     var methodOfTerminationId: Int? = 0,
     var terminationDoneBy: String? = null,
     var terminationDoneById: Int? = 0,
+    var placeOfAnc: String? = null,
+    var placeOfAncId: Int? = 0,
     var isPaiucdId: Int? = 0,
     var isYesOrNo: Boolean? = false,
     var isPaiucd: String? = null,
@@ -522,8 +535,8 @@ data class ANCPost(
             id = id,
             benId = benId,
 
-            lmpDate = getLongFromDate(lmpDate),
-            visitDate = getLongFromDate(visitDate),
+            lmpDate = getLongFromDateMultipleSupport(lmpDate),
+            visitDate = getLongFromDateMultipleSupport(visitDate),
             weekOfPregnancy = weekOfPregnancy,
             serialNo = serialNo,
             methodOfTermination = methodOfTermination,
@@ -533,13 +546,15 @@ data class ANCPost(
             isPaiucdId = isPaiucdId,
             isPaiucd = isPaiucd,
             isYesOrNo = isYesOrNo,
-            dateSterilisation = getLongFromDate(dateSterilisation),
+            dateSterilisation = getLongFromDateMultipleSupport(dateSterilisation),
             remarks = remarks,
             abortionImg1 = abortionImg1,
             abortionImg2 = abortionImg2,
             placeOfDeath = placeOfDeath,
             placeOfDeathId = placeOfDeathId,
             otherPlaceOfDeath = otherPlaceOfDeath,
+            placeOfAnc = placeOfAnc,
+            placeOfAncId = placeOfAncId,
 
 
 
@@ -550,7 +565,7 @@ data class ANCPost(
 //            abortionTypeId =
             abortionFacility = abortionFacility,
 //            abortionFacilityId
-            abortionDate = getLongFromDate(abortionDate),
+            abortionDate = getLongFromDateMultipleSupport(abortionDate),
             weight = weightOfPW,
             bpSystolic = bpSystolic,
             bpDiastolic = bpDiastolic,
@@ -576,7 +591,7 @@ data class ANCPost(
             maternalDeathProbableCause = probableCauseOfDeath,
 //            maternalDeathProbableCauseId
             otherMaternalDeathProbableCause = otherCauseOfDeath,
-            deathDate = getLongFromDate(deathDate),
+            deathDate = getLongFromDateMultipleSupport(deathDate),
             pregnantWomanDelivered = isBabyDelivered,
             processed = "P",
             createdBy = createdBy,
@@ -652,7 +667,9 @@ data class BenWithAncVisitCache(
                     filledWeek = if (lmpDateToUse != 0L)
                         (TimeUnit.MILLISECONDS.toDays(it.ancDate - lmpDateToUse) / 7).toInt()
                     else 0,
-                    syncState = it.syncState
+                    syncState = it.syncState,
+                    anyHighRisk = it.anyHighRisk,
+                    placeOfAncId = it.placeOfAncId,
                 )
             }.sortedBy { it.visitNumber },
             ancDate = lastAncRecord?.ancDate ?: 0L,
@@ -745,6 +762,8 @@ data class BenWithAncListDomain(
     var weekOfPregnancy: Int? = null,
     var abortionDate: Long? = null,
 
+    val showAddHomeVisit: Boolean = false,
+    val showViewHomeVisit: Boolean = false,
     val showAddAnc: Boolean,
     val pmsmaFillable: Boolean,
     val hasPmsma: Boolean,

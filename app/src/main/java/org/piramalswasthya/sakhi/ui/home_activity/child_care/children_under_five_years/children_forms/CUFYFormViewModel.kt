@@ -197,6 +197,18 @@ class CUFYFormViewModel @Inject constructor(
             }
 
 
+            if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID) {
+                val previousVisits = repository.getSavedDataByFormId(formId, benId)
+
+                val bottleCount = previousVisits.size + 1
+
+                localSchemaToRender.sections.forEach { section ->
+                    section.fields.find { it.fieldId == "ifa_bottle_count" }?.let { bottleField ->
+                        bottleField.value = bottleCount
+                        bottleField.isEditable = false
+                    }
+                }
+            }
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -213,10 +225,15 @@ class CUFYFormViewModel @Inject constructor(
             val allFields = localSchemaToRender.sections.flatMap { it.fields }
             localSchemaToRender.sections.forEach { section ->
                 section.fields.forEach { field ->
-                    field.value = when (field.fieldId) {
+                    if (savedFieldValues.isNotEmpty() && savedFieldValues.containsKey(field.fieldId)) {
+                        field.value = savedFieldValues[field.fieldId]
+                    } else if (field.fieldId == "visit_day") {
+                        field.value = visitDay
+                    }
+                    /*field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         else -> savedFieldValues[field.fieldId] ?: field.default
-                    }
+                    }*/
 
                     field.isEditable = when (field.fieldId) {
                         "visit_day", "due_date" -> false
@@ -279,8 +296,8 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
         val visitDate = try {
 
-            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val parsedDate = inputFormat.parse(rawVisitDate)
             if (parsedDate != null) outputFormat.format(parsedDate) else rawVisitDate
         } catch (e: Exception) {
@@ -405,7 +422,7 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
                 } else null
             } catch (e: Exception) {
                 null
@@ -424,6 +441,90 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
                 time = it
                 add(Calendar.DATE, 1)
             }.time
+        }
+    }
+
+   /* suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
+        val savedList = repository.getSavedDataByFormId(
+            FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
+            benId
+        )
+
+        return savedList.sortedByDescending {
+            try {
+                val formDataJson = it.formDataJson
+                val jsonObject = JSONObject(formDataJson)
+                val fields = jsonObject.optJSONObject("fields")
+                val provisionDateStr = fields?.optString("ifa_provision_date", "")
+
+                if (provisionDateStr?.isNotEmpty()  == true) {
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
+                } else {
+                    val visitDateStr = it.visitDate
+                    if (visitDateStr.isNotEmpty()) {
+                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
+                    } else {
+                        null
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.tag("CUFYFormVM").e(e, "Error parsing date from JSON")
+                null
+            }
+        }.firstOrNull()?.let { latest ->
+            try {
+                val formDataJson = latest.formDataJson
+                val jsonObject = JSONObject(formDataJson)
+                val fields = jsonObject.optJSONObject("fields")
+                val provisionDateStr = fields?.optString("ifa_provision_date", "")
+
+                if (provisionDateStr?.isNotEmpty() == true) {
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
+                } else {
+                    val visitDateStr = latest.visitDate
+                    if (visitDateStr.isNotEmpty()) {
+                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
+                    } else {
+                        null
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.tag("CUFYFormVM").e(e, "Error parsing date from JSON for latest visit")
+                null
+            }
+        }
+    }*/
+
+    suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
+        val savedList = repository.getSavedDataByFormId(
+            FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
+            benId
+        )
+
+        return savedList
+            .mapNotNull { extractIfaProvisionDate(it.formDataJson) }
+            .maxOrNull()
+    }
+
+    private fun extractIfaProvisionDate(formDataJson: String): Date? {
+        return try {
+            val jsonObject = JSONObject(formDataJson)
+            val fields = jsonObject.optJSONObject("fields")
+
+            val provisionDateStr = fields
+                ?.optString("ifa_provision_date")
+                ?.takeIf { it.isNotBlank() }
+                ?: return null
+
+            SimpleDateFormat(
+                "dd-MM-yyyy",
+                Locale.ENGLISH
+            ).parse(provisionDateStr)
+
+        } catch (e: Exception) {
+            Timber.tag("CUFYFormVM")
+                .e(e, "Error parsing ifa_provision_date")
+            null
         }
     }
 

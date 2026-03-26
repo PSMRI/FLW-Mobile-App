@@ -190,7 +190,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             visitDate.value = saved.visitDate?.let { getDateFromLong(it) }
             healthStatus.value = saved.healthStatus
             ifaTabletDistribution.value = if (saved.ifaTabletDistributed == true) ifaTabletDistribution.entries!![0] else ifaTabletDistribution.entries!![1]
-            ifaTabletQuantity.value = saved.ifaTabletDistributed?.toString()
+            ifaTabletQuantity.value = saved.quantityOfIfaTablets?.toString()
             menstrualHygieneAwareness.value = if (saved.menstrualHygieneAwarenessGiven == true) menstrualHygieneAwareness.entries!![0] else menstrualHygieneAwareness.entries!![1]
             sanitaryNapkinDistributed.value = if (saved.sanitaryNapkinDistributed == true) sanitaryNapkinDistributed.entries!![0] else sanitaryNapkinDistributed.entries!![1]
             noOfPacketsDistributed.value = saved.noOfPacketsDistributed?.toString()
@@ -290,7 +290,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as AdolescentHealthCache).let { ben ->
-            ben.benId = ben.benId
+            //ben.benId = ben.benId
             ben.visitDate = getLongFromDate(visitDate.value)
             ben.healthStatus = healthStatus.value
             ben.ifaTabletDistributed =  ifaTabletDistribution.value == resources.getStringArray(

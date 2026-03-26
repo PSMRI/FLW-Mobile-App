@@ -3,24 +3,16 @@ package org.piramalswasthya.sakhi.ui.asha_supervisor
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
+import android.view.MotionEvent
 import android.view.WindowManager
-import android.webkit.PermissionRequest
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -34,7 +26,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
@@ -50,22 +41,24 @@ import org.piramalswasthya.sakhi.databinding.ActivitySupervisorBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
-import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
-import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class SupervisorActivity : AppCompatActivity() {
+
+    private var lastAutoTriggerPushTime: Long = 0L
+    private companion object {
+        const val AUTO_PUSH_DEBOUNCE_MS = 120_000L  // 2 minutes
+    }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -130,12 +123,6 @@ class SupervisorActivity : AppCompatActivity() {
 
     private val logoutAlert by lazy {
         var str = ""
-//        if (viewModel.unprocessedRecordsCount.value!! > 0) {
-//            str += viewModel.unprocessedRecordsCount.value!!
-//            str += resources.getString(R.string.not_processed)
-//        } else {
-//            str += resources.getString(R.string.all_records_synced)
-//        }
         str += resources.getString(R.string.are_you_sure_to_logout)
 
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.logout))
@@ -156,10 +143,6 @@ class SupervisorActivity : AppCompatActivity() {
                 viewModel.profilePicUri = it
                 Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
-//                binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_profile_pic).setImageURI(it)
-//                Glide.with(this)
-//                    .load(it)
-//                    .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
             }
         }
 
@@ -184,24 +167,21 @@ class SupervisorActivity : AppCompatActivity() {
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals(
-                "sakshamProd",
-                true
-            ) || BuildConfig.FLAVOR.equals(
-                "niramayProd",
-                true
-            ) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)
-        ) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         _binding = ActivitySupervisorBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        TapjackingProtectionHelper.enableTouchFiltering(this)
+
         setUpActionBar()
         setUpNavHeader()
         setUpFirstTimePullWorker()
@@ -240,8 +220,12 @@ class SupervisorActivity : AppCompatActivity() {
         }
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it > 0) {
-                if (isInternetAvailable(this)) {
-                    WorkerUtils.triggerAmritPushWorker(this)
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
+                    if (isInternetAvailable(this)) {
+                        lastAutoTriggerPushTime = now
+                        WorkerUtils.triggerAmritPushWorker(this)
+                    }
                 }
             }
         }
@@ -352,21 +336,8 @@ class SupervisorActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        // This will block user to cast app screen
-        if (BuildConfig.FLAVOR.equals(
-                "sakshamProd",
-                true
-            ) || BuildConfig.FLAVOR.equals(
-                "niramayProd",
-                true
-            ) || BuildConfig.FLAVOR.equals("xushrukhaProd", true)
-        ) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
         super.onResume()
+        window.decorView.alpha = 1f
         if (isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
@@ -432,7 +403,6 @@ class SupervisorActivity : AppCompatActivity() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
         if (!pref.isFullPullComplete)
             WorkerUtils.triggerAmritPullWorker(this)
-//        WorkerUtils.triggerD2dSyncWorker(this)
     }
 
     private fun setUpNavHeader() {
@@ -494,7 +464,6 @@ class SupervisorActivity : AppCompatActivity() {
         }
 
         binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-//            navController.popBackStack(R.id.lmsFragment, false)
             navController.navigate(R.id.lmsFragment)
 
             binding.drawerLayout.close()
@@ -533,7 +502,6 @@ class SupervisorActivity : AppCompatActivity() {
 
     fun updateActionBar(logoResource: Int, title: String? = null) {
         binding.ivToolbar.setImageResource(logoResource)
-//        binding.toolbar.setLogo(logoResource)
         title?.let {
             binding.toolbar.title = null
             binding.tvToolbar.text = it
@@ -553,10 +521,7 @@ class SupervisorActivity : AppCompatActivity() {
     }
 
     private fun isDeviceRootedOrEmulator(): Boolean {
-
-//      return isRooted() || isEmulator() || RootedUtil().isDeviceRooted(applicationContext)
         return isRooted() || isEmulator()
-
     }
 
 }

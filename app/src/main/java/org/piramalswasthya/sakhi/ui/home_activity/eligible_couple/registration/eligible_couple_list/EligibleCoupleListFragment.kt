@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ECRegistrationAdapter
+import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 
@@ -26,6 +27,13 @@ class EligibleCoupleListFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: EligibleCoupleListViewModel by viewModels()
+
+    private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
+        val lowerValue = value.lowercase()
+        binding.searchView.setText(lowerValue)
+        binding.searchView.setSelection(lowerValue.length)
+        viewModel.filterText(lowerValue)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,14 +48,25 @@ class EligibleCoupleListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = ECRegistrationAdapter(
-            ECRegistrationAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(
-                        benId
+            ECRegistrationAdapter.ClickListener(
+                clickedForm = { hhId, benId ->
+                    findNavController().navigate(
+                        EligibleCoupleListFragmentDirections
+                            .actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(benId)
                     )
-                )
-            }
+                },
+                clickedAddAllBenBtn = { item, benId, hhId, isViewMode, isIFA ->
+                    findNavController().navigate(
+                        EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToBenIfaFormFragment(
+                            hhId = hhId,
+                            benId = benId,
+                            isViewMode = isViewMode,
+                        )
+                    )
+                }
+            )
         )
+
         binding.rvAny.adapter = benAdapter
 
         lifecycleScope.launch {
@@ -59,6 +78,7 @@ class EligibleCoupleListFragment : Fragment() {
                 benAdapter.submitList(it)
             }
         }
+        binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
