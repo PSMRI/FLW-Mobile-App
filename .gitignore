@@ -10,6 +10,7 @@
 /secrets.properties
 **/google-services.json
 app/src/main/res/raw/wildcard.crt
+app/src/main/cpp/native-lib.cpp
 keystore.properties
 app/keystore/*
 keystore.properties
