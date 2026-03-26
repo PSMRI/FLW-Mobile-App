@@ -315,17 +315,50 @@ abstract class InAppDb : RoomDatabase() {
 
 
             }*/
+//            val MIGRATION_57_58 = object : Migration(57, 58) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    // eyeSide column add
+//                    database.execSQL(
+//                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT NOT NULL DEFAULT 'LEFT'"
+//                    )
+//                    // Old unique index drop
+//                    database.execSQL(
+//                        "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
+//                    )
+//                    // New unique index on eyeSide
+//                    database.execSQL(
+//                        "CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide " +
+//                                "ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)"
+//                    )
+//                }
+//            }
+
             val MIGRATION_57_58 = object : Migration(57, 58) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    // eyeSide column add
+
                     database.execSQL(
-                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT NOT NULL DEFAULT 'LEFT'"
+                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT"
                     )
-                    // Old unique index drop
+
                     database.execSQL(
                         "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
                     )
-                    // New unique index on eyeSide
+
+                    database.execSQL("""
+            DELETE FROM ALL_EYE_SURGERY_VISIT_HISTORY
+            WHERE id NOT IN (
+                SELECT MAX(id) 
+                FROM ALL_EYE_SURGERY_VISIT_HISTORY
+                GROUP BY benId, formId
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            UPDATE ALL_EYE_SURGERY_VISIT_HISTORY 
+            SET eyeSide = 'LEFT' 
+            WHERE eyeSide IS NULL
+        """.trimIndent())
+
                     database.execSQL(
                         "CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide " +
                                 "ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)"
