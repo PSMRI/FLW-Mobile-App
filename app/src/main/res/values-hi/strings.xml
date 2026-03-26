@@ -640,7 +640,7 @@
     <string name="all">सभी</string>
     <string name="with_abha">ABHA के साथ</string>
     <string name="without_abha">ABHA के बिना</string>
-    <string name="age_above_30_years">30 वर्ष से अधिक आयु</string>
+    <string name="age_above_30_years">40 वर्ष से अधिक आयु</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">कोई विजिट नहीं की गई</string>
     <string name="filter_list">फ़िल्टर</string>
@@ -867,6 +867,9 @@
         <item>पहले से इलाज कराए गए टीबी का मामला</item>
         <item>ड्रग-रेजिस्टेंट टीबी (DR-TB) का मामला</item>
     </string-array>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
 
     <string-array name="referral_facility">
         <item>जिला टीबी केंद्र (DTC)</item>

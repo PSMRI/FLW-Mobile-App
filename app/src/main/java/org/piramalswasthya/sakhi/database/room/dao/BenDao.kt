@@ -215,7 +215,7 @@ interface BenDao {
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
             OR (:filterType = 2 AND abhaId IS NULL)
-            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 40 AND isDeath = 0)
             OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
@@ -250,7 +250,7 @@ interface BenDao {
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
             OR (:filterType = 2 AND abhaId IS NULL)
-            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 40 AND isDeath = 0)
             OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
@@ -290,7 +290,7 @@ interface BenDao {
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
             OR (:filterType = 2 AND abhaId IS NULL)
-            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 30 AND isDeath = 0)
+            OR (:filterType = 3 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) >= 40 AND isDeath = 0)
             OR (:filterType = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))

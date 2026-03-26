@@ -694,6 +694,7 @@
 
 
                                     if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID || formId == FormConstants.MDA_DISTRIBUTION_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID || formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -705,15 +706,17 @@
                                         if (maxDate == null) {
                                             maxDate = today
                                         }
-                                    } else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
-                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN ) {
+                                    }
+                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                        formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
+
                                         if (field.fieldId == "end_date") {
                                             val startDateValue = getDate("start_date")
                                             if (startDateValue != null) {
-                                                val minDateCalendar = Calendar.getInstance()
-                                                minDateCalendar.time = startDateValue
-                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
-                                                minDate = minDateCalendar.time
+                                                val cal = Calendar.getInstance()
+                                                cal.time = startDateValue
+                                                cal.add(Calendar.DAY_OF_MONTH, 1)
+                                                minDate = cal.time
                                             } else {
                                                 minDate = minVisitDate
                                             }
@@ -721,39 +724,40 @@
                                             minDate = minVisitDate
                                         }
 
-                                        maxDate = maxVisitDate
+                                        maxDate = maxVisitDate ?: today
+                                    }
+                                    else {
 
-                                        if (minDate == null) {
-                                            calendar.time = today
-                                            calendar.add(Calendar.MONTH, -2)
-                                            minDate = calendar.time
-                                        }
-                                        if (maxDate == null) {
+                                        // ✅ NEW LOGIC
+                                        if (formId == FormConstants.EYE_SURGERY_FORM_ID &&
+                                            (field.fieldId == "visit_date" || field.fieldId == "date_of_surgery")){
+                                            val cal = Calendar.getInstance()
+                                            cal.time = today
+                                            cal.add(Calendar.MONTH, -1)
+                                            minDate = cal.time
                                             maxDate = today
                                         }
-                                    }
-                                    else{
-                                        minDate = when (field.fieldId) {
-                                            "visit_date" -> {
-                                                if (formId == FormConstants.HBNC_FORM_ID) {
-                                                    val dueDate = getDate("due_date")
-                                                    when {
-                                                        dueDate != null && minVisitDate != null ->
-                                                            if (dueDate.after(minVisitDate)) dueDate else minVisitDate
-                                                        dueDate != null -> dueDate
-                                                        minVisitDate != null -> minVisitDate
-                                                        else -> null
-                                                    }
-                                                } else {
-                                                    null
+                                        else {
+                                            minDate = when (field.fieldId) {
+                                                "visit_date" -> {
+                                                    if (formId == FormConstants.HBNC_FORM_ID) {
+                                                        val dueDate = getDate("due_date")
+                                                        when {
+                                                            dueDate != null && minVisitDate != null ->
+                                                                if (dueDate.after(minVisitDate)) dueDate else minVisitDate
+                                                            dueDate != null -> dueDate
+                                                            minVisitDate != null -> minVisitDate
+                                                            else -> null
+                                                        }
+                                                    } else null
                                                 }
+                                                "nrc_admission_date" -> getDate("visit_date")
+                                                "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                                "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                                else -> null
                                             }
-                                            "nrc_admission_date" -> getDate("visit_date")
-                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                            else -> null
+                                            maxDate = today
                                         }
-                                        maxDate = today
                                     }
 
                                 }
@@ -920,6 +924,9 @@
                                     calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH)
                                 ).apply {
+                                    minDate?.let { datePicker.minDate = it.time }
+                                    maxDate?.let { datePicker.maxDate = it.time }
+
                                     try {
                                         datePicker.minDate = 0
                                         maxDate?.let { datePicker.maxDate = it.time }
@@ -933,16 +940,14 @@
                                     }
 
                                     setOnDismissListener {
-                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                                        HelperUtil.setOriginalLocaleForDatePicker(activity, originalLocale)
                                     }
-
                                 }.show()
                             }
                         }
 
                         addWithError(textInputLayout, field)
                     }
-
                     "radio" -> {
                         val context = itemView.context
 
@@ -954,21 +959,32 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
+                        val isSNCUDisabled = field.fieldId == "discharged_from_sncu" &&
                                 fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
                                 isSNCU
 
-                        if (isFieldDisabled && field.value != "Yes") {
+                        if (isSNCUDisabled && field.value != "Yes") {
                             field.value = "Yes"
                             onValueChanged(field, "Yes")
                             notifyItemChanged(adapterPosition)
                         }
 
+                        // Pre-selected value for non-editable fields
+                        val preSelectedValue = if (!field.isEditable) field.value?.toString() else null
+
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
                                 text = option
-                                isChecked = field.value == option
-                                isEnabled = !isViewOnly && !isFieldDisabled
+                                // CASE-INSENSITIVE check
+                                isChecked = field.value?.toString().equals(option, ignoreCase = true)
+
+                                isEnabled = when {
+                                    isViewOnly -> false
+                                    isSNCUDisabled -> false
+                                    !field.isEditable -> option.equals(preSelectedValue, ignoreCase = true) // CASE-INSENSITIVE
+                                    else -> true
+                                }
+
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -977,7 +993,7 @@
 
                             radioButton.setOnCheckedChangeListener(null)
 
-                            if (!isViewOnly && !isFieldDisabled) {
+                            if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
                                 radioButton.setOnCheckedChangeListener { _, isChecked ->
                                     if (isChecked && field.value != option) {
                                         field.value = option
@@ -1013,7 +1029,6 @@
                         inputContainer.removeAllViews()
                         inputContainer.addView(wrapper)
                     }
-
 
                     "image" -> {
                         val context = itemView.context

@@ -32,6 +32,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
 
 @AndroidEntryPoint
 class HouseholdMembersFragment : Fragment() {
@@ -300,15 +301,9 @@ class HouseholdMembersFragment : Fragment() {
                 { item, benId, hhId ->
                     if (canProceed(item)) checkAndGenerateABHA(benId)
                 },
-                { item, benId, hhId, isViewMode, isIFA ->
-                    if (canProceed(item)) {
-                        findNavController().navigate(
-                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
-                                hhId = hhId,
-                                benId = benId,
-                                isViewMode = isViewMode,
-                            )
-                        )
+                { item,benId, hhId, isViewMode, isIFA ->
+                    if (!isIFA && !item.isDeactivate) {
+                        showEyeSurgeryBottomSheet(benId, hhId, item.benFullName, item.gender, item.age)
                     }
                 },
                 {
@@ -450,5 +445,22 @@ class HouseholdMembersFragment : Fragment() {
         addBenAlert = null
         _binding = null
     }
-
+    private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {
+        val bottomSheet = EyeSurgeryBottomSheetFragment.newInstance(benId, hhId, benName, gender, age)
+        bottomSheet.setNavigationCallback(object : EyeSurgeryBottomSheetFragment.NavigationCallback {
+            override fun navigateToEyeSurgeryForm(
+                benId: Long, hhId: Long, eyeSide: String, isViewMode: Boolean,
+                formDataJson: String?, recordId: Int, benName: String, gender: String, age: String
+            ) {
+                findNavController().navigate(
+                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
+                        benId = benId, hhId = hhId, eyeSide = eyeSide,
+                        isViewMode = isViewMode, formDataJson = formDataJson,
+                        recordId = recordId, benName = benName, gender = gender, age = age
+                    )
+                )
+            }
+        })
+        bottomSheet.show(childFragmentManager, "EyeSurgeryBottomSheet")
+    }
 }
