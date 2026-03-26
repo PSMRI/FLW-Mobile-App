@@ -76,7 +76,7 @@ class SchedulerFragment : Fragment() {
             }
         }
         binding.cvAnc.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
         }
 
         binding.cvImm.setOnClickListener {
@@ -89,7 +89,7 @@ class SchedulerFragment : Fragment() {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
         }
         binding.cvLwb.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
         }
         binding.cvAbha.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
@@ -116,8 +116,13 @@ class SchedulerFragment : Fragment() {
             }
         }
         lifecycleScope.launch {
-            viewModel.abhaGeneratedCount.collect {
-                binding.tvAbha.text = it.toString()
+            viewModel.abhaOldGeneratedCount.collect {
+                binding.tvAbhaOldCount.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.abhaNewGeneratedCount.collect {
+                binding.tvAbhaNewCount.text = it.toString()
             }
         }
         lifecycleScope.launch {

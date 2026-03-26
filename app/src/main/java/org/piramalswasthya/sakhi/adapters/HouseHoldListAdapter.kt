@@ -1,19 +1,23 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
-import javax.inject.Inject
+import org.piramalswasthya.sakhi.ui.getTitle
+import org.piramalswasthya.sakhi.ui.getTitleRes
 
 
-class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao, private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao,private val isSoftDeleteEnabled:Boolean = false, private val clickListener: HouseholdClickListener) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
@@ -46,7 +50,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             clickListener: HouseholdClickListener,
             isDisease: Boolean,
             pref: PreferenceDao,
-            diseaseType: String
+            diseaseType: String,
+            isSoftDeleteEnabled: Boolean
         ) {
             binding.household = item
             binding.clickListener = clickListener
@@ -55,7 +60,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
 
             if (isDisease) {
                 binding.button4.visibility = View.GONE
-                if (diseaseType == "FILARIA") {
+                if (diseaseType == IconDataset.Disease.FILARIA.getTitle(binding.root.context) ) {
+                    binding.button4.visibility = View.INVISIBLE
                     binding.btnMda.visibility = View.VISIBLE
                 } else {
                     binding.btnMda.visibility = View.GONE
@@ -67,6 +73,38 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                 binding.button4.visibility = View.GONE
                 binding.btnMda.visibility = View.GONE
             }
+
+
+            if (isSoftDeleteEnabled){
+                binding.ivSoftDelete.visibility = View.VISIBLE
+
+                if (item.isDeactivate){
+                    //binding.ivSoftDelete.setImageResource(R.drawable.ic_group_on)
+                    binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
+
+                    binding.ivSoftDelete.visibility = View.GONE
+                    binding.button4.visibility = View.INVISIBLE
+                    binding.tvTitleDuplicaterecord.visibility = View.VISIBLE
+                    binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
+
+                } else{
+                  //  binding.ivSoftDelete.setImageResource(R.drawable.ic_group_off)
+                    binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
+
+                    binding.ivSoftDelete.visibility = View.VISIBLE
+                    binding.button4.visibility = View.VISIBLE
+                    binding.tvTitleDuplicaterecord.visibility = View.GONE
+                    binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.holo_green_dark))
+
+                }
+
+            } else {
+                binding.ivSoftDelete.visibility = View.GONE
+            }
+
+
+            binding.clickListener = clickListener
+            binding.executePendingBindings()
         }
 
     }
@@ -76,19 +114,21 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType)
+        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType,isSoftDeleteEnabled)
     }
 
 
     class HouseholdClickListener(
-        val hhDetails: (hhId: Long) -> Unit,
-        val showMember: (hhId: Long) -> Unit,
+        val hhDetails: (hh: HouseHoldBasicDomain) -> Unit,
+        val showMember: (hh: HouseHoldBasicDomain) -> Unit,
         val newBen: (hh: HouseHoldBasicDomain) -> Unit,
-        val addMDA: (hh: HouseHoldBasicDomain) -> Unit
+        val addMDA: (hh: HouseHoldBasicDomain) -> Unit,
+        val softDeleteHh: (hh: HouseHoldBasicDomain) -> Unit,
     ) {
-        fun onClickedForHHDetails(item: HouseHoldBasicDomain) = hhDetails(item.hhId)
-        fun onClickedForMembers(item: HouseHoldBasicDomain) = showMember(item.hhId)
+        fun onClickedForHHDetails(item: HouseHoldBasicDomain) = hhDetails(item)
+        fun onClickedForMembers(item: HouseHoldBasicDomain) = showMember(item)
         fun onClickedForNewBen(item: HouseHoldBasicDomain) = newBen(item)
         fun onClickedAddMDA(item: HouseHoldBasicDomain) = addMDA(item)
+        fun onClickSoftDeleteHh(item: HouseHoldBasicDomain) = softDeleteHh(item)
     }
 }

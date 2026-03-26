@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -32,9 +34,13 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import javax.inject.Inject
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 
 @AndroidEntryPoint
@@ -81,6 +87,7 @@ class SignInFragment : Fragment() {
                             viewModel.logout()
                         }
                         ImageUtils.removeAllBenImages(requireContext())
+                        prefDao.deleteJWTToken()
                         WorkerUtils.cancelAllWork(requireContext())
                     }
                 }
@@ -91,16 +98,37 @@ class SignInFragment : Fragment() {
             }.create()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignInBinding.inflate(layoutInflater, container, false)
+
+        NoCopyPasteHelper.disableCopyPaste(binding.etPassword)
+        NoCopyPasteHelper.disableCopyPaste(binding.etUsername)
+
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val initialLeft = binding.root.paddingLeft
+        val initialTop = binding.root.paddingTop
+        val initialRight = binding.root.paddingRight
+        val initialBottom = binding.root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val systemBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.updatePadding(
+                left = initialLeft,
+                top = initialTop,
+                right = initialRight,
+                bottom = initialBottom + maxOf(imeBottom, systemBottom)
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
         binding.btnLogin.setOnClickListener {
             view.findFocus()?.let { view ->
                 val imm =
@@ -210,34 +238,34 @@ class SignInFragment : Fragment() {
                     } else {
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
-                                //Below ServiceMapId are form Indian Oil Project
-                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
+//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
+//                                //Below ServiceMapId are form Indian Oil Project
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
+//                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            } else {
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-                            }
+//                            } else {
+//                                binding.clContent.visibility = View.VISIBLE
+//                                binding.pbSignIn.visibility = View.GONE
+//                                binding.tvError.visibility = View.GONE
+//                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+//                            }
 
                         } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
-                            if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
+                           // if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
                                 findNavController().navigate(
                                     if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
                                     else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
                                 activity?.finish()
-                            } else {
-                                binding.clContent.visibility = View.VISIBLE
-                                binding.pbSignIn.visibility = View.GONE
-                                binding.tvError.visibility = View.GONE
-                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-                            }
+//                            } else {
+//                                binding.clContent.visibility = View.VISIBLE
+//                                binding.pbSignIn.visibility = View.GONE
+//                                binding.tvError.visibility = View.GONE
+//                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+//                            }
 
                         } else {
                             findNavController().navigate(

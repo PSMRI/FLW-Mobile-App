@@ -29,4 +29,7 @@ interface DeliveryOutcomeDao {
     @MapInfo(keyColumn = "benId", valueColumn = "dateOfDelivery")
     @Query("select * from delivery_outcome where isActive = 1")
     suspend fun getAllBenIdAndDeliverDate(): Map<Long, Long>
+
+    @Query("UPDATE delivery_outcome SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetSyncingToUnsynced()
 }

@@ -37,10 +37,10 @@
     <string name="icon_title_cd">সংক্রামক ৰোগসমূহ</string>
     <string name="icon_title_vhnd">VHND ফৰ্ম</string>
     <string name="icon_title_ahd">AHD ফৰ্ম</string>
-    <string name="icon_title_vhnc">VHNC ফৰ্ম</string>
+    <string name="icon_title_vhnc">VHSNC Meeting</string>
     <string name="icon_title_phc">PHC পৰ্যালোচনা বৈঠক ফৰ্মসমূহ</string>
     <string name="icon_title_vhnd_list">VHND ফৰ্মৰ তালিকা</string>
-    <string name="icon_title_vhnc_list">VHNC ফৰ্মৰ তালিকা</string>
+    <string name="icon_title_vhnc_list">VHSNC ফৰ্মৰ তালিকা</string>
     <string name="icon_title_phc_list"> PHC সামীক্ষা বৈঠক ফৰ্মৰ তালিকা</string>
     <string name="icon_title_disease">ৰোগ নিয়ন্ত্ৰণ</string>
     <string name="icon_title_maleria">মালেৰিয়া</string>
@@ -62,7 +62,7 @@
     <string name="icon_title_pmt">এএনচি ভিজিট</string>
     <string name="icon_title_pmp">PMSMA</string>
     <string name="icon_title_pmdo">বিতৰণৰ ফলাফল</string>
-    <string name="icon_title_pmir">শিশু নিবন্ধন</string>
+    <string name="icon_title_pmir">নৱজাতকৰ পঞ্জীয়ন</string>
     <string name="icon_title_pmcr">শিশু পঞ্জীয়ন</string>
     <string name="icon_title_ecr">যোগ্য দম্পতি পঞ্জীয়ন</string>
     <string name="icon_title_user_guid">ব্যৱহাৰকাৰী পথদৰ্শিকা</string>
@@ -84,8 +84,9 @@
     <string name="place">স্থান</string>
     <string name="participants">অংশগ্ৰহণকাৰীসকল</string>
     <string name="no_b_attended">উপকাৰভোগীসকলৰ উপস্থিতিৰ সংখ্যা</string>
+    <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
     <string name="vhnd">ভি.এইচ.এন.ডি/ভি.এইচ.এস.এন.ডি</string>
-    <string name="vnhc">ভিএইচএনচি</string>
+    <string name="vnhc">VHSNC</string>
     <string name="phc_review">PHC পৰ্যালোচনা বৈঠক</string>
     <string name="ahd">AHD </string>
     <string name="national_deworming_day">ৰাষ্ট্ৰীয় কৃমিনাশক দিৱস</string>
@@ -93,5 +94,41 @@
     <string name="maa_meeting_list">মা সভাৰ প্ৰ-পত্ৰ তালিকা</string>
     <string name="saas_bahu_list">সাস বহু সন্মিলন</string>
     <string name="saas_bahu_reg">সাস বহু সন্মিলন পঞ্জীয়ন</string>
+    <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
+    <string name="icon_cluster_phc">Cluster Meeting Forms</string>
+    <string name="place_of_meeting">Place of meeting</string>
+    <string name="mitanin">Mitanins</string>
+    <string name="mt">Mitanin Activity check list</string>
+    <string name="anmrho">ANM/ RHO</string>
+    <string name="participants_attended">Participants Attended</string>
+    <string name="leprosy_title">Check if the person has any of these symptoms</string>
+    <string name="no_of_individuals">Number of Individuals</string>
+    <string name="no_of_familes">Number of Families</string>
+
+    <string name="navigation_drawer_open">নেভিগেশ্বন ড্ৰয়াৰ খোলক</string>
+    <string name="navigation_drawer_close">নেভিগেশ্বন ড্ৰয়াৰ বন্ধ কৰক</string>
+    <string name="frag_service_type_title">গাঁও বাছনি কৰক</string>
+    <string name="tv_text_select_village">অনুগ্ৰহ কৰি তলত গাঁও বাছনি কৰক।</string>
+    <string name="service_type_dd_state_text">ৰাজ্য</string>
+    <string name="service_type_dd_district_text">জিলা</string>
+    <string name="service_type_dd_block_text">ব্লক</string>
+    <string name="service_type_dd_village_text">গাঁও</string>
+    <string name="btn_continue_text">আগবাঢ়ক</string>
+    <string name="til_hint_selected_village">বাছনি কৰা গাঁও</string>
+<string name="icon_title_abortion">গৰ্ভপাত তালিকা</string>
+    <string name="icon_title_pmsma">e-PMSMA তালিকা</string>
+    <string name="icon_title_ncd_tb_confirmed">নিশ্চিত টিবি ৰোগী</string>
+    <string name="place_of_vhnd">VHND চেচনৰ স্থান</string>
+    <string name="total_no_pw_attended">ANC পৰীক্ষাৰ বাবে উপস্থিত গৰ্ভৱতী মহিলাৰ সংখ্যা</string>
+    <string name="total_no_lacting_mother_attended">PNC পৰীক্ষাৰ বাবে উপস্থিত স্তন্যপান কৰোৱা মাতৃৰ সংখ্যা</string>
+    <string name="total_no_children_attended">টীকাকৰণৰ বাবে উপস্থিত শিশুৰ সংখ্যা</string>
+    <string name="health_nutrition">স্বাস্থ্য আৰু পুষ্টি শিক্ষা (গৰ্ভৱতী মহিলা, স্তন্যপান কৰোৱা মাতৃ, কিশোৰী ছোৱালীৰ বাবে)</string>
+    <string name="know_balance_diet">সুষম আহাৰৰ জ্ঞান</string>
+    <string name="care_d_pregnancy">গৰ্ভাৱস্থা আৰু প্ৰসৱৰ সময়ত যত্ন</string>
+    <string name="family_planning_title">পৰিয়াল পৰিকল্পনা আৰু স্বাস্থ্য সেৱা</string>
+    <string name="hygiene_title">পৰিষ্কাৰ-পৰিচ্ছন্নতা আৰু অনাময়</string>
+    <string name="com_feeding_title">পৰিপূৰক আহাৰ</string>
+    <string name="imp_brestfeeding_title">স্তন্যপানৰ গুৰুত্ব</string>
+    <string name="cluster_review">ক্লাষ্টাৰ সভা</string>
 
 </resources>

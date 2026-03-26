@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="other_mobile_number_of_kid">"বাচৰ অন্য ম'বাইল নম্বৰ</string>
+    <string name="other_mobile_number_of_kid">"বাচৰ অন্য ম\'বাইল নম্বৰ</string>
     <!--    <string name="home_icon_title_child_care">Child Care</string>-->
     <string name="child_care_icon_title_child_list">শিশুৰ তালিকা</string>
-    <string name="child_care_icon_title_infant_list">শিশুৰ তালিকা</string>
+    <string name="child_care_icon_title_infant_list">নৱজাতকৰ তালিকা</string>
     <string name="child_care_icon_title_adolescent_list">কিশোৰীৰ তালিকা</string>
     <string name="nbr_child_awc">বাচৰ নিবন্ধন এটি AWC-ত কৰা হৈছে নেকি</string>
     <string name="nbr_child_reg_school">বাচৰ নিবন্ধন এটি স্কুলত কৰা হৈছে নেকি</string>
@@ -91,7 +91,6 @@
         <item>অন্য</item>
     </string-array>
 
-
     <string-array name="type_of_delivery">
         <item>স্বাভাবিক জনন</item>
         <item>C - ছেচন</item>
@@ -146,14 +145,13 @@
     <string name="part_i">প্ৰথম খণ্ড</string>
     <string name="part_ii">দ্বিতীয় খণ্ড</string>
     <string name="hbnc_form">এইচ বি এন চি ফৰ্ম</string>
-
+    <string name="ncd_folloup_form">NCD Referal FollowUp Form</string>
 
     <string name="str_name_of_child">শিশুৰ নাম</string>
     <string name="str_rch_id_of_child">শিশুৰ RCH ID নম্বৰ</string>
     <string name="str_date_of_birth">জন্মৰ তাৰিখ</string>
     <string name="str_sex_of_child">শিশুৰ লিংগ</string>
-    <string name="str_mothers_name">মাতৃৰ নাম</string>
-    <string name="str_fathers_name">পিতৃৰ নাম</string>
+<string name="str_fathers_name">পিতৃৰ নাম</string>
     <string name="str_whose_mobile_number">কাৰ মোবাইল নম্বৰ</string>
     <string name="str_mobile_no">ম’বাইল নম্বৰ</string>
     <string name="str_rch_id_of_mother">মাতৃৰ RCH ID নম্বৰ</string>
@@ -167,5 +165,8 @@
     <string name="str_home">ঘৰ</string>
     <string name="str_sub_district_hospital">উপ-জিলা হস্পিটেল</string>
     <string name="str_medical_college_hospital">মেডিকেল কলেজ হাস্পতাল</string>
+    <string name="str_other_public_facility">অন্য চৰকাৰী স্বাস্থ্য কেন্দ্ৰ</string>
+    <string name="str_accredited_private_hospital">স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</string>
+    <string name="str_other_private_hospital">অন্য ব্যক্তিগত চিকিৎসালয়</string>
 
 </resources>

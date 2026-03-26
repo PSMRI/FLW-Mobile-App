@@ -13,7 +13,7 @@ import java.util.*
 class FollowUpDatesAdapter :
     ListAdapter<LeprosyFollowUpCache, FollowUpDatesAdapter.FollowUpViewHolder>(DiffCallback) {
 
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowUpViewHolder {
         val binding = ItemFollowUpDateBinding.inflate(
@@ -33,7 +33,6 @@ class FollowUpDatesAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(followUp: LeprosyFollowUpCache) {
-            binding.tvVisitNumber.text = "Visit ${followUp.visitNumber}"
             binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate))
             binding.tvTreatmentStatus.text = followUp.treatmentStatus ?: "Pending"
         }

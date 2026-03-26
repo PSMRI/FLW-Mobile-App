@@ -7,6 +7,8 @@ import android.util.Range
 import androidx.annotation.StringRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Konstants.english
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -85,8 +87,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
 
         fun dateFormate(dateStr: String): String? {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
             val dateResponse = inputFormat.parse(dateStr)
             return outputFormat.format(dateResponse!!)
@@ -98,8 +100,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (dateStr.isEmpty()) return null
 
             return try {
-                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                 
                 val dateResponse = inputFormat.parse(dateStr) ?: return null
                 outputFormat.format(dateResponse)
@@ -119,6 +121,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
 
+    private val listMutex = Mutex()
     private val list = mutableListOf<FormElement>()
 
     private val _listFlow = MutableStateFlow<List<FormElement>>(emptyList())
@@ -136,11 +139,11 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun FormElement.getStringFromPosition(position: Int): String? {
-        return if (position <= 0) null else entries?.get(position - 1)
+        return if (position <= 0) null else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getStringSpauseFromPosition(position: Int): String? {
-        return if (position <= 0) entries?.get(1) else entries?.get(position - 1)
+        return if (position <= 0) entries?.getOrNull(1) else entries?.getOrNull(position - 1)
     }
 
     protected fun FormElement.getEnglishStringFromPosition(position: Int): String? {
@@ -156,33 +159,36 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     abstract fun mapValues(cacheModel: FormDataModel, pageNumber: Int = 0)
     protected fun getIndexOfElement(element: FormElement) = list.indexOf(element)
     suspend fun updateList(formId: Int, index: Int) {
-        list.find { it.id == formId }?.let {
-            if (it.inputType == InputType.DROPDOWN) {
-                it.errorText = null
+        listMutex.withLock {
+            list.find { it.id == formId }?.let {
+                if (it.inputType == InputType.DROPDOWN) {
+                    it.errorText = null
+                }
             }
-        }
-        val updateIndex = handleListOnValueChanged(formId, index)
-        if (updateIndex != -1) {
-            val newList = list.toMutableList()
+            val updateIndex = handleListOnValueChanged(formId, index)
+            if (updateIndex != -1) {
+                val newList = list.toMutableList()
 //            if (updateUIForCurrentElement) {
 //                Timber.d("Updating UI element ...")
 //                newList[updateIndex] = list[updateIndex].cloneForm()
 //                updateUIForCurrentElement = false
 //            }
-            Timber.d("Emitting ${newList}}")
+                Timber.d("Emitting ${newList}}")
 //            _listFlow.emit(emptyList())
-            _listFlow.emit(newList)
+                _listFlow.emit(newList)
+            }
         }
     }
 
     protected suspend fun setUpPage(mList: List<FormElement>) {
-
-        try {
-            list.clear()
-            list.addAll(mList)
-            _listFlow.emit(list.toMutableList())
-        } catch (e: Exception) {
-            e.printStackTrace()
+        listMutex.withLock {
+            try {
+                list.clear()
+                list.addAll(mList)
+                _listFlow.emit(list.toMutableList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -203,9 +209,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
 
                 targetSideEffect?.let { sideEffectList ->
@@ -213,7 +218,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                         it.value = null
                         it.errorText = null
                     }
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                 }
                 target.forEach {
                     it.value = null
@@ -240,15 +245,14 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 listIndex
             } else -1
         } else {
-            val anyRemoved = list.removeAll(
-                target
-            )
+            var anyRemoved = false
+            target.forEach { if (list.remove(it)) anyRemoved = true }
             if (anyRemoved) {
                 target.forEach {
                     it.value = null
                 }
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -303,7 +307,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
           return if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 list.indexOf(source)
@@ -342,12 +346,34 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             if (anyRemoved) {
                 target.value = null
                 targetSideEffect?.let { sideEffectList ->
-                    list.removeAll(sideEffectList)
+                    sideEffectList.forEach { list.remove(it) }
                     sideEffectList.forEach { it.value = null }
                 }
                 302
             } else -1
         }
+    }
+
+    protected fun infantTriggerDependants(
+        source: FormElement,
+        removeItems: List<FormElement>,
+        addItems: List<FormElement>,
+        position: Int = -1,
+    ): Int {
+
+        removeItems.forEach { it.value = null }
+        removeItems.forEach { list.remove(it) }
+
+        addItems.forEach {
+            if (list.contains(it)) list.remove(it)
+        }
+
+        // FORCE ADD AT BOTTOM → correct sequence always
+        val addPosition = list.lastIndex + 1
+
+        list.addAll(addPosition, addItems)
+
+        return addPosition
     }
 
     protected fun triggerDependants(
@@ -359,7 +385,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         removeItems.forEach {
             it.value = null
         }
-        list.removeAll(removeItems)
+        removeItems.forEach { list.remove(it) }
 //        list.removeAll(addItems)
         addItems.forEach {
             if (list.contains(it)) list.remove(it)
@@ -921,19 +947,37 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
     }
 
     protected fun validateWeightOnEditText(formElement: FormElement): Int {
-        formElement.value?.takeIf { it.isNotEmpty() }?.let {
-            if (it.all { it == '0' }) {
-                formElement.errorText = "Weight Cannot be 0"
-            } else {
-                val weight = it.toIntOrNull()
-                if (weight != null && weight > 7000)
-                    formElement.errorText = "Weight Should not be greater than 7000 gram"
-                else
-                    formElement.errorText = null
-            }
-        } ?: run {
+        val value = formElement.value?.trim()
+
+        if (value.isNullOrEmpty()) {
             formElement.errorText = null
+            return -1
         }
+
+        val weight = value.toDoubleOrNull()
+        if (weight == null) {
+            formElement.errorText = "Please enter weight in grams"
+            return -1
+        }
+
+        when {
+            weight <= 0 -> {
+                formElement.errorText = "Weight cannot be 0"
+            }
+            weight in 1.0..10.0 -> {
+                formElement.errorText = "Please enter weight in grams (e.g. 2500)"
+            }
+            weight < 500 -> {
+                formElement.errorText = "Weight must be at least 500 grams"
+            }
+            weight > 7000 -> {
+                formElement.errorText = "Weight should not be greater than 7000 grams"
+            }
+            else -> {
+                formElement.errorText = null
+            }
+        }
+
         return -1
     }
 
@@ -1058,6 +1102,33 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
             Log.w("Dataset", "Entry '$entry' not found in localized array for ID $arrayId")
             null
         }
+    }
+
+    fun getEnglishCheckboxValues(arrayId: Int, indexValues: String?): String? {
+        if (indexValues.isNullOrEmpty()) return null
+        val englishArray = englishResources.getStringArray(arrayId)
+        return indexValues.split("|")
+            .mapNotNull { it.trim().toIntOrNull() }
+            .filter { it in englishArray.indices }
+            .joinToString("|") { englishArray[it] }
+            .ifEmpty { null }
+    }
+
+    fun getCheckboxIndexesFromValues(arrayId: Int, storedValues: String?): String? {
+        if (storedValues.isNullOrEmpty()) return null
+        val parts = storedValues.split("|")
+        if (parts.all { it.trim().toIntOrNull() != null }) return storedValues
+        val englishArray = englishResources.getStringArray(arrayId)
+        val localizedArray = resources.getStringArray(arrayId)
+        return parts.mapNotNull { value ->
+            val trimmed = value.trim()
+            val englishIdx = englishArray.indexOf(trimmed)
+            if (englishIdx >= 0) englishIdx
+            else {
+                val localIdx = localizedArray.indexOf(trimmed)
+                if (localIdx >= 0) localIdx else null
+            }
+        }.sorted().joinToString("|") { it.toString() }.ifEmpty { null }
     }
 
     fun isValidChildGap(formElement: FormElement, firstDobStr: String?/*, secondDobStr: String?*/): Int {

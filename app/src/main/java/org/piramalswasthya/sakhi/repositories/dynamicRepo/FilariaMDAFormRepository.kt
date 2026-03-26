@@ -38,7 +38,7 @@ class FilariaMDAFormRepository @Inject constructor(
         var result: FormSchemaDto? = null
 
         try {
-            val response = amritApiService.fetchFormSchema(formId,"en")
+            val response = amritApiService.fetchFormSchema(formId,pref.getCurrentLanguage().symbol)
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()
@@ -122,10 +122,10 @@ class FilariaMDAFormRepository @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
         for (fmt in inputs) {
             try {
-                val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                val d = SimpleDateFormat(fmt, Locale.ENGLISH).parse(dateStr)
                 if (d != null) return out.format(d)
             } catch (_: Exception) {}
         }
@@ -228,7 +228,7 @@ class FilariaMDAFormRepository @Inject constructor(
     }
 
     suspend fun markFormAsSynced(id: Int) {
-        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
 }

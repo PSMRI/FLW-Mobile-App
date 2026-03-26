@@ -163,7 +163,6 @@ class LeprosyConfirmedFromViewModel @Inject constructor(
                     val validationError = dataset.validateForm()
                     if (validationError != null) {
                         _state.postValue(State.SAVE_FAILED)
-                        // Post error message to show in fragment
                         _errorMessage.postValue(validationError)
                         return@withContext
                     }
@@ -185,7 +184,7 @@ class LeprosyConfirmedFromViewModel @Inject constructor(
                     newFollowUp.leprosyStatus = screening.leprosyStatus
                     newFollowUp.referredTo = screening.referredTo
                     newFollowUp.referToName = screening.referToName
-                    newFollowUp.treatmentStartDate = screening.treatmentStartDate
+                    //newFollowUp.treatmentStartDate = screening.treatmentStartDate
 
                     leprosyRepo.saveFollowUp(newFollowUp)
 

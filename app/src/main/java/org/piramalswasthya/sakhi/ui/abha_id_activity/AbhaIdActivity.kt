@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.abha_id_activity
 import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.ActivityAbhaIdBinding
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
+import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdViewModel.State
 import timber.log.Timber
@@ -38,10 +41,12 @@ class AbhaIdActivity : AppCompatActivity() {
 
     private var countDownTimer: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         Timber.d("onCreate Called")
         _binding = ActivityAbhaIdBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        TapjackingProtectionHelper.enableTouchFiltering(this)
         setUpActionBar()
 
         mainViewModel.state.observe(this) { state ->
@@ -52,32 +57,37 @@ class AbhaIdActivity : AppCompatActivity() {
                     // Hide other views (if any)
                     binding.navHostFragmentAbhaId.visibility = View.GONE
                     binding.clError.visibility = View.GONE
+
                 }
 
                 State.SUCCESS -> {
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.clError.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.VISIBLE
+
                 }
 
                 State.ERROR_NETWORK -> {
                     binding.clError.visibility = View.VISIBLE
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.GONE
+
                 }
 
                 State.ERROR_SERVER -> {
                     binding.clError.visibility = View.VISIBLE
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.GONE
+
                 }
             }
         }
         mainViewModel.errorMessage.observe(this) {
             binding.textView5.text = it
         }
+
         binding.btnTryAgain.setOnClickListener {
-            mainViewModel.generateAccessToken()
+            mainViewModel.generateAmritToken()
         }
 
         binding.toolbarMenuHome.setOnClickListener {
@@ -93,6 +103,16 @@ class AbhaIdActivity : AppCompatActivity() {
                 finish()
             }
         }.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        window.decorView.alpha = 0f
+    }
+
+    override fun onResume() {
+        super.onResume()
+        window.decorView.alpha = 1f
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -115,8 +135,6 @@ class AbhaIdActivity : AppCompatActivity() {
     }
 
     fun updateActionBar(logoResource: Int, title: String? = null) {
-//        binding.ivToolbarAbha.setImageResource(logoResource)
-//        binding.toolbar.setLogo(logoResource)
         title?.let {
             binding.toolbar.title = null
             binding.tvToolbarAbha.text = it
@@ -159,7 +177,6 @@ class AbhaIdActivity : AppCompatActivity() {
     private fun setUpActionBar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-//        NavigationUI.setupWithNavController(binding.toolbar, navController)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }
 
@@ -192,5 +209,13 @@ class AbhaIdActivity : AppCompatActivity() {
                 pref.getCurrentLanguage().symbol
             )
         )
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (TapjackingProtectionHelper.isTouchAllowed(this, ev)) {
+            super.dispatchTouchEvent(ev)
+        } else {
+            false
+        }
     }
 }

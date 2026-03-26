@@ -22,7 +22,8 @@ interface EcrDao {
     @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId limit 1")
     suspend fun getSavedECR(benId: Long): EligibleCoupleRegCache?
 
-    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+//    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+    @Query("SELECT noOfLiveChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
     suspend fun getNoOfChildren(benId: Long): Int?
 
     @Update
@@ -47,6 +48,9 @@ interface EcrDao {
     @Query("SELECT * FROM eligible_couple_tracking WHERE benId = :benId ORDER BY visitDate DESC")
     suspend fun getAllAntraDoses(benId: Long): List<EligibleCoupleTrackingCache>
 
+    @Query("UPDATE ELIGIBLE_COUPLE_REG SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetRegSyncingToUnsynced()
 
-
+    @Query("UPDATE ELIGIBLE_COUPLE_TRACKING SET syncState = 0 WHERE syncState = 1")
+    suspend fun resetTrackingSyncingToUnsynced()
 }

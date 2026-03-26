@@ -99,8 +99,10 @@ class PncFormFragment : Fragment() {
 
                 val adapter = FormInputAdapter(
                     selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        showMediaOptions()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            showMediaOptions()
+                        }
                     },
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
@@ -154,8 +156,11 @@ class PncFormFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnSubmit.setOnClickListener {
-            if (!isDeliveryDischargeUploaded()) showUploadReminderDialog()
-            else submitAncForm()
+            if (!validateCurrentPage()) return@setOnClickListener
+            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else viewModel.saveForm()
+            }
+            else viewModel.saveForm()
         }
 
         binding.fabEdit.setOnClickListener { viewModel.setRecordExist(false) }
@@ -294,7 +299,7 @@ class PncFormFragment : Fragment() {
         message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
         positiveText = "Yes",
         negativeText = "No",
-        onNegative = { submitAncForm() }
+        onNegative = { viewModel.saveForm() }
     )
 
     private fun showReminderDialog(

@@ -81,7 +81,7 @@ class CbacRepo @Inject constructor(
                 database.benDao.updateBen(ben)
                 true
             } catch (e: java.lang.Exception) {
-                Timber.d("Error : $e raised at saveCbacData")
+                Timber.e("Error : $e raised at saveCbacData")
                 false
             }
         }
@@ -145,51 +145,56 @@ class CbacRepo @Inject constructor(
 
         if (cbacDataList.isEmpty()) return
 
+        // RECORD-LEVEL ISOLATION: Each CBAC record is processed
+        // independently with try/catch. If one record fails, remaining
+        // records continue. Failed records stay UNSYNCED for next cycle.
+        var successCount = 0
+        var failCount = 0
+
         for ((benId, cbac) in cbacDataList) {
-            val request = CbacRequest(
-                visitDetails = VisitDetailsWrapper(
-                    visitDetails = CbacVisitDetails(
-                        beneficiaryRegID = benId,
-                        providerServiceMapID = prefDao.getLoggedInUser()!!.serviceMapId,
-                        visitNo = null,
-                        visitReason = "New Chief Complaint",
-                        visitCategory = "NCD screening",
-                        IdrsOrCbac = "CBAC",
-                        createdBy = prefDao.getLoggedInUser()?.userName.toString(),
-                        vanID = prefDao.getLoggedInUser()?.vanId!!,
-                        parkingPlaceID = prefDao.getLoggedInUser()?.serviceMapId!!,
-                        subVisitCategory = null,
-                        pregnancyStatus = null,
-                        followUpForFpMethod = null,
-                        sideEffects = null,
-                        otherSideEffects = null,
-                        fileIDs = null,
-                        reportFilePath = null,
-                        otherFollowUpForFpMethod = null,
-                        rCHID = null,
-                        healthFacilityType = null,
-                        healthFacilityLocation = null
-                    )
-                ),
-                cbac = cbac,
-                benFlowID = benId,
-                beneficiaryID = benId,
-                sessionID = 3,
-                parkingPlaceID = prefDao.getLoggedInUser()?.serviceMapId,
-                createdBy = prefDao.getLoggedInUser()?.userName.toString(),
-                vanID = prefDao.getLoggedInUser()?.vanId,
-                beneficiaryRegID = benId,
-                benVisitID = null,
-                providerServiceMapID = prefDao.getLoggedInUser()?.serviceMapId,
-                isFlw = true
-            )
+            try {
+                val request = CbacRequest(
+                    visitDetails = VisitDetailsWrapper(
+                        visitDetails = CbacVisitDetails(
+                            beneficiaryRegID = benId,
+                            providerServiceMapID = prefDao.getLoggedInUser()!!.serviceMapId,
+                            visitNo = null,
+                            visitReason = "New Chief Complaint",
+                            visitCategory = "NCD screening",
+                            IdrsOrCbac = "CBAC",
+                            createdBy = prefDao.getLoggedInUser()?.userName.toString(),
+                            vanID = prefDao.getLoggedInUser()?.vanId!!,
+                            parkingPlaceID = prefDao.getLoggedInUser()?.serviceMapId!!,
+                            subVisitCategory = null,
+                            pregnancyStatus = null,
+                            followUpForFpMethod = null,
+                            sideEffects = null,
+                            otherSideEffects = null,
+                            fileIDs = null,
+                            reportFilePath = null,
+                            otherFollowUpForFpMethod = null,
+                            rCHID = null,
+                            healthFacilityType = null,
+                            healthFacilityLocation = null
+                        )
+                    ),
+                    cbac = cbac,
+                    benFlowID = benId,
+                    beneficiaryID = benId,
+                    sessionID = 3,
+                    parkingPlaceID = prefDao.getLoggedInUser()?.serviceMapId,
+                    createdBy = prefDao.getLoggedInUser()?.userName.toString(),
+                    vanID = prefDao.getLoggedInUser()?.vanId,
+                    beneficiaryRegID = benId,
+                    benVisitID = null,
+                    providerServiceMapID = prefDao.getLoggedInUser()?.serviceMapId,
+                    isFlw = true
+                )
 
-            val response = amritApiService.postCbacs(request)
+                val response = amritApiService.postCbacs(request)
 
-            response?.body()?.string()?.let { body ->
-                val jsonBody = JSONObject(body)
-//                val array = jsonBody.getJSONObject("data")
-
+                response?.body()?.string()?.let { body ->
+                    val jsonBody = JSONObject(body)
 
                     val isSuccess = jsonBody.getString("status") == "Success"
 
@@ -207,12 +212,18 @@ class CbacRepo @Inject constructor(
                             refer.benVisitID = benVisitID.toLongOrNull()
                             referalDao.update(refer)
                         }
-                        WorkerUtils.triggerAmritPushWorker(context)
-
-
+                        successCount++
+                    } else {
+                        failCount++
                     }
-                 }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "CBAC push failed for benId: $benId")
+                failCount++
+            }
         }
+
+        Timber.d("CBAC push complete: $successCount succeeded, $failCount failed out of ${cbacDataList.size}")
     }
 
 

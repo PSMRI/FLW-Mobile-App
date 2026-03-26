@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.RADIO
+import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -147,6 +148,9 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
             firstNameHeadOfFamily.value = saved.familyHeadName
             lastNameHeadOfFamily.value = saved.familyName
             mobileNoHeadOfFamily.value = saved.familyHeadPhoneNo.toString()
+            saved.familyHeadName.takeIf { it!!.isNotEmpty() }?.let { firstNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyName.takeIf { it!!.isNotEmpty() }?.let { lastNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyHeadPhoneNo.takeIf { it != null }?.let { mobileNoHeadOfFamily.inputType = TEXT_VIEW }
             houseNo.value = saved.houseNo
             wardNo.value = saved.wardNo
             wardName.value = saved.wardName

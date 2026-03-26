@@ -49,13 +49,14 @@
     <string name="incentive_with_reference_to_the_subject_cited_above">উল্লেখিত বিষয়ৰ প্ৰসংগত, মই মৰমৰ সৈতে তলত উল্লেখ কৰা বিবৰণ অনুসৰি ...... ৰ পৰা ……….. পৰ্যন্ত সময়কালৰ ASHA প্ৰেৰণা দাবীসমূহ জমা দিবলৈ ৰাজি আছো।</string>
     <string name="incentive_an_amount_of_rs">এটা পৰিমাণ Rs……. (মাত্ৰ …… ৰুপী) ASHA প্ৰেৰণা প্ৰদানৰ বাবে অনুমোদিত হৈছে ……ৰ পৰা ……লৈ, আৰু এই পৰিমাণটো DBTৰ জৰিয়তে একাউণ্টত ডেবিট কৰা হৈছে।</string>
 
-
     <string name="incentive_processed">প্ৰক্ৰিয়াকৃত মুঠ: ₹ %1d</string>
     <string name="incentive_pending">বাকী থকা মুঠ : ₹ %1d</string>
     <string name="incentive_amount">₹ %1d</string>
-    <string name="incentive_ben_details">বেন আইডি: %1d\nনাম: %2s</string>
+    <string name="incentive_ben_details">বেন আইডি: %1$d\nনাম: %2$s</string>
     <string name="to">লৈ</string>
     <string name="to_small">" লৈ "</string>
-
+    <string name="activity_name">Activity</string>
+    <string name="incentive_rch_id_details">RCH আইডি: %1s</string>
+    <string name="incentive_abha_id_details">ABHA নম্বৰ: %1s</string>
 
 </resources>

@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -119,7 +120,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
 
 
     suspend fun setFirstPage(ben: BenRegCache, vaccine: Vaccine, imm: ImmunizationCache?) {
-        val list = listOf(
+        val list = mutableListOf(
 //            name,
 //            motherName,
 //            dateOfBirth,
@@ -134,6 +135,10 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
             mcpCard1,
             mcpCard2
         )
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(mcpCard1)
+            list.remove(mcpCard2)
+        }
         vaccineId = vaccine.vaccineId
 //        name.value = ben.firstName ?: "Baby of ${ben.motherName}"
 //        motherName.value = ben.motherName

@@ -20,7 +20,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormRe
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FilariaMDAFormRepository
-import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMDAFormSyncWorker
 import java.text.SimpleDateFormat
 import java.util.*
@@ -147,10 +146,10 @@ class FilariaMDAFormViewModel @Inject constructor(
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
         val inputs = listOf("dd-MM-yyyy", "yyyy-MM-dd")
-        val out = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val out = SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
         for (fmt in inputs) {
             try {
-                val d = SimpleDateFormat(fmt, Locale.getDefault()).parse(dateStr)
+                val d = SimpleDateFormat(fmt, Locale.ENGLISH).parse(dateStr)
                 if (d != null) return out.format(d)
             } catch (_: Exception) {}
         }
@@ -265,7 +264,7 @@ class FilariaMDAFormViewModel @Inject constructor(
             set(Calendar.MILLISECOND, 0)
         }
         val today = todayCal.time
-        val todayMonthKey = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(today)
+        val todayMonthKey = SimpleDateFormat("yyyy-MM", Locale.ENGLISH).format(today)
 
         val alreadyInThisMonth = _syncedVisitList.value.any {
             it.visitMonth == todayMonthKey

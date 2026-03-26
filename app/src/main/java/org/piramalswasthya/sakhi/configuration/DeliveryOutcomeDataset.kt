@@ -2,7 +2,9 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import java.util.Locale
 import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenStatus
@@ -26,7 +28,7 @@ open class DeliveryOutcomeDataset(
     companion object{
         @Throws(Exception::class)
         fun getOneMonthLater(deliveryDate: String?): String {
-            val sdf: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+            val sdf: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date: Date = sdf.parse(deliveryDate)
 
             val calendar: Calendar = Calendar.getInstance()
@@ -61,7 +63,7 @@ open class DeliveryOutcomeDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.do_delivery_place),
         entries = resources.getStringArray(R.array.do_place_of_delivery_array),
-        required = false,
+        required = true,
         hasDependants = false
     )
 
@@ -256,6 +258,11 @@ open class DeliveryOutcomeDataset(
             mcpFileUpload1,
             mcpFileUpload2
         )
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.remove(mcpFileUpload1)
+            list.remove(mcpFileUpload2)
+        }
         if (saved == null) {
             dateOfDelivery.value = getDateFromLong(System.currentTimeMillis())
             //dateOfDischarge.min = System.currentTimeMillis()
@@ -283,6 +290,10 @@ open class DeliveryOutcomeDataset(
                 mcpFileUpload1,
                 mcpFileUpload2
             )
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                list.remove(mcpFileUpload1)
+                list.remove(mcpFileUpload2)
+            }
 //            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
             if (saved.hadComplications == true) {
                 list.add(list.indexOf(hadComplications) + 1 ,complication)
@@ -421,12 +432,15 @@ open class DeliveryOutcomeDataset(
 
             isJSYBenificiary.id -> {
                 val isYes = isJSYBenificiary.value.equals("Yes", ignoreCase = true)
-                triggerDependants(
-                    source = isJSYBenificiary,
-                    passedIndex = index,
-                    triggerIndex = if (isYes) index else -1,
-                    target = jsyFileUpload
-                )
+                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    triggerDependants(
+                        source = isJSYBenificiary,
+                        passedIndex = index,
+                        triggerIndex = if (isYes) index else -1,
+                        target = jsyFileUpload
+                    )
+                }
+              return -1
             }
 
 
@@ -497,9 +511,10 @@ open class DeliveryOutcomeDataset(
             form.mcp2File = mcpFileUpload2.value
             form.jsyFile = jsyFileUpload.value
             form.dateOfDeath=dateOfDeath.value
-            form.placeOfDeath=placeOfDeath.value
+            form.placeOfDeath=getEnglishValueInArray(R.array.death_place_array, placeOfDeath.value)
             form.otherPlaceOfDeath=otherPlaceOfDeath.value
-            if (complication.value.equals("Death", ignoreCase = true)){
+            val englishComplication = getEnglishValueInArray(R.array.do_complications_array, complication.value)
+            if (englishComplication.equals("Death", ignoreCase = true)){
                 form.isDeath=true
                 form.isDeathValue="Death"
             }
@@ -507,19 +522,19 @@ open class DeliveryOutcomeDataset(
                 ?.takeIf { it != -1 }
 
             form.timeOfDelivery = timeOfDelivery.value
-            form.placeOfDelivery = placeOfDelivery.value
-            form.typeOfDelivery = typeOfDelivery.value
+            form.placeOfDelivery = getEnglishValueInArray(R.array.do_place_of_delivery_array, placeOfDelivery.value)
+            form.typeOfDelivery = getEnglishValueInArray(R.array.do_type_of_delivery_array, typeOfDelivery.value)
             form.hadComplications = hadComplications.value == "Yes"
-            form.complication = complication.value
-            form.causeOfDeath = causeOfDeath.value
+            form.complication = englishComplication
+            form.causeOfDeath = getEnglishValueInArray(R.array.do_cause_of_death_array, causeOfDeath.value)
             form.otherCauseOfDeath = otherCauseOfDeath.value
             form.otherComplication = otherComplication.value
             form.deliveryOutcome = deliveryOutcome.value?.toInt()
             form.liveBirth = liveBirth.value?.toInt()
             form.stillBirth = stillBirth.value?.toInt()
-            form.dateOfDischarge = (dateOfDischarge.value?.let {
+            form.dateOfDischarge = dateOfDischarge.value?.takeIf { it.isNotBlank() }?.let {
                 getLongFromDate(it)
-            })
+            }
             form.timeOfDischarge = timeOfDischarge.value
             form.isJSYBenificiary = isJSYBenificiary.value == "Yes"
         }

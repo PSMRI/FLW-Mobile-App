@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.tracking.form
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -129,7 +128,7 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                     it.dateOfReg,
                     pastTrack,
                     if (_recordExists.value == true) eligibleCoupleTracking else null,
-                    ecrRepo.getNoOfChildren(benId)
+                    benRepo.getChildCountForBen(benId)
                 )
             }
         }

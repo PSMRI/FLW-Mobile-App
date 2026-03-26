@@ -34,6 +34,7 @@ data class EligibleCoupleTrackingCache(
     @ColumnInfo(defaultValue = "0")
     var lmpDate: Long = 0L,
     var visitDate: Long = 0L,
+    var dateOfSterilisation: Long = 0L,
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,
     var mpaFile: String? = null,
@@ -61,6 +62,7 @@ data class EligibleCoupleTrackingCache(
         return ECTNetwork(
             benId = benId,
             lmpDate = getDateStringFromLong(lmpDate)!!,
+            dateOfSterilisation = getDateStringFromLong(dateOfSterilisation)!!,
             visitDate = getDateTimeStringFromLong(visitDate)!!,
             dateOfAntraInjection = dateOfAntraInjection?.let { SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(it)?.time }?.let { getDateTimeStringFromLong(it) },
             dueDateOfAntraInjection = dueDateOfAntraInjection,
@@ -88,6 +90,7 @@ data class EligibleCoupleTrackingCache(
 data class ECTNetwork(
     val benId: Long,
     val lmpDate: String? = null,
+    val dateOfSterilisation: String? = null,
     val visitDate: String,
     var dateOfAntraInjection: String? = null,
     var dueDateOfAntraInjection: String? = null,
@@ -133,7 +136,7 @@ data class BenWithEcTrackingCache(
         }
     }
 
-    fun asDomainModel(): BenWithEctListDomain {
+    fun asDomainModel(childCount: Int? = null): BenWithEctListDomain {
         val recentFill = savedECTRecords.maxByOrNull { it.visitDate }
         val allowFill = recentFill?.let {
             val cal = Calendar.getInstance()
@@ -147,7 +150,7 @@ data class BenWithEcTrackingCache(
         return BenWithEctListDomain(
 //            ecBenId,
             ben.asBasicDomainModel(),
-            ecr.noOfLiveChildren.toString(),
+            (childCount ?: ben.noOfAliveChildren).toString(),
             allowFill,
             ectDate = recentFill?.visitDate ?: 0L,
             lmpDate = recentFill?.lmpDate ?: 0L,

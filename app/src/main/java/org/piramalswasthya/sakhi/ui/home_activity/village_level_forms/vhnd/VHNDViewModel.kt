@@ -109,7 +109,7 @@ constructor(
                 vlfReo.saveRecord(_vhndCache)
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
-                Timber.d("saving VHND data failed!!")
+                Timber.d("saving VHND data failed!! $e")
                 _state.postValue(State.SAVE_FAILED)
             }
         }

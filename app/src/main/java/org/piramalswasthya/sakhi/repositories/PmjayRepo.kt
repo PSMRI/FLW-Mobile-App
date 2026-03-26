@@ -30,7 +30,7 @@ class PmjayRepo @Inject constructor(
 
                 true
             } catch (e: Exception) {
-                Timber.d("Error : $e raised at saveCdrData")
+                Timber.e("Error : $e raised at saveCdrData")
                 false
             }
         }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_normal">
+
+    <TextView
+        android:id="@+id/tv_entity_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:padding="@dimen/padding_normal"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        tools:text="Beneficiary" />
+
+    <TextView
+        android:id="@+id/tv_synced"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textColor="@android:color/holo_green_dark"
+        tools:text="42" />
+
+    <TextView
+        android:id="@+id/tv_unsynced"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textColor="@android:color/holo_red_dark"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/tv_syncing"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textColor="@android:color/holo_orange_dark"
+        tools:text="0" />
+
+</LinearLayout>

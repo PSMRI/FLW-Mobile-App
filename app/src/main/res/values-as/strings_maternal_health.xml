@@ -7,7 +7,15 @@
         <item>স্বজনলৈ আপত্তি হৈছে</item>
         <item>Incomplete</item>
     </string-array>
-
+    <string-array name="place_of_anc_array">
+        <item>Sub-Centre</item>
+        <item>VHND/VHSND</item>
+        <item>PHC</item>
+        <item>PMSMA Visit</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+    </string-array>
     <string-array name="abortion_place_array">
         <item>Home</item>
         <item>Subcenter</item>
@@ -88,7 +96,6 @@
         <item>OTHER</item>
     </string-array>
 
-
     <!--  PMSMA  -->
     <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>
     <string name="pnc_visit_number">%1d দিনত পিএনচি ভ্ৰমণ</string>
@@ -165,7 +172,7 @@
     <string name="do_death_cause">মৃত্যুৰ সম্ভাৱনা</string>
     <string name="do_other_death_cause">অন্য মৃত্যুৰ কাৰণ</string>
     <string name="do_other_delivery_complication">অন্য ডেলিভাৰীৰ সমস্যা</string>
-    <string name="do_delivery_outcome">ডেলিভাৰীৰ ফলাফল</string>
+    <string name="do_delivery_outcome">জন্ম হোৱা মুঠ কেঁচুৱাৰ সংখ্যা</string>
     <string name="do_live_birth">জীৱন সন্তান</string>
     <string name="do_still_birth">শাবলা সন্তান</string>
     <string name="do_discharge_date">মুকৰাপৰ তাৰিখ</string>
@@ -187,7 +194,6 @@
     <string-array name="do_type_of_delivery_array">
         <item>নর্মল</item>
         <item>চেছেৰিয়ান</item>
-        <item>সহায়ক</item>
     </string-array>
     <string-array name="do_had_complications_array">
         <item>হোৱ</item>
@@ -216,7 +222,6 @@
         <item>হোৱ</item>
         <item>নহয়</item>
     </string-array>
-
 
     <!--  Post Natal Care -->
     <string name="pnc_period">PNC সময়</string>
@@ -301,7 +306,6 @@
         <item>ৰোগ চিকিৎসা চেণ্টাৰ</item>
         <item>প্ৰবাহিত ক্ষণ</item>
     </string-array>
-
 
     <!--  Infant Registration  -->
     <string name="ir_baby_name">শিশুৰ নাম</string>

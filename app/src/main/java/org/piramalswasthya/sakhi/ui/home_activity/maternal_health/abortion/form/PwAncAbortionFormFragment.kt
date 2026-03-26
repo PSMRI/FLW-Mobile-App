@@ -94,8 +94,10 @@ class PwAncAbortionFormFragment : Fragment() {
                         hardCodedListUpdate(formId)
                     },
                     selectImageClickListener = FormInputAdapterWithBgIcon.SelectUploadImageClickListener { formId ->
-                        viewModel.setCurrentDocumentFormId(formId)
-                        chooseOptions()
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            viewModel.setCurrentDocumentFormId(formId)
+                            chooseOptions()
+                        }
                     },
                     viewDocumentListner = FormInputAdapterWithBgIcon.ViewDocumentOnClick { formId ->
                         if (recordExists) {

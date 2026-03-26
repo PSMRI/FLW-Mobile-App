@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 class AshaProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    preferenceDao: PreferenceDao,
+    private val preferenceDao: PreferenceDao,
     @ApplicationContext var context: Context,
     private val ashaProfileRepo: AshaProfileRepo,
     private val householdRepo: HouseholdRepo,
@@ -40,7 +40,7 @@ class AshaProfileViewModel @Inject constructor(
 
     private val filter = MutableStateFlow("")
 
-    val householdList = recordsRepo.hhList.combine(filter) { list, _ ->
+    val householdList = recordsRepo.hhListforAsha.combine(filter) { list, _ ->
         list.take(1)
     }
 
@@ -127,6 +127,10 @@ class AshaProfileViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapProfileValues(profileActivityCache,context)
+                    ashaProfileRepo.saveRecord(profileActivityCache)
+                    profileActivityCache.profileImage.takeIf { it.isNotEmpty() }?.let {
+                        preferenceDao.saveProfilePicUri(Uri.parse(it))
+                    }
                     _state.postValue(State.SAVE_SUCCESS)
 
                 } catch (e: IllegalAccessError) {

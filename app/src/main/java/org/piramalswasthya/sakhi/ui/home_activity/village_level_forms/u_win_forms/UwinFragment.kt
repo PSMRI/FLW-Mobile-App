@@ -144,11 +144,9 @@ class UwinFragment : Fragment() {
             takePictureLauncher.launch(uri)
         }
     }
-
     private fun selectImage() {
         pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
-
     private fun handleImageResult(formId: Int, uri: Uri?) {
         uri?.let {
             if (checkFileSize(it, requireContext())) {
@@ -156,7 +154,6 @@ class UwinFragment : Fragment() {
             } else updateAdapterForFormId(formId, it)
         }
     }
-
     private fun handleCameraResult() {
         val formId = viewModel.getDocumentFormId()
         uwinSummary[formId]?.let {uri ->
@@ -168,13 +165,11 @@ class UwinFragment : Fragment() {
         }
     }
     }
-
     private fun updateAdapterForFormId(formId: Int, uri: Uri) {
         uwinSummary[formId] = uri
         viewModel.setImageUriToFormElement(uri)
         binding.form.rvInputForm.adapter?.notifyDataSetChanged()
     }
-
     private fun handleViewDocument(formId: Int) {
         if (uwinId != 0) {
             formIdToIndex[formId]?.invoke()?.let { index ->
