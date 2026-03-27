@@ -2771,6 +2771,7 @@ abstract class InAppDb : RoomDatabase() {
         """.trimIndent()
                     )
 
+                    database.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
                     if (tableExists(database, "PREGNANCY_ANC")) {
                         database.execSQL(
                             """
