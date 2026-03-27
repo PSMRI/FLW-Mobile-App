@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.utils
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 object CampaignDateUtil {
@@ -17,7 +18,7 @@ object CampaignDateUtil {
             
             for (format in dateFormats) {
                 try {
-                    val formatter = java.time.format.DateTimeFormatter.ofPattern(format)
+                    val formatter = java.time.format.DateTimeFormatter.ofPattern(format, Locale.ENGLISH)
                     return java.time.LocalDate.parse(dateStr, formatter)
                 } catch (e: Exception) {
                     // Try next format

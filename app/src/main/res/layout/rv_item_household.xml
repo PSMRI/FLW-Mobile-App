@@ -170,10 +170,10 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMda"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_big"
-                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:onClick="@{()->clickListener.onClickedAddMDA(household)}"
                 android:text="@string/add_mda"
                 android:elevation="10dp"
@@ -181,9 +181,10 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:backgroundTint="@android:color/holo_green_dark"
                 android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
+                app:layout_constraintStart_toEndOf="@+id/button3"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details" />
+                app:layout_constraintHorizontal_weight="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button5"

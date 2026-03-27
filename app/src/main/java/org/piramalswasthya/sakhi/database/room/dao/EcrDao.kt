@@ -22,7 +22,8 @@ interface EcrDao {
     @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId limit 1")
     suspend fun getSavedECR(benId: Long): EligibleCoupleRegCache?
 
-    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+//    @Query("SELECT noOfChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
+    @Query("SELECT noOfLiveChildren FROM ELIGIBLE_COUPLE_REG WHERE benId = :benId LIMIT 1")
     suspend fun getNoOfChildren(benId: Long): Int?
 
     @Update
