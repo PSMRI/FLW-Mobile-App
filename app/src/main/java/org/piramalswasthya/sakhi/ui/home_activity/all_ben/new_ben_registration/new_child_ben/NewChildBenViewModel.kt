@@ -158,7 +158,7 @@ class NewChildBenViewModel @Inject constructor(
             oldChildCount = 0
         }
 
-        ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId)!!
+        ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId) ?: return
         _isDeath.postValue(ben.isDeath ?: false)
 
         isBenMarried = ben.genDetails?.maritalStatus != "Unmarried"
