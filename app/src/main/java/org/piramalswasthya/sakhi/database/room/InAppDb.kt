@@ -2776,6 +2776,7 @@ abstract class InAppDb : RoomDatabase() {
         """.trimIndent()
                     )
 
+                    database.execSQL("DROP VIEW IF EXISTS BEN_BASIC_CACHE")
                     database.execSQL("DROP TABLE PREGNANCY_ANC")
                     database.execSQL("ALTER TABLE PREGNANCY_ANC_NEW RENAME TO PREGNANCY_ANC")
 
