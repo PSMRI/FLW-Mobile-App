@@ -603,7 +603,7 @@ class LeprosyFormDataset(
             form.typeOfLeprosy = typeOfLeprosy.value
             form.diseaseTypeID = 5
             form.leprosySymptoms = leprosySymptoms.value
-            form.visitLabel = visitLabel.value
+            form.visitLabel = englishResources.getString(R.string.visit_number_label, form.currentVisitNumber)
             form.syncState = SyncState.UNSYNCED
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
                 resources.getStringArray(R.array.yes_no)[0] -> 0
