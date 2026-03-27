@@ -87,10 +87,10 @@
     </string-array>
 
     <string-array name="place_of_vhsnc">
-        <item>Anganwadi Centre</item>
-        <item>HWC</item>
-        <item>School</item>
-        <item>Community center</item>
+        <item>आंगनवाड़ी केंद्र</item>
+        <item>एचडब्ल्यूसी</item>
+        <item>स्कूल</item>
+        <item>सामुदायिक केंद्र</item>
     </string-array>
 
     <string-array name="nbr_marital_status_female_array">
@@ -257,11 +257,11 @@
     <string name="days">दिन</string>
 
     <string-array name="diet_plane">
-        <item>What to eat, what to avoid, importance of dietary diversity.</item>
+        <item>क्या खाएं, क्या न खाएं, आहार विविधता का महत्व।</item>
 
     </string-array>
     <string-array name="care_pregnancy">
-        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+        <item>एनीमिया, कमज़ोरी से बचाव, आराम और पोषण का महत्व।</item>
 
     </string-array>
     <string-array name="select_all">
@@ -270,20 +270,26 @@
 
 
     <string-array name="import_brestfeeding">
-        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
+        <item>जन्म के बाद जल्दी स्तनपान शुरू करना, 6 महीने तक केवल स्तनपान।</item>
     </string-array>
 
     <string-array name="complementary_feeding">
-        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+        <item>6 महीने के बाद स्तनपान के साथ घर का पौष्टिक अनुपूरक आहार शुरू करना।</item>
 
     </string-array>
     <string-array name="hygiene_senetigation">
-        <item>Maintaining cleanliness while preparing and feeding food</item>
+        <item>खाना बनाते और खिलाते समय स्वच्छता बनाए रखना।</item>
 
     </string-array>
     <string-array name="family_planning_health">
-        <item>Importance of small family and regular health check-ups</item>
+        <item>छोटे परिवार का महत्व और नियमित स्वास्थ्य जांच।</item>
 
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>पॉजिटिव</item>
+        <item>नेगेटिव</item>
+        <item>नहीं किया गया</item>
     </string-array>
 
     <string-array name="maa_breastfeeding">
