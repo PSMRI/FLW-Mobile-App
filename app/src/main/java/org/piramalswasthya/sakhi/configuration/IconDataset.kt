@@ -347,7 +347,7 @@ class IconDataset @Inject constructor(
         if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
             list.add(
                 Icon(
-                    R.drawable.ic__ahd,
+                    R.drawable.ic__sass_bahu_sammelan,
                     resources.getString(R.string.saas_samelan),
                     null,
                     VillageLevelFormsFragmentDirections
@@ -579,7 +579,7 @@ class IconDataset @Inject constructor(
 
     fun getDeathReportDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__death,
+            R.drawable.ic__general_death,
             resources.getString(R.string.general_deaths),
             recordsRepo.getGeneralDeathCount(),
             DeathReportsFragmentDirections.actionDeathReportsFragmentToGdrListFragment()
