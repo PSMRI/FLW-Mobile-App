@@ -188,19 +188,19 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         }
         saved?.let { saved ->
             visitDate.value = saved.visitDate?.let { getDateFromLong(it) }
-            healthStatus.value = saved.healthStatus
+            healthStatus.value = getLocalValueInArray(R.array.ahd_health_status_array, saved.healthStatus)
             ifaTabletDistribution.value = if (saved.ifaTabletDistributed == true) ifaTabletDistribution.entries!![0] else ifaTabletDistribution.entries!![1]
             ifaTabletQuantity.value = saved.quantityOfIfaTablets?.toString()
             menstrualHygieneAwareness.value = if (saved.menstrualHygieneAwarenessGiven == true) menstrualHygieneAwareness.entries!![0] else menstrualHygieneAwareness.entries!![1]
             sanitaryNapkinDistributed.value = if (saved.sanitaryNapkinDistributed == true) sanitaryNapkinDistributed.entries!![0] else sanitaryNapkinDistributed.entries!![1]
             noOfPacketsDistributed.value = saved.noOfPacketsDistributed?.toString()
-            place.value = saved.place
+            place.value = getLocalValueInArray(R.array.ahd_place_array, saved.place)
             sDate.value = saved.distributionDate?.let { getDateFromLong(it) }
             referredToHealthFacility.value = saved.referredToHealthFacility
             counselingProvided.value = if (saved.counselingProvided == true) counselingProvided.entries!![0] else counselingProvided.entries!![1]
-            counselingType.value = saved.counselingType
+            counselingType.value = getLocalValueInArray(R.array.ahd_counseling_type_array, saved.counselingType)
             followUpDate.value = saved.followUpDate?.let { getDateFromLong(it) }
-            referralStatus.value = saved.referralStatus
+            referralStatus.value = getLocalValueInArray(R.array.ahd_referral_status_array, saved.referralStatus)
         }
 
         if (ifaTabletDistribution.value == ifaTabletDistribution.entries!![0]) {
@@ -292,20 +292,20 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         (cacheModel as AdolescentHealthCache).let { ben ->
             //ben.benId = ben.benId
             ben.visitDate = getLongFromDate(visitDate.value)
-            ben.healthStatus = healthStatus.value
+            ben.healthStatus = healthStatus.getEnglishStringFromPosition(healthStatus.getPosition())
             ben.ifaTabletDistributed =  ifaTabletDistribution.value == resources.getStringArray(
                 R.array.yes_no)[0]
             ben.quantityOfIfaTablets = ifaTabletQuantity.value?.toInt()
             ben.menstrualHygieneAwarenessGiven = menstrualHygieneAwareness.value == menstrualHygieneAwareness.entries!![0]
             ben.sanitaryNapkinDistributed = sanitaryNapkinDistributed.value == sanitaryNapkinDistributed.entries!![0]
             ben.noOfPacketsDistributed = noOfPacketsDistributed.value?.toInt()
-            ben.place = place.value
+            ben.place = place.getEnglishStringFromPosition(place.getPosition())
             ben.distributionDate = getLongFromDate(sDate.value)
             ben.referredToHealthFacility = referredToHealthFacility.value
             ben.counselingProvided = counselingProvided.value == counselingProvided.entries!![0]
-            ben.counselingType = counselingType.value
+            ben.counselingType = counselingType.getEnglishStringFromPosition(counselingType.getPosition())
             ben.followUpDate = getLongFromDate(followUpDate.value)
-            ben.referralStatus = referralStatus.value
+            ben.referralStatus = referralStatus.getEnglishStringFromPosition(referralStatus.getPosition())
         }
     }
 
