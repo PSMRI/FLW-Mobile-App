@@ -276,7 +276,7 @@ class HouseholdMembersFragment : Fragment() {
         }
 
         binding.fabAddMember.visibility = if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA, true) && viewModel.isFromDisease == 0) {
-            View.VISIBLE
+            View.GONE
         } else {
             View.GONE
         }
@@ -301,7 +301,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
                 },
                 clickedWifeBen = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -315,7 +315,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
 
                 },clickedHusbandBen = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -329,7 +329,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
@@ -348,7 +348,16 @@ class HouseholdMembersFragment : Fragment() {
                 { item, benId, hhId ->
                     if (canProceed(item)) checkAndGenerateABHA(benId)
                 },
-                { item,benId, hhId, isViewMode, isIFA ->
+                { item, benId, hhId, isViewMode, isIFA ->
+                    if (canProceed(item)) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                isViewMode = isViewMode,
+                            )
+                        )
+                    }
                 },
                 {
                     if(!it.isDeactivate){

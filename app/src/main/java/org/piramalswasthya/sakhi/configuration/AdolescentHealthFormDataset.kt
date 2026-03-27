@@ -37,7 +37,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val visitDate = FormElement(
         id = 3,
         inputType = DATE_PICKER,
-        title = "Visit Date",
+        title = resources.getString(R.string.visit_date),
         arrayId = -1,
         required = true,
         max = getCurrentDateMillis()
@@ -46,9 +46,9 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val healthStatus = FormElement(
         id = 4,
         inputType = DROPDOWN,
-        title = "Health Status",
-        arrayId = -1,
-        entries = arrayOf("Healthy", "Anemic", "Malnourished"),
+        title = resources.getString(R.string.ahd_health_status),
+        arrayId = R.array.ahd_health_status_array,
+        entries = resources.getStringArray(R.array.ahd_health_status_array),
         required = true,
         hasDependants = true
     )
@@ -56,8 +56,8 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val ifaTabletDistribution = FormElement(
         id = 5,
         inputType = RADIO,
-        title = "IFA Tablet Distribution",
-        arrayId = -1,
+        title = resources.getString(R.string.ahd_ifa_tablet_distribution),
+        arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
@@ -66,7 +66,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val ifaTabletQuantity = FormElement(
         id = 6,
         inputType = EDIT_TEXT,
-        title = "Quantity of IFA Tablets",
+        title = resources.getString(R.string.ahd_ifa_tablet_quantity),
         arrayId = -1,
         required = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -77,18 +77,18 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val menstrualHygieneAwareness = FormElement(
         id = 7,
         inputType = RADIO,
-        title = "Menstrual Hygiene Awareness",
-        arrayId = -1,
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ahd_menstrual_hygiene_awareness),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = false
     )
 
     private val sanitaryNapkinDistributed = FormElement(
         id = 8,
         inputType = RADIO,
-        title = "Sanitary Napkin Distributed",
-        arrayId = -1,
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ahd_sanitary_napkin_distributed),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = true,
         hasDependants = true
     )
@@ -96,7 +96,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val noOfPacketsDistributed = FormElement(
         id = 9,
         inputType = EDIT_TEXT,
-        title = "No. of Packets Distributed",
+        title = resources.getString(R.string.ahd_no_of_packets_distributed),
         arrayId = -1,
         required = true,
         min = 1L,
@@ -107,9 +107,9 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val place = FormElement(
         id = 10,
         inputType = DROPDOWN,
-        title = "Place",
-        arrayId = -1,
-        entries = arrayOf("Home", "Community center", "School", "Subcenter"),
+        title = resources.getString(R.string.place),
+        arrayId = R.array.ahd_place_array,
+        entries = resources.getStringArray(R.array.ahd_place_array),
         required = true
     )
 
@@ -117,7 +117,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val referredToHealthFacility = FormElement(
         id = 12,
         inputType = EDIT_TEXT,
-        title = "Referred to Health Facility",
+        title = resources.getString(R.string.ahd_referred_to_health_facility),
         arrayId = -1,
         required = false,
     )
@@ -125,25 +125,25 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val counselingProvided = FormElement(
         id = 13,
         inputType = RADIO,
-        title = "Counseling Provided",
-        arrayId = -1,
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ahd_counseling_provided),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
         required = true
     )
 
     private val counselingType = FormElement(
         id = 14,
         inputType = DROPDOWN,
-        title = "Counseling Type",
-        arrayId = -1,
-        entries = arrayOf("Individual", "Group"),
+        title = resources.getString(R.string.ahd_counseling_type),
+        arrayId = R.array.ahd_counseling_type_array,
+        entries = resources.getStringArray(R.array.ahd_counseling_type_array),
         required = false
     )
 
     private val followUpDate = FormElement(
         id = 15,
         inputType = DATE_PICKER,
-        title = "Follow-up Date",
+        title = resources.getString(R.string.ahd_follow_up_date),
         arrayId = -1,
         required = false,
         max = getCurrentDateMillis()
@@ -152,16 +152,16 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
     private val referralStatus = FormElement(
         id = 16,
         inputType = DROPDOWN,
-        title = "Referral Status",
-        arrayId = -1,
-        entries = arrayOf("Pending", "Completed"),
+        title = resources.getString(R.string.ahd_referral_status),
+        arrayId = R.array.ahd_referral_status_array,
+        entries = resources.getStringArray(R.array.ahd_referral_status_array),
         required = false
     )
 
     private val sDate = FormElement(
         id = 15,
         inputType = DATE_PICKER,
-        title = "Date",
+        title = resources.getString(R.string.ahd_distribution_date),
         arrayId = -1,
         required = false,
         max = getCurrentDateMillis()
@@ -188,19 +188,19 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         }
         saved?.let { saved ->
             visitDate.value = saved.visitDate?.let { getDateFromLong(it) }
-            healthStatus.value = saved.healthStatus
+            healthStatus.value = getLocalValueInArray(R.array.ahd_health_status_array, saved.healthStatus)
             ifaTabletDistribution.value = if (saved.ifaTabletDistributed == true) ifaTabletDistribution.entries!![0] else ifaTabletDistribution.entries!![1]
             ifaTabletQuantity.value = saved.quantityOfIfaTablets?.toString()
             menstrualHygieneAwareness.value = if (saved.menstrualHygieneAwarenessGiven == true) menstrualHygieneAwareness.entries!![0] else menstrualHygieneAwareness.entries!![1]
             sanitaryNapkinDistributed.value = if (saved.sanitaryNapkinDistributed == true) sanitaryNapkinDistributed.entries!![0] else sanitaryNapkinDistributed.entries!![1]
             noOfPacketsDistributed.value = saved.noOfPacketsDistributed?.toString()
-            place.value = saved.place
+            place.value = getLocalValueInArray(R.array.ahd_place_array, saved.place)
             sDate.value = saved.distributionDate?.let { getDateFromLong(it) }
             referredToHealthFacility.value = saved.referredToHealthFacility
             counselingProvided.value = if (saved.counselingProvided == true) counselingProvided.entries!![0] else counselingProvided.entries!![1]
-            counselingType.value = saved.counselingType
+            counselingType.value = getLocalValueInArray(R.array.ahd_counseling_type_array, saved.counselingType)
             followUpDate.value = saved.followUpDate?.let { getDateFromLong(it) }
-            referralStatus.value = saved.referralStatus
+            referralStatus.value = getLocalValueInArray(R.array.ahd_referral_status_array, saved.referralStatus)
         }
 
         if (ifaTabletDistribution.value == ifaTabletDistribution.entries!![0]) {
@@ -292,20 +292,20 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         (cacheModel as AdolescentHealthCache).let { ben ->
             //ben.benId = ben.benId
             ben.visitDate = getLongFromDate(visitDate.value)
-            ben.healthStatus = healthStatus.value
+            ben.healthStatus = healthStatus.getEnglishStringFromPosition(healthStatus.getPosition())
             ben.ifaTabletDistributed =  ifaTabletDistribution.value == resources.getStringArray(
                 R.array.yes_no)[0]
             ben.quantityOfIfaTablets = ifaTabletQuantity.value?.toInt()
             ben.menstrualHygieneAwarenessGiven = menstrualHygieneAwareness.value == menstrualHygieneAwareness.entries!![0]
             ben.sanitaryNapkinDistributed = sanitaryNapkinDistributed.value == sanitaryNapkinDistributed.entries!![0]
             ben.noOfPacketsDistributed = noOfPacketsDistributed.value?.toInt()
-            ben.place = place.value
+            ben.place = place.getEnglishStringFromPosition(place.getPosition())
             ben.distributionDate = getLongFromDate(sDate.value)
             ben.referredToHealthFacility = referredToHealthFacility.value
             ben.counselingProvided = counselingProvided.value == counselingProvided.entries!![0]
-            ben.counselingType = counselingType.value
+            ben.counselingType = counselingType.getEnglishStringFromPosition(counselingType.getPosition())
             ben.followUpDate = getLongFromDate(followUpDate.value)
-            ben.referralStatus = referralStatus.value
+            ben.referralStatus = referralStatus.getEnglishStringFromPosition(referralStatus.getPosition())
         }
     }
 
