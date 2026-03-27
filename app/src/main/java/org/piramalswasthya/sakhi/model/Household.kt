@@ -67,7 +67,7 @@ data class HouseholdCache(
     @Embedded(prefix = "fam_") var family: HouseholdFamily? = null,
     @Embedded(prefix = "det_") var details: HouseholdDetails? = null,
     @Embedded(prefix = "amn_") var amenities: HouseholdAmenities? = null,
-    @Embedded(prefix = "loc_") val locationRecord: LocationRecord,
+    @Embedded(prefix = "loc_") var locationRecord: LocationRecord,
     //Spam
     var registrationType: String? = null,
     var serverUpdatedStatus: Int = 0,
