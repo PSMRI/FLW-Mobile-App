@@ -106,8 +106,8 @@
     <string name="front_side">अगला पृष्ठ</string>
     <string name="back_side">पिछला पृष्ठ</string>
     <string name="ahd_health_status">स्वास्थ्य स्थिति</string>
-    <string name="ahd_ifa_tablet_distribution">IFA टैबलेट वितरण</string>
-    <string name="ahd_ifa_tablet_quantity">IFA टैबलेट की मात्रा</string>
+    <string name="ahd_ifa_tablet_distribution">आईएफए (आयरन फोलिक एसिड) टैबलेट का वितरण</string>
+    <string name="ahd_ifa_tablet_quantity">आईएफए टैबलेट की संख्या</string>
     <string name="ahd_menstrual_hygiene_awareness">मासिक धर्म स्वच्छता जागरूकता</string>
     <string name="ahd_sanitary_napkin_distributed">सैनिटरी नैपकिन वितरित</string>
     <string name="ahd_no_of_packets_distributed">वितरित पैकेट की संख्या</string>
@@ -808,18 +808,145 @@
     <string name="delivery_discharge_summary_3">प्रसव छुट्टी सारांश 3</string>
     <string name="delivery_discharge_summary_4">प्रसव छुट्टी सारांश 4</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
-    <string name="symptomatic_tb_screening">लक्षणयुक्त संकेत जांच </string>
-    <string name="tb_asymptomatic_symptoms">बिना लक्षण वाले संकेत</string>
-    <string name="tb_rise_of_fever">शाम के समय बुखार बढ़ना</string>
-    <string name="tb_loss_of_appetite">भूख न लगना</string>
-    <string name="tb_age_more_than_60">आयु 60 वर्ष से अधिक</string>
+    <string name="symptomatic_tb_screening">टीबी के लक्षणों की जांच</string>
+    <string name="tb_asymptomatic_symptoms">बिना लक्षण वाले लोगों की टीबी जांच</string>
+    <string name="tb_rise_of_fever">रोजाना शाम को तेज बुखार आता है?</string>
+    <string name="tb_loss_of_appetite">भूख कम लगना</string>
+    <string name="tb_age_more_than_60">उम्र 60 वर्ष से अधिक</string>
     <string name="tb_diabetic">मधुमेह रोगी</string>
-    <string name="tb_tobacco_user">तंबाकू का सेवन करने वाला</string>
+    <string name="tb_tobacco_user">तंबाकू सेवन करने वाला</string>
     <string name="tb_bmi_less_than_18_5">बीएमआई 18.5 से कम</string>
-    <string name="tb_contact_with_patient_on_treatment">उपचार पर चल रहे टीबी मरीज के संपर्क में</string>
-    <string name="tb_history_last_5_years">पिछले 5 वर्षों में टीबी का इतिहास</string>
+    <string name="tb_contact_with_patient_on_treatment">क्या आप टीबी मरीज के संपर्क में आए हैं?</string>
+    <string name="tb_history_last_5_years">क्या पिछले 5 साल में आपको कभी टीबी (TB) हुई थी?</string>
     <string name="visit_leprosy">विज़िट</string>
     <string name="visit_number_label">विज़िट -%d</string>
 
+    <string-array name="type_of_tb_case">
+        <item>टीबी का नया मामला</item>
+        <item>पहले से इलाज कराए गए टीबी का मामला</item>
+        <item>ड्रग-रेजिस्टेंट टीबी (DR-TB) का मामला</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>जिला टीबी केंद्र (DTC)</item>
+        <item>एचडब्ल्यूसी</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
+        <item>जिला अस्पताल</item>
+        <item>सरकारी मेडिकल कॉलेज</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>एचडब्ल्यूसी</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
+        <item>जिला अस्पताल</item>
+        <item>सरकारी मेडिकल कॉलेज</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>नियमित</item>
+        <item>अनियमित</item>
+    </string-array>
+
+    <string-array name="dc_case_status">
+        <item name="dc_suspected">संदिग्ध</item>
+        <item name="dc_confirmed">पुष्टि हुई</item>
+        <item name="dc_not_confirmed">पुष्टि नहीं हुई</item>
+        <item name="dc_treatment">उपचार शुरू हुआ</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_kalaazar">
+        <item name="dc_not_app">लागू नहीं</item>
+        <item name="dc_recovering">ठीक हो रहे हैं</item>
+        <item name="dc_cured">ठीक हो गए</item>
+        <item name="dc_death">मृत्यु</item>
+        <item name="dc_symp">लक्षण फिर से आए</item>
+    </string-array>
+
+    <string-array name="death_place">
+        <item name="home">घर</item>
+        <item name="facility">स्वास्थ्य सुविधा</item>
+        <item name="other">अन्य</item>
+    </string-array>
+
+    <string-array name="reason_death">
+        <item name="fever">बुखार</item>
+        <item name="other_disease">अन्य बीमारी</item>
+        <item name="other">अन्य</item>
+    </string-array>
+
+    <string-array name="dc_refer">
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
+        <item>जिला अस्पताल</item>
+        <item>मेडिकल कॉलेज और अस्पताल</item>
+        <item>रेफरल अस्पताल</item>
+        <item>अन्य निजी अस्पताल</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="dc_refer_malaria">
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
+        <item>जिला अस्पताल</item>
+        <item>मेडिकल कॉलेज और अस्पताल</item>
+        <item>रेफरल अस्पताल</item>
+        <item>अन्य निजी अस्पताल</item>
+        <item>अन्य</item>
+        <item>कोई नहीं</item>
+    </string-array>
+
+    <string-array name="hbyc_month_array">
+        <item name="hbyc_month_3">3 महीने</item>
+        <item name="hbyc_month_4">4 महीने</item>
+        <item name="hbyc_month_5">5 महीने</item>
+        <item name="hbyc_month_6">6 महीने</item>
+        <item name="hbyc_month_7">7 महीने</item>
+        <item name="hbyc_month_8">8 महीने</item>
+        <item name="hbyc_month_9">9 महीने</item>
+        <item name="hbyc_month_10">10 महीने</item>
+        <item name="hbyc_month_11">11 महीने</item>
+        <item name="hbyc_month_12">12 महीने</item>
+        <item name="hbyc_month_13">13 महीने</item>
+        <item name="hbyc_month_14">14 महीने</item>
+        <item name="hbyc_month_15">15 महीने</item>
+    </string-array>
+
+    <string-array name="hbnc_place_of_delivery_array">
+        <item name="hbnc_place_of_delivery_1">घर</item>
+        <item name="hbnc_place_of_delivery_2">स्वास्थ्य केंद्र</item>
+        <item name="hbnc_place_of_delivery_3">सामुदायिक स्वास्थ्य केंद्र</item>
+        <item name="hbnc_place_of_delivery_4">प्राथमिक स्वास्थ्य केंद्र</item>
+    </string-array>
+
+    <string-array name="body_part_male">
+        <item>दाएं हाथ</item>
+        <item>बाएं हाथ</item>
+        <item>दाएं पैर</item>
+        <item>बाएं पैर</item>
+        <item>हाइड्रोसील</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>दाएं हाथ</item>
+        <item>बाएं हाथ</item>
+        <item>दाएं पैर</item>
+        <item>बाएं पैर</item>
+        <item>दाईं ओर स्तन</item>
+        <item>बाईं ओर स्तन</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (बुखार)</item>
+        <item>H (सिरदर्द)</item>
+        <item>B (शरीर में दर्द)</item>
+        <item>V (उल्टी)</item>
+        <item>N (नजला)</item>
+        <item>O (अन्य)</item>
+        <item>कोई नहीं</item>
+    </string-array>
 
 </resources>
