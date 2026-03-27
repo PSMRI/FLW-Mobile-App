@@ -59,7 +59,7 @@ class ImmunizationDueTypeFragment : Fragment() {
             viewModel.scope
         )
         binding.rvIconGrid.adapter = iconAdapter
-        iconAdapter.submitList(iconDataset.getImmunizationDataset())
+        iconAdapter.submitList(iconDataset.getImmunizationDataset(resources))
     }
 
     override fun onStart() {

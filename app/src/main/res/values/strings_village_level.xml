@@ -19,5 +19,15 @@
         <item>@string/place_community</item>
     </string-array>
 
+    <string name="maa_meeting_date">MAA Meeting Date</string>
+    <string name="meeting_photos_mom">Meeting Photos / MoM (%1$d)</string>
+
+    <string-array name="maa_meeting_place_array">
+        <item>@string/place_anganwadi</item>
+        <item>@string/place_hwc</item>
+        <item>@string/place_school</item>
+        <item>@string/place_community</item>
+    </string-array>
+
 </resources>
 

@@ -26,7 +26,7 @@
     <string name="do_you_want_to_download_the_abha_card">क्या आप आभा कार्ड डाउनलोड करना चाहते हैं?</string>
     <string name="yes">हाँ</string>
     <string name="no">नहीं</string>
-    <string name="submit">जमा करें</string>
+    <string name="submit">सबमिट करें</string>
 
     <string name="enter_mobile_number">मोबाइल संख्या दर्ज करें</string>
     <string name="enter_number_for_abha">आभा पंजीकरण के लिए आधार संख्या</string>
@@ -71,7 +71,7 @@
     <string name="enter_ben_name">लाभार्थी का नाम दर्ज करें</string>
     <string name="str_didnt_receive_otp">OTP नहीं मिला? कृपया प्रतीक्षा करें</string>
     <string name="str_declaration">मैं यह घोषणा करता/करती हूँ कि:</string>
-    <string name="add_mda_filaria_form_title">Add Filaria MDA Campaign</string>
+    <string name="add_mda_filaria_form_title">फाइलेरिया एमडीए अभियान जोड़े</string>
     <string name="history_of_mda_form_campaign">Filaria MDA Campaign History</string>
     <string name="history_of_mda_form_campaign_title">Annual Mass Drug Administration (MDA) campaign for cases of Lymphatic Filariasis (LF)</string>
 
