@@ -14,6 +14,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.Locale
 import androidx.core.content.FileProvider
 import javax.inject.Inject
 import com.squareup.moshi.Moshi
@@ -184,7 +185,7 @@ class MaaMeetingRepo @Inject constructor(
         }
 
     }
-    private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
     suspend fun isThreeMonthsPassedSinceLastMeeting(meetingDate: String?): Boolean =
         withContext(Dispatchers.IO) {
             if (meetingDate.isNullOrBlank()) return@withContext true

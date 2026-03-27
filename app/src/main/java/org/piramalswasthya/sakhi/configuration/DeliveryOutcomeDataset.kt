@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import java.util.Locale
 import android.util.Log
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
@@ -27,7 +28,7 @@ open class DeliveryOutcomeDataset(
     companion object{
         @Throws(Exception::class)
         fun getOneMonthLater(deliveryDate: String?): String {
-            val sdf: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+            val sdf: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val date: Date = sdf.parse(deliveryDate)
 
             val calendar: Calendar = Calendar.getInstance()
@@ -62,7 +63,7 @@ open class DeliveryOutcomeDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.do_delivery_place),
         entries = resources.getStringArray(R.array.do_place_of_delivery_array),
-        required = false,
+        required = true,
         hasDependants = false
     )
 

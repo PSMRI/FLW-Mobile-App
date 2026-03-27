@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemFilariaMemberListBinding
 import org.piramalswasthya.sakhi.databinding.RvItemKalaAzarMemberListBinding
 import org.piramalswasthya.sakhi.model.BenWithFilariaScreeningDomain
@@ -88,7 +89,7 @@ class FilariaMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            binding.btnFormTb.text = if (item.filaria == null) "Register" else "View"
+            binding.btnFormTb.text = if (item.filaria == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.filaria == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 

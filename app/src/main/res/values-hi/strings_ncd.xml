@@ -183,8 +183,8 @@
     <string name="tb_suspected_alert">चिकित्सा अधिकारी को भेजें और बलगम का नमूना लें</string>
     <string name="tb_suspected_alert_positive">चिकित्सा अधिकारी को भेजें</string>
     <string name="tb_suspected_family_alert">चिकित्सा अधिकारी को भेजें या आर एच ओ (RHO) को परिवार के सभी सदस्यों की जांच के लिए सूचित करें</string>
-    <string name="is_sputum_sample_collected">क्या बलगम का नमूना लिया गया है?</string>
-    <string name="sputum_sample_submitted_at">बलगम का नमूना जमा किया गया स्थान</string>
+    <string name="is_sputum_sample_collected">क्या बलगम (स्पुटम) नमूना लिया गया है?</string>
+    <string name="sputum_sample_submitted_at">बलगम नमूना जमा किया गया</string>
     <string name="nikshay_id">निक्षय आईडी</string>
     <string name="sputum_test_result">बलगम जांच का परिणाम</string>
     <string name="referred_to_facility">स्वास्थ्य केंद्र को भेजा गया</string>
@@ -193,6 +193,41 @@
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
     <string name="cbac_is_leprosy_suspected">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
     <string name="refer_to_hwc_facility_alert">क्या आप HWC सुविधा में रेफर करना चाहते हैं?</string>
+
+    <string-array name="cbac_waist_mes_female">
+        <item>80 सेमी या कम</item>
+        <item>81-90 सेमी</item>
+        <item>90 सेमी से अधिक</item>
+    </string-array>
+
+    <string-array name="cbac_waist_mes_male">
+        <item>90 सेमी या कम</item>
+        <item>91-100 सेमी</item>
+        <item>100 सेमी से अधिक</item>
+    </string-array>
+
+    <string-array name="cbac_type_Cooking_fuel">
+        <item>लकड़ी</item>
+        <item>फसल अवशेष</item>
+        <item>गोबर गैस</item>
+        <item>कोयला</item>
+        <item>मिट्टी का तेल</item>
+        <item>एलपीजी</item>
+    </string-array>
+
+    <string-array name="cbac_li">
+        <item>बिल्कुल नहीं</item>
+        <item>कई दिन</item>
+        <item>आधे से ज़्यादा दिन</item>
+        <item>लगभग हर दिन</item>
+    </string-array>
+
+    <string-array name="cbac_fd">
+        <item>बिल्कुल नहीं</item>
+        <item>कई दिन</item>
+        <item>आधे से ज़्यादा दिन</item>
+        <item>लगभग हर दिन</item>
+    </string-array>
 
 </resources>
 
