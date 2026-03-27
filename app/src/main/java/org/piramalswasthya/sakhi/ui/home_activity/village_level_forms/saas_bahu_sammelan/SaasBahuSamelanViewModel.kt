@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.repositories.SaasBahuSammelanRepo
 import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.register.BenRegisterCHOViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormFragmentArgs
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -73,6 +74,7 @@ class SaasBahuSamelanViewModel @Inject constructor(
             val ashaId = preferenceDao.getLoggedInUser()!!.userId
             saasBahuCache = SaasBahuSammelanCache(0, ashaId = ashaId )
 
+            Log.e("DataView","ABC$id")
            saasBahuDao.getById(id)?.let {
                 saasBahuCache = it
                 _recordExists.value = true

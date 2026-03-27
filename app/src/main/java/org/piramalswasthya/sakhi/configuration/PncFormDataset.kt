@@ -76,6 +76,7 @@ class PncFormDataset(
         etMaxLength = 3,
         max = 400,
         min = 0,
+        value = "0"
     )
 
     private val anyContraceptionMethod = FormElement(
