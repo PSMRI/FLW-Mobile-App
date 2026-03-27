@@ -38,7 +38,7 @@ class PncFormDataset(
     private val deliveryDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Delivery",
+        title = resources.getString(R.string.date_of_delivery),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -185,7 +185,7 @@ class PncFormDataset(
     private val otherPlaceOfDeath = FormElement(
         id = 55,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.other_place_of_death),
+        title = resources.getString(R.string.other_place_of_death),
         required = true,
         hasDependants = true,
     )
@@ -193,7 +193,7 @@ class PncFormDataset(
     private val dateOfSterilisation = FormElement(
         id = 56,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Sterilisation",
+        title = resources.getString(R.string.date_of_sterilisation),
         arrayId = -1,
         max = System.currentTimeMillis(),
         min = getMinDeliveryDate(),
@@ -204,8 +204,8 @@ class PncFormDataset(
     private val anySignOfDanger = FormElement(
         id = 57,
         inputType = InputType.RADIO,
-        title = "Any Danger Signs?\n" +
-                "Any High-risk identified?",
+        title = resources.getString(R.string.any_danger_signs) +
+                resources.getString(R.string.any_high_risk_identified),
         entries = resources.getStringArray(R.array.pnc_confirmation_array),
         required = false,
         hasDependants = true
@@ -214,7 +214,7 @@ class PncFormDataset(
     private val deliveryDischargeSummary1  = FormElement(
         id = 58,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 1",
+        title = resources.getString(R.string.delivery_discharge_summary_1),
         required = false
 
     )
@@ -222,21 +222,21 @@ class PncFormDataset(
     private val deliveryDischargeSummary2 = FormElement(
         id =59,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 2",
+        title = context.getString(R.string.delivery_discharge_summary_2),
         required = false
     )
 
     private val deliveryDischargeSummary3 = FormElement(
         id =60,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 3",
+        title = context.getString(R.string.delivery_discharge_summary_3),
         required = false
     )
 
     private val deliveryDischargeSummary4 = FormElement(
         id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 4",
+        title = context.getString(R.string.delivery_discharge_summary_4),
         required = false
     )
 

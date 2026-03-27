@@ -431,4 +431,27 @@
 
     </string-array>
 
+    <string-array name="ahd_health_status_array">
+        <item>Healthy</item>
+        <item>Anemic</item>
+        <item>Malnourished</item>
+    </string-array>
+
+    <string-array name="ahd_place_array">
+        <item>Home</item>
+        <item>Community center</item>
+        <item>School</item>
+        <item>Subcenter</item>
+    </string-array>
+
+    <string-array name="ahd_counseling_type_array">
+        <item>Individual</item>
+        <item>Group</item>
+    </string-array>
+
+    <string-array name="ahd_referral_status_array">
+        <item>Pending</item>
+        <item>Completed</item>
+    </string-array>
+
 </resources>
