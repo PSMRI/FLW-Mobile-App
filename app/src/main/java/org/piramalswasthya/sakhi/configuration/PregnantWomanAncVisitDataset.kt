@@ -719,8 +719,8 @@ class PregnantWomanAncVisitDataset(
                         in Konstants.minAnc4Week..Konstants.maxAnc4Week -> 4
                         else -> 0
                     }
-                    if (isAborted.value.equals("No", ignoreCase = true) &&
-                        maternalDeath.value.equals("No", ignoreCase = true)
+                    if (isAborted.value == isAborted.entries!!.first() &&
+                        maternalDeath.value == maternalDeath.entries!!.first()
                     ) {
                         ancVisit.value = calcVisitNumber.toString()
 
@@ -801,8 +801,8 @@ class PregnantWomanAncVisitDataset(
                     hrpConfirm
                 )
 
-                if (isAborted.value.equals("Yes", ignoreCase = true) ||
-                    maternalDeath.value.equals("Yes", ignoreCase = true)
+                if (isAborted.value == isAborted.entries!!.last() ||
+                    maternalDeath.value == maternalDeath.entries!!.last()
                 ) {
                     triggerDependants(
                         source = maternalDeath,
@@ -946,8 +946,8 @@ class PregnantWomanAncVisitDataset(
 
                 val week = weekOfPregnancy.value?.toIntOrNull()
 
-                if (maternalDeath.value.equals("Yes", ignoreCase = true) ||
-                    isAborted.value.equals("Yes", ignoreCase = true)
+                if (maternalDeath.value == maternalDeath.entries!!.last() ||
+                    isAborted.value == isAborted.entries!!.last()
                 ) {
                     triggerDependants(
                         source = maternalDeath,
