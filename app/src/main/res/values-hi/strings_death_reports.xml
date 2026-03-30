@@ -4,7 +4,7 @@
  <!--   <string name="cdr_form">बच्चे की मौत की रिपोर्ट (सीडीआर) फॉर्म</string>-->
 
     <string name="str_age">आयु</string>
-    <string name="str_visit">भेंट की तिथि</string>
+    <string name="str_visit">विज़िट की तिथि</string>
     <string name="str_gender">लिंग</string>
     <string name="str_father_name">पिता का नाम</string>
     <string name="str_address">पता</string>
@@ -14,9 +14,9 @@
     <string name="str_pincode">पिन कोड</string>
     <string name="str_landline">लैंडलाइन</string>
     <string name="str_mobile_number">मोबाइल नंबर</string>
-    <string name="str_date_of_death">मृत्यु तिथि</string>
+    <string name="str_date_of_death">मृत्यु की तिथि</string>
     <string name="str_time">समय</string>
-    <string name="str_place_of_death">मृत्यु स्थान</string>
+    <string name="str_place_of_death">मृत्यु का स्थान</string>
     <string name="str_name_of_first_informant">प्रथम सूचनादाता का नाम</string>
     <string name="str_name_of_asha">आशा का हस्ताक्षर/नाम</string>
     <string name="str_date_of_notification">सूचना की तिथि</string>
