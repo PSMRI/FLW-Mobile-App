@@ -343,6 +343,9 @@
         <action
             android:id="@+id/action_villageLevelFormsFragment_to_filariaMdaCampaignHistoryFragment"
             app:destination="@id/filariaMdaCampaignHistory" />
+        <action
+            android:id="@+id/action_villageLevelFormsFragment_to_saasBahuListFragment"
+            app:destination="@id/saasBahuSammelanListFragment" />
     </fragment>
 
     <fragment
@@ -607,7 +610,11 @@
         android:id="@+id/ncdPriorityListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_priority_list.NcdPriorityListFragment"
         android:label="@string/ncd_priority_list"
-        tools:layout="@layout/fragment_ncd_priority_list" />
+        tools:layout="@layout/fragment_ncd_priority_list">
+        <action
+            android:id="@+id/action_ncdPriorityListFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+    </fragment>
     <fragment
         android:id="@+id/surveyRegisterFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.survey_register.SurveyRegisterFragment"
@@ -769,6 +776,9 @@
             android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
             app:destination="@id/eyeSurgeryFormFragment" />
 
+        <action
+            android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
@@ -2229,6 +2239,10 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.sync_dashboard.SyncDashboardFragment"
         android:label="@string/sync_dashboard"
         tools:layout="@layout/fragment_sync_dashboard" />
+    <fragment
+        android:id="@+id/saasBahuSammelanListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSammelanListFragment"
+        android:label="SaasBahuSammelanListFragment" >
 
     <fragment
         android:id="@+id/eyeSurgeryBottomSheetFragment"
@@ -2239,4 +2253,8 @@
             app:destination="@id/eyeSurgeryFormFragment" />
     </fragment>
 
+        <action
+            android:id="@+id/action_saasBahuSamelanList_to_saasbahuFormFragment"
+            app:destination="@id/saasBahuSamelanFragment" />
+    </fragment>
 </navigation>

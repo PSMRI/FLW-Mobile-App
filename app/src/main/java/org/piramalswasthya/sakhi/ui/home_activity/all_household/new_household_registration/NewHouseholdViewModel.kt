@@ -75,6 +75,7 @@ class NewHouseholdViewModel @Inject constructor(
                     registrationType = isAshaFamily,
                     locationRecord = locationRecord
                 )
+                dataset.setVillages(user.villages)
                 dataset.setupPage(household)
             }
         }

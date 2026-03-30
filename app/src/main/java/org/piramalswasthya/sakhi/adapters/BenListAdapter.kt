@@ -29,6 +29,7 @@ class BenListAdapter(
     private val pref: PreferenceDao? = null,
     var context: FragmentActivity,
     private val isSoftDeleteEnabled: Boolean = false,
+    private val showActionButtons: Boolean = true,
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
 
@@ -65,7 +66,8 @@ class BenListAdapter(
             pref: PreferenceDao?,
             context: FragmentActivity,
             benIdList: List<Long>,
-            childCountMap: Map<Long, Int> = emptyMap()
+            childCountMap: Map<Long, Int> = emptyMap(),
+            showActionButtons: Boolean = true
         ) {
 
             if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
@@ -226,6 +228,13 @@ class BenListAdapter(
                 }
             }
 
+            if (!showActionButtons) {
+                binding.btnAbove30.visibility = View.GONE
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.GONE
+            }
+
             if (showBeneficiaries) {
                 if (item.spouseName == "Not Available" && item.fatherName == "Not Available") {
                     binding.father = true
@@ -351,7 +360,8 @@ class BenListAdapter(
             isSoftDeleteEnabled,
             pref,
             context,
-            benIds
+            benIds,
+            showActionButtons = showActionButtons
         )
     }
 

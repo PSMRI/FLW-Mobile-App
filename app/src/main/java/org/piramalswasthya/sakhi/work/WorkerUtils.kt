@@ -12,7 +12,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
-import androidx.work.OutOfQuotaPolicy
+
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkContinuation
 import androidx.work.WorkManager
@@ -47,10 +47,9 @@ object WorkerUtils {
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
-    /** Standard builder: network constraint + expedited + exponential backoff (30s → 60s → 120s …). */
+    /** Standard builder: network constraint + exponential backoff (30s → 60s → 120s …). */
     private inline fun <reified W : androidx.work.ListenableWorker> syncRequestBuilder(
     ) = OneTimeWorkRequestBuilder<W>()
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         .setConstraints(networkOnlyConstraint)
         .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
 
@@ -106,13 +105,15 @@ object WorkerUtils {
 
         // Start unique work chain with registration as the anchor.
         // All subsequent chains fan out from this single entry point.
-        // KEEP: If a push cycle is already running/enqueued, skip this request.
-        // The running cycle will pick up any new data. This prevents the
-        // feedback loop where each DB change re-triggers the entire chain.
+        // APPEND_OR_REPLACE: If a push cycle is already running, the new
+        // chain is queued after it completes. If the previous chain failed,
+        // it is replaced with a fresh chain. This ensures newly saved
+        // records are always picked up. processNewBen() uses a Mutex to
+        // prevent concurrent execution when two chains overlap.
         val afterRegistration = workManager
             .beginUniqueWork(
                 pushWorkerUniqueName,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 registration
             )
 

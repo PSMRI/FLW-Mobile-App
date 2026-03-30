@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.helpers.dynamicMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.utils.StringMappingUtil
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
@@ -56,14 +57,17 @@ object FormSubmitRequestMapper {
 
             val type = object : TypeToken<Map<String, Any?>>() {}.type
             val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
+            val englishFieldsMap = fieldsMap.mapValues { (_, v) ->
+                if (v is String) StringMappingUtil.convertDigits(v) else v
+            }
 
             FormSubmitRequest(
                 userName = userName,
                 formId = jsonObj.optString("formId"),
                 beneficiaryId = jsonObj.optLong("beneficiaryId"),
                 houseHoldId = jsonObj.optLong("houseHoldId"),
-                visitDate = jsonObj.optString("visitDate"),
-                fields = fieldsMap
+                visitDate = StringMappingUtil.convertDigits(jsonObj.optString("visitDate")),
+                fields = englishFieldsMap
             )
         } catch (e: Exception) {
             e.printStackTrace()

@@ -61,6 +61,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             if (isDisease) {
                 binding.button4.visibility = View.GONE
                 if (diseaseType == IconDataset.Disease.FILARIA.getTitle(binding.root.context) ) {
+                    binding.button4.visibility = View.INVISIBLE
                     binding.btnMda.visibility = View.VISIBLE
                 } else {
                     binding.btnMda.visibility = View.GONE

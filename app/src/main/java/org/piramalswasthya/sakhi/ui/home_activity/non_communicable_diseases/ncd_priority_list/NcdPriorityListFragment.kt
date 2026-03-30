@@ -58,9 +58,21 @@ class NcdPriorityListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
 
         val benAdapter = BenListAdapter(
+            clickListener = BenListAdapter.BenClickListener(
+                { _, _, _, _ -> },
+                clickedWifeBen = { _, _, _, _ -> },
+                clickedHusbandBen = { _, _, _, _ -> },
+                clickedChildben = { _, _, _, _ -> },
+                { _, _ -> },
+                { _, _, _ -> },
+                { _, _, _, _, _ -> },
+                { },
+                { },
+            ),
             showBeneficiaries = true,
             pref = prefDao,
-            context = requireActivity()
+            context = requireActivity(),
+            showActionButtons = false
         )
         binding.rvAny.adapter = benAdapter
 

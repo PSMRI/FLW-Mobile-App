@@ -37,13 +37,7 @@ class GenerateBenIdsWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                setForeground(createForegroundInfo())
-            } catch (_: Throwable) {
-                // Expedited work handles foreground promotion; ignore failures here
-            }
-            benRepo.getBenIdsGeneratedFromServer()
+        return try {            benRepo.getBenIdsGeneratedFromServer()
             Result.success()
         } catch (e: Exception) {
             Timber.e("Caught Exception for Gen Ben iD worker $e")
