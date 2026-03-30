@@ -95,6 +95,31 @@
         <item>OTHER</item>
     </string-array>
 
+    <string-array name="method_of_contraception_for_zero_child">
+        <item>स्वयं</item>
+        <item>अंतरा इंजेक्शन</item>
+        <item>कॉपर टी (आईयूसीडी)</item>
+        <item>कंडोम</item>
+        <item>माला एन</item>
+        <item>छाया</item>
+        <item>आपातकालीन गर्भनिरोधक गोली (ईसीपी)</item>
+        <item>कोई अन्य विधि</item>
+    </string-array>
+
+    <string-array name="method_of_contraception">
+        <item>स्वयं</item>
+        <item>अंतरा इंजेक्शन</item>
+        <item>कॉपर टी (आईयूसीडी)</item>
+        <item>कंडोम</item>
+        <item>माला एन</item>
+        <item>छाया</item>
+        <item>आपातकालीन गर्भनिरोधक गोली (ईसीपी)</item>
+        <item>पुरुष नसबंदी</item>
+        <item>महिला नसबंदी</item>
+        <item>मिनीलैप</item>
+        <item>कोई अन्य विधि</item>
+    </string-array>
+
     <!-- PMSMA Strings -->
     <string name="pmsma_mcts_rch_number">MCTS नंबर / RCH नंबर</string>
     <string name="pmsma_have_mcp_card">क्या लाभार्थी के पास एक एमसीपी कार्ड है</string>
@@ -162,10 +187,10 @@
     <string name="do_death_cause">मौत के संभावित कारण</string>
     <string name="do_other_death_cause">अन्य मौत के कारण</string>
     <string name="do_other_delivery_complication">अन्य प्रसव समस्या</string>
-    <string name="do_delivery_outcome">पजन्म लेने वाले शिशुओं की कुल संख्या</string>
-    <string name="do_live_birth">जीवित जन्म</string>
-    <string name="do_still_birth">स्थित जन्म</string>
-    <string name="do_discharge_date">निष्कर्षण की तारीख</string>
+    <string name="do_delivery_outcome">कुल जन्म (जन्मे शिशुओं की कुल संख्या)</string>
+    <string name="do_live_birth">जीवित जन्मों की संख्या</string>
+    <string name="do_still_birth">मृत जन्मों की संख्या</string>
+    <string name="do_discharge_date">छुट्टी की तारीख</string>
     <string name="do_discharge_time">निष्कर्षण का समय</string>
     <string name="do_is_jsy_beneficiary">क्या गर्भवती महिला जेएसवाई लाभार्थी है?</string>
     <string-array name="do_place_of_delivery_array">
@@ -218,16 +243,16 @@
     <string name="pnc_visit_date">PNC दौरे की तारीख</string>
     <string name="pnc_ifa_tabs_given">दी गई IFA गोलियों की संख्या</string>
     <string name="pnc_contraception_method">गर्भनिरोध का तरीका</string>
-    <string name="pnc_any_contraception_method">कोई भी गर्भनिरोध का तरीका</string>
+    <string name="pnc_any_contraception_method">क्या प्रसव के बाद दंपति ने कोई परिवार नियोजन विधि अपनाई है? \n कोई भी गर्भनिरोध का तरीका</string>
     <string name="pnc_other_ppc_method">अन्य PPC तरीका</string>
-    <string name="pnc_mother_danger_sign">मां का खतरनाक संकेत</string>
+    <string name="pnc_mother_danger_sign">माँ को खतरे के संकेत</string>
     <string name="pnc_other_danger_sign">अन्य खतरनाक संकेत</string>
-    <string name="pnc_referral_facility">संदर्भ सुविधा</string>
+    <string name="pnc_referral_facility">रेफरल सुविधा</string>
     <string name="pnc_mother_death">मां की मौके पर मौत</string>
-    <string name="pnc_death_date">मौत की तारीख</string>
+    <string name="pnc_death_date">मृत्यु की तिथि</string>
     <string name="pnc_death_cause">मां की मौत का संभावित कारण</string>
     <string name="pnc_other_death_cause">अन्य मौत का कारण</string>
-    <string name="pnc_death_place">मौत का स्थान</string>
+    <string name="pnc_death_place">मृत्यु का स्थान</string>
     <string name="pnc_remarks">टिप्पणियां</string>
     <string-array name="pnc_period_array">
         <item>पहला दिन</item>
@@ -253,11 +278,11 @@
     </string-array>
 
     <string-array name="pnc_mother_danger_sign_array">
-        <item>PPH (पोस्ट पार्टम हेमोरेज)</item>
+        <item>पीपीएच – अत्यधिक रक्तस्राव</item>
         <item>बुखार</item>
-        <item>सेप्सिस</item>
-        <item>गंभीर पेट दर्द</item>
-        <item>गंभीर सिरदर्द या ब्लर्ड विजन</item>
+        <item>सेप्सिस (गंभीर संक्रमण)</item>
+        <item>पेट में तेज दर्द</item>
+        <item>तेज सिरदर्द या धुंधला दिखाई देना </item>
         <item>सांस लेने में कठिनाई</item>
         <item>पेशाब, त्वचा या आँखों का पीलापन</item>
         <item>त्वचा या आँखों का पीला पड़ना </item>
@@ -276,7 +301,7 @@
         <item>हेमोरेज (PPH)</item>
         <item>एनीमिया</item>
         <item>उच्च बुखार</item>
-        <item>पूति</item>
+        <item>संक्रमण</item>
         <item>दुर्घटना</item>
         <item>कोई अन्य</item>
     </string-array>
@@ -359,7 +384,7 @@
     <string name="str_any_high_risk_cond">कोई उच्च जोखिम वाली स्थितियाँ</string>
     <string name="str_high_risk_cond">उच्च जोखिम वाली स्थितियाँ</string>
     <string name="str_any_other_high_risk_cond">कोई अन्य उच्च जोखिम वाली स्थितियाँ</string>
-    <string name="str_referral_facility">रेफ़रल स्वास्थ्य केंद्र</string>
+    <string name="str_referral_facility">रेफरल सुविधा</string>
     <string name="str_hrp_confirmed">क्या एचआरपी (उच्च जोखिम) की पुष्टि हुई है?</string>
     <string name="str_identified_as_hrp">HRP (उच्च जोखिम वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
     <string name="str_maternal_death">मातृ मृत्यु</string>

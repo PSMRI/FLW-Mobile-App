@@ -55,11 +55,6 @@ abstract class BaseDynamicWorker(
         }
         initTokens()
         return try {
-            try {
-                setForeground(createForegroundInfo("Syncing data..."))
-            } catch (_: Throwable) {
-                // Expedited work handles foreground promotion; ignore failures here
-            }
             doSyncWork()
         } catch (e: IllegalStateException) {
             Timber.e(e, "[$workerName] failed: ${e.message}")

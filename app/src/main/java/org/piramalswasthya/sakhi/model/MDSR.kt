@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @Entity(
     tableName = "MDSR",
@@ -126,21 +127,21 @@ data class MdsrPost(
 fun getMonth(): String {
     val calendar = Calendar.getInstance()
     val date = calendar.time
-    val month = SimpleDateFormat("MM").format(date) // always 2 digits
+    val month = SimpleDateFormat("MM", Locale.ENGLISH).format(date) // always 2 digits
     return month
 }
 
 fun getYear(): String {
     val calendar = Calendar.getInstance()
     val date = calendar.time
-    val year = SimpleDateFormat("yyyy").format(date) // 4 digit y
+    val year = SimpleDateFormat("yyyy", Locale.ENGLISH).format(date) // 4 digit y
     return year
 }
 
 fun getDays(): String {
     val calendar = Calendar.getInstance()
     val date = calendar.time
-    val days = SimpleDateFormat("dd").format(date) // 2 digit y
+    val days = SimpleDateFormat("dd", Locale.ENGLISH).format(date) // 2 digit y
     return days
 }
 

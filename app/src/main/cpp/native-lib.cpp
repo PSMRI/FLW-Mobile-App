@@ -6,7 +6,7 @@
 
 
 // ================== Development Constants ================== //
- #ifdef IS_DEVELOPMENT
+ #if IS_DEVELOPMENT
  const char* M_ENCRYPTED_PASS_KEY = "Piramal12Piramal";
  const char* M_ABHA_CLIENT_SECRET = "87b7eb89-b236-43b6-82b0-6eef154a9b90";
  const char* M_ABHA_CLIENT_ID = "SBX_001542";
