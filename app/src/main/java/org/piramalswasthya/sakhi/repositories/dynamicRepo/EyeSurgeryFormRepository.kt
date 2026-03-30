@@ -7,8 +7,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -16,6 +18,7 @@ import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -28,17 +31,16 @@ class EyeSurgeryFormRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("gsonAmritApi") private val amritApiService: AmritApiService,
     private val pref: PreferenceDao,
-    private val db: InAppDb
+    private val db: InAppDb,
+    private val ncdReferalRepo: NcdReferalRepo
 ) {
     private val formSchemaDao = db.formSchemaDao()
     private val jsonResponseDao = db.formResponseJsonDaoEyeSurgery()
 
     suspend fun getFormSchema(formId: String): FormSchemaDto? = withContext(Dispatchers.IO) {
         var result: FormSchemaDto? = null
-
         try {
-            val response = amritApiService.fetchFormSchema(formId,pref.getCurrentLanguage().symbol)
-
+            val response = amritApiService.fetchFormSchema(formId, pref.getCurrentLanguage().symbol)
             if (response.isSuccessful) {
                 val apiResponse = response.body()
                 if (apiResponse?.success == true) {
@@ -52,8 +54,7 @@ class EyeSurgeryFormRepository @Inject constructor(
                     }
                 }
             }
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
 
         if (result == null) {
             val dbSchema = formSchemaDao.getSchema(formId)
@@ -68,9 +69,7 @@ class EyeSurgeryFormRepository @Inject constructor(
             val json = context.assets.open("hbnc_form_1stday.json")
                 .bufferedReader().use { it.readText() }
             FormSchemaDto.fromJson(json)
-        } catch (e: Exception) {
-            null
-        }
+        } catch (e: Exception) { null }
     }
 
     suspend fun saveFormSchemaToDb(schema: FormSchemaDto) {
@@ -89,13 +88,14 @@ class EyeSurgeryFormRepository @Inject constructor(
     suspend fun getSyncedVisitsByRchId(benId: Long): List<EyeSurgeryFormResponseJsonEntity> =
         jsonResponseDao.getSyncedVisitsByRchId(benId)
 
-    suspend fun getAllFormVisits(formName: String, request: HBNCVisitRequest): Response<HBNCVisitListResponse> {
-        return amritApiService.getAllEyeSurgeryFormVisits(formName, request)
-    }
+    // NEW
+    suspend fun getAllVisitsByBenId(benId: Long): List<EyeSurgeryFormResponseJsonEntity> =
+        jsonResponseDao.getAllVisitsByBenId(benId)
 
-    suspend fun getAllBenIds(): List<Long> {
-        return jsonResponseDao.getAllUniqueBenIds()
-    }
+    suspend fun getAllFormVisits(formName: String, request: HBNCVisitRequest): Response<HBNCVisitListResponse> =
+        amritApiService.getAllEyeSurgeryFormVisits(formName, request)
+
+    suspend fun getAllBenIds(): List<Long> = jsonResponseDao.getAllUniqueBenIds()
 
     private fun toMonthKey(dateStr: String?): String {
         if (dateStr.isNullOrBlank()) return ""
@@ -119,11 +119,9 @@ class EyeSurgeryFormRepository @Inject constructor(
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {
         try {
             if (list.isEmpty()) return
-
             val entityList = list.mapNotNull { item ->
                 try {
                     if (item.fields == null) return@mapNotNull null
-
                     val visitDate = item.visitDate ?: "-"
                     val visitMonth = toMonthKey(visitDate)
                     val benId = item.beneficiaryId
@@ -170,14 +168,8 @@ class EyeSurgeryFormRepository @Inject constructor(
                     null
                 }
             }
-
-            if (entityList.isNotEmpty()) {
-                insertAllByMonth(entityList)
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+            if (entityList.isNotEmpty()) insertAllByMonth(entityList)
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     @WorkerThread
@@ -187,6 +179,10 @@ class EyeSurgeryFormRepository @Inject constructor(
 
     suspend fun insertFormResponse(entity: EyeSurgeryFormResponseJsonEntity) =
         jsonResponseDao.upsertByMonth(entity)
+
+    // NEW: upsert by eye
+    suspend fun upsertByEye(entity: EyeSurgeryFormResponseJsonEntity) =
+        jsonResponseDao.upsertByEye(entity)
 
     suspend fun loadFormResponseJson(benId: Long, formId: String): String? =
         jsonResponseDao.getLatestForBenForm(benId, formId)?.formDataJson
@@ -199,13 +195,29 @@ class EyeSurgeryFormRepository @Inject constructor(
             val request = FormSubmitRequestMapper.fromEntity(form, userName) ?: return false
             val response = amritApiService.submitEyeSurgeryForm(formName, listOf(request))
             response.isSuccessful
-        } catch (e: Exception) {
-            false
-        }
+        } catch (e: Exception) { false }
     }
 
     suspend fun markFormAsSynced(id: Int) {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(Date())
         jsonResponseDao.markAsSynced(id, timestamp)
     }
+
+    suspend fun saveReferral(benId: Long, referredTo: String,referralReasons: String) {
+        try {
+            val referalCache = ReferalCache(
+                benId = benId,
+                referralReason = referralReasons,
+                referredToInstituteName = referredTo,
+                type = "Cataract Surgery",
+                revisitDate = System.currentTimeMillis(),
+                createdBy = pref.getLoggedInUser()?.userName,
+                syncState = SyncState.UNSYNCED
+            )
+            ncdReferalRepo.saveReferedNCD(referalCache)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }

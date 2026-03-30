@@ -54,7 +54,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="@dimen/_5sdp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_due_date"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_name" />
 
@@ -71,6 +71,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Ebababebabisa" />
 
+                <TextView
+                    android:id="@+id/tv_due_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:text="@{@string/due_date_label(vaccine.dueDate)}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="@color/md_theme_light_outline"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                    tools:text="Due: 12-01-2024" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVaccine"
                     vaccineState="@{vaccine.state}"

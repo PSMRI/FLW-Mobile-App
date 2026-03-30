@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao
 
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -41,16 +40,33 @@ interface EyeSurgeryFormResponseJsonDao {
     @Query("SELECT formDataJson FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId")
     suspend fun getFormJsonList(benId: Long, formId: String): List<String>
 
-    // NEW: month-keyed helpers for uniqueness/upsert
     @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId AND visitMonth = :visitMonth LIMIT 1")
     suspend fun getByBenFormMonth(benId: Long, formId: String, visitMonth: String): EyeSurgeryFormResponseJsonEntity?
 
     @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId ORDER BY visitMonth DESC LIMIT 1")
     suspend fun getLatestForBenForm(benId: Long, formId: String): EyeSurgeryFormResponseJsonEntity?
 
+
+    @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId AND formId = :formId AND eyeSide = :eyeSide LIMIT 1")
+    suspend fun getByBenAndEye(
+        benId: Long,
+        formId: String,
+        eyeSide: String
+    ): EyeSurgeryFormResponseJsonEntity?
+
+    @Query("SELECT * FROM ALL_EYE_SURGERY_VISIT_HISTORY WHERE benId = :benId ORDER BY createdAt ASC")
+    suspend fun getAllVisitsByBenId(benId: Long): List<EyeSurgeryFormResponseJsonEntity>
+
     @Transaction
     suspend fun upsertByMonth(entity: EyeSurgeryFormResponseJsonEntity) {
         val existing = getByBenFormMonth(entity.benId, entity.formId, entity.visitMonth)
+        val toSave = existing?.let { entity.copy(id = it.id) } ?: entity
+        insertFormResponse(toSave)
+    }
+
+    @Transaction
+    suspend fun upsertByEye(entity: EyeSurgeryFormResponseJsonEntity) {
+        val existing = getByBenAndEye(entity.benId, entity.formId, entity.eyeSide)
         val toSave = existing?.let { entity.copy(id = it.id) } ?: entity
         insertFormResponse(toSave)
     }
