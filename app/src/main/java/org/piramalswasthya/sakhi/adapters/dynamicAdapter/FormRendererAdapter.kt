@@ -590,6 +590,346 @@
                     }
 
 
+//                    "date" -> {
+//                        val context = itemView.context
+//                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+//                        val today = Calendar.getInstance().time
+//                        val todayStr = sdf.format(today)
+//
+//                        if (field.fieldId == "visit_date" &&
+//                            (field.value == null || (field.value as? String)?.isBlank() == true)
+//                        ) {
+//                            field.value = todayStr
+//                        }
+//
+//                        val isFieldDisabled = field.fieldId == "due_date"
+//                        val isFieldEditable = field.isEditable && !isViewOnly && !isFieldDisabled
+//
+//                        val textInputLayout = TextInputLayout(
+//                            context, null,
+//                            com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox
+//                        ).apply {
+//                            layoutParams = LinearLayout.LayoutParams(
+//                                ViewGroup.LayoutParams.MATCH_PARENT,
+//                                ViewGroup.LayoutParams.WRAP_CONTENT
+//                            ).apply { setMargins(0, 16, 0, 8) }
+//
+//                            hint = field.placeholder ?: "Select ${field.label}"
+//                            boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+//                            boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
+//                            boxStrokeWidthFocused = 2
+//                            setBoxCornerRadii(12f, 12f, 12f, 12f)
+//                        }
+//
+//                        val editText = TextInputEditText(context).apply {
+//                            layoutParams = LinearLayout.LayoutParams(
+//                                ViewGroup.LayoutParams.MATCH_PARENT,
+//                                ViewGroup.LayoutParams.WRAP_CONTENT
+//                            )
+//                            setPadding(32, 24, 32, 24)
+//                            background = null
+//                            setText(field.value as? String ?: "")
+//                            isFocusable = false
+//                            isClickable = isFieldEditable
+//                            isEnabled = isFieldEditable
+//                            setCompoundDrawablesWithIntrinsicBounds(
+//                                null, null,
+//                                ContextCompat.getDrawable(context, R.drawable.ic_calendar),
+//                                null
+//                            )
+//                            compoundDrawablePadding = 24
+//                            setTextColor(ContextCompat.getColor(context, android.R.color.black))
+//                            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+//                        }
+//
+//                        textInputLayout.addView(editText)
+//
+//                        fun getDate(fieldId: String): Date? {
+//                            val v = fields.find { it.fieldId == fieldId }?.value as? String
+//                            return try { sdf.parse(v ?: "") } catch (e: Exception) { null }
+//                        }
+//
+//                        fun setError(fieldId: String, msg: String) {
+//                            val f = fields.find { it.fieldId == fieldId }
+//                            f?.errorMessage = msg
+//                            notifyItemChanged(fields.indexOf(f))
+//                        }
+//
+//                        fun clearError(fieldId: String) {
+//                            val f = fields.find { it.fieldId == fieldId }
+//                            if (f?.errorMessage != null) {
+//                                f.errorMessage = null
+//                                notifyItemChanged(fields.indexOf(f))
+//                            }
+//                        }
+//
+//                        if (isFieldEditable) {
+//                            editText.setOnClickListener {
+//                                val activity = editText.context.findFragmentActivity()
+//                                    ?: return@setOnClickListener
+//                                val originalLocale = Locale.getDefault()
+//                                HelperUtil.setEnLocaleForDatePicker(activity)
+//
+//                                val calendar = Calendar.getInstance()
+//
+//                                var minDate: Date? = null
+//                                var maxDate: Date? = null
+//
+//                                if (field.fieldId == "ifa_provision_date") {
+//                                    minDate = minVisitDate
+//                                    maxDate = maxVisitDate
+//
+//                                    if (minDate == null) {
+//                                        calendar.time = today
+//                                        calendar.add(Calendar.MONTH, -2)
+//                                        minDate = calendar.time
+//                                    }
+//                                    if (maxDate == null) {
+//                                        maxDate = today
+//                                    }
+//                                }
+//                                else {
+//
+//
+//                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+//                                        minDate = minVisitDate
+//                                        maxDate = maxVisitDate
+//
+//                                        if (minDate == null) {
+//                                            calendar.time = today
+//                                            calendar.add(Calendar.MONTH, -2)
+//                                            minDate = calendar.time
+//                                        }
+//                                        if (maxDate == null) {
+//                                            maxDate = today
+//                                        }
+//                                    } else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+//                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN ) {
+//                                        if (field.fieldId == "end_date") {
+//                                            val startDateValue = getDate("start_date")
+//                                            if (startDateValue != null) {
+//                                                val minDateCalendar = Calendar.getInstance()
+//                                                minDateCalendar.time = startDateValue
+//                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
+//                                                minDate = minDateCalendar.time
+//                                            } else {
+//                                                minDate = minVisitDate
+//                                            }
+//                                        } else {
+//                                            minDate = minVisitDate
+//                                        }
+//
+//                                        maxDate = maxVisitDate
+//
+//                                        if (minDate == null) {
+//                                            calendar.time = today
+//                                            calendar.add(Calendar.MONTH, -2)
+//                                            minDate = calendar.time
+//                                        }
+//                                        if (maxDate == null) {
+//                                            maxDate = today
+//                                        }
+//                                    }
+//                                    else{
+//                                        minDate = when (field.fieldId) {
+//                                            "visit_date" -> {
+//                                                if (formId == FormConstants.HBNC_FORM_ID) {
+//                                                    val dueDate = getDate("due_date")
+//                                                    when {
+//                                                        dueDate != null && minVisitDate != null ->
+//                                                            if (dueDate.after(minVisitDate)) dueDate else minVisitDate
+//                                                        dueDate != null -> dueDate
+//                                                        minVisitDate != null -> minVisitDate
+//                                                        else -> null
+//                                                    }
+//                                                } else {
+//                                                    null
+//                                                }
+//                                            }
+//                                            "nrc_admission_date" -> getDate("visit_date")
+//                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
+//                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
+//                                            else -> null
+//                                        }
+//                                        maxDate = today
+//                                    }
+//
+//                                }
+//
+//                                DatePickerDialog(
+//                                    context,
+//                                    { _, year, month, dayOfMonth ->
+//
+//                                        val dateStr = String.format(
+//                                            Locale.ENGLISH,
+//                                            "%02d-%02d-%04d",
+//                                            dayOfMonth,
+//                                            month + 1,
+//                                            year
+//                                        )
+//
+//                                        editText.setText(dateStr)
+//                                        field.value = dateStr
+//                                        onValueChanged(field, dateStr)
+//                                        field.errorMessage = null
+//
+//                                        if (field.fieldId == "ifa_provision_date") {
+//                                            val selectedDate = sdf.parse(dateStr)
+//                                            if (minDate != null && selectedDate.before(minDate)) {
+//                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
+//                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
+//                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
+//                                            }
+//                                            notifyItemChanged(adapterPosition)
+//                                        }
+//
+//                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+//                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
+//                                            val selectedDate = sdf.parse(dateStr)
+//                                            if (minDate != null && selectedDate.before(minDate)) {
+//                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
+//                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
+//                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
+//                                            }
+//
+//                                            if (field.fieldId == "end_date") {
+//                                                val startDateValue = getDate("start_date")
+//                                                if (startDateValue != null) {
+//                                                    val minEndDate = Calendar.getInstance()
+//                                                    minEndDate.time = startDateValue
+//                                                    minEndDate.add(Calendar.DAY_OF_MONTH, 1)
+//                                                    minEndDate.set(Calendar.HOUR_OF_DAY, 0)
+//                                                    minEndDate.set(Calendar.MINUTE, 0)
+//                                                    minEndDate.set(Calendar.SECOND, 0)
+//                                                    minEndDate.set(Calendar.MILLISECOND, 0)
+//
+//                                                    val selectedDateCal = Calendar.getInstance()
+//                                                    selectedDateCal.time = selectedDate
+//                                                    selectedDateCal.set(Calendar.HOUR_OF_DAY, 0)
+//                                                    selectedDateCal.set(Calendar.MINUTE, 0)
+//                                                    selectedDateCal.set(Calendar.SECOND, 0)
+//                                                    selectedDateCal.set(Calendar.MILLISECOND, 0)
+//
+//                                                    val startDateCal = Calendar.getInstance()
+//                                                    startDateCal.time = startDateValue
+//                                                    startDateCal.set(Calendar.HOUR_OF_DAY, 0)
+//                                                    startDateCal.set(Calendar.MINUTE, 0)
+//                                                    startDateCal.set(Calendar.SECOND, 0)
+//                                                    startDateCal.set(Calendar.MILLISECOND, 0)
+//
+//                                                    if (selectedDateCal.before(minEndDate) || selectedDateCal.time == startDateCal.time) {
+//                                                        field.errorMessage = "End date must be at least 1 day after start date (${sdf.format(minEndDate.time)})"
+//                                                    }
+//                                                }
+//                                            }
+//
+//                                            if (field.errorMessage != null) {
+//                                                notifyItemChanged(adapterPosition)
+//                                            }
+//                                        }
+//
+//                                        when (field.fieldId) {
+//                                            "start_date" -> {
+//                                                if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+//                                                    formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
+//                                                    val endDateField = fields.find { it.fieldId == "end_date" }
+//                                                    if (endDateField != null) {
+//                                                        val startDateParsed = sdf.parse(dateStr)
+//                                                        if (startDateParsed != null) {
+//                                                            val minEndDate = Calendar.getInstance()
+//                                                            minEndDate.time = startDateParsed
+//                                                            minEndDate.add(Calendar.DAY_OF_MONTH, 1)
+//                                                            endDateField.validation?.minDate = sdf.format(minEndDate.time)
+//                                                            notifyItemChanged(fields.indexOf(endDateField))
+//
+//                                                            val existingEndDate = getDate("end_date")
+//                                                            if (existingEndDate != null) {
+//                                                                val existingEndDateCal = Calendar.getInstance()
+//                                                                existingEndDateCal.time = existingEndDate
+//                                                                existingEndDateCal.set(Calendar.HOUR_OF_DAY, 0)
+//                                                                existingEndDateCal.set(Calendar.MINUTE, 0)
+//                                                                existingEndDateCal.set(Calendar.SECOND, 0)
+//                                                                existingEndDateCal.set(Calendar.MILLISECOND, 0)
+//
+//                                                                val startDateCal = Calendar.getInstance()
+//                                                                startDateCal.time = startDateParsed
+//                                                                startDateCal.set(Calendar.HOUR_OF_DAY, 0)
+//                                                                startDateCal.set(Calendar.MINUTE, 0)
+//                                                                startDateCal.set(Calendar.SECOND, 0)
+//                                                                startDateCal.set(Calendar.MILLISECOND, 0)
+//
+//                                                                if (existingEndDateCal.before(minEndDate) || existingEndDateCal.time == startDateCal.time) {
+//                                                                    setError("end_date", "End date must be at least 1 day after start date")
+//                                                                } else {
+//                                                                    clearError("end_date")
+//                                                                }
+//                                                            }
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
+//
+//                                            "visit_date" -> {
+//                                                val admission = fields.find { it.fieldId == "nrc_admission_date" }
+//                                                admission?.validation?.minDate = dateStr
+//                                                notifyItemChanged(fields.indexOf(admission))
+//                                                clearError("nrc_admission_date")
+//                                            }
+//
+//                                            "nrc_admission_date" -> {
+//                                                val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
+//                                                discharge?.validation?.minDate = dateStr
+//                                                notifyItemChanged(fields.indexOf(discharge))
+//
+//                                                val dischargeDate = getDate("nrc_discharge_date")
+//                                                val admissionDate = sdf.parse(dateStr)
+//
+//                                                if (dischargeDate != null && dischargeDate.before(admissionDate)) {
+//                                                    setError("nrc_discharge_date", "Discharge cannot be before admission")
+//                                                } else {
+//                                                    clearError("nrc_discharge_date")
+//                                                }
+//                                            }
+//
+//                                            "nrc_discharge_date" -> {
+//                                                val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
+//                                                followUp?.validation?.minDate = dateStr
+//                                                notifyItemChanged(fields.indexOf(followUp))
+//
+//                                                val followDate = getDate("follow_up_visit_date")
+//                                                val dischargeDate = sdf.parse(dateStr)
+//
+//                                                if (followDate != null && followDate.before(dischargeDate)) {
+//                                                    setError("follow_up_visit_date", "Follow-up cannot be before discharge")
+//                                                } else {
+//                                                    clearError("follow_up_visit_date")
+//                                                }
+//                                            }
+//                                        }
+//                                    },
+//                                    calendar.get(Calendar.YEAR),
+//                                    calendar.get(Calendar.MONTH),
+//                                    calendar.get(Calendar.DAY_OF_MONTH)
+//                                ).apply {
+//                                    minDate?.let { datePicker.minDate = it.time }
+//                                    maxDate?.let { datePicker.maxDate = it.time }
+//
+//                                    if (minDate != null && maxDate != null && minDate.after(maxDate)) {
+//                                        datePicker.minDate = maxDate.time
+//                                    }
+//
+//                                    setOnDismissListener {
+//                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+//                                    }
+//
+//                                }.show()
+//                            }
+//                        }
+//
+//                        addWithError(textInputLayout, field)
+//                    }
+
+
                     "date" -> {
                         val context = itemView.context
                         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -690,8 +1030,7 @@
                                 }
                                 else {
 
-
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID || formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -703,15 +1042,17 @@
                                         if (maxDate == null) {
                                             maxDate = today
                                         }
-                                    } else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
-                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN ) {
+                                    }
+                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                        formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
+
                                         if (field.fieldId == "end_date") {
                                             val startDateValue = getDate("start_date")
                                             if (startDateValue != null) {
-                                                val minDateCalendar = Calendar.getInstance()
-                                                minDateCalendar.time = startDateValue
-                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
-                                                minDate = minDateCalendar.time
+                                                val cal = Calendar.getInstance()
+                                                cal.time = startDateValue
+                                                cal.add(Calendar.DAY_OF_MONTH, 1)
+                                                minDate = cal.time
                                             } else {
                                                 minDate = minVisitDate
                                             }
@@ -719,47 +1060,46 @@
                                             minDate = minVisitDate
                                         }
 
-                                        maxDate = maxVisitDate
+                                        maxDate = maxVisitDate ?: today
+                                    }
+                                    else {
 
-                                        if (minDate == null) {
-                                            calendar.time = today
-                                            calendar.add(Calendar.MONTH, -2)
-                                            minDate = calendar.time
+                                        // ✅ NEW LOGIC
+                                        if (formId == FormConstants.EYE_SURGERY_FORM_ID &&
+                                            (field.fieldId == "visit_date" || field.fieldId == "date_of_surgery")){
+                                            val cal = Calendar.getInstance()
+                                            cal.time = today
+                                            cal.add(Calendar.MONTH, -1)
+                                            minDate = cal.time
+                                            maxDate = today
                                         }
-                                        if (maxDate == null) {
+                                        else {
+                                            minDate = when (field.fieldId) {
+                                                "visit_date" -> {
+                                                    if (formId == FormConstants.HBNC_FORM_ID) {
+                                                        val dueDate = getDate("due_date")
+                                                        when {
+                                                            dueDate != null && minVisitDate != null ->
+                                                                if (dueDate.after(minVisitDate)) dueDate else minVisitDate
+                                                            dueDate != null -> dueDate
+                                                            minVisitDate != null -> minVisitDate
+                                                            else -> null
+                                                        }
+                                                    } else null
+                                                }
+                                                "nrc_admission_date" -> getDate("visit_date")
+                                                "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                                "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                                else -> null
+                                            }
                                             maxDate = today
                                         }
                                     }
-                                    else{
-                                        minDate = when (field.fieldId) {
-                                            "visit_date" -> {
-                                                if (formId == FormConstants.HBNC_FORM_ID) {
-                                                    val dueDate = getDate("due_date")
-                                                    when {
-                                                        dueDate != null && minVisitDate != null ->
-                                                            if (dueDate.after(minVisitDate)) dueDate else minVisitDate
-                                                        dueDate != null -> dueDate
-                                                        minVisitDate != null -> minVisitDate
-                                                        else -> null
-                                                    }
-                                                } else {
-                                                    null
-                                                }
-                                            }
-                                            "nrc_admission_date" -> getDate("visit_date")
-                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                            else -> null
-                                        }
-                                        maxDate = today
-                                    }
-
                                 }
 
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-
                                         val dateStr = String.format(
                                             Locale.ENGLISH,
                                             "%02d-%02d-%04d",
@@ -772,140 +1112,6 @@
                                         field.value = dateStr
                                         onValueChanged(field, dateStr)
                                         field.errorMessage = null
-
-                                        if (field.fieldId == "ifa_provision_date") {
-                                            val selectedDate = sdf.parse(dateStr)
-                                            if (minDate != null && selectedDate.before(minDate)) {
-                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
-                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
-                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
-                                            }
-                                            notifyItemChanged(adapterPosition)
-                                        }
-
-                                        if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
-                                            formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
-                                            val selectedDate = sdf.parse(dateStr)
-                                            if (minDate != null && selectedDate.before(minDate)) {
-                                                field.errorMessage = "Date cannot be before ${sdf.format(minDate)}"
-                                            } else if (maxDate != null && selectedDate.after(maxDate)) {
-                                                field.errorMessage = "Date cannot be after ${sdf.format(maxDate)}"
-                                            }
-
-                                            if (field.fieldId == "end_date") {
-                                                val startDateValue = getDate("start_date")
-                                                if (startDateValue != null) {
-                                                    val minEndDate = Calendar.getInstance()
-                                                    minEndDate.time = startDateValue
-                                                    minEndDate.add(Calendar.DAY_OF_MONTH, 1)
-                                                    minEndDate.set(Calendar.HOUR_OF_DAY, 0)
-                                                    minEndDate.set(Calendar.MINUTE, 0)
-                                                    minEndDate.set(Calendar.SECOND, 0)
-                                                    minEndDate.set(Calendar.MILLISECOND, 0)
-
-                                                    val selectedDateCal = Calendar.getInstance()
-                                                    selectedDateCal.time = selectedDate
-                                                    selectedDateCal.set(Calendar.HOUR_OF_DAY, 0)
-                                                    selectedDateCal.set(Calendar.MINUTE, 0)
-                                                    selectedDateCal.set(Calendar.SECOND, 0)
-                                                    selectedDateCal.set(Calendar.MILLISECOND, 0)
-
-                                                    val startDateCal = Calendar.getInstance()
-                                                    startDateCal.time = startDateValue
-                                                    startDateCal.set(Calendar.HOUR_OF_DAY, 0)
-                                                    startDateCal.set(Calendar.MINUTE, 0)
-                                                    startDateCal.set(Calendar.SECOND, 0)
-                                                    startDateCal.set(Calendar.MILLISECOND, 0)
-
-                                                    if (selectedDateCal.before(minEndDate) || selectedDateCal.time == startDateCal.time) {
-                                                        field.errorMessage = "End date must be at least 1 day after start date (${sdf.format(minEndDate.time)})"
-                                                    }
-                                                }
-                                            }
-
-                                            if (field.errorMessage != null) {
-                                                notifyItemChanged(adapterPosition)
-                                            }
-                                        }
-
-                                        when (field.fieldId) {
-                                            "start_date" -> {
-                                                if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
-                                                    formId == FormConstants.ORS_CAMPAIGN_FORM_ID) {
-                                                    val endDateField = fields.find { it.fieldId == "end_date" }
-                                                    if (endDateField != null) {
-                                                        val startDateParsed = sdf.parse(dateStr)
-                                                        if (startDateParsed != null) {
-                                                            val minEndDate = Calendar.getInstance()
-                                                            minEndDate.time = startDateParsed
-                                                            minEndDate.add(Calendar.DAY_OF_MONTH, 1)
-                                                            endDateField.validation?.minDate = sdf.format(minEndDate.time)
-                                                            notifyItemChanged(fields.indexOf(endDateField))
-
-                                                            val existingEndDate = getDate("end_date")
-                                                            if (existingEndDate != null) {
-                                                                val existingEndDateCal = Calendar.getInstance()
-                                                                existingEndDateCal.time = existingEndDate
-                                                                existingEndDateCal.set(Calendar.HOUR_OF_DAY, 0)
-                                                                existingEndDateCal.set(Calendar.MINUTE, 0)
-                                                                existingEndDateCal.set(Calendar.SECOND, 0)
-                                                                existingEndDateCal.set(Calendar.MILLISECOND, 0)
-
-                                                                val startDateCal = Calendar.getInstance()
-                                                                startDateCal.time = startDateParsed
-                                                                startDateCal.set(Calendar.HOUR_OF_DAY, 0)
-                                                                startDateCal.set(Calendar.MINUTE, 0)
-                                                                startDateCal.set(Calendar.SECOND, 0)
-                                                                startDateCal.set(Calendar.MILLISECOND, 0)
-
-                                                                if (existingEndDateCal.before(minEndDate) || existingEndDateCal.time == startDateCal.time) {
-                                                                    setError("end_date", "End date must be at least 1 day after start date")
-                                                                } else {
-                                                                    clearError("end_date")
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            "visit_date" -> {
-                                                val admission = fields.find { it.fieldId == "nrc_admission_date" }
-                                                admission?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(admission))
-                                                clearError("nrc_admission_date")
-                                            }
-
-                                            "nrc_admission_date" -> {
-                                                val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
-                                                discharge?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(discharge))
-
-                                                val dischargeDate = getDate("nrc_discharge_date")
-                                                val admissionDate = sdf.parse(dateStr)
-
-                                                if (dischargeDate != null && dischargeDate.before(admissionDate)) {
-                                                    setError("nrc_discharge_date", "Discharge cannot be before admission")
-                                                } else {
-                                                    clearError("nrc_discharge_date")
-                                                }
-                                            }
-
-                                            "nrc_discharge_date" -> {
-                                                val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
-                                                followUp?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(followUp))
-
-                                                val followDate = getDate("follow_up_visit_date")
-                                                val dischargeDate = sdf.parse(dateStr)
-
-                                                if (followDate != null && followDate.before(dischargeDate)) {
-                                                    setError("follow_up_visit_date", "Follow-up cannot be before discharge")
-                                                } else {
-                                                    clearError("follow_up_visit_date")
-                                                }
-                                            }
-                                        }
                                     },
                                     calendar.get(Calendar.YEAR),
                                     calendar.get(Calendar.MONTH),
@@ -914,21 +1120,15 @@
                                     minDate?.let { datePicker.minDate = it.time }
                                     maxDate?.let { datePicker.maxDate = it.time }
 
-                                    if (minDate != null && maxDate != null && minDate.after(maxDate)) {
-                                        datePicker.minDate = maxDate.time
-                                    }
-
                                     setOnDismissListener {
-                                        HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
+                                        HelperUtil.setOriginalLocaleForDatePicker(activity, originalLocale)
                                     }
-
                                 }.show()
                             }
                         }
 
                         addWithError(textInputLayout, field)
                     }
-
                     "radio" -> {
                         val context = itemView.context
 
@@ -940,21 +1140,32 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
+                        val isSNCUDisabled = field.fieldId == "discharged_from_sncu" &&
                                 fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
                                 isSNCU
 
-                        if (isFieldDisabled && field.value != "Yes") {
+                        if (isSNCUDisabled && field.value != "Yes") {
                             field.value = "Yes"
                             onValueChanged(field, "Yes")
                             notifyItemChanged(adapterPosition)
                         }
 
+                        // Pre-selected value for non-editable fields
+                        val preSelectedValue = if (!field.isEditable) field.value?.toString() else null
+
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
                                 text = option
-                                isChecked = field.value == option
-                                isEnabled = !isViewOnly && !isFieldDisabled
+                                // CASE-INSENSITIVE check
+                                isChecked = field.value?.toString().equals(option, ignoreCase = true)
+
+                                isEnabled = when {
+                                    isViewOnly -> false
+                                    isSNCUDisabled -> false
+                                    !field.isEditable -> option.equals(preSelectedValue, ignoreCase = true) // CASE-INSENSITIVE
+                                    else -> true
+                                }
+
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -963,7 +1174,7 @@
 
                             radioButton.setOnCheckedChangeListener(null)
 
-                            if (!isViewOnly && !isFieldDisabled) {
+                            if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
                                 radioButton.setOnCheckedChangeListener { _, isChecked ->
                                     if (isChecked && field.value != option) {
                                         field.value = option
@@ -999,7 +1210,6 @@
                         inputContainer.removeAllViews()
                         inputContainer.addView(wrapper)
                     }
-
 
                     "image" -> {
                         val context = itemView.context
