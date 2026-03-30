@@ -116,7 +116,7 @@
         <item>आपातकालीन गर्भनिरोधक गोली (ईसीपी)</item>
         <item>पुरुष नसबंदी</item>
         <item>महिला नसबंदी</item>
-        <item>मिनीलैप</item>
+      <!--  <item>मिनीलैप</item>-->
         <item>कोई अन्य विधि</item>
     </string-array>
 
