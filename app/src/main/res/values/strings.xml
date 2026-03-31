@@ -558,7 +558,7 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
-    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="age_above_30_years">Age above 40 years</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
@@ -733,7 +733,7 @@
     <string name="str_block_name">Block Name</string>
     <string name="str_still_birth">Still Birth</string>
     <string name="str_supervisors_remark">Supervisors Remark </string>
-    <string name="str_supervisor">Supervisor</string>
+    <string name="str_supervisor">Asha Supervisor</string>
     <string name="str_supervisor_name">Supervisor name</string>
     <string name="str_signature_with_date">Signature with Date of Supervisor</string>
     <string name="str_mother_newborn_home_visit_card">Mother-Newborn Home Visit Card</string>
@@ -1224,16 +1224,10 @@
 
     <!-- Sync Dashboard -->
     <string name="sync_dashboard">Sync Dashboard</string>
-    <string name="sync_dashboard_tab_status">Status</string>
     <string name="sync_dashboard_tab_logs">Logs</string>
-    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
-    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
     <string name="sync_dashboard_worker_idle">Idle</string>
     <string name="sync_dashboard_worker_complete">Complete</string>
-    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
     <string name="sync_dashboard_no_logs">No sync logs yet. Trigger a sync to see activity.</string>
-    <string name="sync_dashboard_clear_logs">Clear Logs</string>
-    <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sync_dashboard_no_log_files">No log files to export</string>
     <string name="form_name">Form Name</string>
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
@@ -1243,9 +1237,17 @@
     <string name="marriage_date">Marriage Date</string>
     <string name="children_details">Children Details</string>
     <string name="bank_details">Bank Details</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
 
     <string name="camera">Camera</string>
 
+    <!-- Sync Dashboard -->
+    <string name="sync_dashboard_tab_status">Status</string>
+    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
+    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
+    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
+    <string name="sync_dashboard_clear_logs">Clear Logs</string>
+    <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sub_center_under_you_4">Sub-Center Under You</string>
     <string name="incentive_verification">Incentive Verification</string>
     <string name="no_activities_found">No activities found</string>
@@ -1270,6 +1272,9 @@
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
     <string name="date_of_delivery">Date of Delivery</string>
     <string name="any_danger_signs">Any Danger Signs?\n</string>
     <string name="any_high_risk_identified">Any High-risk identified?</string>

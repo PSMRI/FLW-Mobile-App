@@ -157,7 +157,7 @@ class NewBenRegViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 user = preferenceDao.getLoggedInUser()!!
                 household = benRepo.getHousehold(hhId)!!
-                locationRecord = preferenceDao.getLocationRecord()!!
+                locationRecord = household.locationRecord
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!

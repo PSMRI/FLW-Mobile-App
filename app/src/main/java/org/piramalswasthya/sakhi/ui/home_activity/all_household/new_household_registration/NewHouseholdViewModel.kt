@@ -56,7 +56,7 @@ class NewHouseholdViewModel @Inject constructor(
         get() = _readRecord
 
     private lateinit var user: User
-    private val dataset = HouseholdFormDataset(context, preferenceDao.getCurrentLanguage())
+    private val dataset = HouseholdFormDataset(context, preferenceDao.getCurrentLanguage(),preferenceDao)
     val formList = dataset.listFlow
     private lateinit var household: HouseholdCache
 
@@ -75,6 +75,7 @@ class NewHouseholdViewModel @Inject constructor(
                     registrationType = isAshaFamily,
                     locationRecord = locationRecord
                 )
+                dataset.setVillages(user.villages)
                 dataset.setupPage(household)
             }
         }
