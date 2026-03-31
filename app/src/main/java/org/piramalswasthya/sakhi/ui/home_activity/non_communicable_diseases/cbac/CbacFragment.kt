@@ -130,6 +130,7 @@ class CbacFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
             if (suspected && isInFillMode &&
                 !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.LEPROSY) &&
