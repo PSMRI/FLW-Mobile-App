@@ -16,6 +16,7 @@
     <string name="frag_nhhr_title">New Household Registration</string>
 
     <string name="nhhr_title_page_1">Family Details</string>
+    <string name="nhhr_village">Village</string>
     <string name="nhhr_title_page_2">Household Details</string>
     <string name="nhhr_title_page_3">Household Amenities</string>
 

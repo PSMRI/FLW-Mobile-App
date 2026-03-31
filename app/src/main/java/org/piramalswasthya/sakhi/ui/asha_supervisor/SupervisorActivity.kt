@@ -357,13 +357,15 @@ class SupervisorActivity : AppCompatActivity() {
                 val langMenu = menu.findItem(R.id.toolbar_menu_language)
                 homeMenu.isVisible = showMenuHome
                 langMenu.isVisible = !showMenuHome
+                val syncMenu = menu.findItem(R.id.sync_status)
+                syncMenu.isVisible = false
 
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
                     R.id.toolbar_menu_home -> {
-                        navController.popBackStack(R.id.supervisorFragment, false)
+                        navController.popBackStack(R.id.supervisorHomeFragment, false)
                         return true
                     }
 
@@ -428,6 +430,8 @@ class SupervisorActivity : AppCompatActivity() {
             }
     }
 
+
+
     private fun setUpActionBar() {
         setSupportActionBar(binding.toolbar)
 
@@ -435,7 +439,8 @@ class SupervisorActivity : AppCompatActivity() {
 
         val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
-                R.id.supervisorFragment
+                R.id.supervisorHomeFragment,
+
             )
         ).setOpenableLayout(binding.drawerLayout).build()
 
@@ -443,7 +448,7 @@ class SupervisorActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
         binding.navView.menu.findItem(R.id.supervisorFragment).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.supervisorFragment, false)
+            navController.popBackStack(R.id.supervisorHomeFragment, false)
             binding.drawerLayout.close()
             true
         }
@@ -472,7 +477,7 @@ class SupervisorActivity : AppCompatActivity() {
         }
 //
         binding.navView.menu.findItem(R.id.abha_id_activity).setOnMenuItemClickListener {
-            navController.popBackStack(R.id.supervisorFragment, false)
+            navController.popBackStack(R.id.supervisorHomeFragment, false)
             startActivity(Intent(this, AbhaIdActivity::class.java))
             binding.drawerLayout.close()
             true
