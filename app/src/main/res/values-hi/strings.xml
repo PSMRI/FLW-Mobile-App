@@ -299,6 +299,9 @@
     <string name="pnc_mother_list">PNC माँ सूची</string>
     <string name="reproductive_age_list">प्रजनन आयु सूची</string>
     <string name="ncd_eligible_list">गैर संक्रामक रोग पात्र सूची</string>
+    <string name="ncd_cat_all">सभी</string>
+    <string name="ncd_cat_screened">स्क्रीन किया गया</string>
+    <string name="ncd_cat_not_screened">स्क्रीन नहीं किया गया</string>
     <string name="ncd_list">गैर संक्रामक रोग सूची</string>
     <string name="ncd_non_eligible_list">गैर संक्रामक रोग गैर-प्राथमिकता सूची</string>
     <string name="ncd_priority_list">गैर संक्रामक रोग प्राथमिकता सूची</string>

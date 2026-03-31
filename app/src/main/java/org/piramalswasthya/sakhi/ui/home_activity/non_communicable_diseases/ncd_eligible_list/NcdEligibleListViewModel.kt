@@ -24,7 +24,7 @@ class NcdEligibleListViewModel @Inject constructor(
     private lateinit var asha: User
     var clickedPosition = 0
 
-    private val selectedCategory = MutableStateFlow("ALL")
+    private val selectedCategory = MutableStateFlow(NcdCategory.ALL)
 
     private val allBenList = recordsRepo.getNcdEligibleList
     private val filter = MutableStateFlow("")
@@ -38,13 +38,31 @@ class NcdEligibleListViewModel @Inject constructor(
         val filteredIds = filteredBenBasicDomainList.map { it.benId }.toSet()
 
         when (selectedCat) {
-            "Screened" -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
-            "Not Screened" -> list.filter { it.savedCbacRecords.isEmpty() && (it.ben.benId in filteredIds) }
-            else -> list.filter { it.ben.benId in filteredIds } // "ALL" or any other text -> show filtered results
+            NcdCategory.SCREENED -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
+            NcdCategory.NOT_SCREENED -> list.filter { it.savedCbacRecords.isEmpty() && (it.ben.benId in filteredIds) }
+            else -> list.filter { it.ben.benId in filteredIds }
         }
     }
 
-    fun setSelectedCategory(cat: String) {
+    val categoryList = combine(allBenList, filter) { cacheList, filterText ->
+        val list = cacheList.map { it.asDomainModel() }
+        val benBasicDomainList = list.map { it.ben }
+        val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filterText)
+        val filteredIds = filteredBenBasicDomainList.map { it.benId }.toSet()
+        val filteredList = list.filter { it.ben.benId in filteredIds }
+
+        val totalCount = filteredList.size
+        val screenedCount = filteredList.count { it.savedCbacRecords.isNotEmpty() }
+        val notScreenedCount = filteredList.count { it.savedCbacRecords.isEmpty() }
+
+        arrayListOf(
+            Pair(NcdCategory.ALL, totalCount),
+            Pair(NcdCategory.SCREENED, screenedCount),
+            Pair(NcdCategory.NOT_SCREENED, notScreenedCount)
+        )
+    }
+
+    fun setSelectedCategory(cat: NcdCategory) {
         viewModelScope.launch {
             selectedCategory.emit(cat)
         }
@@ -81,18 +99,6 @@ class NcdEligibleListViewModel @Inject constructor(
     fun getSelectedBenId(): Long = selectedBenId.value
     fun getAshaId(): Int = asha.userId
 
-
-    private val catList = ArrayList<String>()
-
-    fun categoryData() : ArrayList<String> {
-
-        catList.clear()
-        catList.add("ALL")
-        catList.add("Screened")
-        catList.add("Not Screened")
-        return catList
-
-    }
 
     private val yearsData = ArrayList<String>()
 

@@ -61,7 +61,8 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, viewModel.yearsList())
         binding.tilRvDropdown.setAdapter(adapter)
 
-        binding.rvCat.adapter = NCDCategoryAdapter(viewModel.categoryData(),this,viewModel)
+        val catAdapter = NCDCategoryAdapter(arrayListOf(), this, viewModel)
+        binding.rvCat.adapter = catAdapter
 
         val benAdapter =
             NcdCbacBenListAdapter(
@@ -95,6 +96,11 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
             )
         binding.rvAny.adapter = benAdapter
 
+        lifecycleScope.launch {
+            viewModel.categoryList.collect { cats ->
+                catAdapter.updateData(cats)
+            }
+        }
         lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
@@ -156,8 +162,8 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         }
     }
 
-    override fun onClicked(catDataList: String) {
-        viewModel.setSelectedCategory(catDataList)
+    override fun onClicked(category: NcdCategory) {
+        viewModel.setSelectedCategory(category)
     }
 
 }
