@@ -1218,6 +1218,7 @@
     <string name="malaria_treatment_started">Treatment Started</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
     <string name="upload_files">Upload Files</string>
     <string name="choose_upload_source">Choose Upload Source</string>
 
