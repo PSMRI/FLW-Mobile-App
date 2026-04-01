@@ -322,7 +322,7 @@ class EligibleCoupleTrackingDataset(
                 // Restore FP method details
                 saved.methodOfContraception?.let { method ->
                     val methods = resources.getStringArray(R.array.method_of_contraception)
-                    val sterilizationIndices = listOf(7, 8, 9)
+                    val sterilizationIndices = listOf(7, 8)
 
                     when {
                         method in methods -> {
@@ -408,7 +408,7 @@ class EligibleCoupleTrackingDataset(
             isPregnancyTestDone.id -> {
                 antraDoses.value = antraDoseValue
                 isPregnant.isEnabled = true
-                if (isPregnancyTestDone.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (isPregnancyTestDone.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[0]) {
                     triggerDependants(
                         source = isPregnancyTestDone,
                         removeItems = listOf(isPregnant,usingFamilyPlanning,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2),
@@ -531,7 +531,7 @@ class EligibleCoupleTrackingDataset(
                     list1= listOf(methodOfContraception,anyOtherMethod,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,wantToUseFamilyPlanning,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2)
 
                 }
-                if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[0]) {
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         triggerDependants(
@@ -551,7 +551,7 @@ class EligibleCoupleTrackingDataset(
                         )
                     }
                 }
-                else if (isPregnant.value == resources.getStringArray(R.array.yes_no_donno)[1]) {
+                else if (isPregnant.value == resources.getStringArray(R.array.ectdset_yes_no_dont)[1]) {
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         triggerDependants(
                             source = isPregnant,
@@ -600,7 +600,7 @@ class EligibleCoupleTrackingDataset(
                         resources.getStringArray(R.array.method_of_contraception_for_zero_child)
                     else
                         resources.getStringArray(R.array.method_of_contraception)
-                if (usingFamilyPlanning.value == resources.getStringArray(R.array.yes_no_donno)[0]) {
+                if (usingFamilyPlanning.value == resources.getStringArray(R.array.ectdset_yes_no)[0]) {
                     triggerDependants(
                         source = usingFamilyPlanning,
                         removeItems = emptyList(),
@@ -656,7 +656,7 @@ class EligibleCoupleTrackingDataset(
                         if(noOfChildrens!=0)
                         {
                             val methods = resources.getStringArray(R.array.method_of_contraception).toMutableList()
-                            val sterilizationIndices = listOf(7, 8, 9)
+                            val sterilizationIndices = listOf(7, 8)
                             val selectedIndex = methods.indexOf(methodOfContraception.value)
                             if (selectedIndex in sterilizationIndices) {
                                 triggerDependants(

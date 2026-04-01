@@ -29,6 +29,7 @@ class BenListAdapter(
     private val pref: PreferenceDao? = null,
     var context: FragmentActivity,
     private val isSoftDeleteEnabled: Boolean = false,
+    private val showActionButtons: Boolean = true,
 ) :
     ListAdapter<BenBasicDomain, BenListAdapter.BenViewHolder>(BenDiffUtilCallBack) {
 
@@ -65,7 +66,8 @@ class BenListAdapter(
             pref: PreferenceDao?,
             context: FragmentActivity,
             benIdList: List<Long>,
-            childCountMap: Map<Long, Int> = emptyMap()
+            childCountMap: Map<Long, Int> = emptyMap(),
+            showActionButtons: Boolean = true
         ) {
 
             if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
@@ -170,6 +172,7 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + no spouse: show Add Husband only
                 item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
                     binding.btnAddChildren.visibility = View.INVISIBLE
@@ -180,11 +183,15 @@ class BenListAdapter(
                     }
                 }
 
+                // FEMALE + married + spouse added + 0 children + doYouHavechildren: Register Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
+                        item.isSpouseAdded &&
+                        item.doYouHavechildren &&
                         effectiveChildCount == 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
+                    binding.btnAddChildren.text = context.getString(R.string.add_children)
                     binding.btnAddSpouse.visibility = View.GONE
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
                     binding.btnAddChildren.setOnClickListener {
@@ -192,19 +199,11 @@ class BenListAdapter(
                     }
                 }
 
-                /* item.gender == "FEMALE" &&
-                         item.isMarried &&
-                         !item.doYouHavechildren &&
-                         !item.isChildrenAdded -> {
-
-                     binding.btnAddChildren.visibility = View.INVISIBLE
-                     binding.btnAddSpouse.visibility = View.GONE
-                     binding.llAddSpouseBtn.visibility = View.VISIBLE
-                 }*/
-
+                // FEMALE + married + spouse added + >0 children: View Children
                 item.gender == "FEMALE" &&
                         item.isMarried &&
-                        effectiveChildCount != 0 -> {
+                        item.isSpouseAdded &&
+                        effectiveChildCount > 0 -> {
 
                     binding.btnAddChildren.visibility = View.VISIBLE
                     binding.btnAddChildren.text = context.getString(R.string.view_children)
@@ -220,6 +219,13 @@ class BenListAdapter(
                     binding.btnAddChildren.visibility = View.INVISIBLE
                     binding.llAddSpouseBtn.visibility = View.GONE
                 }
+            }
+
+            if (!showActionButtons) {
+                binding.btnAbove30.visibility = View.GONE
+                binding.btnAddSpouse.visibility = View.GONE
+                binding.btnAddChildren.visibility = View.GONE
+                binding.llAddSpouseBtn.visibility = View.GONE
             }
 
             if (showBeneficiaries) {
@@ -347,7 +353,8 @@ class BenListAdapter(
             isSoftDeleteEnabled,
             pref,
             context,
-            benIds
+            benIds,
+            showActionButtons = showActionButtons
         )
     }
 

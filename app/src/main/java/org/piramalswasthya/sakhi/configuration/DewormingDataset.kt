@@ -37,7 +37,7 @@ class DewormingDataset(
     private val dewormingDone = FormElement(
         id = 6,
         inputType = RADIO,
-        title = context.getString(R.string.was_the_deworming_round_conducted),
+        title = resources.getString(R.string.was_the_deworming_round_conducted),
         entries = resources.getStringArray(R.array.yes_no_options),
         required = true,
         hasDependants = true
@@ -46,7 +46,7 @@ class DewormingDataset(
     private val dewormingDate = FormElement(
         id = 5,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.date_of_ndd),
+        title = resources.getString(R.string.date_of_ndd),
         required = true,
         min = getMinDate(),
         max = getMaxDate(),
@@ -55,7 +55,7 @@ class DewormingDataset(
     private val dewormingLocation = FormElement(
         id = 4,
         inputType = DROPDOWN,
-        title = context.getString(R.string.place_of_ndd),
+        title = resources.getString(R.string.place_of_ndd),
         entries = resources.getStringArray(R.array.deworming_location_options),
         required = true,
     )
@@ -63,7 +63,7 @@ class DewormingDataset(
     private val ageGroup = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_out_of_school_children_sent_to_anganwad),
+        title = resources.getString(R.string.number_of_out_of_school_children_sent_to_anganwad),
         etMaxLength = 2,
         etInputType = InputType.TYPE_CLASS_NUMBER,
         required = true

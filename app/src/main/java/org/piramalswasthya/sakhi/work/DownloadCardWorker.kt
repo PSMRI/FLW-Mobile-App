@@ -45,15 +45,7 @@ class DownloadCardWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val fileName = inputData.getString(file_name)
-        return try {
-            try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e(throwable.message, "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val response = abhaIdRepo.downloadPdfCard()
                 val directory =
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)

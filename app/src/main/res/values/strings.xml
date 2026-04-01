@@ -269,6 +269,10 @@
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="abha_number_digit">ABHA number should be 14-digit long</string>
     <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
+    <string name="ifsc_code">IFSC</string>
+    <string name="app_settings">App Settings</string>
+    <string name="incentive_dashboard">Incentive Dashboard</string>
+    <string name="facilitator">Facilitator</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1$s should be greater than or equal to %2$.1f</string>
@@ -347,6 +351,7 @@
     <string name="sup_tb_cases">TB Cases</string>
     <string name="contact_number">Contact Number</string>
     <string name="kcuf">KCUF</string>
+    <string name="vaccine_fill">FILL</string>
     <string name="show_vaccines">Show Vaccines</string>
     <string name="add_cbac">Add CBAC</string>
     <string name="view_cbac">View CBAC</string>
@@ -436,6 +441,7 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
+    <string name="email">Email</string>
 
     //................VHND........................
 
@@ -509,6 +515,41 @@
     <string name="details_of_pregnant_women">Details of Pregnant women</string>
     <string name="anc_period">ANC Period</string>
     <string name="anc_date">ANC Date</string>
+    <string name="place_of_anc">Place of ANC</string>
+    <string name="abortion_if_any">Abortion If Any</string>
+    <string name="weight_of_pw_kg">Weight of PW (Kg) at time Registration</string>
+    <string name="bp_of_pw">BP of PW &#x2013; Systolic/ Diastolic (mm Hg)</string>
+    <string name="pulse_rate_bpm">Pulse Rate (BPM)</string>
+    <string name="hb_gm_dl">HB (gm/dl)</string>
+    <string name="fundal_height_uterus">Fundal Height / Size of the Uterus weeks</string>
+    <string name="urine_albumin">Urine Albumin</string>
+    <string name="random_blood_sugar_test">Random Blood Sugar Test</string>
+    <string name="date_td_tt_1st_dose">Date of Td TT (1st Dose)</string>
+    <string name="date_td_tt_2nd_dose">Date of Td TT (2nd Dose)</string>
+    <string name="date_td_tt_booster_dose">Date of Td TT (Booster Dose)</string>
+    <string name="no_of_folic_acid_tabs">No. of Folic Acid Tabs given</string>
+    <string name="no_of_ifa_tabs">No. of IFA Tabs given</string>
+    <string name="any_high_risk_conditions">Any High Risk conditions</string>
+    <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
+    <string name="who_identified_hrp">Who had identified as HRP?</string>
+    <string name="probable_cause_of_death">Probable Cause of Death</string>
+    <string name="other_death_cause">Other Death Cause</string>
+    <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
+    <string name="mcp_cards">MCP Cards</string>
+    <string name="front_side">Front Side</string>
+    <string name="back_side">Back Side</string>
+    <string name="ahd_health_status">Health Status</string>
+    <string name="ahd_ifa_tablet_distribution">IFA Tablet Distribution</string>
+    <string name="ahd_ifa_tablet_quantity">Quantity of IFA Tablets</string>
+    <string name="ahd_menstrual_hygiene_awareness">Menstrual Hygiene Awareness</string>
+    <string name="ahd_sanitary_napkin_distributed">Sanitary Napkin Distributed</string>
+    <string name="ahd_no_of_packets_distributed">No. of Packets Distributed</string>
+    <string name="ahd_referred_to_health_facility">Referred to Health Facility</string>
+    <string name="ahd_counseling_provided">Counseling Provided</string>
+    <string name="ahd_counseling_type">Counseling Type</string>
+    <string name="ahd_follow_up_date">Follow-up Date</string>
+    <string name="ahd_referral_status">Referral Status</string>
+    <string name="ahd_distribution_date">Date</string>
     <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
@@ -617,6 +658,7 @@
     </string-array>
 
     <string name="str_subcenter_name">Subcenter name</string>
+    <string name="str_subcenter">Sub-center</string>
     <string name="str_primary_health_center_name">Primary Health Center Name </string>
     <string name="str_village_population">Village Population</string>
     <string name="str_total_no_of_childrens">Total number of children aged 3 to 15 months in villages</string>
@@ -1171,10 +1213,12 @@
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
     <string name="screening">Screening</string>
     <string name="suspected">Suspected</string>
+    <string name="malaria_confirmed">Confirmed</string>
+    <string name="malaria_not_confirmed">Not Confirmed</string>
+    <string name="malaria_treatment_started">Treatment Started</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
     <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
-    <string name="camera">Camera</string>
     <string name="upload_files">Upload Files</string>
     <string name="choose_upload_source">Choose Upload Source</string>
 
@@ -1195,6 +1239,57 @@
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
     <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
     <string name="try_again">Try Again!</string>
+    <string name="no_of_childrens">No of children</string>
+    <string name="marriage_date">Marriage Date</string>
+    <string name="children_details">Children Details</string>
+    <string name="bank_details">Bank Details</string>
+
+    <string name="camera">Camera</string>
+
+    <string name="sub_center_under_you_4">Sub-Center Under You</string>
+    <string name="incentive_verification">Incentive Verification</string>
+    <string name="no_activities_found">No activities found</string>
+    <string name="supervisor_id">Supervisor ID:</string>
+    <string name="activity">Activity</string>
+    <string name="amount_rs">Amount (Rs.)</string>
+    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
+    <string name="verify">✓ Verify</string>
+    <string name="reject">✕ Reject</string>
+    <string name="reason_for_rejection">Reason for Rejection</string>
+    <string name="confirm_rejection">Confirm Rejection</string>
+    <string name="search_asha">Search ASHA....</string>
+    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
+    <string name="jan_2026">Jan, 2026</string>
+    <string name="verified_0">Verified: 0</string>
+    <string name="pending_0">Pending: 0</string>
+    <string name="rejected_0">Rejected: 0</string>
+    <string name="overdue_0">Overdue: 0</string>
+    <string name="total_ashas">Total ASHAs</string>
+    <string name="select_month">Select Month</string>
+    <string name="pending">Pending</string>
+    <string name="overdue">OverDue</string>
+    <string name="rejected">Rejected</string>
+    <string name="claim">Claim</string>
+    <string name="date_of_delivery">Date of Delivery</string>
+    <string name="any_danger_signs">Any Danger Signs?\n</string>
+    <string name="any_high_risk_identified">Any High-risk identified?</string>
+    <string name="delivery_discharge_summary_1">Delivery Discharge Summary 1</string>
+    <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
+    <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
+    <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
+    <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
+    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
+    <string name="tb_rise_of_fever">Rise of fever in evening</string>
+    <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_age_more_than_60">Age more than 60 years</string>
+    <string name="tb_diabetic">Diabetic</string>
+    <string name="tb_tobacco_user">Tobacco user</string>
+    <string name="tb_bmi_less_than_18_5">BMI &lt; 18.5</string>
+    <string name="tb_contact_with_patient_on_treatment">Contact with TB patient on treatment</string>
+    <string name="tb_history_last_5_years">Last 5 years history of TB</string>
+    <string name="visit_leprosy">Visit</string>
+    <string name="visit_number_label">Visit -%d</string>
 
     <!-- Chat Support -->
     <string name="chat_support">Chat Support</string>

@@ -116,7 +116,7 @@ class MalariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -187,6 +187,7 @@ class MalariaRepo @Inject constructor(
                         val jsonObj = JSONObject(responseString)
 
                         val responseStatusCode = jsonObj.getInt("statusCode")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
@@ -210,9 +211,7 @@ class MalariaRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                val errorMessage = jsonObj.getString("errorMessage")
-//                                if (errorMessage == "No record found") return@withContext 0
-                                return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -236,8 +235,13 @@ class MalariaRepo @Inject constructor(
 
     private suspend fun saveMalariaScreeningCacheFromResponse(dataObj: String): MutableList<MalariaScreeningCache> {
         val malariaScreeningList = mutableListOf<MalariaScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
-        requestDTO?.malariaLists?.forEach { malariaScreeningDTO ->
+        val malariaLists: List<MalariaScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<MalariaScreeningDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
+            requestDTO?.malariaLists ?: emptyList()
+        }
+        malariaLists.forEach { malariaScreeningDTO ->
             malariaScreeningDTO.caseDate?.let {
                 var tbScreeningCache: MalariaScreeningCache? =
                     malariaDao.getMalariaScreening(
@@ -296,7 +300,7 @@ class MalariaRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit malaria confirmed data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -345,8 +349,13 @@ class MalariaRepo @Inject constructor(
 
     private suspend fun saveMalariaConfirmedCacheFromResponse(dataObj: String): MutableList<MalariaConfirmedCasesCache> {
         val malariaConfirmedList = mutableListOf<MalariaConfirmedCasesCache>()
-        val requestDTO = Gson().fromJson(dataObj, MalariaConfirmedRequestDTO::class.java)
-        requestDTO?.malariaFollowListUp?.forEach { malariaConfirmedDTO ->
+        val malariaFollowListUp: List<MalariaConfirmedDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<MalariaConfirmedDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, MalariaConfirmedRequestDTO::class.java)
+            requestDTO?.malariaFollowListUp ?: emptyList()
+        }
+        malariaFollowListUp.forEach { malariaConfirmedDTO ->
             malariaConfirmedDTO.dateOfDiagnosis?.let {
                 val malariaConfirmedCache: MalariaConfirmedCasesCache? =
                     malariaDao.getMalariaConfirmed(
@@ -546,9 +555,11 @@ class MalariaRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }

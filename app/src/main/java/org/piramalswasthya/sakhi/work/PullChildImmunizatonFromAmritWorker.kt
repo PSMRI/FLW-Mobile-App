@@ -39,13 +39,7 @@ class PullChildImmunizatonFromAmritWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                setForeground(createForegroundInfo("Downloading Child Immunization Data"))
-            } catch (throwable: Throwable) {
-                Timber.e("FgLW", "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
 
                 try {
@@ -101,7 +95,7 @@ class PullChildImmunizatonFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = immunizationRepo.getImmunizationDetailsFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }

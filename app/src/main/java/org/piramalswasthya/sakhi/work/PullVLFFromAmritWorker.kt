@@ -40,15 +40,7 @@ class PullVLFFromAmritWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading VLF Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e("error", "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
 
                 try {
@@ -107,7 +99,7 @@ class PullVLFFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = vlfRepo.getVHNDFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
@@ -118,7 +110,7 @@ class PullVLFFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = vlfRepo.getPHCFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
@@ -129,7 +121,7 @@ class PullVLFFromAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = vlfRepo.getVHNCFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
@@ -141,7 +133,7 @@ private suspend fun getAHD(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val res = vlfRepo.getAHDFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
@@ -155,7 +147,7 @@ private suspend fun getDeworming(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val res = vlfRepo.getDewormingFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
