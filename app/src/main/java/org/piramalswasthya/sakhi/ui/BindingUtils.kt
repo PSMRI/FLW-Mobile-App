@@ -83,15 +83,15 @@ fun Button.setVaccineState(syncState: VaccineState?) {
         visibility = View.VISIBLE
         when (it) {
             PENDING -> {
-                text = "FILL"
+                text = resources.getString(R.string.vaccine_fill)
             }
 
             OVERDUE -> {
-                text = "FILL"
+                text = resources.getString(R.string.vaccine_fill)
             }
 
             DONE -> {
-                text = "VIEW"
+                text = resources.getString(R.string.view)
             }
 
             MISSED,

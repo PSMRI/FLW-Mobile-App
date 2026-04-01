@@ -30,9 +30,7 @@ class MaaMeetingDownsyncWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
     override suspend fun doWork(): Result {
-        try { setForeground(createForegroundInfo()) } catch (_: Throwable) {}
-        return try {
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 maaMeetingRepo.downSyncAndPersist()
             }
             Result.success()

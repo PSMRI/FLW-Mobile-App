@@ -156,10 +156,11 @@ class PncFormFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnSubmit.setOnClickListener {
+            if (!validateCurrentPage()) return@setOnClickListener
             if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else submitAncForm()
+                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else viewModel.saveForm()
             }
-            else submitAncForm()
+            else viewModel.saveForm()
         }
 
         binding.fabEdit.setOnClickListener { viewModel.setRecordExist(false) }
@@ -298,7 +299,7 @@ class PncFormFragment : Fragment() {
         message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
         positiveText = "Yes",
         negativeText = "No",
-        onNegative = { submitAncForm() }
+        onNegative = { viewModel.saveForm() }
     )
 
     private fun showReminderDialog(

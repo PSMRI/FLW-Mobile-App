@@ -40,15 +40,7 @@ class PullVaccinesWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading TB Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e("FgLW", "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
                 val startPage =
@@ -109,7 +101,7 @@ class PullVaccinesWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = vaccineRepo.getVaccineDetailsFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
                 return@withContext false

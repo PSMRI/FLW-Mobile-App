@@ -44,15 +44,7 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Filaria Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e("FgLW", "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
                 val startPage =
@@ -66,6 +58,8 @@ class GeneralOpdPullFromAmritWorker @AssistedInject constructor(
                     } while (numPages == -2)
                     if (numPages == 0)
                         return@withContext Result.success()
+                    if (numPages == -1)
+                        return@withContext Result.failure(workDataOf("worker_name" to "GeneralOpdPullFromAmritWorker", "error" to "Initial page fetch failed"))
                     val result1 =
                         awaitAll(
                             async { getBeneficiariesFromServerForWorker(numPages, 0, startPage) },

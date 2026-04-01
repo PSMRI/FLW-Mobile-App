@@ -11,11 +11,12 @@
     <string name="rv_item_hh_ph_3">उपनाम : </string>
     <string name="hh_members_text">सदस्यों</string>
     <string name="btn_rv_item_hh_add_ben">लाभार्थी जोड़ें</string>
-    <string name="str_duplicate_record">डुप्लिकेट रिकॉर्ड</string>
+    <string name="str_duplicate_record">रिकार्ड हटा दिया गया</string>
 
     <string name="frag_nhhr_title">नया घरेलू पंजीकरण</string>
 
     <string name="nhhr_title_page_1">पारिवारिक विवरण</string>
+    <string name="nhhr_village">गाँव</string>
     <string name="nhhr_title_page_2">घरेलू विवरण</string>
     <string name="nhhr_title_page_3">घरेलू सुविधाएं</string>
 

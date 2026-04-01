@@ -43,7 +43,6 @@
                 binding.benWithCbac = item
                 binding.referredFrom.text = userName
 
-                binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                     binding.father = true
                     binding.husband = false
@@ -73,6 +72,7 @@
                 }
 
                 binding.executePendingBindings()
+                binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 binding.btnFollowUp.setOnClickListener {
                     listener.onClickedFollowUp(item.ben)
                 }

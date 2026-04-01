@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
+import org.piramalswasthya.sakhi.utils.StringMappingUtil
 
 class AshaProfileDataset(
     context: Context, currentLanguage: Languages,var ashaProfileRepo: AshaProfileRepo
@@ -449,23 +450,23 @@ class AshaProfileDataset(
             dataModel.dob = dateReverseFormat(dob.value.toString()).toString()
             dataModel.age = ages.value!!.toInt()
             dataModel.mobileNumber = mobileNumber.value.toString()
-            dataModel.alternateMobileNumber = alternameMobileNumber.value.toString()
+            dataModel.alternateMobileNumber = StringMappingUtil.convertDigits(alternameMobileNumber.value.toString())
             dataModel.fatherOrSpouseName = spouseOrFatherNameEdt.value.toString()
             dataModel.supervisorName = ashaSupervisorName.value.toString()
-            dataModel.supervisorMobile = ashaSupervisorContactNumber.value.toString()
+            dataModel.supervisorMobile = StringMappingUtil.convertDigits(ashaSupervisorContactNumber.value.toString())
             dataModel.dateOfJoining = dateOfJoining.value.toString()
-            dataModel.bankAccount = bankAccount.value.toString()
-            dataModel.ifsc = Ifsc.value.toString()
-            dataModel.populationCovered = populationCovered.value?.takeIf { it.isNotEmpty() }?.toIntOrNull()!!
+            dataModel.bankAccount = StringMappingUtil.convertDigits(bankAccount.value.toString())
+            dataModel.ifsc = StringMappingUtil.convertDigits(Ifsc.value.toString())
+            dataModel.populationCovered = StringMappingUtil.convertDigits(populationCovered.value?.takeIf { it.isNotEmpty() })?.toIntOrNull() ?: 0
             dataModel.choName = ChoName.value.toString()
-            dataModel.choMobile = ChoMobileNo.value.toString()
+            dataModel.choMobile = StringMappingUtil.convertDigits(ChoMobileNo.value.toString())
             dataModel.awwName = nameOfAWW.value.toString()
-            dataModel.awwMobile = mobieNoOfAWW.value.toString()
+            dataModel.awwMobile = StringMappingUtil.convertDigits(mobieNoOfAWW.value.toString())
             dataModel.anm1Name = nameOfANM1.value.toString()
-            dataModel.anm1Mobile = mobileNoOfANM1.value.toString()
+            dataModel.anm1Mobile = StringMappingUtil.convertDigits(mobileNoOfANM1.value.toString())
             dataModel.anm2Name = nameOfANM2.value.toString()
-            dataModel.anm2Mobile = mobileNoOfANM2.value.toString()
-            dataModel.abhaNumber = abhaNumber.value.toString()
+            dataModel.anm2Mobile = StringMappingUtil.convertDigits(mobileNoOfANM2.value.toString())
+            dataModel.abhaNumber = StringMappingUtil.convertDigits(abhaNumber.value.toString())
 //            dataModel.ashaHouseholdRegistration = ashaHouseholdRegistrationNo.value.toString()
 //            dataModel.ashaFamilyMember = ashaFamilymember.value.toString()
             dataModel.isFatherOrSpouse = when (fatherOrspouse.value) {

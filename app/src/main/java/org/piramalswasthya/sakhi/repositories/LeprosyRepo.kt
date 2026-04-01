@@ -91,16 +91,20 @@ class LeprosyRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
-                        val responseStatusCode = jsonObj.getInt("statusCode")
-                        Timber.d("Pull from amrit tb screening data : $responseStatusCode")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
+                        if (!jsonObj.has("statusCode")) {
+                            Timber.e("Leprosy screening response missing statusCode. Raw response: $responseString")
+                            return@withContext -1
+                        }
+                        val responseStatusCode = jsonObj.optInt("statusCode", -1)
+                        Timber.d("Pull from amrit leprosy screening data : $responseStatusCode")
                         when (responseStatusCode) {
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getString("data")
                                     saveTBScreeningCacheFromResponse(dataObj)
                                 } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
+                                    Timber.d("Leprosy Screening entries not synced $e")
                                     return@withContext 0
                                 }
 
@@ -116,10 +120,11 @@ class LeprosyRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+                                return@withContext 0
                             }
 
                             else -> {
+                                Timber.e("Leprosy screening unexpected statusCode: $responseStatusCode, response: $responseString")
                                 throw IllegalStateException("$responseStatusCode received, dont know what todo!?")
                             }
                         }
@@ -129,9 +134,14 @@ class LeprosyRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 Timber.e("get_tb error : $e")
                 return@withContext -2
-
+            } catch (e: JSONException) {
+                Timber.e("JSON parsing error for leprosy screening data: $e")
+                return@withContext -1
             } catch (e: java.lang.IllegalStateException) {
                 Timber.e("get_tb error : $e")
+                return@withContext -1
+            } catch (e: Exception) {
+                Timber.e("get_leprosy_screening unexpected error : $e")
                 return@withContext -1
             }
             -1
@@ -140,8 +150,13 @@ class LeprosyRepo @Inject constructor(
 
     private suspend fun saveTBScreeningCacheFromResponse(dataObj: String): MutableList<LeprosyScreeningCache> {
         val leprosyScreeningList = mutableListOf<LeprosyScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, LeprosyScreeningRequestDTO::class.java)
-        requestDTO?.leprosyLists?.forEach { leprosyScreeningDTO ->
+        val leprosyLists: List<LeprosyScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<LeprosyScreeningDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            val requestDTO = Gson().fromJson(dataObj, LeprosyScreeningRequestDTO::class.java)
+            requestDTO?.leprosyLists ?: emptyList()
+        }
+        leprosyLists.forEach { leprosyScreeningDTO ->
             leprosyScreeningDTO.homeVisitDate?.let {
                 var tbScreeningCache: LeprosyScreeningCache? =
                     leprosyDao.getLeprosyScreening(
@@ -334,9 +349,12 @@ class LeprosyRepo @Inject constructor(
 
                         val jsonObj = JSONObject(responseString)
 
-                        // Use the correct field names from the response
-                        val statusCodeFromResponse = jsonObj.getInt("statusCode")
-                        val status = jsonObj.getString("status")
+                        if (!jsonObj.has("statusCode")) {
+                            Timber.e("Leprosy data response missing statusCode. Raw response: $responseString")
+                            return@withContext -1
+                        }
+                        val statusCodeFromResponse = jsonObj.optInt("statusCode", -1)
+                        val status = jsonObj.optString("status", "")
 
                         Timber.d("Pull all leprosy data - Status: $statusCodeFromResponse, Status: $status")
 
@@ -358,7 +376,12 @@ class LeprosyRepo @Inject constructor(
                                 else throw IllegalStateException("User Logged out!!")
                             }
 
+                            5000 -> {
+                                return@withContext 0
+                            }
+
                             else -> {
+                                Timber.e("Leprosy data unexpected statusCode: $statusCodeFromResponse, response: $responseString")
                                 throw IllegalStateException("$statusCodeFromResponse received, dont know what todo!?")
                             }
                         }
@@ -406,9 +429,12 @@ class LeprosyRepo @Inject constructor(
 
                         val jsonObj = JSONObject(responseString)
 
-                        // Use the correct field names from the response
-                        val statusCodeFromResponse = jsonObj.getInt("statusCode")
-                        val status = jsonObj.getString("status")
+                        if (!jsonObj.has("statusCode")) {
+                            Timber.e("Leprosy followup response missing statusCode. Raw response: $responseString")
+                            return@withContext -1
+                        }
+                        val statusCodeFromResponse = jsonObj.optInt("statusCode", -1)
+                        val status = jsonObj.optString("status", "")
 
                         Timber.d("Pull all leprosy followup data - Status: $statusCodeFromResponse, Status: $status")
 
@@ -430,7 +456,12 @@ class LeprosyRepo @Inject constructor(
                                 else throw IllegalStateException("User Logged out!!")
                             }
 
+                            5000 -> {
+                                return@withContext 0
+                            }
+
                             else -> {
+                                Timber.e("Leprosy followup unexpected statusCode: $statusCodeFromResponse, response: $responseString")
                                 throw IllegalStateException("$statusCodeFromResponse received, dont know what todo!?")
                             }
                         }
@@ -633,8 +664,11 @@ class LeprosyRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
         }
     }

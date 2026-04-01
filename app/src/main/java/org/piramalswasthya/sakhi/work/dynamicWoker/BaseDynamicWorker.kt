@@ -53,11 +53,6 @@ abstract class BaseDynamicWorker(
                 KEY_ERROR to "Max retries ($MAX_RETRY_COUNT) exceeded"
             ))
         }
-        try {
-            setForeground(createForegroundInfo("Syncing $workerName..."))
-        } catch (e: Throwable) {
-            Timber.w(e, "[$workerName] Could not set foreground notification")
-        }
         initTokens()
         return try {
             doSyncWork()

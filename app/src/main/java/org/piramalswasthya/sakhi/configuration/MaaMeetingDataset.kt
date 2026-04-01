@@ -17,7 +17,7 @@ class MaaMeetingDataset(
     val meetingDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = "MAA Meeting Date",
+        title = resources.getString(R.string.maa_meeting_date),
         required = true,
         max = System.currentTimeMillis(),
     ).apply {
@@ -30,15 +30,15 @@ class MaaMeetingDataset(
     val meetingPlace = FormElement(
         id = 2,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.place_of_maa_meeting),
+        title = resources.getString(R.string.place_of_maa_meeting),
         required = true,
-        entries = arrayOf("Anganwadi Centre", "HWC","School","Community Center")
+        entries = resources.getStringArray(R.array.maa_meeting_place_array)
     )
 
     val villageName = FormElement(
         id = 9,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.village_name),
+        title = resources.getString(R.string.village_name),
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -46,7 +46,7 @@ class MaaMeetingDataset(
      val noOfPW = FormElement(
         id = 17,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_pregnant_woman_attended),
+        title = resources.getString(R.string.number_of_pregnant_woman_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -60,7 +60,7 @@ class MaaMeetingDataset(
      val noOfLM = FormElement(
         id = 16,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_lactating_mothers_attended),
+        title = resources.getString(R.string.number_of_lactating_mothers_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -74,7 +74,7 @@ class MaaMeetingDataset(
      val duringBreastfeeding  = FormElement(
         id = 15,
         inputType = InputType.CHECKBOXES,
-        title = context.getString(R.string.during_breastfeeding_counseling_check_list),
+        title = resources.getString(R.string.during_breastfeeding_counseling_check_list),
         arrayId = -1,
         entries = resources.getStringArray(R.array.maa_breastfeeding),
         required = false,
@@ -95,13 +95,13 @@ class MaaMeetingDataset(
     val upload1 = FormElement(
         id = 10,
         inputType = InputType.FILE_UPLOAD,
-        title = "Meeting Photos / MoM (1)",
+        title = resources.getString(R.string.meeting_photos_mom, 1),
         required = false
     )
-    val upload2 = upload1.copy(id = 11, title = "Meeting Photos / MoM (2)")
-    val upload3 = upload1.copy(id = 12, title = "Meeting Photos / MoM (3)")
-    val upload4 = upload1.copy(id = 13, title = "Meeting Photos / MoM (4)")
-    val upload5 = upload1.copy(id = 14, title = "Meeting Photos / MoM (5)")
+    val upload2 = upload1.copy(id = 11, title = resources.getString(R.string.meeting_photos_mom, 2))
+    val upload3 = upload1.copy(id = 12, title = resources.getString(R.string.meeting_photos_mom, 3))
+    val upload4 = upload1.copy(id = 13, title = resources.getString(R.string.meeting_photos_mom, 4))
+    val upload5 = upload1.copy(id = 14, title = resources.getString(R.string.meeting_photos_mom, 5))
 
     suspend fun setUpPage(recordExists: Boolean) {
         val list = mutableListOf(

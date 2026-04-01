@@ -40,15 +40,7 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {
-            try {
-                // This ensures that you waiting for the Notification update to be done.
-                setForeground(createForegroundInfo("Downloading Filaria Data"))
-            } catch (throwable: Throwable) {
-                // Handle this exception gracefully
-                Timber.e("FgLW", "Something bad happened", throwable)
-            }
-            withContext(Dispatchers.IO) {
+        return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
                 val startPage =
@@ -112,11 +104,11 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val res = leprosyRepo.getLeprosyScreeningDetailsFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             } catch (e: Exception) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
             }
-            true
+            false
         }
     }
 
@@ -125,14 +117,14 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         {
             try{
                 val res = leprosyRepo.getAllLeprosyDataFromServer()
-                return@withContext res == 1
+                return@withContext res == 1 || res == 0
             }
             catch (e: Exception)
             {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
 
             }
-            true
+            false
         }
     }
 
@@ -140,14 +132,14 @@ class PullLeprosyFormAmritWorker @AssistedInject constructor(
         return  withContext(Dispatchers.IO){
             try {
                 val res = leprosyRepo.getAllLeprosyFollowUpDataFromServer()
-                return@withContext res ==1
+                return@withContext res == 1 || res == 0
             }
             catch (e: Exception)
             {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
 
             }
-            true
+            false
         }
     }
 

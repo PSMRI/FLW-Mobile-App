@@ -48,6 +48,7 @@ import timber.log.Timber
 import java.io.File
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -723,7 +724,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -748,7 +749,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                if (errorMessage == "No record found") return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -881,7 +882,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -906,7 +907,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                if (errorMessage == "No record found") return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1039,7 +1040,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-//                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1064,7 +1065,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                if (errorMessage == "No record found") return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1198,7 +1199,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1355,6 +1356,7 @@ class VLFRepo @Inject constructor(
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
+                        val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit hrp assess data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -1378,7 +1380,7 @@ class VLFRepo @Inject constructor(
                             }
 
                             5000 -> {
-//                                if (errorMessage == "No record found") return@withContext 0
+                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -1476,28 +1478,37 @@ class VLFRepo @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun isFormFilledForCurrentMonth(): Flow<Map<String, Boolean>> {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-        val currentYearMonth = YearMonth.now()
-        val startDate = currentYearMonth.atDay(1).format(formatter)
-        val endDate = currentYearMonth.atEndOfMonth().format(formatter)
 
-        val vhnd = vlfDao.countVHNDFormsInDateRange(startDate, endDate)
-        val vhnc = vlfDao.countVHNCFormsInDateRange(startDate, endDate)
-        val phc = vlfDao.countPHCFormsInDateRange(startDate, endDate)
-        val ahd = vlfDao.countAHDFormsInDateRange(startDate, endDate)
+        val current = YearMonth.now()
+
+        val vhnd = vlfDao.getAllVHND()
+        val vhnc = vlfDao.getAllVHNC()
+        val phc = vlfDao.getAllPHC()
+        val ahd = vlfDao.getAllAHD()
         val deworming = vlfDao.countDewormingInLastSixMonths()
-        return combine(vhnd, vhnc, phc, ahd, deworming) { vhndCount, vhncCount, phcCount, ahdCount, dewormingCount ->
+
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+
+        return combine(vhnd, vhnc, phc, ahd, deworming) { vhndList, vhncList, phcList, ahdList, dewormingCount ->
+
+            fun isInCurrentMonth(dateStr: String?): Boolean {
+                return try {
+                    val date = LocalDate.parse(dateStr, formatter)
+                    YearMonth.from(date) == current
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
             mapOf(
-                "VHND" to (vhndCount > 0),
-                "VHNC" to (vhncCount > 0),
-                "PHC" to (phcCount > 0),
-                "AHD" to (ahdCount > 0),
+                "VHND" to vhndList.any { isInCurrentMonth(it.vhndDate) },
+                "VHNC" to vhncList.any { isInCurrentMonth(it.vhncDate) },
+                "PHC" to phcList.any { isInCurrentMonth(it.phcReviewDate) },
+                "AHD" to ahdList.any { isInCurrentMonth(it.ahdDate) },
                 "DEWORMING" to (dewormingCount > 0)
             )
         }
     }
-
-
     suspend fun getFilariaMdaCampaignFromServer(): Int {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()
