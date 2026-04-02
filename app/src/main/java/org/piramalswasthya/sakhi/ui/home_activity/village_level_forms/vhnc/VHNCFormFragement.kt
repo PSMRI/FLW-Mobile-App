@@ -69,6 +69,11 @@ class VHNCFormFragement:Fragment() {
 //                    Toast.makeText(context,"Image$it",Toast.LENGTH_LONG).show()
 
                 },
+                selectImageClickListener =  FormInputAdapter.SelectUploadImageClickListener{
+
+                    imgValue=it
+                    showImagePickerDialog()
+                },
                 isEnabled = !it
             )
             binding.btnSubmit.isEnabled = !it

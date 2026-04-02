@@ -68,6 +68,10 @@ class PHCReviewFormFragement:Fragment() {
                     showImagePickerDialog()
 
                 },
+                selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
+                    imgValue=it
+                    showImagePickerDialog()
+                },
                 isEnabled = !it
             )
              binding.btnSubmit.isEnabled = !it

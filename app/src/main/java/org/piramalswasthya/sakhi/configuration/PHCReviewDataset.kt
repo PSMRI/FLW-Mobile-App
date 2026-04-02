@@ -97,14 +97,14 @@ class PHCReviewDataset(
 
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType = InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType = InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,

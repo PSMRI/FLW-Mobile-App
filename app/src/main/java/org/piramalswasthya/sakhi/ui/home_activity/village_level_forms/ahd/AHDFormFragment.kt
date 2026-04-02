@@ -68,6 +68,10 @@ class AHDFormFragment : Fragment() {
                     imgValue = it
                     showImagePickerDialog()
                 },
+                selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
+                    imgValue=it
+                    showImagePickerDialog()
+                },
                 isEnabled = !exists
             )
             binding.btnSubmit.isEnabled = !exists
