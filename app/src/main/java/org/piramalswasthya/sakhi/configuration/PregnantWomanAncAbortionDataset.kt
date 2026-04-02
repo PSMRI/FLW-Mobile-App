@@ -82,7 +82,7 @@ class PregnantWomanAncAbortionDataset(
         title = context.getString(R.string.method_of_termination),
         arrayId = R.array.anc_method_of_termination,
         entries = resources.getStringArray(R.array.anc_method_of_termination),
-        required = true,
+        required = false,
         hasDependants = true,
     )
 
@@ -92,7 +92,7 @@ class PregnantWomanAncAbortionDataset(
         title = context.getString(R.string.termination_done_by),
         arrayId = R.array.anc_termination_done_by,
         entries = resources.getStringArray(R.array.anc_termination_done_by),
-        required = true,
+        required = false,
     )
 
     private val isPlanig = FormElement(

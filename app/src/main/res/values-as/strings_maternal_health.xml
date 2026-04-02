@@ -258,7 +258,6 @@
         <item>পুৰুষৰ নিৰ্বাচন</item>
         <item>নাৰীৰ নিৰ্বাচন</item>
         <item>পোষ্ট পাৰ্টাম নিৰ্বাচন (PSS 7 দিনৰ মধ্যে)</item>
-        <item>MiniLap</item>
         <item>অন্যান্য (উল্লিখন কৰক)</item>
     </string-array>
     <string-array name="sterilization_methods_array">

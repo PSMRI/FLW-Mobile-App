@@ -652,14 +652,16 @@
                         fun setError(fieldId: String, msg: String) {
                             val f = fields.find { it.fieldId == fieldId }
                             f?.errorMessage = msg
-                            notifyItemChanged(fields.indexOf(f))
+                            val idx = fields.indexOf(f)
+                            if (idx >= 0) notifyItemChanged(idx)
                         }
 
                         fun clearError(fieldId: String) {
                             val f = fields.find { it.fieldId == fieldId }
                             if (f?.errorMessage != null) {
                                 f.errorMessage = null
-                                notifyItemChanged(fields.indexOf(f))
+                                val idx = fields.indexOf(f)
+                                if (idx >= 0) notifyItemChanged(idx)
                             }
                         }
 
@@ -691,7 +693,7 @@
                                 else {
 
 
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID || formId == FormConstants.MDA_DISTRIBUTION_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -759,7 +761,7 @@
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-
+                                      try {
                                         val dateStr = String.format(
                                             Locale.ENGLISH,
                                             "%02d-%02d-%04d",
@@ -770,8 +772,8 @@
 
                                         editText.setText(dateStr)
                                         field.value = dateStr
-                                        onValueChanged(field, dateStr)
                                         field.errorMessage = null
+                                        onValueChanged(field, dateStr)
 
                                         if (field.fieldId == "ifa_provision_date") {
                                             val selectedDate = sdf.parse(dateStr)
@@ -840,7 +842,8 @@
                                                             minEndDate.time = startDateParsed
                                                             minEndDate.add(Calendar.DAY_OF_MONTH, 1)
                                                             endDateField.validation?.minDate = sdf.format(minEndDate.time)
-                                                            notifyItemChanged(fields.indexOf(endDateField))
+                                                            val endIdx = fields.indexOf(endDateField)
+                                                            if (endIdx >= 0) notifyItemChanged(endIdx)
 
                                                             val existingEndDate = getDate("end_date")
                                                             if (existingEndDate != null) {
@@ -872,14 +875,16 @@
                                             "visit_date" -> {
                                                 val admission = fields.find { it.fieldId == "nrc_admission_date" }
                                                 admission?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(admission))
+                                                val admIdx = fields.indexOf(admission)
+                                                if (admIdx >= 0) notifyItemChanged(admIdx)
                                                 clearError("nrc_admission_date")
                                             }
 
                                             "nrc_admission_date" -> {
                                                 val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
                                                 discharge?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(discharge))
+                                                val disIdx = fields.indexOf(discharge)
+                                                if (disIdx >= 0) notifyItemChanged(disIdx)
 
                                                 val dischargeDate = getDate("nrc_discharge_date")
                                                 val admissionDate = sdf.parse(dateStr)
@@ -894,7 +899,8 @@
                                             "nrc_discharge_date" -> {
                                                 val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
                                                 followUp?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(followUp))
+                                                val fuIdx = fields.indexOf(followUp)
+                                                if (fuIdx >= 0) notifyItemChanged(fuIdx)
 
                                                 val followDate = getDate("follow_up_visit_date")
                                                 val dischargeDate = sdf.parse(dateStr)
@@ -906,16 +912,24 @@
                                                 }
                                             }
                                         }
+                                      } catch (e: Exception) {
+                                        Timber.tag("FormRendererAdapter").e(e, "Error in DatePicker callback for field: ${field.fieldId}")
+                                      }
                                     },
                                     calendar.get(Calendar.YEAR),
                                     calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH)
                                 ).apply {
-                                    minDate?.let { datePicker.minDate = it.time }
-                                    maxDate?.let { datePicker.maxDate = it.time }
-
-                                    if (minDate != null && maxDate != null && minDate.after(maxDate)) {
-                                        datePicker.minDate = maxDate.time
+                                    try {
+                                        datePicker.minDate = 0
+                                        maxDate?.let { datePicker.maxDate = it.time }
+                                        if (minDate != null && maxDate != null && minDate.after(maxDate)) {
+                                            datePicker.minDate = maxDate.time
+                                        } else {
+                                            minDate?.let { datePicker.minDate = it.time }
+                                        }
+                                    } catch (e: Exception) {
+                                        Timber.tag("FormRendererAdapter").e(e, "Error setting date constraints for field: ${field.fieldId}")
                                     }
 
                                     setOnDismissListener {
@@ -1097,11 +1111,7 @@
         }
 
         init {
-            setHasStableIds(true)
-        }
-
-        override fun getItemId(position: Int): Long {
-            return fields[position].fieldId.hashCode().toLong()
+            setHasStableIds(false)
         }
 
 
