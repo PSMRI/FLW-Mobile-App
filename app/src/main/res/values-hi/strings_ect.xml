@@ -13,10 +13,10 @@
         <item>नहीं</item>
     </array>
     <string name="ectdset_preg_tst_rlt">गर्भावस्था जांच का परिणाम</string>
-    <array name="ectdset_po_neg">
-        <item>सकारात्मक</item>
-        <item>नकारात्मक</item>
-    </array>
+<!--    <array name="ectdset_po_neg">-->
+<!--        <item>सकारात्मक</item>-->
+<!--        <item>नकारात्मक</item>-->
+<!--    </array>-->
     <string name="ectdset_name_wo_preg">क्या महिला गर्भवती है?</string>
     <string name="ectdset_fly_plan_mthd">क्या आप परिवार नियोजन तरीका अपना रही हैं?</string>
     <string name="ectdset_mthd_conpt">एफपी तरीके</string>

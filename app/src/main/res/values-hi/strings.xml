@@ -323,6 +323,7 @@
     <string name="immunization">टीकाकरण</string>
     <string name="pregnancy_registration_form">गर्भावस्था पंजीकरण फॉर्म</string>
     <string name="anc_visit">एएनसी विजिट</string>
+    <string name="home_visit">गृह भ्रमण</string>
     <string name="eligible_couple_list">लक्ष्य दंपति सूची</string>
     <string name="eligible_couple_registration">पात्र दंपत्ति पंजीकरण</string>
     <string name="eligible_couple_tracking_list">पात्र दंपत्ति ट्रैकिंग सूची</string>

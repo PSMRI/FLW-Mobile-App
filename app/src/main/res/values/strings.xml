@@ -412,6 +412,7 @@
     <string name="immunization">Immunization</string>
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
+    <string name="home_visit">Home Visit</string>
     <string name="cac_form">CAC Form</string>
     <string name="anc">ANC</string>
     <string name="eligible_couple_list">Eligible Couple List</string>

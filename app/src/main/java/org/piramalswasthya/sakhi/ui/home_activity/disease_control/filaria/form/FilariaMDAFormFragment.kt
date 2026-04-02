@@ -199,10 +199,15 @@ class FilariaMDAFormFragment : Fragment() {
                         showImagePickerDialog()
                     } else {
                         field.value = value
+                        val oldCount = adapter.itemCount
                         viewModel.updateFieldValue(field.fieldId, value)
-                        adapter.updateFields(viewModel.getVisibleFields())
+                        val newVisibleFields = viewModel.getVisibleFields()
+                        if (newVisibleFields.size != oldCount) {
+                            adapter.updateFields(newVisibleFields)
+                        }
                     }
-                },)
+                },
+            formId = FormConstants.MDA_DISTRIBUTION_FORM_ID)
 
         binding.recyclerView.adapter = adapter
     }
