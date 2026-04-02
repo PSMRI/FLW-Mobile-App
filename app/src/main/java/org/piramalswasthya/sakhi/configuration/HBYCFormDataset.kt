@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.model.HBYCCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class HBYCFormDataset(
@@ -275,6 +276,18 @@ class HBYCFormDataset(
         )
 
         month.value = monthVal
+
+        ben?.let { benReg ->
+            val monthInt = monthVal.toIntOrNull() ?: 0
+            if (monthInt > 0 && benReg.dob > 0) {
+                val cal = Calendar.getInstance()
+                cal.timeInMillis = benReg.dob
+                cal.add(Calendar.MONTH, monthInt)
+                visitDate.min = cal.timeInMillis
+            } else if (benReg.dob > 0) {
+                visitDate.min = benReg.dob
+            }
+        }
 
         saved?.let { hbycCache ->
             month.value = hbycCache.month
