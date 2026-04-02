@@ -1197,10 +1197,6 @@
     <string name="no_of_childrens">No of children</string>
     <string name="marriage_date">Marriage Date</string>
     <string name="children_details">Children Details</string>
-    <string name="bank_details">Bank Details</string>
-    <string name="gallery">Gallery</string>
-    <string name="documents">Documents</string>
-    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
     <string name="camera">Camera</string>
 
     <!-- Sync Dashboard -->

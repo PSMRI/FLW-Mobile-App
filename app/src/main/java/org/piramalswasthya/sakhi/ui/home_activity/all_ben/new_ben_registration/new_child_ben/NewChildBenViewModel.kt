@@ -158,7 +158,10 @@ class NewChildBenViewModel @Inject constructor(
             oldChildCount = 0
         }
 
-        ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId) ?: return
+        ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId) ?: run {
+            Timber.e("Beneficiary not found: benId=$SelectedbenIdFromArgs, hhId=$hhId")
+            return
+        }
         _isDeath.postValue(ben.isDeath ?: false)
 
         isBenMarried = ben.genDetails?.maritalStatus != "Unmarried"
