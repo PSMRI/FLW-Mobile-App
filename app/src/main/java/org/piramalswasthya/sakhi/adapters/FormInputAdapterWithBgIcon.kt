@@ -539,7 +539,11 @@ class FormInputAdapterWithBgIcon (
                 item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                if (item.max!!> item.min!!){
+                val canShow = when {
+                    item.max == null || item.min == null -> true
+                    else -> item.max!! > item.min!!
+                }
+                if (canShow){
                     datePickerDialog.show()
                 }else{
                     Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
