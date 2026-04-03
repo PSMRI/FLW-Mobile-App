@@ -1003,4 +1003,9 @@
         <item>आईएनएच मोनो (6 महीने)</item>
     </string-array>
 
+    <string-array name="benificary_case_status">
+        <item>जांच</item>
+        <item>मृत्यु</item>
+    </string-array>
+
 </resources>

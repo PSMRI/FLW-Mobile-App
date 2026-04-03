@@ -152,7 +152,7 @@ class KalaAzarFormDataset(
         )
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
-            beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status)[0]
+            beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status_kalaazar)[0]
             caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
         } else {
 
@@ -376,7 +376,7 @@ class KalaAzarFormDataset(
             form.visitDate = getLongFromDate(dateOfCase.value)
             form.referToName = referredTo.value
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.value
+            form.beneficiaryStatus = beneficiaryStatus.getEnglishStringFromPosition(beneficiaryStatus.getPosition())
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
             form.reasonForDeath = reasonOfDeath.value
             form.kalaAzarCaseStatus = getEnglishValueInArray(R.array.dc_case_status, caseStatus.value)
