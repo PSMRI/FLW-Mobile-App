@@ -898,7 +898,7 @@ data class BenBasicDomainForForm(
     val dob: Long,
     val ageInt: Int = getAgeFromDob(dob),
     val ageUnit: AgeUnit = getAgeUnitFromDob(dob),
-    val age: String = "$ageInt $ageUnit",
+    val age: String = "${getAgeDisplayString(dob)}",
     val mobileNo: String,
     val fatherName: String? = null,
     val spouseName: String? = null,
