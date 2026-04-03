@@ -179,6 +179,9 @@
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
     <string name="screen">Screen</string>
+    <string name="view_screen">View Screen</string>
+    <string name="screened">Screened</string>
+    <string name="not_screened">Not Screened</string>
     <string name="tb_suspected_sputum_test">TB Suspected Sputum Test</string>
     <string name="tb_tracking_submitted">TB Tracking submitted</string>
     <string name="track">Track</string>

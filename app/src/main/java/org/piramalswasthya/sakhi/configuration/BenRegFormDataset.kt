@@ -472,20 +472,20 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val headLine = FormElement(
         id = 45,
         inputType = org.piramalswasthya.sakhi.model.InputType.HEADLINE,
-        title = "Birth Certificates",
+        title = resources.getString(R.string.cr_birth_cert_uploads),
         headingLine = false,
         required = false,
     )
     private val fileUploadFront = FormElement(
         id = 46,
         inputType = FILE_UPLOAD,
-        title = "Front Side",
+        title = resources.getString(R.string.front_side),
         required = false,
     )
     private val fileUploadBack = FormElement(
         id = 47,
         inputType = FILE_UPLOAD,
-        title = "Back Side",
+        title = resources.getString(R.string.back_side),
         required = false,
     )
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accident">दुर्घटना</string>
- <!--   <string name="cdr_form">बच्चे की मौत की रिपोर्ट (सीडीआर) फॉर्म</string>-->
+    <string name="cdr_form">सीडीआर फॉर्म</string>
 
     <string name="str_age">आयु</string>
-    <string name="str_visit">विज़िट की तिथि</string>
+    <string name="str_visit">भ्रमण की तिथि</string>
     <string name="str_gender">लिंग</string>
     <string name="str_father_name">पिता का नाम</string>
     <string name="str_address">पता</string>
