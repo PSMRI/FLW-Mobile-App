@@ -160,6 +160,7 @@ class NewChildBenViewModel @Inject constructor(
 
         ben = benRepo.getBeneficiaryRecord(SelectedbenIdFromArgs, hhId) ?: run {
             Timber.e("Beneficiary not found: benId=$SelectedbenIdFromArgs, hhId=$hhId")
+            _state.postValue(State.SAVE_FAILED)
             return
         }
         _isDeath.postValue(ben.isDeath ?: false)

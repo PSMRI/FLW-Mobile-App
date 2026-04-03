@@ -2672,10 +2672,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
             ben.userImage = pic.value
-            ben.regDate = getLongFromDate(dateOfReg.value!!)
+            ben.regDate = getLongFromDate(dateOfReg.value)
             ben.firstName = firstName.value
             ben.lastName = lastName.value
-            ben.dob = getLongFromDate(agePopup.value!!)
+            ben.dob = getLongFromDate(agePopup.value)
             ben.age = (getAgeFromDob(getLongFromDate(agePopup.value)))
             ben.ageUnitId = 3
             ben.ageUnit = AgeUnit.YEARS
