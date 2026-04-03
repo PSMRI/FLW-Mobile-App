@@ -1,22 +1,27 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_eligible_list
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import javax.inject.Inject
 
 @HiltViewModel
 class NcdEligibleListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
-    preferenceDao: PreferenceDao
+    private val preferenceDao: PreferenceDao,
+    @ApplicationContext private val context: Context
 ) : ViewModel(
 
 ) {
@@ -24,7 +29,9 @@ class NcdEligibleListViewModel @Inject constructor(
     private lateinit var asha: User
     var clickedPosition = 0
 
-    private val selectedCategory = MutableStateFlow("ALL")
+    private val resources get() = getLocalizedResources(context, preferenceDao.getCurrentLanguage())
+
+    private val selectedCategory = MutableStateFlow(resources.getString(R.string.all))
 
     private val allBenList = recordsRepo.getNcdEligibleList
     private val filter = MutableStateFlow("")
@@ -38,9 +45,9 @@ class NcdEligibleListViewModel @Inject constructor(
         val filteredIds = filteredBenBasicDomainList.map { it.benId }.toSet()
 
         when (selectedCat) {
-            "Screened" -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
-            "Not Screened" -> list.filter { it.savedCbacRecords.isEmpty() && (it.ben.benId in filteredIds) }
-            else -> list.filter { it.ben.benId in filteredIds } // "ALL" or any other text -> show filtered results
+            resources.getString(R.string.screened) -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
+            resources.getString(R.string.not_screened) -> list.filter { it.savedCbacRecords.isEmpty() && (it.ben.benId in filteredIds) }
+            else -> list.filter { it.ben.benId in filteredIds }
         }
     }
 
@@ -87,9 +94,9 @@ class NcdEligibleListViewModel @Inject constructor(
     fun categoryData() : ArrayList<String> {
 
         catList.clear()
-        catList.add("ALL")
-        catList.add("Screened")
-        catList.add("Not Screened")
+        catList.add(resources.getString(R.string.all))
+        catList.add(resources.getString(R.string.screened))
+        catList.add(resources.getString(R.string.not_screened))
         return catList
 
     }

@@ -29,10 +29,10 @@
     <string name="nbr_dor">पंजीकरण की तारीख</string>
     <string name="nbr_nb_first_name">पहला नाम</string>
     <string name="nbr_nb_last_name">अंतिम नाम / उपनाम</string>
-    <string name="title_new_ben_reg_hof">HoF Registration</string>
+    <string name="title_new_ben_reg_hof">मुखिया का पंजीकरण</string>
     <string name="title_new_ben_reg_non_hof">परिवार सदस्य पंजीकरण</string>
     <string name="icon_title_abortion">गर्भपात सूची</string>
-    <string name="icon_title_pmsma">e-PMSMA List</string>
+    <string name="icon_title_pmsma">ई-पीएमएसएमए सूची</string>
     <string name="mother_rch_id">मां की RCH आईडी</string>
     <string-array name="anc_paiucd_done_by">
         <item>डॉक्टर</item>
@@ -57,7 +57,7 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array3">
-        <item>Not Applicable</item>
+        <item>लागू नहीं</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array4">
@@ -365,6 +365,16 @@
     <string-array name="ahd_referral_status_array">
         <item>लंबित</item>
         <item>पूर्ण</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>परिवार के मुखिया</item>
+        <item>स्वयं</item>
+        <item>पति / पत्नी</item>
+        <item>माँ</item>
+        <item>पिता</item>
+        <item>पड़ोसी</item>
+        <item>मित्र / रिश्तेदार</item>
     </string-array>
 
 </resources>
