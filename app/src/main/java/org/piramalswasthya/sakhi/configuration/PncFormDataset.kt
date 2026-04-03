@@ -311,7 +311,7 @@ class PncFormDataset(
                 42
             ).filter { if (daysSinceDelivery == 0L) it <= 1 else it <= daysSinceDelivery }
                 .filter { it > (previousPnc?.pncPeriod ?: 0) }
-                .map { "Day $it" }.toTypedArray()
+                .map { "${resources.getString(R.string.day)} $it" }.toTypedArray()
 
         if (hasPreviousPermanentSterilization) {
 
@@ -350,7 +350,7 @@ class PncFormDataset(
 
 
         saved?.let {
-            pncPeriod.value = "Day ${it.pncPeriod}"
+            pncPeriod.value = "${resources.getString(R.string.day)} ${it.pncPeriod}"
             visitDate.value = getDateFromLong(it.pncDate)
             ifaTabsGiven.value = it.ifaTabsGiven?.toString()
             anyContraceptionMethod.value = it.anyContraceptionMethod?.let {
@@ -472,7 +472,7 @@ class PncFormDataset(
 
 
                 val today = Calendar.getInstance().setToStartOfTheDay().timeInMillis
-                when (val visitNumber = pncPeriod.value!!.substring(4).toInt()) {
+                when (val visitNumber = pncPeriod.value!!.filter { it.isDigit() }.toInt()) {
                     1 -> {
                         visitDate.min = minOf(today, dateOfDelivery)
                         visitDate.max = minOf(
@@ -784,7 +784,7 @@ class PncFormDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PNCVisitCache).let { form ->
-            form.pncPeriod = pncPeriod.value!!.substring(4).toInt()
+            form.pncPeriod = pncPeriod.value!!.filter { it.isDigit() }.toInt()
             form.pncDate = getLongFromDate(visitDate.value!!)
             form.otherPlaceOfDeath=otherPlaceOfDeath.value
             form.dateOfDelivery = getLongFromDate(deliveryDate.value)
