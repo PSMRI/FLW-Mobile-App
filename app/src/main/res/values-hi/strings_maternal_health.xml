@@ -174,7 +174,7 @@
     <string-array name="pmsma_malaria_array">
         <item>नेगेटिव</item>
         <item>पॉजिटिव</item>
-        <item>Test Not Done</item>
+        <item>परीक्षण नहीं किया गया</item>
     </string-array>
 
     <!-- Delivery Outcome Strings -->

@@ -608,8 +608,8 @@
     <string name="asha_profile">प्रोफाइल</string>
     <string name="status">स्थिति</string>
     <string name="sync_status">सिंक स्थिति</string>
-    <string name="ncd_refer_form">NCD रेफर फॉर्म</string>
-    <string name="ncd_refer_list">NCD रेफर सूची</string>
+    <string name="ncd_refer_form">एनसीडी रेफर फॉर्म</string>
+    <string name="ncd_refer_list">एनसीडी रेफर सूची</string>
     <string name="hwc_refer_form">एचडब्ल्यूसी रेफर फॉर्म</string>
     <string name="hwc_refer_list">एचडब्ल्यूसी रेफर सूची</string>
     <string name="child_under_five_years_list">पांच वर्ष से कम आयु के बच्चों की सूची</string>
