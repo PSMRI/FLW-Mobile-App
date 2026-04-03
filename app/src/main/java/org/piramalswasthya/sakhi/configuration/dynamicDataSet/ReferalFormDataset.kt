@@ -16,16 +16,16 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     private val healthCenter = FormElement(
         id = 1,
         inputType = DROPDOWN,
-        title = context.getString(R.string.higher_healthcare_center),
+        title = resources.getString(R.string.higher_healthcare_center),
         arrayId = -1,
-        entries = arrayOf("Apolo", "CHC", "District Hospital","PHC"),
+        entries = resources.getStringArray(R.array.referal_health_center_array),
         required = true,
         hasDependants = true
     )
     private val reasonForReferal = FormElement(
         id = 2,
         inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
-        title = context.getString(R.string.referral_reason),
+        title = resources.getString(R.string.referral_reason),
         arrayId = -1,
         required = false,
 
@@ -34,7 +34,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     private val additionalService = FormElement(
         id = 3,
         inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
-        title = context.getString(R.string.additional_services),
+        title = resources.getString(R.string.additional_services),
         value = "FLW",
         arrayId = -1,
         required = true,
@@ -44,7 +44,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     private val referDate = FormElement(
         id = 4,
         inputType = DATE_PICKER,
-        title = "Refer Date",
+        title = resources.getString(R.string.refer_date),
         arrayId = -1,
         required = true,
         isEnabled = false,

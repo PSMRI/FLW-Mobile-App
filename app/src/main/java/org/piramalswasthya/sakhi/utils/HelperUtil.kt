@@ -762,8 +762,8 @@ object HelperUtil {
         if (muac <= 11.5f) {
             showAlertDialog(
                 context,
-                "SAM Case Detected",
-                "MUAC is $muac cm. Please refer the Child to NRC as SAM case."
+                context.getString(R.string.sam_case_detected),
+                context.getString(R.string.muac_sam_alert_message, muac)
             )
             return true
         }
@@ -774,8 +774,8 @@ object HelperUtil {
         if (status == "SAM") {
             showAlertDialog(
                 context,
-                "SAM Case Detected",
-                "Weight-for-Height Status is SAM. Please refer the Child to NRC as SAM case."
+                context.getString(R.string.sam_case_detected),
+                context.getString(R.string.weight_height_sam_alert_message)
             )
             return true
         }

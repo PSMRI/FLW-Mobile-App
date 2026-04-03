@@ -21,7 +21,7 @@ class InfantRegistrationDataset(
     private var babyName = FormElement(
         id = 1,
         inputType = InputType.TEXT_VIEW,
-        title = "Name of Baby",
+        title = resources.getString(R.string.ir_baby_name),
         required = false,
         hasDependants = false
     )
@@ -29,8 +29,8 @@ class InfantRegistrationDataset(
     private var infantTerm = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Infant Term",
-        entries = arrayOf("Full Term", "Pre Term"),
+        title = resources.getString(R.string.ir_infant_term),
+        entries = resources.getStringArray(R.array.ir_infant_term),
         required = false,
         hasDependants = false
     )
@@ -38,8 +38,8 @@ class InfantRegistrationDataset(
     private var corticosteroidGiven = FormElement(
         id = 3,
         inputType = InputType.RADIO,
-        title = "Was Corticosteroid Inj. given?",
-        entries = arrayOf("Yes", "No", "Don't Know"),
+        title = resources.getString(R.string.ir_corticosteroid_given),
+        entries = resources.getStringArray(R.array.ir_confirmation_array3),
         required = false,
         hasDependants = false
     )
@@ -47,7 +47,7 @@ class InfantRegistrationDataset(
     private var gender = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Sex of Infant",
+        title = resources.getString(R.string.ir_gender),
         entries = resources.getStringArray(R.array.ecr_gender_array),
         required = true,
         hasDependants = true,
@@ -56,8 +56,8 @@ class InfantRegistrationDataset(
     private var babyCriedAtBirth = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Baby Cried Immediately after Birth",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_baby_cried_at_birth),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = false,
         hasDependants = true
     )
@@ -65,8 +65,8 @@ class InfantRegistrationDataset(
     private var resuscitation = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "If No, Resuscitation Done",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_resuscitation),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = true,
         hasDependants = false
     )
@@ -74,8 +74,8 @@ class InfantRegistrationDataset(
     private var referred = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Referred to higher facility for further management",
-        entries = arrayOf("Yes", "No", "NA"),
+        title = resources.getString(R.string.ir_referred),
+        entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = false
     )
@@ -83,28 +83,25 @@ class InfantRegistrationDataset(
     private var hadBirthDefect = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = "Any birth defect seen in at birth?",
-        entries = arrayOf("Yes", "No", "NA"),
+        title = resources.getString(R.string.ir_had_birth_defect),
+        entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = true
     )
 
     private var birthDefect = FormElement(
-        id = 9, inputType = InputType.DROPDOWN, title = "Defect seen at birth", entries = arrayOf(
-            "Cleft Lip / Cleft Palate",
-            "Club Foot",
-            "Down's Syndrome",
-            "Hydrocephalus",
-            "Imperforate Anus",
-            "Neural Tube Defect (Spinal Bifida)",
-            "Other"
-        ), required = false, hasDependants = true
+        id = 9,
+        inputType = InputType.DROPDOWN,
+        title = resources.getString(R.string.ir_birth_defect),
+        entries = resources.getStringArray(R.array.ir_birth_defect_array),
+        required = false,
+        hasDependants = true
     )
 
     private var otherDefect = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = "Other defect seen at Birth",
+        title = resources.getString(R.string.ir_other_defect),
         required = false,
         hasDependants = false,
     )
@@ -124,15 +121,15 @@ class InfantRegistrationDataset(
     private var breastFeedingStarted = FormElement(
         id = 12,
         inputType = InputType.RADIO,
-        title = "Breast feeding started within 1 hour of birth",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_breast_feeding_started),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = true,
         hasDependants = false,
     )
     private var isSncu = FormElement(
         id = 13,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.is_baby_discharge_from_sncu),
+        title = resources.getString(R.string.is_baby_discharge_from_sncu),
         entries = resources.getStringArray(R.array.do_is_jsy_beneficiary_array),
         required = false,
         hasDependants = true
@@ -142,7 +139,7 @@ class InfantRegistrationDataset(
     private val deliveryDischargeSummary1  = FormElement(
         id = 58,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 1",
+        title = resources.getString(R.string.delivery_discharge_summary_1),
         required = false
 
     )
@@ -150,21 +147,21 @@ class InfantRegistrationDataset(
     private val deliveryDischargeSummary2 = FormElement(
         id =59,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 2",
+        title = resources.getString(R.string.delivery_discharge_summary_2),
         required = false
     )
 
     private val deliveryDischargeSummary3 = FormElement(
         id =60,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 3",
+        title = resources.getString(R.string.delivery_discharge_summary_3),
         required = false
     )
 
     private val deliveryDischargeSummary4 = FormElement(
         id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 4",
+        title = resources.getString(R.string.delivery_discharge_summary_4),
         required = false
     )
 

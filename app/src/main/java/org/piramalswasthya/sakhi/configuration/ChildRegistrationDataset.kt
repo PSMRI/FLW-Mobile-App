@@ -23,7 +23,7 @@ class ChildRegistrationDataset(
     private val dateOfReg = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.nbr_dor),
+        title = resources.getString(R.string.nbr_dor),
         arrayId = -1,
         required = true,
         min = getMinDateOfReg(),
@@ -99,11 +99,7 @@ class ChildRegistrationDataset(
         id = 8,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_whose_mobile_number),
-        entries = arrayOf(
-            "Mother",
-            "Father",
-            "Others"
-        ),
+        entries = resources.getStringArray(R.array.cr_mobile_no_of_array),
         isEnabled = false,
 
         required = false,
@@ -113,7 +109,7 @@ class ChildRegistrationDataset(
     private val mobileNumber = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
-        title = "Mobile No.",
+        title = resources.getString(R.string.str_mobile_no),
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -127,7 +123,7 @@ class ChildRegistrationDataset(
     private val rchIdMother = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = "RCH ID No. of Mother",
+        title = resources.getString(R.string.str_rch_id_of_mother),
         arrayId = -1,
         required = false,
         isEnabled = false,
@@ -141,7 +137,7 @@ class ChildRegistrationDataset(
     private val birthCertificateNo = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Birth Certificate Number",
+        title = resources.getString(R.string.str_birth_cert_number),
         arrayId = -1,
         required = false,
     )
@@ -172,40 +168,28 @@ class ChildRegistrationDataset(
     private val placeOfBirth = FormElement(
         id = 13,
         inputType = InputType.DROPDOWN,
-        title = "Place of Birth",
-        entries = arrayOf(
-            "District Hospital",
-            "Community Health Centre",
-            "Primary Health Centre",
-            "Sub Centre",
-            "Other Public Facility",
-            "Accredited Private Hospital",
-            "Other Private Hospital ",
-            "Home",
-            "Sub District Hospital",
-            "Medical College Hospital",
-            "In Transit"
-        ),
+        title = resources.getString(R.string.str_place_of_birth),
+        entries = resources.getStringArray(R.array.cr_place_of_birth_array),
         required = false,
         hasDependants = false
     )
     private val headLine = FormElement(
         id = 13,
         inputType = InputType.HEADLINE,
-        title = "Birth Certificate Uploads",
+        title = resources.getString(R.string.cr_birth_cert_uploads),
         headingLine = false,
         required = false,
     )
     private val fileUploadFront = FormElement(
         id = 14,
         inputType = InputType.FILE_UPLOAD,
-        title = "Front Side",
+        title = resources.getString(R.string.front_side),
         required = false,
     )
     private val fileUploadBack = FormElement(
         id = 15,
         inputType = InputType.FILE_UPLOAD,
-        title = "Back Side",
+        title = resources.getString(R.string.back_side),
         required = false,
     )
 
