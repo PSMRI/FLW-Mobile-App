@@ -41,7 +41,7 @@
         private val pmsmaVisitDate = FormElement(
             id = 43,
             inputType = org.piramalswasthya.sakhi.model.InputType.DATE_PICKER,
-            title = context.getString(R.string.pmsma_visit_date),
+            title = resources.getString(R.string.pmsma_visit_date),
             required = true,
             hasDependants = true,
             showDrawable = true
@@ -50,21 +50,21 @@
         private val pmsmaVisit = FormElement(
             id = 44,
             inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
-            title = context.getString(R.string.pmsma_visit),
+            title = resources.getString(R.string.pmsma_visit),
             required = true,
             showDrawable = true,
         )
         private val detailsOfPW = FormElement(
             id = 46,
             inputType = HEADLINE,
-            title = context.getString(R.string.details_of_pregnant_women),
+            title = resources.getString(R.string.details_of_pregnant_women),
             required = false
         )
 
         private val highRiskReason = FormElement(
             id = 45,
             inputType = org.piramalswasthya.sakhi.model.InputType.DROPDOWN,
-            title = context.getString(R.string.if_yes_select_high_risk_condition),
+            title = resources.getString(R.string.if_yes_select_high_risk_condition),
             arrayId = R.array.select_high_risk_condition,
             entries = resources.getStringArray(R.array.select_high_risk_condition),
             required = true,

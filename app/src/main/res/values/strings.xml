@@ -122,6 +122,7 @@
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
     <string name="tv_reg_date_ph">Registration Date</string>
+    <string name="reg_date">Reg Date</string>
     <string name="tv_ben_name_ph">Beneficiary Name</string>
     <string name="tv_type_of_list">Type of List</string>
     <string name="tv_rch_id">RCH ID</string>
@@ -217,6 +218,11 @@
     <string-array name="yes_no_options">
         <item>Yes</item>
         <item>No</item>
+    </string-array>
+
+    <string-array name="mdsr_cause_of_death_type">
+        <item>Suspected Maternal death</item>
+        <item>Non-maternal death</item>
     </string-array>
 
     <string-array name="ahd_place_options">
@@ -577,9 +583,19 @@
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>
+    <string name="refer_date">Refer Date</string>
+    <string-array name="referal_health_center_array">
+        <item>Apolo</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>PHC</item>
+    </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="add_new">Add New</string>
+    <string name="ifa_distribution">IFA Distribution</string>
+    <string name="ifa_quantity">IFA Quantity</string>
     <string name="date_of_provision">Date of Provision</string>
     <string name="bottle_number">Bottle Number</string>
     <string name="s_no">S. No</string>
@@ -1291,6 +1307,12 @@
     <string name="tb_history_last_5_years">Last 5 years history of TB</string>
     <string name="visit_leprosy">Visit</string>
     <string name="visit_number_label">Visit -%d</string>
+    <string name="add_spouse">Add Spouse</string>
+    <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="str_wife">Wife</string>
+    <string name="str_husband">Husband</string>
+    <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
+    <string name="distribution_date">Distribution Date</string>
 
 </resources>
 

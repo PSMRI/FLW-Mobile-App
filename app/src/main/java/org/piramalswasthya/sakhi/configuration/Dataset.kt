@@ -48,9 +48,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
      companion object {
         fun getLongFromDate(dateString: String?): Long {
+            if (dateString.isNullOrEmpty()) return 0L
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-            val date = dateString?.let { f.parse(it) }
-            return date?.time ?: 0L
+            return try {
+                f.parse(dateString)?.time ?: 0L
+            } catch (e: java.text.ParseException) {
+                0L
+            }
         }
 
 
@@ -1067,15 +1071,21 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         val englishArray = englishResources.getStringArray(arrayId)
         val localizedArray = resources.getStringArray(arrayId)
-        val index = englishArray.indexOf(entry)
 
-        return if (index in englishArray.indices) {
-            localizedArray[index]
-        } else {
-            // Optional: log and gracefully fail
-            Log.w("Dataset", "Entry '$entry' not found in English array for ID $arrayId")
-            null
+        // Try English lookup first (value was stored in English)
+        val englishIndex = englishArray.indexOf(entry)
+        if (englishIndex in englishArray.indices) {
+            return localizedArray[englishIndex]
         }
+
+        // Fallback: value was stored in localized language, find it directly
+        val localIndex = localizedArray.indexOf(entry)
+        if (localIndex in localizedArray.indices) {
+            return localizedArray[localIndex]
+        }
+
+        Log.w("Dataset", "Entry '$entry' not found in array for ID $arrayId")
+        return null
     }
 
 

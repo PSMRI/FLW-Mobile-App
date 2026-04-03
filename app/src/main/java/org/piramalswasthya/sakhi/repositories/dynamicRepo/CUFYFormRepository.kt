@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.*
@@ -319,6 +320,7 @@ class CUFYFormRepository @Inject constructor(
     suspend fun getCurrentSamStatus(benId: Long): String {
         Timber.tag("CUFYFormRepository").d("🔍 getCurrentSamStatus: benId=$benId")
 
+        val localizedRes = HelperUtil.getLocalizedResources(context, pref.getCurrentLanguage())
 
         val samForms = jsonResponseDao.getFormsDataByFormID(
             FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID,
@@ -327,7 +329,7 @@ class CUFYFormRepository @Inject constructor(
 
 
         if (samForms.isEmpty()) {
-            return "Check SAM"
+            return localizedRes.getString(R.string.check_sam_)
         }
 
         val latestForm = samForms.first()
@@ -345,14 +347,14 @@ class CUFYFormRepository @Inject constructor(
 
             when {
                 isDischargedFromNRC -> {
-                    if (samStatus == "Improved") "Check SAM" else context.getString(R.string.follow_up_sam)
+                    if (samStatus == "Improved") localizedRes.getString(R.string.check_sam_) else localizedRes.getString(R.string.follow_up_sam)
                 }
-                isAdmittedToNRC -> context.getString(R.string.nrc_admitted)
-                isReferredToNRC -> context.getString(R.string.referred_to_nrc)
-                else -> context.getString(R.string.check_sam)
+                isAdmittedToNRC -> localizedRes.getString(R.string.nrc_admitted)
+                isReferredToNRC -> localizedRes.getString(R.string.referred_to_nrc)
+                else -> localizedRes.getString(R.string.check_sam_)
             }
         } catch (e: Exception) {
-            context.getString(R.string.check_sam)
+            localizedRes.getString(R.string.check_sam_)
         }
     }
 }
