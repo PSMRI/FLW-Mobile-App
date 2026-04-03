@@ -95,6 +95,7 @@ class EligibleCoupleRegFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val currentBinding = _binding ?: return
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
             if(viewModel.getDocumentFormId() == 31) {
                 data?.data?.let { pdfUri ->
@@ -105,7 +106,7 @@ class EligibleCoupleRegFragment : Fragment() {
                         latestTmpUri = pdfUri
                         latestTmpUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -123,7 +124,7 @@ class EligibleCoupleRegFragment : Fragment() {
                         backViewFileUri = pdfUri
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
