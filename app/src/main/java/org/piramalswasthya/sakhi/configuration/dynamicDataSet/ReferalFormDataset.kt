@@ -17,7 +17,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         id = 1,
         inputType = DROPDOWN,
         title = resources.getString(R.string.higher_healthcare_center),
-        arrayId = -1,
+        arrayId = R.array.referal_health_center_array,
         entries = resources.getStringArray(R.array.referal_health_center_array),
         required = true,
         hasDependants = true
@@ -95,7 +95,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
             form.referralReason = reasonForReferal.value
             form.refrredToAdditionalServiceList = listOf("FLW")
             form.referredToInstituteID = healthCenter.getPosition()
-            form.referredToInstituteName = healthCenter.value
+            form.referredToInstituteName = healthCenter.getEnglishStringFromPosition(healthCenter.getPosition())
             form.createdBy =  preferenceDao.getLoggedInUser()?.userName
             form.vanID =  preferenceDao.getLoggedInUser()?.vanId
             form.providerServiceMapID =  preferenceDao.getLoggedInUser()?.serviceMapId
