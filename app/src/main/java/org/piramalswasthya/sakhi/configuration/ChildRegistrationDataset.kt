@@ -169,6 +169,7 @@ class ChildRegistrationDataset(
         id = 13,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.str_place_of_birth),
+        arrayId = R.array.cr_place_of_birth_array,
         entries = resources.getStringArray(R.array.cr_place_of_birth_array),
         required = false,
         hasDependants = false
@@ -246,7 +247,7 @@ class ChildRegistrationDataset(
             dob.isEnabled = true
         }
         deliveryOutcomeCache?.placeOfDelivery?.let {
-            placeOfBirth.value = it
+            placeOfBirth.value = getLocalValueInArray(R.array.cr_place_of_birth_array, it) ?: it
         }
         infantRegCache?.let { infant ->
             childName.value = infant.babyName
@@ -363,7 +364,7 @@ class ChildRegistrationDataset(
             processed = "N",
             kidDetails = BenRegKid(
                 childName = childName.value,
-                birthPlace = placeOfBirth.value,
+                birthPlace = placeOfBirth.getEnglishStringFromPosition(placeOfBirth.getPosition()),
                 birthPlaceId = placeOfBirth.getPosition(),
                 birthCertificateNumber = birthCertificateNo.value,
                 birthCertificateFileFrontView = fileUploadFront.value.toString(),

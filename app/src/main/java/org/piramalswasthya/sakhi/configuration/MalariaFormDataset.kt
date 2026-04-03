@@ -921,7 +921,7 @@ class MalariaFormDataset(
             form.caseStatus = getEnglishValueInArray(R.array.dc_case_status, caseStatus.value)
             form.referToName = referredTo.value
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.value
+            form.beneficiaryStatus = beneficiaryStatus.getEnglishStringFromPosition(beneficiaryStatus.getPosition())
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
             form.reasonForDeath = reasonOfDeath.value
             form.otherPlaceOfDeath = otherPlaceOfDeath.value
