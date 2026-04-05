@@ -182,14 +182,14 @@
     </string-array>
 
     <string-array name="community_array">
-        <item>सामान्य</item>
-        <item>अनुसूचित जाति</item>
-        <item>अनुसूचित जनजाति</item>
-        <item>पिछड़ा वर्ग</item>
-        <item>अन्य पिछड़ा वर्ग</item>
-        <item>अन्य वर्ग</item>
-        <item>विशेष रूप से कमजोर जनजातीय समूह</item>
-        <item>नहीं दिया गया</item>
+        <item>सामान्य (GEN)</item>
+        <item>अनुसूचित जाति (SC)</item>
+        <item>अनुसूचित जनजाति (ST)</item>
+        <item>पिछड़ा वर्ग (BC)</item>
+        <item>अन्य पिछड़ा वर्ग (OBC)</item>
+        <item>अन्य वर्ग (OC)</item>
+        <item>विशेष रूप से कमजोर जनजातीय समूह (PVTG)</item>
+        <item>नहीं दिया गया (NA)</item>
     </string-array>
 
     <string-array name="religion_array">

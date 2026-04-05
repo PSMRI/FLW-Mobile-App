@@ -70,13 +70,23 @@
         <item>दुर्घटना</item>
         <item>अन्य</item>
     </string-array>
+    <string-array name="anc_termination_done_by">
+        <item>डॉक्टर</item>
+        <item>नर्स</item>
+    </string-array>
+    <string-array name="anc_method_of_termination">
+        <item>MVA</item>
+        <item>EVA</item>
+        <item>MMA</item>
+        <item>अन्य</item>
+    </string-array>
     <string-array name="anc_confirmation_array">
         <item>हाँ</item>
         <item>नहीं</item>
     </string-array>
 
     <string-array name="abortion_isplaning_array">
-        <item>Has a PAIUCD been inserted?(Copper-T)\n or</item>
+        <item>क्या PAIUCD (कॉपर-T) डाला गया है?\n अथवा</item>
         <item>क्या महिला ने स्थायी नसबंदी (ट्यूबेक्टॉमी) चुनी है?</item>
     </string-array>
     <string-array name="anc_confirmation_array1">

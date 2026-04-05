@@ -1254,7 +1254,7 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE

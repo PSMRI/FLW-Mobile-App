@@ -24,6 +24,8 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
 import timber.log.Timber
 import java.io.File
 
@@ -67,6 +69,23 @@ class AHDFormFragment : Fragment() {
                 imageClickListener = FormInputAdapter.ImageClickListener {
                     imgValue = it
                     showImagePickerDialog()
+                },
+                selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
+                    imgValue=it
+                    showImagePickerDialog()
+                },
+                viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
+                    val element = (binding.form.rvInputForm.adapter as? FormInputAdapter)
+                        ?.currentList?.firstOrNull { it.id == formId }
+
+                    element?.value?.let { uriStr ->
+                        val uri = Uri.parse(uriStr)
+                        if (uriStr.isEmpty()) {
+                            Toast.makeText(requireContext(), "No image found", Toast.LENGTH_SHORT).show()
+                        } else {
+                            requireContext().showImageDialog(uri)
+                        }
+                    }
                 },
                 isEnabled = !exists
             )
