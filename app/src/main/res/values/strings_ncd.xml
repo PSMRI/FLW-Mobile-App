@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
-    <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
+    <string name="radio_title_cbac">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
+    <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
     <string name="cbac_ask_pat">Ask if Patient has any of these Symptoms</string>
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>

@@ -6,6 +6,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
@@ -49,7 +50,7 @@ class AHDDataset(
 
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.nbr_image),
         subtitle = resources.getString(R.string.nbr_image_sub),
         arrayId = -1,
@@ -58,7 +59,7 @@ class AHDDataset(
 
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.nbr_image),
         subtitle = resources.getString(R.string.nbr_image_sub),
         arrayId = -1,
