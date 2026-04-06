@@ -75,7 +75,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
 
         if (saved && cache != null) {
             uWinSessionDate.value = getDateFromLong(cache.sessionDate)
-            place.value = cache.place
+            place.value = getLocalValueInArray(R.array.place_of_delivery_options, cache.place)
             participant.value = cache.participantsCount.toString()
             uploadSummary1.value = cache.uploadedFiles1
             uploadSummary2.value = cache.uploadedFiles2

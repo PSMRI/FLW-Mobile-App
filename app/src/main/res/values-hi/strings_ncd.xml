@@ -269,5 +269,11 @@
         <item>सरकारी मेडिकल कॉलेज</item>
     </string-array>
 
+    <string name="cat_ncd">एनसीडी</string>
+    <string name="cat_tb">टीबी</string>
+    <string name="cat_leprosy">कुष्ठ रोग</string>
+    <string name="cat_geriatric">वृद्धावस्था</string>
+    <string name="cat_hrp">एचआरपी</string>
+    <string name="cat_maternal">मातृ</string>
 </resources>
 

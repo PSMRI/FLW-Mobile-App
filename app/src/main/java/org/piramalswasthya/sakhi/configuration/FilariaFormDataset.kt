@@ -123,7 +123,7 @@ class FilariaFormDataset(
                     if (saved.sufferingFromFilariasis == true) "Yes" else "No"
                 )
 
-            if (isSuffering.value == "Yes") {
+            if (isSuffering.value == isSuffering.entries!!.first()) {
 
                 val bodyField = if (isMale) whichPartOfBodyMale else whichPartOfBodyFemale
 
@@ -266,7 +266,7 @@ class FilariaFormDataset(
     }
 
     fun isSuffering(): Boolean {
-        return isSuffering.value == "Yes"
+        return isSuffering.value == isSuffering.entries!!.first()
     }
 
     fun updateBen(benRegCache: BenRegCache) {

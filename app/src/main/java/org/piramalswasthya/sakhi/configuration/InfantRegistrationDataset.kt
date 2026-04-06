@@ -30,6 +30,7 @@ class InfantRegistrationDataset(
         id = 2,
         inputType = InputType.TEXT_VIEW,
         title = resources.getString(R.string.ir_infant_term),
+        arrayId = R.array.ir_infant_term,
         entries = resources.getStringArray(R.array.ir_infant_term),
         required = false,
         hasDependants = false
@@ -39,6 +40,7 @@ class InfantRegistrationDataset(
         id = 3,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.ir_corticosteroid_given),
+        arrayId = R.array.ir_confirmation_array3,
         entries = resources.getStringArray(R.array.ir_confirmation_array3),
         required = false,
         hasDependants = false
@@ -75,6 +77,7 @@ class InfantRegistrationDataset(
         id = 7,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.ir_referred),
+        arrayId = R.array.ir_confirmation_array2,
         entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = false
@@ -84,6 +87,7 @@ class InfantRegistrationDataset(
         id = 8,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.ir_had_birth_defect),
+        arrayId = R.array.ir_confirmation_array2,
         entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = true
@@ -93,6 +97,7 @@ class InfantRegistrationDataset(
         id = 9,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.ir_birth_defect),
+        arrayId = R.array.ir_birth_defect_array,
         entries = resources.getStringArray(R.array.ir_birth_defect_array),
         required = false,
         hasDependants = true
@@ -130,6 +135,7 @@ class InfantRegistrationDataset(
         id = 13,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.is_baby_discharge_from_sncu),
+        arrayId = R.array.do_is_jsy_beneficiary_array,
         entries = resources.getStringArray(R.array.do_is_jsy_beneficiary_array),
         required = false,
         hasDependants = true
@@ -284,18 +290,18 @@ class InfantRegistrationDataset(
                 vitkDose*/
             )
             babyName.value = saved.babyName
-            infantTerm.value = saved.infantTerm
-            corticosteroidGiven.value = saved.corticosteroidGiven
+            infantTerm.value = getLocalValueInArray(R.array.ir_infant_term, saved.infantTerm)
+            corticosteroidGiven.value = getLocalValueInArray(R.array.ir_confirmation_array3, saved.corticosteroidGiven)
             gender.value = saved.gender?.let { gender.entries?.get(it.ordinal) }
-            babyCriedAtBirth.value = if (saved.babyCriedAtBirth == true) "Yes" else "No"
-            resuscitation.value = if (saved.resuscitation == true) "Yes" else "No"
-            referred.value = saved.referred
-            hadBirthDefect.value = saved.hadBirthDefect
-            birthDefect.value = saved.birthDefect
+            babyCriedAtBirth.value = if (saved.babyCriedAtBirth == true) babyCriedAtBirth.entries!![0] else babyCriedAtBirth.entries!![1]
+            resuscitation.value = if (saved.resuscitation == true) resuscitation.entries!![0] else resuscitation.entries!![1]
+            referred.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.referred)
+            hadBirthDefect.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.hadBirthDefect)
+            birthDefect.value = getLocalValueInArray(R.array.ir_birth_defect_array, saved.birthDefect)
             otherDefect.value = saved.otherDefect
             weight.value = saved.weight.toString()
-            breastFeedingStarted.value = if (saved.breastFeedingStarted == true) "Yes" else "No"
-            isSncu.value=saved.isSNCU
+            breastFeedingStarted.value = if (saved.breastFeedingStarted == true) breastFeedingStarted.entries!![0] else breastFeedingStarted.entries!![1]
+            isSncu.value = getLocalValueInArray(R.array.do_is_jsy_beneficiary_array, saved.isSNCU)
             if (saved.isSNCU=="Yes")
             {
                 deliveryDischargeSummary1.value = saved.deliveryDischargeSummary1
@@ -343,7 +349,7 @@ class InfantRegistrationDataset(
             }
 
             isSncu.id -> {
-                val isYes = isSncu.value.equals("Yes", ignoreCase = true)
+                val isYes = isSncu.value == isSncu.entries!![0]
                 if(isYes){
                     triggerDependants(
                         source = isSncu,
@@ -386,27 +392,27 @@ class InfantRegistrationDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as InfantRegCache).let { form ->
             form.babyName = babyName.value
-            form.infantTerm = infantTerm.value
-            form.corticosteroidGiven = corticosteroidGiven.value
+            form.infantTerm = getEnglishValueInArray(R.array.ir_infant_term, infantTerm.value)
+            form.corticosteroidGiven = getEnglishValueInArray(R.array.ir_confirmation_array3, corticosteroidGiven.value)
             form.gender = gender.value?.let {
                 Gender.values()[gender.getPosition() - 1]
             }
-            form.babyCriedAtBirth = babyCriedAtBirth.value == "Yes"
-            form.resuscitation = resuscitation.value == "Yes"
-            form.referred = referred.value
+            form.babyCriedAtBirth = babyCriedAtBirth.value == babyCriedAtBirth.entries!![0]
+            form.resuscitation = resuscitation.value == resuscitation.entries!![0]
+            form.referred = getEnglishValueInArray(R.array.ir_confirmation_array2, referred.value)
 
-            form.isSNCU = isSncu.value?:"No"
+            form.isSNCU = getEnglishValueInArray(R.array.do_is_jsy_beneficiary_array, isSncu.value) ?: "No"
             form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary3 = deliveryDischargeSummary3.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary4 = deliveryDischargeSummary4.value?.takeIf { it.isNotEmpty() }
 
 
-            form.hadBirthDefect = hadBirthDefect.value
-            form.birthDefect = birthDefect.value
+            form.hadBirthDefect = getEnglishValueInArray(R.array.ir_confirmation_array2, hadBirthDefect.value)
+            form.birthDefect = getEnglishValueInArray(R.array.ir_birth_defect_array, birthDefect.value)
             form.otherDefect = otherDefect.value
             form.weight = weight.value?.toDouble()
-            form.breastFeedingStarted = breastFeedingStarted.value == "Yes"
+            form.breastFeedingStarted = breastFeedingStarted.value == breastFeedingStarted.entries!![0]
            /* form.opv0Dose = getLongFromDate(opv0Dose.value)
             form.bcgDose = getLongFromDate(bcgDose.value)
             form.hepBDose = getLongFromDate(hepBDose.value)

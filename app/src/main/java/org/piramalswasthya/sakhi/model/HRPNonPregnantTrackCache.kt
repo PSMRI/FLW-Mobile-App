@@ -49,11 +49,12 @@ data class HRPNonPregnantTrackCache(
     var isPregnant: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
-    fun asDomainModel(): HRPPregnantTrackDomain {
+    fun asDomainModel(resources: android.content.res.Resources): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
             dateOfVisit = getDateStrFromLong(visitDate),
-            filledOnString = "Follow Up " + HelperUtil.getTrackDate(visitDate),
+            filledOnString = resources.getString(org.piramalswasthya.sakhi.R.string.track_follow_up_label) +
+                " " + HelperUtil.getTrackDate(visitDate, resources),
             syncState = syncState
         )
     }
@@ -103,19 +104,20 @@ data class BenWithHRNPTrackingCache(
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
-        private fun getHRNPTFilledDateFromLong(long: Long?): String {
-            return "Visited on ${dateFormat.format(long)}"
+        private fun getHRNPTFilledDateFromLong(long: Long?, resources: android.content.res.Resources): String {
+            val visitedOn = resources.getString(org.piramalswasthya.sakhi.R.string.track_visited_on)
+            return "$visitedOn ${dateFormat.format(long)}"
         }
     }
 
-    fun asDomainModel(): BenWithHRNPTListDomain {
+    fun asDomainModel(resources: android.content.res.Resources): BenWithHRNPTListDomain {
         return BenWithHRNPTListDomain(
             ben.asBasicDomainModel(),
             savedTrackings.map {
                 HRNPTDomain(
                     it.benId,
                     it.visitDate,
-                    getHRNPTFilledDateFromLong(it.visitDate),
+                    getHRNPTFilledDateFromLong(it.visitDate, resources),
                     it.syncState
                 )
             }

@@ -108,14 +108,14 @@
     </string-array>
 
     <string-array name="select_high_risk_condition">
-        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
+        <item>उच्च बीपी (सिस्टोलिक>=140 और/या डायस्टोलिक>=90mmHg)</item>
         <item>दौरे</item>
-        <item>VAGINAL BLEEDING</item>
-        <item>FOUL SMELLING DISCHARGE</item>
-        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
-        <item>DIABETES</item>
-        <item>TWINS</item>
-        <item>OTHER</item>
+        <item>योनि से रक्तस्राव</item>
+        <item>बदबूदार डिस्चार्ज</item>
+        <item>गंभीर रक्त की कमी (हीमोग्लोबिन 7 gm/dl से कम)</item>
+        <item>मधुमेह (डायबिटीज)</item>
+        <item>जुड़वां</item>
+        <item>अन्य</item>
     </string-array>
 
     <string-array name="method_of_contraception_for_zero_child">

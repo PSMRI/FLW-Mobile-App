@@ -220,6 +220,7 @@ class MalariaFormDataset(
         id = 17,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.rapid_diagnostic),
+        arrayId = R.array.positive_negative,
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
         hasDependants = true
@@ -241,6 +242,7 @@ class MalariaFormDataset(
         id = 27,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.slide_test),
+        arrayId = R.array.pf_pv,
         entries = resources.getStringArray(R.array.pf_pv),
         required = false,
         hasDependants = true
@@ -250,6 +252,7 @@ class MalariaFormDataset(
         id = 19,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.slide_test_pf),
+        arrayId = R.array.positive_negative,
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
         hasDependants = true
@@ -259,6 +262,7 @@ class MalariaFormDataset(
         id = 20,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.slide_test_pv),
+        arrayId = R.array.positive_negative,
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
         hasDependants = true
@@ -406,20 +410,14 @@ class MalariaFormDataset(
                     getLocalValueInArray(R.array.dc_case_status, saved.caseStatus)
             }
 
-            rapidDiagnostic.value =
-                if (saved.rapidDiagnosticTest == "Positive") resources.getStringArray(R.array.positive_negative)[0]
-                else if (saved.rapidDiagnosticTest == "Negative") resources.getStringArray(R.array.positive_negative)[1]
-                else resources.getStringArray(R.array.positive_negative)[2]
+            rapidDiagnostic.value = getLocalValueInArray(R.array.positive_negative, saved.rapidDiagnosticTest)
+                ?: resources.getStringArray(R.array.positive_negative)[2]
 
-            slideTestPv.value =
-                if (saved.slideTestPv == "Positive") resources.getStringArray(R.array.positive_negative)[0]
-                else if (saved.slideTestPv == "Negative") resources.getStringArray(R.array.positive_negative)[1]
-                else resources.getStringArray(R.array.positive_negative)[2]
+            slideTestPv.value = getLocalValueInArray(R.array.positive_negative, saved.slideTestPv)
+                ?: resources.getStringArray(R.array.positive_negative)[2]
 
-            slideTestPf.value =
-                if (saved.slideTestPf == "Positive") resources.getStringArray(R.array.positive_negative)[0]
-                else if (saved.slideTestPf == "Negative") resources.getStringArray(R.array.positive_negative)[1]
-                else resources.getStringArray(R.array.positive_negative)[2]
+            slideTestPf.value = getLocalValueInArray(R.array.positive_negative, saved.slideTestPf)
+                ?: resources.getStringArray(R.array.positive_negative)[2]
 
 
             if (saved.malariaSlideTestType != 0) {
@@ -484,7 +482,7 @@ class MalariaFormDataset(
                     list.add(list.indexOf(caseStatus) + 1, testType)
                     if (testType.value ==  resources.getStringArray(R.array.test_type)[0]) {
                         list.add(list.indexOf(testType) + 1, rapidDiagnostic)
-                        if (rapidDiagnostic.value != "Not Performed") {
+                        if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
                             dateOfTest.value = getDateFromLong(saved.dateOfRdt)
 
@@ -498,19 +496,19 @@ class MalariaFormDataset(
                         } else {
                             list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
                         }
-                        if (slideTestPv.value != "Not Performed") {
+                        if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
                             dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
                         }
 
-                        if (slideTestPf.value != "Not Performed") {
+                        if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
                             dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
                         }
 
                     } else {
                         list.add(list.indexOf(testType) + 1, rapidDiagnostic)
-                        if (rapidDiagnostic.value != "Not Performed") {
+                        if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
                             dateOfTest.value = getDateFromLong(saved.dateOfRdt)
                             list.add(list.indexOf(rapidDiagnostic) + 2, slideTestOptions)
@@ -522,12 +520,12 @@ class MalariaFormDataset(
                         } else {
                             list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
                         }
-                        if (slideTestPv.value != "Not Performed") {
+                        if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
                             dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
                         }
 
-                        if (slideTestPf.value != "Not Performed") {
+                        if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
                             list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
                             dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
                         }
@@ -729,7 +727,7 @@ class MalariaFormDataset(
                         removeItems = listOf(dateOfTest,slideTestOptions,slideTestPf,slideTestPv,dateOfSlidetest)
                     )
                 } else if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[1]) {
-                    if (testType.value == "Both") {
+                    if (testType.value == resources.getStringArray(R.array.test_type)[2]) {
                         triggerDependants(
                             source = rapidDiagnostic,
                             addItems = listOf(dateOfTest,slideTestOptions),
@@ -749,7 +747,7 @@ class MalariaFormDataset(
 
 //                    caseStatus.value = getLocalValueInArray(caseStatus.arrayId, resources.getStringArray(R.array.dc_case_status)[1])
                 } else {
-                    if (testType.value == "Both") {
+                    if (testType.value == resources.getStringArray(R.array.test_type)[2]) {
                         triggerDependants(
                             source = rapidDiagnostic,
                             addItems = listOf(dateOfTest,slideTestOptions),
@@ -919,22 +917,22 @@ class MalariaFormDataset(
             form.diarrhea =
                 isDiarrhea.value == resources.getStringArray(R.array.yes_no)[0]
             form.caseStatus = getEnglishValueInArray(R.array.dc_case_status, caseStatus.value)
-            form.referToName = referredTo.value
+            form.referToName = getEnglishValueInArray(R.array.dc_refer_malaria, referredTo.value)
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.value
+            form.beneficiaryStatus = getEnglishValueInArray(R.array.benificary_case_status, beneficiaryStatus.value)
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
-            form.reasonForDeath = reasonOfDeath.value
+            form.reasonForDeath = getEnglishValueInArray(R.array.reason_death, reasonOfDeath.value)
             form.otherPlaceOfDeath = otherPlaceOfDeath.value
             form.otherReasonForDeath = otherReasonOfDeath.value
             form.dateOfDeath = getLongFromDate(dateOfDeath.value)
             form.dateOfRdt = getLongFromDate(dateOfTest.value)
             form.dateOfSlideTest = getLongFromDate(dateOfSlidetest.value)
-            form.placeOfDeath = placeOfDeath.value
+            form.placeOfDeath = getEnglishValueInArray(R.array.death_place, placeOfDeath.value)
             form.otherReferredFacility = other.value
-            form.rapidDiagnosticTest = rapidDiagnostic.value
-            form.slideTestPv = slideTestPv.value
-            form.slideTestPf = slideTestPf.value
-            form.slideTestName = slideTestOptions.value
+            form.rapidDiagnosticTest = getEnglishValueInArray(R.array.positive_negative, rapidDiagnostic.value)
+            form.slideTestPv = getEnglishValueInArray(R.array.positive_negative, slideTestPv.value)
+            form.slideTestPf = getEnglishValueInArray(R.array.positive_negative, slideTestPf.value)
+            form.slideTestName = getEnglishValueInArray(R.array.pf_pv, slideTestOptions.value)
             form.remarks = remarks.value
             form.dateOfVisitBySupervisor = getLongFromDate(dateOfVisitBySupervisor.value)
             form.diseaseTypeID = 1

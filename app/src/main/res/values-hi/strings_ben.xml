@@ -292,6 +292,12 @@
         <item>नहीं किया गया</item>
     </string-array>
 
+
+    <string-array name="pf_pv">
+        <item>पीएफ</item>
+        <item>पीवी</item>
+    </string-array>
+
     <string-array name="maa_breastfeeding">
         <item>सभी चुनें</item>
         <item>शिशु को जन्म के पहले घंटे में तुरंत स्तनपान कराना चाहिए</item>

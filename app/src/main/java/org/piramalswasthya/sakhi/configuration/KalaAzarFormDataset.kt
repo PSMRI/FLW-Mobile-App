@@ -97,6 +97,7 @@ class KalaAzarFormDataset(
         id = 9,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.rapid_diagnostic_kala),
+        arrayId = R.array.positive_negative,
         entries = resources.getStringArray(R.array.positive_negative),
         required = false,
         hasDependants = true
@@ -158,21 +159,20 @@ class KalaAzarFormDataset(
 
             dateOfCase.value = getDateFromLong(saved.visitDate)
 
-            rapidDiagnostic.value =
-                if (saved.rapidDiagnosticTest == "Positive") resources.getStringArray(R.array.positive_negative)[0]
-                else if (saved.rapidDiagnosticTest == "Negative") resources.getStringArray(R.array.positive_negative)[1]
-                else resources.getStringArray(R.array.positive_negative)[2]
+            rapidDiagnostic.value = getLocalValueInArray(R.array.positive_negative, saved.rapidDiagnosticTest)
+                ?: resources.getStringArray(R.array.positive_negative)[2]
 
+            val caseStatusArray = resources.getStringArray(R.array.dc_case_status)
             if (saved.kalaAzarCaseStatus == "Suspected") {
-                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
-                    .filter { it == "Confirmed" || it == "Not Confirmed" }
+                caseStatus.entries = caseStatusArray
+                    .filter { it == caseStatusArray[1] || it == caseStatusArray[2] }
                     .toTypedArray()
             } else if (saved.kalaAzarCaseStatus == "Confirmed") {
-                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
-                    .filter { it == "Treatment Started"}
+                caseStatus.entries = caseStatusArray
+                    .filter { it == caseStatusArray[3] }
                     .toTypedArray()
             } else {
-                caseStatus.entries = resources.getStringArray(R.array.dc_case_status)
+                caseStatus.entries = caseStatusArray
             }
             if (saved.kalaAzarCaseStatus != null) {
                 caseStatus.value =
@@ -214,7 +214,7 @@ class KalaAzarFormDataset(
                 list.add(list.indexOf(beneficiaryStatus) + 2, rapidDiagnostic)
                 list.add(list.indexOf(beneficiaryStatus) + 3, followUpPoint)
                 list.add(list.indexOf(beneficiaryStatus) + 4, referredTo)
-                if (rapidDiagnostic.value != "Not Performed") {
+                if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
                     list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
                     dateOfTest.value = getDateFromLong(saved.dateOfRdt)
                 }
@@ -374,19 +374,19 @@ class KalaAzarFormDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as KalaAzarScreeningCache).let { form ->
             form.visitDate = getLongFromDate(dateOfCase.value)
-            form.referToName = referredTo.value
+            form.referToName = getEnglishValueInArray(R.array.dc_refer, referredTo.value)
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.value
+            form.beneficiaryStatus = getEnglishValueInArray(R.array.benificary_case_status_kalaazar, beneficiaryStatus.value)
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
-            form.reasonForDeath = reasonOfDeath.value
+            form.reasonForDeath = getEnglishValueInArray(R.array.reason_death, reasonOfDeath.value)
             form.kalaAzarCaseStatus = getEnglishValueInArray(R.array.dc_case_status, caseStatus.value)
             form.otherPlaceOfDeath = otherPlaceOfDeath.value
             form.otherReasonForDeath = otherReasonOfDeath.value
             form.dateOfDeath = getLongFromDate(dateOfDeath.value)
             form.dateOfRdt = getLongFromDate(dateOfTest.value)
-            form.placeOfDeath = placeOfDeath.value
+            form.placeOfDeath = getEnglishValueInArray(R.array.death_place, placeOfDeath.value)
             form.otherReferredFacility = other.value
-            form.rapidDiagnosticTest = rapidDiagnostic.value
+            form.rapidDiagnosticTest = getEnglishValueInArray(R.array.positive_negative, rapidDiagnostic.value)
             form.diseaseTypeID = 2
             form.createdDate = getLongFromDate(dateOfCase.value)
             form.followUpPoint = followUpPoint.value?.toIntOrNull() ?: 0

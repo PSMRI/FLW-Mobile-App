@@ -960,22 +960,22 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         val weight = value.toDoubleOrNull()
         if (weight == null) {
-            formElement.errorText = "Please enter weight in grams"
+            formElement.errorText = resources.getString(R.string.weight_enter_in_grams)
             return -1
         }
 
         when {
             weight <= 0 -> {
-                formElement.errorText = "Weight cannot be 0"
+                formElement.errorText = resources.getString(R.string.weight_cannot_be_zero)
             }
             weight in 1.0..10.0 -> {
-                formElement.errorText = "Please enter weight in grams (e.g. 2500)"
+                formElement.errorText = resources.getString(R.string.weight_enter_in_grams_example)
             }
             weight < 500 -> {
-                formElement.errorText = "Weight must be at least 500 grams"
+                formElement.errorText = resources.getString(R.string.weight_min_500)
             }
             weight > 7000 -> {
-                formElement.errorText = "Weight should not be greater than 7000 grams"
+                formElement.errorText = resources.getString(R.string.weight_max_7000)
             }
             else -> {
                 formElement.errorText = null
@@ -1017,15 +1017,15 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
         val matchResult = bpRegex.matchEntire(bp.value!!)
         if (matchResult == null)
-            bp.errorText = "Invalid format. Should be like 123/56"
+            bp.errorText = resources.getString(R.string.bp_invalid_format)
         else {
             val sys = matchResult.groupValues[1].toInt()
             val dia = matchResult.groupValues[2].toInt()
-            bp.errorText = if (sys < minSys) "Systole should not be less than $minSys"
-            else if (sys > maxSys) "Systole should not be greater than $maxSys"
-            else if (dia < minDia) "Diastole should not be less then $minDia"
-            else if (dia > maxDia) "Diastole should not be greater than $maxDia"
-            else if (dia > sys) "Diastole cannot be greater than systole"
+            bp.errorText = if (sys < minSys) resources.getString(R.string.bp_systole_less_than, minSys)
+            else if (sys > maxSys) resources.getString(R.string.bp_systole_greater_than, maxSys)
+            else if (dia < minDia) resources.getString(R.string.bp_diastole_less_than, minDia)
+            else if (dia > maxDia) resources.getString(R.string.bp_diastole_greater_than, maxDia)
+            else if (dia > sys) resources.getString(R.string.bp_diastole_greater_than_systole)
             else null
         }
         return -1

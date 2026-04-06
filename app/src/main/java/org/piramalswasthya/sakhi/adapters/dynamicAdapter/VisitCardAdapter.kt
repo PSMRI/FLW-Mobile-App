@@ -57,7 +57,22 @@ class VisitCardAdapter(
     }
     override fun onBindViewHolder(holder: VisitViewHolder, position: Int) {
         val visit = visits[position]
-        holder.tvVisitDay.text = visit.visitDay
+        val ctx = holder.itemView.context
+        holder.tvVisitDay.text = when {
+            visit.visitDay.endsWith("Day") -> {
+                val englishDays = listOf("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day")
+                val localizedDays = ctx.resources.getStringArray(R.array.hbnc_visit_days)
+                val idx = englishDays.indexOf(visit.visitDay)
+                if (idx >= 0) localizedDays[idx] else visit.visitDay
+            }
+            visit.visitDay.endsWith("Months") -> {
+                val month = visit.visitDay.substringBefore(" ").toIntOrNull()
+                val localizedMonths = ctx.resources.getStringArray(R.array.hbyc_month_array)
+                val idx = if (month != null) month - 3 else -1
+                if (idx >= 0 && idx < localizedMonths.size) localizedMonths[idx] else visit.visitDay
+            }
+            else -> visit.visitDay
+        }
         holder.tvVisitDate.text = visit.visitDate
         holder.btnView.visibility = View.GONE
         holder.btnAddVisit.visibility = View.GONE

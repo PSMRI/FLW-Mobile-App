@@ -84,84 +84,84 @@ class HBYCFormDataset(
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_ors_packet_delivered),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val ironFolicAcidGiven = FormElement(
         id = 10,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_Iron_folic_acid),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val isVaccinatedByAge = FormElement(
         id = 11,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_child_vaccinated_by_age),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val wasIll = FormElement(
         id = 12,
         inputType = InputType.RADIO,
         title =resources.getString(R.string.str_child_was_ill),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val referred = FormElement(
         id = 13,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_if_yes_refer_hospital),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val supplementsGiven = FormElement(
         id = 14,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_suppliments_given_to_child),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val byHeightLength = FormElement(
         id = 15,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_by_height_length),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val childrenWeighingLessReferred = FormElement(
         id = 16,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_no_of_children_weighing_less),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val weightAccordingToAge = FormElement(
         id = 17,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_weight_acc_to_child),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val delayInDevelopment = FormElement(
         id = 18,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_delay_constraint_found),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val referredToHealthInstitite = FormElement(
         id = 19,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_if_yes_then_health_institute),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val vitaminASupplementsGiven = FormElement(
         id = 20,
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_vit_a_suppliment),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val deathAge = FormElement(
         id = 21,
@@ -181,35 +181,35 @@ class HBYCFormDataset(
         inputType = InputType.RADIO,
         title =  resources.getString(R.string.str_qm_informed),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val deathPlace = FormElement(
         id = 24,
         inputType = InputType.DROPDOWN,
         title =  resources.getString(R.string.str_place_of_death),
         required = false,
-        entries = arrayOf("Home", "Health Center", "On the Way")
+        entries = resources.getStringArray(R.array.do_cause_of_death_array)
     )
     private val superVisorOn = FormElement(
         id = 25,
         inputType = InputType.RADIO,
         title =resources.getString(R.string.str_supervisor_from_block),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val orsShortage = FormElement(
         id = 26,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_ors_in_last_one_month),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
     private val ifaDecreased = FormElement(
         id = 27,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.str_ifa_last_month),
         required = false,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no_options)
     )
 
     val firstPage by lazy {
@@ -299,43 +299,43 @@ class HBYCFormDataset(
             visitDate.value = getDateStrFromLong(hbycCache.visitdate)
             hbycAgeCategory.value = hbycCache.hbycAgeCategory
             orsPacketDelivered.value =
-                if (hbycCache.orsPacketDelivered == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.orsPacketDelivered - 1]
+                if (hbycCache.orsPacketDelivered == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.orsPacketDelivered - 1]
             ironFolicAcidGiven.value =
-                if (hbycCache.ironFolicAcidGiven == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.ironFolicAcidGiven - 1]
+                if (hbycCache.ironFolicAcidGiven == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.ironFolicAcidGiven - 1]
             isVaccinatedByAge.value =
-                if (hbycCache.isVaccinatedByAge == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.isVaccinatedByAge - 1]
+                if (hbycCache.isVaccinatedByAge == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.isVaccinatedByAge - 1]
             wasIll.value =
-                if (hbycCache.wasIll == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.wasIll - 1]
+                if (hbycCache.wasIll == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.wasIll - 1]
             referred.value =
-                if (hbycCache.referred == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.referred - 1]
+                if (hbycCache.referred == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.referred - 1]
             supplementsGiven.value =
-                if (hbycCache.supplementsGiven == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.supplementsGiven - 1]
+                if (hbycCache.supplementsGiven == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.supplementsGiven - 1]
             byHeightLength.value =
-                if (hbycCache.byHeightLength == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.byHeightLength - 1]
+                if (hbycCache.byHeightLength == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.byHeightLength - 1]
             childrenWeighingLessReferred.value =
                 if (hbycCache.childrenWeighingLessReferred == 0) null else resources.getStringArray(
                     R.array.yes_no
                 )[hbycCache.childrenWeighingLessReferred - 1]
             weightAccordingToAge.value =
-                if (hbycCache.weightAccordingToAge == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.weightAccordingToAge - 1]
+                if (hbycCache.weightAccordingToAge == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.weightAccordingToAge - 1]
             delayInDevelopment.value =
-                if (hbycCache.delayInDevelopment == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.delayInDevelopment - 1]
+                if (hbycCache.delayInDevelopment == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.delayInDevelopment - 1]
             referredToHealthInstitite.value =
-                if (hbycCache.referredToHealthInstitite == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.referredToHealthInstitite - 1]
+                if (hbycCache.referredToHealthInstitite == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.referredToHealthInstitite - 1]
             vitaminASupplementsGiven.value =
-                if (hbycCache.vitaminASupplementsGiven == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.vitaminASupplementsGiven - 1]
+                if (hbycCache.vitaminASupplementsGiven == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.vitaminASupplementsGiven - 1]
             deathAge.value = hbycCache.deathAge
             deathCause.value = hbycCache.deathCause
             qmOrAnmInformed.value =
-                if (hbycCache.qmOrAnmInformed == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.qmOrAnmInformed - 1]
+                if (hbycCache.qmOrAnmInformed == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.qmOrAnmInformed - 1]
             deathPlace.value =
                 if (hbycCache.deathPlace != null) resources.getStringArray(R.array.do_cause_of_death_array)[hbycCache.deathPlace!!] else null
             superVisorOn.value =
-                if (hbycCache.superVisorOn == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.superVisorOn - 1]
+                if (hbycCache.superVisorOn == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.superVisorOn - 1]
             orsShortage.value =
-                if (hbycCache.orsShortage == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.orsShortage - 1]
+                if (hbycCache.orsShortage == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.orsShortage - 1]
             ifaDecreased.value =
-                if (hbycCache.ifaDecreased == 0) null else resources.getStringArray(R.array.yes_no)[hbycCache.ifaDecreased - 1]
+                if (hbycCache.ifaDecreased == 0) null else resources.getStringArray(R.array.yes_no_options)[hbycCache.ifaDecreased - 1]
         }
         setUpPage(list)
     }

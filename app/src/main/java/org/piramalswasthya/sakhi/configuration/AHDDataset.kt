@@ -90,12 +90,12 @@ class AHDDataset(
     fun getFormElementList(): List<FormElement> = formElementList
 
     private fun loadCachedData(ahd: AHDCache, list: MutableList<FormElement>) {
-        mobilizedForAHD.value = ahd.mobilizedForAHD
-        ahdPlace.value = ahd.ahdPlace
+        mobilizedForAHD.value = getLocalValueInArray(R.array.yes_no_options, ahd.mobilizedForAHD)
+        ahdPlace.value = getLocalValueInArray(R.array.ahd_place_options, ahd.ahdPlace)
         ahdDate.value = ahd.ahdDate
         pic1.value = ahd.image1
         pic2.value = ahd.image2
-        if(mobilizedForAHD.value == "Yes") {
+        if(mobilizedForAHD.value == mobilizedForAHD.entries!!.first()) {
             list.add(mobilizedForAHD.getPosition() ,ahdPlace)
             list.add(mobilizedForAHD.getPosition() + 1,ahdDate)
         }
@@ -106,7 +106,7 @@ class AHDDataset(
         return when (formId) {
 
             mobilizedForAHD.id -> {
-                if (mobilizedForAHD.value == "Yes") {
+                if (mobilizedForAHD.value == mobilizedForAHD.entries!!.first()) {
                     if (!formElementList.contains(ahdPlace)) {
                         formElementList.add(ahdPlace)
                     }
@@ -137,8 +137,8 @@ class AHDDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as AHDCache).let { form ->
 
-            form.mobilizedForAHD = mobilizedForAHD.value!!
-            form.ahdPlace = ahdPlace.value
+            form.mobilizedForAHD = getEnglishValueInArray(R.array.yes_no_options, mobilizedForAHD.value) ?: mobilizedForAHD.value!!
+            form.ahdPlace = getEnglishValueInArray(R.array.ahd_place_options, ahdPlace.value)
             form.ahdDate = ahdDate.value
             form.image1 = pic1.value
             form.image2 = pic2.value

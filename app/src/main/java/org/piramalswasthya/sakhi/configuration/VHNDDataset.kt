@@ -44,7 +44,7 @@ class VHNDDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.place_of_vhnd),
         entries = resources.getStringArray(R.array.place_of_vhsnc),
-        arrayId = -1,
+        arrayId = R.array.place_of_vhsnc,
         required = true,
         allCaps = true,
     )
@@ -228,7 +228,7 @@ class VHNDDataset(
             vhndDate.value = it.vhndDate
             pic1.value = it.image1
             pic2.value = it.image2
-            place.value = it.place
+            place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
             noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                 noOfPWAttended.value = it.pregnantWomenAnc
@@ -319,7 +319,7 @@ class VHNDDataset(
         (cacheModel as VHNDCache).let { form ->
 
             form.vhndDate = vhndDate.value!!
-            form.place = place.value
+            form.place = getEnglishValueInArray(R.array.place_of_vhsnc, place.value)
             form.vhndPlaceId = place.getPosition()
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
