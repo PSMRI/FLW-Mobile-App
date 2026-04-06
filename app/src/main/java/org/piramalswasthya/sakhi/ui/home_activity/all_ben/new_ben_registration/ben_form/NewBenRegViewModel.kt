@@ -155,12 +155,28 @@ class NewBenRegViewModel @Inject constructor(
     suspend fun setUpPage() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                user = preferenceDao.getLoggedInUser()!!
-                household = benRepo.getHousehold(hhId)!!
-                locationRecord = preferenceDao.getLocationRecord()!!
+                user = preferenceDao.getLoggedInUser() ?: run {
+                    Timber.e("User not logged in")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
+                household = benRepo.getHousehold(hhId) ?: run {
+                    Timber.e("Household not found: hhId=$hhId")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
+                locationRecord = preferenceDao.getLocationRecord() ?: run {
+                    Timber.e("Location record not found")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
-                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
+                        Timber.e("Beneficiary not found: benId=$benIdFromArgs, hhId=$hhId")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _isDeath.postValue(ben.isDeath ?: false)
                     if (ben.genDetails?.maritalStatus == "Unmarried") {
                         isBenMarried = false
@@ -175,7 +191,11 @@ class NewBenRegViewModel @Inject constructor(
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
-                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
+                        Timber.e("Beneficiary not found: benId=$benIdFromArgs, hhId=$hhId")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     isOtpVerified = ben.isConsent
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
@@ -188,7 +208,7 @@ class NewBenRegViewModel @Inject constructor(
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = ben.gender!!,
+                            hoF = hoFBen, benGender = ben.gender ?: benGender ?: Gender.MALE,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
@@ -212,14 +232,14 @@ class NewBenRegViewModel @Inject constructor(
                             val femaleOfHouse = familyList.firstOrNull {
                                 it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
                             }
-                            femaleOfHouse?.beneficiaryId ?: hoFBen!!.beneficiaryId
+                            femaleOfHouse?.beneficiaryId ?: hoFBen?.beneficiaryId ?: 0L
                         }
 
 
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = benGender!!,
+                            hoF = hoFBen, benGender = benGender ?: Gender.MALE,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
