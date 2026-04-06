@@ -12,14 +12,16 @@ import org.piramalswasthya.sakhi.model.ChildRegDomain
 import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
+import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
+import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithHRNPADomain
 import org.piramalswasthya.sakhi.model.BenWithHRNPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithHRPADomain
 import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain
-import org.piramalswasthya.sakhi.model.BenWithPwrDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
 import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
@@ -188,6 +190,91 @@ fun filterEcTrackingList(
                 it.ben.benId.toString().lowercase().contains(filterText) ||
                 it.ben.mobileNo.lowercase().contains(filterText) ||
                 it.ben.rchId.takeIf { it1 -> it1?.isDigitsOnly() == true }?.contains(filterText) ?: false
+    }
+
+enum class EcFilterType {
+    NEWEST_FIRST, OLDEST_FIRST, AGE_WISE, SYNCING_FIRST, UNSYNCED_FIRST
+}
+
+fun sortEcRegistrationList(list: List<BenWithEcrDomain>, sort: EcFilterType): List<BenWithEcrDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.ecr?.createdDate ?: 0L }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.ecr?.createdDate ?: Long.MAX_VALUE }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.ecr?.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.ecr?.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortEcTrackingList(list: List<BenWithEctListDomain>, sort: EcFilterType): List<BenWithEctListDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.ectDate }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.ectDate }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.savedECTRecords.any { r -> r.syncState == SyncState.SYNCING }) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.allSynced == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortPncList(list: List<BenPncDomain>, sort: EcFilterType): List<BenPncDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.pncDate }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.pncDate }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortPwrList(list: List<BenWithPwrDomain>, sort: EcFilterType): List<BenWithPwrDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.pwr?.createdDate ?: 0L }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.pwr?.createdDate ?: Long.MAX_VALUE }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.pwr?.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.pwr?.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortAncList(list: List<BenWithAncListDomain>, sort: EcFilterType): List<BenWithAncListDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.ancDate }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.ancDate }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortAbortionList(list: List<BenWithAncListDomain>, sort: EcFilterType): List<BenWithAncListDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.abortionDate ?: 0L }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.abortionDate ?: Long.MAX_VALUE }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortChildRegList(list: List<ChildRegDomain>, sort: EcFilterType): List<ChildRegDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.infant.createdDate }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.infant.createdDate }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.motherBen.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.infant.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.infant.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortInfantRegList(list: List<InfantRegDomain>, sort: EcFilterType): List<InfantRegDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.savedIr?.createdDate ?: 0L }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.savedIr?.createdDate ?: Long.MAX_VALUE }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.motherBen.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
+    }
+
+fun sortHwcList(list: List<BenWithCbacReferDomain>, sort: EcFilterType): List<BenWithCbacReferDomain> =
+    when (sort) {
+        EcFilterType.NEWEST_FIRST   -> list.sortedByDescending { it.referalCac.revisitDate }
+        EcFilterType.OLDEST_FIRST   -> list.sortedBy { it.referalCac.revisitDate }
+        EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
+        EcFilterType.SYNCING_FIRST  -> list.sortedBy { if (it.referalCac.syncState == SyncState.SYNCING) 0 else 1 }
+        EcFilterType.UNSYNCED_FIRST -> list.sortedBy { if (it.referalCac.syncState == SyncState.UNSYNCED) 0 else 1 }
     }
 
 fun filterEcRegistrationList(

@@ -118,9 +118,13 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
 
         }
         binding.btnSubmit.setOnClickListener {
-            if (!ismcpCardUploaded()) requireContext().showUploadReminderDialog(getString(R.string.do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive)){submitImmForm()}
-            else
-            submitImmForm()
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                submitImmForm()
+            } else if (!ismcpCardUploaded()) {
+                requireContext().showUploadReminderDialog(getString(R.string.do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive)) { submitImmForm() }
+            } else {
+                submitImmForm()
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

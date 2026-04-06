@@ -6,7 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterPwrRegistrationList
+import org.piramalswasthya.sakhi.helpers.sortPwrList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class PwRegistrationListViewModel @Inject constructor(
     private val allBenWithRchList = recordsRepo.getPregnantWomenWithRchList()
     private val filter = MutableStateFlow("")
     private val kind = MutableStateFlow("false")
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
 
     val benList = allBenList.combine(kind) { list, kind ->
         if (kind.equals("false", true)) {
@@ -27,6 +30,8 @@ class PwRegistrationListViewModel @Inject constructor(
         }
     }.combine(filter) { list, filter ->
         filterPwrRegistrationList(list, filter)
+    }.combine(sortFilter) { list, sort ->
+        sortPwrList(list, sort)
     }
 
     fun filterText(text: String) {
@@ -42,5 +47,11 @@ class PwRegistrationListViewModel @Inject constructor(
         }
 
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
 }

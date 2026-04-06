@@ -7,7 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterEcRegistrationList
+import org.piramalswasthya.sakhi.helpers.sortEcRegistrationList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
@@ -30,15 +32,20 @@ class EligibleCoupleListViewModel @Inject constructor(
     }
 
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
-        filterEcRegistrationList(list, filter)
-    }
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
+
+    val benList = allBenList
+        .combine(filter) { list, f -> filterEcRegistrationList(list, f) }
+        .combine(sortFilter) { list, sort -> sortEcRegistrationList(list, sort) }
 
     fun filterText(text: String) {
-        viewModelScope.launch {
-            filter.emit(text)
-        }
-
+        viewModelScope.launch { filter.emit(text) }
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
 }
