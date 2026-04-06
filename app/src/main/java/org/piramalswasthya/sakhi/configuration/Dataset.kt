@@ -86,12 +86,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         }
 
-        fun dateFormate(dateStr: String): String? {
+        fun dateFormate(dateStr: String?): String? {
+            if (dateStr.isNullOrBlank() || dateStr == "null") return null
             val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
-            val dateResponse = inputFormat.parse(dateStr)
-            return outputFormat.format(dateResponse!!)
+            val dateResponse = inputFormat.parse(dateStr) ?: return null
+            return outputFormat.format(dateResponse)
 
 
         }
