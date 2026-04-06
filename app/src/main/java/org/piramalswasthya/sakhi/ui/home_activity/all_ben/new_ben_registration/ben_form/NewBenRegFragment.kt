@@ -180,6 +180,7 @@ class NewBenRegFragment : Fragment() {
         }
     }
     private fun showAddSpouseAlert() {
+        if (!isAdded) return
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
@@ -192,14 +193,16 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setPositiveButton(
             "Yes"
         ) { dialog, _ ->
-            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
-            findNavController().navigate(
-                NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
-                    hhId = viewModel.hhId,
-                    gender = spouseGender,
-                    relToHeadId = if (spouseGender == 1) 5 else 4
+            if (isAdded && findNavController().currentDestination?.id == R.id.newBenRegFragment) {
+                val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+                findNavController().navigate(
+                    NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
+                        hhId = viewModel.hhId,
+                        gender = spouseGender,
+                        relToHeadId = if (spouseGender == 1) 5 else 4
+                    )
                 )
-            )
+            }
             dialog.dismiss()
         }
 
