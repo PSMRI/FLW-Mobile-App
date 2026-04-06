@@ -59,7 +59,7 @@
     <string-array name="anc_confirmed_by_array">
         <item>एएनएम (सहायक नर्स दाई)</item>
         <item>सीएचओ (सामुदायिक स्वास्थ्य अधिकारी)</item>
-        <item>PHC – MO</item>
+        <item>पीएचसी – चिकित्सा अधिकारी</item>
         <item>उच्च सुविधा में विशेषज्ञ</item>
     </string-array>
     <string-array name="anc_death_cause_array">
@@ -75,9 +75,9 @@
         <item>नर्स</item>
     </string-array>
     <string-array name="anc_method_of_termination">
-        <item>MVA</item>
-        <item>EVA</item>
-        <item>MMA</item>
+        <item>एमवीए</item>
+        <item>ईवीए</item>
+        <item>एमएमए</item>
         <item>अन्य</item>
     </string-array>
     <string-array name="anc_confirmation_array">
@@ -94,9 +94,22 @@
         <item>हाँ</item>
     </string-array>
 
+    <string-array name="maternal_health_past_illness">
+    <item>कोई नहीं</item>
+    <item>टीबी (क्षय रोग)</item>
+    <item>मधुमेह</item>
+    <item>उच्च रक्तचाप</item>
+    <item>हृदय रोग</item>
+    <item>मिर्गी</item>
+    <item>यौन संचारित संक्रमण / प्रजनन तंत्र संक्रमण</item>
+    <item>हेपेटाइटिस-बी</item>
+    <item>दमा</item>
+    <item>अन्य कोई भी</item>
+    </string-array>
+
     <string-array name="select_high_risk_condition">
         <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
-        <item>CONVULSIONS</item>
+        <item>दौरे</item>
         <item>VAGINAL BLEEDING</item>
         <item>FOUL SMELLING DISCHARGE</item>
         <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
@@ -230,10 +243,25 @@
         <item>बाधित प्रसव</item>
         <item>प्रोलैप्स्ड कॉर्ड</item>
         <item>जुड़वा गर्भावस्था</item>
-        <item>मिर्गी का दौरा</item>
+        <item>दौरे</item>
         <item>मौत</item>
         <item>कोई अन्य (विशिष्ट करें)</item>
         <item>मालूम नहीं</item>
+    </string-array>
+    <string-array name="maternal_health_past_del_complications">
+        <item>कोई नहीं</item>
+        <item>दौरे</item>
+        <item>एपीएच (गर्भावस्था के दौरान रक्तस्राव)</item>
+        <item>गर्भावस्था जनित उच्च रक्तचाप (पीआईएच)</item>
+        <item>बार-बार गर्भपात</item>
+        <item>मृत जन्म</item>
+        <item>जन्मजात विकृति</item>
+        <item>सिजेरियन प्रसव</item>
+        <item>रक्त चढ़ाना</item>
+        <item>जुड़वां</item>
+        <item>अवरुद्ध प्रसव</item>
+        <item>पीपीएच (प्रसवोत्तर रक्तस्राव)</item>
+        <item>अन्य</item>
     </string-array>
     <string-array name="do_cause_of_death_array">
         <item>एक्लैम्प्सिया</item>
@@ -364,6 +392,13 @@
         <item>अन्य</item>
     </string-array>
 
+    <string-array name="maternal_health_reg_hrp_confirm_by">
+        <item>एएनएम (सहायक नर्स दाई)</item>
+        <item>सीएचओ (सामुदायिक स्वास्थ्य अधिकारी)</item>
+        <item>पीएचसी – चिकित्सा अधिकारी</item>
+        <item>उच्च स्वास्थ्य संस्थान में विशेषज्ञ डॉक्टर</item>
+    </string-array>
+
     <string name="anc_visit_number">एएनसी (ANC) विज़िट %1d</string>
     <string name="pnc_visit_number">पीएनसी (PNC) विज़िट – दिन %1d</string>
     <string name="register">पंजीकरण</string>
@@ -395,7 +430,7 @@
     <string name="str_any_other_high_risk_cond">कोई अन्य उच्च जोखिम वाली स्थितियाँ</string>
     <string name="str_referral_facility">रेफरल सुविधा / संदर्भित स्वास्थ्य केंद्र</string>
     <string name="str_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
-    <string name="str_identified_as_hrp">HRP (उच्च जोखिम वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
+    <string name="str_identified_as_hrp">एचआरपी (उच्च जोखिम वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
     <string name="str_maternal_death">मातृ मृत्यु</string>
     <string name="str_cause_of_death">मृत्यु का संभावित कारण</string>
     <string name="str_other_cause_of_death">मृत्यु का अन्य कारण</string>

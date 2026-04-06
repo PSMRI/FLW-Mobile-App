@@ -1071,14 +1071,14 @@ class FormInputAdapter(
 
                     if (internalUpdate) return
                     if (editable.isNullOrBlank()) {
-                        item.errorText = "Value cannot be empty"
+                        item.errorText = binding.root.resources.getString(R.string.value_cannot_be_empty)
                         showError(item.errorText!!)
                         return
                     }
 
                     val inputValue = editable.toString().toIntOrNull()
                     if (inputValue == null) {
-                        item.errorText = "Enter a valid number"
+                        item.errorText = binding.root.resources.getString(R.string.enter_a_valid_number)
                         showError(item.errorText!!)
                         return
                     }
@@ -1087,9 +1087,9 @@ class FormInputAdapter(
 
                     if (validated != inputValue) {
                         val msg = if (maxValue != null)
-                            "Allowed range: $minValue to $maxValue"
+                            binding.root.resources.getString(R.string.allowed_range, minValue, maxValue)
                         else
-                            "Minimum allowed value: $minValue"
+                            binding.root.resources.getString(R.string.minimum_allowed_value, minValue)
                         item.errorText = msg
                         showError(msg)
 

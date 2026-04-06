@@ -29,7 +29,7 @@
     <string name="tv_age_ph">आयु</string>
     <string name="tv_suspected_hrp_ph">संभावित HRP</string>
     <string name="tv_imu_status_ph">टीकाकरण स्थिति</string>
-    <string name="tv_ncd_status_ph">NCD स्थिति</string>
+    <string name="tv_ncd_status_ph">एनसीडी स्थिति</string>
     <string name="tv_tb_status_ph">TB स्थिति</string>
     <string name="iv_sync_state_tv">SYNC STATE</string>
 <string name="version">2.0.0</string>
@@ -68,7 +68,7 @@
     <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
     <string name="termination_done_by">गर्भसमापन किसके द्वारा किया गया</string>
     <string name="method_of_termination">गर्भसमापन की विधि</string>
-    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
+    <string name="serial_no_as_per_admission_evacuation_register">प्रवेश/निकासी रजिस्टर के अनुसार क्रम संख्या</string>
     <string name="facility_place_of_abortion">सुविधा (गर्भपात का स्थान)</string>
     <string name="abortion_type">गर्भपात का प्रकार</string>
     <string name="abortion_date">गर्भपात की तिथि</string>
@@ -99,7 +99,7 @@
     <string name="no_of_ifa_tabs">दी गई IFA गोलियों की संख्या</string>
     <string name="any_high_risk_conditions">कोई उच्च जोखिम की स्थिति</string>
     <string name="is_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
-    <string name="who_identified_hrp">HRP के रूप में किसने पहचाना?</string>
+    <string name="who_identified_hrp">एचआरपी के रूप में किसने पहचाना?</string>
     <string name="probable_cause_of_death">मृत्यु का संभावित कारण</string>
     <string name="other_death_cause">मृत्यु का अन्य कारण</string>
     <string name="has_pw_delivered">क्या गर्भवती महिला ने प्रसव कर लिया है?</string>
@@ -119,9 +119,9 @@
     <string name="ahd_referral_status">रेफरल की स्थिति</string>
     <string name="ahd_distribution_date">तिथि</string>
     <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
-    <string name="pmsma_visit_date">PMSMA Visit Date</string>
-    <string name="pmsma_visits">PMSMA Visits</string>
-    <string name="pmsma_visit">पीएमएसएमए का दौरा</string>
+    <string name="pmsma_visit_date">पीएमएसएमए भ्रमण तिथि</string>
+    <string name="pmsma_visits">पीएमएसएमए भ्रमण</string>
+    <string name="pmsma_visit">पीएमएसएमए भ्रमणा</string>
     <string name="is_baby_discharge_from_sncu">क्या शिशु को एसएनसीयू में भर्ती किया गया है?</string>
     <string name="optional">(Optional)</string>
     <string name="optional_">Optional</string>
@@ -536,13 +536,13 @@
     <string name="visit_date">भ्रमण की तिथि</string>
     <string name="home_visit_date_mda_program">घर विजिट तारीख (MDA कार्यक्रम)</string>
     <string name="case_date_malaria">मलेरिया केस स्थिति तारीख</string>
-    <string name="aes_case_status_date">AES / JE केस स्थिति तारीख</string>
+    <string name="aes_case_status_date">एईएस / जेएस केस स्थिति तारीख</string>
     <string name="case_status">केस स्थिति</string>
     <string name="m_test_type">मलेरिया जांच प्रकार</string>
     <string name="place_of_Death">मृत्यु का स्थान</string>
     <string name="reason_of_Death">मृत्यु का कारण</string>
     <string name="beneficiary_status">लाभार्थी स्थिति</string>
-    <string name="aes_case_status">AES / JE केस स्थिति</string>
+    <string name="aes_case_status">एईएस/जेएस केस स्थिति</string>
     <string name="refer_to">रेफर किया गया</string>
     <string name="day_wise_tracking_pf">Pf - दैनिक ट्रैकिंग</string>
     <string name="day_wise_tracking_pv">PV - दैनिक ट्रैकिंग</string>
@@ -598,12 +598,12 @@
     <string name="sup_beneficiaries">लाभार्थी</string>
     <string name="sup_eligible_couples">पात्र दंपत्ति</string>
     <string name="sup_pregnant_women">गर्भवती महिलाएं</string>
-    <string name="sup_anc_visits">ANC विजिट</string>
-    <string name="sup_hrp_woman">HRP महिला</string>
+    <string name="sup_anc_visits">एएनसी विजिट</string>
+    <string name="sup_hrp_woman">एचआरपी महिला</string>
     <string name="sup_deliveries">प्रसव</string>
     <string name="sup_routine_immunization">नियमित टीकाकरण</string>
-    <string name="sup_ncd_screened">NCD स्क्रीन किया गया</string>
-    <string name="sup_ncd_priority">NCD प्राथमिकता</string>
+    <string name="sup_ncd_screened">एनसीडी स्क्रीन किया गया</string>
+    <string name="sup_ncd_priority">एनसीडी प्राथमिकता</string>
     <string name="sup_tb_cases">टीबी केस</string>
     <string name="add">जोड़ें</string>
     <string name="asha_profile">प्रोफाइल</string>
@@ -616,14 +616,14 @@
     <string name="child_under_five_years_list">पांच वर्ष से कम आयु के बच्चों की सूची</string>
     <string name="nmdsr_list">NMDSR सूची</string>
     <string name="gdr_list">GDR सूची</string>
-    <string name="cac_form">CAC फॉर्म</string>
+    <string name="cac_form">सीएसी फॉर्म</string>
     <string name="anc">ANC</string>
     <string name="ec">EC</string>
     <string name="tb_confirmed_list">पुष्टि टीबी सूची</string>
     <string name="tb_confirmed_form">पुष्टि टीबी फॉर्म</string>
     <string name="maleria_screening_form">मलेरिया फॉर्म</string>
     <string name="kala_screening_form">काला अजार फॉर्म</string>
-    <string name="aes_screening_form">AES फॉर्म</string>
+    <string name="aes_screening_form">एईएस फॉर्म</string>
     <string name="filaria_screening_form">फाइलेरिया फॉर्म</string>
     <string name="leprosy_screening_form">कुष्ठ रोग फॉर्म</string>
     <string name="follow_up_form">फॉलो-अप फॉर्म</string>
@@ -861,12 +861,25 @@
     <string name="str_husband">पति</string>
     <string name="is_medicine_distributed_yes_no">क्या दवा वितरित की गई है? (हाँ/नहीं)</string>
     <string name="distribution_date">वितरण तिथि</string>
+    <string name="value_cannot_be_empty">मान खाली नहीं हो सकता</string>
+    <string name="enter_a_valid_number">एक मान्य संख्या दर्ज करें</string>
+    <string name="allowed_range">अनुमत सीमा: %1$d से %2$d</string>
+    <string name="minimum_allowed_value">न्यूनतम अनुमत मान: %1$d</string>
+    <string name="_ok">ठीक है</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">क्या आप अपना प्रोत्साहन राशि प्राप्त करने के लिए \"डिलीवरी डिस्चार्ज सारांश\" की फोटो कॉपी अपलोड करना चाहते हैं?</string>
+    <string name="pnc_form">प्रसवोत्तर देखभाल फॉर्म</string>
 
     <string-array name="type_of_tb_case">
         <item>टीबी का नया मामला</item>
         <item>पहले से इलाज कराए गए टीबी का मामला</item>
         <item>ड्रग-रेजिस्टेंट टीबी (DR-TB) का मामला</item>
     </string-array>
+
+    <string-array name="ecr_gender_array">
+        <item name="nbr_gender_1">पुरुष</item>
+        <item name="nbr_gender_2">महिला</item>
+    </string-array>
+
 
     <string-array name="referral_facility">
         <item>जिला टीबी केंद्र (DTC)</item>
@@ -915,6 +928,11 @@
         <item name="fever">बुखार</item>
         <item name="other_disease">अन्य बीमारी</item>
         <item name="other">अन्य</item>
+    </string-array>
+
+    <string-array name="benificary_case_status">
+        <item name="dc_not">जांच</item>
+        <item name="dc_death">मृत्यु</item>
     </string-array>
 
     <string-array name="dc_refer">

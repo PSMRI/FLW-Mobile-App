@@ -231,14 +231,7 @@
         <item>Community center</item>
     </string-array>
 
-    <string-array name="temp_array">
-        <item>Item 1</item>
-        <item>Item 2</item>
-        <item>Item 3</item>
-        <item>Item 4</item>
-        <item>Item 5</item>
-        <item>Item 6</item>
-    </string-array>
+
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
@@ -1313,6 +1306,21 @@
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
     <string name="distribution_date">Distribution Date</string>
+
+    <string name="filter_sort_by">Sort By</string>
+    <string name="filter_newest_first">Newest First</string>
+    <string name="filter_oldest_first">Oldest First</string>
+    <string name="filter_age_wise">Age Wise</string>
+    <string name="filter_syncing_first">Syncing Data First</string>
+    <string name="filter_unsynced_first">Un-Synced First</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
+    <string name="enter_a_valid_number">Enter a valid number</string>
+    <string name="allowed_range">Allowed range: %1$d to %2$d</string>
+    <string name="minimum_allowed_value">Minimum allowed value: %1$d</string>
+    <string name="_ok">OK</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.</string>
+    <string name="pnc_form">PNC Form</string>
 
 </resources>
 

@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterPwAncList
+import org.piramalswasthya.sakhi.helpers.sortAncList
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.HomeVisitUiState
@@ -40,6 +42,7 @@ class PwAncVisitsListViewModel @Inject constructor(
 
     private val filter = MutableStateFlow("")
     private val showHighRisk = MutableStateFlow(false)
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
 
     enum class BottomSheetMode { NORMAL, PMSMA }
     private val bottomSheetMode = MutableStateFlow(BottomSheetMode.NORMAL)
@@ -47,7 +50,7 @@ class PwAncVisitsListViewModel @Inject constructor(
     private val benIdSelected = MutableStateFlow(0L)
     private val pmsmaBenIdSelected = MutableStateFlow(0L)
 
-    val benList: Flow<List<BenWithAncListDomain>> = combine(
+    private val filteredBenList: Flow<List<BenWithAncListDomain>> = combine(
         allBenList,
         highRiskBenList,
         showHighRisk,
@@ -56,6 +59,9 @@ class PwAncVisitsListViewModel @Inject constructor(
         val listToShow = if (isHighRisk) highRiskList else normalList
         filterPwAncList(listToShow, filterText)
     }
+
+    val benList: Flow<List<BenWithAncListDomain>> =
+        filteredBenList.combine(sortFilter) { list, sort -> sortAncList(list, sort) }
 
     val bottomSheetList: Flow<List<AncStatus>> = combine(
         benList,
@@ -106,6 +112,12 @@ class PwAncVisitsListViewModel @Inject constructor(
     fun filterText(text: String) {
         viewModelScope.launch { filter.emit(text) }
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
     fun showAncBottomSheet(benId: Long, mode: BottomSheetMode) {
         viewModelScope.launch {
