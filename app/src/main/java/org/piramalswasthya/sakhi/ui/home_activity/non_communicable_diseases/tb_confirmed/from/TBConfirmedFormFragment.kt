@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.adapters.TBFollowUpDatesAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentLeprosyFromBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
+import timber.log.Timber
 
 @AndroidEntryPoint
 class TBConfirmedFormFragment : Fragment() {
@@ -106,9 +107,23 @@ class TBConfirmedFormFragment : Fragment() {
 
 
     private fun submitTBSuspectedForm() {
-        viewModel.saveForm()
+        if (validateCurrentPage()) {
+            viewModel.saveForm()
+        }
+    }
 
-
+    private fun validateCurrentPage(): Boolean {
+        val result = binding.form.rvInputForm.adapter?.let {
+            (it as FormInputAdapter).validateInput(resources)
+        }
+        Timber.d("Validation : $result")
+        return if (result == -1) true
+        else {
+            if (result != null) {
+                binding.form.rvInputForm.scrollToPosition(result)
+            }
+            false
+        }
     }
 
     private fun setupFollowUpRecyclerView() {

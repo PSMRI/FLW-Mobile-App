@@ -27,13 +27,7 @@ class PullAshaWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
-    override suspend fun doWork(): Result {
-        try {
-            setForeground(createForegroundInfo())
-        } catch (_: Throwable) {
-            // Expedited work handles foreground promotion; ignore failures here
-        }
-        val user = preferenceDao.getLoggedInUser()
+    override suspend fun doWork(): Result {        val user = preferenceDao.getLoggedInUser()
             ?: return Result.failure(
                 Data.Builder().putAll(mapOf("result" to "User not found")).build()
             )

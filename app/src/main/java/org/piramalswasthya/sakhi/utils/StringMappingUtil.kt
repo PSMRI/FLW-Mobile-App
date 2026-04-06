@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object StringMappingUtil {
 
@@ -29,8 +30,8 @@ object StringMappingUtil {
         if (input.isNullOrEmpty()) return ""
         return try {
                 val english = convertDigits(input)
-                val inFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                val outFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val inFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+                val outFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
                 LocalDate.parse(english, inFmt).format(outFmt)
             } catch (e: Exception) {
                 ""

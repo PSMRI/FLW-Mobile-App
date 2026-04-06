@@ -76,7 +76,7 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
         val uploadList = listOf(upload1, upload2, upload3, upload4, upload5)
 
         if (recordExists) {
-            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+
                 dateD.value = getDateStringFromLong(saasBahu?.date)
                 place.value = saasBahu?.place
                 noOfParticipante.value = saasBahu?.participants?.toString()
@@ -93,7 +93,7 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
                 } else {
                     list.addAll(filledUploads)
                 }
-            }
+
 
         } else {
             list.addAll(uploadList)

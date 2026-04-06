@@ -267,6 +267,29 @@
     <string name="details_of_pregnant_women">Details of Pregnant women</string>
     <string name="anc_period">ANC Period</string>
     <string name="anc_date">ANC Date</string>
+    <string name="place_of_anc">Place of ANC</string>
+    <string name="abortion_if_any">Abortion If Any</string>
+    <string name="weight_of_pw_kg">Weight of PW (Kg) at time Registration</string>
+    <string name="bp_of_pw">BP of PW &#x2013; Systolic/ Diastolic (mm Hg)</string>
+    <string name="pulse_rate_bpm">Pulse Rate (BPM)</string>
+    <string name="hb_gm_dl">HB (gm/dl)</string>
+    <string name="fundal_height_uterus">Fundal Height / Size of the Uterus weeks</string>
+    <string name="urine_albumin">Urine Albumin</string>
+    <string name="random_blood_sugar_test">Random Blood Sugar Test</string>
+    <string name="date_td_tt_1st_dose">Date of Td TT (1st Dose)</string>
+    <string name="date_td_tt_2nd_dose">Date of Td TT (2nd Dose)</string>
+    <string name="date_td_tt_booster_dose">Date of Td TT (Booster Dose)</string>
+    <string name="no_of_folic_acid_tabs">No. of Folic Acid Tabs given</string>
+    <string name="no_of_ifa_tabs">No. of IFA Tabs given</string>
+    <string name="any_high_risk_conditions">Any High Risk conditions</string>
+    <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
+    <string name="who_identified_hrp">Who had identified as HRP?</string>
+    <string name="probable_cause_of_death">Probable Cause of Death</string>
+    <string name="other_death_cause">Other Death Cause</string>
+    <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
+    <string name="mcp_cards">MCP Cards</string>
+    <string name="front_side">Front Side</string>
+    <string name="back_side">Back Side</string>
     <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
     <string name="pmsma_visit_date">PMSMA Visit Date</string>
     <string name="pmsma_visits">PMSMA Visits</string>
@@ -881,8 +904,39 @@
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
-
-
-
-
+    <string name="visit_number_label">Visit -%d</string>
+    <string name="vaccine_fill">FILL</string>
+    <string name="malaria_confirmed">Confirmed</string>
+    <string name="malaria_not_confirmed">Not Confirmed</string>
+    <string name="malaria_treatment_started">Treatment Started</string>
+    <string name="ahd_health_status">Health Status</string>
+    <string name="ahd_ifa_tablet_distribution">IFA Tablet Distribution</string>
+    <string name="ahd_ifa_tablet_quantity">Quantity of IFA Tablets</string>
+    <string name="ahd_menstrual_hygiene_awareness">Menstrual Hygiene Awareness</string>
+    <string name="ahd_sanitary_napkin_distributed">Sanitary Napkin Distributed</string>
+    <string name="ahd_no_of_packets_distributed">No. of Packets Distributed</string>
+    <string name="ahd_referred_to_health_facility">Referred to Health Facility</string>
+    <string name="ahd_counseling_provided">Counseling Provided</string>
+    <string name="ahd_counseling_type">Counseling Type</string>
+    <string name="ahd_follow_up_date">Follow-up Date</string>
+    <string name="ahd_referral_status">Referral Status</string>
+    <string name="ahd_distribution_date">Date</string>
+    <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
+    <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these symptoms</string>
+    <string name="tb_asymptomatic_symptoms">Asymptomatic TB Screening</string>
+    <string name="tb_rise_of_fever">Rise of fever in evening</string>
+    <string name="tb_loss_of_appetite">Loss of appetite</string>
+    <string name="tb_age_more_than_60">Age more than 60 years</string>
+    <string name="tb_diabetic">Diabetic</string>
+    <string name="tb_tobacco_user">Tobacco user</string>
+    <string name="tb_bmi_less_than_18_5">BMI less than 18.5</string>
+    <string name="tb_contact_with_patient_on_treatment">Contact with patient on treatment</string>
+    <string name="tb_history_last_5_years">History of TB in last 5 years</string>
+    <string name="date_of_delivery">Date of Delivery</string>
+    <string name="any_danger_signs">Any Danger Signs</string>
+    <string name="any_high_risk_identified">Any High-risk identified?</string>
+    <string name="delivery_discharge_summary_1">Delivery Discharge Summary 1</string>
+    <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
+    <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
+    <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
 </resources>

@@ -15,14 +15,14 @@ class TBScreeningDataset(
     private val symptomaticLabel = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
-        title = "Symptomatic TB Screening",
+        title = resources.getString(R.string.symptomatic_tb_screening),
         required = false
     )
 
     private val checkSymptomsLabel = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
-        title = "Check if the person has any of these Symptoms:",
+        title = resources.getString(R.string.check_if_the_person_has_any_of_these_symptoms),
         required = false
     )
     private val dateOfVisit = FormElement(
@@ -113,7 +113,7 @@ class TBScreeningDataset(
     private var riseOfFever = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Rise of fever in evening",
+        title = resources.getString(R.string.tb_rise_of_fever),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -124,7 +124,7 @@ class TBScreeningDataset(
     private var lossOfAppetite = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Loss of appetite",
+        title = resources.getString(R.string.tb_loss_of_appetite),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -133,19 +133,19 @@ class TBScreeningDataset(
     private val aSymptomaticLabel = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
-        title = "Asymptomatic TB Screening",
+        title = resources.getString(R.string.tb_asymptomatic_symptoms),
         required = false
     )
     private val checkSymptomsLabel1 = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
-        title = "Check if the person has any of these Symptoms:",
+        title = resources.getString(R.string.check_if_the_person_has_any_of_these_symptoms),
         required = false
     )
     private var age = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Age more than 60 years",
+        title = resources.getString(R.string.tb_age_more_than_60),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -154,7 +154,7 @@ class TBScreeningDataset(
     private var diabetic = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Diabetic",
+        title = resources.getString(R.string.tb_diabetic),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -163,7 +163,7 @@ class TBScreeningDataset(
     private var tobaccoUser = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Tobacco user",
+        title = resources.getString(R.string.tb_tobacco_user),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -172,7 +172,7 @@ class TBScreeningDataset(
     private var bmi = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "BMI < 18.5",
+        title = resources.getString(R.string.tb_bmi_less_than_18_5),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -181,7 +181,7 @@ class TBScreeningDataset(
     private var contactWithTBPatient = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Contact with TB patient on treatment",
+        title = resources.getString(R.string.tb_contact_with_patient_on_treatment),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,
@@ -190,7 +190,7 @@ class TBScreeningDataset(
     private var historyOfTBInLastFiveYrs = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "History of TB in last 5 years",
+        title = resources.getString(R.string.tb_history_last_5_years),
         entries = resources.getStringArray(R.array.yes_no),
         doubleStar = true,
         required = true,

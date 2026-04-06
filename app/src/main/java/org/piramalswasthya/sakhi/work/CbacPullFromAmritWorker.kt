@@ -29,13 +29,7 @@ class CbacPullFromAmritWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
-    override suspend fun doWork(): Result {
-        try {
-            setForeground(createForegroundInfo())
-        } catch (_: Throwable) {
-            // Expedited work handles foreground promotion; ignore failures here
-        }
-        return withContext(Dispatchers.IO) {
+    override suspend fun doWork(): Result {        return withContext(Dispatchers.IO) {
             return@withContext try {
                 val getNumPages: Int = cbacRepo.pullAndPersistCbacRecord()
                 if (getNumPages > 0) {

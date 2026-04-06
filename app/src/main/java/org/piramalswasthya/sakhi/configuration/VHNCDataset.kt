@@ -40,7 +40,7 @@ class VHNCDataset(
     private val vhncDate = FormElement(
         id = 2,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.vhsnc_meeting_date),
+        title = resources.getString(R.string.vhsnc_meeting_date),
         arrayId = -1,
         required = true,
         min = getTwoMonthsBackMillis(),
@@ -58,7 +58,7 @@ class VHNCDataset(
     private val villageName = FormElement(
         id = 9,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.village_name),
+        title = resources.getString(R.string.village_name),
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -81,7 +81,7 @@ class VHNCDataset(
     private val noOfANM = FormElement(
         id = 11,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_anm_mpw_attended),
+        title = resources.getString(R.string.number_of_anm_mpw_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -94,7 +94,7 @@ class VHNCDataset(
     private val noOfAWW = FormElement(
         id = 12,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_aww_attended),
+        title = resources.getString(R.string.number_of_aww_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -107,7 +107,7 @@ class VHNCDataset(
     private val noOfPW = FormElement(
         id = 13,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_pregnant_woman),
+        title = resources.getString(R.string.number_of_pregnant_woman),
         arrayId = -1,
         value = "0",
         required = false,
@@ -120,7 +120,7 @@ class VHNCDataset(
   private val noOfLM = FormElement(
         id = 14,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_lactating_mothers),
+        title = resources.getString(R.string.number_of_lactating_mothers),
         arrayId = -1,
         value = "0",
         required = false,
@@ -133,7 +133,7 @@ class VHNCDataset(
     private val noOfCommentte = FormElement(
         id = 15,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_committee_members_present),
+        title = resources.getString(R.string.number_of_committee_members_present),
         arrayId = -1,
         value = "0",
         required = false,
@@ -147,7 +147,7 @@ class VHNCDataset(
     private val followupPrevius = FormElement(
         id = 16,
         inputType = RADIO,
-        title = context.getString(R.string.follow_up_the_previous_meeting_minutes),
+        title = resources.getString(R.string.follow_up_the_previous_meeting_minutes),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
         required = false,

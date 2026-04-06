@@ -141,11 +141,7 @@ class NewChildBenViewModel @Inject constructor(
             _state.postValue(State.SAVE_FAILED)
             return
         }
-        locationRecord = preferenceDao.getLocationRecord() ?: run {
-            Timber.e("Location record not found")
-            _state.postValue(State.SAVE_FAILED)
-            return
-        }
+        locationRecord = household.locationRecord
 
         val benForEcr = ecrRepo.getBenFromId(SelectedbenIdFromArgs)
         val savedEcr = ecrRepo.getSavedRecord(SelectedbenIdFromArgs)
