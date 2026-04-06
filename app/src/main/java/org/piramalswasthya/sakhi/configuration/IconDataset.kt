@@ -46,11 +46,7 @@ class IconDataset @Inject constructor(
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
-        val vlfTitle = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            resources.getString(R.string.mitanin_village_meetings)
-        } else {
-            resources.getString(R.string.asha_village_meetings)
-        }
+        val vlfTitle = resources.getString(R.string.icon_title_vlf)
 
         Timber.d("currently : $showAll")
         lateinit var showModules:Modules
@@ -374,13 +370,6 @@ class IconDataset @Inject constructor(
                         .actionVillageLevelFormsFragmentToAllMaaMeetingFragment()
                 ),
                 Icon(
-                    R.drawable.ic__u_win,
-                    resources.getString(R.string.u_win_session),
-                    null,
-                    VillageLevelFormsFragmentDirections
-                        .actionVillageLevelFormsFragmentToUwinListFragment()
-                ),
-                Icon(
                     R.drawable.ic__pulse_polio,
                     resources.getString(R.string.pulse_polio_campaign),
                     null,
@@ -403,6 +392,18 @@ class IconDataset @Inject constructor(
                 )
             )
         )
+
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.add(
+                Icon(
+                    R.drawable.ic__u_win,
+                    resources.getString(R.string.u_win_session),
+                    null,
+                    VillageLevelFormsFragmentDirections
+                        .actionVillageLevelFormsFragmentToUwinListFragment()
+                )
+            )
+        }
 
         return list.apply {
             forEachIndexed { index, icon ->
