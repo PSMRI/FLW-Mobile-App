@@ -636,8 +636,9 @@ data class BenWithAncVisitCache(
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
-        private fun getAncVisitedDateFromLong(long: Long): String {
-            return "Visited on ${dateFormat.format(long)}"
+        private fun getAncVisitedDateFromLong(long: Long, resources: android.content.res.Resources): String {
+            val visitedOn = resources.getString(org.piramalswasthya.sakhi.R.string.track_visited_on)
+            return "$visitedOn ${dateFormat.format(long)}"
         }
     }
 

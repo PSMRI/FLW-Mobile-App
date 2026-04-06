@@ -247,6 +247,16 @@
     <string name="view_household_information">परिवार की जानकारी देखें</string>
     <string name="hello">नमस्ते</string>
     <string name="select_immunization_category">टीकाकरण श्रेणी चुनें</string>
+    <string name="imm_cat_birth_dose">जन्म खुराक</string>
+    <string name="imm_cat_6_weeks">6 सप्ताह</string>
+    <string name="imm_cat_10_weeks">10 सप्ताह</string>
+    <string name="imm_cat_14_weeks">14 सप्ताह</string>
+    <string name="imm_cat_9_12_months">9-12 महीने</string>
+    <string name="imm_cat_16_24_months">16-24 महीने</string>
+    <string name="imm_cat_5_6_years">5-6 वर्ष</string>
+    <string name="imm_cat_10_years">10 वर्ष</string>
+    <string name="imm_cat_16_years">16 वर्ष</string>
+    <string name="imm_cat_catch_up">कैच अप</string>
     <string name="children">बच्चे</string>
     <string name="mother">माँ</string>
     <string name="patient_information">रोगी की जानकारी</string>
@@ -284,8 +294,8 @@
     <string name="household_id">परिवार आईडी</string>
     <string name="contact_number">संपर्क संख्या</string>
     <string name="show_vaccines">टीके दिखाएँ</string>
-    <string name="add_cbac">CBAC जोड़ें</string>
-    <string name="view_cbac">CBAC देखें</string>
+    <string name="add_cbac">सीबीएसी जोड़ें</string>
+    <string name="view_cbac">सीबीएसी देखें</string>
     <string name="view">देखें</string>
     <string name="vaccine_fill">भरें</string>
     <string name="home">घर</string>
@@ -397,7 +407,7 @@
     <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
-    <string name="hwc_referred_list">उप स्वास्थ्य केंद्र रेफर्ड सूची</string>
+    <string name="hwc_referred_list">एचडब्ल्यूसी रेफर्ड सूची</string>
     <string name="vhsnc_meeting_date">वीएचएसएनसी बैठक की तिथि</string>
     <string name="place_of_vhsnc_meeting">वीएचएसएनसी बैठक का स्थान</string>
     <string name="village_name">गाँव का नाम</string>
@@ -553,8 +563,8 @@
     <string name="ben_marked_death">लाभार्थी को मृत चिह्नित किया गया।</string>
     <string name="kala_submitted">काला अजार फॉर्म जमा किया गया</string>
     <string name="isrefer">रेफर</string>
-    <string name="ncd_refer_alert">क्या आप HWC सुविधा में रेफर करना चाहते हैं?</string>
-    <string name="cbac_screening_submitted">CBAC स्क्रीनिंग जमा की गई</string>
+    <string name="ncd_refer_alert">क्या आप एचडब्ल्यूसी सुविधा में रेफर करना चाहते हैं?</string>
+    <string name="cbac_screening_submitted">सीबीएसी स्क्रीनिंग जमा की गई</string>
     <string name="title_activity_supervisor">पर्यवेक्षक</string>
     <string name="mosquito_net_on">मच्छरदानी चालू</string>
     <string name="mosquito_net_off">मच्छरदानी बंद</string>
@@ -854,7 +864,7 @@
     <string name="tb_contact_with_patient_on_treatment">क्या आप टीबी मरीज के संपर्क में आए हैं?</string>
     <string name="tb_history_last_5_years">क्या पिछले 5 साल में आपको कभी टीबी (TB) हुई थी?</string>
     <string name="visit_leprosy">भ्रमण</string>
-    <string name="visit_number_label">विज़िट -%d</string>
+    <string name="visit_number_label">भ्रमण -%d</string>
     <string name="add_spouse">जीवनसाथी जोड़ें </string>
     <string name="would_you_like_to_add_spouse">क्या आप %1$s के %2$s को जोड़ना चाहते हैं?</string>
     <string name="str_wife">पत्नी</string>
@@ -956,6 +966,20 @@
         <item>कोई नहीं</item>
     </string-array>
 
+    <string-array name="daysPv">
+        <item>दिन 1</item>
+        <item>दिन 2</item>
+        <item>दिन 3</item>
+        <item>दिन 4</item>
+
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>दिन 1</item>
+        <item>दिन 2</item>
+        <item>दिन 3</item>
+    </string-array>
+
     <string-array name="hbyc_month_array">
         <item name="hbyc_month_3">3 महीने</item>
         <item name="hbyc_month_4">4 महीने</item>
@@ -977,6 +1001,16 @@
         <item name="hbnc_place_of_delivery_2">स्वास्थ्य केंद्र</item>
         <item name="hbnc_place_of_delivery_3">सामुदायिक स्वास्थ्य केंद्र</item>
         <item name="hbnc_place_of_delivery_4">प्राथमिक स्वास्थ्य केंद्र</item>
+    </string-array>
+
+    <string-array name="hbnc_visit_days">
+        <item>पहला दिन</item>
+        <item>तीसरा दिन</item>
+        <item>सातवां दिन</item>
+        <item>चौदहवां दिन</item>
+        <item>इक्कीसवां दिन</item>
+        <item>अट्ठाईसवां दिन</item>
+        <item>बयालीसवां दिन</item>
     </string-array>
 
     <string-array name="body_part_male">
@@ -1020,5 +1054,24 @@
         <item>बीपीएएल रेजिमेन (6 महीने)</item>
         <item>आईएनएच मोनो (6 महीने)</item>
     </string-array>
+
+    <string name="btn_cancel">रद्द करें</string>
+    <string name="filter_sort_by">क्रमबद्ध करें</string>
+    <string name="filter_newest_first">नवीनतम पहले</string>
+    <string name="filter_oldest_first">सबसे पुराना पहले</string>
+    <string name="filter_age_wise">उम्र के अनुसार</string>
+    <string name="filter_syncing_first">सिंकिंग डेटा पहले</string>
+    <string name="filter_unsynced_first">असिंक्ड पहले</string>
+    <string name="bp_invalid_format">अमान्य प्रारूप। जैसे 123/56 होना चाहिए</string>
+    <string name="bp_systole_less_than">सिस्टोल %d से कम नहीं होना चाहिए</string>
+    <string name="bp_systole_greater_than">सिस्टोल %d से अधिक नहीं होना चाहिए</string>
+    <string name="bp_diastole_less_than">डायस्टोल %d से कम नहीं होना चाहिए</string>
+    <string name="bp_diastole_greater_than">डायस्टोल %d से अधिक नहीं होना चाहिए</string>
+    <string name="bp_diastole_greater_than_systole">डायस्टोल सिस्टोल से अधिक नहीं हो सकता</string>
+    <string name="weight_enter_in_grams">कृपया वजन ग्राम में दर्ज करें</string>
+    <string name="weight_cannot_be_zero">वजन 0 नहीं हो सकता</string>
+    <string name="weight_enter_in_grams_example">कृपया वजन ग्राम में दर्ज करें (जैसे 2500)</string>
+    <string name="weight_min_500">वजन कम से कम 500 ग्राम होना चाहिए</string>
+    <string name="weight_max_7000">वजन 7000 ग्राम से अधिक नहीं होना चाहिए</string>
 
 </resources>

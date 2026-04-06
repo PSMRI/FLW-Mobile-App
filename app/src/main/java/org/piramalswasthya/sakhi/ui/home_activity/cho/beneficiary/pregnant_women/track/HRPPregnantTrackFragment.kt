@@ -73,9 +73,9 @@ class HRPPregnantTrackFragment : Fragment() {
                 binding.benId.text = it.ben.benId.toString()
                 binding.rchId.text = it.ben.rchId ?: resources.getString(R.string.str_not_available)
                 binding.mobileNumber.text = it.ben.mobileNo.toString()
-                binding.lmp.text = it.asDomainModel().lmpString
-                binding.edd.text = it.asDomainModel().eddString
-                binding.weeksOfPreg.text = it.asDomainModel().weeksOfPregnancy
+                binding.lmp.text = it.asDomainModel(resources).lmpString
+                binding.edd.text = it.asDomainModel(resources).eddString
+                binding.weeksOfPreg.text = it.asDomainModel(resources).weeksOfPregnancy
             }
 
         }

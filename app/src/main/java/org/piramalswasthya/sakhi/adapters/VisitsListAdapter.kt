@@ -5,9 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemVisitsBinding
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -34,9 +37,14 @@ class VisitsListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(followUp: MalariaScreeningCache) {
-            binding.tvVisitNumber.text = "Visit ${followUp.visitId}"
+            val ctx = binding.root.context
+            val englishArray = HelperUtil.getLocalizedResources(ctx, Languages.ENGLISH)
+                .getStringArray(R.array.dc_case_status)
+            val localizedArray = ctx.resources.getStringArray(R.array.dc_case_status)
+            val idx = englishArray.indexOf(followUp.caseStatus)
+            binding.tvVisitNumber.text = ctx.getString(R.string.visit_format, followUp.visitId)
             binding.tvFollowUpDate.text = getDateStrFromLong(followUp.caseDate)
-            binding.tvTreatmentStatus.text = followUp.caseStatus ?: "Suspected"
+            binding.tvTreatmentStatus.text = if (idx >= 0) localizedArray[idx] else localizedArray[0]
         }
     }
 
