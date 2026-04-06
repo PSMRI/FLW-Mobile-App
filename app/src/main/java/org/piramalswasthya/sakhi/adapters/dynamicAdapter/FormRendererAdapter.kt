@@ -735,7 +735,7 @@
                                     else{
                                         minDate = when (field.fieldId) {
                                             "visit_date" -> {
-                                                if (formId == FormConstants.HBNC_FORM_ID) {
+                                                if (formId == FormConstants.HBNC_FORM_ID || formId == FormConstants.HBYC_FORM_ID) {
                                                     val dueDate = getDate("due_date")
                                                     when {
                                                         dueDate != null && minVisitDate != null ->
