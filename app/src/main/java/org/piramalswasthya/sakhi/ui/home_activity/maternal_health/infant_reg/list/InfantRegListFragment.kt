@@ -47,12 +47,14 @@ class InfantRegListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = InfantRegistrationAdapter(
             InfantRegistrationAdapter.ClickListener { benId, babyIndex ->
-                findNavController().navigate(
-                    InfantRegListFragmentDirections.actionInfantRegListFragmentToInfantRegFragment(
-                        benId,
-                        babyIndex
+                if (findNavController().currentDestination?.id == R.id.infantRegListFragment) {
+                    findNavController().navigate(
+                        InfantRegListFragmentDirections.actionInfantRegListFragmentToInfantRegFragment(
+                            benId,
+                            babyIndex
+                        )
                     )
-                )
+                }
             }
         )
         binding.rvAny.adapter = benAdapter

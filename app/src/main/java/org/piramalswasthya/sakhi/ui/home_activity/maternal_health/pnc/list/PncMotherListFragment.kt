@@ -60,13 +60,15 @@ class PncMotherListFragment : Fragment() {
                         bottomSheet.show(childFragmentManager, "PNC")
                 },
                 addVisit = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PncMotherListFragmentDirections.actionPncMotherListFragmentToPncFormFragment(
-                            benId,
-                            hhId.toString(),
-                            visitNumber
+                    if (findNavController().currentDestination?.id == R.id.pncMotherListFragment) {
+                        findNavController().navigate(
+                            PncMotherListFragmentDirections.actionPncMotherListFragmentToPncFormFragment(
+                                benId,
+                                hhId.toString(),
+                                visitNumber
+                            )
                         )
-                    )
+                    }
                 })
         )
         binding.rvAny.adapter = benAdapter

@@ -39,11 +39,13 @@ class ConfirmedMalariaLIstFragment : Fragment() {
 
         val benAdapter = MalariaConfirmedCasesListAdapter(
             clickListener = MalariaConfirmedCasesListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    ConfirmedMalariaLIstFragmentDirections.actionConfirmedMalariaLIstFragmentToConfirmedCaseFollowUpFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.confirmedMalariaLIstFragment) {
+                    findNavController().navigate(
+                        ConfirmedMalariaLIstFragmentDirections.actionConfirmedMalariaLIstFragmentToConfirmedCaseFollowUpFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter

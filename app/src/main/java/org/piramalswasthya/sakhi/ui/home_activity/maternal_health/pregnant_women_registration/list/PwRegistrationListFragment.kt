@@ -102,11 +102,13 @@ class PwRegistrationListFragment : Fragment() {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { hhId, benId ->
-                    findNavController().navigate(
-                        PwRegistrationListFragmentDirections.actionPwRegistrationFragmentToPregnancyRegistrationFormFragment(
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.pwRegistrationFragment) {
+                        findNavController().navigate(
+                            PwRegistrationListFragmentDirections.actionPwRegistrationFragmentToPregnancyRegistrationFormFragment(
+                                benId
+                            )
                         )
-                    )
+                    }
                 }), prefDao
         )
         binding.rvAny.adapter = benAdapter

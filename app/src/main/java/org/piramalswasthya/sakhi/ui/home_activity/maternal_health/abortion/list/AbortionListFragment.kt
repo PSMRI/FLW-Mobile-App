@@ -55,12 +55,14 @@
                 },
 
                     addVisit = { benId ->
-                        findNavController().navigate(
-                            AbortionListFragmentDirections
-                                .actionAbortionListFragmentToPwAncAbortionFormFragment(
-                                    benId
-                                )
-                        )
+                        if (findNavController().currentDestination?.id == R.id.abortionListFragment) {
+                            findNavController().navigate(
+                                AbortionListFragmentDirections
+                                    .actionAbortionListFragmentToPwAncAbortionFormFragment(
+                                        benId
+                                    )
+                            )
+                        }
                     },
 
                 )
