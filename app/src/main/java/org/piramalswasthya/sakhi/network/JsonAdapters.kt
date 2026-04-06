@@ -1449,7 +1449,7 @@ data class AESScreeningDTO(
     var diseaseTypeID: Int ? = 0,
     var createdDate: String,
     var createdBy: String ? = null,
-    var followUpPoint: Int ? = 0,
+    var followUpPoint: Int ? = 1,
     var syncState: SyncState = SyncState.UNSYNCED,
 
     ) {

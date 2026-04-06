@@ -16,6 +16,8 @@ import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
+import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.LocationRecord
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -23,6 +25,18 @@ import java.util.Date
 import java.util.Locale
 
 class HouseholdFormDataset(context: Context, language: Languages,var preferenceDao: PreferenceDao) : Dataset(context, language) {
+
+    private var villageList: List<LocationEntity> = emptyList()
+
+    fun setVillages(villages: List<LocationEntity>) {
+        villageList = villages
+        val villageNames = villages.map { it.name }.toTypedArray()
+        villageDropdown.entries = villageNames
+        if (villages.size == 1) {
+            villageDropdown.value = villageNames[0]
+        }
+    }
+
     companion object {
         private fun getCurrentDate(): String {
             val calendar = Calendar.getInstance()
@@ -128,6 +142,15 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
         required = true
     )
 
+    private val villageDropdown = FormElement(
+        id = 21,
+        inputType = DROPDOWN,
+        title = resources.getString(R.string.nhhr_village),
+        arrayId = -1,
+        entries = emptyArray(),
+        required = true
+    )
+
     suspend fun setupPage(hh: HouseholdCache?) {
 
         val list = mutableListOf<FormElement>()
@@ -137,6 +160,7 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
                 firstNameHeadOfFamily,
                 lastNameHeadOfFamily,
                 mobileNoHeadOfFamily,
+                villageDropdown,
                 houseNo,
                 wardNo,
                 wardName,
@@ -145,6 +169,9 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
             )
         }
         list.addAll(firstPage)
+        hh?.locationRecord?.let { loc ->
+            villageDropdown.value = loc.village.name
+        }
         hh?.family?.let { saved ->
             firstNameHeadOfFamily.value = saved.familyHeadName
             lastNameHeadOfFamily.value = saved.familyName
@@ -217,6 +244,7 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
                 firstNameHeadOfFamily,
                 lastNameHeadOfFamily,
                 mobileNoHeadOfFamily,
+                villageDropdown,
                 houseNo,
                 wardNo,
                 wardName,
@@ -551,7 +579,18 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
             family.povertyLine =
                 povertyLine.getEnglishStringFromPosition(family.povertyLineId)
         }
-        (cacheModel as HouseholdCache).family = family
+        val household = cacheModel as HouseholdCache
+        household.family = family
+
+        val selectedVillageName = villageDropdown.value
+        if (!selectedVillageName.isNullOrEmpty()) {
+            val selectedVillage = villageList.find { it.name == selectedVillageName }
+            if (selectedVillage != null) {
+                household.locationRecord = household.locationRecord.copy(
+                    village = selectedVillage
+                )
+            }
+        }
     }
 
     private fun mapValuesForPage2(cacheModel: FormDataModel) {

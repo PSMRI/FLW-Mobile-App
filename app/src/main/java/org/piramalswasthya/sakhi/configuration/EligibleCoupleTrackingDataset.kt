@@ -322,7 +322,7 @@ class EligibleCoupleTrackingDataset(
                 // Restore FP method details
                 saved.methodOfContraception?.let { method ->
                     val methods = resources.getStringArray(R.array.method_of_contraception)
-                    val sterilizationIndices = listOf(7, 8, 9)
+                    val sterilizationIndices = listOf(7, 8)
 
                     when {
                         method in methods -> {
@@ -656,7 +656,7 @@ class EligibleCoupleTrackingDataset(
                         if(noOfChildrens!=0)
                         {
                             val methods = resources.getStringArray(R.array.method_of_contraception).toMutableList()
-                            val sterilizationIndices = listOf(7, 8, 9)
+                            val sterilizationIndices = listOf(7, 8)
                             val selectedIndex = methods.indexOf(methodOfContraception.value)
                             if (selectedIndex in sterilizationIndices) {
                                 triggerDependants(

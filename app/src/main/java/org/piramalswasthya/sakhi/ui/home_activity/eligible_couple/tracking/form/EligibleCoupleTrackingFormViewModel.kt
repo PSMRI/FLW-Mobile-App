@@ -128,7 +128,7 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                     it.dateOfReg,
                     pastTrack,
                     if (_recordExists.value == true) eligibleCoupleTracking else null,
-                    ecrRepo.getNoOfChildren(benId)
+                    benRepo.getChildCountForBen(benId)
                 )
             }
         }

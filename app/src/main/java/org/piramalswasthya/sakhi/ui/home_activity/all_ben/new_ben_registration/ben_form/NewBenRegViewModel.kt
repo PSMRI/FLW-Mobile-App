@@ -165,11 +165,7 @@ class NewBenRegViewModel @Inject constructor(
                     _state.postValue(State.SAVE_FAILED)
                     return@withContext
                 }
-                locationRecord = preferenceDao.getLocationRecord() ?: run {
-                    Timber.e("Location record not found")
-                    _state.postValue(State.SAVE_FAILED)
-                    return@withContext
-                }
+                locationRecord = household.locationRecord
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
