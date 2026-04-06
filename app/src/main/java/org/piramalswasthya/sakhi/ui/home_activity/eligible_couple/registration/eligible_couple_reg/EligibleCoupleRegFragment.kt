@@ -59,6 +59,7 @@ class EligibleCoupleRegFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
+                val currentBinding = _binding ?: return@registerForActivityResult
                 if(viewModel.getDocumentFormId() == 75) {
                     latestTmpUri?.let { uri ->
                         if (checkFileSize(uri,requireContext())) {
@@ -66,7 +67,7 @@ class EligibleCoupleRegFragment : Fragment() {
 
                         } else {
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -80,7 +81,7 @@ class EligibleCoupleRegFragment : Fragment() {
 
                         } else {
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -294,7 +295,8 @@ class EligibleCoupleRegFragment : Fragment() {
     }
 
     fun validate(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
+        val currentBinding = _binding ?: return false
+        val result = currentBinding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapterWithBgIcon).validateInput(resources)
         }
         Timber.d("Validation : $result")
@@ -302,14 +304,14 @@ class EligibleCoupleRegFragment : Fragment() {
             true
         else {
             if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
+                currentBinding.form.rvInputForm.scrollToPosition(result)
             }
             false
         }
     }
 
     private fun hardCodedListUpdate(formId: Int) {
-        binding.form.rvInputForm.adapter?.apply {
+        _binding?.form?.rvInputForm?.adapter?.apply {
             when (formId) {
                 17 -> {
                     notifyDataSetChanged()
