@@ -92,7 +92,16 @@ class PncFormDataset(
         id = 6,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_contraception_method),
-        entries = resources.getStringArray(R.array.pnc_contraception_method_array),
+        entries = resources.getStringArray(R.array.pnc_contraception_method_array).let { entries ->
+            val englishEntries = englishResources.getStringArray(R.array.pnc_contraception_method_array)
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                val miniLapIndex = englishEntries.indexOfFirst { it.equals("MiniLap", ignoreCase = true) }
+                entries.filterIndexed { index, _ -> index != miniLapIndex }.toTypedArray()
+            } else {
+                val femSterIndex = englishEntries.indexOfFirst { it.equals("FEMALE STERILIZATION", ignoreCase = true) }
+                entries.filterIndexed { index, _ -> index != femSterIndex }.toTypedArray()
+            }
+        },
         required = false,
         hasDependants = true
     )
