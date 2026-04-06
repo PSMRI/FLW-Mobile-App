@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -746,9 +747,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
 
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true
@@ -758,9 +763,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
             var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true
