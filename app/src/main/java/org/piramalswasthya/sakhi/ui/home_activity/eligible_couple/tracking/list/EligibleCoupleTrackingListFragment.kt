@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -44,6 +45,7 @@ class EligibleCoupleTrackingListFragment : Fragment() {
     private val bottomSheet by lazy {
         ECTrackingListBottomSheetFragment()
     }
+    private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
@@ -63,16 +65,18 @@ class EligibleCoupleTrackingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
+        childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f is ECTrackingListBottomSheetFragment) isBottomSheetShowing = false
+            }
+        }, false)
 
 
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = ECTrackingListAdapter(
             ECTrackingListAdapter.ECTrackListClickListener(
                 addNewTrack = { benId, canAdd ->
-                        if (canAdd)
+                        if (canAdd && findNavController().currentDestination?.id == R.id.eligibleCoupleTrackingListFragment)
                             findNavController().navigate(
                                 EligibleCoupleTrackingListFragmentDirections.actionEligibleCoupleTrackingListFragmentToEligibleCoupleTrackingFormFragment(
                                     benId
@@ -84,8 +88,11 @@ class EligibleCoupleTrackingListFragment : Fragment() {
                                 Toast.LENGTH_LONG
                             ).show()
             }, showAllTracks = {
-                        viewModel.setClickedBenId(it)
-                        bottomSheet.show(childFragmentManager, "ECT")
+                        if (!isBottomSheetShowing) {
+                            isBottomSheetShowing = true
+                            viewModel.setClickedBenId(it)
+                            bottomSheet.show(childFragmentManager, "ECT")
+                        }
             })
         )
         binding.rvAny.adapter = benAdapter

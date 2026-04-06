@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -36,6 +37,7 @@ class HRPPregnantListFragment : Fragment() {
     }
 
     private val bottomSheet: HRPPregnantTrackBottomSheet by lazy { HRPPregnantTrackBottomSheet() }
+    private var isBottomSheetShowing = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,26 +49,35 @@ class HRPPregnantListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f is HRPPregnantTrackBottomSheet) isBottomSheetShowing = false
+            }
+        }, false)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = HRPTListAdapter(
             clickListener = HRPTListAdapter.HRPTClickListener(
                 {
                 },
                 { _, benId ->
-                    findNavController().navigate(
-                        HRPPregnantListFragmentDirections.actionHRPPregnantListFragmentToHRPPregnantTrackFragment(
-                            benId = benId,
-                            trackId = 0
+                    if (findNavController().currentDestination?.id == R.id.HRPPregnantListFragment) {
+                        findNavController().navigate(
+                            HRPPregnantListFragmentDirections.actionHRPPregnantListFragmentToHRPPregnantTrackFragment(
+                                benId = benId,
+                                trackId = 0
+                            )
                         )
-                    )
+                    }
                 },
                 { _, benId ->
-                    viewModel.benId = benId
-                    if (!bottomSheet.isVisible)
+                    if (!isBottomSheetShowing) {
+                        isBottomSheetShowing = true
+                        viewModel.benId = benId
                         bottomSheet.show(
                             childFragmentManager,
                             resources.getString(R.string.follow_up)
                         )
+                    }
                 }
             ),
             formButtonText = arrayOf(

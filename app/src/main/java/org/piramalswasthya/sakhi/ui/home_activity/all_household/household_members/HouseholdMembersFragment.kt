@@ -251,6 +251,7 @@ class HouseholdMembersFragment : Fragment() {
         normalFlow: () -> Unit
     ){
         if (!canProceed(item)) return
+        if (findNavController().currentDestination?.id != R.id.householdMembersFragment) return
         if (viewModel.isFromDisease == 0) normalFlow() else navigateToDiseaseForm(benId)
     }
 
