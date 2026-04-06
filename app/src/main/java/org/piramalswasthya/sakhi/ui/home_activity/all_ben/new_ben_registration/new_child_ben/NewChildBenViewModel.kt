@@ -131,9 +131,21 @@ class NewChildBenViewModel @Inject constructor(
 
     private suspend fun setUpPage() {
 
-        user = preferenceDao.getLoggedInUser()!!
-        household = benRepo.getHousehold(hhId)!!
-        locationRecord = preferenceDao.getLocationRecord()!!
+        user = preferenceDao.getLoggedInUser() ?: run {
+            Timber.e("User not logged in")
+            _state.postValue(State.SAVE_FAILED)
+            return
+        }
+        household = benRepo.getHousehold(hhId) ?: run {
+            Timber.e("Household not found: hhId=$hhId")
+            _state.postValue(State.SAVE_FAILED)
+            return
+        }
+        locationRecord = preferenceDao.getLocationRecord() ?: run {
+            Timber.e("Location record not found")
+            _state.postValue(State.SAVE_FAILED)
+            return
+        }
 
         val benForEcr = ecrRepo.getBenFromId(SelectedbenIdFromArgs)
         val savedEcr = ecrRepo.getSavedRecord(SelectedbenIdFromArgs)
@@ -183,7 +195,7 @@ class NewChildBenViewModel @Inject constructor(
             if (recordExistsLocal) ecrForm else null,
             household = household,
             hoF = hoFBen,
-            benGender = ben.gender!!,
+            benGender = ben.gender ?: benGender ?: Gender.MALE,
             relationToHeadId = relToHeadId,
             hoFSpouse = familyList.filter {
                 it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
