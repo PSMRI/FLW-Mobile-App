@@ -70,7 +70,7 @@ class NewBenRegFragment : Fragment() {
         val listIndex =
             viewModel.updateValueByIdAndReturnListIndex(micClickedElementId, formattedValue)
         listIndex.takeIf { it >= 0 }?.let {
-            binding.form.rvInputForm.adapter?.notifyItemChanged(it)
+            _binding?.form?.rvInputForm?.adapter?.notifyItemChanged(it)
         }
     }
 
@@ -97,11 +97,12 @@ class NewBenRegFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
+                val currentBinding = _binding ?: return@registerForActivityResult
                 if(viewModel.getDocumentFormId() == 46) {
                     frontViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -111,7 +112,7 @@ class NewBenRegFragment : Fragment() {
                     backViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -121,7 +122,7 @@ class NewBenRegFragment : Fragment() {
                     latestTmpUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -136,6 +137,7 @@ class NewBenRegFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val currentBinding = _binding ?: return
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
             if(viewModel.getDocumentFormId() == 46) {
                 data?.data?.let { pdfUri ->
@@ -146,7 +148,7 @@ class NewBenRegFragment : Fragment() {
                         frontViewFileUri = pdfUri
                         frontViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
@@ -164,7 +166,7 @@ class NewBenRegFragment : Fragment() {
                         backViewFileUri = pdfUri
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
