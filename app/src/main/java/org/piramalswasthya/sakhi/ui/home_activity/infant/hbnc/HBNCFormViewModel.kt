@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
@@ -289,7 +290,7 @@ class HBNCFormViewModel @Inject constructor(
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {
