@@ -28,13 +28,18 @@ data class AshaWorkerResponse(
     @SerializedName("userId") val userId: Int,
     @SerializedName("totalAmount") val totalAmount: Int?,
     @SerializedName("facilityName") val facilityName: String?,
-    @SerializedName("claimedDate") val claimedDate: String?,
-    @SerializedName("OtherReason") val otherReason: String?,
-    @SerializedName("isClaimed") val isClaimed: Boolean?,
-    @SerializedName("reason") val reason: String?,
-    @SerializedName("role") val role: String?,
-    @SerializedName("approvalDate") val approvalDate: String?,
+    @SerializedName("activities") val activities: List<Activity>?
 
+
+)
+data class Activity(
+    @SerializedName("approvalStatus") val approvalStatus: Int?,
+    @SerializedName("reason") val reason: String?,
+    @SerializedName("otherReason") val otherReason: String?,
+    @SerializedName("claimedDate") val claimedDate: String?,
+    @SerializedName("approvalDate") val approvalDate: String?,
+    @SerializedName("role") val role: String?,
+    @SerializedName("isClaimed") val isClaimed: Boolean?
 )
 
 data class AshaWorker(
