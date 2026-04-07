@@ -108,10 +108,7 @@ class WorkerDetailViewModel @Inject constructor(
         ashaId: Int,
         incentiveIds: List<Long>
     ) {
-        if (incentiveIds.isEmpty()) {
-            _actionState.value = ActionState.Error("No records to verify")
-            return
-        }
+
         viewModelScope.launch {
             _actionState.value = ActionState.Loading
             try {
@@ -151,10 +148,7 @@ class WorkerDetailViewModel @Inject constructor(
         reason: String,
         otherReason: String
     ) {
-        if (incentiveIds.isEmpty()) {
-            _actionState.value = ActionState.Error("No records to reject")
-            return
-        }
+
         viewModelScope.launch {
             _actionState.value = ActionState.Loading
             try {

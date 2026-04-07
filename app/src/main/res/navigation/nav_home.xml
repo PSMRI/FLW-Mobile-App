@@ -776,9 +776,7 @@
             android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
             app:destination="@id/eyeSurgeryFormFragment" />
 
-        <action
-            android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
-            app:destination="@id/eyeSurgeryFormFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
