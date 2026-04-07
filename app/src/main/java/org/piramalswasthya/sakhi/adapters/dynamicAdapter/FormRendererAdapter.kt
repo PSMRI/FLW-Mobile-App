@@ -735,7 +735,7 @@
                                             cal.add(Calendar.MONTH, -1)
                                             minDate = cal.time
                                             maxDate = today
-
+                                        
                                     }
                                     else{
                                         minDate = when (field.fieldId) {
