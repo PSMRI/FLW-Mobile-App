@@ -222,7 +222,7 @@ class PregnantWomanAncAbortionDataset(
             }
             if (saved.isPaiucdId != 0) {
                 list.add(list.indexOf(isPaiucd) + 1, isYesOrNo)
-                isYesOrNo.value = if (saved.isYesOrNo == true) "Yes" else "No"
+                isYesOrNo.value = getLocalValueInArray(R.array.anc_confirmation_array, if (saved.isYesOrNo == true) "Yes" else "No")
 
                 if (saved.isPaiucdId == 2 && saved.isYesOrNo == true) {
                     list.add(list.indexOf(isYesOrNo) + 1, dateOfSterilization)
@@ -242,9 +242,8 @@ class PregnantWomanAncAbortionDataset(
             abortionFacility.value = saved.abortionFacility
             abortionDate.value = saved.abortionDate?.let { getDateFromLong(it) }
             serialNoAsPerAdmission.value = saved.serialNo
-            methodOfTermination.value = saved.methodOfTermination
-            terminationDoneBy.value = saved.terminationDoneBy
-            isPaiucd.value = saved.isPaiucd
+            methodOfTermination.value = getLocalValueInArray(R.array.anc_method_of_termination, saved.methodOfTermination)
+            terminationDoneBy.value = getLocalValueInArray(R.array.anc_termination_done_by, saved.terminationDoneBy)
             remarks.value = saved.remarks
             abortionDischargeSummaryImg1.value = saved.abortionImg1
             abortionDischargeSummaryImg2.value = saved.abortionImg2
@@ -268,7 +267,8 @@ class PregnantWomanAncAbortionDataset(
 
             isYesOrNo.id -> {
                 val isPaiucdSecondOption = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) == 1
-                if (isYesOrNo.value == "Yes" && isPaiucdSecondOption) {
+                val isYes = isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
+                if (isYes && isPaiucdSecondOption) {
                     triggerDependants(
                         source = isYesOrNo,
                         addItems = listOf(dateOfSterilization),
@@ -297,17 +297,13 @@ class PregnantWomanAncAbortionDataset(
             cache.abortionFacilityId = abortionFacility.getPosition()
             cache.abortionDate = abortionDate.value?.let { getLongFromDate(it) }
             cache.serialNo = serialNoAsPerAdmission.value
-            cache.methodOfTermination = methodOfTermination.value
-            cache.methodOfTerminationId =
-                methodOfTermination.entries?.indexOf(methodOfTermination.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.terminationDoneBy = terminationDoneBy.value
-            cache.terminationDoneById =
-                terminationDoneBy.entries?.indexOf(terminationDoneBy.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.isPaiucd = isPaiucd.value
-            cache.isPaiucdId = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) + 1
-            cache.isYesOrNo =isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
+            cache.methodOfTermination = methodOfTermination.getEnglishStringFromPosition(methodOfTermination.getPosition())
+            cache.methodOfTerminationId = methodOfTermination.getPosition().takeIf { it > 0 }?.minus(1)
+            cache.terminationDoneBy = terminationDoneBy.getEnglishStringFromPosition(terminationDoneBy.getPosition())
+            cache.terminationDoneById = terminationDoneBy.getPosition().takeIf { it > 0 }?.minus(1)
+            cache.isPaiucd = isPaiucd.getEnglishStringFromPosition(isPaiucd.getPosition())
+            cache.isPaiucdId = isPaiucd.getPosition()
+            cache.isYesOrNo = isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
             cache.remarks = remarks.value
             cache.dateSterilisation = dateOfSterilization.value?.let { getLongFromDate(it) }
             cache.abortionImg1 = abortionDischargeSummaryImg1.value

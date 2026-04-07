@@ -231,14 +231,7 @@
         <item>Community center</item>
     </string-array>
 
-    <string-array name="temp_array">
-        <item>Item 1</item>
-        <item>Item 2</item>
-        <item>Item 3</item>
-        <item>Item 4</item>
-        <item>Item 5</item>
-        <item>Item 6</item>
-    </string-array>
+
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
@@ -304,6 +297,16 @@
     <string name="view_household_information">View Household Information</string>
     <string name="hello">Hello</string>
     <string name="select_immunization_category">Select Immunization Category</string>
+    <string name="imm_cat_birth_dose">Birth Dose</string>
+    <string name="imm_cat_6_weeks">6 WEEKS</string>
+    <string name="imm_cat_10_weeks">10 WEEKS</string>
+    <string name="imm_cat_14_weeks">14 WEEKS</string>
+    <string name="imm_cat_9_12_months">9-12 MONTHS</string>
+    <string name="imm_cat_16_24_months">16-24 MONTHS</string>
+    <string name="imm_cat_5_6_years">5-6 YEARS</string>
+    <string name="imm_cat_10_years">10 YEARS</string>
+    <string name="imm_cat_16_years">16 YEARS</string>
+    <string name="imm_cat_catch_up">Catch Up</string>
     <string name="children">Children</string>
     <string name="mother">Mother</string>
     <string name="patient_information">Patient Information</string>
@@ -1045,6 +1048,16 @@
         <item name="hbnc_place_of_mother_referral_10">Other</item>
     </string-array>
 
+    <string-array name="hbnc_visit_days">
+        <item>1st Day</item>
+        <item>3rd Day</item>
+        <item>7th Day</item>
+        <item>14th Day</item>
+        <item>21st Day</item>
+        <item>28th Day</item>
+        <item>42nd Day</item>
+    </string-array>
+
     <string-array name="dc_case_status">
         <item name="dc_suspected">Suspected</item>
         <item name="dc_confirmed">Confirmed</item>
@@ -1313,6 +1326,32 @@
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
     <string name="distribution_date">Distribution Date</string>
+
+    <string name="filter_sort_by">Sort By</string>
+    <string name="filter_newest_first">Newest First</string>
+    <string name="filter_oldest_first">Oldest First</string>
+    <string name="filter_age_wise">Age Wise</string>
+    <string name="filter_syncing_first">Syncing Data First</string>
+    <string name="filter_unsynced_first">Un-Synced First</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
+    <string name="enter_a_valid_number">Enter a valid number</string>
+    <string name="allowed_range">Allowed range: %1$d to %2$d</string>
+    <string name="minimum_allowed_value">Minimum allowed value: %1$d</string>
+    <string name="_ok">OK</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.</string>
+    <string name="pnc_form">PNC Form</string>
+    <string name="bp_invalid_format">Invalid format. Should be like 123/56</string>
+    <string name="bp_systole_less_than">Systole should not be less than %d</string>
+    <string name="bp_systole_greater_than">Systole should not be greater than %d</string>
+    <string name="bp_diastole_less_than">Diastole should not be less than %d</string>
+    <string name="bp_diastole_greater_than">Diastole should not be greater than %d</string>
+    <string name="bp_diastole_greater_than_systole">Diastole cannot be greater than systole</string>
+    <string name="weight_enter_in_grams">Please enter weight in grams</string>
+    <string name="weight_cannot_be_zero">Weight cannot be 0</string>
+    <string name="weight_enter_in_grams_example">Please enter weight in grams (e.g. 2500)</string>
+    <string name="weight_min_500">Weight must be at least 500 grams</string>
+    <string name="weight_max_7000">Weight should not be greater than 7000 grams</string>
 
 </resources>
 

@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterBenList
+import org.piramalswasthya.sakhi.helpers.sortHwcList
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
@@ -26,6 +28,7 @@ class HwcReferredViewModel @Inject constructor(
     private val allBenList = recordsRepo.getHwcRefferedList
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
     var userName = preferenceDao.getLoggedInUser()!!.name
 
     val benList = allBenList.combine(filter) { cacheList, filter ->
@@ -37,7 +40,7 @@ class HwcReferredViewModel @Inject constructor(
         val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filter)
 
         maternalList.filter { it.ben.benId in filteredBenBasicDomainList.map { it.benId } }
-    }
+    }.combine(sortFilter) { list, sort -> sortHwcList(list, sort) }
 
 
     init {
@@ -53,6 +56,11 @@ class HwcReferredViewModel @Inject constructor(
 
     }
 
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
     fun getAshaId(): Int? {
         return asha?.userId

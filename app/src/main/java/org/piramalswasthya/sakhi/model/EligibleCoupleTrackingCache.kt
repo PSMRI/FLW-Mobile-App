@@ -131,12 +131,13 @@ data class BenWithEcTrackingCache(
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
-        private fun getECTFilledDateFromLong(long: Long): String {
-            return "Visited on ${dateFormat.format(long)}"
+        private fun getECTFilledDateFromLong(long: Long, resources: android.content.res.Resources): String {
+            val visitedOn = resources.getString(org.piramalswasthya.sakhi.R.string.track_visited_on)
+            return "$visitedOn ${dateFormat.format(long)}"
         }
     }
 
-    fun asDomainModel(childCount: Int? = null): BenWithEctListDomain {
+    fun asDomainModel(childCount: Int? = null, resources: android.content.res.Resources): BenWithEctListDomain {
         val recentFill = savedECTRecords.maxByOrNull { it.visitDate }
         val allowFill = recentFill?.let {
             val cal = Calendar.getInstance()
@@ -159,7 +160,7 @@ data class BenWithEcTrackingCache(
                     it.benId,
                     it.createdDate,
                     it.visitDate,
-                    getECTFilledDateFromLong(it.visitDate),
+                    getECTFilledDateFromLong(it.visitDate, resources),
                     it.syncState
                 )
             }
