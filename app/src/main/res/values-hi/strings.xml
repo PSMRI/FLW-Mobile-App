@@ -454,7 +454,7 @@
     <string name="leprosy_confirmed_form">कुष्ठ रोग पुष्टि फॉर्म</string>
     <string name="leprosy_suspected_form">कुष्ठ रोग संदिग्ध फॉर्म </string>
     <string name="any_leprosy_symptoms_present">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
-    <string name="visits">भ्रमण</string>
+    <string name="visits">विज़िट</string>
     <string name="type_of_leprocy">पुष्टि किया गया कुष्ठ रोग का प्रकार</string>
     <string name="has_leprosy_been_confirmed">क्या कुष्ठ रोग की पुष्टि हुई है?</string>
     <string name="treatment_start_date">चिकित्सा आरंभ तिथि</string>
@@ -650,7 +650,7 @@
     <string name="all">सभी</string>
     <string name="with_abha">ABHA के साथ</string>
     <string name="without_abha">ABHA के बिना</string>
-    <string name="age_above_30_years">30 वर्ष से अधिक आयु</string>
+    <string name="age_above_30_years">40 वर्ष से अधिक आयु</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">कोई विजिट नहीं की गई</string>
     <string name="filter_list">फ़िल्टर</string>
@@ -848,6 +848,9 @@
     <string name="any_danger_signs">क्या कोई खतरे के संकेत हैं?\n</string>
     <string name="any_high_risk_identified">क्या कोई उच्च जोखिम पहचाना गया है?</string>
     <string name="claim">Claim</string>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
     <string name="delivery_discharge_summary_1">प्रसव छुट्टी सारांश 1</string>
     <string name="delivery_discharge_summary_2">प्रसव छुट्टी सारांश 2</string>
     <string name="delivery_discharge_summary_3">प्रसव छुट्टी सारांश 3</string>

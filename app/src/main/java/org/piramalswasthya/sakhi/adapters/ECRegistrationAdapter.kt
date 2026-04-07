@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -46,6 +47,7 @@ class ECRegistrationAdapter(
         ) {
             binding.benWithEcr = item
 
+            binding.noOfchild.text= item.childCount.toString()
             if (item.ecr == null) {
                 binding.llLmpDate.visibility = View.INVISIBLE
                 binding.llBenStatus.visibility = View.INVISIBLE
