@@ -317,6 +317,7 @@
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
         <item>POST PARTUM STERILIZATION (PPS)</item>
+        <item>MiniLap</item>
         <item>ANY OTHER (SPECIFY)</item>
     </string-array>
 

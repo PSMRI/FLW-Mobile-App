@@ -300,6 +300,9 @@ class NewBenRegFragment : Fragment() {
             .setCancelable(false)
             .create()
         alertBinding.scrollableText.movementMethod = android.text.method.ScrollingMovementMethod()
+        alertBinding.scrollableText.setOnClickListener {
+            alertBinding.checkBox.isChecked = !alertBinding.checkBox.isChecked
+        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {
