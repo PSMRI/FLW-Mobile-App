@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ImmunizationCategoryAdapter
 import org.piramalswasthya.sakhi.databinding.BottomSheetImmVaccineBinding
 import org.piramalswasthya.sakhi.model.ChildImmunizationCategory
@@ -57,9 +58,26 @@ class MotherImmunizationVaccineBottomSheetFragment : BottomSheetDialogFragment()
     }
 
 
+    private fun ChildImmunizationCategory.toLocalizedString(): String {
+        val ctx = requireContext()
+        return ctx.getString(when (this) {
+            ChildImmunizationCategory.BIRTH -> R.string.imm_cat_birth_dose
+            ChildImmunizationCategory.WEEK_6 -> R.string.imm_cat_6_weeks
+            ChildImmunizationCategory.WEEK_10 -> R.string.imm_cat_10_weeks
+            ChildImmunizationCategory.WEEK_14 -> R.string.imm_cat_14_weeks
+            ChildImmunizationCategory.MONTH_9_12 -> R.string.imm_cat_9_12_months
+            ChildImmunizationCategory.MONTH_16_24 -> R.string.imm_cat_16_24_months
+            ChildImmunizationCategory.YEAR_5_6 -> R.string.imm_cat_5_6_years
+            ChildImmunizationCategory.YEAR_10 -> R.string.imm_cat_10_years
+            ChildImmunizationCategory.YEAR_16 -> R.string.imm_cat_16_years
+            ChildImmunizationCategory.CATCH_UP -> R.string.imm_cat_catch_up
+        })
+    }
+
     private fun submitListToVaccinationRv(detail: ImmunizationDetailsDomain) {
         val list = ChildImmunizationCategory.values().map { category ->
             VaccineCategoryDomain(category,
+                categoryString = category.toLocalizedString(),
                 vaccineStateList = detail.vaccineStateList.filter { it.vaccineCategory == category })
         }.filter { it.vaccineStateList.isNotEmpty() }
         Timber.d("Called list at bottom sheet ${_binding?.rvImmCat?.adapter} ${detail.ben.benId} $list")

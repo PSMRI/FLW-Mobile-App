@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -73,9 +74,9 @@ class ECRegistrationAdapter(
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
             binding.btnFormEc1.text =
                 if (item.ecr != null && item.ecr.lmpDate != 0L) {
-                    "View"
+                    binding.root.resources.getString(R.string.view)
                 } else {
-                    "Register"
+                    binding.root.resources.getString(R.string.register)
                 }
 
 

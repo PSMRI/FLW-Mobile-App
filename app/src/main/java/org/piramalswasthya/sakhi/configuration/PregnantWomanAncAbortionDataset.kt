@@ -23,7 +23,7 @@ class PregnantWomanAncAbortionDataset(
     private val visitDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.visit_date),
+        title = resources.getString(R.string.visit_date),
         required = true,
         max = System.currentTimeMillis(),
         hasDependants = true,
@@ -35,7 +35,7 @@ class PregnantWomanAncAbortionDataset(
     private val weekOfPregnancy = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.weeks_of_pregnancy),
+        title = resources.getString(R.string.weeks_of_pregnancy),
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -45,7 +45,7 @@ class PregnantWomanAncAbortionDataset(
     private val abortionDate = FormElement(
         id = 3,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.abortion_date),
+        title = resources.getString(R.string.abortion_date),
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -55,21 +55,21 @@ class PregnantWomanAncAbortionDataset(
     private val abortionType = FormElement(
         id = 4,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.abortion_type),
+        title = resources.getString(R.string.abortion_type),
         required = false,
     )
 
     private val abortionFacility = FormElement(
         id = 5,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.facility_place_of_abortion),
+        title = resources.getString(R.string.facility_place_of_abortion),
         required = false,
     )
 
     private val serialNoAsPerAdmission = FormElement(
         id = 6,
         inputType = InputType.EDIT_TEXT,
-        title = context.getString(R.string.serial_no_as_per_admission_evacuation_register),
+        title = resources.getString(R.string.serial_no_as_per_admission_evacuation_register),
         arrayId = -1,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED,
         etMaxLength = 10,
@@ -79,26 +79,26 @@ class PregnantWomanAncAbortionDataset(
     private val methodOfTermination = FormElement(
         id = 7,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.method_of_termination),
+        title = resources.getString(R.string.method_of_termination),
         arrayId = R.array.anc_method_of_termination,
         entries = resources.getStringArray(R.array.anc_method_of_termination),
-        required = true,
+        required = false,
         hasDependants = true,
     )
 
     private val terminationDoneBy = FormElement(
         id = 8,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.termination_done_by),
+        title = resources.getString(R.string.termination_done_by),
         arrayId = R.array.anc_termination_done_by,
         entries = resources.getStringArray(R.array.anc_termination_done_by),
-        required = true,
+        required = false,
     )
 
     private val isPlanig = FormElement(
         id = 25,
         inputType = InputType.HEADLINE,
-        title = context.getString(R.string.what_family_planning_method_has_been_chosen_after_the_abortion),
+        title = resources.getString(R.string.what_family_planning_method_has_been_chosen_after_the_abortion),
         required = false,
         hasDependants = false
     )
@@ -126,7 +126,7 @@ class PregnantWomanAncAbortionDataset(
     private val dateOfSterilization = FormElement(
         id = 24,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.date_of_sterilisation),
+        title = resources.getString(R.string.date_of_sterilisation),
         required = true,
         max = System.currentTimeMillis(),
         hasDependants = true,
@@ -135,7 +135,7 @@ class PregnantWomanAncAbortionDataset(
     private val remarks = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = context.getString(R.string.remarks),
+        title = resources.getString(R.string.remarks),
         arrayId = -1,
         etMaxLength = 100,
         required = false,
@@ -144,14 +144,14 @@ class PregnantWomanAncAbortionDataset(
     private val abortionDischargeSummaryImg1 = FormElement(
         id = 21,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.abortion_discharge_summary_1),
+        title = resources.getString(R.string.abortion_discharge_summary_1),
         required = false,
     )
 
     private val abortionDischargeSummaryImg2 = FormElement(
         id = 22,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.abortion_discharge_summary_2),
+        title = resources.getString(R.string.abortion_discharge_summary_2),
         required = false,
     )
 
@@ -222,7 +222,7 @@ class PregnantWomanAncAbortionDataset(
             }
             if (saved.isPaiucdId != 0) {
                 list.add(list.indexOf(isPaiucd) + 1, isYesOrNo)
-                isYesOrNo.value = if (saved.isYesOrNo == true) "Yes" else "No"
+                isYesOrNo.value = getLocalValueInArray(R.array.anc_confirmation_array, if (saved.isYesOrNo == true) "Yes" else "No")
 
                 if (saved.isPaiucdId == 2 && saved.isYesOrNo == true) {
                     list.add(list.indexOf(isYesOrNo) + 1, dateOfSterilization)
@@ -242,9 +242,8 @@ class PregnantWomanAncAbortionDataset(
             abortionFacility.value = saved.abortionFacility
             abortionDate.value = saved.abortionDate?.let { getDateFromLong(it) }
             serialNoAsPerAdmission.value = saved.serialNo
-            methodOfTermination.value = saved.methodOfTermination
-            terminationDoneBy.value = saved.terminationDoneBy
-            isPaiucd.value = saved.isPaiucd
+            methodOfTermination.value = getLocalValueInArray(R.array.anc_method_of_termination, saved.methodOfTermination)
+            terminationDoneBy.value = getLocalValueInArray(R.array.anc_termination_done_by, saved.terminationDoneBy)
             remarks.value = saved.remarks
             abortionDischargeSummaryImg1.value = saved.abortionImg1
             abortionDischargeSummaryImg2.value = saved.abortionImg2
@@ -268,7 +267,8 @@ class PregnantWomanAncAbortionDataset(
 
             isYesOrNo.id -> {
                 val isPaiucdSecondOption = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) == 1
-                if (isYesOrNo.value == "Yes" && isPaiucdSecondOption) {
+                val isYes = isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
+                if (isYes && isPaiucdSecondOption) {
                     triggerDependants(
                         source = isYesOrNo,
                         addItems = listOf(dateOfSterilization),
@@ -297,17 +297,13 @@ class PregnantWomanAncAbortionDataset(
             cache.abortionFacilityId = abortionFacility.getPosition()
             cache.abortionDate = abortionDate.value?.let { getLongFromDate(it) }
             cache.serialNo = serialNoAsPerAdmission.value
-            cache.methodOfTermination = methodOfTermination.value
-            cache.methodOfTerminationId =
-                methodOfTermination.entries?.indexOf(methodOfTermination.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.terminationDoneBy = terminationDoneBy.value
-            cache.terminationDoneById =
-                terminationDoneBy.entries?.indexOf(terminationDoneBy.value ?: "")
-                    ?.takeIf { it != -1 }
-            cache.isPaiucd = isPaiucd.value
-            cache.isPaiucdId = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) + 1
-            cache.isYesOrNo =isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
+            cache.methodOfTermination = methodOfTermination.getEnglishStringFromPosition(methodOfTermination.getPosition())
+            cache.methodOfTerminationId = methodOfTermination.getPosition().takeIf { it > 0 }?.minus(1)
+            cache.terminationDoneBy = terminationDoneBy.getEnglishStringFromPosition(terminationDoneBy.getPosition())
+            cache.terminationDoneById = terminationDoneBy.getPosition().takeIf { it > 0 }?.minus(1)
+            cache.isPaiucd = isPaiucd.getEnglishStringFromPosition(isPaiucd.getPosition())
+            cache.isPaiucdId = isPaiucd.getPosition()
+            cache.isYesOrNo = isYesOrNo.entries?.indexOf(isYesOrNo.value ?: "") == 0
             cache.remarks = remarks.value
             cache.dateSterilisation = dateOfSterilization.value?.let { getLongFromDate(it) }
             cache.abortionImg1 = abortionDischargeSummaryImg1.value

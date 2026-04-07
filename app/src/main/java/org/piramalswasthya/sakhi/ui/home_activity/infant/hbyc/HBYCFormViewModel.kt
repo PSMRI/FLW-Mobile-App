@@ -115,7 +115,7 @@ class HBYCFormViewModel @Inject constructor(
                         field.value = when (field.fieldId) {
                             "visit_day" -> visitMonth
                             "due_date" -> calculateDueDate(dob, visitMonth)?.let { formatDate(it) } ?: field.defaultValue
-                            else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                            else -> savedFieldValues[field.fieldId] ?: if (field.type == "radio") null else field.defaultValue
                         }
                         field.isEditable = when (field.fieldId) {
                             "visit_day", "due_date" -> false
@@ -323,7 +323,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
             val isBabyDeath = visit?.formDataJson?.let {
                 val root = JSONObject(it)
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                fieldsJson.optString("is_baby_alive", "Yes").equals("No", ignoreCase = true)
+                fieldsJson.optString("is_baby_alive", "").equals("No", ignoreCase = true)
             } ?: false
 
 

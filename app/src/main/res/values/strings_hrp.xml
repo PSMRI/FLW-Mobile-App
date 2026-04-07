@@ -133,4 +133,7 @@
         <item>FBS &amp; PPBS</item>
         <item>OGTT</item>
     </string-array>
+    <string name="track_visited_on">Visited on</string>
+    <string name="track_on"> on </string>
+    <string name="track_follow_up_label">Follow Up</string>
 </resources>

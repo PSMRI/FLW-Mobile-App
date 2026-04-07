@@ -6,6 +6,7 @@ import android.text.InputType
 import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
+import org.piramalswasthya.sakhi.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.piramalswasthya.sakhi.R
@@ -472,20 +473,20 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val headLine = FormElement(
         id = 45,
         inputType = org.piramalswasthya.sakhi.model.InputType.HEADLINE,
-        title = "Birth Certificates",
+        title = resources.getString(R.string.cr_birth_cert_uploads),
         headingLine = false,
         required = false,
     )
     private val fileUploadFront = FormElement(
         id = 46,
         inputType = FILE_UPLOAD,
-        title = "Front Side",
+        title = resources.getString(R.string.front_side),
         required = false,
     )
     private val fileUploadBack = FormElement(
         id = 47,
         inputType = FILE_UPLOAD,
-        title = "Back Side",
+        title = resources.getString(R.string.back_side),
         required = false,
     )
 
@@ -774,15 +775,19 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     }
 
 
+    private val isMitaninVariant = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
     suspend fun setPageForHof(ben: BenRegCache?, household: HouseholdCache) {
         val list = mutableListOf(
             pic,
             dateOfReg,
             firstName,
             lastName,
-            tempraryContactNo,
-            tempraryContactNoBelongsto,
-            sendOtpBtn,
+        )
+        if (!isMitaninVariant) {
+            list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
+        }
+        list.addAll(listOf(
             agePopup,
             gender,
             maritalStatus,
@@ -792,11 +797,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             community,
             religion,
             rchId,
-        )
+        ))
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
-        tempraryContactNoBelongsto.value =
-            tempraryContactNoBelongsto.getStringFromPosition(1)
-        tempraryContactNo.value = familyHeadPhoneNo
+        if (!isMitaninVariant) {
+            tempraryContactNoBelongsto.value =
+                tempraryContactNoBelongsto.getStringFromPosition(1)
+            tempraryContactNo.value = familyHeadPhoneNo
+        }
         this.isHoF = true
         if (dateOfReg.value == null)
             dateOfReg.value = getCurrentDateString()
@@ -905,12 +912,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
-            tempraryContactNoBelongsto.value =
-                tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
-            tempraryContactNoBelongsto.isEnabled = false
+            if (!isMitaninVariant) {
+                tempraryContactNoBelongsto.value =
+                    tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
+                tempraryContactNoBelongsto.isEnabled = false
+                tempraryContactNo.value = saved.contactNumber.toString()
+            }
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
-            tempraryContactNo.value = saved.contactNumber.toString()
             relationToHead.value = relationToHeadListDefault[saved.familyHeadRelationPosition - 1]
             otherRelationToHead.value = saved.familyHeadRelationOther
             community.value = community.getStringFromPosition(saved.communityId)
@@ -964,9 +973,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             dateOfReg,
             firstName,
             lastName,
-            tempraryContactNo,
-            tempraryContactNoBelongsto,
-            sendOtpBtn,
+        )
+        if (!isMitaninVariant) {
+            list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
+        }
+        list.addAll(listOf(
             agePopup,
             gender,
             maritalStatus,
@@ -978,11 +989,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             community,
             religion,
             rchId
-        )
+        ))
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
         this.isAddSppouse = isAddspouse
-        tempraryContactNoBelongsto.value =
-            tempraryContactNoBelongsto.getStringFromPosition(1)
+        if (!isMitaninVariant) {
+            tempraryContactNoBelongsto.value =
+                tempraryContactNoBelongsto.getStringFromPosition(1)
+        }
         this.hof = hoF
         this.benIfDataExist = ben
         if (ben == null) {
@@ -990,7 +1003,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //            ageUnit.value = ageUnit.entries!!.last()
             mobileNoOfRelation.value = mobileNoOfRelation.entries!![4]
             contactNumber.value = familyHeadPhoneNo
-            tempraryContactNo.value = familyHeadPhoneNo
+            if (!isMitaninVariant) {
+                tempraryContactNo.value = familyHeadPhoneNo
+            }
             community.value = hoF?.communityId?.let { community.getStringFromPosition(it) }
             religion.value = hoF?.religionId?.let { religion.getStringFromPosition(it) }
             gender.value = when (benGender) {
@@ -1122,12 +1137,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
-            tempraryContactNoBelongsto.value =
-                tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
-            tempraryContactNoBelongsto.isEnabled = false
+            if (!isMitaninVariant) {
+                tempraryContactNoBelongsto.value =
+                    tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
+                tempraryContactNoBelongsto.isEnabled = false
+                tempraryContactNo.value = saved.contactNumber.toString()
+            }
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
-            tempraryContactNo.value = saved.contactNumber.toString()
 //            relationToHead.entries = relationToHeadListDefault
             relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
@@ -2201,32 +2218,33 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             tempraryContactNo.id -> {
-                validateEmptyOnEditText(tempraryContactNo)
-                validateMobileNumberOnEditText(tempraryContactNo)
-                if (tempraryContactNo.value!!.isEmpty()) {
-                    triggerforHide(
-                        source = tempraryContactNoBelongsto,
-                        passedIndex = index,
-                        triggerIndex = index,
-                        target = sendOtpBtn
-                    )
-                } else if(tempraryContactNo.value!!.length >= 10){
-                    triggerDependants(
-                        source = tempraryContactNoBelongsto,
-                        passedIndex = index,
-                        triggerIndex = index,
-                        target = sendOtpBtn
-
-                    )
-
-                } else {
-                    triggerforHide(
-                        source = tempraryContactNoBelongsto,
-                        passedIndex = index,
-                        triggerIndex = index,
-                        target = sendOtpBtn
-                    )
+                if (!isMitaninVariant) {
+                    validateEmptyOnEditText(tempraryContactNo)
+                    validateMobileNumberOnEditText(tempraryContactNo)
+                    if (tempraryContactNo.value!!.isEmpty()) {
+                        triggerforHide(
+                            source = tempraryContactNoBelongsto,
+                            passedIndex = index,
+                            triggerIndex = index,
+                            target = sendOtpBtn
+                        )
+                    } else if (tempraryContactNo.value!!.length >= 10) {
+                        triggerDependants(
+                            source = tempraryContactNoBelongsto,
+                            passedIndex = index,
+                            triggerIndex = index,
+                            target = sendOtpBtn
+                        )
+                    } else {
+                        triggerforHide(
+                            source = tempraryContactNoBelongsto,
+                            passedIndex = index,
+                            triggerIndex = index,
+                            target = sendOtpBtn
+                        )
+                    }
                 }
+                -1
             }
 
             contactNumber.id -> {
@@ -2235,7 +2253,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             sendOtpBtn.id -> {
-                if (sendOtpBtn.isEnabled) {
+                if (!isMitaninVariant && sendOtpBtn.isEnabled) {
                     triggerDependants(
                         source = sendOtpBtn,
                         passedIndex = index,
@@ -2244,7 +2262,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     )
                 }
                 return 0
-
             }
 
             mobileNoOfRelation.id -> {
@@ -2702,7 +2719,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 getEnglishValueInArray(R.array.nbr_relationship_to_head_src, relationToHead.value)
             ben.familyHeadRelationOther = otherRelationToHead.value
             ben.mobileNoOfRelationId = if (isHoF) 1 else mobileNoOfRelation.getPosition()
-            ben.tempMobileNoOfRelationId = if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
+            ben.tempMobileNoOfRelationId = if (isMitaninVariant) 0 else if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
             ben.mobileNoOfRelation =
                 mobileNoOfRelation.getEnglishStringFromPosition(ben.mobileNoOfRelationId)
             /* ben.mobileNoOfRelation =

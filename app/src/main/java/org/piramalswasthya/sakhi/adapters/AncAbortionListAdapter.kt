@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemAbortionBinding
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 
@@ -31,7 +32,9 @@ class AncAbortionListAdapter(
             binding.visit = item
             binding.clickListener = clickListener
 
-            binding.btnPmsma.text = if (item.isAbortionFormFilled) "View" else "Add"
+            binding.btnPmsma.text = if (item.isAbortionFormFilled) binding.root.resources.getString(
+                R.string.view) else binding.root.resources.getString(
+                R.string.add)
             binding.btnPmsma.setBackgroundColor(
                 binding.root.resources.getColor(
                     if (item.isAbortionFormFilled) android.R.color.holo_green_dark

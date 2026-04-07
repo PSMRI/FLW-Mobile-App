@@ -155,14 +155,14 @@ class VHNCDataset(
     )
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType = InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
@@ -212,7 +212,7 @@ class VHNCDataset(
             vhncDate.value = it.vhncDate
             pic1.value = it.image1
             pic2.value = it.image2
-            place.value = it.place
+            place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
             villageName.value = it.villageName
             noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
             noOfANM.value = it.anm.toString()
@@ -252,7 +252,7 @@ class VHNCDataset(
         (cacheModel as VHNCCache).let { form ->
 
             form.vhncDate = vhncDate.value!!
-            form.place = place.value
+            form.place = getEnglishValueInArray(R.array.place_of_vhsnc, place.value)
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             form.image1 = pic1.value?.takeIf { it.isNotEmpty() }
             form.image2 = pic2.value?.takeIf { it.isNotEmpty() }

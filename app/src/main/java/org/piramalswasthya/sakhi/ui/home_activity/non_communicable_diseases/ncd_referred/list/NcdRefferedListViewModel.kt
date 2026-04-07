@@ -9,26 +9,46 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import javax.inject.Inject
 
 @HiltViewModel
 class NcdRefferedListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
-    preferenceDao: PreferenceDao,
-    @ApplicationContext context: Context,
+    private val preferenceDao: PreferenceDao,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private lateinit var asha: User
+
+    private val resources get() = getLocalizedResources(context, preferenceDao.getCurrentLanguage())
+
+    private val englishCategories = listOf("ALL", "NCD", "TB", "LEPROSY", "GERIATRIC", "HRP", "MATERNAL")
+
+    private fun toEnglishCategory(localizedType: String?): String {
+        val localized = listOf(
+            resources.getString(R.string.all),
+            resources.getString(R.string.cat_ncd),
+            resources.getString(R.string.cat_tb),
+            resources.getString(R.string.cat_leprosy),
+            resources.getString(R.string.cat_geriatric),
+            resources.getString(R.string.cat_hrp),
+            resources.getString(R.string.cat_maternal)
+        )
+        val idx = localized.indexOf(localizedType)
+        return if (idx >= 0) englishCategories[idx] else localizedType ?: "ALL"
+    }
 
     private val allBenList = recordsRepo.getNcdrefferedList
     private val filter = MutableStateFlow("")
     private val selectedBenId = MutableStateFlow(0L)
     var userName = preferenceDao.getLoggedInUser()!!.name
-    val selectedFilter = MutableStateFlow<String?>("ALL")
+    val selectedFilter = MutableStateFlow<String?>(resources.getString(R.string.all))
 
     val benList = combine(
         allBenList,
@@ -36,10 +56,11 @@ class NcdRefferedListViewModel @Inject constructor(
         selectedFilter
     ) { cacheList, searchText, selectedType ->
 
-        val typeFiltered = if (selectedType == "ALL") {
+        val englishType = toEnglishCategory(selectedType)
+        val typeFiltered = if (englishType == "ALL") {
             cacheList
         } else {
-            cacheList.filter { it.referral.type == selectedType }
+            cacheList.filter { it.referral.type == englishType }
         }
 
         val domainList = typeFiltered.map { it.asDomainModel() }
@@ -93,13 +114,13 @@ class NcdRefferedListViewModel @Inject constructor(
     fun categoryData() : ArrayList<String> {
 
         catList.clear()
-        catList.add("ALL")
-        catList.add("NCD")
-        catList.add("TB")
-        catList.add("LEPROSY")
-        catList.add("GERIATRIC")
-        catList.add("HRP")
-        catList.add("MATERNAL")
+        catList.add(resources.getString(R.string.all))
+        catList.add(resources.getString(R.string.cat_ncd))
+        catList.add(resources.getString(R.string.cat_tb))
+        catList.add(resources.getString(R.string.cat_leprosy))
+        catList.add(resources.getString(R.string.cat_geriatric))
+        catList.add(resources.getString(R.string.cat_hrp))
+        catList.add(resources.getString(R.string.cat_maternal))
 
 
         return catList

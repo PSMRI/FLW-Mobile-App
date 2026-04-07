@@ -285,7 +285,7 @@ class AntenatalCounsellingFragment : Fragment() {
 
                     Toast.makeText(
                         requireContext(),
-                        "Form submitted successfully",
+                        getString(R.string.anc_form_submitted),
                         Toast.LENGTH_SHORT
                     ).show()
 
@@ -295,7 +295,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 AntenatalCounsellingViewModel.State.FAIL -> {
                     Toast.makeText(
                         requireContext(),
-                        "Something went wrong. Please try again.",
+                        getString(R.string.something_went_wrong_try_again),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -396,9 +396,9 @@ class AntenatalCounsellingFragment : Fragment() {
 
     private fun showContinueAncVisitDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Continue ANC Visit")
-            .setMessage("Do you want to continue with ANC visit?")
-            .setPositiveButton("Yes") { dialog, _ ->
+            .setTitle(getString(R.string.continue_anc_visit))
+            .setMessage(getString(R.string.continue_anc_visit_message))
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
                 if(benList.showAddAnc){
                 navigateToAddAncVisitScreen()}
@@ -406,12 +406,12 @@ class AntenatalCounsellingFragment : Fragment() {
                 {   dialog.dismiss()
                     Toast.makeText(
                         requireContext(),
-                        "Next ANC visit is DUE",
+                        getString(R.string.next_anc_visit_due),
                         Toast.LENGTH_SHORT
                     ).show()
                     findNavController().popBackStack()}
             }
-            .setNegativeButton("No") { dialog, _ ->
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
                 findNavController().popBackStack()
             }
@@ -471,9 +471,9 @@ class AntenatalCounsellingFragment : Fragment() {
                         }
 
                         val errorMessage = when {
-                            visitDateStr.isBlank() -> "Visit date is required"
-                            visitDate == null -> "Invalid visit date format"
-                            visitDate.after(today) -> "Visit Date cannot be after today's date"
+                            visitDateStr.isBlank() -> getString(R.string.visit_date_required)
+                            visitDate == null -> getString(R.string.invalid_visit_date_format)
+                            visitDate.after(today) -> getString(R.string.visit_date_cannot_be_after_today_s_date)
                             else -> null
                         }
 
@@ -503,7 +503,7 @@ class AntenatalCounsellingFragment : Fragment() {
             binding.recyclerView.scrollToPosition(firstErrorIndex)
             Toast.makeText(
                 requireContext(),
-                "Please fill all required fields correctly",
+                getString(R.string.fill_required_fields),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -512,7 +512,7 @@ class AntenatalCounsellingFragment : Fragment() {
         if (hasValidationErrors) {
             Toast.makeText(
                 requireContext(),
-                "Please fill all required fields correctly",
+                getString(R.string.fill_required_fields),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -539,16 +539,16 @@ class AntenatalCounsellingFragment : Fragment() {
 
     private fun showDangerSignDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Danger Signs Identified!")
-            .setMessage("Do you want to refer to HWC facility?")
-            .setPositiveButton("Yes") { dialog, _ ->
+            .setTitle(getString(R.string.danger_signs_identified))
+            .setMessage(getString(R.string.refer_to_hwc_facility_alert))
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
 
                 isReferralDialogShown = true
                 hasAnyDangerSign = true
                 navigateToHwcReferralScreen()
             }
-            .setNegativeButton("No") { dialog, _ ->
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
 
                 isReferralDialogShown = true
@@ -670,7 +670,7 @@ class AntenatalCounsellingFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__anc_visit,
-                getString(R.string.anc_visit)
+                getString(R.string.home_visit)
             )
         }
     }

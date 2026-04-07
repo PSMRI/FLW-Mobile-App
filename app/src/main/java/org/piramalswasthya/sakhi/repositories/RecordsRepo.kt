@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.repositories
 
 import androidx.paging.PagingSource
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +33,7 @@ import javax.inject.Inject
 
 @ActivityRetainedScoped
 class RecordsRepo @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val householdDao: HouseholdDao,
     private val benDao: BenDao,
     private val ancHomeVisitDao : FormResponseANCJsonDao,
@@ -40,6 +43,7 @@ class RecordsRepo @Inject constructor(
     preferenceDao: PreferenceDao
 ) {
     private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
+    private val localizedResources = HelperUtil.getLocalizedResources(context, preferenceDao.getCurrentLanguage())
 
     val hhList = householdDao.getAllHouseholdWithNumMembers(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
@@ -306,7 +310,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
     val eligibleCoupleTrackingList = benDao.getAllEligibleTrackingList(selectedVillage)
         .combine(childCountsByBen) { list, counts ->
-            list.map { it.asDomainModel(counts[it.ben.benId]) }
+            list.map { it.asDomainModel(counts[it.ben.benId], localizedResources) }
         }
 
     //        .map { list -> list.map { it.asBenBasicDomainModelECTForm() } }
@@ -327,7 +331,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                     false
                 }
             }
-                .map { it.asDomainModel(counts[it.ben.benId]) } }
+                .map { it.asDomainModel(counts[it.ben.benId], localizedResources) } }
 
     val eligibleCoupleTrackingNonFollowUpListCount = eligibleCoupleTrackingNonFollowUpList.map { it.size }
 
@@ -340,7 +344,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                     false
                 }
             }
-                .map { it.asDomainModel(counts[it.ben.benId]) } }
+                .map { it.asDomainModel(counts[it.ben.benId], localizedResources) } }
     val eligibleCoupleTrackingMissedPeriodListCount = eligibleCoupleTrackingMissedPeriodList.map { it.size }
 
     var hrpPregnantWomenList = benDao.getAllPregnancyWomenForHRList(selectedVillage)
@@ -349,7 +353,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
     val hrpPregnantWomenListCount = benDao.getAllPregnancyWomenForHRListCount(selectedVillage)
 
     var hrpTrackingPregList = benDao.getAllHRPTrackingPregList(selectedVillage)
-        .map { list -> list.map { it.asDomainModel() } }
+        .map { list -> list.map { it.asDomainModel(localizedResources) } }
 
     val hrpTrackingPregListCount = benDao.getAllHRPTrackingPregListCount(selectedVillage)
 
@@ -358,7 +362,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
     val hrpNonPregnantWomenListCount = benDao.getAllNonPregnancyWomenListCount(selectedVillage)
 
     var hrpTrackingNonPregList = benDao.getAllHRPTrackingNonPregList(selectedVillage)
-        .map { list -> list.map { it.asDomainModel() } }
+        .map { list -> list.map { it.asDomainModel(localizedResources) } }
     val hrpTrackingNonPregListCount = benDao.getAllHRPTrackingNonPregListCount(selectedVillage)
 
 

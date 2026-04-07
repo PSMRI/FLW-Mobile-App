@@ -71,7 +71,7 @@ class DewormingDataset(
 
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType =  org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false
@@ -79,7 +79,7 @@ class DewormingDataset(
 
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType =  org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false
@@ -106,14 +106,14 @@ class DewormingDataset(
     }
     fun getFormElementList(): List<FormElement> = formElementList
     private fun loadCachedData(deworming: DewormingCache, list: MutableList<FormElement>) {
-        dewormingDone.value = deworming.dewormingDone
+        dewormingDone.value = getLocalValueInArray(R.array.yes_no_options, deworming.dewormingDone)
         dewormingDate.value = deworming.dewormingDate
-        dewormingLocation.value = deworming.dewormingLocation
+        dewormingLocation.value = getLocalValueInArray(R.array.deworming_location_options, deworming.dewormingLocation)
         ageGroup.value = deworming.ageGroup?.toString()
         pic1.value = deworming.image1
         pic2.value = deworming.image2
 
-        if (dewormingDone.value == "Yes") {
+        if (dewormingDone.value == dewormingDone.entries!!.first()) {
             list.add(dewormingDone.getPosition() ,dewormingDate)
             list.add(dewormingDone.getPosition() + 1,dewormingLocation)
         }
@@ -122,7 +122,7 @@ class DewormingDataset(
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
             dewormingDone.id -> {
-                if (dewormingDone.value == "Yes") {
+                if (dewormingDone.value == dewormingDone.entries!!.first()) {
                     if (!formElementList.contains(dewormingDate)) {
                         formElementList.add(dewormingDate)
                     }
@@ -152,9 +152,9 @@ class DewormingDataset(
         (cacheModel as DewormingCache).let { form ->
             val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val currentDate = formatter.format(Date())
-            form.dewormingDone = dewormingDone.value!!
+            form.dewormingDone = getEnglishValueInArray(R.array.yes_no_options, dewormingDone.value) ?: dewormingDone.value!!
             form.dewormingDate = dewormingDate.value
-            form.dewormingLocation = dewormingLocation.value
+            form.dewormingLocation = getEnglishValueInArray(R.array.deworming_location_options, dewormingLocation.value)
             form.ageGroup = ageGroup.value?.toInt()
             form.image1 = pic1.value
             form.image2 = pic2.value

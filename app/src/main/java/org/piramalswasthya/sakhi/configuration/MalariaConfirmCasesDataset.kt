@@ -32,6 +32,7 @@ class MalariaConfirmCasesDataset(
         id = 7,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.treatment_given),
+        arrayId = R.array.pf_pv,
         entries = resources.getStringArray(R.array.pf_pv),
         required = false,
         isEnabled = false,
@@ -97,7 +98,7 @@ class MalariaConfirmCasesDataset(
             dayWiseTrackingPf.value = resources.getStringArray(R.array.daysPf)[0]
             dayWiseTrackingPV.value = resources.getStringArray(R.array.daysPv)[0]
 
-            treatmentGiven.value = slideTestName
+            treatmentGiven.value = getLocalValueInArray(R.array.pf_pv, slideTestName)
             if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
                 list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPf)
             } else {
@@ -109,7 +110,7 @@ class MalariaConfirmCasesDataset(
             dateOfCase.value = getDateFromLong(saved.dateOfDiagnosis)
             dateOfCompletion.value = getDateFromLong(saved.treatmentCompletionDate)
             referalDate.value = getDateFromLong(saved.referralDate)
-            treatmentGiven.value = saved.treatmentGiven
+            treatmentGiven.value = getLocalValueInArray(R.array.pf_pv, saved.treatmentGiven)
 
             if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
                 list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPf)
