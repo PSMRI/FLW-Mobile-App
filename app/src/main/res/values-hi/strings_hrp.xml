@@ -121,5 +121,8 @@
     <string name="help_support">मदद एवंसहयोग</string>
     <string name="user_guide">उपयोगकर्ता मार्गदर्शिका</string>
     <string name="video_tutorial">वीडियो ट्यूटोरियल</string>
+    <string name="track_visited_on">दौरा किया</string>
+    <string name="track_on"> पर </string>
+    <string name="track_follow_up_label">फॉलो अप</string>
 
 </resources>

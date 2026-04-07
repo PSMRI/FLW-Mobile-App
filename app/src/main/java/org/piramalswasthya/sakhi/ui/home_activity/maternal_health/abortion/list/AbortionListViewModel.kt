@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterAbortionList
+import org.piramalswasthya.sakhi.helpers.sortAbortionList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import java.util.Calendar
 import javax.inject.Inject
@@ -17,12 +19,13 @@ class AbortionListViewModel @Inject constructor(
 
     private val selectedYearMonth = MutableStateFlow(getCurrentYearMonth())
     private val searchQuery = MutableStateFlow("")
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
     val allAbortionList = recordsRepo.getAbortionPregnantWomanList()
     private val benIdSelected = MutableStateFlow(0L)
 
-    val abortionList = allAbortionList.combine(searchQuery) { list, filter ->
-        filterAbortionList(list, filter)
-    }
+    val abortionList = allAbortionList
+        .combine(searchQuery) { list, filter -> filterAbortionList(list, filter) }
+        .combine(sortFilter) { list, sort -> sortAbortionList(list, sort) }
 
     fun setYearMonth(year: Int, month: Int) {
         viewModelScope.launch {
@@ -31,10 +34,14 @@ class AbortionListViewModel @Inject constructor(
     }
 
     fun setSearchQuery(query: String) {
-        viewModelScope.launch {
-            searchQuery.emit(query)
-        }
+        viewModelScope.launch { searchQuery.emit(query) }
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
     fun updateSelectedBenId(benId: Long) {
         viewModelScope.launch {

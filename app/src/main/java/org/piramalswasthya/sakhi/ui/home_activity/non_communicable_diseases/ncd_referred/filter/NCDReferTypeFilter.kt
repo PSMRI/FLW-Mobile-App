@@ -48,13 +48,11 @@ class NCDReferTypeFilter : BottomSheetDialogFragment(), NCDReferTypeFilterAdapte
 
     override fun onClicked(catDataList: String) {
         viewModel.selectedFilter.value = catDataList
-        if (catDataList.contains("ALL")) {
+        if (catDataList == getString(R.string.all)) {
             viewModel.filterText("")
-
         } else {
             catTxt = catDataList
             viewModel.setSelectedFilter(catTxt)
-
         }
         dismiss()
     }

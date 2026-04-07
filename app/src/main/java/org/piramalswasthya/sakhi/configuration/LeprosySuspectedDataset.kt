@@ -153,7 +153,7 @@ class LeprosySuspectedDataset (
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
-            visitLabel.value = "Visit -1"
+            visitLabel.value = resources.getString(R.string.visit_number_label, 1)
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
 
             updateDateConstraints()
@@ -163,7 +163,7 @@ class LeprosySuspectedDataset (
             val symptomsPosition = saved.leprosySymptomsPosition ?: 1
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                 ?: resources.getStringArray(R.array.yes_no)[1]
-            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            visitLabel.value = resources.getString(R.string.visit_number_label, saved?.currentVisitNumber ?: 1)
 
             leprosyStatus.value =
                 getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
@@ -234,28 +234,13 @@ class LeprosySuspectedDataset (
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as LeprosyScreeningCache).let { form ->
             form.homeVisitDate = getLongFromDate(dateOfCase.value)
-            form.referToName = referredTo.value
+            form.referToName = getEnglishValueInArray(R.array.dc_refer, referredTo.value)
             form.referredTo = referredTo.getPosition()
             form.otherReferredTo = other.value
             form.remarks = remarks.value
-            form.leprosyStatus = leprosyStatus.value
-            form.typeOfLeprosy = typeOfLeprosy.value
+            form.typeOfLeprosy = getEnglishValueInArray(R.array.type_of_leprocy, typeOfLeprosy.value)
             form.diseaseTypeID = 5
-            form.leprosyStatus = when (leprosyStatus.value) {
-                "Screening" -> "Screening"
-                "Denied" -> "Denied"
-                "Not Screened" -> "Not Screened"
-                "Suspected" -> "Suspected"
-                "Confirmed" -> "Confirmed"
-                "Not Confirmed" -> "Not Confirmed"
-                resources.getStringArray(R.array.leprosy_status)[0] -> "Screening"
-                resources.getStringArray(R.array.leprosy_status)[1] -> "Denied"
-                resources.getStringArray(R.array.leprosy_status)[2] -> "Not Screened"
-                resources.getStringArray(R.array.leprosy_status)[3] -> "Suspected"
-                resources.getStringArray(R.array.leprosy_status)[4] -> "Confirmed"
-                resources.getStringArray(R.array.leprosy_status)[5] -> "Not Confirmed"
-                else -> leprosyStatus.value ?: "Screening"
-            }
+            form.leprosyStatus = getEnglishValueInArray(R.array.leprosy_status, leprosyStatus.value) ?: "Screening"
             form.visitLabel = visitLabel.value
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
                 resources.getStringArray(R.array.yes_no)[0] -> 0

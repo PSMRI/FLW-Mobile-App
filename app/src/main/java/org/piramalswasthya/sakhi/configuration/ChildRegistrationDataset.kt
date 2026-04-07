@@ -364,7 +364,7 @@ class ChildRegistrationDataset(
             processed = "N",
             kidDetails = BenRegKid(
                 childName = childName.value,
-                birthPlace = placeOfBirth.getEnglishStringFromPosition(placeOfBirth.getPosition()),
+                birthPlace = getEnglishValueInArray(R.array.cr_place_of_birth_array, placeOfBirth.value),
                 birthPlaceId = placeOfBirth.getPosition(),
                 birthCertificateNumber = birthCertificateNo.value,
                 birthCertificateFileFrontView = fileUploadFront.value.toString(),

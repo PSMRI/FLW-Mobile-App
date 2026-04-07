@@ -150,11 +150,7 @@ class AESJEFormDataset(
             referredTo.value =
                 getLocalValueInArray(referredTo.arrayId, saved.referToName)
             if (referredTo.value == referredTo.entries!!.last()) {
-                referredTo.value = saved.referToName
                 list.add(list.indexOf(referredTo) + 1, other)
-            } else {
-                referredTo.value =
-                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
             }
             beneficiaryStatus.value =
                 getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)
@@ -190,11 +186,7 @@ class AESJEFormDataset(
             referredTo.value =
                 getLocalValueInArray(referredTo.arrayId, saved.referToName)
             if (referredTo.value == referredTo.entries!!.last()) {
-                referredTo.value = saved.referToName
                 list.add(list.indexOf(referredTo) + 1, other)
-            } else {
-                referredTo.value =
-                    getLocalValueInArray(referredTo.arrayId, saved.referToName)
             }
 
             other.value = saved.otherReferredFacility
@@ -301,16 +293,16 @@ class AESJEFormDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as AESScreeningCache).let { form ->
             form.visitDate = getLongFromDate(dateOfCase.value)
-            form.referToName = referredTo.value
+            form.referToName = getEnglishValueInArray(referredTo.arrayId, referredTo.value) ?: referredTo.value
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.getEnglishStringFromPosition(beneficiaryStatus.getPosition())
+            form.beneficiaryStatus = getEnglishValueInArray(beneficiaryStatus.arrayId, beneficiaryStatus.value)
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
-            form.reasonForDeath = reasonOfDeath.value
+            form.reasonForDeath = getEnglishValueInArray(reasonOfDeath.arrayId, reasonOfDeath.value)
             form.aesJeCaseStatus = getEnglishValueInArray(R.array.dc_case_status, caseStatus.value)
             form.otherPlaceOfDeath = otherPlaceOfDeath.value
             form.otherReasonForDeath = otherReasonOfDeath.value
             form.dateOfDeath = getLongFromDate(dateOfDeath.value)
-            form.placeOfDeath = placeOfDeath.value
+            form.placeOfDeath = getEnglishValueInArray(placeOfDeath.arrayId, placeOfDeath.value)
             form.otherReferredFacility = other.value
             form.diseaseTypeID = 3
             form.createdDate = getLongFromDate(dateOfCase.value)

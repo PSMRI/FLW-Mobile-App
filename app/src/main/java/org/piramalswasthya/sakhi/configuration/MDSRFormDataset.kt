@@ -54,6 +54,7 @@ class MDSRFormDataset(
         required = true,
         isEnabled = false,
         hasDependants = true,
+        arrayId = R.array.mdsr_cause_of_death_type,
         entries = resources.getStringArray(R.array.mdsr_cause_of_death_type)
     )
     private val reasonOfDeath = FormElement(
@@ -325,32 +326,32 @@ class MDSRFormDataset(
         dateOfDeath.value=ben.dateOfDeath
         timeOfDeath.value=ben.timeOfDeath
         nameOfDeceased.value = "${ben.firstName} ${ben.lastName}"
-        duringPregnancy.value = if (pregnancyDeath) "Yes" else "No"
-        duringDelivery.value = if (deliveryDeath) "Yes" else "No"
-        duringDelivery42Days.value = if (pncDeath) "Yes" else "No"
-        duringAbortion6Weeks.value = if (abortionDeath) "Yes" else "No"
+        duringPregnancy.value = if (pregnancyDeath) duringPregnancy.entries!![0] else duringPregnancy.entries!![1]
+        duringDelivery.value = if (deliveryDeath) duringDelivery.entries!![0] else duringDelivery.entries!![1]
+        duringDelivery42Days.value = if (pncDeath) duringDelivery42Days.entries!![0] else duringDelivery42Days.entries!![1]
+        duringAbortion6Weeks.value = if (abortionDeath) duringAbortion6Weeks.entries!![0] else duringAbortion6Weeks.entries!![1]
 
         val causeOfDeathValue = if (pregnancyDeath || abortionDeath || deliveryDeath || pncDeath) {
             if(pncDeathCause || ancDeathCause)
-                "Non-maternal death"
+                causeOfDeath.entries!![1]
             else
-                "Suspected Maternal death"
+                causeOfDeath.entries!![0]
         } else {
-            "Non-maternal death"
+            causeOfDeath.entries!![1]
         }
         causeOfDeath.value = causeOfDeathValue
         saved?.let { mdsr ->
             dateOfDeath.value = mdsr.dateOfDeath?.let { getDateFromLong(it) }
             this.address.value = mdsr.address
             husbandName.value = mdsr.husbandName
-            causeOfDeath.value = mdsr.causeOfDeath
+            causeOfDeath.value = getLocalValueInArray(R.array.mdsr_cause_of_death_type, mdsr.causeOfDeath)
             reasonOfDeath.value = mdsr.reasonOfDeath
             mdsrFileUpload1.value=mdsr.mdsr1File
             mdsrFileUpload2.value=mdsr.mdsr2File
             mdsrDeathFileUpload.value=mdsr.mdsrDeathCertFile
             investigationDate.value = mdsr.investigationDate?.let { getDateFromLong(it) }
             actionTaken.value = mdsr.actionTaken?.let {
-                if (it) resources.getString(R.string.yes) else resources.getString(R.string.no)
+                if (it) actionTaken.entries!![0] else actionTaken.entries!![1]
             }
             blockMOSign.value = mdsr.blockMOSign
             dateIc.value = mdsr.dateIc?.let { getDateFromLong(it) }
@@ -379,9 +380,9 @@ class MDSRFormDataset(
             mdsrCache.mdsr1File = mdsrFileUpload1.value
             mdsrCache.mdsr2File = mdsrFileUpload2.value
             mdsrCache.mdsrDeathCertFile = mdsrDeathFileUpload.value
-            mdsrCache.causeOfDeath = causeOfDeath.value
+            mdsrCache.causeOfDeath = getEnglishValueInArray(R.array.mdsr_cause_of_death_type, causeOfDeath.value)
             mdsrCache.reasonOfDeath = reasonOfDeath.value
-            mdsrCache.actionTaken = actionTaken.value?.let { actionTaken.value == "Yes" }
+            mdsrCache.actionTaken = actionTaken.value?.let { actionTaken.value == actionTaken.entries!![0] }
             mdsrCache.investigationDate = investigationDate.value?.let { getLongFromDate(it) }
             mdsrCache.blockMOSign = blockMOSign.value
             mdsrCache.dateIc = dateIc.value?.let { getLongFromDate(it) }

@@ -227,9 +227,10 @@ object HelperUtil {
     }
 
 
-    fun getTrackDate(long: Long?): String? {
+    fun getTrackDate(long: Long?, resources: android.content.res.Resources): String? {
         long?.let {
-            return " on ${dateFormat.format(long)}"
+            val on = resources.getString(org.piramalswasthya.sakhi.R.string.track_on)
+            return "${on}${dateFormat.format(long)}"
         }
         return null
     }

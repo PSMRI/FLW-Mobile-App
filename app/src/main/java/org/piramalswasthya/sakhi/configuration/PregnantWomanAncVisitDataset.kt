@@ -554,7 +554,7 @@ class PregnantWomanAncVisitDataset(
         ancVisit.value = visitNumber.toString()
 
         saved?.let { savedAnc ->
-            placeOfAnc.value=savedAnc.placeOfAnc
+            placeOfAnc.value = getLocalValueInArray(placeOfAnc.arrayId, savedAnc.placeOfAnc)
             val woP = getWeeksOfPregnancy(savedAnc.ancDate, regis.lmpDate)
             if (woP <= 12) {
                 list.remove(fundalHeight)
@@ -999,11 +999,11 @@ class PregnantWomanAncVisitDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PregnantWomanAncCache).let { cache ->
-            cache.placeOfDeath = placeOfDeath.value
+            cache.placeOfDeath = getEnglishValueInArray(placeOfDeath.arrayId, placeOfDeath.value)
             cache.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
                 ?.takeIf { it != -1 }
 
-            cache.placeOfAnc = placeOfAnc.value
+            cache.placeOfAnc = getEnglishValueInArray(placeOfAnc.arrayId, placeOfAnc.value)
             cache.placeOfAncId = placeOfAnc.entries?.indexOf(placeOfAnc.value ?: "")
                 ?.takeIf { it != -1 }
             cache.otherPlaceOfDeath = otherPlaceOfDeath.value
@@ -1011,9 +1011,9 @@ class PregnantWomanAncVisitDataset(
             cache.visitNumber = ancVisit.value!!.toInt()
             cache.ancDate = getLongFromDate(ancDate.value)
             cache.isAborted = isAborted.value == isAborted.entries!!.last()
-            cache.abortionType = abortionType.value
+            cache.abortionType = getEnglishValueInArray(abortionType.arrayId, abortionType.value)
             cache.abortionTypeId = abortionType.getPosition()
-            cache.abortionFacility = abortionFacility.value
+            cache.abortionFacility = getEnglishValueInArray(abortionFacility.arrayId, abortionFacility.value)
             cache.abortionFacilityId = abortionFacility.getPosition()
             cache.abortionDate = abortionDate.value?.let { getLongFromDate(it) }
             cache.weight = weight.value?.toInt()
@@ -1022,9 +1022,9 @@ class PregnantWomanAncVisitDataset(
             cache.pulseRate = pulseRate.value?.takeIf { it.isNotEmpty() }
             cache.hb = hb.value?.toDouble()
             cache.fundalHeight = fundalHeight.value?.toInt()
-            cache.urineAlbumin = urineAlbumin.value
+            cache.urineAlbumin = getEnglishValueInArray(urineAlbumin.arrayId, urineAlbumin.value)
             cache.urineAlbuminId = urineAlbumin.getPosition()
-            cache.randomBloodSugarTest = randomBloodSugarTest.value
+            cache.randomBloodSugarTest = getEnglishValueInArray(randomBloodSugarTest.arrayId, randomBloodSugarTest.value)
             cache.randomBloodSugarTestId = randomBloodSugarTest.getPosition()
             updateRegistrationForTdX()
             cache.numFolicAcidTabGiven = numFolicAcidTabGiven.value?.toInt() ?: 0
@@ -1032,16 +1032,16 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk.value?.let {
                 cache.anyHighRisk = it == anyHighRisk.entries!!.last()
             }
-            cache.highRisk = highRiskCondition.value
+            cache.highRisk = getEnglishValueInArray(highRiskCondition.arrayId, highRiskCondition.value)
             cache.highRiskId = highRiskCondition.getPosition()
             cache.otherHighRisk = otherHighRiskCondition.value
-            cache.referralFacility = highRiskReferralFacility.value
+            cache.referralFacility = getEnglishValueInArray(highRiskReferralFacility.arrayId, highRiskReferralFacility.value)
             cache.referralFacilityId = highRiskReferralFacility.getPosition()
             cache.hrpConfirmed = hrpConfirm.value?.let { it == hrpConfirm.entries!!.last() }
-            cache.hrpConfirmedBy = hrpConfirmedBy.value
+            cache.hrpConfirmedBy = getEnglishValueInArray(hrpConfirmedBy.arrayId, hrpConfirmedBy.value)
             cache.hrpConfirmedById = hrpConfirmedBy.getPosition()
             cache.maternalDeath = maternalDeath.value == maternalDeath.entries!!.last()
-            cache.maternalDeathProbableCause = maternalDeathProbableCause.value
+            cache.maternalDeathProbableCause = getEnglishValueInArray(maternalDeathProbableCause.arrayId, maternalDeathProbableCause.value)
             cache.maternalDeathProbableCauseId = maternalDeathProbableCause.getPosition()
             cache.otherMaternalDeathProbableCause = otherMaternalDeathProbableCause.value
             cache.deathDate = maternalDateOfDeath.value?.let { getLongFromDate(it) }
