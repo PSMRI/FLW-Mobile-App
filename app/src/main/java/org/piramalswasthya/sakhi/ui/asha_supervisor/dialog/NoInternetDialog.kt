@@ -8,10 +8,10 @@ import org.piramalswasthya.sakhi.R
 class NoInternetDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        isCancelable = false          // user cannot dismiss manually
+        isCancelable = false
         return MaterialAlertDialogBuilder(requireContext())
-            .setTitle("No Internet Connection")
-            .setMessage("Please check your network settings. This dialog will close automatically when connectivity is restored.")
+            .setTitle(getString(R.string.no_internet_connection))
+            .setMessage(getString(R.string.please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored))
             .setIcon(R.drawable.no_wifi)
             .create()
     }
