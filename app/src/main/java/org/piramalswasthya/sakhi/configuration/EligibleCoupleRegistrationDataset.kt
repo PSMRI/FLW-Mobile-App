@@ -212,7 +212,9 @@ class EligibleCoupleRegistrationDataset(
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
-        min = 0L,
+        min = Calendar.getInstance().apply {
+            add(Calendar.MONTH, -3)
+        }.timeInMillis,
         hasDependants = true,
         showDrawable = true
     )
@@ -240,7 +242,7 @@ class EligibleCoupleRegistrationDataset(
     private val womanDetails = FormElement(
         id = 6,
         inputType = HEADLINE,
-        title = resources.getString(R.string.ecrdset_dts_of_wo),
+        title = context.getString(R.string.children_details),
         arrayId = -1,
         required = false
     )
@@ -258,6 +260,13 @@ class EligibleCoupleRegistrationDataset(
         min = 100000000000L
     )
 
+    private val bankDetailsLabel = FormElement(
+        id = 79,  // naya unique id
+        inputType = HEADLINE,
+        title = context.getString(R.string.bank_details),
+        arrayId = -1,
+        required = false
+    )
     private val bankAccount = FormElement(
         id = 8,
         inputType = EDIT_TEXT,
@@ -1026,46 +1035,451 @@ class EligibleCoupleRegistrationDataset(
 
 
 
+//    suspend fun setUpPage(
+//        ben: BenRegCache?,
+//        assess: HRPNonPregnantAssessCache?,
+//        saved: EligibleCoupleRegCache?,
+//        childList: List<BenRegCache>,
+//    ) {
+//        val list = mutableListOf(
+//            dateOfReg,
+//            rchId,
+////            name,
+//            husbandName,
+////            age,
+//            ageAtMarriage,
+//            lmpDate,
+//            nayiPahelKitHandOver,
+//            womanDetails,
+////            aadharNo,
+////            noOfChildren,
+//            noOfLiveChildren,
+//            numMale,
+//            numFemale,
+//            assesLabel,
+//            infoChildLabel,
+//            noOfDeliveries,
+//            timeLessThan18m,
+//            physicalObsLabel,
+//            heightShort,
+//            ageCheck,
+//            obsHistoryLabel,
+//            misCarriage,
+//            homeDelivery,
+//            medicalIssues,
+//            pastCSection,
+//        )
+//        dateOfReg.value = getDateFromLong(System.currentTimeMillis())
+////        lmpDate.value = getDateFromLong(1735237800000L)
+////        dateOfReg.value?.let {
+////            val long = Dataset.getLongFromDate(it)
+////            dateOfhivTestDone.min = long
+////        }
+//
+//        ben?.let {
+//            dateOfReg.min = it.regDate
+//            rchId.value = ben.rchId
+//            aadharNo.value = ben.aadharNum?.takeIf { it.isNotEmpty() }?.also {
+//                aadharNo.inputType = TEXT_VIEW
+//            }
+//            name.value = "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
+//            husbandName.value = ben.genDetails?.spouseName
+//            age.value = BenBasicCache.getAgeFromDob(ben.dob).toString()
+//            dateOfBirth = ben.dob
+//            updateAgeCheck(dateOfBirth, Calendar.getInstance().timeInMillis)
+//            ben.genDetails?.ageAtMarriage?.let { it1 ->
+//                ageAtMarriage.value = it1.toString()
+//                val cal = Calendar.getInstance()
+//                cal.timeInMillis = ben.dob
+//                cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) + it1)
+//                dob1.min = cal.timeInMillis
+//                timeAtMarriage = cal.timeInMillis
+//            }
+//        }
+//        assess?.let {
+//            noOfDeliveries.value = getLocalValueInArray(R.array.yes_no, it.noOfDeliveries)
+//            timeLessThan18m.value = getLocalValueInArray(R.array.yes_no, it.timeLessThan18m)
+//            heightShort.value = getLocalValueInArray(R.array.yes_no, it.heightShort)
+////            ageCheck.value = getLocalValueInArray(R.array.yes_no,it.age)
+//            misCarriage.value = getLocalValueInArray(R.array.yes_no, it.misCarriage)
+//            homeDelivery.value = getLocalValueInArray(R.array.yes_no, it.homeDelivery)
+//            medicalIssues.value = getLocalValueInArray(R.array.yes_no, it.medicalIssues)
+//            pastCSection.value = getLocalValueInArray(R.array.yes_no, it.pastCSection)
+//
+//            infoChildLabel.showHighRisk =
+//                (noOfDeliveries.value == resources.getStringArray(R.array.yes_no)[0] || timeLessThan18m.value == resources.getStringArray(
+//                    R.array.yes_no
+//                )[0])
+//
+//            physicalObsLabel.showHighRisk =
+//                (heightShort.value == resources.getStringArray(R.array.yes_no)[0] || ageCheck.value == resources.getStringArray(
+//                    R.array.yes_no
+//                )[0])
+//
+//            obsHistoryLabel.showHighRisk =
+//                (misCarriage.value == resources.getStringArray(R.array.yes_no)[0] || homeDelivery.value == resources.getStringArray(
+//                    R.array.yes_no
+//                )[0]
+//                        || medicalIssues.value == resources.getStringArray(R.array.yes_no)[0] || pastCSection.value == resources.getStringArray(
+//                    R.array.yes_no
+//                )[0])
+//
+//        }
+//        var insertIndex = list.indexOf(noOfLiveChildren) + 1
+//
+//        noOfLiveChildren.value = childList.size.coerceAtMost(9).toString()
+//        val limitedChildList = childList.take(9)
+//        numFemale.value = limitedChildList.count { it.gender == Gender.FEMALE }.toString()
+//        numMale.value = limitedChildList.count { it.gender == Gender.MALE }.toString()
+//        childList.take(9).forEachIndexed { index, child ->
+//            val bundle = children[index]
+//            bundle.dob.value = getDateFromLong(child.dob)
+//            bundle.age.value = child.age?.toString()
+//
+//            bundle.gender.value = getLocalValueInArray(
+//                R.array.ecr_gender_array,
+//                child.gender?.name
+//                    ?.lowercase()
+//                    ?.replaceFirstChar { it.uppercase() }
+//            )
+//
+//            if (index == 0) {
+//                setSiblingAgeDiff(timeAtMarriage, child.dob, bundle.gap)
+//            } else {
+//                setSiblingAgeDiff(
+//                    childList[index - 1].dob,
+//                    child.dob,
+//                    bundle.gap
+//                )
+//            }
+//
+//            val childViews = listOf(
+//                bundle.dob,
+//                bundle.age,
+//                bundle.gender,
+//                bundle.gap
+//            )
+//
+//            list.addAll(insertIndex, childViews)
+//
+//            insertIndex += childViews.size
+//        }
+//
+//        saved?.let { ecCache ->
+//            dateOfReg.value = getDateFromLong(ecCache.dateOfReg)
+//            bankAccount.value = ecCache.bankAccount?.toString()
+//            bankName.value = ecCache.bankName
+//            branchName.value = ecCache.branchName
+//            ifsc.value = ecCache.ifsc
+////            noOfChildren.value = ecCache.noOfChildren.toString()
+////            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
+//            lmpDate.value = getDateFromLong(ecCache.lmpDate)
+////            numMale.value = ecCache.noOfMaleChildren.toString()
+////            numFemale.value = ecCache.noOfFemaleChildren.toString()
+//            val isKitHandedOver = ecCache.isKitHandedOver == true
+//            nayiPahelKitHandOver.value = if (isKitHandedOver) "Yes" else "No"
+//            if (isKitHandedOver) {
+//                list.addAll(
+//                    list.indexOf(nayiPahelKitHandOver) + 1,
+//                    listOf(kithandOverDate)
+//                )
+//                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+//                    list.addAll(
+//                        list.indexOf(kithandOverDate) + 1,
+//                        listOf(ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
+//                    )
+//                }
+//
+//
+//
+//
+//                ecCache.kitHandedOverDate?.let { kithandOverDate.value = getDateFromLong(it) }
+//                kitPhotoUploadOne.value = ecCache.kitPhoto1
+//                kitPhotoUploadTwo.value = ecCache.kitPhoto2
+//            } else {
+//                kitPhotoUploadOne.value = null
+//                kitPhotoUploadTwo.value = null
+//            }
+//
+//
+//           /* if (ecCache.noOfLiveChildren > 0) {
+//                ecCache.dob1?.let {
+//                    dob1.value = getDateFromLong(it)
+//                    age1.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    setSiblingAgeDiff(timeAtMarriage, it, marriageFirstChildGap)
+//                }
+//                ecCache.gender1?.let {
+//                    gender1.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(noOfLiveChildren) + 1,
+//                    listOf(firstChildDetails, dob1, age1, gender1, marriageFirstChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 1) {
+//                ecCache.dob2?.let {
+//                    dob2.value = getDateFromLong(it)
+//                    age2.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob1?.let { it1 -> setSiblingAgeDiff(it1, it, firstAndSecondChildGap) }
+//                }
+//                ecCache.gender2?.let {
+//                    gender2.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//                list.addAll(
+//                    list.indexOf(marriageFirstChildGap) + 1,
+//                    listOf(secondChildDetails, dob2, age2, gender2, firstAndSecondChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 2) {
+//                ecCache.dob3?.let {
+//                    dob3.value = getDateFromLong(it)
+//                    age3.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob2?.let { it1 -> setSiblingAgeDiff(it1, it, secondAndThirdChildGap) }
+//
+//                }
+//                ecCache.gender3?.let {
+//                    gender3.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//                list.addAll(
+//                    list.indexOf(firstAndSecondChildGap) + 1,
+//                    listOf(thirdChildDetails, dob3, age3, gender3, secondAndThirdChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 3) {
+//                ecCache.dob4?.let {
+//                    dob4.value = getDateFromLong(it)
+//                    age4.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob3?.let { it1 -> setSiblingAgeDiff(it1, it, thirdAndFourthChildGap) }
+//
+//                }
+//                ecCache.gender4?.let {
+//                    gender4.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(secondAndThirdChildGap) + 1,
+//                    listOf(fourthChildDetails, dob4, age4, gender4, thirdAndFourthChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 4) {
+//                ecCache.dob5?.let {
+//                    dob5.value = getDateFromLong(it)
+//                    age5.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob4?.let { it1 -> setSiblingAgeDiff(it1, it, fourthAndFifthChildGap) }
+//                }
+//                ecCache.gender5?.let {
+//                    gender5.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(thirdAndFourthChildGap) + 1,
+//                    listOf(fifthChildDetails, dob5, age5, gender5, fourthAndFifthChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 5) {
+//                ecCache.dob6?.let {
+//                    dob6.value = getDateFromLong(it)
+//                    age6.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob5?.let { it1 -> setSiblingAgeDiff(it1, it, fifthAndSixthChildGap) }
+//                }
+//                ecCache.gender6?.let {
+//                    gender6.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(fourthAndFifthChildGap) + 1,
+//                    listOf(sixthChildDetails, dob6, age6, gender6, fifthAndSixthChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 6) {
+//                ecCache.dob7?.let {
+//                    dob7.value = getDateFromLong(it)
+//                    age7.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob6?.let { it1 -> setSiblingAgeDiff(it1, it, sixthAndSeventhChildGap) }
+//
+//                }
+//                ecCache.gender7?.let {
+//                    gender7.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(fifthAndSixthChildGap) + 1,
+//                    listOf(seventhChildDetails, dob7, age7, gender7, sixthAndSeventhChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 7) {
+//                ecCache.dob8?.let {
+//                    dob8.value = getDateFromLong(it)
+//                    age8.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob7?.let { it1 ->
+//                        setSiblingAgeDiff(
+//                            it1,
+//                            it,
+//                            seventhAndEighthChildGap
+//                        )
+//                    }
+//                }
+//                ecCache.gender8?.let {
+//                    gender8.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//
+//                list.addAll(
+//                    list.indexOf(sixthAndSeventhChildGap) + 1,
+//                    listOf(eighthChildDetails, dob8, age8, gender8, seventhAndEighthChildGap)
+//                )
+//            }
+//            if (ecCache.noOfLiveChildren > 8) {
+//                ecCache.dob9?.let {
+//                    dob9.value = getDateFromLong(it)
+//                    age9.value = if (BenBasicCache.getAgeUnitFromDob(it)
+//                        == AgeUnit.YEARS
+//                    ) {
+//                        BenBasicCache.getAgeFromDob(it).toString()
+//                    } else "0"
+//                    ecCache.dob8?.let { it1 -> setSiblingAgeDiff(it1, it, eighthAndNinthChildGap) }
+//                }
+//                ecCache.gender9?.let {
+//                    gender9.value = getLocalValueInArray(R.array.ecr_gender_array, it.name.lowercase().replaceFirstChar { c -> c.uppercase() })
+//                }
+//
+//                list.addAll(
+//                    list.indexOf(seventhAndEighthChildGap) + 1,
+//                    listOf(ninthChildDetails, dob9, age9, gender9, eighthAndNinthChildGap)
+//                )
+//            }*/
+//        }
+//        setUpPage(list)
+//
+//    }
+
     suspend fun setUpPage(
         ben: BenRegCache?,
         assess: HRPNonPregnantAssessCache?,
         saved: EligibleCoupleRegCache?,
         childList: List<BenRegCache>,
     ) {
+
+//        val list = mutableListOf(
+//            dateOfReg,
+//            rchId,
+////            husbandName,
+////            ageAtMarriage,
+//            lmpDate,
+//            nayiPahelKitHandOver,
+//            womanDetails,
+//            noOfLiveChildren,
+//            numMale,
+//            numFemale,
+//            assesLabel,
+//            infoChildLabel,
+//            noOfDeliveries,
+//            timeLessThan18m,
+//            physicalObsLabel,
+//            heightShort,
+//            ageCheck,
+//            obsHistoryLabel,
+//            misCarriage,
+//            homeDelivery,
+//            medicalIssues,
+//            pastCSection,
+//        )
+//
+//        if (BuildConfig.FLAVOR.contains("saksham", ignoreCase = true)) {
+//            list.addAll(listOf(bankDetailsLabel, bankAccount, bankName, branchName, ifsc))
+//        }
+//
+//        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+//            list.addAll(listOf(
+//                assesLabel,
+//                infoChildLabel,
+//                noOfDeliveries,
+//                timeLessThan18m,
+//                physicalObsLabel,
+//                heightShort,
+//                ageCheck,
+//                obsHistoryLabel,
+//                misCarriage,
+//                homeDelivery,
+//                medicalIssues,
+//                pastCSection,
+//            ))
+//        }
+
         val list = mutableListOf(
             dateOfReg,
             rchId,
-//            name,
-            husbandName,
-//            age,
-            ageAtMarriage,
             lmpDate,
             nayiPahelKitHandOver,
             womanDetails,
-//            aadharNo,
-//            noOfChildren,
             noOfLiveChildren,
             numMale,
             numFemale,
-            assesLabel,
-            infoChildLabel,
-            noOfDeliveries,
-            timeLessThan18m,
-            physicalObsLabel,
-            heightShort,
-            ageCheck,
-            obsHistoryLabel,
-            misCarriage,
-            homeDelivery,
-            medicalIssues,
-            pastCSection,
         )
+
+        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            list.addAll(listOf(
+                assesLabel,
+                infoChildLabel,
+                noOfDeliveries,
+                timeLessThan18m,
+                physicalObsLabel,
+                heightShort,
+                ageCheck,
+                obsHistoryLabel,
+                misCarriage,
+                homeDelivery,
+                medicalIssues,
+                pastCSection,
+            ))
+        }
+
+        if (BuildConfig.FLAVOR.contains("saksham", ignoreCase = true)) {
+            list.addAll(listOf(bankDetailsLabel, bankAccount, bankName, branchName, ifsc))
+        }
+
+
         dateOfReg.value = getDateFromLong(System.currentTimeMillis())
-//        lmpDate.value = getDateFromLong(1735237800000L)
-//        dateOfReg.value?.let {
-//            val long = Dataset.getLongFromDate(it)
-//            dateOfhivTestDone.min = long
-//        }
 
         ben?.let {
             dateOfReg.min = it.regDate
@@ -1087,73 +1501,59 @@ class EligibleCoupleRegistrationDataset(
                 timeAtMarriage = cal.timeInMillis
             }
         }
+
         assess?.let {
             noOfDeliveries.value = getLocalValueInArray(R.array.yes_no, it.noOfDeliveries)
             timeLessThan18m.value = getLocalValueInArray(R.array.yes_no, it.timeLessThan18m)
             heightShort.value = getLocalValueInArray(R.array.yes_no, it.heightShort)
-//            ageCheck.value = getLocalValueInArray(R.array.yes_no,it.age)
             misCarriage.value = getLocalValueInArray(R.array.yes_no, it.misCarriage)
             homeDelivery.value = getLocalValueInArray(R.array.yes_no, it.homeDelivery)
             medicalIssues.value = getLocalValueInArray(R.array.yes_no, it.medicalIssues)
             pastCSection.value = getLocalValueInArray(R.array.yes_no, it.pastCSection)
 
             infoChildLabel.showHighRisk =
-                (noOfDeliveries.value == resources.getStringArray(R.array.yes_no)[0] || timeLessThan18m.value == resources.getStringArray(
-                    R.array.yes_no
-                )[0])
+                (noOfDeliveries.value == resources.getStringArray(R.array.yes_no)[0] || timeLessThan18m.value == resources.getStringArray(R.array.yes_no)[0])
 
             physicalObsLabel.showHighRisk =
-                (heightShort.value == resources.getStringArray(R.array.yes_no)[0] || ageCheck.value == resources.getStringArray(
-                    R.array.yes_no
-                )[0])
+                (heightShort.value == resources.getStringArray(R.array.yes_no)[0] || ageCheck.value == resources.getStringArray(R.array.yes_no)[0])
 
             obsHistoryLabel.showHighRisk =
-                (misCarriage.value == resources.getStringArray(R.array.yes_no)[0] || homeDelivery.value == resources.getStringArray(
-                    R.array.yes_no
-                )[0]
-                        || medicalIssues.value == resources.getStringArray(R.array.yes_no)[0] || pastCSection.value == resources.getStringArray(
-                    R.array.yes_no
-                )[0])
-
+                (misCarriage.value == resources.getStringArray(R.array.yes_no)[0] || homeDelivery.value == resources.getStringArray(R.array.yes_no)[0]
+                        || medicalIssues.value == resources.getStringArray(R.array.yes_no)[0] || pastCSection.value == resources.getStringArray(R.array.yes_no)[0])
         }
+
         var insertIndex = list.indexOf(noOfLiveChildren) + 1
 
         noOfLiveChildren.value = childList.size.coerceAtMost(9).toString()
         val limitedChildList = childList.take(9)
         numFemale.value = limitedChildList.count { it.gender == Gender.FEMALE }.toString()
         numMale.value = limitedChildList.count { it.gender == Gender.MALE }.toString()
+
         childList.take(9).forEachIndexed { index, child ->
             val bundle = children[index]
             bundle.dob.value = getDateFromLong(child.dob)
             bundle.age.value = child.age?.toString()
-
             bundle.gender.value = getLocalValueInArray(
                 R.array.ecr_gender_array,
-                child.gender?.name
-                    ?.lowercase()
-                    ?.replaceFirstChar { it.uppercase() }
+                child.gender?.name?.lowercase()?.replaceFirstChar { it.uppercase() }
             )
-
             if (index == 0) {
                 setSiblingAgeDiff(timeAtMarriage, child.dob, bundle.gap)
             } else {
-                setSiblingAgeDiff(
-                    childList[index - 1].dob,
-                    child.dob,
-                    bundle.gap
-                )
+                setSiblingAgeDiff(childList[index - 1].dob, child.dob, bundle.gap)
             }
-
-            val childViews = listOf(
-                bundle.dob,
-                bundle.age,
-                bundle.gender,
-                bundle.gap
-            )
-
+            val childViews = listOf(bundle.dob, bundle.age, bundle.gender, bundle.gap)
             list.addAll(insertIndex, childViews)
-
             insertIndex += childViews.size
+        }
+
+        val liveChildCount = noOfLiveChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+        if (liveChildCount > 0) {
+            list.remove(nayiPahelKitHandOver)
+            list.remove(kithandOverDate)
+            list.remove(ashaPhotoTitle)
+            list.remove(kitPhotoUploadOne)
+            list.remove(kitPhotoUploadTwo)
         }
 
         saved?.let { ecCache ->
@@ -1162,11 +1562,8 @@ class EligibleCoupleRegistrationDataset(
             bankName.value = ecCache.bankName
             branchName.value = ecCache.branchName
             ifsc.value = ecCache.ifsc
-//            noOfChildren.value = ecCache.noOfChildren.toString()
-//            noOfLiveChildren.value = ecCache.noOfLiveChildren.toString()
             lmpDate.value = getDateFromLong(ecCache.lmpDate)
-//            numMale.value = ecCache.noOfMaleChildren.toString()
-//            numFemale.value = ecCache.noOfFemaleChildren.toString()
+
             val isKitHandedOver = ecCache.isKitHandedOver == true
             nayiPahelKitHandOver.value = if (isKitHandedOver) nayiPahelKitHandOver.entries!![0] else nayiPahelKitHandOver.entries!![1]
             if (isKitHandedOver) {
@@ -1177,13 +1574,9 @@ class EligibleCoupleRegistrationDataset(
                 if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                     list.addAll(
                         list.indexOf(kithandOverDate) + 1,
-                        listOf(ashaPhotoTitle,kitPhotoUploadOne, kitPhotoUploadTwo)
+                        listOf(ashaPhotoTitle, kitPhotoUploadOne, kitPhotoUploadTwo)
                     )
                 }
-
-
-
-
                 ecCache.kitHandedOverDate?.let { kithandOverDate.value = getDateFromLong(it) }
                 kitPhotoUploadOne.value = ecCache.kitPhoto1
                 kitPhotoUploadTwo.value = ecCache.kitPhoto2
