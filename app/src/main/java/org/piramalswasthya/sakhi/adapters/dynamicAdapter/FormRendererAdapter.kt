@@ -947,7 +947,7 @@
                         }
 
                         addWithError(textInputLayout, field)
-                    }
+                    }}
                     "radio" -> {
                         val context = itemView.context
 
