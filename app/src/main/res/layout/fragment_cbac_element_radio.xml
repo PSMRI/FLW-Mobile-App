@@ -11,6 +11,10 @@
             name="numAsterisk"
             type="Integer" />
 
+        <variable
+            name="numAsteriskAlt"
+            type="Integer" />
+
     </data>
 
     <LinearLayout
@@ -21,7 +25,8 @@
         <TextView
             style="@style/cbac_ed_hint"
             cbac_name="@{fieldName}"
-            asteriskColor="@{numAsterisk}" />
+            asteriskColor="@{numAsterisk}"
+            asteriskColorAlt="@{numAsteriskAlt}" />
 
         <RadioGroup
             android:id="@+id/cbac_ed_rg"
