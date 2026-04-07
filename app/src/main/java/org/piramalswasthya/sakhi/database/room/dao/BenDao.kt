@@ -712,7 +712,7 @@ interface BenDao {
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and isDeactivate=0 and ben.villageId=:selectedVillage")
     fun getAllRegisteredPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
 
-    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and ben.villageId=:selectedVillage and isDeactivate=0")
+    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and pwr.abortionDate is not null and ben.villageId=:selectedVillage and isDeactivate=0")
     fun getAllAbortionWomenListCount(selectedVillage: Int): Flow<Int>
 
     @Query("""

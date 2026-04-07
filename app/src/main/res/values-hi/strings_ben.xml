@@ -29,10 +29,10 @@
     <string name="nbr_dor">पंजीकरण की तारीख</string>
     <string name="nbr_nb_first_name">पहला नाम</string>
     <string name="nbr_nb_last_name">अंतिम नाम / उपनाम</string>
-    <string name="title_new_ben_reg_hof">HoF Registration</string>
+    <string name="title_new_ben_reg_hof">मुखिया का पंजीकरण</string>
     <string name="title_new_ben_reg_non_hof">परिवार सदस्य पंजीकरण</string>
     <string name="icon_title_abortion">गर्भपात सूची</string>
-    <string name="icon_title_pmsma">e-PMSMA List</string>
+    <string name="icon_title_pmsma">ई-पीएमएसएमए सूची</string>
     <string name="mother_rch_id">मां की RCH आईडी</string>
     <string-array name="anc_paiucd_done_by">
         <item>डॉक्टर</item>
@@ -57,7 +57,7 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array3">
-        <item>Not Applicable</item>
+        <item>लागू नहीं</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array4">
@@ -182,14 +182,14 @@
     </string-array>
 
     <string-array name="community_array">
-        <item>सामान्य</item>
-        <item>अनुसूचित जाति</item>
-        <item>अनुसूचित जनजाति</item>
-        <item>पिछड़ा वर्ग</item>
-        <item>अन्य पिछड़ा वर्ग</item>
-        <item>अन्य वर्ग</item>
-        <item>विशेष रूप से कमजोर जनजातीय समूह</item>
-        <item>नहीं दिया गया</item>
+        <item>सामान्य (GEN)</item>
+        <item>अनुसूचित जाति (SC)</item>
+        <item>अनुसूचित जनजाति (ST)</item>
+        <item>पिछड़ा वर्ग (BC)</item>
+        <item>अन्य पिछड़ा वर्ग (OBC)</item>
+        <item>अन्य वर्ग (OC)</item>
+        <item>विशेष रूप से कमजोर जनजातीय समूह (PVTG)</item>
+        <item>नहीं दिया गया (NA)</item>
     </string-array>
 
     <string-array name="religion_array">
@@ -292,6 +292,12 @@
         <item>नहीं किया गया</item>
     </string-array>
 
+
+    <string-array name="pf_pv">
+        <item>पीएफ</item>
+        <item>पीवी</item>
+    </string-array>
+
     <string-array name="maa_breastfeeding">
         <item>सभी चुनें</item>
         <item>शिशु को जन्म के पहले घंटे में तुरंत स्तनपान कराना चाहिए</item>
@@ -365,6 +371,16 @@
     <string-array name="ahd_referral_status_array">
         <item>लंबित</item>
         <item>पूर्ण</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>परिवार के मुखिया</item>
+        <item>स्वयं</item>
+        <item>पति / पत्नी</item>
+        <item>माँ</item>
+        <item>पिता</item>
+        <item>पड़ोसी</item>
+        <item>मित्र / रिश्तेदार</item>
     </string-array>
 
 </resources>

@@ -32,4 +32,7 @@
     <string name="visit_date_cannot_be_more_than_2_months_old">Visit date cannot be more than 2 months old</string>
     <string name="only_one_visit_per_month_allowed">Only one visit per month is allowed</string>
     <string name="bottle_count">Bottle Count</string>
+    <string name="sam_case_detected">SAM Case Detected</string>
+    <string name="muac_sam_alert_message">MUAC is %1$.1f cm. Please refer the Child to NRC as SAM case.</string>
+    <string name="weight_height_sam_alert_message">Weight-for-Height Status is SAM. Please refer the Child to NRC as SAM case.</string>
 </resources>

@@ -539,7 +539,11 @@ class FormInputAdapterWithBgIcon (
                 item.max?.let { datePickerDialog.datePicker.maxDate = it }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                if (item.max!!> item.min!!){
+                val canShow = when {
+                    item.max == null || item.min == null -> true
+                    else -> item.max!! > item.min!!
+                }
+                if (canShow){
                     datePickerDialog.show()
                 }else{
                     Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
@@ -867,20 +871,20 @@ class FormInputAdapterWithBgIcon (
 
                     if (internalUpdate) return
                     if (editable.isNullOrBlank()) {
-                        showError("Value cannot be empty")
+                        showError(binding.root.context.getString(R.string.value_cannot_be_empty))
                         return
                     }
 
                     val inputValue = editable.toString().toIntOrNull()
                     if (inputValue == null) {
-                        showError("Enter a valid number")
+                        showError(binding.root.context.getString(R.string.enter_a_valid_number))
                         return
                     }
 
                     val validated = validateValue(inputValue, minValue, maxValue, allowNegative)
 
                     if (validated != inputValue) {
-                        showError("Allowed range: $minValue to $maxValue")
+                        showError(binding.root.context.getString(R.string.allowed_range, minValue, maxValue))
 
                         updateDisplay(validated)
                         updateValue(validated, item, formValueListener)

@@ -574,35 +574,21 @@ class LeprosyFormDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as LeprosyScreeningCache).let { form ->
             form.homeVisitDate = getLongFromDate(dateOfCase.value)
-            form.referToName = referredTo.value
+            form.referToName = getEnglishValueInArray(R.array.dc_refer, referredTo.value)
             form.referredTo = referredTo.getPosition()
-            form.beneficiaryStatus = beneficiaryStatus.value
+            form.beneficiaryStatus = getEnglishValueInArray(R.array.benificary_case_status_leprosy, beneficiaryStatus.value)
             form.beneficiaryStatusId = beneficiaryStatus.getPosition()
-            form.reasonForDeath = reasonOfDeath.value
+            form.reasonForDeath = getEnglishValueInArray(R.array.reason_death, reasonOfDeath.value)
             form.otherPlaceOfDeath = otherPlaceOfDeath.value
             form.otherReasonForDeath = otherReasonOfDeath.value
             form.dateOfDeath = getLongFromDate(dateOfDeath.value)
-            form.placeOfDeath = placeOfDeath.value
+            form.placeOfDeath = getEnglishValueInArray(R.array.death_place, placeOfDeath.value)
             form.otherReferredTo = other.value
             form.remarks = remarks.value
-            form.leprosyStatus = when (leprosyStatus.value) {
-                "Screening" -> "Screening"
-                "Denied" -> "Denied"
-                "Not Screened" -> "Not Screened"
-                "Suspected" -> "Suspected"
-                "Confirmed" -> "Confirmed"
-                "Not Confirmed" -> "Not Confirmed"
-                resources.getStringArray(R.array.leprosy_status)[0] -> "Screening"
-                resources.getStringArray(R.array.leprosy_status)[1] -> "Denied"
-                resources.getStringArray(R.array.leprosy_status)[2] -> "Not Screened"
-                resources.getStringArray(R.array.leprosy_status)[3] -> "Suspected"
-                resources.getStringArray(R.array.leprosy_status)[4] -> "Confirmed"
-                resources.getStringArray(R.array.leprosy_status)[5] -> "Not Confirmed"
-                else -> leprosyStatus.value ?: "Screening"
-            }
-            form.typeOfLeprosy = typeOfLeprosy.value
+            form.leprosyStatus = getEnglishValueInArray(R.array.leprosy_status, leprosyStatus.value) ?: "Screening"
+            form.typeOfLeprosy = getEnglishValueInArray(R.array.type_of_leprocy, typeOfLeprosy.value)
             form.diseaseTypeID = 5
-            form.leprosySymptoms = leprosySymptoms.value
+            form.leprosySymptoms = getEnglishValueInArray(R.array.yes_no, leprosySymptoms.value)
             form.visitLabel = englishResources.getString(R.string.visit_number_label, form.currentVisitNumber)
             form.syncState = SyncState.UNSYNCED
             form.leprosySymptomsPosition = when (leprosySymptoms.value) {
@@ -665,17 +651,17 @@ class LeprosyFormDataset(
                 resources.getStringArray(R.array.yes_no)[1] -> 1
                 else -> 1
             }
-            form.recurrentUlceration = recurrentUlceration.value
-            form.recurrentTingling = cbacRecurrentTingling.value
-            form.hypopigmentedPatch  = cbacAnyHyperPigmented.value
-            form.thickenedSkin  = cbacAnyThickendSkin.value
-            form.skinNodules  = cbacAnyNodulesSkin.value
-            form.recurrentNumbness  = cbacRecurrentNumbness.value
-            form.clawingFingers  = cbacClawingOfFingers.value
-            form.tinglingNumbnessExtremities  = cbacTinglingOrNumbness.value
-            form.inabilityCloseEyelid  = cbacInabilityCloseEyelid.value
-            form.difficultyHoldingObjects   = cbacDiffHoldingObjects.value
-            form.weaknessFeet   = cbacWeeknessInFeet.value
+            form.recurrentUlceration = getEnglishValueInArray(R.array.yes_no, recurrentUlceration.value)
+            form.recurrentTingling = getEnglishValueInArray(R.array.yes_no, cbacRecurrentTingling.value)
+            form.hypopigmentedPatch  = getEnglishValueInArray(R.array.yes_no, cbacAnyHyperPigmented.value)
+            form.thickenedSkin  = getEnglishValueInArray(R.array.yes_no, cbacAnyThickendSkin.value)
+            form.skinNodules  = getEnglishValueInArray(R.array.yes_no, cbacAnyNodulesSkin.value)
+            form.recurrentNumbness  = getEnglishValueInArray(R.array.yes_no, cbacRecurrentNumbness.value)
+            form.clawingFingers  = getEnglishValueInArray(R.array.yes_no, cbacClawingOfFingers.value)
+            form.tinglingNumbnessExtremities  = getEnglishValueInArray(R.array.yes_no, cbacTinglingOrNumbness.value)
+            form.inabilityCloseEyelid  = getEnglishValueInArray(R.array.yes_no, cbacInabilityCloseEyelid.value)
+            form.difficultyHoldingObjects   = getEnglishValueInArray(R.array.yes_no, cbacDiffHoldingObjects.value)
+            form.weaknessFeet   = getEnglishValueInArray(R.array.yes_no, cbacWeeknessInFeet.value)
 
 
         }

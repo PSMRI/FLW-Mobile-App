@@ -175,6 +175,9 @@
     <string name="tb_screening">टीबी जांच</string>
     <string name="tb_screening_submitted">टीबी जांच जमा हो गई</string>
     <string name="screen">जांच करें</string>
+    <string name="view_screen">जांच देखें</string>
+    <string name="screened">जांच हो चुकी है</string>
+    <string name="not_screened">जांच नहीं हुई</string>
     <string name="tb_suspected_sputum_test">संदिग्ध टीबी के लिए बलगम जांच</string>
     <string name="tb_tracking_submitted">टीबी ट्रैकिंग जमा हो गई</string>
     <string name="track">ट्रैक करें</string>
@@ -206,6 +209,17 @@
         <item>100 सेमी से अधिक</item>
     </string-array>
 
+    <string-array name="cbac_smoke">
+        <item>कभी नहीं</item>
+        <item>पहले कभी इसका सेवन करता था</item>
+        <item>दैनिक</item>
+    </string-array>
+
+    <string-array name="cbac_alcohol">
+    <item>नहीं</item>
+    <item>हां</item>
+    </string-array>
+
     <string-array name="cbac_type_Cooking_fuel">
         <item>लकड़ी</item>
         <item>फसल अवशेष</item>
@@ -228,6 +242,38 @@
         <item>आधे से ज़्यादा दिन</item>
         <item>लगभग हर दिन</item>
     </string-array>
+    <string-array name="cbac_pa">
+        <item>सप्ताह में कम से कम 150 मिनट</item>
+        <item>सप्ताह में 150 मिनट से भी कम</item>
+    </string-array>
+    <string-array name="cbac_fh">
+        <item>नहीं</item>
+        <item>हां</item>
+    </string-array>
+    <string-array name="cbac_type_occupational_exposure">
+        <item>फसल अवशेष जलाना</item>
+        <item>कूड़ा-कचरा-पत्तियाँ जलाना</item>
+        <item>धुएं, गैस और धूल के संपर्क वाले उद्योगों में काम करना जैसे ईंट भट्टे और कांच के कारखाने।</item>
+    </string-array>
 
+    <string-array name="tb_test_result">
+        <item>सकारात्मक</item>
+        <item>नकारात्मक</item>
+    </string-array>
+
+    <string-array name="tb_sputum_sample_submitted_at">
+        <item>एचडब्ल्यूसी</item>
+        <item>पीएचसी</item>
+        <item>सीएचसी</item>
+        <item>जिला अस्पताल</item>
+        <item>सरकारी मेडिकल कॉलेज</item>
+    </string-array>
+
+    <string name="cat_ncd">एनसीडी</string>
+    <string name="cat_tb">टीबी</string>
+    <string name="cat_leprosy">कुष्ठ रोग</string>
+    <string name="cat_geriatric">वृद्धावस्था</string>
+    <string name="cat_hrp">एचआरपी</string>
+    <string name="cat_maternal">मातृ</string>
 </resources>
 

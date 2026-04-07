@@ -181,14 +181,18 @@ class NewBenRegFragment : Fragment() {
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
-        alertDialog.setTitle("Add Spouse")
+        alertDialog.setTitle(getString(R.string.add_spouse))
 
         // Setting Dialog Message
-        alertDialog.setMessage("Would you like to add ${viewModel.getBenName()}'s ${if (viewModel.getBenGender() == Gender.MALE) "Wife" else "Husband"}?")
+        alertDialog.setMessage(getString(
+            R.string.would_you_like_to_add_spouse,
+            viewModel.getBenName(),
+            getString(if (viewModel.getBenGender() == Gender.MALE) R.string.str_wife else R.string.str_husband)
+        ))
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Yes"
+            resources.getString(R.string.yes)
         ) { dialog, _ ->
             val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
             findNavController().navigate(
@@ -296,6 +300,9 @@ class NewBenRegFragment : Fragment() {
             .setCancelable(false)
             .create()
         alertBinding.scrollableText.movementMethod = android.text.method.ScrollingMovementMethod()
+        alertBinding.scrollableText.setOnClickListener {
+            alertBinding.checkBox.isChecked = !alertBinding.checkBox.isChecked
+        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {

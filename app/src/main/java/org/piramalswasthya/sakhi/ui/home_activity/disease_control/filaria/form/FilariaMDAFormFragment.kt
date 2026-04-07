@@ -166,8 +166,9 @@ class FilariaMDAFormFragment : Fragment() {
 
     private fun tableRender() {
         binding.includeBottleTable.tableHeading.visibility = View.GONE
-        binding.includeBottleTable.bottleNum.text = "Is Medicine Distributed? (Yes/No)"
-        binding.includeBottleTable.date.text = "Distribution Date"
+        binding.includeBottleTable.bottleNum.text =
+            getString(R.string.is_medicine_distributed_yes_no)
+        binding.includeBottleTable.date.text = getString(R.string.distribution_date)
 
         binding.includeBottleTable.tableRv.layoutManager = LinearLayoutManager(requireContext())
         viewModel.bottleList.observe(viewLifecycleOwner) { list ->
@@ -199,10 +200,15 @@ class FilariaMDAFormFragment : Fragment() {
                         showImagePickerDialog()
                     } else {
                         field.value = value
+                        val oldCount = adapter.itemCount
                         viewModel.updateFieldValue(field.fieldId, value)
-                        adapter.updateFields(viewModel.getVisibleFields())
+                        val newVisibleFields = viewModel.getVisibleFields()
+                        if (newVisibleFields.size != oldCount) {
+                            adapter.updateFields(newVisibleFields)
+                        }
                     }
-                },)
+                },
+            formId = FormConstants.MDA_DISTRIBUTION_FORM_ID)
 
         binding.recyclerView.adapter = adapter
     }

@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterPncDomainList
+import org.piramalswasthya.sakhi.helpers.sortPncList
 import org.piramalswasthya.sakhi.model.PncDomain
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.list.PwAncVisitsListFragmentArgs
@@ -28,9 +30,11 @@ class PncMotherListViewModel @Inject constructor(
     }
 
     private val filter = MutableStateFlow("")
-    val benList = allBenList.combine(filter) { list, filter ->
-        filterPncDomainList(list, filter)
-    }
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
+
+    val benList = allBenList
+        .combine(filter) { list, f -> filterPncDomainList(list, f) }
+        .combine(sortFilter) { list, sort -> sortPncList(list, sort) }
 
     private val benIdSelected = MutableStateFlow(0L)
 
@@ -46,11 +50,14 @@ class PncMotherListViewModel @Inject constructor(
 
 
     fun filterText(text: String) {
-        viewModelScope.launch {
-            filter.emit(text)
-        }
-
+        viewModelScope.launch { filter.emit(text) }
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
     fun updateBottomSheetData(benId: Long) {
         viewModelScope.launch {

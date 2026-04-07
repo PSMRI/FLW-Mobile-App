@@ -34,7 +34,6 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
 
     private val viewModel: ChildImmunizationListViewModel by viewModels()
-    private var catTxt = ""
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
@@ -132,15 +131,8 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     }
 
     override fun onClicked(catDataList: String) {
-
-        if (catDataList.contains("ALL")) {
-            viewModel.filterText("")
-        }
-        else {
-            catTxt = catDataList
-            viewModel.filterText(catTxt)
-
-        }
+        val englishKey = viewModel.toEnglishCategory(catDataList)
+        viewModel.filterText(englishKey)
     }
 
 

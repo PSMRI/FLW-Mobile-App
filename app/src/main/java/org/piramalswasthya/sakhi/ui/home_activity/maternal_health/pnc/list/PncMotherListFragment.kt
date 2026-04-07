@@ -17,7 +17,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.PncVisitListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EcFilterBottomSheetFragment
 
 @AndroidEntryPoint
 class PncMotherListFragment : Fragment() {
@@ -52,6 +54,20 @@ class PncMotherListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
+        binding.filterText.visibility = View.VISIBLE
+        binding.tvSelectedFilter.text = getString(R.string.filter_newest_first)
+        binding.ivFilter.setOnClickListener {
+            EcFilterBottomSheetFragment(viewModel.getCurrentSort()) { selected ->
+                viewModel.setSortFilter(selected)
+                binding.tvSelectedFilter.text = when (selected) {
+                    EcFilterType.NEWEST_FIRST   -> getString(R.string.filter_newest_first)
+                    EcFilterType.OLDEST_FIRST   -> getString(R.string.filter_oldest_first)
+                    EcFilterType.AGE_WISE       -> getString(R.string.filter_age_wise)
+                    EcFilterType.SYNCING_FIRST  -> getString(R.string.filter_syncing_first)
+                    EcFilterType.UNSYNCED_FIRST -> getString(R.string.filter_unsynced_first)
+                }
+            }.show(childFragmentManager, "ECFilter")
+        }
         val benAdapter = PncVisitListAdapter(
             PncVisitListAdapter.PncVisitClickListener(
                 showVisits = {

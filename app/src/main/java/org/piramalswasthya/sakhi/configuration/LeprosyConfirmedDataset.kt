@@ -190,7 +190,7 @@ class LeprosyConfirmedDataset(
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
-            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            visitLabel.value = resources.getString(R.string.visit_number_label, saved?.currentVisitNumber ?: 1)
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
 
             updateDateConstraints()
@@ -208,7 +208,8 @@ class LeprosyConfirmedDataset(
                 resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                     ?: resources.getStringArray(R.array.yes_no)[1]
             val visit_value = saved.visitLabel
-            visitLabel.value = visit_value ?: "Visit -1"
+            val visitNum = visit_value?.substringAfterLast("-")?.toIntOrNull() ?: 1
+            visitLabel.value = resources.getString(R.string.visit_number_label, visitNum)
             leprosyStatus.value = getLocalValueInArray(leprosyStatus.arrayId, saved.leprosyStatus)
 
             if (leprosyStatus.value == leprosyStatus.entries!!.last()) {
@@ -239,12 +240,12 @@ class LeprosyConfirmedDataset(
         }
 
         if (followUp == null) {
-            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            visitLabel.value = resources.getString(R.string.visit_number_label, saved?.currentVisitNumber ?: 1)
             // followUpdate.value = getDateFromLong(System.currentTimeMillis())
             isNewFollowUp = true
         } else {
             isNewFollowUp = false
-            visitLabel.value = "Visit -${saved?.currentVisitNumber ?: 1}"
+            visitLabel.value = resources.getString(R.string.visit_number_label, saved?.currentVisitNumber ?: 1)
             // followUpdate.value = getDateFromLong(followUp.followUpDate)
             mdt_blister_pack_recived.value = getLocalValueInArray(
                 mdt_blister_pack_recived.arrayId,
@@ -304,7 +305,7 @@ class LeprosyConfirmedDataset(
         if (followUp == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             leprosyStatus.value = resources.getStringArray(R.array.leprosy_status)[0]
-            visitLabel.value = "Visit -1"
+            visitLabel.value = resources.getString(R.string.visit_number_label, 1)
             leprosySymptoms.value = resources.getStringArray(R.array.yes_no)[1]
             isNewFollowUp = true
             updateDateConstraints()
@@ -321,7 +322,8 @@ class LeprosyConfirmedDataset(
                 resources.getStringArray(R.array.yes_no).getOrNull(symptomsPosition)
                     ?: resources.getStringArray(R.array.yes_no)[1]
             val visit_value = followUp.visitLabel
-            visitLabel.value = visit_value ?: "Visit -1"
+            val visitNum = visit_value?.substringAfterLast("-")?.toIntOrNull() ?: 1
+            visitLabel.value = resources.getString(R.string.visit_number_label, visitNum)
             leprosyStatus.value =
                 getLocalValueInArray(leprosyStatus.arrayId, followUp.leprosyStatus)
 
@@ -410,8 +412,8 @@ class LeprosyConfirmedDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as LeprosyFollowUpCache).let { followUp ->
             followUp.followUpDate = getLongFromDate(followUpdate.value)
-            followUp.mdtBlisterPackReceived = mdt_blister_pack_recived.value
-            followUp.treatmentStatus = treatmentStatus.value
+            followUp.mdtBlisterPackReceived = getEnglishValueInArray(R.array.yes_no, mdt_blister_pack_recived.value)
+            followUp.treatmentStatus = getEnglishValueInArray(treatmentStatus.arrayId, treatmentStatus.value)
             followUp.treatmentStartDate = getLongFromDate(treatmentStartDate.value)
 
             if (treatmentStatus.value == treatmentStatus.entries?.last()) {

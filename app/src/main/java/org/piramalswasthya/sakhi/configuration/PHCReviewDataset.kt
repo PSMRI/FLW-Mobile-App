@@ -49,7 +49,7 @@ class PHCReviewDataset(
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.place_of_meeting),
         entries = resources.getStringArray(R.array.place_of_vhsnc),
-        arrayId = -1,
+        arrayId = R.array.place_of_vhsnc,
         required = true,
         allCaps = true,
     )
@@ -97,14 +97,14 @@ class PHCReviewDataset(
 
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
@@ -147,7 +147,7 @@ class PHCReviewDataset(
             phcReviewDate.value = it.phcReviewDate
             pic1.value = it.image1
             pic2.value = it.image2
-            place.value = it.place
+            place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
             villageName.value = it.villageName
             noOfParticipantsAttended.value = it.noOfBeneficiariesAttended.toString()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -249,7 +249,7 @@ class PHCReviewDataset(
         (cacheModel as PHCReviewMeetingCache).let { form ->
 
             form.phcReviewDate = phcReviewDate.value!!
-            form.place = place.value
+            form.place = getEnglishValueInArray(R.array.place_of_vhsnc, place.value)
             form.placeId = place.getPosition()
             form.noOfBeneficiariesAttended = noOfParticipantsAttended.value?.toIntOrNull() ?: 0
             form.image1 = pic1.value

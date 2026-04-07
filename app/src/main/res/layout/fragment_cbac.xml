@@ -508,7 +508,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat_note"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -516,7 +516,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast1"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -524,7 +524,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast2"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -1183,7 +1183,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/hrp_sug_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1192,7 +1192,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diab"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1200,7 +1200,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_hyper"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1208,7 +1208,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_hyperstroke"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1216,7 +1216,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/hrp_sug_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1224,7 +1224,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_tbcancer"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1232,7 +1232,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diabm"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1240,7 +1240,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diabcancer"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1248,7 +1248,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_cansthyroid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1256,7 +1256,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_tb"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1264,7 +1264,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_oc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1272,7 +1272,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_bc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1280,7 +1280,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_mentalhealth"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1289,7 +1289,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_cc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1297,7 +1297,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1305,7 +1305,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_dia_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1313,7 +1313,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_can_thy"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1321,7 +1321,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_dia_can"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1329,7 +1329,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_can_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1337,7 +1337,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_all_display"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1347,7 +1347,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_hyper_stk_display"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1356,7 +1356,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_tb_can"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1365,7 +1365,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_hyper_only"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1375,7 +1375,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/ncd_sus_valid"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <!--                <TextView-->
@@ -1384,7 +1384,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/hrpncd_sus_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1394,7 +1394,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tbcase"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1403,7 +1403,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tb_collect_sputum"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1412,7 +1412,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tv_moic_treat"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1421,7 +1421,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tv_bl_menopause"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                 </LinearLayout>

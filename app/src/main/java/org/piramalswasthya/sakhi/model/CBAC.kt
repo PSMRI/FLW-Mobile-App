@@ -243,10 +243,10 @@ data class CbacCache(
 
 
 
-    fun asDomainModel(): CbacDomain {
+    fun asDomainModel(resources: Resources): CbacDomain {
         return CbacDomain(
             cbacId = this.id,
-            date = "Filled on ${getCbacCreatedDateFromLong(this.fillDate)}",
+            date = "${resources.getString(R.string.filled_on)}${getCbacCreatedDateFromLong(this.fillDate)}",
             syncState = this.syncState
         )
     }

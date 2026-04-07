@@ -41,7 +41,7 @@
         private val pmsmaVisitDate = FormElement(
             id = 43,
             inputType = org.piramalswasthya.sakhi.model.InputType.DATE_PICKER,
-            title = context.getString(R.string.pmsma_visit_date),
+            title = resources.getString(R.string.pmsma_visit_date),
             required = true,
             hasDependants = true,
             showDrawable = true
@@ -50,21 +50,21 @@
         private val pmsmaVisit = FormElement(
             id = 44,
             inputType = org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW,
-            title = context.getString(R.string.pmsma_visit),
+            title = resources.getString(R.string.pmsma_visit),
             required = true,
             showDrawable = true,
         )
         private val detailsOfPW = FormElement(
             id = 46,
             inputType = HEADLINE,
-            title = context.getString(R.string.details_of_pregnant_women),
+            title = resources.getString(R.string.details_of_pregnant_women),
             required = false
         )
 
         private val highRiskReason = FormElement(
             id = 45,
             inputType = org.piramalswasthya.sakhi.model.InputType.DROPDOWN,
-            title = context.getString(R.string.if_yes_select_high_risk_condition),
+            title = resources.getString(R.string.if_yes_select_high_risk_condition),
             arrayId = R.array.select_high_risk_condition,
             entries = resources.getStringArray(R.array.select_high_risk_condition),
             required = true,
@@ -187,6 +187,7 @@
         private val urineAlbumin = FormElement(
             id = 17,
             inputType = RADIO,
+            arrayId = R.array.pmsma_confirmation_array,
             entries = resources.getStringArray(R.array.pmsma_confirmation_array),
             title = resources.getString(R.string.pmsma_urine_albumin),
             required = false
@@ -218,6 +219,7 @@
         private val malaria = FormElement(
             id = 22,
             inputType = RADIO,
+            arrayId = R.array.pmsma_malaria_array,
             entries = resources.getStringArray(R.array.pmsma_malaria_array),
             title = resources.getString(R.string.pmsma_malaria),
             required = false
@@ -274,6 +276,7 @@
             id = 30,
             inputType = RADIO,
             title = resources.getString(R.string.pmsma_tetanus_toxoid),
+            arrayId = R.array.pmsma_tetanus_toxoid_array,
             entries = resources.getStringArray(R.array.pmsma_tetanus_toxoid_array),
             required = false
         )
@@ -381,7 +384,7 @@
             hiv.value=pwr.hivTestResult
             vdrl.value=pwr.vdrlRprTestResult
             hbsc.value=pwr.hbsAgTestResult
-            malaria.value="Negative"
+            malaria.value = resources.getStringArray(R.array.pmsma_malaria_array)[0]
             numANC.value=countOfANC.toString()
 //            hivTestDuringANC.value=pwr.hivTestResult
 
@@ -477,7 +480,7 @@
         override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
             (cacheModel as PMSMACache).let { pmsmaCache ->
                 pmsmaCache.mctsNumberOrRchNumber = mctsNumberOrRchNumber.value
-                pmsmaCache.haveMCPCard = haveMCPCard.value == "Yes"
+                pmsmaCache.haveMCPCard = haveMCPCard.value == haveMCPCard.entries!![0]
                 pmsmaCache.husbandName = husbandName.value
                 pmsmaCache.visitDate= getLongFromDate(pmsmaVisitDate.value)
                 pmsmaCache.visitNumber = pmsmaVisit.value!!.toInt()
@@ -491,29 +494,29 @@
                 pmsmaCache.bloodPressure = bp.value?.takeIf { it.isNotEmpty() }?.substringAfter("/")
                 pmsmaCache.abdominalCheckUp = abdominalCheckUp.value
                 pmsmaCache.fetalHRPM = fetalHRPM.value?.toInt() ?: 0
-                pmsmaCache.twinPregnancy = twinPregnancy.value == "Yes"
-                pmsmaCache.urineAlbumin = urineAlbumin.value
+                pmsmaCache.twinPregnancy = twinPregnancy.value == twinPregnancy.entries!![0]
+                pmsmaCache.urineAlbumin = getEnglishValueInArray(R.array.pmsma_confirmation_array, urineAlbumin.value)
                 pmsmaCache.haemoglobinAndBloodGroup = haemoglobinAndBloodGroup.value
                 pmsmaCache.hiv = hiv.value
                 pmsmaCache.vdrl = vdrl.value
                 pmsmaCache.hbsc = hbsc.value
-                pmsmaCache.malaria = malaria.value
-                pmsmaCache.hivTestDuringANC = hivTestDuringANC.value == "Yes"
-                pmsmaCache.swollenCondtion = swollenCondtion.value == "Yes"
-                pmsmaCache.bloodSugarTest = bloodSugarTest.value == "Yes"
-                pmsmaCache.ultraSound = ultraSound.value == "Yes"
-                pmsmaCache.ironFolicAcid = ironFolicAcid.value == "Yes"
-                pmsmaCache.calciumSupplementation = calciumSupplementation.value == "Yes"
-                pmsmaCache.tetanusToxoid = tetanusToxoid.value
+                pmsmaCache.malaria = getEnglishValueInArray(R.array.pmsma_malaria_array, malaria.value)
+                pmsmaCache.hivTestDuringANC = hivTestDuringANC.value == hivTestDuringANC.entries!![0]
+                pmsmaCache.swollenCondtion = swollenCondtion.value == swollenCondtion.entries!![0]
+                pmsmaCache.bloodSugarTest = bloodSugarTest.value == bloodSugarTest.entries!![0]
+                pmsmaCache.ultraSound = ultraSound.value == ultraSound.entries!![0]
+                pmsmaCache.ironFolicAcid = ironFolicAcid.value == ironFolicAcid.entries!![0]
+                pmsmaCache.calciumSupplementation = calciumSupplementation.value == calciumSupplementation.entries!![0]
+                pmsmaCache.tetanusToxoid = getEnglishValueInArray(R.array.pmsma_tetanus_toxoid_array, tetanusToxoid.value)
                 pmsmaCache.lastMenstrualPeriod =
                     lastMenstrualPeriod.value?.let { getLongFromDate(it) } ?: 0L
                 pmsmaCache.expectedDateOfDelivery = getLongFromDate(expectedDateOfDelivery.value!!)
-                pmsmaCache.highriskSymbols = highriskSymbols.value == "Yes"
-                pmsmaCache.highRiskReason = highRiskReason.value
-                pmsmaCache.highRiskPregnant = highRiskPregnant.value == "Yes"
-                pmsmaCache.highRiskPregnancyReferred = highRiskPregnancyReferred.value == "Yes"
+                pmsmaCache.highriskSymbols = highriskSymbols.value == highriskSymbols.entries!![0]
+                pmsmaCache.highRiskReason = getEnglishValueInArray(R.array.select_high_risk_condition, highRiskReason.value)
+                pmsmaCache.highRiskPregnant = highRiskPregnant.value == highRiskPregnant.entries!![0]
+                pmsmaCache.highRiskPregnancyReferred = highRiskPregnancyReferred.value == highRiskPregnancyReferred.entries!![0]
                 pmsmaCache.birthPrepAndNutritionAndFamilyPlanning =
-                    birthPrepAndNutritionAndFamilyPlanning.value == "Yes"
+                    birthPrepAndNutritionAndFamilyPlanning.value == birthPrepAndNutritionAndFamilyPlanning.entries!![0]
                 pmsmaCache.medicalOfficerSign = medicalOfficerSign.value
             }
 
@@ -521,7 +524,7 @@
 
         fun setExistingValues(pmsma: PMSMACache) {
             mctsNumberOrRchNumber.value = pmsma.mctsNumberOrRchNumber
-            haveMCPCard.value = if (pmsma.haveMCPCard == true) "Yes" else "No"
+            haveMCPCard.value = if (pmsma.haveMCPCard == true) haveMCPCard.entries!![0] else haveMCPCard.entries!![1]
             husbandName.value = pmsma.husbandName
             pmsmaVisitDate.value = getDateFromLong(pmsma.visitDate!!)
             pmsmaVisit.value = pmsma.visitNumber.toString()
@@ -534,30 +537,30 @@
                 if (pmsma.systolicBloodPressure == null || pmsma.bloodPressure == null) null else "${pmsma.systolicBloodPressure}/${pmsma.bloodPressure}"
             abdominalCheckUp.value = pmsma.abdominalCheckUp
             fetalHRPM.value = pmsma.fetalHRPM.toString()
-            twinPregnancy.value = if (pmsma.twinPregnancy == true) "Yes" else "No"
-            urineAlbumin.value = pmsma.urineAlbumin
+            twinPregnancy.value = if (pmsma.twinPregnancy == true) twinPregnancy.entries!![0] else twinPregnancy.entries!![1]
+            urineAlbumin.value = getLocalValueInArray(R.array.pmsma_confirmation_array, pmsma.urineAlbumin)
             haemoglobinAndBloodGroup.value = pmsma.haemoglobinAndBloodGroup
             hiv.value = pmsma.hiv
             vdrl.value = pmsma.vdrl
             hbsc.value = pmsma.hbsc
-            malaria.value = pmsma.malaria
-            hivTestDuringANC.value = if (pmsma.hivTestDuringANC == true) "Yes" else "No"
-            swollenCondtion.value = if (pmsma.swollenCondtion == true) "Yes" else "No"
-            bloodSugarTest.value = if (pmsma.bloodSugarTest == true) "Yes" else "No"
-            ultraSound.value = if (pmsma.ultraSound == true) "Yes" else "No"
-            ironFolicAcid.value = if (pmsma.ironFolicAcid == true) "Yes" else "No"
+            malaria.value = getLocalValueInArray(R.array.pmsma_malaria_array, pmsma.malaria)
+            hivTestDuringANC.value = if (pmsma.hivTestDuringANC == true) hivTestDuringANC.entries!![0] else hivTestDuringANC.entries!![1]
+            swollenCondtion.value = if (pmsma.swollenCondtion == true) swollenCondtion.entries!![0] else swollenCondtion.entries!![1]
+            bloodSugarTest.value = if (pmsma.bloodSugarTest == true) bloodSugarTest.entries!![0] else bloodSugarTest.entries!![1]
+            ultraSound.value = if (pmsma.ultraSound == true) ultraSound.entries!![0] else ultraSound.entries!![1]
+            ironFolicAcid.value = if (pmsma.ironFolicAcid == true) ironFolicAcid.entries!![0] else ironFolicAcid.entries!![1]
             calciumSupplementation.value =
-                if (pmsma.calciumSupplementation == true) "Yes" else "No"
-            tetanusToxoid.value = pmsma.tetanusToxoid
+                if (pmsma.calciumSupplementation == true) calciumSupplementation.entries!![0] else calciumSupplementation.entries!![1]
+            tetanusToxoid.value = getLocalValueInArray(R.array.pmsma_tetanus_toxoid_array, pmsma.tetanusToxoid)
             lastMenstrualPeriod.value = pmsma.lastMenstrualPeriod.let { getDateFromLong(it) }
             expectedDateOfDelivery.value = pmsma.expectedDateOfDelivery.let { getDateFromLong(it) }
-            highriskSymbols.value = if (pmsma.highriskSymbols == true) "Yes" else "No"
-            highRiskReason.value = pmsma.highRiskReason
-            highRiskPregnant.value = if (pmsma.highRiskPregnant == true) "Yes" else "No"
+            highriskSymbols.value = if (pmsma.highriskSymbols == true) highriskSymbols.entries!![0] else highriskSymbols.entries!![1]
+            highRiskReason.value = getLocalValueInArray(R.array.select_high_risk_condition, pmsma.highRiskReason)
+            highRiskPregnant.value = if (pmsma.highRiskPregnant == true) highRiskPregnant.entries!![0] else highRiskPregnant.entries!![1]
             highRiskPregnancyReferred.value =
-                if (pmsma.highRiskPregnancyReferred == true) "Yes" else "No"
+                if (pmsma.highRiskPregnancyReferred == true) highRiskPregnancyReferred.entries!![0] else highRiskPregnancyReferred.entries!![1]
             birthPrepAndNutritionAndFamilyPlanning.value =
-                if (pmsma.birthPrepAndNutritionAndFamilyPlanning == true) "Yes" else "No"
+                if (pmsma.birthPrepAndNutritionAndFamilyPlanning == true) birthPrepAndNutritionAndFamilyPlanning.entries!![0] else birthPrepAndNutritionAndFamilyPlanning.entries!![1]
             medicalOfficerSign.value = pmsma.medicalOfficerSign
         }
 
@@ -574,7 +577,7 @@
                 }
 
                 highriskSymbols.id -> {
-                    if(highriskSymbols.value=="Yes")
+                    if(highriskSymbols.value == highriskSymbols.entries!![0])
                     {
                         viewModel.onHighRiskSelected(true)
 

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildRegBinding
 import org.piramalswasthya.sakhi.model.ChildRegDomain
 
@@ -42,7 +43,7 @@ class ChildRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.item = item
-            binding.btnForm.text = if (item.childBen == null) "Register" else "View"
+            binding.btnForm.text = if (item.childBen == null) binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
 
             binding.btnForm.setBackgroundColor(binding.root.resources.getColor(if (item.childBen == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
