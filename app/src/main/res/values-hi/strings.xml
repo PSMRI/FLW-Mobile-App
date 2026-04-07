@@ -1073,10 +1073,6 @@
     <string name="weight_enter_in_grams_example">कृपया वजन ग्राम में दर्ज करें (जैसे 2500)</string>
     <string name="weight_min_500">वजन कम से कम 500 ग्राम होना चाहिए</string>
     <string name="weight_max_7000">वजन 7000 ग्राम से अधिक नहीं होना चाहिए</string>
-<!--    <string-array name="benificary_case_status">-->
-<!--        <item>जांच</item>-->
-<!--        <item>मृत्यु</item>-->
-<!--    </string-array>-->
 
     <string name="dynamic_form_select">%s चुनें</string>
 </resources>
