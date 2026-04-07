@@ -726,8 +726,6 @@
                                         maxDate = maxVisitDate ?: today
                                     }
                                     else {
-
-                                        
                                         if (formId == FormConstants.EYE_SURGERY_FORM_ID &&
                                             (field.fieldId == "visit_date" || field.fieldId == "date_of_surgery")){
                                             val cal = Calendar.getInstance()
