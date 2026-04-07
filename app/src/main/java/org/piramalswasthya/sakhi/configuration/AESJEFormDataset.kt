@@ -136,7 +136,7 @@ class AESJEFormDataset(
         )
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
-            beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status)[0]
+            beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status_kalaazar)[0]
             caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
         } else {
 
