@@ -194,6 +194,8 @@
     <string name="facility_referral_follow_ups">स्वास्थ्य केंद्र रेफरल का फॉलो-अप</string>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
+    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
+    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
     <string name="cbac_is_leprosy_suspected">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
     <string name="refer_to_hwc_facility_alert">क्या आप HWC सुविधा में रेफर करना चाहते हैं?</string>
 
