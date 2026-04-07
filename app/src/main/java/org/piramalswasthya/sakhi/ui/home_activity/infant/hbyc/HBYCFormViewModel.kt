@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
@@ -127,14 +128,17 @@ class HBYCFormViewModel @Inject constructor(
                 localSchemaToRender.sections.orEmpty().forEach { section ->
                     section.fields.orEmpty().forEach { field ->
                         field.visible = evaluateFieldVisibility(field, allFields)
+                        if (field.fieldId == "measles_vaccine" && visitMonth in listOf("3 Months", "6 Months")) {
+                            field.visible = false
+                        }
                     }
                 }
 
                 val submittedMonths = _syncedVisitList.value.map { it.visitDay }.toSet()
                 localSchemaToRender.sections.orEmpty().forEach { section ->
                     section.fields.orEmpty().forEach { field ->
-                        if (field.fieldId == "visit_day" && field.options != null) {
-                            field.options = field.options!!.filter { it == visitMonth || !submittedMonths.contains(it) }.toMutableList()
+                        if (field.fieldId == "visit_day" && field.optionItems() != null) {
+                            field.options = field.optionItems()!!.filter { it.value == visitMonth || !submittedMonths.contains(it.value) }
                         }
                     }
                 }
@@ -163,6 +167,9 @@ fun updateFieldValue(fieldId: String, value: Any?) {
     }
     allFields.forEach { field ->
         field.visible = evaluateFieldVisibility(field, allFields)
+        if (field.fieldId == "measles_vaccine" && visitMonth in listOf("3 Months", "6 Months")) {
+            field.visible = false
+        }
     }
 
     val babyAliveValue = allFields.find { it.fieldId == "is_baby_alive" }?.value
@@ -261,7 +268,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {
