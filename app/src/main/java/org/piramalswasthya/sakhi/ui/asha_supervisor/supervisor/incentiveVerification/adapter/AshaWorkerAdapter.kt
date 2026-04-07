@@ -11,9 +11,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
 import org.piramalswasthya.sakhi.utils.HelperUtil
-import org.piramalswasthya.sakhi.utils.Log
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class AshaWorkerAdapter(
@@ -48,7 +46,6 @@ class AshaWorkerAdapter(
             tvWorkerName.text = worker.name
             tvAmount.text = formatAmount(worker.amount)
             tvAshaIdCenter.text = "${worker.ashaId} · ${worker.serviceCenter}"
-            Log.e("ApprovalDate","${worker.approvalDate}${worker.role}")
 
             when (worker.status) {
                 VerificationStatus.VERIFIED -> {
