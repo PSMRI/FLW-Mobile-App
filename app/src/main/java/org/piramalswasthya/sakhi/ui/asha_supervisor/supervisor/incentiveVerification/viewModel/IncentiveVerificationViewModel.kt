@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaListResponse
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
+import org.piramalswasthya.sakhi.utils.HelperUtil.formatDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -92,6 +93,9 @@ class IncentiveVerificationViewModel @Inject constructor(
                     summary = parsed.approvalStatus ?: ApprovalStatusSummary(0, 0, 0)
 
                     allWorkers = parsed.data?.map { worker ->
+                        val latestActivity = worker.activities
+                            ?.filter { !it.approvalDate.isNullOrBlank() }
+                            ?.maxByOrNull { it.approvalDate ?: "" }
                         AshaWorker(
                             id            = worker.userId.toString(),
                             name          = worker.fullName ?: "Unknown",
@@ -101,10 +105,10 @@ class IncentiveVerificationViewModel @Inject constructor(
                             pending       = worker.pending ?: 0,
                             verified      = worker.verified ?: 0,
                             rejected      = worker.rejected ?: 0,
-                            role          = worker.role ?:"" ,
-                            approvalDate  = worker.approvalDate ?:"",
-                            reason        = worker.reason ?: "",
-                            OtherReason   = worker.otherReason ?: "",
+                            role          = latestActivity?.role?.takeIf { it.isNotBlank() } ?: "",
+                            approvalDate  = formatDate(latestActivity?.approvalDate),
+                            reason        = latestActivity?.reason ?: "",
+                            OtherReason   = latestActivity?.otherReason ?: "",
                             status        = mapStatus(worker.approvalStatus)
                         )
                     } ?: emptyList()

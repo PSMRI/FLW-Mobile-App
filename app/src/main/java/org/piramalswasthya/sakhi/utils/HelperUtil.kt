@@ -55,6 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object HelperUtil {
 
@@ -881,11 +882,25 @@ object HelperUtil {
 
     fun formatDate(dateString: String?): String {
         return try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+            if (dateString.isNullOrBlank()) return ""
 
-            val date = inputFormat.parse(dateString ?: "")
-            outputFormat.format(date!!)
+            val inputFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+
+            val outputFormat = SimpleDateFormat(
+                "d MMM yyyy",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getDefault()
+            }
+
+            val date = inputFormat.parse(dateString)
+            if (date != null) outputFormat.format(date) else ""
+
         } catch (e: Exception) {
             Timber.w(e, "Failed to parse date: $dateString")
             ""

@@ -28,9 +28,6 @@
     <string name="ectdset_discharge_summary_1">डिस्चार्ज सारांश (नसबंदी विधि 1 के लिए लागू)</string>
     <string name="ectdset_discharge_summary_2">डिस्चार्ज सारांश (नसबंदी विधि 2 के लिए लागू)</string>
 
-    <array name="ectdset_po_neg">
-        <item>पॉजिटिव</item>
-        <item>नेगेटिव</item>
-    </array>
+
 
 </resources>

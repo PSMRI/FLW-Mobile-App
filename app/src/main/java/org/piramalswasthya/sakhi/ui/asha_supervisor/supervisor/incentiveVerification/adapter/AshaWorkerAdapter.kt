@@ -12,7 +12,6 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class AshaWorkerAdapter(
@@ -52,7 +51,7 @@ class AshaWorkerAdapter(
                 VerificationStatus.VERIFIED -> {
                     statusBadge.text = "Verified"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
-                    tvStatusDate.text = "Verified Date: ${HelperUtil.formatDate(worker.approvalDate)}"
+                    tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
                 }
