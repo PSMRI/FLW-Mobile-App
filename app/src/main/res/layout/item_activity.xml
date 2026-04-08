@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/clMain"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.08" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline75"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <!-- S.No -->
+    <TextView
+        android:id="@+id/tvSerialNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toStartOf="@id/guideline10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
+
+    <!-- Activity Name bold -->
+    <TextView
+        android:id="@+id/tvActivityName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/guideline50"
+        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="IMMUNIZATION" />
+
+    <!-- Activity Desc -->
+    <TextView
+        android:id="@+id/tvActivityDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#666666"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toStartOf="@id/guideline50"
+        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityName"
+        tools:text="ASHA incentive Rs.150 per meeting for mobilizing" />
+
+    <!-- No of Claims -->
+    <TextView
+        android:id="@+id/tvClaimCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/statusBadge"
+        app:layout_constraintEnd_toStartOf="@id/guideline75"
+        app:layout_constraintStart_toStartOf="@id/guideline50"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
+
+    <!-- Amount -->
+    <TextView
+        android:id="@+id/tvActivityAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/statusBadge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline75"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="150" />
+
+    <!-- Status Badge -->
+    <TextView
+        android:id="@+id/statusBadge"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityAmount"
+        tools:text="Verified" />
+
+    <!-- Divider -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#E0E0E0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvActivityDesc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

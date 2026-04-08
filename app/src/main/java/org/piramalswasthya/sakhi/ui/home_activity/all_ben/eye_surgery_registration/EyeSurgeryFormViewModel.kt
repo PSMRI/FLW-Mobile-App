@@ -1,30 +1,29 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
 import android.content.Context
-    import android.util.Log
-    import androidx.lifecycle.LiveData
-    import androidx.lifecycle.MutableLiveData
-    import androidx.lifecycle.ViewModel
-    import androidx.lifecycle.viewModelScope
-    import dagger.hilt.android.lifecycle.HiltViewModel
-    import dagger.hilt.android.qualifiers.ApplicationContext
-    import kotlinx.coroutines.flow.MutableStateFlow
-    import kotlinx.coroutines.flow.StateFlow
-    import kotlinx.coroutines.launch
-    import org.json.JSONObject
-    import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
-    import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
-    import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
-    import org.piramalswasthya.sakhi.model.BottleItem
-    import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
-    import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-    import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
-    import org.piramalswasthya.sakhi.repositories.dynamicRepo.EyeSurgeryFormRepository
-    import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
-    import java.text.SimpleDateFormat
-    import java.util.*
-    import javax.inject.Inject
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.EyeSurgeryFormRepository
+import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
+import java.text.SimpleDateFormat
+import java.util.*
+import javax.inject.Inject
 
 @HiltViewModel
 class EyeSurgeryFormViewModel @Inject constructor(
@@ -47,7 +46,6 @@ class EyeSurgeryFormViewModel @Inject constructor(
     private val _benIdList = MutableLiveData<List<Long>>()
     val benIdList: LiveData<List<Long>> = _benIdList
 
-
     fun loadAllBenIds() {
         viewModelScope.launch {
             val ids = repository.getAllBenIds()
@@ -66,42 +64,68 @@ class EyeSurgeryFormViewModel @Inject constructor(
         benId: Long,
         formId: String,
         viewMode: Boolean,
+        loadSavedData: Boolean = true,
+        eyeSide: String = ""
     ) {
         this.isViewMode = viewMode
         loadSyncedVisitList(benId)
 
         viewModelScope.launch {
             val cachedSchemaEntity = repository.getSavedSchema(formId)
-            val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
+            val localSchemaToRender = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
-            }
+            } ?: repository.getFormSchema(formId) ?: return@launch
 
-            val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
-
-            val savedJson = repository.loadFormResponseJson(benId, formId)
-            val savedFieldValues = if (!savedJson.isNullOrBlank()) {
-                try {
-                    val root = JSONObject(savedJson)
-                    val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                    fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
-                } catch (e: Exception) {
-                    emptyMap()
-                }
+            val savedFieldValues = if (loadSavedData) {
+                val savedJson = repository.loadFormResponseJson(benId, formId)
+                if (!savedJson.isNullOrBlank()) {
+                    try {
+                        val root = JSONObject(savedJson)
+                        val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+                        fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+                    } catch (e: Exception) { emptyMap() }
+                } else emptyMap()
             } else {
                 emptyMap()
             }
 
+
             val allFields = localSchemaToRender.sections.flatMap { it.fields.orEmpty() }
+
+            allFields.forEach {
+                Log.d("EyeVM", "fieldId=${it.fieldId} type=${it.type} options=${it.options}")
+            }
+
             localSchemaToRender.sections.orEmpty().forEach { section ->
                 section.fields.orEmpty().forEach { field ->
-                    field.value = when (field.fieldId) {
-                        "visit_day" -> visitDay
-                        else -> savedFieldValues[field.fieldId] ?: field.default
+                    field.value = when {
+                        field.fieldId == "visit_day" -> visitDay
+
+                        field.fieldId == "eye_affected" && eyeSide.isNotEmpty() && !loadSavedData -> {
+                            val matchedOption = field.options?.find {
+                                it.equals(eyeSide, ignoreCase = true)
+                            } ?:
+                            eyeSide
+                            matchedOption
+                        }
+
+                        else -> {
+                            if (loadSavedData) {
+                                savedFieldValues[field.fieldId] ?: field.default
+                            } else {
+                                null
+                            }
+                        }
                     }
 
-                    field.isEditable = when (field.fieldId) {
-                        "visit_day", "due_date" -> false
+                    field.isEditable = when {
+                        field.fieldId == "visit_day" || field.fieldId == "due_date" -> false
+                        field.fieldId == "eye_affected" && eyeSide.isNotEmpty() && !loadSavedData -> false
                         else -> !viewMode
+                    }
+
+                    if (field.fieldId == "eye_affected") {
+                        Log.d("EyeVM", "eye_affected: value=${field.value} isEditable=${field.isEditable} options=${field.options}")
                     }
                 }
             }
@@ -112,6 +136,53 @@ class EyeSurgeryFormViewModel @Inject constructor(
                 }
             }
             _schema.value = localSchemaToRender
+        }
+    }
+
+    fun loadFormSchemaFromJson(
+        benId: Long,
+        formId: String,
+        isViewMode: Boolean,
+        formDataJson: String
+    ) {
+        this.isViewMode = isViewMode
+        loadSyncedVisitList(benId)
+
+        viewModelScope.launch {
+            val cachedSchemaEntity = repository.getSavedSchema(formId)
+            val cachedSchema: FormSchemaDto? = cachedSchemaEntity?.let {
+                FormSchemaDto.fromJson(it.schemaJson)
+            }
+            val localSchema = cachedSchema ?: repository.getFormSchema(formId) ?: return@launch
+
+            val savedValues = try {
+                val root = JSONObject(formDataJson)
+                val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
+                fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+            } catch (e: Exception) {
+                emptyMap<String, Any?>()
+            }
+
+            val allFields = localSchema.sections.flatMap { it.fields.orEmpty() }
+
+            localSchema.sections.orEmpty().forEach { section ->
+                section.fields.orEmpty().forEach { field ->
+                    field.value = savedValues[field.fieldId] ?: field.default
+                    field.isEditable = when (field.fieldId) {
+                        "visit_day", "due_date" -> false
+                        "eye_affected" -> false
+                        else -> !isViewMode
+                    }
+                }
+            }
+
+            localSchema.sections.orEmpty().forEach { section ->
+                section.fields.orEmpty().forEach { field ->
+                    field.visible = evaluateFieldVisibility(field, allFields)
+                }
+            }
+
+            _schema.value = localSchema
         }
     }
 
@@ -130,13 +201,10 @@ class EyeSurgeryFormViewModel @Inject constructor(
     fun updateFieldValue(fieldId: String, value: Any?) {
         val currentSchema = _schema.value ?: return
         val allFields = currentSchema.sections.flatMap { it.fields }
-
         allFields.find { it.fieldId == fieldId }?.value = value
-
         allFields.forEach { field ->
             field.visible = evaluateFieldVisibility(field, allFields)
         }
-
         _schema.value = currentSchema.copy()
     }
 
@@ -159,12 +227,16 @@ class EyeSurgeryFormViewModel @Inject constructor(
         } catch (_: Exception) { "" }
     }
 
-    suspend fun saveFormResponses(benId: Long, hhId: Long) : Boolean {
-        return try{
+    suspend fun saveFormResponses(
+        benId: Long,
+        hhId: Long,
+        eyeSide: String = "",
+        recordId: Int = 0
+    ): Boolean {
+        return try {
             val currentSchema = _schema.value ?: return false
             val formId = currentSchema.formId
             val version = currentSchema.version
-            val beneficiaryId = benId
 
             val fieldMap = currentSchema.sections.orEmpty()
                 .flatMap { it.fields.orEmpty() }
@@ -176,31 +248,35 @@ class EyeSurgeryFormViewModel @Inject constructor(
 
             val wrappedJson = JSONObject().apply {
                 put("formId", formId)
-                put("beneficiaryId", beneficiaryId)
+                put("beneficiaryId", benId)
                 put("houseHoldId", hhId)
                 put("visitDate", visitDate)
+                put("eyeSide", eyeSide)
                 put("fields", JSONObject(fieldMap))
             }
 
             val entity = EyeSurgeryFormResponseJsonEntity(
+                id = if (recordId > 0) recordId else 0,
                 benId = benId,
                 hhId = hhId,
                 visitDate = visitDate,
                 visitMonth = visitMonth,
+                eyeSide = eyeSide.uppercase(),
                 formId = formId,
                 version = version,
                 formDataJson = wrappedJson.toString(),
                 isSynced = false,
                 syncedAt = null
             )
-
-            repository.insertFormResponse(entity)
-
-            loadSyncedVisitList(benId)
+            val referredTo = fieldMap["referred_to"]?.toString()
+            val referralReason = fieldMap["symptoms_observed"]?.toString()
+            if (!referredTo.isNullOrBlank() && !referralReason.isNullOrBlank()) {
+                repository.saveReferral(benId, referredTo,referralReason)
+            }
+            repository.upsertByEye(entity)
             EyeSurgeryFormSyncWorker.enqueue(context)
-
             true
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             false
         }
@@ -239,7 +315,9 @@ class EyeSurgeryFormViewModel @Inject constructor(
                             )
                         } else null
                     },
-                    value = field.value
+                    value = field.value,
+                    isEditable = field.isEditable
+
                 )
             }
         } ?: emptyList()

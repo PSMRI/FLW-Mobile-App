@@ -94,6 +94,7 @@ class UserRepo @Inject constructor(
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
+        preferenceDao.saveStateId(response.data.stateId)
         return user
     }
 
@@ -196,6 +197,74 @@ class UserRepo @Inject constructor(
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()
+            val designationId = data.optInt("designationID", -1)
+            preferenceDao.saveDesignationId(designationId)
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+                    val locationType = location.optString("locationType", "")
+                    preferenceDao.saveLocationType(locationType)
+
+
+                }
+                if (facilityData.has("user")) {
+
+                    val userObj = facilityData.getJSONObject("user")
+                    val employeeId = userObj.optString("employeeId", "")
+                    preferenceDao.saveEmployeeId(employeeId)
+                    if (userObj.has("demographics")) {
+
+                        val demographics = userObj.getJSONObject("demographics")
+                        val gender = demographics.optString("gender", "")
+                        val dob = demographics.optString("dob", "")
+                        val mobile = demographics.optString("mobile", "")
+                        val email = demographics.optString("email", "")
+                        preferenceDao.saveUserGender(gender)
+                        preferenceDao.saveUserDob(dob)
+                        preferenceDao.saveUserMobile(mobile)
+                        preferenceDao.saveUserEmail(email)
+
+                    }
+                }
+                val supervisorName = data.optString("fullName", "")
+                val supervisorId = data.optInt("userID", -1)
+                preferenceDao.saveSupervisorName(supervisorName)
+                preferenceDao.saveSupervisorId(supervisorId)
+            }
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                // ----- LOCATION -----
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
+
+                    preferenceDao.saveSupervisorDistrict(district)
+                    preferenceDao.saveSupervisorBlock(block)
+                    preferenceDao.saveSupervisorState(state)
+                }
+
+                if (facilityData.has("facilities")) {
+                    val facilitiesArray = facilityData.getJSONArray("facilities")
+
+                    if (facilitiesArray.length() > 0) {
+                        val facilityObj = facilitiesArray.getJSONObject(0)
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+                    }
+                }
+            }
             return@withContext userId
         }
     }
