@@ -211,8 +211,8 @@ class PregnantWomanAncAbortionDataset(
             dateOfSterilization.min = regis.abortionDate
             val woP = getWeeksOfPregnancy(regis.ancDate, regis.lmpDate)
             weekOfPregnancy.value = woP.toString()
-            abortionType.value = regis.abortionType
-            abortionFacility.value = regis.abortionFacility
+            abortionType.value = getLocalValueInArray(R.array.anc_abortion_type_array, regis.abortionType)
+            abortionFacility.value = getLocalValueInArray(R.array.abortion_place_array, regis.abortionFacility)
             abortionDate.value = regis.abortionDate?.let { getDateFromLong(it) }
         } else {
             isPaiucd.value = when (saved.isPaiucdId) {
@@ -238,8 +238,8 @@ class PregnantWomanAncAbortionDataset(
 
             val woP = getWeeksOfPregnancy(saved.ancDate, regis.lmpDate)
             weekOfPregnancy.value = woP.toString()
-            abortionType.value = saved.abortionType
-            abortionFacility.value = saved.abortionFacility
+            abortionType.value = getLocalValueInArray(R.array.anc_abortion_type_array, saved.abortionType)
+            abortionFacility.value = getLocalValueInArray(R.array.abortion_place_array, saved.abortionFacility)
             abortionDate.value = saved.abortionDate?.let { getDateFromLong(it) }
             serialNoAsPerAdmission.value = saved.serialNo
             methodOfTermination.value = getLocalValueInArray(R.array.anc_method_of_termination, saved.methodOfTermination)
