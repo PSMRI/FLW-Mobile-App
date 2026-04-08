@@ -15,3 +15,6 @@ app/keystore/*
 keystore.properties
 debug-keystore.jks
 debug-keystore-base64.txt
+.claude/
+.firebaserc
+firebase.json
