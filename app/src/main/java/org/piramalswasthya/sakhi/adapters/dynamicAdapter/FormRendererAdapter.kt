@@ -976,11 +976,11 @@
                             val radioButton = RadioButton(context).apply {
                                 id = View.generateViewId()
                                 text = option.label
-                                isChecked = field.value?.toString().equals(option, ignoreCase = true)
+                                isChecked = field.value?.toString().equals(option.value, ignoreCase = true)
                                 isEnabled = when {
                                     isViewOnly -> false
                                     isSNCUDisabled -> false
-                                    !field.isEditable -> option.equals(preSelectedValue, ignoreCase = true) // CASE-INSENSITIVE
+                                    !field.isEditable -> option.value.equals(preSelectedValue, ignoreCase = true) // CASE-INSENSITIVE
                                     else -> true
                                 }
 
