@@ -274,23 +274,39 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val motherImmunizationListCount = motherImmunizationList.map { it.size }
 
-    val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
-        .map { list -> list.map { it.asDomainModel() } }
+//    val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
+//        .map { list -> list.map { it.asDomainModel() } }
+val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
+    .combine(childCountsByBen) { list, counts ->
+        list.map { it.asDomainModel(counts[it.ben.benId]) }
+    }
+
     val eligibleCoupleListCount = eligibleCoupleList.map { it.size }
 
+//    val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
+//        .map { list ->
+//            list.filter {
+//                it.ecr != null && it.ecr.lmpDate != 0L &&
+//                        System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+////                if (it.ecr != null && it.ecr.lmpDate != 0L) {
+////                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+////                } else {
+////                    true
+////                }
+//                }
+//                .map { it.asDomainModel() } }
+
     val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
-        .map { list ->
+        .combine(childCountsByBen) { list, counts ->
             list.filter {
                 it.ecr != null && it.ecr.lmpDate != 0L &&
                         System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
-//                if (it.ecr != null && it.ecr.lmpDate != 0L) {
-//                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
-//                } else {
-//                    true
-//                }
-                }
-                .map { it.asDomainModel() } }
+            }
+                .map { it.asDomainModel(counts[it.ben.benId]) }
+        }
     val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
+
+//    val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
 
     val eligibleCoupleTrackingList = benDao.getAllEligibleTrackingList(selectedVillage)
         .combine(childCountsByBen) { list, counts ->

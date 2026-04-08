@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -15,7 +16,7 @@ import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
 import org.piramalswasthya.sakhi.utils.StringMappingUtil
 
 class AshaProfileDataset(
-    context: Context, currentLanguage: Languages,var ashaProfileRepo: AshaProfileRepo
+    context: Context, currentLanguage: Languages,var ashaProfileRepo: AshaProfileRepo,var preferenceDao: PreferenceDao
 ) : Dataset(context, currentLanguage) {
 
     private val pic = FormElement(
@@ -314,7 +315,7 @@ class AshaProfileDataset(
         pic.value = ashaProfile?.profileImage
         village.value = currentUser.villages[0].name
         loginuserName.value = currentUser.userName
-        userId.value = ashaProfile?.employeeId.toString()
+        userId.value = preferenceDao.getEmployeeId().orEmpty()
         mobileNumber.value = ashaProfile?.mobileNumber.toString()
         alternameMobileNumber.value = ashaProfile?.alternateMobileNumber.toString()
         dateOfJoining.value = ashaProfile?.dateOfJoining.toString()

@@ -133,7 +133,7 @@ class NewChildBenViewModel @Inject constructor(
 
         user = preferenceDao.getLoggedInUser()!!
         household = benRepo.getHousehold(hhId)!!
-        locationRecord = preferenceDao.getLocationRecord()!!
+        locationRecord = household.locationRecord
 
         val benForEcr = ecrRepo.getBenFromId(SelectedbenIdFromArgs)
         val savedEcr = ecrRepo.getSavedRecord(SelectedbenIdFromArgs)
