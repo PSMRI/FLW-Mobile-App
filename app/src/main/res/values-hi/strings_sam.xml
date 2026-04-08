@@ -14,6 +14,9 @@
     <string name="take_photo">फोटो लो</string>
     <string name="select_image">छवि चुनें</string>
     <string name="choose_from_gallery">गैलरी से चुनें</string>
+    <string name="pick_image">फ़ोटो चुनें</string>
+    <string name="select_file">फ़ाइल चुनें</string>
+    <string name="choose_file_pdf_image">फ़ाइल चुनें (PDF / छवि)</string>
     <string name="invalid_visit_date">अमान्य भ्रमण तिथि</string>
     <string name="delivery_date_is_missing">प्रसव की तिथि अनुपस्थित है</string>
     <string name="visit_date_cannot_be_after_today_s_date">भ्रमण की तिथि आज की तिथि के बाद नहीं हो सकती</string>

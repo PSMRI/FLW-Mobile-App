@@ -1068,7 +1068,7 @@
 
                             if (!isViewOnly && field.isEditable) {
                                 val pickButton = Button(context).apply {
-                                    text = "Pick Image"
+                                    text = context.getString(R.string.pick_image)
                                     layoutParams = LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.WRAP_CONTENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -1093,7 +1093,7 @@
                             }
 
                             val pickButton = Button(context).apply {
-                                text = "Pick Image"
+                                text = context.getString(R.string.pick_image)
                                 isEnabled = !isViewOnly && field.isEditable
                                 setOnClickListener {
                                     if (!isViewOnly && field.isEditable) {
