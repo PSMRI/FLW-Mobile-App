@@ -90,6 +90,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             return cal.timeInMillis
         }
 
+        private fun getAgeStringFromDob(dob: Long): String {
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = dob
+            val ageUnitDTO = org.piramalswasthya.sakhi.model.AgeUnitDTO(0, 0, 0)
+            org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO(ageUnitDTO, cal)
+            return org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit(ageUnitDTO)
+        }
     }
 
     private var familyHeadPhoneNo: String? = null
@@ -157,6 +164,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasDependants = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
     )
+    private val dobReadOnly = FormElement(
+        id = 116,
+        inputType = TEXT_VIEW,
+        title = resources.getString(R.string.nbr_dob),
+        required = false,
+    )
+
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
@@ -870,6 +884,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                agePopup.value = getAgeStringFromDob(saved.dob)
+                dobReadOnly.value = getDateFromLong(saved.dob)
+                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
                 maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
@@ -1106,6 +1123,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                agePopup.value = getAgeStringFromDob(saved.dob)
+                dobReadOnly.value = getDateFromLong(saved.dob)
+                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
                 maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
