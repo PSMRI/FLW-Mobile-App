@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
@@ -140,7 +141,7 @@ class PulsePolioCampaignViewModel @Inject constructor(
                     label = field.label,
                     type = field.type,
                     defaultValue = field.defaultValue,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {

@@ -47,7 +47,7 @@ data class FormFieldDto(
     val type: String = "",
 
     @SerializedName("options")
-    var options: List<String>? = null,
+    var options: Any? = null,
 
     @SerializedName("isRequired")
     val required: Boolean = false,
@@ -100,5 +100,5 @@ data class FieldValidationDto(
 
 data class OptionItem(
     val label: String = "",
-    val value: Any? = null
+    val value: String = ""
 )

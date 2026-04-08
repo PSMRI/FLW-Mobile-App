@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.EyeSurgeryFormRepository
 import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
 import java.text.SimpleDateFormat
@@ -70,7 +71,6 @@ class EyeSurgeryFormViewModel @Inject constructor(
         loadSyncedVisitList(benId)
 
         viewModelScope.launch {
-
             val cachedSchemaEntity = repository.getSavedSchema(formId)
             val localSchemaToRender = cachedSchemaEntity?.let {
                 FormSchemaDto.fromJson(it.schemaJson)
@@ -290,7 +290,7 @@ class EyeSurgeryFormViewModel @Inject constructor(
                     label = field.label,
                     type = field.type,
                     defaultValue = field.defaultValue,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {

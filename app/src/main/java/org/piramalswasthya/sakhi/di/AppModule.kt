@@ -224,7 +224,7 @@ object AppModule {
         @Named("uatClient") httpClient: OkHttpClient
     ): AmritApiService {
         return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create()) // ✅ Only for this API
+            .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(KeyUtils.baseTMCUrl())
             .client(httpClient)
             .build()
