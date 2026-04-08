@@ -50,6 +50,7 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.State
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
@@ -714,21 +715,39 @@ class NewBenRegFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    //    requestLocationPermission()
-        activity?.let {
-            (it as HomeActivity).updateActionBar(
+//    override fun onStart() {
+//        super.onStart()
+//    //    requestLocationPermission()
+//        activity?.let {
+//            (it as HomeActivity).updateActionBar(
+//                R.drawable.ic__ben,
+//                getString(if (viewModel.isHoF) R.string.title_new_ben_reg_hof else R.string.title_new_ben_reg_non_hof)
+//            )
+//        }
+//
+//        viewModel.recordExists.observe(viewLifecycleOwner) {
+//            if (!it && !viewModel.getIsConsentAgreed()) consentAlert.show()
+//        }
+//
+//    }
+override fun onStart() {
+    super.onStart()
+    activity?.let {
+        when (it) {
+            is HomeActivity -> it.updateActionBar(
                 R.drawable.ic__ben,
                 getString(if (viewModel.isHoF) R.string.title_new_ben_reg_hof else R.string.title_new_ben_reg_non_hof)
             )
+            is VolunteerActivity -> it.updateActionBar(
+                R.drawable.ic__ben,
+                getString(R.string.title_new_ben_reg_hof)
+            )
         }
-
-        viewModel.recordExists.observe(viewLifecycleOwner) {
-            if (!it && !viewModel.getIsConsentAgreed()) consentAlert.show()
-        }
-
     }
+    viewModel.recordExists.observe(viewLifecycleOwner) {
+        if (!it && !viewModel.getIsConsentAgreed()) consentAlert.show()
+    }
+}
 
     private fun requestLocationPermission() {
         val locationManager =

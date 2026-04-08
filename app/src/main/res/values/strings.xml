@@ -1352,6 +1352,7 @@
     <string name="weight_enter_in_grams_example">Please enter weight in grams (e.g. 2500)</string>
     <string name="weight_min_500">Weight must be at least 500 grams</string>
     <string name="weight_max_7000">Weight should not be greater than 7000 grams</string>
+    <string name="volunteer">Volunteer</string>
 
 </resources>
 

@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.adapters.TbScreeningListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 
 @AndroidEntryPoint
 class TBScreeningListFragment : Fragment() {
@@ -95,10 +96,16 @@ class TBScreeningListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
-                getString(R.string.tb_screening_list)
-            )
+            when (it) {
+                is HomeActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_screening_list)
+                )
+                is VolunteerActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_screening_list)
+                )
+            }
         }
     }
 

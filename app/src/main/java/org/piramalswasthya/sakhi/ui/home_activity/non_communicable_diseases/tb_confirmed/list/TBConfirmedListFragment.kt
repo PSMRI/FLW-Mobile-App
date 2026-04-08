@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from.TBConfirmedViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list.TBScreeningListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.list.TBSuspectedListViewModel
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import javax.inject.Inject
 import kotlin.getValue
 
@@ -111,13 +112,17 @@ class TBConfirmedListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
+            when {
+                it is VolunteerActivity -> it.updateActionBar(
                     R.drawable.ic__ncd,
                     getString(R.string.tb_confirmed_list)
                 )
-            } else {
-                (it as SupervisorActivity).updateActionBar(
+                prefDao.getLoggedInUser()?.role.equals("asha", true) ->
+                    (it as HomeActivity).updateActionBar(
+                        R.drawable.ic__ncd,
+                        getString(R.string.tb_confirmed_list)
+                    )
+                else -> (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd,
                     getString(R.string.tb_confirmed_list)
                 )

@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentNcdEligibleListBinding
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -149,10 +150,16 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd_list,
-                getString(R.string.ncd_eligible_list)
-            )
+            when (it) {
+                is HomeActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd_list,
+                    getString(R.string.ncd_eligible_list)
+                )
+                is VolunteerActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd_list,
+                    getString(R.string.ncd_eligible_list)
+                )
+            }
         }
     }
 

@@ -42,7 +42,9 @@ class RecordsRepo @Inject constructor(
     private val childRegistrationDao: ChildRegistrationDao,
     preferenceDao: PreferenceDao
 ) {
-    private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
+//    private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
+    private val selectedVillage = preferenceDao.getLocationRecord()?.village?.id ?: 0
+
     private val localizedResources = HelperUtil.getLocalizedResources(context, preferenceDao.getCurrentLanguage())
 
     val hhList = householdDao.getAllHouseholdWithNumMembers(selectedVillage)

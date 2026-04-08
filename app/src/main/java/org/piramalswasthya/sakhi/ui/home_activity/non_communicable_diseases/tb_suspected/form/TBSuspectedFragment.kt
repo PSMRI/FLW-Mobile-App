@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 
@@ -118,14 +119,19 @@ class TBSuspectedFragment : Fragment() {
             false
         }
     }
-
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
-                getString(R.string.tb_suspected_form)
-            )
+            when (it) {
+                is HomeActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_form)
+                )
+                is VolunteerActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.tb_suspected_form)
+                )
+            }
         }
     }
 

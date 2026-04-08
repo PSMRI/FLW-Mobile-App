@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.filter.NCDReferTypeFilter
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import javax.inject.Inject
 import kotlin.getValue
 
@@ -138,6 +139,11 @@ class NcdRefferedList : Fragment() {
         activity?.let {
             if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(
+                    R.drawable.ic__ncd_priority,
+                    getString(R.string.ncd_refer_list)
+                )
+            } else if (it is VolunteerActivity) {
+                it.updateActionBar(
                     R.drawable.ic__ncd_priority,
                     getString(R.string.ncd_refer_list)
                 )

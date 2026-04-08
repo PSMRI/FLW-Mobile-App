@@ -41,6 +41,7 @@ import javax.inject.Inject
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 
 
 @AndroidEntryPoint
@@ -220,61 +221,76 @@ class SignInFragment : Fragment() {
                     binding.tvError.visibility = View.GONE
 
                     val loggedInUser = prefDao.getLoggedInUser()
-                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
-                        val user = loggedInUser!!
-                        val village = user.villages.firstOrNull()
-                        val locationRecord = LocationRecord(
-                            LocationEntity(1, "India"),
-                            LocationEntity(user.state.id, user.state.name),
-                            LocationEntity(0, ""),
-                            LocationEntity(user.block.id, user.block.name),
-                            LocationEntity(village?.id ?: 0, village?.name ?: ""),
-                        )
-                        prefDao.saveLocationRecord(locationRecord)
+                    // TEMP: testing ke liye, baad mein hata dena
+                    activity?.finish()
+                    val goToVolunteer = Intent(requireContext(), VolunteerActivity::class.java)
+                    startActivity(goToVolunteer)
+                    //..................temp.vol......................................
 
-                        activity?.finish()
-                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
-                        startActivity(goToHome)
-                    } else {
-                        WorkerUtils.triggerGenBenIdWorker(requireContext())
-                        if (BuildConfig.FLAVOR.equals("niramay", true)) {
-//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
-//                                //Below ServiceMapId are form Indian Oil Project
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-//                            } else {
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-//                            }
-
-                        } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
-                           // if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-//                            } else {
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-//                            }
-
-                        } else {
-                            findNavController().navigate(
-                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                            activity?.finish()
-                        }
-                    }
-
+                    // ................ if Roll Availble then uncomment below code..................................
+//                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+//                        val user = loggedInUser!!
+//                        val village = user.villages.firstOrNull()
+//                        val locationRecord = LocationRecord(
+//                            LocationEntity(1, "India"),
+//                            LocationEntity(user.state.id, user.state.name),
+//                            LocationEntity(0, ""),
+//                            LocationEntity(user.block.id, user.block.name),
+//                            LocationEntity(village?.id ?: 0, village?.name ?: ""),
+//                        )
+//                        prefDao.saveLocationRecord(locationRecord)
+//
+//                        activity?.finish()
+//                        val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
+//                        startActivity(goToHome)
+//                    }
+//                    else if (loggedInUser?.role.equals(RoleConstants.ROLE_VOLUNTEER, true)) {
+//                        // Volunteer → directly VolunteerActivity, no facility selection
+//                        activity?.finish()
+//                        val goToVolunteer = Intent(requireContext(), VolunteerActivity::class.java)
+//                        startActivity(goToVolunteer)
+//
+//                    }
+//                    else {
+//                        WorkerUtils.triggerGenBenIdWorker(requireContext())
+//                        if (BuildConfig.FLAVOR.equals("niramay", true)) {
+////                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
+////                                //Below ServiceMapId are form Indian Oil Project
+////                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
+////                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
+////                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
+//                                findNavController().navigate(
+//                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+//                                activity?.finish()
+////                            } else {
+////                                binding.clContent.visibility = View.VISIBLE
+////                                binding.pbSignIn.visibility = View.GONE
+////                                binding.tvError.visibility = View.GONE
+////                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
+////                            }
+//
+//                        } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
+//                           // if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
+//                                findNavController().navigate(
+//                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+//                                activity?.finish()
+////                            } else {
+////                                binding.clContent.visibility = View.VISIBLE
+////                                binding.pbSignIn.visibility = View.GONE
+////                                binding.tvError.visibility = View.GONE
+////                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
+////                            }
+//
+//                        } else {
+//                            findNavController().navigate(
+//                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+//                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+//                            activity?.finish()
+//                        }
+//                    }
+                    //........................................................................................
                 }
             }
         }

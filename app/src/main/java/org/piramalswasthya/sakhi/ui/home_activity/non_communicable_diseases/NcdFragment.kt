@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,7 +29,7 @@ class NcdFragment : Fragment() {
     }
 
     private val viewModel: NcdViewModel by viewModels()
-    private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
+//    private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
     private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
 
     override fun onCreateView(
@@ -62,10 +63,16 @@ class NcdFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
-                getString(R.string.icon_title_ncd)
-            )
+            when (it) {
+                is HomeActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.icon_title_ncd)
+                )
+                is VolunteerActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd,
+                    getString(R.string.icon_title_ncd)
+                )
+            }
         }
     }
 

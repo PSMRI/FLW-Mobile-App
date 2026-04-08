@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_volunteer"
+    app:startDestination="@id/volunteerHomeFragment">
+
+    <fragment
+        android:id="@+id/volunteerHomeFragment"
+        android:name="org.piramalswasthya.sakhi.ui.volunteer.fragment.VolunteerHomeFragment"
+        android:label="Home">
+        <action
+            android:id="@+id/action_volunteerHomeFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
+        <action
+            android:id="@+id/action_volunteerHomeFragment_to_tbFragment"
+            app:destination="@id/tbFragment" />
+        <action
+            android:id="@+id/action_volunteerHomeFragment_to_ncdFragment"
+            app:destination="@id/ncdFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newBenRegFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegFragment"
+        android:label="New Beneficiary">
+        <argument android:name="hhId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="relToHeadId" app:argType="integer" android:defaultValue="18" />
+        <argument android:name="gender" app:argType="integer" android:defaultValue="0" />
+        <argument android:name="benId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="selectedBenId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="isAddSpouse" app:argType="integer" android:defaultValue="0" />
+    </fragment>
+
+    <!-- TB -->
+    <fragment
+        android:id="@+id/tbFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragment"
+        android:label="TB">
+        <action
+            android:id="@+id/action_cdFragment_to_TBScreeningListFragment"
+            app:destination="@id/TBScreeningListFragment" />
+        <action
+            android:id="@+id/action_cdFragment_to_TBSuspectedListFragment"
+            app:destination="@id/TBSuspectedListFragment" />
+        <action
+            android:id="@+id/action_cdFragment_to_TBConfirmedListFragment"
+            app:destination="@id/TBConfirmedListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBScreeningListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list.TBScreeningListFragment"
+        android:label="TB Screening">
+        <action
+            android:id="@+id/action_TBScreeningListFragment_to_TBScreeningFormFragment"
+            app:destination="@id/TBScreeningFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBScreeningFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.form.TBScreeningFormFragment"
+        android:label="TB Screening Form">
+        <argument android:name="benId" app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBSuspectedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.list.TBSuspectedListFragment"
+        android:label="TB Suspected">
+        <action
+            android:id="@+id/action_TBSuspectedListFragment_to_TBSuspectedFragment"
+            app:destination="@id/TBSuspectedFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBSuspectedFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.form.TBSuspectedFragment"
+        android:label="TB Suspected Form">
+        <argument android:name="benId" app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBConfirmedListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.list.TBConfirmedListFragment"
+        android:label="TB Confirmed">
+        <action
+            android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
+            app:destination="@id/TBConfirmedFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TBConfirmedFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from.TBConfirmedFormFragment"
+        android:label="TB Confirmed Form">
+        <argument android:name="benId" app:argType="long" />
+    </fragment>
+
+    <!-- NCD -->
+    <fragment
+        android:id="@+id/ncdFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragment"
+        android:label="NCD">
+        <action
+            android:id="@+id/action_ncdFragment_to_ncdEligibleListFragment"
+            app:destination="@id/ncdEligibleListFragment" />
+        <action
+            android:id="@+id/action_ncdFragment_to_ncdNonEligibleListFragment"
+            app:destination="@id/ncdNonEligibleListFragment" />
+        <action
+            android:id="@+id/action_ncdFragment_to_ncdPriorityListFragment"
+            app:destination="@id/ncdPriorityListFragment" />
+        <action
+            android:id="@+id/action_ncdFragment_to_ncdReferredListFragment"
+            app:destination="@id/ncdRefferedList" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ncdEligibleListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_eligible_list.NcdEligibleListFragment"
+        android:label="NCD Eligible">
+        <action
+            android:id="@+id/action_ncdEligibleListFragment_to_cbacFragment"
+            app:destination="@id/cbacFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cbacFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac.CbacFragment"
+        android:label="CBAC Form">
+        <argument android:name="benId" android:defaultValue="0L" app:argType="long" />
+        <argument android:name="cbacId" android:defaultValue="0" app:argType="integer" />
+        <argument android:name="ashaId" android:defaultValue="0" app:argType="integer" />
+        <action
+            android:id="@+id/action_cbacFragment_to_ncdReferForm"
+            app:destination="@id/NCDReferalForm" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ncdNonEligibleListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_non_eligible_list.NcdNonEligibleListFragment"
+        android:label="NCD Non Eligible" />
+
+    <fragment
+        android:id="@+id/ncdPriorityListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_priority_list.NcdPriorityListFragment"
+        android:label="NCD Priority" />
+
+    <fragment
+        android:id="@+id/ncdRefferedList"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list.NcdRefferedList"
+        android:label="NCD Referred">
+        <action
+            android:id="@+id/action_ncdRefferedList_to_NCDReferalFormFragment"
+            app:destination="@id/NCDReferalFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NCDReferalForm"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.form.NCDReferalFormFragment"
+        android:label="NCD Refer Form">
+        <argument android:name="benId" app:argType="long" />
+        <argument android:name="referral" app:argType="string" />
+        <argument android:name="referralType" app:argType="string" />
+        <argument android:name="cbacId" android:defaultValue="0" app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NCDReferalFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp.NCDReferalFormFragment"
+        android:label="NCD Refer Follow Up">
+        <argument android:name="benId" app:argType="long" />
+        <argument android:name="hhId" app:argType="long" />
+    </fragment>
+
+</navigation>

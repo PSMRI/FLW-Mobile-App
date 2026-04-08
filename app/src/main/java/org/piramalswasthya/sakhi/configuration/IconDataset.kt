@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.MotherCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.NcdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.VillageLevelFormsFragmentDirections
+import org.piramalswasthya.sakhi.ui.volunteer.fragment.VolunteerHomeFragmentDirections
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,6 +43,27 @@ class IconDataset @Inject constructor(
 
     enum class Disease {
         MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING
+    }
+
+
+
+    fun getVolunteerIconDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.icon_title_ncd_tb_screening),
+            null,
+            VolunteerHomeFragmentDirections.actionVolunteerHomeFragmentToTbFragment()
+        ),
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.icon_title_ncd),
+            null,
+            VolunteerHomeFragmentDirections.actionVolunteerHomeFragmentToNcdFragment()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {

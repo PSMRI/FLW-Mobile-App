@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
@@ -156,8 +157,30 @@ class NewBenRegViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 user = preferenceDao.getLoggedInUser()!!
-                household = benRepo.getHousehold(hhId)!!
-                locationRecord = preferenceDao.getLocationRecord()!!
+//                household = benRepo.getHousehold(hhId)!!
+//                locationRecord = preferenceDao.getLocationRecord()!!
+
+                household = benRepo.getHousehold(hhId) ?: HouseholdCache(
+                    householdId = 0,
+                    ashaId = user.userId,
+                    processed = "N",
+                    isDraft = false,
+                    locationRecord = LocationRecord(
+                        country = LocationEntity(1, "India"),
+                        state = LocationEntity(0, ""),
+                        district = LocationEntity(0, ""),
+                        block = LocationEntity(0, ""),
+                        village = LocationEntity(0, "")
+                    )
+                )
+
+                locationRecord = preferenceDao.getLocationRecord() ?: LocationRecord(
+                    country = LocationEntity(1, "India"),
+                    state = LocationEntity(0, ""),
+                    district = LocationEntity(0, ""),
+                    block = LocationEntity(0, ""),
+                    village = LocationEntity(0, "")
+                )
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!

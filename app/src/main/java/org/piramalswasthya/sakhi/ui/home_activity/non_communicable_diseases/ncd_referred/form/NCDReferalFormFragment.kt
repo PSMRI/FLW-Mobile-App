@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.volunteer.VolunteerActivity
 import timber.log.Timber
 import kotlin.getValue
 
@@ -120,9 +121,16 @@ class NCDReferalFormFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd_list,
-                getActionBarTitle()            )
+            when (it) {
+                is HomeActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd_list,
+                    getActionBarTitle()
+                )
+                is VolunteerActivity -> it.updateActionBar(
+                    R.drawable.ic__ncd_list,
+                    getActionBarTitle()
+                )
+            }
         }
     }
 
