@@ -2,7 +2,7 @@
   "mcpServers": {
     "firebase": {
       "command": "npx",
-      "args": ["-y", "firebase-tools@latest", "mcp", "--dir", "D:/PiramalSwasthya/FLW/FLW-Mobile-App"]
+      "args": ["-y", "firebase-tools@latest", "mcp", "--dir", "."]
     }
   }
 }
