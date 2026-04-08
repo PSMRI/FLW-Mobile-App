@@ -46,15 +46,11 @@ class PncFormDataset(
         isEnabled = true
     )
 
-    private val pncDays = listOf(1, 3, 7, 14, 21, 28, 42)
-    private val pncDayLabels = resources.getStringArray(R.array.pnc_period_array)
-    private val pncDayLabelMap: Map<Int, String> = pncDays.zip(pncDayLabels).toMap()
-    private val pncLabelDayMap: Map<String, Int> = pncDayLabels.zip(pncDays).toMap()
-
     private val pncPeriod = FormElement(
         id = 2,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_period),
+//        entries = resources.getStringArray(R.array.pnc_period_array),
         arrayId = -1,
         required = true,
         hasDependants = false
@@ -96,16 +92,7 @@ class PncFormDataset(
         id = 6,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pnc_contraception_method),
-        entries = resources.getStringArray(R.array.pnc_contraception_method_array).let { entries ->
-            val englishEntries = englishResources.getStringArray(R.array.pnc_contraception_method_array)
-            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                val miniLapIndex = englishEntries.indexOfFirst { it.equals("MiniLap", ignoreCase = true) }
-                entries.filterIndexed { index, _ -> index != miniLapIndex }.toTypedArray()
-            } else {
-                val femSterIndex = englishEntries.indexOfFirst { it.equals("FEMALE STERILIZATION", ignoreCase = true) }
-                entries.filterIndexed { index, _ -> index != femSterIndex }.toTypedArray()
-            }
-        },
+        entries = resources.getStringArray(R.array.pnc_contraception_method_array),
         required = false,
         hasDependants = true
     )
@@ -149,7 +136,7 @@ class PncFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.pnc_mother_death),
         entries = resources.getStringArray(R.array.pnc_confirmation_array),
-        required = false,
+        required = true,
         hasDependants = true,
     )
 
@@ -169,7 +156,7 @@ class PncFormDataset(
         title = resources.getString(R.string.pnc_death_cause),
         entries = resources.getStringArray(R.array.pnc_death_cause_array),
         required = true,
-        hasDependants = true,
+        hasDependants = false,
     )
 
     private val otherDeathCause = FormElement(
@@ -284,7 +271,7 @@ class PncFormDataset(
             deliveryDischargeSummary4,
 
 
-        )
+            )
 
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
             list.remove(deliveryDischargeSummary1)
@@ -301,7 +288,7 @@ class PncFormDataset(
 
         deathDate.max = System.currentTimeMillis()
         anySignOfDanger.value = anySignOfDanger.entries!!.last()
-        motherDeath.value = motherDeath.entries!!.last()
+        motherDeath.value = motherDeath.entries!!.first()
         val daysSinceDeliveryMillis = Calendar.getInstance()
             .setToStartOfTheDay().timeInMillis - deliveryOutcomeCache?.dateOfDelivery.let {
             val cal = Calendar.getInstance()
@@ -324,7 +311,7 @@ class PncFormDataset(
                 42
             ).filter { if (daysSinceDelivery == 0L) it <= 1 else it <= daysSinceDelivery }
                 .filter { it > (previousPnc?.pncPeriod ?: 0) }
-                .map { pncDayLabelMap[it] ?: "Day $it" }.toTypedArray()
+                .map { "Day $it" }.toTypedArray()
 
         if (hasPreviousPermanentSterilization) {
 
@@ -363,7 +350,7 @@ class PncFormDataset(
 
 
         saved?.let {
-            pncPeriod.value = pncDayLabelMap[it.pncPeriod] ?: "Day ${it.pncPeriod}"
+            pncPeriod.value = "Day ${it.pncPeriod}"
             visitDate.value = getDateFromLong(it.pncDate)
             ifaTabsGiven.value = it.ifaTabsGiven?.toString()
             anyContraceptionMethod.value = it.anyContraceptionMethod?.let {
@@ -375,41 +362,40 @@ class PncFormDataset(
             if (it.anyContraceptionMethod == true) {
                 list.add(list.indexOf(anyContraceptionMethod) + 1, contraceptionMethod)
             }
-            contraceptionMethod.value = getLocalValueInArray(R.array.pnc_contraception_method_array, it.contraceptionMethod)
+            contraceptionMethod.value = it.contraceptionMethod
             it.sterilisationDate.let { it2 ->
                 dateOfSterilisation.value = getDateFromLong(it2 ?: 0L)
             }
-            if (contraceptionMethod.value == contraceptionMethod.entries!!.last()) {
+            if (it.contraceptionMethod == contraceptionMethod.entries!!.last()) {
                 list.add(list.indexOf(contraceptionMethod) + 1, otherPpcMethod)
 
             }
-            if(contraceptionMethod.value in sterilisation )
+            if(it.contraceptionMethod in sterilisation )
             {
                 list.add(list.indexOf(contraceptionMethod) + 1, dateOfSterilisation)
 
             }
 
             otherPpcMethod.value = it.otherPpcMethod
-            anySignOfDanger.value = getLocalValueInArray(R.array.pnc_confirmation_array, it.anyDangerSign)
+            anySignOfDanger.value = it.anyDangerSign
             anySignOfDanger.value?.let { dangerSignValue ->
                 val isDangerSignYes = dangerSignValue == anySignOfDanger.entries!!.first()
                 referralFacility.required = isDangerSignYes
             }
-            motherDangerSign.value = getLocalValueInArray(R.array.pnc_mother_danger_sign_array, it.motherDangerSign)
-            if (motherDangerSign.value == motherDangerSign.entries!!.last()) {
+            motherDangerSign.value = it.motherDangerSign
+            if (it.motherDangerSign == motherDangerSign.entries!!.last()) {
                 list.add(list.indexOf(motherDangerSign) + 1, otherDangerSign)
             }
             otherDangerSign.value = it.otherDangerSign
-            referralFacility.value = getLocalValueInArray(R.array.pnc_referral_facility_array, it.referralFacility)
+            referralFacility.value = it.referralFacility
             motherDeath.value =
-                if (it.motherDeath) motherDeath.entries!!.first() else motherDeath.entries!!.last()
+                if (it.motherDeath) motherDeath.entries!!.last() else motherDeath.entries!!.first()
             if (it.motherDeath) {
                 deathDate.value = getDateStrFromLong(it.deathDate)
-                causeOfDeath.value = getLocalValueInArray(R.array.pnc_death_cause_array, it.causeOfDeath)
-                otherDeathCause.value = it.otherDeathCause
-                placeOfDeath.value = getLocalValueInArray(R.array.death_place_array, it.placeOfDeath)
+                causeOfDeath.value = it.causeOfDeath
+                placeOfDeath.value = it.placeOfDeath
                 otherPlaceOfDeath.value = it.otherPlaceOfDeath
-                placeOfDeath.entries?.indexOf(placeOfDeath.value)?.takeIf { it >= 0 }?.let { index ->
+                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
                     if (index == 8) {
                         list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
                     }
@@ -418,8 +404,6 @@ class PncFormDataset(
                     list.indexOf(motherDeath) + 1,
                     listOf(deathDate, causeOfDeath, placeOfDeath)
                 )
-                if (causeOfDeath.value == causeOfDeath.entries!!.last())
-                    list.add(list.indexOf(causeOfDeath) + 1, otherDeathCause)
             }
             remarks.value = it.remarks
             deliveryDischargeSummary1.value = it.deliveryDischargeSummary1
@@ -485,7 +469,7 @@ class PncFormDataset(
 
 
                 val today = Calendar.getInstance().setToStartOfTheDay().timeInMillis
-                when (val visitNumber = pncLabelDayMap[pncPeriod.value] ?: pncPeriod.value!!.replace("Day ", "").toInt()) {
+                when (val visitNumber = pncPeriod.value!!.substring(4).toInt()) {
                     1 -> {
                         visitDate.min = minOf(today, dateOfDelivery)
                         visitDate.max = minOf(
@@ -691,9 +675,9 @@ class PncFormDataset(
                 if (index == 0) {
                     referralFacility.required = true
 
-                   /* if (referralFacility.value.isNullOrEmpty()) {
-                        referralFacility.errorText = "This field is required"
-                    }*/
+                    /* if (referralFacility.value.isNullOrEmpty()) {
+                         referralFacility.errorText = "This field is required"
+                     }*/
                 } else {
                     referralFacility.required = false
                     referralFacility.errorText = null
@@ -715,20 +699,21 @@ class PncFormDataset(
                     target = otherDangerSign
                 )
 
-         /*   motherDeath.id -> {
+            /*   motherDeath.id -> {
 
-                triggerDependants(
-                    source = motherDeath,
-                    passedIndex = index,
-                    triggerIndex = 0,
-                    target = listOf(deathDate, causeOfDeath, placeOfDeath),
-                    targetSideEffect = listOf(otherDeathCause)
-                )
+                   triggerDependants(
+                       source = motherDeath,
+                       passedIndex = index,
+                       triggerIndex = 0,
+                       target = listOf(deathDate, causeOfDeath, placeOfDeath),
+                       targetSideEffect = listOf(otherDeathCause)
+                   )
 
-            }*/
+               }*/
 
             motherDeath.id -> {
-                if (index == 0) {
+                if (index == 1) {
+                    // "No" selected = mother is NOT alive = death
                     triggerDependants(
                         source = motherDeath,
                         removeItems = listOf(
@@ -737,23 +722,21 @@ class PncFormDataset(
                             anySignOfDanger,
                             referralFacility,
                             remarks
-
                         ),
                         addItems = listOf(
                             deathDate,
                             causeOfDeath,
-                            placeOfDeath,
-                            otherDeathCause
+                            placeOfDeath
                         )
                     )
                 } else {
+                    // "Yes" selected = mother is alive
                     triggerDependants(
                         source = motherDeath,
                         removeItems = listOf(
                             deathDate,
                             causeOfDeath,
-                            placeOfDeath,
-                            otherDeathCause
+                            placeOfDeath
                         ),
                         addItems = listOf(
                             ifaTabsGiven,
@@ -761,21 +744,9 @@ class PncFormDataset(
                             anySignOfDanger,
                             referralFacility,
                             remarks
-
                         )
                     )
                 }
-            }
-
-
-
-            causeOfDeath.id -> {
-                triggerDependants(
-                    source = causeOfDeath,
-                    passedIndex = index,
-                    triggerIndex = causeOfDeath.entries!!.lastIndex,
-                    target = otherDeathCause
-                )
             }
 
 //
@@ -797,24 +768,24 @@ class PncFormDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PNCVisitCache).let { form ->
-            form.pncPeriod = pncLabelDayMap[pncPeriod.value] ?: pncPeriod.value!!.replace("Day ", "").toInt()
+            form.pncPeriod = pncPeriod.value!!.substring(4).toInt()
             form.pncDate = getLongFromDate(visitDate.value!!)
             form.otherPlaceOfDeath=otherPlaceOfDeath.value
             form.dateOfDelivery = getLongFromDate(deliveryDate.value)
             form.ifaTabsGiven = ifaTabsGiven.value?.takeIf { it.isNotEmpty() }?.toInt()
             form.anyContraceptionMethod =
                 anyContraceptionMethod.value?.let { it == anyContraceptionMethod.entries!!.first() }
-            form.contraceptionMethod = getEnglishValueInArray(R.array.pnc_contraception_method_array, contraceptionMethod.value)?.takeIf { it.isNotEmpty() }
+            form.contraceptionMethod = contraceptionMethod.value?.takeIf { it.isNotEmpty() }
             form.otherPpcMethod = otherPpcMethod.value?.takeIf { it.isNotEmpty() }
-            form.motherDangerSign = getEnglishValueInArray(R.array.pnc_mother_danger_sign_array, motherDangerSign.value)?.takeIf { it.isNotEmpty() }
+            form.motherDangerSign = motherDangerSign.value?.takeIf { it.isNotEmpty() }
             form.otherDangerSign = otherDangerSign.value?.takeIf { it.isNotEmpty() }
-            form.referralFacility = getEnglishValueInArray(R.array.pnc_referral_facility_array, referralFacility.value)?.takeIf { it.isNotEmpty() }
+            form.referralFacility = referralFacility.value?.takeIf { it.isNotEmpty() }
             form.motherDeath =
-                motherDeath.value?.let { it == motherDeath.entries!!.first() } ?: false
+                motherDeath.value?.let { it == motherDeath.entries!!.last() } ?: false
             form.deathDate = deathDate.value?.let { getLongFromDate(it) }
-            form.causeOfDeath = getEnglishValueInArray(R.array.pnc_death_cause_array, causeOfDeath.value)?.takeIf { it.isNotEmpty() }
-            form.otherDeathCause = otherDeathCause.value?.takeIf { it.isNotEmpty() }
-            form.placeOfDeath = getEnglishValueInArray(R.array.death_place_array, placeOfDeath.value)?.takeIf { it.isNotEmpty() }
+            form.causeOfDeath = causeOfDeath.value?.takeIf { it.isNotEmpty() }
+            form.otherDeathCause = null
+            form.placeOfDeath = placeOfDeath.value?.takeIf { it.isNotEmpty() }
             form.remarks = remarks.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
