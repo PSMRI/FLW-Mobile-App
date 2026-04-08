@@ -138,6 +138,10 @@ class SignInFragment : Fragment() {
             viewModel.loginInClicked()
         }
 
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.rbAssamese.visibility = android.view.View.GONE
+        }
+
         when (prefDao.getCurrentLanguage()) {
             ENGLISH -> binding.rgLangSelect.check(binding.rbEng.id)
             Languages.HINDI -> binding.rgLangSelect.check(binding.rbHindi.id)
