@@ -233,9 +233,9 @@
     <string name="pnc_mother_danger_sign">মাতাৰ বিপজ্য চিহ্ন</string>
     <string name="pnc_other_danger_sign">অন্য বিপজ্য চিহ্ন</string>
     <string name="pnc_referral_facility">ৰেফাৰেল সুবিধা</string>
-    <string name="pnc_mother_death">মাতাৰ মৰণ</string>
+    <string name="pnc_mother_death">মাতৃ জীৱিত আছে নে?</string>
     <string name="pnc_death_date">মৰণৰ তাৰিখ</string>
-    <string name="pnc_death_cause">মাতাৰ মৰণৰ সম্ভাব্য কাৰণ</string>
+    <string name="pnc_death_cause">মৃত্যুৰ কাৰণ</string>
     <string name="pnc_other_death_cause">অন্য মৰণৰ কাৰণ</string>
     <string name="pnc_death_place">মৰণৰ স্থান</string>
     <string name="pnc_remarks">মন্তব্য</string>
@@ -299,13 +299,16 @@
         <item>উচ্চ জ্বৰ</item>
         <item>চেপ্চিছ</item>
         <item>দুৰ্ঘটনা</item>
-        <item>অন্যান্য</item>
+        <item>মাতৃ মৃত্যু</item>
     </string-array>
     <string-array name="pnc_death_place_array">
         <item>ঘৰ</item>
         <item>ৰোগ চিকিৎসা চেণ্টাৰ</item>
         <item>প্ৰবাহিত ক্ষণ</item>
     </string-array>
+
+    <string name="is_pw_currently_alive">গৰ্ভৱতী মহিলাগৰাকী জীয়াই আছেনে?</string>
+
 
     <!--  Infant Registration  -->
     <string name="ir_baby_name">শিশুৰ নাম</string>
@@ -350,6 +353,10 @@
         <item>ইম্পাৰফৰেট এনাছ</item>
         <item>নিউৰেল টিউব ডিফেক্ট (স্পাইনেল বিফাইদা)</item>
         <item>অন্য দোষ</item>
+    </string-array>
+    <string-array name="anc_alive_array">
+        <item>হয়</item>
+        <item>নহয়</item>
     </string-array>
 
     <string name="pmsma_edd">প্ৰত্যাশিত প্ৰসৱ</string>

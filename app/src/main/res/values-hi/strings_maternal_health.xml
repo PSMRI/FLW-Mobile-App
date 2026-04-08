@@ -286,9 +286,9 @@
     <string name="pnc_mother_danger_sign">माँ को खतरे के संकेत</string>
     <string name="pnc_other_danger_sign">अन्य खतरनाक संकेत</string>
     <string name="pnc_referral_facility">रेफरल सुविधा / संदर्भित स्वास्थ्य केंद्र</string>
-    <string name="pnc_mother_death">मां की मौके पर मौत</string>
+    <string name="pnc_mother_death">क्या माँ जीवित है?</string>
     <string name="pnc_death_date">मृत्यु की तिथि</string>
-    <string name="pnc_death_cause">मां की मौत का संभावित कारण</string>
+    <string name="pnc_death_cause">मृत्यु का कारण</string>
     <string name="pnc_other_death_cause">अन्य मौत का कारण</string>
     <string name="pnc_death_place">मृत्यु का स्थान</string>
     <string name="pnc_remarks">टिप्पणी</string>
@@ -341,7 +341,7 @@
         <item>उच्च बुखार</item>
         <item>संक्रमण</item>
         <item>दुर्घटना</item>
-        <item>कोई अन्य</item>
+        <item>मातृ मृत्यु</item>
     </string-array>
     <string-array name="pnc_death_place_array">
         <item>घर</item>
@@ -399,6 +399,10 @@
         <item>पीएचसी – चिकित्सा अधिकारी</item>
         <item>उच्च स्वास्थ्य संस्थान में विशेषज्ञ डॉक्टर</item>
     </string-array>
+    <string-array name="anc_alive_array">
+        <item>हाँ</item>
+        <item>नहीं</item>
+    </string-array>
 
     <string name="anc_visit_number">एएनसी (ANC) विज़िट %1d</string>
     <string name="pnc_visit_number">पीएनसी (PNC) विज़िट – दिन %1d</string>
@@ -452,5 +456,6 @@
     <string name="invalid_visit_date_format">अमान्य भ्रमण तिथि प्रारूप</string>
     <string name="fill_required_fields">कृपया सभी आवश्यक फ़ील्ड सही से भरें</string>
     <string name="danger_signs_identified">खतरे के संकेत पहचाने गए!</string>
+    <string name="is_pw_currently_alive">क्या गर्भवती महिला जीवित है?</string>
 
 </resources>
