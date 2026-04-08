@@ -82,8 +82,32 @@ class EyeSurgeryFormViewModel @Inject constructor(
                     try {
                         val root = JSONObject(savedJson)
                         val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                        fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
-                    } catch (e: Exception) { emptyMap() }
+
+                        fieldsJson.keys().asSequence().associateWith { key ->
+
+                            when (val value = fieldsJson.opt(key)) {
+
+                                is org.json.JSONArray -> {
+                                    (0 until value.length()).map {
+                                        value.optString(it)
+                                    }
+                                }
+
+                                is String -> {
+                                    if (value.contains(",")) {
+                                        value.split(",").map { it.trim() }
+                                    } else {
+                                        value
+                                    }
+                                }
+
+                                else -> value
+                            }
+                        }
+
+                    } catch (e: Exception) {
+                        emptyMap()
+                    }
                 } else emptyMap()
             } else {
                 emptyMap()
@@ -102,16 +126,37 @@ class EyeSurgeryFormViewModel @Inject constructor(
                         field.fieldId == "visit_day" -> visitDay
 
                         field.fieldId == "eye_affected" && eyeSide.isNotEmpty() && !loadSavedData -> {
-                            val matchedOption = field.options?.find {
-                                it.equals(eyeSide, ignoreCase = true)
-                            } ?:
-                            eyeSide
+
+                            val matchedOption = when (val opts = field.options) {
+
+                                is List<*> -> {
+                                    opts.find {
+                                        it.toString().equals(eyeSide, ignoreCase = true)
+                                    }?.toString()
+                                }
+
+                                is String -> {
+
+                                    opts.split(",").find {
+                                        it.trim().equals(eyeSide, ignoreCase = true)
+                                    }
+                                }
+
+                                else -> null
+                            } ?: eyeSide
+
                             matchedOption
                         }
 
+
                         else -> {
                             if (loadSavedData) {
-                                savedFieldValues[field.fieldId] ?: field.default
+                                (savedFieldValues[field.fieldId] ?: field.default)?.let { value ->
+                                    when (value) {
+                                        is org.json.JSONArray -> (0 until value.length()).map { value.optString(it) }
+                                        else -> value
+                                    }
+                                }
                             } else {
                                 null
                             }
@@ -158,7 +203,29 @@ class EyeSurgeryFormViewModel @Inject constructor(
             val savedValues = try {
                 val root = JSONObject(formDataJson)
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                fieldsJson.keys().asSequence().associateWith { fieldsJson.opt(it) }
+
+                fieldsJson.keys().asSequence().associateWith { key ->
+
+                    when (val value = fieldsJson.opt(key)) {
+
+                        is org.json.JSONArray -> {
+                            (0 until value.length()).map {
+                                value.optString(it)
+                            }
+                        }
+
+                        is String -> {
+                            if (value.contains(",")) {
+                                value.split(",").map { it.trim() }
+                            } else {
+                                value
+                            }
+                        }
+
+                        else -> value
+                    }
+                }
+
             } catch (e: Exception) {
                 emptyMap<String, Any?>()
             }
@@ -269,7 +336,10 @@ class EyeSurgeryFormViewModel @Inject constructor(
                 syncedAt = null
             )
             val referredTo = fieldMap["referred_to"]?.toString()
-            val referralReason = fieldMap["symptoms_observed"]?.toString()
+            val referralReason = when (val v = fieldMap["symptoms_observed"]) {
+                is List<*> -> v.joinToString(", ")
+                else -> v?.toString()
+            }
             if (!referredTo.isNullOrBlank() && !referralReason.isNullOrBlank()) {
                 repository.saveReferral(benId, referredTo,referralReason)
             }
