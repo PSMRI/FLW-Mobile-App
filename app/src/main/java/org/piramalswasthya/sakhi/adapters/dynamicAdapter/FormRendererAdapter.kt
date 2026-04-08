@@ -282,7 +282,7 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        val selectedOptions: MutableSet<String> = when (val v = field.value) {
+                        val selectedValues: MutableSet<String> = when (val v = field.value) {
                             is Set<*> -> v.filterIsInstance<String>().toMutableSet()
                             is List<*> -> v.filterIsInstance<String>().toMutableSet()
                             is String -> v.split(",").map { it.trim() }.toMutableSet()
@@ -290,8 +290,8 @@
                         }
                         field.options?.forEach { option ->
                             val checkBox = CheckBox(context).apply {
-                                text = option
-                                isChecked = selectedOptions.contains(option)
+                                text = option.label
+                                isChecked = selectedValues.contains(option.value)
                                 isEnabled = !isViewOnly && field.isEditable
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -302,12 +302,12 @@
                             if (!isViewOnly && field.isEditable) {
                                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                                     if (isChecked) {
-                                        selectedOptions.add(option)
+                                        selectedValues.add(option.value)
                                     } else {
-                                        selectedOptions.remove(option)
+                                        selectedValues.remove(option.value)
                                     }
-                                    field.value = selectedOptions
-                                    onValueChanged(field, selectedOptions)
+                                    field.value = selectedValues
+                                    onValueChanged(field, selectedValues)
                                 }
                             }
 
@@ -369,7 +369,8 @@
                         if (!isViewOnly) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     onValueChanged(field, s.toString())
 
@@ -416,7 +417,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText((field.value as? Number)?.toString() ?: "")
+                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                             isEnabled = !isViewOnly
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
@@ -427,7 +428,8 @@
 
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                                     muacDebounceJob?.cancel()
@@ -478,7 +480,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText((field.value as? Number)?.toString() ?: "")
+                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                             val isIFABottleCount = field.fieldId == "ifa_bottle_count"
@@ -498,7 +500,8 @@
                         if (editText.isEnabled) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                         muacDebounceJob?.cancel()
@@ -535,7 +538,7 @@
                             ).apply {
                                 setMargins(0, 16, 0, 8)
                             }
-                            hint = field.placeholder ?: "Select ${field.label}"
+                            hint = field.placeholder ?: context.getString(R.string.dynamic_form_select, field.label)
                             boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                             boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
                             boxStrokeWidthFocused = 2
@@ -550,7 +553,9 @@
                             isFocusable = false
                             isClickable = isEditableField
                             isEnabled = isEditableField
-                            setText(field.value?.toString() ?: "")
+                            val displayText = field.options?.find { it.value == field.value?.toString() }?.label
+                                ?: field.value?.toString() ?: ""
+                            setText(displayText)
                             background = null
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
                             setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
@@ -572,14 +577,14 @@
                         if (isEditableField) {
                             editText.setOnClickListener {
                                 val options = field.options ?: emptyList()
+                                val labels = options.map { it.label }.toTypedArray()
                                 val builder = AlertDialog.Builder(context)
-                                builder.setTitle("Select ${field.label}")
-                                builder.setItems(options.toTypedArray()) { _, which ->
+                                builder.setTitle(context.getString(R.string.dynamic_form_select, field.label))
+                                builder.setItems(labels) { _, which ->
                                     val selected = options[which]
-                                    editText.setText(selected)
-                                    field.value = selected
-                                    onValueChanged(field, selected)
-
+                                    editText.setText(selected.label)
+                                    field.value = selected.value
+                                    onValueChanged(field, selected.value)
                                 }
                                 builder.show()
                             }
@@ -614,7 +619,7 @@
                                 ViewGroup.LayoutParams.WRAP_CONTENT
                             ).apply { setMargins(0, 16, 0, 8) }
 
-                            hint = field.placeholder ?: "Select ${field.label}"
+                            hint = field.placeholder ?: context.getString(R.string.dynamic_form_select, field.label)
                             boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                             boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
                             boxStrokeWidthFocused = 2
@@ -705,10 +710,8 @@
                                         if (maxDate == null) {
                                             maxDate = today
                                         }
-                                    }
-                                    else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
-                                        formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN) {
-
+                                    } else if (formId == FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID ||
+                                             formId == FormConstants.ORS_CAMPAIGN_FORM_ID || formId == FormConstants.LF_MDA_CAMPAIGN ) {
                                         if (field.fieldId == "end_date") {
                                             val startDateValue = getDate("start_date")
                                             if (startDateValue != null) {
@@ -967,15 +970,13 @@
                             notifyItemChanged(adapterPosition)
                         }
 
-                        // Pre-selected value for non-editable fields
                         val preSelectedValue = if (!field.isEditable) field.value?.toString() else null
 
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
-                                text = option
-                                // CASE-INSENSITIVE check
+                                id = View.generateViewId()
+                                text = option.label
                                 isChecked = field.value?.toString().equals(option, ignoreCase = true)
-
                                 isEnabled = when {
                                     isViewOnly -> false
                                     isSNCUDisabled -> false
@@ -988,23 +989,36 @@
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                                 ).apply { setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) }
                             }
+                            radioGroup.addView(radioButton)
+                        }
 
-                            radioButton.setOnCheckedChangeListener(null)
+                        // Set checked state AFTER all buttons are added to the group
+                        field.options?.forEachIndexed { index, option ->
+                            val rb = radioGroup.getChildAt(index) as RadioButton
+                            if (field.value?.toString() == option.value) {
+                                radioGroup.check(rb.id)
+                            }
+                        }
 
-                            if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
-                                radioButton.setOnCheckedChangeListener { _, isChecked ->
-                                    if (isChecked && field.value != option) {
-                                        field.value = option
-                                        onValueChanged(field, option)
-                                        for (i in 0 until radioGroup.childCount) {
-                                            val child = radioGroup.getChildAt(i) as RadioButton
-                                            if (child.text != option) child.isChecked = false
-                                        }
-                                    }
+                        if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
+                            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                                val checkedIndex = (0 until group.childCount).firstOrNull { (group.getChildAt(it) as RadioButton).id == checkedId } ?: return@setOnCheckedChangeListener
+                                val selectedOption = field.options?.getOrNull(checkedIndex) ?: return@setOnCheckedChangeListener
+                                if (field.value?.toString() != selectedOption.value) {
+                                    field.value = selectedOption.value
+                                    onValueChanged(field, selectedOption.value)
                                 }
                             }
-
-                            radioGroup.addView(radioButton)
+//                            radioButton.setOnCheckedChangeListener { _, isChecked ->
+//                                if (isChecked && field.value != option) {
+//                                    field.value = option
+//                                    onValueChanged(field, option)
+//                                    for (i in 0 until radioGroup.childCount) {
+//                                        val child = radioGroup.getChildAt(i) as RadioButton
+//                                        if (child.text != option) child.isChecked = false
+//                                    }
+//                                }
+//                            }
                         }
 
                         val wrapper = LinearLayout(itemView.context).apply {

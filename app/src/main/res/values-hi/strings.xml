@@ -454,7 +454,7 @@
     <string name="leprosy_confirmed_form">कुष्ठ रोग पुष्टि फॉर्म</string>
     <string name="leprosy_suspected_form">कुष्ठ रोग संदिग्ध फॉर्म </string>
     <string name="any_leprosy_symptoms_present">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
-    <string name="visits">विज़िट</string>
+    <string name="visits">भ्रमण</string>
     <string name="type_of_leprocy">पुष्टि किया गया कुष्ठ रोग का प्रकार</string>
     <string name="has_leprosy_been_confirmed">क्या कुष्ठ रोग की पुष्टि हुई है?</string>
     <string name="treatment_start_date">चिकित्सा आरंभ तिथि</string>
@@ -650,7 +650,7 @@
     <string name="all">सभी</string>
     <string name="with_abha">ABHA के साथ</string>
     <string name="without_abha">ABHA के बिना</string>
-    <string name="age_above_30_years">40 वर्ष से अधिक आयु</string>
+    <string name="age_above_30_years">30 वर्ष से अधिक आयु</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">कोई विजिट नहीं की गई</string>
     <string name="filter_list">फ़िल्टर</string>
@@ -1078,4 +1078,5 @@
     <string name="weight_max_7000">वजन 7000 ग्राम से अधिक नहीं होना चाहिए</string>
 
 
+    <string name="dynamic_form_select">%s चुनें</string>
 </resources>

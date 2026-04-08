@@ -413,19 +413,26 @@ fun ImageView.setAncState(ancFormState: AncFormState?) {
 }
 
 @RequiresApi(Build.VERSION_CODES.N)
-@BindingAdapter("cbac_name", "asteriskColor")
-fun TextView.setAsteriskText(fieldName: String?, numAsterisk: Int?) {
-
+@BindingAdapter("cbac_name", "asteriskColor", "asteriskColorAlt", requireAll = false)
+fun TextView.setAsteriskText(fieldName: String?, numAsterisk: Int?, numAsteriskAlt: Int?) {
     fieldName?.let {
-        numAsterisk?.let {
-            text = if (numAsterisk == 1) {
+        val count = numAsteriskAlt ?: numAsterisk
+        val useAlt = numAsteriskAlt != null
+        count?.let {
+            text = if (count == 1) {
                 Html.fromHtml(
-                    resources.getString(R.string.radio_title_cbac, fieldName),
+                    resources.getString(
+                        if (useAlt) R.string.radio_title_cbac_alt else R.string.radio_title_cbac,
+                        fieldName
+                    ),
                     Html.FROM_HTML_MODE_LEGACY
                 )
-            } else if (numAsterisk == 2) {
+            } else if (count == 2) {
                 Html.fromHtml(
-                    resources.getString(R.string.radio_title_cbac_ds, fieldName),
+                    resources.getString(
+                        if (useAlt) R.string.radio_title_cbac_ds_alt else R.string.radio_title_cbac_ds,
+                        fieldName
+                    ),
                     Html.FROM_HTML_MODE_LEGACY
                 )
             } else {

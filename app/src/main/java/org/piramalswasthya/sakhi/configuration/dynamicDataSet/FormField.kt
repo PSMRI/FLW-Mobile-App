@@ -1,12 +1,14 @@
 package org.piramalswasthya.sakhi.configuration.dynamicDataSet
 
+import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItem
+
 data class FormField(
     val fieldId: String,
     val label: String,
     val type: String,
     var defaultValue: String? = null,
     val isRequired: Boolean,
-    val options: List<String>? = null,
+    val options: List<OptionItem>? = null,
     var value: Any? = null,
     var visible: Boolean = true,
     val conditional: ConditionalLogic? = null,
