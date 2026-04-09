@@ -226,6 +226,14 @@
     <string name="form_input_alphabet_space_only_error">केवल अक्षर और खाली जगह मान्य</string>
     <string name="form_input_alphabet_special_only_error">केवल अक्षर और विशेष चिन्ह मान्य</string>
     <string name="form_input_alph_numeric_space_only_error">केवल अक्षर और अंक मान्य</string>
+    <string name="field_is_required">%s आवश्यक है</string>
+    <string name="field_is_invalid">%s अमान्य है</string>
+    <string name="field_must_be_number">%s एक संख्या होनी चाहिए</string>
+    <string name="field_min_value">%1$s कम से कम %2$s होना चाहिए</string>
+    <string name="field_max_value">%1$s अधिकतम %2$s होना चाहिए</string>
+    <string name="field_date_invalid">%s तारीख अमान्य है</string>
+    <string name="field_date_before">%1$s %2$s से पहले नहीं हो सकता</string>
+    <string name="field_date_after">%1$s %2$s के बाद नहीं हो सकता</string>
     <string name="form_input__no_alpha_space_error">अक्षर या खाली जगह मान्य नहीं</string>
     <string name="form_input_digit_only_error">केवल अंक मान्य</string>
     <string name="form_input_min_limit_error_decimal">%1$s %2$.1f से अधिक या बराबर होना चाहिए</string>
@@ -640,7 +648,6 @@
     <string name="otp_resent">OTP पुनः भेजा गया</string>
     <string name="assamese">অসমীয়া</string>
     <string name="non_follow_up_cases">फॉलो-अप न किए गए केस</string>
-    <string name="app_native_name">उत्प्रेरणा</string>
     <string name="visit_day">विजिट दिन</string>
     <string name="date_of_diagnosis">निदान की तारीख</string>
     <string name="time_of_death">मृत्यु का समय</string>
