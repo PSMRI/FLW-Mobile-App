@@ -99,6 +99,11 @@
             super.onViewRecycled(holder)
         }
 
+        override fun onViewDetachedFromWindow(holder: FormViewHolder) {
+            holder.clear()
+            super.onViewDetachedFromWindow(holder)
+        }
+
         override fun getItemCount(): Int = fields.size
 
         inner class FormViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -188,6 +193,8 @@
             }
 
             fun clear() {
+                muacDebounceJob?.cancel()
+                muacDebounceJob = null
                 viewHolderScope.coroutineContext.cancelChildren()
             }
 
@@ -505,7 +512,7 @@
                                     field.value = value
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                         muacDebounceJob?.cancel()
-                                        muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                        muacDebounceJob = viewHolderScope.launch {
                                             delay(1500)
                                             onValueChanged(field, value)
                                         }
