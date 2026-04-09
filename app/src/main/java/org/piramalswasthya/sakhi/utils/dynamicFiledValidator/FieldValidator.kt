@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.utils.dynamicFiledValidator
 
+import android.content.Context
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,9 +25,11 @@ object FieldValidator {
         )
     )
 
-    fun validate(field: FormField, dob: String?, todayStr: String = getToday()): ValidationResult {
+    fun validate(field: FormField, dob: String?, todayStr: String = getToday(), context: Context? = null): ValidationResult {
         if (field.isRequired && (field.value == null || field.value.toString().isBlank())) {
-            return ValidationResult(false, "${field.label} is required")
+            val msg = context?.getString(R.string.field_is_required, field.label)
+                ?: "${field.label} is required"
+            return ValidationResult(false, msg)
         }
 
         val valueStr = field.value.toString().trim()
@@ -35,7 +39,9 @@ object FieldValidator {
             "text" -> {
                 val regex = rules.regex
                 if (regex != null && !regex.toRegex().matches(valueStr)) {
-                    ValidationResult(false, rules.errorMessage ?: "${field.label} is invalid")
+                    val msg = context?.getString(R.string.field_is_invalid, field.label)
+                        ?: rules.errorMessage ?: "${field.label} is invalid"
+                    ValidationResult(false, msg)
                 } else {
                     ValidationResult(true)
                 }
@@ -43,16 +49,22 @@ object FieldValidator {
 
             "number" -> {
                 val num = valueStr.toFloatOrNull()
-                    ?: return ValidationResult(false, "${field.label} must be a number")
+                    ?: return ValidationResult(false,
+                        context?.getString(R.string.field_must_be_number, field.label)
+                            ?: "${field.label} must be a number")
 
                 val min = rules.min
                 val max = rules.max
 
                 if (min != null && num < min)
-                    return ValidationResult(false, "${field.label} should be at least $min")
+                    return ValidationResult(false,
+                        context?.getString(R.string.field_min_value, field.label, min.toString())
+                            ?: "${field.label} should be at least $min")
 
                 if (max != null && num > max)
-                    return ValidationResult(false, "${field.label} should be at most $max")
+                    return ValidationResult(false,
+                        context?.getString(R.string.field_max_value, field.label, max.toString())
+                            ?: "${field.label} should be at most $max")
 
                 ValidationResult(true)
             }
@@ -60,7 +72,9 @@ object FieldValidator {
             "date" -> {
                 val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
                 val valueDate = runCatching { sdf.parse(valueStr) }.getOrNull()
-                    ?: return ValidationResult(false, "${field.label} date is invalid")
+                    ?: return ValidationResult(false,
+                        context?.getString(R.string.field_date_invalid, field.label)
+                            ?: "${field.label} date is invalid")
 
                 val minDate = when (rules.minDate) {
                     "dob" -> dob?.let { runCatching { sdf.parse(it) }.getOrNull() }
@@ -76,21 +90,24 @@ object FieldValidator {
 
                 if (minDate != null && valueDate.before(minDate)) {
                     val customMessage = fieldConfigs[field.fieldId]?.customMessages?.get("minDate")
-                    return ValidationResult(
-                        false,
-                        customMessage?.let { "${field.label} $it" }
+                    val msg = if (customMessage != null) {
+                        "${field.label} $customMessage"
+                    } else {
+                        context?.getString(R.string.field_date_before, field.label, rules.minDate)
                             ?: "${field.label} cannot be before ${rules.minDate}"
-
-                    )
+                    }
+                    return ValidationResult(false, msg)
                 }
 
                 if (maxDate != null && valueDate.after(maxDate)) {
                     val customMessage = fieldConfigs[field.fieldId]?.customMessages?.get("minDate")
-                    return ValidationResult(
-                        false,
-                        customMessage?.let { "${field.label} $it" }
+                    val msg = if (customMessage != null) {
+                        "${field.label} $customMessage"
+                    } else {
+                        context?.getString(R.string.field_date_after, field.label, rules.maxDate)
                             ?: "${field.label} cannot be after ${rules.maxDate}"
-                    )
+                    }
+                    return ValidationResult(false, msg)
                 }
 
                 ValidationResult(true)

@@ -266,7 +266,7 @@ class PulsePolioCampaignFormFragment : Fragment() {
         val visibleFields = viewModel.getVisibleFields()
 
         val hasErrors = visibleFields.any { field ->
-            val result = FieldValidator.validate(field, null)
+            val result = FieldValidator.validate(field, null, context = requireContext())
             if (!result.isValid) {
                 field.errorMessage = result.errorMessage
                 true
