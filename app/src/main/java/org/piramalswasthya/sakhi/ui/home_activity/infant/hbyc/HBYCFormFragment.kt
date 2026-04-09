@@ -210,7 +210,7 @@ class HBYCFormFragment : Fragment() {
             section.fields.orEmpty().forEach { schemaField ->
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
-                    val result = FieldValidator.validate(updated, dobString)
+                    val result = FieldValidator.validate(updated, dobString, context = requireContext())
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
 
