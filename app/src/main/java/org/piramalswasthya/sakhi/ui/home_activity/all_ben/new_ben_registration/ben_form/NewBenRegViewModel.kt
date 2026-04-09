@@ -124,6 +124,7 @@ class NewBenRegViewModel @Inject constructor(
     private lateinit var household: HouseholdCache
     private lateinit var ben: BenRegCache
     private lateinit var locationRecord: LocationRecord
+    private var isSetupComplete = false
 
     private var lastImageFormId: Int = 0
     var otp = 1234
@@ -201,10 +202,15 @@ class NewBenRegViewModel @Inject constructor(
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
 
+                        val resolvedGender = ben.gender ?: benGender ?: run {
+                            Timber.e("Gender missing for ben=$benIdFromArgs, hhId=$hhId")
+                            _state.postValue(State.SAVE_FAILED)
+                            return@withContext
+                        }
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = ben.gender ?: benGender ?: Gender.MALE,
+                            hoF = hoFBen, benGender = resolvedGender,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
@@ -231,11 +237,15 @@ class NewBenRegViewModel @Inject constructor(
                             femaleOfHouse?.beneficiaryId ?: hoFBen?.beneficiaryId ?: 0L
                         }
 
-
+                        val resolvedGender2 = benGender ?: run {
+                            Timber.e("Gender missing for new ben registration, hhId=$hhId")
+                            _state.postValue(State.SAVE_FAILED)
+                            return@withContext
+                        }
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = benGender ?: Gender.MALE,
+                            hoF = hoFBen, benGender = resolvedGender2,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
@@ -245,6 +255,7 @@ class NewBenRegViewModel @Inject constructor(
                             )
                     }
                 }
+                isSetupComplete = true
             }
         }
 
@@ -254,6 +265,11 @@ class NewBenRegViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
+                    if (!isSetupComplete) {
+                        Timber.e("saveForm() called before setup completed")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _state.postValue(State.SAVING)
                     if (!this@NewBenRegViewModel::ben.isInitialized) {
                         val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)

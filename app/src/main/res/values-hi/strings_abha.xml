@@ -100,7 +100,7 @@
     <string name="linked_toO_beneficiary">लाभार्थी से जुड़ा</string>
     <string name="submitted">जमा किया गया</string>
     <string name="add_eye_surgery">नेत्र शल्य चिकित्सा जोड़ें</string>
-    <string name="mda_form_title">MDA फॉर्म</string>
+    <string name="mda_form_title">एमडीए फॉर्म</string>
     <string name="view_edit_eye_surgery">नेत्र शल्य चिकित्सा देखें/संपादित करें</string>
     <string name="eye_surgery_details_saved_successfully">नेत्र शल्य चिकित्सा विवरण सफलतापूर्वक सहेजा गया।</string>
     <string name="failed_to_submit_form">फॉर्म जमा करने में विफल। कृपया पुनः प्रयास करें।</string>
