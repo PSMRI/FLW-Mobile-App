@@ -558,7 +558,7 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
-    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="age_above_30_years">Age above 40 years</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
@@ -1236,7 +1236,7 @@
     <string name="no_of_childrens">No of children</string>
     <string name="marriage_date">Marriage Date</string>
     <string name="children_details">Children Details</string>
-    <string name="camera">Camera</string>
+    <string name="choose_upload_source">Choose Upload Source</string>
 
     <!-- Sync Dashboard -->
     <string name="sync_dashboard_tab_status">Status</string>
@@ -1269,6 +1269,9 @@
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
     <string name="date_of_delivery">Date of Delivery</string>
     <string name="any_danger_signs">Any Danger Signs?\n</string>
     <string name="any_high_risk_identified">Any High-risk identified?</string>

@@ -710,7 +710,7 @@ class IconDataset @Inject constructor(
         }
     }
 
-    fun getImmunizationDataset(resources: Resources) = listOf(
+    fun getImmunizationDataset(resources : Resources) = listOf(
         Icon(
             R.drawable.ic_vaccines,
             resources.getString(R.string.child_immunization),
