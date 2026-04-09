@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.login_activity.sign_in
 
 import android.app.AlertDialog
+import timber.log.Timber
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -178,7 +179,8 @@ class SignInFragment : Fragment() {
                     i.setData(Uri.parse(url))
                     startActivity(i)
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, resources.getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(requireContext(), getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -14,8 +14,8 @@
     <string name="ecrdset_ifsc_code">IFSC कोड</string>
     <string name="ecrdset_ttl_child_born">अब तक पैदा हुए बच्चों की कुल संख्या</string>
     <string name="ecrdset_no_live_child">जीवित बच्चों की संख्या</string>
-    <string name="ecrdset_male">लड़के</string>
-    <string name="ecrdset_female">लड़कियां</string>
+    <string name="ecrdset_male">पुरुष</string>
+    <string name="ecrdset_female">महिला</string>
     <string name="ecrdset_dls_1_child">पहले बच्चे का विवरण</string>
     <string name="ecrdset_1_child_bth">पहले बच्चे की जन्मतिथि</string>
     <string name="ecrdset_1_child_age_in_yrs">पहले बच्चे की उम्र (वर्ष में)</string>

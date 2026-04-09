@@ -2,6 +2,8 @@
 <resources>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
+    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
+    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
     <string name="cbac_ask_pat">Ask if Patient has any of these Symptoms</string>
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>
@@ -179,6 +181,9 @@
     <string name="tb_screening">TB Screening</string>
     <string name="tb_screening_submitted">TB Screening submitted</string>
     <string name="screen">Screen</string>
+    <string name="view_screen">View Screen</string>
+    <string name="screened">Screened</string>
+    <string name="not_screened">Not Screened</string>
     <string name="tb_suspected_sputum_test">TB Suspected Sputum Test</string>
     <string name="tb_tracking_submitted">TB Tracking submitted</string>
     <string name="track">Track</string>
@@ -272,4 +277,11 @@
         <item>More than half the days</item>
         <item>Nearly everyday</item>
     </string-array>
+
+    <string name="cat_ncd">NCD</string>
+    <string name="cat_tb">TB</string>
+    <string name="cat_leprosy">LEPROSY</string>
+    <string name="cat_geriatric">GERIATRIC</string>
+    <string name="cat_hrp">HRP</string>
+    <string name="cat_maternal">MATERNAL</string>
 </resources>

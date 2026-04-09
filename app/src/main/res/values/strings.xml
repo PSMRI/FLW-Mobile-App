@@ -122,6 +122,7 @@
     <string name="long_to_string">%d</string>
     <string name="ben_pending_sync">Pending Sync</string>
     <string name="tv_reg_date_ph">Registration Date</string>
+    <string name="reg_date">Reg Date</string>
     <string name="tv_ben_name_ph">Beneficiary Name</string>
     <string name="tv_type_of_list">Type of List</string>
     <string name="tv_rch_id">RCH ID</string>
@@ -219,6 +220,11 @@
         <item>No</item>
     </string-array>
 
+    <string-array name="mdsr_cause_of_death_type">
+        <item>Suspected Maternal death</item>
+        <item>Non-maternal death</item>
+    </string-array>
+
     <string-array name="ahd_place_options">
         <item>School</item>
         <item>Anganwadi Centre</item>
@@ -298,6 +304,16 @@
     <string name="view_household_information">View Household Information</string>
     <string name="hello">Hello</string>
     <string name="select_immunization_category">Select Immunization Category</string>
+    <string name="imm_cat_birth_dose">Birth Dose</string>
+    <string name="imm_cat_6_weeks">6 WEEKS</string>
+    <string name="imm_cat_10_weeks">10 WEEKS</string>
+    <string name="imm_cat_14_weeks">14 WEEKS</string>
+    <string name="imm_cat_9_12_months">9-12 MONTHS</string>
+    <string name="imm_cat_16_24_months">16-24 MONTHS</string>
+    <string name="imm_cat_5_6_years">5-6 YEARS</string>
+    <string name="imm_cat_10_years">10 YEARS</string>
+    <string name="imm_cat_16_years">16 YEARS</string>
+    <string name="imm_cat_catch_up">Catch Up</string>
     <string name="children">Children</string>
     <string name="mother">Mother</string>
     <string name="patient_information">Patient Information</string>
@@ -412,6 +428,7 @@
     <string name="immunization">Immunization</string>
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
+    <string name="home_visit">Home Visit</string>
     <string name="cac_form">CAC Form</string>
     <string name="anc">ANC</string>
     <string name="eligible_couple_list">Eligible Couple List</string>
@@ -576,9 +593,19 @@
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>
+    <string name="refer_date">Refer Date</string>
+    <string-array name="referal_health_center_array">
+        <item>Apolo</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>PHC</item>
+    </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="add_new">Add New</string>
+    <string name="ifa_distribution">IFA Distribution</string>
+    <string name="ifa_quantity">IFA Quantity</string>
     <string name="date_of_provision">Date of Provision</string>
     <string name="bottle_number">Bottle Number</string>
     <string name="s_no">S. No</string>
@@ -1028,6 +1055,16 @@
         <item name="hbnc_place_of_mother_referral_10">Other</item>
     </string-array>
 
+    <string-array name="hbnc_visit_days">
+        <item>1st Day</item>
+        <item>3rd Day</item>
+        <item>7th Day</item>
+        <item>14th Day</item>
+        <item>21st Day</item>
+        <item>28th Day</item>
+        <item>42nd Day</item>
+    </string-array>
+
     <string-array name="dc_case_status">
         <item name="dc_suspected">Suspected</item>
         <item name="dc_confirmed">Confirmed</item>
@@ -1218,7 +1255,6 @@
     <string name="malaria_treatment_started">Treatment Started</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
-    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
     <string name="upload_files">Upload Files</string>
     <string name="choose_upload_source">Choose Upload Source</string>
 
@@ -1236,7 +1272,10 @@
     <string name="no_of_childrens">No of children</string>
     <string name="marriage_date">Marriage Date</string>
     <string name="children_details">Children Details</string>
-    <string name="choose_upload_source">Choose Upload Source</string>
+    <string name="bank_details">Bank Details</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
+
+    <string name="camera">Camera</string>
 
     <!-- Sync Dashboard -->
     <string name="sync_dashboard_tab_status">Status</string>
@@ -1292,6 +1331,41 @@
     <string name="tb_history_last_5_years">Last 5 years history of TB</string>
     <string name="visit_leprosy">Visit</string>
     <string name="visit_number_label">Visit -%d</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
+    <string name="add_spouse">Add Spouse</string>
+    <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="str_wife">Wife</string>
+    <string name="str_husband">Husband</string>
+    <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
+    <string name="distribution_date">Distribution Date</string>
 
+    <string name="filter_sort_by">Sort By</string>
+    <string name="filter_newest_first">Newest First</string>
+    <string name="filter_oldest_first">Oldest First</string>
+    <string name="filter_age_wise">Age Wise</string>
+    <string name="filter_syncing_first">Syncing Data First</string>
+    <string name="filter_unsynced_first">Un-Synced First</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
+    <string name="enter_a_valid_number">Enter a valid number</string>
+    <string name="allowed_range">Allowed range: %1$d to %2$d</string>
+    <string name="minimum_allowed_value">Minimum allowed value: %1$d</string>
+    <string name="_ok">OK</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.</string>
+    <string name="pnc_form">PNC Form</string>
+    <string name="bp_invalid_format">Invalid format. Should be like 123/56</string>
+    <string name="bp_systole_less_than">Systole should not be less than %d</string>
+    <string name="bp_systole_greater_than">Systole should not be greater than %d</string>
+    <string name="bp_diastole_less_than">Diastole should not be less than %d</string>
+    <string name="bp_diastole_greater_than">Diastole should not be greater than %d</string>
+    <string name="bp_diastole_greater_than_systole">Diastole cannot be greater than systole</string>
+    <string name="weight_enter_in_grams">Please enter weight in grams</string>
+    <string name="weight_cannot_be_zero">Weight cannot be 0</string>
+    <string name="weight_enter_in_grams_example">Please enter weight in grams (e.g. 2500)</string>
+    <string name="weight_min_500">Weight must be at least 500 grams</string>
+    <string name="weight_max_7000">Weight should not be greater than 7000 grams</string>
+
+    <string name="dynamic_form_select">Select %s</string>
 </resources>
 

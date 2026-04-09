@@ -811,7 +811,7 @@ class AbhaIdRepo @Inject constructor(
             val abha = ABHAModel(
                 beneficiaryID = mapHIDtoBeneficiary.beneficiaryID ?: return,
                 beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID ?: return,
-                benName = ben?.firstName.toString(),
+                benName = ben?.firstName ?: "",
                 benSurname = ben?.lastName,
                 healthId = mapHIDtoBeneficiary.healthId ?: return,
                 txnId = mapHIDtoBeneficiary.txnId ?: "",
@@ -819,7 +819,7 @@ class AbhaIdRepo @Inject constructor(
                 createdBy = "",
                 providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId ?: return,
                 abhaProfileJson = abhaProfileJson,
-                healthIdNumber = mapHIDtoBeneficiary.healthIdNumber.toString(),
+                healthIdNumber = mapHIDtoBeneficiary.healthIdNumber?.toString() ?: "",
                 isNewAbha = mapHIDtoBeneficiary.isNew ?: false
             )
             abhaGenerated.saveAbhaGenrated(abha)

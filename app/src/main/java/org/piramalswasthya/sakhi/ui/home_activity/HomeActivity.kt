@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
 import android.Manifest
+import timber.log.Timber
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -752,6 +753,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     i.setData(Uri.parse(url))
                     startActivity(i)
                 } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
                     Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
                 }
             }
@@ -768,6 +770,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     i.setData(Uri.parse(url))
                     startActivity(i)
                 } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
                     Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
                 }
             }
