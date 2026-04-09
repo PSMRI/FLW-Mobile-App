@@ -223,7 +223,7 @@ class PncFormDataset(
     private val deliveryDischargeSummary2 = FormElement(
         id =59,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.delivery_discharge_summary_2),
+        title = resources.getString(R.string.delivery_discharge_summary_2),
         required = false
     )
 
