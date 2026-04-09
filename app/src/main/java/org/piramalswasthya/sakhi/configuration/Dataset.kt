@@ -685,7 +685,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     protected fun validateAllAlphabetsSpecialAndNumericOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let { input ->
-            val regex = "^[a-zA-Z0-9\\s\\p{Punct}]+$".toRegex() // allows alphabets, numbers, spaces, and special characters
+            val regex = "^[\\p{L}0-9\\s\\p{Punct}]+$".toRegex() // allows Unicode letters, numbers, spaces, and special characters
 
             val isValid = regex.matches(input)
             if (!isValid) {
