@@ -1344,20 +1344,22 @@ class FormInputAdapter(
     fun validateInput(resources: Resources): Int {
         var retVal = -1
         if (!isEnabled) return retVal
-        currentList.forEachIndexed { index, it ->
-            Timber.d("Error text for ${it.title} ${it.errorText}")
-            if (it.inputType != TEXT_VIEW && it.errorText != null) {
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            Timber.d("Error text for ${item.title} ${item.errorText}")
+            if (item.inputType != TEXT_VIEW && item.errorText != null) {
                 retVal = index
                 return@forEachIndexed
             }
         }
         Timber.d("Validation : $retVal")
         if (retVal != -1) return retVal
-        currentList.forEachIndexed { index, it ->
-            if (it.inputType != TEXT_VIEW && it.required) {
-                if (it.value.isNullOrBlank()) {
-                    Timber.d("validateInput called for item $it, with index ${index}")
-                    it.errorText = resources.getString(R.string.form_input_empty_error)
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            if (item.inputType != TEXT_VIEW && item.required) {
+                if (item.value.isNullOrBlank()) {
+                    Timber.d("validateInput called for item $item, with index ${index}")
+                    item.errorText = resources.getString(R.string.form_input_empty_error)
                     notifyItemChanged(index)
                     if (retVal == -1) retVal = index
                 }

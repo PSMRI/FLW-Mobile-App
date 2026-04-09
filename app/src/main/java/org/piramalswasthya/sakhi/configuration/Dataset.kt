@@ -90,14 +90,16 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         }
 
-        fun dateFormate(dateStr: String): String? {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-
-            val dateResponse = inputFormat.parse(dateStr)
-            return outputFormat.format(dateResponse!!)
-
-
+        fun dateFormate(dateStr: String?): String? {
+            if (dateStr.isNullOrBlank() || dateStr == "null") return null
+            return try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+                val dateResponse = inputFormat.parse(dateStr) ?: return null
+                outputFormat.format(dateResponse)
+            } catch (e: java.text.ParseException) {
+                null
+            }
         }
 
         fun dateReverseFormat(dateStr: String): String? {

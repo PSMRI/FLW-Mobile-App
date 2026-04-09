@@ -42,6 +42,7 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
     protected abstract val iconResId: Int
     protected abstract val titleResId: Int
     protected open val isGeneralForm: Boolean = false
+    protected abstract val navFragmentId: Int
     protected abstract fun getNavDirection(hhId: Long, benId: Long): NavDirections
 
     private var _binding: T? = null
@@ -68,7 +69,11 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
         val benAdapter = BenListAdapterForForm(
             BenListAdapterForForm.ClickListener(
                 { Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show() },
-                { hhId, benId -> findNavController().navigate(getNavDirection(hhId, benId)) }
+                { hhId, benId ->
+                    if (findNavController().currentDestination?.id == navFragmentId) {
+                        findNavController().navigate(getNavDirection(hhId, benId))
+                    }
+                }
             ),
             resources.getString(R.string.mdsr_form),
             pref = prefDao,

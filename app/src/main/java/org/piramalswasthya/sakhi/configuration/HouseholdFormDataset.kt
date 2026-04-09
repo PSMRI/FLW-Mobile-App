@@ -176,8 +176,8 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
             firstNameHeadOfFamily.value = saved.familyHeadName
             lastNameHeadOfFamily.value = saved.familyName
             mobileNoHeadOfFamily.value = saved.familyHeadPhoneNo.toString()
-            saved.familyHeadName.takeIf { it!!.isNotEmpty() }?.let { firstNameHeadOfFamily.inputType = TEXT_VIEW }
-            saved.familyName.takeIf { it!!.isNotEmpty() }?.let { lastNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyHeadName.takeIf { !it.isNullOrEmpty() }?.let { firstNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyName.takeIf { !it.isNullOrEmpty() }?.let { lastNameHeadOfFamily.inputType = TEXT_VIEW }
             saved.familyHeadPhoneNo.takeIf { it != null }?.let { mobileNoHeadOfFamily.inputType = TEXT_VIEW }
             houseNo.value = saved.houseNo
             wardNo.value = saved.wardNo

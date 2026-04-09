@@ -153,7 +153,7 @@ class AllBenFragment : Fragment() {
         benAdapter = BenPagingAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item,hhId, benId, relToHeadId ->
-
+                    if (findNavController().currentDestination?.id != R.id.allBenFragment) return@BenClickListener
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -169,7 +169,7 @@ class AllBenFragment : Fragment() {
                 clickedWifeBen = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -187,7 +187,7 @@ class AllBenFragment : Fragment() {
                 clickedHusbandBen = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -204,7 +204,7 @@ class AllBenFragment : Fragment() {
                 clickedChildben = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
@@ -226,6 +226,7 @@ class AllBenFragment : Fragment() {
                     checkAndGenerateABHA(benId)
                 },
                 {item, benId, hhId , isViewMode, isIFA->
+                    if (findNavController().currentDestination?.id != R.id.allBenFragment) return@BenClickListener
                         if (isIFA){
                             findNavController().navigate(
                                 AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(

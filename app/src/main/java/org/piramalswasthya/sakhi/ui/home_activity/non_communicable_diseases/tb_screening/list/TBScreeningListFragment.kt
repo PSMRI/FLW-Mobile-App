@@ -49,11 +49,13 @@ class TBScreeningListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbScreeningListAdapter(
             TbScreeningListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.TBScreeningListFragment) {
+                    findNavController().navigate(
+                        TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             }
         )
         binding.rvAny.adapter = benAdapter

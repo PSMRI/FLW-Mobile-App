@@ -53,11 +53,13 @@ class NonPregnantListFragment : Fragment() {
 //                    Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { _, benId ->
-                    findNavController().navigate(
-                        NonPregnantListFragmentDirections.actionNonPregnantListFragmentToHRPNonPregnantAssessFragment(
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.nonPregnantListFragment) {
+                        findNavController().navigate(
+                            NonPregnantListFragmentDirections.actionNonPregnantListFragmentToHRPNonPregnantAssessFragment(
+                                benId
+                            )
                         )
-                    )
+                    }
                 }
             ),
             formButtonText = arrayOf(resources.getString(R.string.assess)),
