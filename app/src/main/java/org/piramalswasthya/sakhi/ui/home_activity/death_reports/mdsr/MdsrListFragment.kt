@@ -58,12 +58,14 @@ class MdsrListFragment : Fragment() {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { hhId, benId ->
-                    findNavController().navigate(
-                        MdsrListFragmentDirections.actionMdsrListFragmentToMdsrObjectFragment(
-                            hhId,
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.mdsrListFragment) {
+                        findNavController().navigate(
+                            MdsrListFragmentDirections.actionMdsrListFragmentToMdsrObjectFragment(
+                                hhId,
+                                benId
+                            )
                         )
-                    )
+                    }
                 }), resources.getString(R.string.mdsr_form), pref = prefDao
         )
         binding.rvAny.adapter = benAdapter

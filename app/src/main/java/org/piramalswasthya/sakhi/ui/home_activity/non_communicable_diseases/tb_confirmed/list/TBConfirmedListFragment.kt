@@ -63,12 +63,13 @@ class TBConfirmedListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbConfirmedListAdapter(
             TbConfirmedListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
-                    benId
+                if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
+                    findNavController().navigate(
+                        TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
+                            benId
+                        )
                     )
-                )
-
+                }
             },
             pref = prefDao
         )

@@ -100,25 +100,22 @@ class PmsmaHighRiskListFragment : Fragment() {
 
                 },
                 addVisit = { benId,hhId, visitNumber ->
-                    findNavController().navigate(
-                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
-                            benId,hhId.toString(), visitNumber,true
+                    if (findNavController().currentDestination?.id == R.id.pmsmaHighRiskListFragment) {
+                        findNavController().navigate(
+                            PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
+                                benId, hhId.toString(), visitNumber, true
+                            )
                         )
-                    )
+                    }
                 },
                 pmsma = { benId, hhId, visitNumber ->
-//                    findNavController().navigate(
-//                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPmsmaFragment(
-////                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
-//                            benId, hhId, visitNumber
-//                        )
-//                    )
-
-                    findNavController().navigate(
-                        PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
-                            benId,hhId.toString(), visitNumber
+                    if (findNavController().currentDestination?.id == R.id.pmsmaHighRiskListFragment) {
+                        findNavController().navigate(
+                            PmsmaHighRiskListFragmentDirections.actionPmsmaHighRiskListFragmentToPwAncFormFragment(
+                                benId, hhId.toString(), visitNumber
+                            )
                         )
-                    )
+                    }
                 },
                 showPmsmaVisits = { benId, hhId ->
                     viewModel.showAncBottomSheet(

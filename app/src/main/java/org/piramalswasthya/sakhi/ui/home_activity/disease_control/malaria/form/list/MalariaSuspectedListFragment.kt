@@ -179,11 +179,13 @@ class MalariaSuspectedListFragment : Fragment() {
 
         val benAdapter = MalariaMemberListAdapter(
             clickListener = MalariaMemberListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    MalariaSuspectedListFragmentDirections.actionMalariaSuspectedListFragmentToMalariaFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.malariaSuspectedListFragment) {
+                    findNavController().navigate(
+                        MalariaSuspectedListFragmentDirections.actionMalariaSuspectedListFragmentToMalariaFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter
