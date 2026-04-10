@@ -122,7 +122,7 @@ class ServiceLocationActivity : AppCompatActivity() {
                     ServiceTypeViewModel.State.LOADING -> {}//TODO()
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
-                        binding.actvStateDropdown.apply {
+                      /*  binding.actvStateDropdown.apply {
                             isEnabled = false
                             setText(viewModel.stateList.first())
                         }
@@ -133,7 +133,7 @@ class ServiceLocationActivity : AppCompatActivity() {
                         binding.actvBlockDropdown.apply {
                             isEnabled = false
                             setText(viewModel.blockList.first())
-                        }
+                        }*/
                         binding.actvVillageDropdown.apply {
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
@@ -151,9 +151,9 @@ class ServiceLocationActivity : AppCompatActivity() {
     }
 
     private fun dataValid(): Boolean {
-        return !(binding.actvStateDropdown.text.isNullOrBlank() ||
-                binding.actvDistrictDropdown.text.isNullOrBlank() ||
-                binding.actvBlockDropdown.text.isNullOrBlank() ||
+        return !(binding.tvState.text.isNullOrBlank() ||
+                binding.tvDistrict.text.isNullOrBlank() ||
+                binding.tvBlock.text.isNullOrBlank() ||
                 binding.actvVillageDropdown.text.isNullOrBlank())
 
     }

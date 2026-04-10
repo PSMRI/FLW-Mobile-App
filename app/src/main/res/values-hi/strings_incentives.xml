@@ -13,6 +13,7 @@
     <string name="bank_name_branch_name"><![CDATA[Bank Name & Branch Name:]]></string>
     <string name="contact_no">Contact No:</string>
     <string name="village">Village: %1$s</string>
+    <string name="village_new">Village</string>
     <string name="name_of_the_asha">Name of the ASHA : %1$s</string>
     <string name="sc_name">SC Name:</string>
     <string name="certify_that_the_claims_mentioned_above_are_correct">Certify that the claims mentioned above are correct.</string>
