@@ -30,7 +30,6 @@
     import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
     import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
     import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
-    import org.piramalswasthya.sakhi.utils.Log
     import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
     import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
     import org.piramalswasthya.sakhi.work.dynamicWoker.EyeSurgeryFormSyncWorker
@@ -186,7 +185,7 @@
                     viewModel.loadFormSchemaFromJson(
                         benId = benId,
                         formId = FormConstants.EYE_SURGERY_FORM_ID,
-                        isViewMode = false,  // EDIT mode
+                        isViewMode = false,
                         formDataJson = formDataJson
                     )
                 }

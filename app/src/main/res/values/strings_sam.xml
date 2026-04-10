@@ -14,6 +14,9 @@
     <string name="take_photo">Take Photo</string>
     <string name="select_image">Select Image</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="pick_image">Pick Image</string>
+    <string name="select_file">Select File</string>
+    <string name="choose_file_pdf_image">Choose File (PDF / Image)</string>
     <string name="invalid_visit_date">Invalid visit date</string>
     <string name="delivery_date_is_missing">Delivery date is missing</string>
     <string name="visit_date_cannot_be_after_today_s_date">Visit Date cannot be after today\'s date</string>

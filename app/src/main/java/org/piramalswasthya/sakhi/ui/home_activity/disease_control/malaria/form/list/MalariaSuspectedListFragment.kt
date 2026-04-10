@@ -339,7 +339,7 @@ class MalariaSuspectedListFragment : Fragment() {
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
-                    val result = FieldValidator.validate(updated, null)
+                    val result = FieldValidator.validate(updated, null, context = requireContext())
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
                     if (schemaField.fieldId == "visit_date" && schemaField.value is String) {

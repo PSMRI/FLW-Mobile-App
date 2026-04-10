@@ -275,6 +275,14 @@
     <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
     <string name="form_input_min_limit_error">%1$s should be greater than or equal to %2$d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="field_is_required">%s is required</string>
+    <string name="field_is_invalid">%s is invalid</string>
+    <string name="field_must_be_number">%s must be a number</string>
+    <string name="field_min_value">%1$s should be at least %2$s</string>
+    <string name="field_max_value">%1$s should be at most %2$s</string>
+    <string name="field_date_invalid">%s date is invalid</string>
+    <string name="field_date_before">%1$s cannot be before %2$s</string>
+    <string name="field_date_after">%1$s cannot be after %2$s</string>
     <string name="abha_number_digit">ABHA number should be 14-digit long</string>
     <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="ifsc_code">IFSC</string>
