@@ -29,7 +29,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAshaProfileBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
+
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -120,8 +120,9 @@ class AshaProfileFragment : Fragment() {
 
         val householdAdapter = HouseHoldListAdapter("",false, prefDao, false, HouseHoldListAdapter.HouseholdClickListener({
                 findNavController().navigate(
-                    AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
-                        it.hhId
+                    AshaProfileFragmentDirections.actionAshaProfileFragmentToNewHouseholdFragment(
+                        hhId = it.hhId,
+                        isAshaFamily = "Yes"
                     )
                 )
         }, {

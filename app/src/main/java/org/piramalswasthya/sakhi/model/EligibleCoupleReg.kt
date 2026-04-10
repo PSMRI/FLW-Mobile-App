@@ -171,10 +171,11 @@ data class BenWithECRCache(
     val ecr: EligibleCoupleRegCache?,
 
     ) {
-    fun asDomainModel(): BenWithEcrDomain {
+    fun asDomainModel(childCount: Int? = null): BenWithEcrDomain {
         return BenWithEcrDomain(
             ben = ben.asBasicDomainModel(),
-            ecr = ecr
+            ecr = ecr,
+            childCount = childCount ?: 0
         )
     }
 }
@@ -182,7 +183,8 @@ data class BenWithECRCache(
 data class BenWithEcrDomain(
 //    val benId: Long,
     val ben: BenBasicDomain,
-    val ecr: EligibleCoupleRegCache?
+    val ecr: EligibleCoupleRegCache?,
+    val childCount: Int = 0
 )
 
 data class EcrPost(

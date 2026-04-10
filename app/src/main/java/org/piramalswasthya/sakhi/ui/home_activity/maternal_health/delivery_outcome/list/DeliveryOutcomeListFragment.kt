@@ -61,11 +61,13 @@ class DeliveryOutcomeListFragment : Fragment() {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { hhId, benId ->
-                    findNavController().navigate(
-                        DeliveryOutcomeListFragmentDirections.actionDeliveryOutcomeListFragmentToDeliveryOutcomeFragment(
-                            benId, hhId
+                    if (findNavController().currentDestination?.id == R.id.deliveryOutcomeListFragment) {
+                        findNavController().navigate(
+                            DeliveryOutcomeListFragmentDirections.actionDeliveryOutcomeListFragmentToDeliveryOutcomeFragment(
+                                benId, hhId
+                            )
                         )
-                    )
+                    }
                 }), resources.getString(R.string.register), pref = prefDao
         )
         binding.rvAny.adapter = benAdapter

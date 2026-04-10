@@ -771,9 +771,12 @@
         <action
             android:id="@+id/action_householdMembersFragment_to_kalaAzarFormFragment"
             app:destination="@id/kalaAzarFormFragment" />
+
         <action
             android:id="@+id/action_householdMembersFragment_to_eyeSurgeryFormFragment"
             app:destination="@id/eyeSurgeryFormFragment" />
+
+
     </fragment>
     <fragment
         android:id="@+id/hbncDayListFragment"
@@ -1287,6 +1290,27 @@
             android:name="isViewMode"
             app:argType="boolean"
             android:defaultValue="false" />
+
+        <argument android:name="eyeSide"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument android:name="formDataJson"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+        <argument android:name="recordId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument android:name="benName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument android:name="gender"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument android:name="age"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
     <fragment
@@ -2217,6 +2241,15 @@
         android:id="@+id/saasBahuSammelanListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.saas_bahu_sammelan.SaasBahuSammelanListFragment"
         android:label="SaasBahuSammelanListFragment" >
+
+    <fragment
+        android:id="@+id/eyeSurgeryBottomSheetFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment"
+        android:label="EyeSurgeryBottomSheet">
+        <action
+            android:id="@+id/action_eyeSurgeryBottomSheet_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+    </fragment>
 
         <action
             android:id="@+id/action_saasBahuSamelanList_to_saasbahuFormFragment"

@@ -203,7 +203,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 57, exportSchema = false
+    version = 58, exportSchema = false
 )
 
 @TypeConverters(
@@ -310,8 +310,63 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
 
-            val MIGRATION_56_57 = object : Migration(56, 57) {
+
+            }*/
+//            val MIGRATION_57_58 = object : Migration(57, 58) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    // eyeSide column add
+//                    database.execSQL(
+//                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT NOT NULL DEFAULT 'LEFT'"
+//                    )
+//                    // Old unique index drop
+//                    database.execSQL(
+//                        "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
+//                    )
+//                    // New unique index on eyeSide
+//                    database.execSQL(
+//                        "CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide " +
+//                                "ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)"
+//                    )
+//                }
+//            }
+
+            val MIGRATION_57_58 = object : Migration(57, 58) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT"
+                    )
+
+                    database.execSQL(
+                        "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
+                    )
+
+                    database.execSQL("""
+            DELETE FROM ALL_EYE_SURGERY_VISIT_HISTORY
+            WHERE id NOT IN (
+                SELECT MAX(id) 
+                FROM ALL_EYE_SURGERY_VISIT_HISTORY
+                GROUP BY benId, formId
+            )
+        """.trimIndent())
+
+                    database.execSQL("""
+            UPDATE ALL_EYE_SURGERY_VISIT_HISTORY 
+            SET eyeSide = 'LEFT' 
+            WHERE eyeSide IS NULL
+        """.trimIndent())
+
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide " +
+                                "ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)"
+                    )
+                }
+            }
+
+               val MIGRATION_56_57 = object : Migration(56, 57) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     val householdLocColumns = listOf(
                         "loc_country_id INTEGER NOT NULL DEFAULT 0",
@@ -337,7 +392,7 @@ abstract class InAppDb : RoomDatabase() {
                     )
                     for (column in householdLocColumns) {
                         val columnName = column.split(" ")[0]
-                        if (!columnExists(database, "HOUSEHOLD", columnName)) {
+                             if (!columnExists(database, "HOUSEHOLD", columnName)) {
                             database.execSQL("ALTER TABLE HOUSEHOLD ADD COLUMN $column")
                         }
                     }
@@ -694,6 +749,42 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_55_56 = object : Migration(55, 56) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserName TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN reason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN otherReason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalStatus INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserId INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN isClaimed INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN calimedDate TEXT"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN supervisorRole TEXT"
+                    )
+
                     if (!columnExists(database, "INCENTIVE_RECORD", "isEligible")) {
                         database.execSQL(
                             """
@@ -704,7 +795,6 @@ abstract class InAppDb : RoomDatabase() {
                     }
                 }
             }
-
 
             val MIGRATION_54_55 = object : Migration(54, 55) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3214,7 +3304,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_53_54,
                         MIGRATION_54_55,
                         MIGRATION_55_56,
-                        MIGRATION_56_57
+                        MIGRATION_56_57,
+                        MIGRATION_57_58
 
 
                     ).build()
