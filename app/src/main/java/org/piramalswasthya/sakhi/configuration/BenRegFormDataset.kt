@@ -91,6 +91,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             return cal.timeInMillis
         }
 
+        private fun getAgeStringFromDob(dob: Long): String {
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = dob
+            val ageUnitDTO = org.piramalswasthya.sakhi.model.AgeUnitDTO(0, 0, 0)
+            org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO(ageUnitDTO, cal)
+            return org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit(ageUnitDTO)
+        }
     }
 
     private var familyHeadPhoneNo: String? = null
@@ -158,6 +165,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         hasDependants = true,
         etInputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
     )
+    private val dobReadOnly = FormElement(
+        id = 116,
+        inputType = TEXT_VIEW,
+        title = resources.getString(R.string.nbr_dob),
+        required = false,
+    )
+
     val gender = FormElement(
         id = 9,
         inputType = RADIO,
@@ -871,6 +885,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                agePopup.value = getAgeStringFromDob(saved.dob)
+                dobReadOnly.value = getDateFromLong(saved.dob)
+                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
                 maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
@@ -1107,6 +1124,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
                 agePopup.inputType = TEXT_VIEW
+                agePopup.value = getAgeStringFromDob(saved.dob)
+                dobReadOnly.value = getDateFromLong(saved.dob)
+                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
                 maritalStatus.inputType = TEXT_VIEW
             }
             fatherName.value = saved.fatherName
@@ -2461,10 +2481,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                 val saved = benIfDataExist
                 if (saved != null) {
-                    reproductiveStatus.value = saved.genDetails?.reproductiveStatus
-//                    reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-//                        reproductiveStatus.getStringFromPosition(it)
-//                    }
+                    val storedEnglishStatus = saved.genDetails?.reproductiveStatus
+                    reproductiveStatus.value = if (storedEnglishStatus != null) {
+                        listOf(
+                            R.array.nbr_reproductive_status_array1,
+                            R.array.nbr_reproductive_status_array2,
+                            R.array.nbr_reproductive_status_array3,
+                            R.array.nbr_reproductive_status_array4,
+                            R.array.nbr_reproductive_status_array5
+                        ).firstNotNullOfOrNull { getLocalValueInArray(it, storedEnglishStatus) } ?: storedEnglishStatus
+                    } else null
                 }
                 reproductiveStatus.inputType = DROPDOWN
 
@@ -2592,7 +2618,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         removeItems = listOf(birthCertificateNumber, placeOfBirth),
                         addItems = listOf(maritalStatus)
                     )
-                    if (gender.value == "Female") {
+                    if (gender.value == gender.entries!![1]) {
                         triggerDependants(
                             source = rchId,
                             removeItems = listOf(),
@@ -2630,15 +2656,27 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         return if (listChanged || listChanged2 || listChanged3 || listChanged4) 1 else -1
     }
 
+    private fun getReproductiveStatusEnglishValue(): String {
+        val localized = reproductiveStatus.value?.trim() ?: return ""
+        return listOf(
+            R.array.nbr_reproductive_status_array1,
+            R.array.nbr_reproductive_status_array2,
+            R.array.nbr_reproductive_status_array3,
+            R.array.nbr_reproductive_status_array4,
+            R.array.nbr_reproductive_status_array5
+        ).firstNotNullOfOrNull { getEnglishValueInArray(it, localized) } ?: localized
+    }
+
     private fun validateReproductiveStatusField(genderIsFemale: Boolean, age: Int): Int {
+        val reproEnglish = getReproductiveStatusEnglishValue()
         if ((genderIsFemale &&
                     age in 15..19 &&
                     maritalStatus.value == maritalStatus.entries!![1] &&
-                    reproductiveStatus.value == "Adolescent Girl") ||
+                    reproEnglish == "Adolescent Girl") ||
             (genderIsFemale &&
                     age in 20..49 &&
                     maritalStatus.value == maritalStatus.entries!![1] &&
-                    reproductiveStatus.value == "Not Applicable")) {
+                    reproEnglish == "Not Applicable")) {
             reproductiveStatus.inputType = DROPDOWN
 
         }
@@ -2773,7 +2811,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 //                }
 
             ben.genDetails?.let { gen ->
-                val selectedValue = reproductiveStatus.value?.trim() ?: ""
+                val selectedValue = getReproductiveStatusEnglishValue()
                 val reproductiveMap = mapOf(
                     "Eligible Couple" to 1,
                     "Pregnant Woman" to 2,
@@ -3166,7 +3204,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             removeItems = listOf(birthCertificateNumber, placeOfBirth),
                             addItems = listOf(maritalStatus)
                         )
-                        if (gender.value == "Female") {
+                        if (gender.value == gender.entries!![1]) {
                             triggerDependants(
                                 source = rchId,
                                 removeItems = listOf(),

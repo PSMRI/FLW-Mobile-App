@@ -747,9 +747,12 @@ object HelperUtil {
         onCameraSelected: () -> Unit,
         onFileSelected: () -> Unit
     ) {
-        val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
+        val options = arrayOf(
+            context.getString(R.string.take_photo),
+            context.getString(R.string.choose_file_pdf_image)
+        )
         AlertDialog.Builder(context)
-            .setTitle("Select File")
+            .setTitle(context.getString(R.string.select_file))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> onCameraSelected()

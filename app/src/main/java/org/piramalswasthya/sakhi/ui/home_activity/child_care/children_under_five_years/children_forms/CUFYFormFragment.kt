@@ -315,6 +315,15 @@ class CUFYFormFragment : Fragment() {
             }
         }
 
+        // If the adapter is already initialized, update its fields in place rather than
+        // replacing the adapter. Replacing the adapter causes NestedScrollView.onSizeChanged()
+        // to call offsetDescendantRectToMyCoords() on a focused view that RecyclerView has
+        // already detached, throwing IllegalArgumentException: "parameter must be a descendant".
+        if (::adapter.isInitialized) {
+            adapter.updateFields(visibleFields)
+            return
+        }
+
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = isViewMode,
@@ -335,7 +344,7 @@ class CUFYFormFragment : Fragment() {
                     adapter.updateFields(updatedVisibleFields)
 
 
-                    if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID) {
+                    if (formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID && isAdded) {
                         checkAndShowSAMAlert(requireContext(), field.fieldId, value)
                     }
                 }
@@ -367,6 +376,10 @@ class CUFYFormFragment : Fragment() {
         ifaMinDate: Date?,
         ifaMaxDate: Date?
     ) {
+        if (::adapter.isInitialized) {
+            adapter.updateFields(visibleFields)
+            return
+        }
         adapter = FormRendererAdapter(
             visibleFields,
             isViewOnly = isViewMode,
@@ -444,7 +457,7 @@ class CUFYFormFragment : Fragment() {
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
-                    val result = FieldValidator.validate(updated, dobString)
+                    val result = FieldValidator.validate(updated, dobString, context = requireContext())
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
 
@@ -629,9 +642,10 @@ class CUFYFormFragment : Fragment() {
                         val isDateGreaterThanAll = existingVisits.all { existingVisit ->
                             val existingVisitDateStr = extractVisitDateFromFormData(existingVisit.formDataJson)
                             if (existingVisitDateStr != null) {
-                                val currentDate = sdf.parse(visitDate)
-                                val existingDate = sdf.parse(existingVisitDateStr)
-                                currentDate.after(existingDate)
+                                val currentDate = try { sdf.parse(visitDate) } catch (e: Exception) { null }
+                                val existingDate = try { sdf.parse(existingVisitDateStr) } catch (e: Exception) { null }
+                                if (currentDate == null || existingDate == null) true
+                                else currentDate.after(existingDate)
                             } else {
                                 true
                             }
