@@ -126,9 +126,9 @@
         <item>ससुर</item>
         <item>सास</item>
         <item>पोता</item>
-        <item>पोती</item>
+        <item>पोती/नातनी</item>
         <item>दामाद</item>
-        <item>नातनी</item>
+        <item>बहू</item>
         <item>अन्य</item>
     </string-array>
     <string-array name="nbr_relationship_to_head_src">
@@ -147,11 +147,13 @@
         <item>ससुर</item>
         <item>सास</item>
         <item>पोता</item>
-        <item>पोती</item>
+        <item>पोती/नातनी</item>
         <item>दामाद</item>
-        <item>नातनी</item>
+        <item>बहू</item>
+        <item>भाभी/नन्द/साली</item>
         <item>स्वयं</item>
         <item>अन्य</item>
+
     </string-array>
 
     <string-array name="nbr_relationship_to_head_male">
