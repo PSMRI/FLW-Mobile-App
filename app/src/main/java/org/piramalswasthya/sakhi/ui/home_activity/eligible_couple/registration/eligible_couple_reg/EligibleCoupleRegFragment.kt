@@ -59,6 +59,7 @@ class EligibleCoupleRegFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
+                val currentBinding = _binding ?: return@registerForActivityResult
                 if(viewModel.getDocumentFormId() == 75) {
                     latestTmpUri?.let { uri ->
                         if (checkFileSize(uri,requireContext())) {
@@ -66,7 +67,7 @@ class EligibleCoupleRegFragment : Fragment() {
 
                         } else {
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -80,7 +81,7 @@ class EligibleCoupleRegFragment : Fragment() {
 
                         } else {
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -95,6 +96,7 @@ class EligibleCoupleRegFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val currentBinding = _binding ?: return
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
             if(viewModel.getDocumentFormId() == 31) {
                 data?.data?.let { pdfUri ->
@@ -105,7 +107,7 @@ class EligibleCoupleRegFragment : Fragment() {
                         latestTmpUri = pdfUri
                         latestTmpUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -123,7 +125,7 @@ class EligibleCoupleRegFragment : Fragment() {
                         backViewFileUri = pdfUri
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapterWithBgIcon
                                 adapter.notifyDataSetChanged()
                             }
@@ -251,6 +253,19 @@ class EligibleCoupleRegFragment : Fragment() {
             binding.tvNoChild.text = it.toString()
         }
 
+        viewModel.benName.observe(viewLifecycleOwner) {
+            binding.tvBenName.text = it
+        }
+        binding.husbandNameLl.visibility = View.VISIBLE
+        binding.marriageLl.visibility = View.VISIBLE
+        viewModel.husbandName.observe(viewLifecycleOwner) {
+            binding.tvHusbandname.text = it ?: ""
+        }
+
+        viewModel.marriageDate.observe(viewLifecycleOwner) {
+            binding.tvMarriageDate.text = it ?: ""
+        }
+
 
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
@@ -280,7 +295,8 @@ class EligibleCoupleRegFragment : Fragment() {
     }
 
     fun validate(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
+        val currentBinding = _binding ?: return false
+        val result = currentBinding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapterWithBgIcon).validateInput(resources)
         }
         Timber.d("Validation : $result")
@@ -288,14 +304,14 @@ class EligibleCoupleRegFragment : Fragment() {
             true
         else {
             if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
+                currentBinding.form.rvInputForm.scrollToPosition(result)
             }
             false
         }
     }
 
     private fun hardCodedListUpdate(formId: Int) {
-        binding.form.rvInputForm.adapter?.apply {
+        _binding?.form?.rvInputForm?.adapter?.apply {
             when (formId) {
                 17 -> {
                     notifyDataSetChanged()

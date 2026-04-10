@@ -47,6 +47,7 @@ import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -54,6 +55,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object HelperUtil {
 
@@ -882,6 +884,32 @@ object HelperUtil {
         }.time
     }
 
+    fun formatDate(dateString: String?): String {
+        return try {
+            if (dateString.isNullOrBlank()) return ""
+
+            val inputFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+
+            val outputFormat = SimpleDateFormat(
+                "d MMM yyyy",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getDefault()
+            }
+
+            val date = inputFormat.parse(dateString)
+            if (date != null) outputFormat.format(date) else ""
+
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to parse date: $dateString")
+            ""
+        }
+    }
      fun getFilesName(uri: Uri,context: Context): String? {
         var result: String? = null
 

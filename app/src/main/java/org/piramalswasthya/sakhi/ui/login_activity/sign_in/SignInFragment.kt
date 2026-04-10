@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.login_activity.sign_in
 
 import android.app.AlertDialog
+import timber.log.Timber
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -34,6 +36,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -175,9 +178,14 @@ class SignInFragment : Fragment() {
             }
 
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(requireContext(), getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -224,7 +232,7 @@ class SignInFragment : Fragment() {
                     binding.tvError.visibility = View.GONE
 
                     val loggedInUser = prefDao.getLoggedInUser()
-                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || loggedInUser?.role.equals(RoleConstants.ROLE_ANM, true) || loggedInUser?.role.equals(RoleConstants.ROLE_CHO, true)) {
                         val user = loggedInUser!!
                         val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
@@ -235,11 +243,11 @@ class SignInFragment : Fragment() {
                             LocationEntity(village?.id ?: 0, village?.name ?: ""),
                         )
                         prefDao.saveLocationRecord(locationRecord)
-
                         activity?.finish()
                         val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
                         startActivity(goToHome)
                     } else {
+
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {
 //                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||

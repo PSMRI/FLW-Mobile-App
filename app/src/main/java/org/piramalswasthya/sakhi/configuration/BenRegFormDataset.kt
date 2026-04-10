@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
+import timber.log.Timber
 import android.util.Log
 import android.util.Range
 import android.widget.LinearLayout
@@ -2727,11 +2728,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
 
             ben.userImage = pic.value
-            ben.regDate = getLongFromDate(dateOfReg.value!!)
+            ben.regDate = getLongFromDate(dateOfReg.value)
             ben.firstName = firstName.value
             ben.lastName = lastName.value
-            ben.dob = getLongFromDate(agePopup.value!!)
-            ben.age = (getAgeFromDob(getLongFromDate(agePopup.value)))
+            val dobValue = agePopup.value
+            if (dobValue.isNullOrBlank()) {
+                Timber.e("DOB (agePopup) is null or blank — skipping dob/age assignment")
+            } else {
+                ben.dob = getLongFromDate(dobValue)
+                ben.age = (getAgeFromDob(getLongFromDate(dobValue)))
+            }
             ben.ageUnitId = 3
             ben.ageUnit = AgeUnit.YEARS
             ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
