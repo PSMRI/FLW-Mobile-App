@@ -118,5 +118,9 @@
         <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
         <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
     </style>
+    <style name="CircleImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
 </resources>
