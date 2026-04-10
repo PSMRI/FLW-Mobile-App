@@ -206,10 +206,17 @@ class UserRepo @Inject constructor(
                 if (facilityData.has("location")) {
                     val location = facilityData.getJSONObject("location")
                     val locationType = location.optString("locationType", "")
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
                     preferenceDao.saveLocationType(locationType)
+                    preferenceDao.saveBlock(block)
+                    preferenceDao.saveState(state)
+                    preferenceDao.saveDistrict(district)
 
 
                 }
+
                 if (facilityData.has("user")) {
 
                     val userObj = facilityData.getJSONObject("user")
@@ -238,7 +245,6 @@ class UserRepo @Inject constructor(
 
                 val facilityData = data.getJSONObject("facilityData")
 
-                // ----- LOCATION -----
                 if (facilityData.has("location")) {
                     val location = facilityData.getJSONObject("location")
 
@@ -251,18 +257,32 @@ class UserRepo @Inject constructor(
                     preferenceDao.saveSupervisorState(state)
                 }
 
-                if (facilityData.has("facilities")) {
-                    val facilitiesArray = facilityData.getJSONArray("facilities")
+                if (facilityData.has("facility")) {
+                    val facilityObj = facilityData.getJSONObject("facility")
 
-                    if (facilitiesArray.length() > 0) {
-                        val facilityObj = facilitiesArray.getJSONObject(0)
 
                         val subcenterName = facilityObj.optString("facilityName", "")
                         val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
 
                         preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
                         preferenceDao.saveSupervisorFacilityType(facilityType)
-                    }
+
+                }
+
+                if (facilityData.has("supervisor")) {
+                    val facilityObj = facilityData.getJSONObject("supervisor")
+
+
+                    val supervisorName = facilityObj.optString("fullName", "")
+                    val supervisorEmpID = facilityObj.optString("employeeId", "")
+                    val supervisorContact = facilityObj.optString("mobile", "")
+
+                    preferenceDao.saveSupervisorName(supervisorName)
+                    preferenceDao.saveSupervisorEmpID(supervisorEmpID)
+                    preferenceDao.saveSupervisorContact(supervisorContact)
+
                 }
             }
             return@withContext userId

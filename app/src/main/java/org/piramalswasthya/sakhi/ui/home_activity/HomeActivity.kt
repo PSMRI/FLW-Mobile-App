@@ -635,12 +635,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             headerView.findViewById<TextView>(R.id.tv_nav_name).text =
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_2_text, it.userName)
+                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
-            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+            val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
             val formatted = HtmlCompat.fromHtml(
-                getString(R.string.nav_item_3_text, englishId),
+                getString(R.string.nav_item_emp_text, englishId),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted

@@ -14,122 +14,132 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimary"
-        >
+        android:background="?attr/colorPrimary">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_login_item_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/margin_normal"
-            android:elevation="@dimen/padding_wide"
-            app:cardCornerRadius="@dimen/padding_wide"
-            app:cardElevation="@dimen/padding_wide">
+            android:layout_margin="20dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_wide">
+                android:padding="20dp">
 
+                <!-- Welcome -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{@string/tv_text_welcome_user(viewModel.userName)}"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                    android:layout_marginBottom="16dp"/>
 
+                <!-- Section Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Facility Details"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="8dp"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+
+                <!-- Info Card -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_light_card"
+                    android:padding="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_facility"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/tv_text_facility(viewModel.facilityName)}"
+                        android:paddingVertical="6dp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/tv_text_state(viewModel.stateDropdownEntry)}"
+                        android:paddingVertical="6dp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/tv_text_district(viewModel.districtDropdownEntry)}"
+                        android:paddingVertical="6dp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/tv_text_block(viewModel.blockDropdownEntry)}"
+                        android:paddingVertical="6dp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"/>
+
+                </LinearLayout>
+
+                <!-- Select Village -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_select_service_region"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
                     android:text="@string/tv_text_select_village"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_state_dropdown"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/service_type_dd_state_text"
-                    android:labelFor="@id/actv_state_dropdown">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/actv_state_dropdown"
-                        listItems="@{viewModel.stateList}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_district_dropdown"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/service_type_dd_district_text"
-                    android:labelFor="@id/actv_district_dropdown">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/actv_district_dropdown"
-                        listItems="@{viewModel.districtList}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_block_dropdown"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/service_type_dd_block_text"
-                    android:labelFor="@id/actv_block_dropdown">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/actv_block_dropdown"
-                        listItems="@{viewModel.blockList}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="8dp"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_village_dropdown"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:endIconMode="dropdown_menu"
                     android:hint="@string/service_type_dd_village_text"
-                    android:labelFor="@id/actv_village_dropdown">
+                    android:layout_marginBottom="20dp">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/actv_village_dropdown"
-                        listItems="@{viewModel.villageList}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="none" />
+                        android:inputType="none"
+                        android:padding="14dp"
+                        listItems="@{viewModel.villageList}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Continue Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_continue"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/padding_normal"
-                    android:padding="@dimen/padding_normal"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/btn_continue_text"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:textColor="?attr/colorOnPrimary" />
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="?attr/colorPrimary"/>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
-
 
     </FrameLayout>
 </layout>

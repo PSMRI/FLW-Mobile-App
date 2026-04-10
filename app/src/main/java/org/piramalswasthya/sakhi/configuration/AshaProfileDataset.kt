@@ -42,7 +42,7 @@ class AshaProfileDataset(
     private val village = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = resources.getString(R.string.village),
+        title = resources.getString(R.string.village_new),
         required = false,
     )
 
@@ -260,6 +260,25 @@ class AshaProfileDataset(
 
 
     )
+    private val facilityName = FormElement(
+        id = 24,
+        inputType = InputType.TEXT_VIEW,
+        title = resources.getString(R.string.str_facility),
+        required = false,
+        allCaps = true,
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+
+    )
+    private val facilityId = FormElement(
+        id = 25,
+        inputType = InputType.TEXT_VIEW,
+        title = resources.getString(R.string.str_facility_id),
+        required = false,
+        etMaxLength = 10,
+        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
+
+        )
+
 //    private val  ashaHouseholdRegistrationNo = FormElement(
 //        id = 24,
 //        inputType = InputType.TEXT_VIEW,
@@ -294,6 +313,8 @@ class AshaProfileDataset(
             bankAccount,
             Ifsc,
             populationCovered,
+            facilityName,
+            facilityId,
             ashaSupervisorName,
             ashaSupervisorContactNumber,
             ChoName,
@@ -313,7 +334,7 @@ class AshaProfileDataset(
 
         ashaName.value = ashaProfile?.name
         pic.value = ashaProfile?.profileImage
-        village.value = currentUser.villages[0].name
+        village.value = currentUser.villages.joinToString(", ") { it.name }
         loginuserName.value = currentUser.userName
         userId.value = preferenceDao.getEmployeeId().orEmpty()
         mobileNumber.value = ashaProfile?.mobileNumber.toString()
@@ -326,8 +347,8 @@ class AshaProfileDataset(
         populationCovered.value = ashaProfile?.populationCovered.toString()
         spouseOrFatherNameEdt.value = ashaProfile?.fatherOrSpouseName.toString()
         fatherOrspouse.value = fatherOrspouse.getStringSpauseFromPosition(if(ashaProfile?.isFatherOrSpouse==true) 1 else 0)
-        ashaSupervisorName.value = ashaProfile?.supervisorName.toString()
-        ashaSupervisorContactNumber.value = ashaProfile?.supervisorMobile.toString()
+        ashaSupervisorName.value = preferenceDao.getSupervisorName().toString()
+        ashaSupervisorContactNumber.value = preferenceDao.getSupervisorContact().toString()
         ChoName.value = ashaProfile?.choName.toString()
         ChoMobileNo.value = ashaProfile?.choMobile.toString()
         nameOfAWW.value = ashaProfile?.awwName.toString()
@@ -337,6 +358,8 @@ class AshaProfileDataset(
         nameOfANM2.value = ashaProfile?.anm2Name.toString()
         mobileNoOfANM2.value = ashaProfile?.anm2Mobile.toString()
         abhaNumber.value = ashaProfile?.abhaNumber.toString()
+        facilityName.value = preferenceDao.getSupervisorSubcenter()
+        facilityId.value = preferenceDao.getFacilityId().toString()
 //        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
 //        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
         setUpPage(list)

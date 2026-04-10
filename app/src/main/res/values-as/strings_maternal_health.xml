@@ -367,6 +367,8 @@
     <string name="str_abortion_if_any">আগতে গৰ্ভপাত হৈছিল নে?</string>
     <string name="str_abortion_type">গৰ্ভপাতৰ প্ৰকাৰ</string>
     <string name="str_facility">কেন্দ্ৰ</string>
+    <string name="str_facility_id">Facility ID</string>
+
     <string name="str_abortion_date">গৰ্ভপাতৰ তাৰিখ</string>
     <string name="str_weight_pw">নিবন্ধনৰ সময়ত গৰ্ভৱতী মহিলাৰ ওজন (কিলোগ্ৰামত)</string>
     <string name="str_bp_of_pw">গৰ্ভৱতী মহিলাৰ ৰক্তচাপ – সিস্ট’লিক/ডায়াষ্ট’লিক (মি.মি. এইচ.জি.)</string>

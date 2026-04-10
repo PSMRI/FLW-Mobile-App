@@ -294,6 +294,22 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         return pref.getString("PREF_SUPERVISOR_NAME", null)
     }
 
+    fun saveSupervisorEmpID(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_EMPID", name).apply()
+    }
+
+    fun getSupervisorEmpID(): String? {
+        return pref.getString("PREF_SUPERVISOR_EMPID", null)
+    }
+
+    fun saveSupervisorContact(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_Contact", name).apply()
+    }
+
+    fun getSupervisorContact(): String? {
+        return pref.getString("PREF_SUPERVISOR_Contact", null)
+    }
+
     fun saveSupervisorId(id: Int) {
         pref.edit().putInt("PREF_SUPERVISOR_ID", id).apply()
     }
@@ -343,6 +359,14 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", null)
     }
 
+    fun saveFacilityId(facilityId: Int) {
+        pref.edit().putInt("facilityId", facilityId).apply()
+    }
+
+    fun getFacilityId(): Int {
+        return pref.getInt("facilityId", -1)
+    }
+
     fun saveDesignationId(designationId: Int) {
         pref.edit().putInt("designation_id", designationId).apply()
     }
@@ -356,5 +380,28 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     fun getLocationType(): String {
         return pref.getString("location_type", "") ?: ""
+    }
+
+    fun saveDistrict(district: String) {
+        pref.edit().putString("district", district).apply()
+    }
+
+    fun getDistrict(): String {
+        return pref.getString("district", "") ?: ""
+    }
+
+    fun saveBlock(block: String) {
+        pref.edit().putString("block", block).apply()
+    }
+
+    fun getBlock(): String {
+        return pref.getString("block", "") ?: ""
+    }
+    fun saveState(state: String) {
+        pref.edit().putString("state", state).apply()
+    }
+
+    fun getState(): String {
+        return pref.getString("state", "") ?: ""
     }
 }
