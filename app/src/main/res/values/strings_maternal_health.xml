@@ -486,6 +486,7 @@
     <string name="str_abortion_if_any">Abortion If Any</string>
     <string name="str_abortion_type">Abortion Type</string>
     <string name="str_facility">Facility</string>
+    <string name="str_facility_id">Facility ID</string>
     <string name="str_abortion_date">Abortion Date</string>
     <string name="str_weight_pw">Weight of PW (Kg) at time Registration</string>
     <string name="str_bp_of_pw">BP of PW – Systolic/ Diastolic (mm Hg) </string>

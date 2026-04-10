@@ -157,10 +157,10 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
         val firstPage by lazy {
             listOf(
                 familyHeading,
+                villageDropdown,
                 firstNameHeadOfFamily,
                 lastNameHeadOfFamily,
                 mobileNoHeadOfFamily,
-                villageDropdown,
                 houseNo,
                 wardNo,
                 wardName,
