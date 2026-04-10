@@ -36,17 +36,19 @@
     <string name="btn_frag_nhhr_prev">previous</string>
     <string name="btn_frag_nhhr_next">next</string>
     <string name="nhhr_type_residential_area">आवासीय क्षेत्र का प्रकार</string>
-    <string name="nhhr_type_residential_area_1">चयन कीजिए</string>
-    <string name="nhhr_type_residential_area_2">ग्रामीण क्षेत्र</string>
-    <string name="nhhr_type_residential_area_3">शहरी क्षेत्र</string>
+    <string name="nhhr_type_residential_area_1">ग्रामीण क्षेत्र</string>
+    <string name="nhhr_type_residential_area_2">शहरी क्षेत्र</string>
+    <string name="nhhr_type_residential_area_3">जनजातीय क्षेत्र</string>
     <string name="nhhr_type_residential_area_4">अन्य</string>
-    <string name="nhhr_type_residential_area_5">Tea Garden</string>
+    <string name="nhhr_type_residential_area_5">चाय बागान</string>
 
     <string-array name="nhhr_type_residential_area_array">
         <item>@string/nhhr_type_residential_area_1</item>
         <item>@string/nhhr_type_residential_area_2</item>
         <item>@string/nhhr_type_residential_area_3</item>
         <item>@string/nhhr_type_residential_area_4</item>
+        <item>@string/nhhr_type_residential_area_5</item>
+
 
     </string-array>
     <string name="nhhr_type_of_house">घर का प्रकार</string>
