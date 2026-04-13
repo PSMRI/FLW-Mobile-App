@@ -82,7 +82,7 @@
     <string name="icon_title_hrp_pregnant_assess">गर्भवती महिलाओं में उच्च जोखिम का आकलन</string>
     <string name="icon_title_hrp_pregnant_track">गर्भवती महिलाओं का अनुवर्ती कार्रवाई</string>
     <string name="icon_title_hrp_non_pregnant_assess">गैर-गर्भवती महिलाओं में उच्च जोखिम का आकलन</string>
-    <string name="icon_title_hrp_non_pregnant_track">उच्च जोखिम वाली गर्भवती महिलाओं की नियमित निगरानी</string>
+    <string name="icon_title_hrp_non_pregnant_track">गैर-गर्भवती महिलाओं का अनुवर्ती कार्रवाई</string>
     <string name="icon_title_sr">सर्वेक्षण रजिस्टर</string>
     <string name="icon_title_ahd_list">एएचडी फॉर्म सूची</string>
 
