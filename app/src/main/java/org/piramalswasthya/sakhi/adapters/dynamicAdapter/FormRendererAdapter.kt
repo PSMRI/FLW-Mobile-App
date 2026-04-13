@@ -238,6 +238,7 @@
                     wrapper.addView(inputView)
 
                     val errorTextView = TextView(itemView.context).apply {
+                        tag = "field_error_tv"
                         setTextColor(android.graphics.Color.RED)
                         textSize = 12f
                         text = field.errorMessage ?: ""
