@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.net.Uri
 import android.os.CountDownTimer
 import android.text.Editable
@@ -13,6 +14,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -424,6 +426,10 @@ class FormInputAdapterOld(
                             rdBtn.isChecked = true
                         rdBtn.setOnCheckedChangeListener { _, b ->
                             if (b) {
+                                // Clear focus from any previously focused EditText to prevent auto-scroll
+                                binding.root.rootView.findFocus()?.clearFocus()
+                                val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value.value = it
                             }
                             item.errorText = null
