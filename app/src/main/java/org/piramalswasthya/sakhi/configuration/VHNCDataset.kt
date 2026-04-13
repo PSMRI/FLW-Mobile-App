@@ -213,13 +213,13 @@ class VHNCDataset(
             pic1.value = it.image1
             pic2.value = it.image2
             place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
-            villageName.value = it.villageName
-            noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
-            noOfANM.value = it.anm.toString()
-            noOfAWW.value = it.aww.toString()
-            noOfPW.value = it.noOfPragnentWoment.toString()
-            noOfLM.value = it.noOfLactingMother.toString()
-            noOfCommentte.value = it.noOfCommittee.toString()
+            villageName.value = it.villageName?.takeIf { v -> v.isNotEmpty() && v != "null" } ?: ""
+            noOfBeneficiariesAttended.value = (it.noOfBeneficiariesAttended ?: 0).toString()
+            noOfANM.value = (it.anm ?: 0).toString()
+            noOfAWW.value = (it.aww ?: 0).toString()
+            noOfPW.value = (it.noOfPragnentWoment ?: 0).toString()
+            noOfLM.value = (it.noOfLactingMother ?: 0).toString()
+            noOfCommentte.value = (it.noOfCommittee ?: 0).toString()
             followupPrevius.value = it.followupPrevius?.let { value ->
                 val options = resources.getStringArray(R.array.yes_no)
                 if (value) options[0] else options[1]
