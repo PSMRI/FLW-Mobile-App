@@ -9,7 +9,7 @@
     <string name="has_aadhaar_number">आधार नंबर है</string>
     <string name="enter_aadhaar_number_ben">आधार नंबर दर्ज करें</string>
     <string name="reproductive_status">जननांग स्थिति</string>
-    <string name="birth_certificate_number">Birth Certificate No.</string>
+    <string name="birth_certificate_number">जन्म प्रमाण पत्र संख्या.</string>
     <string name="beneficiary_details">लाभार्थी विवरण</string>
     <string name="wife_s_name">पत्नी का नाम</string>
     <string name="spouse_s_name">पति / पत्नी का नाम</string>
@@ -383,6 +383,11 @@
         <item>पिता</item>
         <item>पड़ोसी</item>
         <item>मित्र / रिश्तेदार</item>
+    </string-array>
+
+    <string-array name="fathers_spouse">
+        <item>पिता</item>
+        <item>जीवनसाथी</item>
     </string-array>
 
 </resources>
