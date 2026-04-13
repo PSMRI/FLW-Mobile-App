@@ -323,9 +323,9 @@ class VHNDDataset(
             form.vhndPlaceId = place.getPosition()
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                form.pregnantWomenAnc = noOfPWAttended.value ?: "0"
-                form.lactatingMothersPnc = noOflactingMotherAttended.value ?: "0"
-                form.childrenImmunization = noOfchildrenAttended.value ?: "0"
+                form.pregnantWomenAnc = noOfPWAttended.value?.takeUnless { it.isBlank() } ?: "0"
+                form.lactatingMothersPnc = noOflactingMotherAttended.value?.takeUnless { it.isBlank() } ?: "0"
+                form.childrenImmunization = noOfchildrenAttended.value?.takeUnless { it.isBlank() } ?: "0"
                 form.knowledgeBalancedDiet = toCsv(knowOfBalanceDiet.value,knowOfBalanceDiet.entries!!)
                 form.careDuringPregnancy = toCsv(careDuringPregnancy.value,careDuringPregnancy.entries!!)
                 form.importanceBreastfeeding = toCsv(importBreastFeeding.value,importBreastFeeding.entries!!)
