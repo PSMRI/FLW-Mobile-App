@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutPulsePolioCampaignItemBinding
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -42,7 +43,7 @@ class PulsePolioCampaignAdapter(
             val startDate = HelperUtil.extractFieldValue(item.formDataJson,"start_date")
             val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"children_vaccinated")
             binding.tvDate.text = startDate
-            binding.numberOfChildren.text = "Number Of Children : $numberOfChildren"
+            binding.numberOfChildren.text = binding.root.context.getString(R.string.number_of_children_label, numberOfChildren)
         }
     }
 
