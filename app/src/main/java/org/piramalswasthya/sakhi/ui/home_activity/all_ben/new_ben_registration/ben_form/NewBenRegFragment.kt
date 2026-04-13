@@ -238,7 +238,7 @@ class NewBenRegFragment : Fragment() {
                     hhId = viewModel.hhId,
                     benId = viewModel.benIdFromArgs,
                     gender = spouseGender,
-                    selectedBenId = viewModel.SelectedbenIdFromArgs,
+                    selectedBenId = viewModel.SelectedbenIdFromArgs.takeIf { it != 0L } ?: viewModel.benIdFromArgs,
                     relToHeadId = viewModel.relToHeadId
                 )
             )
