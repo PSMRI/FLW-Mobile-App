@@ -468,12 +468,12 @@ class PregnantWomanAncVisitDataset(
             fileUploadFront,
             fileUploadBack,
 
-        )
+            )
 
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-           list.remove(fileUploadFront)
-           list.remove(fileUploadBack)
-           list.remove(headLine)
+            list.remove(fileUploadFront)
+            list.remove(fileUploadBack)
+            list.remove(headLine)
         }
         if (BuildConfig.FLAVOR.contains("xushrukha", ignoreCase = true)) {
             bp.required=true
@@ -622,7 +622,7 @@ class PregnantWomanAncVisitDataset(
             }
             savedAnc.maternalDeath?.let {
                 maternalDeath.value = if (it) maternalDeath.entries!!.last() else maternalDeath.entries!!.first()
-                  if (it) {
+                if (it) {
                     maternalDeathProbableCause.value =
                         getLocalValueInArray(
                             maternalDeathProbableCause.arrayId,
@@ -634,11 +634,11 @@ class PregnantWomanAncVisitDataset(
                         list.indexOf(maternalDeath) + 1,
                         listOf(maternalDeathProbableCause, maternalDateOfDeath)
                     )
-                      placeOfDeath.entries?.indexOf(savedAnc.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
-                          if (index == 8) {
-                              list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
-                          }
-                      }
+                    placeOfDeath.entries?.indexOf(savedAnc.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                        if (index == 8) {
+                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                        }
+                    }
                     otherMaternalDeathProbableCause.value =
                         savedAnc.otherMaternalDeathProbableCause
                     if (maternalDeathProbableCause.value == maternalDeathProbableCause.entries!!.last()) list.add(
@@ -801,14 +801,23 @@ class PregnantWomanAncVisitDataset(
                     hrpConfirm
                 )
 
-                if (isAborted.value == isAborted.entries!!.last() ||
-                    maternalDeath.value == maternalDeath.entries!!.last()
-                ) {
+                val isAbortedYes = isAborted.value == isAborted.entries!!.last()
+                val isMaternalDeathYes = maternalDeath.value == maternalDeath.entries!!.last()
+                val abortionFields = listOf(abortionType, abortionFacility, abortionDate)
+
+                if (isAbortedYes) {
                     triggerDependants(
                         source = maternalDeath,
-                        addItems = listOf(abortionType, abortionFacility, abortionDate),
+                        addItems = abortionFields,
                         removeItems = commonAddItems + deliveryDone,
                         position = getIndexById(isAborted.id).coerceAtLeast(0) + 1 // safe
+                    )
+                } else if (isMaternalDeathYes) {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = emptyList(),
+                        removeItems = abortionFields + commonAddItems + deliveryDone,
+                        position = -1
                     )
                 } else {
                     val week = weekOfPregnancy.value?.toIntOrNull()
@@ -819,7 +828,7 @@ class PregnantWomanAncVisitDataset(
                         commonAddItems
                     }
 
-                    val removeItems = listOf(abortionType, abortionFacility, abortionDate) +
+                    val removeItems = abortionFields +
                             if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
 
                     triggerDependants(
@@ -946,14 +955,22 @@ class PregnantWomanAncVisitDataset(
 
                 val week = weekOfPregnancy.value?.toIntOrNull()
 
-                if (maternalDeath.value == maternalDeath.entries!!.last() ||
-                    isAborted.value == isAborted.entries!!.last()
-                ) {
+                val isMaternalDeathYes = maternalDeath.value == maternalDeath.entries!!.last()
+                val isAbortedYes = isAborted.value == isAborted.entries!!.last()
+
+                if (isMaternalDeathYes) {
                     triggerDependants(
                         source = maternalDeath,
                         addItems = maternalDeathFields,
                         removeItems = commonAddItems + deliveryDone,
                         position = getIndexById(maternalDeath.id).coerceAtLeast(0) + 1
+                    )
+                } else if (isAbortedYes) {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = emptyList(),
+                        removeItems = maternalDeathFields + commonAddItems + deliveryDone,
+                        position = -1
                     )
                 } else {
                     val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
