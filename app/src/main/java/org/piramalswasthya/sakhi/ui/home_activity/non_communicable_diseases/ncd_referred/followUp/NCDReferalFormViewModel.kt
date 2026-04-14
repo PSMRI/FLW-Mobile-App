@@ -78,41 +78,41 @@ class NCDReferalFormViewModel @Inject constructor(
         return lastFollow
     }
 
-private fun getNextFollowUpMinDate(): String {
+    private fun getNextFollowUpMinDate(): String {
 
-    val lastMain = getLastMainVisit() ?: return ""
-    val lastFollowUp = getLastFollowUp()
+        val lastMain = getLastMainVisit() ?: return ""
+        val lastFollowUp = getLastFollowUp()
 
-    val treatmentDate = parseDbDate(lastMain.treatmentStartDate) ?: return ""
+        val treatmentDate = parseDbDate(lastMain.treatmentStartDate) ?: return ""
 
-    val cal = Calendar.getInstance()
-    val todayCal = Calendar.getInstance()
+        val cal = Calendar.getInstance()
+        val todayCal = Calendar.getInstance()
 
-    if (lastFollowUp != null && lastFollowUp.visitNo == visitNo) {
-        val lastFollowUpDate = parseDbDate(lastFollowUp.followUpDate) ?: treatmentDate
-        cal.time = lastFollowUpDate
+        if (lastFollowUp != null && lastFollowUp.visitNo == visitNo) {
+            val lastFollowUpDate = parseDbDate(lastFollowUp.followUpDate) ?: treatmentDate
+            cal.time = lastFollowUpDate
 
-    } else {
-        cal.time = treatmentDate
-    }
-    cal.add(Calendar.MONTH, 1)
-    cal.set(Calendar.DAY_OF_MONTH, 1)
-    val isFutureMonth =
-        cal.get(Calendar.YEAR) > todayCal.get(Calendar.YEAR) ||
-                (cal.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR) &&
-                        cal.get(Calendar.MONTH) > todayCal.get(Calendar.MONTH))
-
-    if (isFutureMonth) {
-
-        cal.time = todayCal.time
+        } else {
+            cal.time = treatmentDate
+        }
+        cal.add(Calendar.MONTH, 1)
         cal.set(Calendar.DAY_OF_MONTH, 1)
+        val isFutureMonth =
+            cal.get(Calendar.YEAR) > todayCal.get(Calendar.YEAR) ||
+                    (cal.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR) &&
+                            cal.get(Calendar.MONTH) > todayCal.get(Calendar.MONTH))
+
+        if (isFutureMonth) {
+
+            cal.time = todayCal.time
+            cal.set(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        val nextDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
+
+        return nextDate
     }
-
-    val nextDate =
-        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
-
-    return nextDate
-}
 
 
     private fun parseDbDate(dateStr: String?): Date? {
@@ -205,7 +205,7 @@ private fun getNextFollowUpMinDate(): String {
         val updatedSections = current.sections.map { section ->
             section.copy(
                 fields = section.fields.map { field ->
-                    if (field.fieldId == fieldId) field.copy(value = value)
+                    if (field.fieldId == fieldId) field.copy(value = value, errorMessage = null)
                     else field
                 }
             )
