@@ -91,8 +91,8 @@ class FilariaMdaCampaignRepository @Inject constructor(
             val fields = root.optJSONObject("fields")
             val startDate = fields?.optString("start_date", "-") ?: "-"
             val endDate = fields?.optString("end_date", "-") ?: "-"
-            val noofFamiles = fields?.optString("no_of_families", "-") ?: "-"
-            val noofIndividuals = fields?.optString("no_of_individuals", "-") ?: "-"
+            val noofFamiles = fields?.optString("no_of_families", "0")?.takeIf { it != "null" } ?: "0"
+            val noofIndividuals = fields?.optString("no_of_individuals", "0")?.takeIf { it != "null" } ?: "0"
 
             result.add(
                 MDACampaignItem(

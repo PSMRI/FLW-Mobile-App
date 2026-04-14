@@ -880,6 +880,12 @@
     <string name="tuberculosis">Tuberculosis</string>
     <string name="only_one_follow_up_per_month">Only one follow-up visit per month is allowed</string>
     <string name="follow_up_must_be_after_last">Follow-up date must be after the last follow-up date</string>
+    <string name="follow_up_date_required_or_invalid">Follow-up date is required or invalid</string>
+    <string name="main_visit_not_found">Main visit not found</string>
+    <string name="invalid_treatment_date_in_db">Invalid treatment date in DB</string>
+    <string name="follow_up_must_be_after_treatment">Follow-up must be after treatment start date (%s)</string>
+    <string name="follow_up_must_be_next_month">Follow-up must be in the immediate next month after last follow-up of current visit</string>
+    <string name="follow_up_cannot_be_future_month">Follow-up cannot be in a future month</string>
     <string name="month_format">Month-%d</string>
 
     <!-- Arrays for TB Confirmed Treatment -->
