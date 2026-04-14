@@ -213,7 +213,7 @@ class NCDReferalFormFragment : Fragment() {
 
         val followUpError = viewModel.getFollowUpDateErrorFromUI()
         if (followUpError != null) {
-            val (errorMessage, _) = followUpError
+            val errorMessage = getString(followUpError.resId, *followUpError.formatArgs)
             currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == "follow_up_date" }?.let { schemaField ->
                     schemaField.errorMessage = errorMessage
@@ -295,8 +295,9 @@ class NCDReferalFormFragment : Fragment() {
                     val visibleFields = viewModel.getVisibleFields()
 
                     visibleFields.forEach { f ->
-                        if (f.fieldId == "visit_label")
-                            Log.d("NCDFormFragment", "visit_label: ${f.value}")
+                        if (f.fieldId == "visit_label") {
+                            f.value = getString(R.string.visit_format, viewModel.visitNo)
+                        }
                     }
 
                     formAdapter.updateFields(visibleFields)

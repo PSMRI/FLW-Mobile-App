@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
@@ -318,24 +319,26 @@ class NCDReferalFormViewModel @Inject constructor(
         }
     }
 
-    fun getFollowUpDateErrorFromUI(): Pair<String, Int>? {
+    data class FollowUpDateError(val resId: Int, val formatArgs: Array<Any> = emptyArray(), val scrollIndex: Int = 0)
+
+    fun getFollowUpDateErrorFromUI(): FollowUpDateError? {
         val fields = getVisibleFields()
         val followUpField = fields.firstOrNull { it.fieldId == "follow_up_date" } ?: return null
         val followUpDateStr = followUpField.value as? String
         val followUpDate = parseUiDateStrict(followUpDateStr)
-            ?: return "Follow-up date is required or invalid" to 0
+            ?: return FollowUpDateError(R.string.follow_up_date_required_or_invalid)
 
 
-        val lastMain = getLastMainVisit() ?: return "Main visit not found" to -1
+        val lastMain = getLastMainVisit() ?: return FollowUpDateError(R.string.main_visit_not_found, scrollIndex = -1)
         val treatmentDate = parseDbDateStrict(lastMain.treatmentStartDate)
-            ?: return "Invalid treatment date in DB" to -1
+            ?: return FollowUpDateError(R.string.invalid_treatment_date_in_db, scrollIndex = -1)
         val currentVisitFollowUps = _visitHistory.value
             .filter { it.visitNo == visitNo && it.followUpNo >= 1 }
             .sortedBy { it.followUpNo }
 
         if (currentVisitFollowUps.isEmpty()) {
             if (!followUpDate.after(treatmentDate)) {
-                return "Follow-up must be after treatment start date (${lastMain.treatmentStartDate})" to 0
+                return FollowUpDateError(R.string.follow_up_must_be_after_treatment, arrayOf(lastMain.treatmentStartDate ?: ""))
             }
         } else {
             val lastFollowUp = currentVisitFollowUps.last()
@@ -346,7 +349,7 @@ class NCDReferalFormViewModel @Inject constructor(
 
             val followCal = Calendar.getInstance().apply { time = followUpDate }
             if (followCal.get(Calendar.MONTH) != expectedMonth || followCal.get(Calendar.YEAR) != expectedYear) {
-                return "Follow-up must be in the immediate next month after last follow-up of current visit" to 0
+                return FollowUpDateError(R.string.follow_up_must_be_next_month)
             }
         }
 
@@ -355,7 +358,7 @@ class NCDReferalFormViewModel @Inject constructor(
         val isFutureMonth = followCal.get(Calendar.YEAR) > today.get(Calendar.YEAR) ||
                 (followCal.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
                         followCal.get(Calendar.MONTH) > today.get(Calendar.MONTH))
-        if (isFutureMonth) return "Follow-up cannot be in a future month" to 0
+        if (isFutureMonth) return FollowUpDateError(R.string.follow_up_cannot_be_future_month)
 
         return null
     }

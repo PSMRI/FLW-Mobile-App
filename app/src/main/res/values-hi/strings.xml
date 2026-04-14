@@ -744,6 +744,12 @@
     <string name="tuberculosis">क्षय रोग</string>
     <string name="only_one_follow_up_per_month">प्रति माह केवल एक फॉलो-अप विजिट की अनुमति है</string>
     <string name="follow_up_must_be_after_last">फॉलो-अप तारीख अंतिम फॉलो-अप तारीख के बाद होनी चाहिए</string>
+    <string name="follow_up_date_required_or_invalid">फॉलो-अप तारीख आवश्यक या अमान्य है</string>
+    <string name="main_visit_not_found">मुख्य विजिट नहीं मिली</string>
+    <string name="invalid_treatment_date_in_db">डेटाबेस में उपचार तारीख अमान्य है</string>
+    <string name="follow_up_must_be_after_treatment">फॉलो-अप उपचार शुरू होने की तारीख (%s) के बाद होना चाहिए</string>
+    <string name="follow_up_must_be_next_month">फॉलो-अप वर्तमान विजिट के अंतिम फॉलो-अप के तुरंत अगले महीने में होना चाहिए</string>
+    <string name="follow_up_cannot_be_future_month">फॉलो-अप भविष्य के महीने में नहीं हो सकता</string>
     <string name="month_format">माह-%d</string>
     <string name="gallery">गैलरी</string>
     <string name="documents">दस्तावेज़</string>
