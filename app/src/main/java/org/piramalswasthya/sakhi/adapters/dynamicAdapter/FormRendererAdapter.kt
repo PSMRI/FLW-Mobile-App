@@ -326,6 +326,7 @@
 
                         // Error TextView
                         val errorTextView = TextView(context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""
@@ -1025,6 +1026,7 @@
                         wrapper.addView(radioGroup)
 
                         val errorTextView = TextView(itemView.context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""
