@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
@@ -127,7 +128,7 @@ class HBNCFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: field.defaultValue
+                        else -> savedFieldValues[field.fieldId] ?: if (field.type == "radio") null else field.defaultValue
                     }
 
                     field.isEditable = when (field.fieldId) {
@@ -289,7 +290,7 @@ class HBNCFormViewModel @Inject constructor(
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {
@@ -346,7 +347,7 @@ class HBNCFormViewModel @Inject constructor(
             val isBabyDeath = visit?.formDataJson?.let {
                 val root = JSONObject(it)
                 val fieldsJson = root.optJSONObject("fields") ?: JSONObject()
-                val isAliveValue = fieldsJson.optString("is_baby_alive", "Yes")
+                val isAliveValue = fieldsJson.optString("is_baby_alive", "")
                 isAliveValue.equals("No", ignoreCase = true)
 
 

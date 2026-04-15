@@ -156,10 +156,11 @@ class PncFormFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnSubmit.setOnClickListener {
+            if (!validateCurrentPage()) return@setOnClickListener
             if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else submitAncForm()
+                if (!isDeliveryDischargeUploaded()) showUploadReminderDialog() else viewModel.saveForm()
             }
-            else submitAncForm()
+            else viewModel.saveForm()
         }
 
         binding.fabEdit.setOnClickListener { viewModel.setRecordExist(false) }
@@ -288,17 +289,17 @@ class PncFormFragment : Fragment() {
         deliveryDischargeUris.values.any { it != null }
 
     private fun showIncentiveAlert() = showReminderDialog(
-        title = "Reminder!!",
-        message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
-        positiveText = "OK"
+        title = getString(R.string.reminder),
+        message = getString(R.string.do_you_want_to_upload_delivery_discharge_summary),
+        positiveText = getString(R.string.ok)
     )
 
     private fun showUploadReminderDialog() = showReminderDialog(
-        title = "Reminder!!",
-        message = "Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.",
-        positiveText = "Yes",
-        negativeText = "No",
-        onNegative = { submitAncForm() }
+        title = getString(R.string.reminder),
+        message = getString(R.string.do_you_want_to_upload_delivery_discharge_summary),
+        positiveText = getString(R.string.yes_dialog),
+        negativeText = getString(R.string.no_dialog),
+        onNegative = { viewModel.saveForm() }
     )
 
     private fun showReminderDialog(
@@ -346,7 +347,8 @@ class PncFormFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        (activity as? HomeActivity)?.updateActionBar(R.drawable.ic_pnc__mother, "PNC Form")
+        (activity as? HomeActivity)?.updateActionBar(R.drawable.ic_pnc__mother,
+            getString(R.string.pnc_form))
     }
 
     override fun onDestroy() {

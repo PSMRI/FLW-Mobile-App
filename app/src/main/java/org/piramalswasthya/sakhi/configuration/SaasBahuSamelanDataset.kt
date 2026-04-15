@@ -33,7 +33,7 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.place),
         entries = resources.getStringArray(R.array.place_array),
-        arrayId = -1,
+        arrayId = R.array.place_array,
         required = false,
         hasDependants = false
     )
@@ -76,9 +76,9 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
         val uploadList = listOf(upload1, upload2, upload3, upload4, upload5)
 
         if (recordExists) {
-            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+
                 dateD.value = getDateStringFromLong(saasBahu?.date)
-                place.value = saasBahu?.place
+                place.value = getLocalValueInArray(R.array.place_array, saasBahu?.place)
                 noOfParticipante.value = saasBahu?.participants?.toString()
                 val imgs = saasBahu?.sammelanImages ?: emptyList()
                 upload1.value = imgs.getOrNull(0)
@@ -93,7 +93,7 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
                 } else {
                     list.addAll(filledUploads)
                 }
-            }
+
 
         } else {
             list.addAll(uploadList)
@@ -127,7 +127,7 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
      fun mapSaasBahuValues(
         cacheModel: SaasBahuSammelanCache,
     ) {
-         cacheModel.place = place.value
+         cacheModel.place = getEnglishValueInArray(R.array.place_array, place.value)
          cacheModel.sammelanImages = listOfNotNull(upload1.value, upload2.value, upload3.value, upload4.value, upload5.value)
          cacheModel.participants = noOfParticipante.value?.toInt()
 

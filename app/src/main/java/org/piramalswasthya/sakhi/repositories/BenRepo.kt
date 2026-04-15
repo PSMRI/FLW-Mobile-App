@@ -8,6 +8,8 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
@@ -48,6 +50,8 @@ class BenRepo @Inject constructor(
     private val formResponseJsonDao: FormResponseJsonDao,
     private val provideCUFYFormResponseJsonDao: CUFYFormResponseJsonDao
 ) {
+
+    private val processNewBenMutex = Mutex()
 
     companion object {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
@@ -197,6 +201,10 @@ class BenRepo @Inject constructor(
 
     }
 
+    suspend fun getChildCountForBen(benId: Long): Int {
+        return benDao.getChildCountForBen(benId)
+    }
+
     suspend fun getChildBenListFromHousehold(
         hhId: Long,
         selectedbenIdFromArgs: Long,
@@ -253,40 +261,37 @@ class BenRepo @Inject constructor(
             val originalImagePath = ben.userImage
             val finalImagePath = originalImagePath?.let { imagePath ->
                 val uri = Uri.parse(imagePath)
-                val filePath = uri.path
-                    ?: throw IllegalStateException("Invalid image URI: $imagePath")
 
-                val file = File(filePath)
+                // Check if image is already in permanent storage (filesDir)
+                val isAlreadyPermanent = uri.scheme == "file" && uri.path?.let {
+                    File(it).absolutePath.startsWith(context.filesDir.absolutePath)
+                } == true
 
-                when {
-                    file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
-                        val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
-                            context = context,
-                            uriString = imagePath,
-                            benId = ben.beneficiaryId
-                        )
+                if (isAlreadyPermanent) {
+                    imagePath
+                } else {
+                    // Save to permanent storage (handles both content:// and file:// URIs)
+                    val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
+                        context = context,
+                        uriString = imagePath,
+                        benId = ben.beneficiaryId
+                    )
 
-                        if (savedPath.isNullOrBlank()) {
-                            Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
+                    if (savedPath.isNullOrBlank()) {
+                        Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
 
-                            // Cleanup orphaned cache file
-                            runCatching { file.delete() }
-                                .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
-
-                            throw IllegalStateException("Failed to save beneficiary image")
+                        // Cleanup orphaned cache file if it's a file URI
+                        if (uri.scheme == "file") {
+                            uri.path?.let { File(it) }?.let { file ->
+                                runCatching { file.delete() }
+                                    .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
+                            }
                         }
 
-                        savedPath
+                        throw IllegalStateException("Failed to save beneficiary image")
                     }
 
-                    file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
-                        imagePath
-                    }
-
-                    else -> {
-                        Timber.w("Unknown image path source: $imagePath")
-                        imagePath
-                    }
+                    savedPath
                 }
             }
             ben.userImage = finalImagePath
@@ -360,9 +365,12 @@ class BenRepo @Inject constructor(
     ): Boolean {
 
         val sendingData = ben.asNetworkSendingModel(user, locationRecord, context)
+        Timber.d("Amrit push beneficiary registration: benId=${ben.beneficiaryId}, hhId=${ben.householdId}")
         try {
             val response = tmcNetworkApiService.getBenIdFromBeneficiarySending(sendingData)
+            val statusCode = response.code()
             val responseString = response.body()?.string()
+            Timber.d("Amrit push beneficiary registration response: httpStatus=$statusCode, benId=${ben.beneficiaryId}")
             if (responseString != null) {
                 val jsonObj = JSONObject(responseString)
                 val errorMessage = jsonObj.optString("errorMessage", "")
@@ -372,6 +380,7 @@ class BenRepo @Inject constructor(
                     val response = jsonObjectData.getString("response")
                     val newBenId = jsonObjectData.getString("benGenId").toLong()
                     val newBenRegId = jsonObjectData.getString("benRegId").toLong()
+                    Timber.d("Amrit push beneficiary registration success: oldBenId=${ben.beneficiaryId}, newBenId=$newBenId, benRegId=$newBenRegId")
                     //FIX TO UPDATE IMAGE-NAME WITH NEW BEN-ID
                     val infantReg = infantRegRepo.getInfantRegFromChildBenId(ben.beneficiaryId)
                     infantReg?.let {
@@ -406,28 +415,32 @@ class BenRepo @Inject constructor(
 
                     return true
                 }
+                Timber.e("Amrit push beneficiary registration failed: statusCode=$responseStatusCode, error=$errorMessage, benId=${ben.beneficiaryId}")
                 if (responseStatusCode == 5002 || responseStatusCode ==401) {
                     if (userRepo.refreshTokenTmc(
                             user.userName, user.password
                         )
                     ) throw SocketTimeoutException("Refreshed Token")
                 }
+            } else {
+                Timber.e("Amrit push beneficiary registration failed: response body is null, httpStatus=$statusCode, benId=${ben.beneficiaryId}")
             }
             throw IllegalStateException("Response undesired!")
         } catch (se: SocketTimeoutException) {
             if (se.message == "Refreshed Token") {
                 return createBenIdAtServerByBeneficiarySending(ben, user, locationRecord)
             }
+            Timber.e("Amrit push beneficiary registration timeout: benId=${ben.beneficiaryId}, error=$se")
             return false
         } catch (e: java.lang.Exception) {
             benDao.setSyncState(ben.householdId, ben.beneficiaryId, SyncState.UNSYNCED)
-            Timber.e("Caugnt error $e")
+            Timber.e("Amrit push beneficiary registration error: benId=${ben.beneficiaryId}, error=$e")
             return false
         }
     }
 
-    suspend fun processNewBen(): Boolean {
-        return withContext(Dispatchers.IO) {
+    suspend fun processNewBen(): Boolean = processNewBenMutex.withLock {
+        withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
@@ -481,7 +494,6 @@ class BenRepo @Inject constructor(
             }
             return@withContext true
         }
-
     }
 
     private suspend fun postDataToAmritServer(
@@ -491,6 +503,9 @@ class BenRepo @Inject constructor(
         retryCount: Int = 3,
     ): Boolean {
         if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
+        val benIds = benNetworkPostSet.map { it.benId }
+        val hhIds = householdNetworkPostSet.map { it.householdId }
+        Timber.d("Amrit push syncDataToAmrit: sending ${benNetworkPostSet.size} ben(s) $benIds, ${householdNetworkPostSet.size} hh(s) $hhIds, ${kidNetworkPostSet.size} kid(s)")
         val rmnchData = SendingRMNCHData(
             householdNetworkPostSet.toList(),
             benNetworkPostSet.toList(),
@@ -500,6 +515,7 @@ class BenRepo @Inject constructor(
         try {
             val response = tmcNetworkApiService.submitRmnchDataAmrit(rmnchData)
             val statusCode = response.code()
+            Timber.d("Amrit push syncDataToAmrit response: httpStatus=$statusCode")
 
             if (statusCode == 200) {
 
@@ -509,14 +525,17 @@ class BenRepo @Inject constructor(
                     val responseStatusCode = jsonObj.getInt("statusCode")
                     val errorMessage = jsonObj.optString("errorMessage", "")
                     if (responseStatusCode == 200) {
-                        Timber.d("response : $jsonObj")
+                        Timber.d("Amrit push syncDataToAmrit success: $jsonObj")
                         val benToUpdateList =
                             benNetworkPostSet.takeIf { it.isNotEmpty() }?.map { it.benId }
                                 ?.toTypedArray()?.toLongArray()
                         val hhToUpdateList = householdNetworkPostSet.takeIf { it.isNotEmpty() }
                             ?.map { it.householdId.toLong() }?.toTypedArray()?.toLongArray()
-                        Timber.d("ben : ${benNetworkPostSet.size}, hh: ${householdNetworkPostSet.size}")
-                        benToUpdateList?.let { benDao.benSyncedWithServer(*it) }
+                        Timber.d("Amrit push syncDataToAmrit marking synced: benIds=${benToUpdateList?.toList()}, hhIds=${hhToUpdateList?.toList()}")
+                        benToUpdateList?.let {
+                            benDao.benSyncedWithServer(*it)
+                            Timber.d("Amrit push syncDataToAmrit DB updated: benIds=${it.toList()}")
+                        }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
                         return true
                     } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
@@ -528,22 +547,25 @@ class BenRepo @Inject constructor(
                         ) throw SocketTimeoutException("Refreshed Token!")
                         else throw IllegalStateException("User seems to be logged out and refresh token not working!!!!")
                     }
+                    Timber.e("Amrit push syncDataToAmrit failed: statusCode=$responseStatusCode, error=$errorMessage")
+                } else {
+                    Timber.e("Amrit push syncDataToAmrit failed: response body is null, httpStatus=$statusCode")
                 }
             }
-            Timber.w("Bad Response from server, need to check $householdNetworkPostSet\n$benNetworkPostSet\n$kidNetworkPostSet $response ")
+            Timber.w("Amrit push syncDataToAmrit bad response: httpStatus=$statusCode, benIds=$benIds")
             return false
         } catch (e: SocketTimeoutException) {
-            Timber.e("Caught exception $e here")
+            Timber.e("Amrit push syncDataToAmrit timeout: benIds=$benIds, error=$e")
             if (retryCount > 0) return postDataToAmritServer(
                 benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
-            Timber.e("postDataToAmritServer: max retries exhausted")
+            Timber.e("Amrit push syncDataToAmrit: max retries exhausted")
             return false
         } catch (e: JSONException) {
-            Timber.e("Caught exception $e here")
+            Timber.e("Amrit push syncDataToAmrit JSON error: benIds=$benIds, error=$e")
             return false
         } catch (e: java.lang.Exception) {
-            Timber.e("Caught exception $e here")
+            Timber.e("Amrit push syncDataToAmrit error: benIds=$benIds, error=$e")
             return false
         }
     }

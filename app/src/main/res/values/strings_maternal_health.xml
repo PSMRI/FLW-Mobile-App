@@ -112,7 +112,7 @@
         <item>ECP</item>
         <item>MALE STERILIZATION</item>
         <item>FEMALE STERILIZATION</item>
-        <item>MiniLap</item>
+<!--        <item>MiniLap</item>-->
         <item>Any Other Method</item>
     </string-array>
 
@@ -504,5 +504,15 @@
     <string name="str_other_cause_of_death">Other Death Cause</string>
     <string name="str_death_date">Death Date</string>
     <string name="str_has_pregnant_women_delivered">Has the pregnant woman delivered?</string>
+
+    <string name="anc_form_submitted">Form submitted successfully</string>
+    <string name="something_went_wrong_try_again">Something went wrong. Please try again.</string>
+    <string name="continue_anc_visit">Continue ANC Visit</string>
+    <string name="continue_anc_visit_message">Do you want to continue with ANC visit?</string>
+    <string name="next_anc_visit_due">Next ANC visit is DUE</string>
+    <string name="visit_date_required">Visit date is required</string>
+    <string name="invalid_visit_date_format">Invalid visit date format</string>
+    <string name="fill_required_fields">Please fill all required fields correctly</string>
+    <string name="danger_signs_identified">Danger Signs Identified!</string>
 
 </resources>

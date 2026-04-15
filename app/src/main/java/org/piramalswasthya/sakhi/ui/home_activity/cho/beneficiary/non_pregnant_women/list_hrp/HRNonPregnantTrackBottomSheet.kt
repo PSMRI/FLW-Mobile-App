@@ -68,7 +68,7 @@ class HRNonPregnantTrackBottomSheet : BottomSheetDialogFragment() {
 
         (_binding?.rvHrpTract?.adapter as HRPPregTrackAdapter?)?.submitList(
             list.map { trackCache ->
-                trackCache.asDomainModel()
+                trackCache.asDomainModel(resources)
             })
     }
 

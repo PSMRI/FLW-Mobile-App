@@ -556,11 +556,21 @@ class MaternalHealthRepo @Inject constructor(
             Gson().fromJson(dataObj, Array<ANCPost>::class.java).toList()
         ancList.forEach { ancDTO ->
             ancDTO.createdDate?.let {
-                val hasBen = benDao.getBen(ancDTO.benId) != null
+                val ben = benDao.getBen(ancDTO.benId)
+                val hasBen = ben != null
                 val ancCache: PregnantWomanAncCache? =
                     maternalHealthDao.getSavedRecord(ancDTO.benId, ancDTO.ancVisit)
                 if (hasBen && ancCache == null) {
                     maternalHealthDao.saveRecord(ancDTO.toAncCache(context))
+                }
+                if (hasBen && ancDTO.isBabyDelivered == true) {
+                    ben?.let { benRecord ->
+                        if (benRecord.genDetails?.reproductiveStatusId != 3) {
+                            benRecord.genDetails?.reproductiveStatus = "Postnatal Mother"
+                            benRecord.genDetails?.reproductiveStatusId = 3
+                            benDao.updateBen(benRecord)
+                        }
+                    }
                 }
             }
         }

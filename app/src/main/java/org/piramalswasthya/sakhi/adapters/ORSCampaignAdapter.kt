@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutOrsCampaignItemBinding
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -42,7 +43,7 @@ class ORSCampaignAdapter(
             val startDate = HelperUtil.extractFieldValue(item.formDataJson,"start_date")
             val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"number_of_families")
             binding.tvDate.text = startDate
-            binding.numberOfChildren.text = "Number Of Families : $numberOfChildren"
+            binding.numberOfChildren.text = binding.root.context.getString(R.string.number_of_families_label, numberOfChildren)
         }
     }
 

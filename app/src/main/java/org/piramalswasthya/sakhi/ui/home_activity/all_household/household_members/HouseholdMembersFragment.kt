@@ -87,36 +87,18 @@ class HouseholdMembersFragment : Fragment() {
             binding.linearLayout4.visibility = View.VISIBLE
             binding.actvRth.text = null
 
-            val relations = getFilteredRelations(selectedGender)
+            val relations = when (selectedGender) {
+                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
+                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
+                else -> emptyArray()
+            }
+
             binding.actvRth.setAdapter(
                 ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, relations)
             )
         }
     }
-    private fun getFilteredRelations(selectedGender: Gender): List<String> {
-        val list = baseRelations(selectedGender)
-
-        val hof = householdMembers.firstOrNull { it.relToHeadId == 19 }
-            ?: return list
-
-        applyParentFilters(list)
-        val isUnmarried = !hof.isMarried
-        val isMarried = hof.isMarried
-
-
-        if (isUnmarried) {
-            applyUnmarriedFilters(list)
-        } else if (!isMarried) {
-            val relations = resources.getStringArray(R.array.nbr_relationship_to_head)
-            list.remove(relations[5])
-            list.remove(relations[4])
-        }
-
-        applySameGenderSpouseFilter(list, hof, selectedGender)
-
-        return list
-    }
-
     private fun setupRelationClickListener(binding: AlertNewBenBinding) {
         binding.actvRth.setOnItemClickListener { _, _, _, _ ->
             binding.btnOk.isEnabled = true
@@ -188,36 +170,6 @@ class HouseholdMembersFragment : Fragment() {
             else -> 0
         }
     }
-
-    private fun baseRelations(selectedGender: Gender): MutableList<String> {
-        val arr = when (selectedGender) {
-            Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-            Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-            Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-        }
-        return arr.toMutableList()
-    }
-
-    private fun applyParentFilters(list: MutableList<String>) {
-        val relations = resources.getStringArray(R.array.nbr_relationship_to_head)
-        val fatherExists = householdMembers.any { it.relToHeadId == 2 }
-        val motherExists = householdMembers.any { it.relToHeadId == 1 }
-
-        if (fatherExists) list.remove(relations[1])
-        if (motherExists) list.remove(relations[0])
-    }
-
-    private fun applyUnmarriedFilters(list: MutableList<String>) {
-        val filters = resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
-        list.removeAll(filters)
-    }
-
-    private fun applySameGenderSpouseFilter(list: MutableList<String>, hof: BenBasicDomain, selectedGender: Gender) {
-        val relations = resources.getStringArray(R.array.nbr_relationship_to_head)
-        if (hof.gender == Gender.MALE.name && selectedGender == Gender.MALE) list.remove(relations[5])
-        if (hof.gender == Gender.FEMALE.name && selectedGender == Gender.FEMALE) list.remove(relations[4])
-    }
-
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
@@ -301,7 +253,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
                 },
                 clickedWifeBen = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -315,7 +267,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
 
                 },clickedHusbandBen = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -329,7 +281,7 @@ class HouseholdMembersFragment : Fragment() {
                     }
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
-                    routeBenFlow(item, benId) {
+                    if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
@@ -348,7 +300,16 @@ class HouseholdMembersFragment : Fragment() {
                 { item, benId, hhId ->
                     if (canProceed(item)) checkAndGenerateABHA(benId)
                 },
-                { item,benId, hhId, isViewMode, isIFA ->
+                { item, benId, hhId, isViewMode, isIFA ->
+                    if (canProceed(item)) {
+                        findNavController().navigate(
+                            HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                isViewMode = isViewMode,
+                            )
+                        )
+                    }
                 },
                 {
                     if(!it.isDeactivate){

@@ -20,7 +20,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
@@ -28,6 +30,7 @@ import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
 import timber.log.Timber
 import java.io.File
 
@@ -68,6 +71,23 @@ class VHNCFormFragement:Fragment() {
                     showImagePickerDialog()
 //                    Toast.makeText(context,"Image$it",Toast.LENGTH_LONG).show()
 
+                },
+                selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
+                    imgValue=it
+                    showImagePickerDialog()
+                },
+                viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
+                    val element = (binding.form.rvInputForm.adapter as? FormInputAdapter)
+                        ?.currentList?.firstOrNull { it.id == formId }
+
+                    element?.value?.let { uriStr ->
+                        val uri = Uri.parse(uriStr)
+                        if (uriStr.isEmpty()) {
+                            Toast.makeText(requireContext(), "No image found", Toast.LENGTH_SHORT).show()
+                        } else {
+                            requireContext().showImageDialog(uri)
+                        }
+                    }
                 },
                 isEnabled = !it
             )
@@ -234,6 +254,17 @@ class VHNCFormFragement:Fragment() {
             }
             false
         }
+    }
+
+    private fun showImageDialog(uri: Uri) {
+        val viewImageBinding = LayoutViewMediaBinding.inflate(layoutInflater, binding.root, false)
+        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(viewImageBinding.root)
+            .setCancelable(true)
+            .create()
+        Glide.with(this).load(uri).placeholder(R.drawable.ic_person).into(viewImageBinding.viewImage)
+        viewImageBinding.btnClose.setOnClickListener { alertDialog.dismiss() }
+        alertDialog.show()
     }
 
     private fun isImageSizeValid(uri: Uri): Boolean {

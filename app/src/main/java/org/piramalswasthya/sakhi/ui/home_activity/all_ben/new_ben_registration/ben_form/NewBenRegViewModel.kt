@@ -212,7 +212,7 @@ class NewBenRegViewModel @Inject constructor(
                             val femaleOfHouse = familyList.firstOrNull {
                                 it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
                             }
-                            femaleOfHouse?.beneficiaryId ?: hoFBen!!.beneficiaryId
+                            femaleOfHouse?.beneficiaryId ?: hoFBen?.beneficiaryId ?: 0L
                         }
 
 

@@ -36,6 +36,7 @@ class TBConfirmedDataset(
         id = 1,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.regimen_type),
+        arrayId = R.array.tb_regimen_types,
         entries = resources.getStringArray(R.array.tb_regimen_types),
         required = true,
         hasDependants = true,
@@ -93,6 +94,7 @@ class TBConfirmedDataset(
         id = 6,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.adherence_to_medicines),
+        arrayId = R.array.adherence_options,
         entries = resources.getStringArray(R.array.adherence_options),
         required = true,
         hasDependants = false,
@@ -138,6 +140,7 @@ class TBConfirmedDataset(
         id = 10,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.treatment_outcome),
+        arrayId = R.array.tb_treatment_outcomes,
         entries = resources.getStringArray(R.array.tb_treatment_outcomes),
         required = false,
         hasDependants = true,
@@ -161,6 +164,7 @@ class TBConfirmedDataset(
         id = 12,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.place_of_death),
+        arrayId = R.array.place_of_death,
         entries = resources.getStringArray(R.array.place_of_death),
         required = false,
         hasDependants = false,
@@ -225,11 +229,23 @@ class TBConfirmedDataset(
                 ?.takeIf { it > 0 }
                 ?: getOneYearBeforeCurrentDate()
 
+            // Enable follow-up date since treatment start date is pre-filled
+            val todayStart = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+            treatmentStartDateValue = todayStart
+            treatmentStartDateLong = todayStart
+            followUpDate.min = todayStart
+            followUpDate.isEnabled = true
+
 
         } else
         {
             isNewRecord = false
-            regimenType.value = saved.regimenType
+            regimenType.value = getLocalValueInArray(R.array.tb_regimen_types, saved.regimenType)
             followUpDate.isEnabled =true
             treatmentStartDateLong = saved?.treatmentStartDate ?: 0L
             lastFollowUpDateLong = saved?.followUpDate ?: 0L
@@ -250,7 +266,7 @@ class TBConfirmedDataset(
             }
             followUpDate.value = saved.followUpDate?.let { getDateFromLong(it) }
             monthlyFollowUpDone.value = saved.monthlyFollowUpDone
-            adherenceToMedicines.value = saved.adherenceToMedicines
+            adherenceToMedicines.value = getLocalValueInArray(R.array.adherence_options, saved.adherenceToMedicines)
             anyDiscomfort.value = saved.anyDiscomfort?.let {
                 if (it) resources.getStringArray(R.array.yes_no)[0]
                 else resources.getStringArray(R.array.yes_no)[1]
@@ -262,9 +278,9 @@ class TBConfirmedDataset(
             actualTreatmentCompletionDate.value = saved.actualTreatmentCompletionDate?.let {
                 getDateFromLong(it)
             }
-            treatmentOutcome.value = saved.treatmentOutcome
+            treatmentOutcome.value = getLocalValueInArray(R.array.tb_treatment_outcomes, saved.treatmentOutcome)
             dateOfDeath.value = saved.dateOfDeath?.let { getDateFromLong(it) }
-            placeOfDeath.value = saved.placeOfDeath
+            placeOfDeath.value = getLocalValueInArray(R.array.place_of_death, saved.placeOfDeath)
             reasonForDeath.value = saved.reasonForDeath
             reasonForNotCompleting.value = saved.reasonForNotCompleting
 
@@ -297,7 +313,7 @@ class TBConfirmedDataset(
                     if (saved.treatmentOutcome != null) {
                         baseList.add(treatmentOutcome)
 
-                        if (saved.treatmentOutcome == "Death") {
+                        if (treatmentOutcome.value == treatmentOutcome.entries!![3]) {
                             baseList.addAll(listOf(
                                 dateOfDeath,
                                 placeOfDeath,
@@ -310,10 +326,8 @@ class TBConfirmedDataset(
                 }
             }
 
-            val outcomes = resources.getStringArray(R.array.tb_treatment_outcomes)
-
-            saved.treatmentOutcome?.let { outcome ->
-                if (outcome == outcomes[0] || outcome == outcomes.last()) {
+            treatmentOutcome.value?.let { outcome ->
+                if (outcome == treatmentOutcome.entries!![0] || outcome == treatmentOutcome.entries!!.last()) {
                     baseList.forEach { it.isEnabled = false }
                 }
             }
@@ -617,20 +631,20 @@ class TBConfirmedDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as TBConfirmedTreatmentCache).let { form ->
-            form.regimenType = regimenType.value
+            form.regimenType = getEnglishValueInArray(R.array.tb_regimen_types, regimenType.value)
             form.treatmentStartDate = getLongFromDate(treatmentStartDate.value)
             form.expectedTreatmentCompletionDate = getLongFromDate(expectedTreatmentCompletionDate.value)
             form.followUpDate = getLongFromDate(followUpDate.value)
             form.monthlyFollowUpDone = monthlyFollowUpDone.value
-            form.adherenceToMedicines = adherenceToMedicines.value
-            form.anyDiscomfort = anyDiscomfort.value == resources.getStringArray(R.array.yes_no)[0]
+            form.adherenceToMedicines = getEnglishValueInArray(R.array.adherence_options, adherenceToMedicines.value)
+            form.anyDiscomfort = anyDiscomfort.value == anyDiscomfort.entries!![0]
             form.treatmentCompleted = treatmentCompleted.value?.let {
-                it == resources.getStringArray(R.array.yes_no)[0]
+                it == treatmentCompleted.entries!![0]
             }
             form.actualTreatmentCompletionDate = getLongFromDate(actualTreatmentCompletionDate.value)
-            form.treatmentOutcome = treatmentOutcome.value
+            form.treatmentOutcome = getEnglishValueInArray(R.array.tb_treatment_outcomes, treatmentOutcome.value)
             form.dateOfDeath = getLongFromDate(dateOfDeath.value)
-            form.placeOfDeath = placeOfDeath.value
+            form.placeOfDeath = getEnglishValueInArray(R.array.place_of_death, placeOfDeath.value)
             form.reasonForDeath = reasonForDeath.value ?: resources.getString(R.string.tuberculosis)
             form.reasonForNotCompleting = reasonForNotCompleting.value
         }

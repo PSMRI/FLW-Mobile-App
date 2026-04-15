@@ -70,7 +70,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{phc.noOffamilies.toString()}"
+                        android:text="@{phc.noOffamilies}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="2" />
@@ -94,7 +94,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{phc.noOfIndividuals.toString()}"
+                        android:text="@{phc.noOfIndividuals}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnPrimary"
                         tools:text="Noida" />

@@ -154,7 +154,9 @@ class HRPPregnantTrackDataset(
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
-        etMaxLength = 3
+        etMaxLength = 3,
+        min = 50,
+        max = 300
     )
 
     private val diastolic = FormElement(
@@ -164,7 +166,9 @@ class HRPPregnantTrackDataset(
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER,
-        etMaxLength = 4
+        etMaxLength = 3,
+        min = 30,
+        max = 200
     )
 
     private val bloodGlucoseTest = FormElement(
@@ -240,7 +244,9 @@ class HRPPregnantTrackDataset(
         arrayId = -1,
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
-        etMaxLength = 4
+        etMaxLength = 4,
+        minDecimal = 2.0,
+        maxDecimal = 15.0
     )
 
     private val ifaGiven = FormElement(
@@ -551,15 +557,15 @@ class HRPPregnantTrackDataset(
             }
 
             systolic.id -> {
-                validateInput(systolic)
+                validateIntMinMax(systolic)
                 1
             }
             diastolic.id -> {
-                validateInput(diastolic)
+                validateIntMinMax(diastolic)
                 1
             }
             hemoglobinTest.id->{
-                validateInput(hemoglobinTest)
+                validateDoubleMinMax(hemoglobinTest)
                 1
             }
 

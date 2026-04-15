@@ -155,10 +155,10 @@ object AppModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
-                if (BuildConfig.DEBUG)
+                //if (BuildConfig.DEBUG)
                     HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
+                //else
+                    //HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
@@ -224,7 +224,7 @@ object AppModule {
         @Named("uatClient") httpClient: OkHttpClient
     ): AmritApiService {
         return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create()) // ✅ Only for this API
+            .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(KeyUtils.baseTMCUrl())
             .client(httpClient)
             .build()

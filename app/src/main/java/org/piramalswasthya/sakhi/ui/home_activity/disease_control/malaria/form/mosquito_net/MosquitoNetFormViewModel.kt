@@ -16,10 +16,12 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.MosquitoNetFormRepository
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
+import org.piramalswasthya.sakhi.utils.StringMappingUtil
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -149,13 +151,18 @@ class MosquitoNetFormViewModel @Inject constructor(
                 .filter { it.visible && it.value != null }
                 .associate { it.fieldId to it.value }
 
-            val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+            val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+            val visitDate = StringMappingUtil.convertDigits(rawVisitDate)
+
+            val englishFieldMap = fieldMap.mapValues { (_, v) ->
+                if (v is String) StringMappingUtil.convertDigits(v) else v
+            }
 
             val wrappedJson = JSONObject().apply {
                 put("formId", formId)
                 put("houseHoldId", hhId)
                 put("visitDate", visitDate)
-                put("fields", JSONObject(fieldMap))
+                put("fields", JSONObject(englishFieldMap))
             }
 
             val entity = MosquitoNetFormResponseJsonEntity(
@@ -192,7 +199,7 @@ class MosquitoNetFormViewModel @Inject constructor(
                     label = field.label,
                     type = field.type,
                     defaultValue = field.defaultValue,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = field.validation?.let {
@@ -237,7 +244,7 @@ class MosquitoNetFormViewModel @Inject constructor(
                 val fields = json.optJSONObject("fields")
                 val dateStr = fields?.optString("visit_date")
                 if (!dateStr.isNullOrBlank()) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateStr)
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(StringMappingUtil.convertDigits(dateStr))
                 } else null
             } catch (e: Exception) {
                 null

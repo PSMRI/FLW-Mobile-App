@@ -3,6 +3,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -20,7 +21,8 @@ class NcdReferalRepo@Inject constructor(
     private val referalDao: NcdReferalDao,
     private val preferenceDao: PreferenceDao,
     private val userRepo: UserRepo,
-    private val tmcNetworkApiService: AmritApiService
+    private val tmcNetworkApiService: AmritApiService,
+    private val database: InAppDb
 )  {
     suspend fun getReferedNCD(benId: Long): ReferalCache? {
         return withContext(Dispatchers.IO) {
@@ -81,7 +83,11 @@ class NcdReferalRepo@Inject constructor(
                 val dto = gson.fromJson(item.toString(), NCDReferalDTO::class.java)
                 cbacEntities.add(dto.toCache())
             }
-            referalDao.insertAll(cbacEntities)
+            val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId })
+            val validEntities = cbacEntities.filter { it.benId in existingBenIds }
+            if (validEntities.isNotEmpty()) {
+                referalDao.insertAll(validEntities)
+            }
 
 
         }
