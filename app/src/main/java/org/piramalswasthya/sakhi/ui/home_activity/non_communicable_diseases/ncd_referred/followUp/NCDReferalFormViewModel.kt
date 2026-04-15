@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.utils.Log
@@ -77,41 +79,41 @@ class NCDReferalFormViewModel @Inject constructor(
         return lastFollow
     }
 
-private fun getNextFollowUpMinDate(): String {
+    private fun getNextFollowUpMinDate(): String {
 
-    val lastMain = getLastMainVisit() ?: return ""
-    val lastFollowUp = getLastFollowUp()
+        val lastMain = getLastMainVisit() ?: return ""
+        val lastFollowUp = getLastFollowUp()
 
-    val treatmentDate = parseDbDate(lastMain.treatmentStartDate) ?: return ""
+        val treatmentDate = parseDbDate(lastMain.treatmentStartDate) ?: return ""
 
-    val cal = Calendar.getInstance()
-    val todayCal = Calendar.getInstance()
+        val cal = Calendar.getInstance()
+        val todayCal = Calendar.getInstance()
 
-    if (lastFollowUp != null && lastFollowUp.visitNo == visitNo) {
-        val lastFollowUpDate = parseDbDate(lastFollowUp.followUpDate) ?: treatmentDate
-        cal.time = lastFollowUpDate
+        if (lastFollowUp != null && lastFollowUp.visitNo == visitNo) {
+            val lastFollowUpDate = parseDbDate(lastFollowUp.followUpDate) ?: treatmentDate
+            cal.time = lastFollowUpDate
 
-    } else {
-        cal.time = treatmentDate
-    }
-    cal.add(Calendar.MONTH, 1)
-    cal.set(Calendar.DAY_OF_MONTH, 1)
-    val isFutureMonth =
-        cal.get(Calendar.YEAR) > todayCal.get(Calendar.YEAR) ||
-                (cal.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR) &&
-                        cal.get(Calendar.MONTH) > todayCal.get(Calendar.MONTH))
-
-    if (isFutureMonth) {
-
-        cal.time = todayCal.time
+        } else {
+            cal.time = treatmentDate
+        }
+        cal.add(Calendar.MONTH, 1)
         cal.set(Calendar.DAY_OF_MONTH, 1)
+        val isFutureMonth =
+            cal.get(Calendar.YEAR) > todayCal.get(Calendar.YEAR) ||
+                    (cal.get(Calendar.YEAR) == todayCal.get(Calendar.YEAR) &&
+                            cal.get(Calendar.MONTH) > todayCal.get(Calendar.MONTH))
+
+        if (isFutureMonth) {
+
+            cal.time = todayCal.time
+            cal.set(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        val nextDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
+
+        return nextDate
     }
-
-    val nextDate =
-        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
-
-    return nextDate
-}
 
 
     private fun parseDbDate(dateStr: String?): Date? {
@@ -204,7 +206,7 @@ private fun getNextFollowUpMinDate(): String {
         val updatedSections = current.sections.map { section ->
             section.copy(
                 fields = section.fields.map { field ->
-                    if (field.fieldId == fieldId) field.copy(value = value)
+                    if (field.fieldId == fieldId) field.copy(value = value, errorMessage = null)
                     else field
                 }
             )
@@ -278,7 +280,7 @@ private fun getNextFollowUpMinDate(): String {
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.options,
+                    options = field.optionItems(),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = validation,
@@ -317,24 +319,26 @@ private fun getNextFollowUpMinDate(): String {
         }
     }
 
-    fun getFollowUpDateErrorFromUI(): Pair<String, Int>? {
+    data class FollowUpDateError(val resId: Int, val formatArgs: Array<Any> = emptyArray(), val scrollIndex: Int = 0)
+
+    fun getFollowUpDateErrorFromUI(): FollowUpDateError? {
         val fields = getVisibleFields()
         val followUpField = fields.firstOrNull { it.fieldId == "follow_up_date" } ?: return null
         val followUpDateStr = followUpField.value as? String
         val followUpDate = parseUiDateStrict(followUpDateStr)
-            ?: return "Follow-up date is required or invalid" to 0
+            ?: return FollowUpDateError(R.string.follow_up_date_required_or_invalid)
 
 
-        val lastMain = getLastMainVisit() ?: return "Main visit not found" to -1
+        val lastMain = getLastMainVisit() ?: return FollowUpDateError(R.string.main_visit_not_found, scrollIndex = -1)
         val treatmentDate = parseDbDateStrict(lastMain.treatmentStartDate)
-            ?: return "Invalid treatment date in DB" to -1
+            ?: return FollowUpDateError(R.string.invalid_treatment_date_in_db, scrollIndex = -1)
         val currentVisitFollowUps = _visitHistory.value
             .filter { it.visitNo == visitNo && it.followUpNo >= 1 }
             .sortedBy { it.followUpNo }
 
         if (currentVisitFollowUps.isEmpty()) {
             if (!followUpDate.after(treatmentDate)) {
-                return "Follow-up must be after treatment start date (${lastMain.treatmentStartDate})" to 0
+                return FollowUpDateError(R.string.follow_up_must_be_after_treatment, arrayOf(lastMain.treatmentStartDate ?: ""))
             }
         } else {
             val lastFollowUp = currentVisitFollowUps.last()
@@ -345,7 +349,7 @@ private fun getNextFollowUpMinDate(): String {
 
             val followCal = Calendar.getInstance().apply { time = followUpDate }
             if (followCal.get(Calendar.MONTH) != expectedMonth || followCal.get(Calendar.YEAR) != expectedYear) {
-                return "Follow-up must be in the immediate next month after last follow-up of current visit" to 0
+                return FollowUpDateError(R.string.follow_up_must_be_next_month)
             }
         }
 
@@ -354,7 +358,7 @@ private fun getNextFollowUpMinDate(): String {
         val isFutureMonth = followCal.get(Calendar.YEAR) > today.get(Calendar.YEAR) ||
                 (followCal.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
                         followCal.get(Calendar.MONTH) > today.get(Calendar.MONTH))
-        if (isFutureMonth) return "Follow-up cannot be in a future month" to 0
+        if (isFutureMonth) return FollowUpDateError(R.string.follow_up_cannot_be_future_month)
 
         return null
     }

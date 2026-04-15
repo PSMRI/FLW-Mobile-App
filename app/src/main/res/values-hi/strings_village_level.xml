@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="u_win_session_date">U-WIN सत्र तिथि</string>
+    <string name="u_win_session_date">यू-विन सत्र तिथि</string>
     <string name="place_village">स्थान</string>
     <string name="no_of_participants_attended">उपस्थित प्रतिभागियों की संख्या</string>
-    <string name="place_hwc">HWC</string>
-    <string name="place_school">विद्यालय</string>
-    <string name="place_anganwadi">आंगनवाड़ी केंद्र</string>
+    <string name="place_hwc">उप स्वास्थ्य केंद्र</string>
+    <string name="place_school">स्कूल</string>
+    <string name="place_anganwadi">आंगनबाडी केंद्र</string>
     <string name="place_community">सामुदायिक केंद्र</string>
     <string name="place_label">स्थान: %1$s</string>
     <string name="participant_label">प्रतिभागी: %1$s</string>
     <string name="total_no_of_participants_attended">प्रतिभागियों की कुल संख्या</string>
+    <string name="maa_meeting_date">माँ बैठक की तिथि</string>
+    <string name="meeting_photos_mom">बैठक की तस्वीरें / MoM (%1$d)</string>
 </resources>

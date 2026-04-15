@@ -48,9 +48,13 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
      companion object {
         fun getLongFromDate(dateString: String?): Long {
+            if (dateString.isNullOrEmpty()) return 0L
             val f = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-            val date = dateString?.let { f.parse(it) }
-            return date?.time ?: 0L
+            return try {
+                f.parse(dateString)?.time ?: 0L
+            } catch (e: java.text.ParseException) {
+                0L
+            }
         }
 
 
@@ -681,7 +685,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     protected fun validateAllAlphabetsSpecialAndNumericOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.let { input ->
-            val regex = "^[a-zA-Z0-9\\s\\p{Punct}]+$".toRegex() // allows alphabets, numbers, spaces, and special characters
+            val regex = "^[\\p{L}\\p{M}0-9\\s\\p{Punct}]+$".toRegex() // allows Unicode letters, combining marks (vowel signs, anusvara, nukta), numbers, spaces, and special characters
 
             val isValid = regex.matches(input)
             if (!isValid) {
@@ -956,22 +960,22 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         val weight = value.toDoubleOrNull()
         if (weight == null) {
-            formElement.errorText = "Please enter weight in grams"
+            formElement.errorText = resources.getString(R.string.weight_enter_in_grams)
             return -1
         }
 
         when {
             weight <= 0 -> {
-                formElement.errorText = "Weight cannot be 0"
+                formElement.errorText = resources.getString(R.string.weight_cannot_be_zero)
             }
             weight in 1.0..10.0 -> {
-                formElement.errorText = "Please enter weight in grams (e.g. 2500)"
+                formElement.errorText = resources.getString(R.string.weight_enter_in_grams_example)
             }
             weight < 500 -> {
-                formElement.errorText = "Weight must be at least 500 grams"
+                formElement.errorText = resources.getString(R.string.weight_min_500)
             }
             weight > 7000 -> {
-                formElement.errorText = "Weight should not be greater than 7000 grams"
+                formElement.errorText = resources.getString(R.string.weight_max_7000)
             }
             else -> {
                 formElement.errorText = null
@@ -1013,15 +1017,15 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         }
         val matchResult = bpRegex.matchEntire(bp.value!!)
         if (matchResult == null)
-            bp.errorText = "Invalid format. Should be like 123/56"
+            bp.errorText = resources.getString(R.string.bp_invalid_format)
         else {
             val sys = matchResult.groupValues[1].toInt()
             val dia = matchResult.groupValues[2].toInt()
-            bp.errorText = if (sys < minSys) "Systole should not be less than $minSys"
-            else if (sys > maxSys) "Systole should not be greater than $maxSys"
-            else if (dia < minDia) "Diastole should not be less then $minDia"
-            else if (dia > maxDia) "Diastole should not be greater than $maxDia"
-            else if (dia > sys) "Diastole cannot be greater than systole"
+            bp.errorText = if (sys < minSys) resources.getString(R.string.bp_systole_less_than, minSys)
+            else if (sys > maxSys) resources.getString(R.string.bp_systole_greater_than, maxSys)
+            else if (dia < minDia) resources.getString(R.string.bp_diastole_less_than, minDia)
+            else if (dia > maxDia) resources.getString(R.string.bp_diastole_greater_than, maxDia)
+            else if (dia > sys) resources.getString(R.string.bp_diastole_greater_than_systole)
             else null
         }
         return -1
@@ -1067,15 +1071,21 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         val englishArray = englishResources.getStringArray(arrayId)
         val localizedArray = resources.getStringArray(arrayId)
-        val index = englishArray.indexOf(entry)
 
-        return if (index in englishArray.indices) {
-            localizedArray[index]
-        } else {
-            // Optional: log and gracefully fail
-            Log.w("Dataset", "Entry '$entry' not found in English array for ID $arrayId")
-            null
+        // Try English lookup first (value was stored in English)
+        val englishIndex = englishArray.indexOf(entry)
+        if (englishIndex in englishArray.indices) {
+            return localizedArray[englishIndex]
         }
+
+        // Fallback: value was stored in localized language, find it directly
+        val localIndex = localizedArray.indexOf(entry)
+        if (localIndex in localizedArray.indices) {
+            return localizedArray[localIndex]
+        }
+
+        Log.w("Dataset", "Entry '$entry' not found in array for ID $arrayId")
+        return null
     }
 
 

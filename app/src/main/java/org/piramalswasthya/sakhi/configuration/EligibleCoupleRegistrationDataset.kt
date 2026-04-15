@@ -1168,7 +1168,7 @@ class EligibleCoupleRegistrationDataset(
 //            numMale.value = ecCache.noOfMaleChildren.toString()
 //            numFemale.value = ecCache.noOfFemaleChildren.toString()
             val isKitHandedOver = ecCache.isKitHandedOver == true
-            nayiPahelKitHandOver.value = if (isKitHandedOver) "Yes" else "No"
+            nayiPahelKitHandOver.value = if (isKitHandedOver) nayiPahelKitHandOver.entries!![0] else nayiPahelKitHandOver.entries!![1]
             if (isKitHandedOver) {
                 list.addAll(
                     list.indexOf(nayiPahelKitHandOver) + 1,
@@ -2051,7 +2051,7 @@ class EligibleCoupleRegistrationDataset(
                 gender1.entries!![1] -> Gender.FEMALE
                 else -> null
             }
-            ecr.isKitHandedOver = nayiPahelKitHandOver.value.equals("yes", ignoreCase = true)
+            ecr.isKitHandedOver = nayiPahelKitHandOver.value == nayiPahelKitHandOver.entries!![0]
             ecr.kitHandedOverDate = getLongFromDate(kithandOverDate.value)
             ecr.kitPhoto1 = kitPhotoUploadOne.value
             ecr.kitPhoto2 = kitPhotoUploadTwo.value

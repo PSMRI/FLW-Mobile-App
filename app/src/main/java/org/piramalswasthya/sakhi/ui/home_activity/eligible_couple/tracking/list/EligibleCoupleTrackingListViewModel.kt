@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterEcTrackingList
+import org.piramalswasthya.sakhi.helpers.sortEcTrackingList
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import javax.inject.Inject
 
@@ -31,18 +33,14 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
     }
 
     private val filter = MutableStateFlow("")
+    private val sortFilter = MutableStateFlow(EcFilterType.NEWEST_FIRST)
     private val selectedBenId = MutableStateFlow(0L)
 
-    val benList =
-        allBenList
-            .combine(filter) { list, filter ->
-                list.filter { domainList ->
-                    domainList.ben.benId in filterEcTrackingList(
-                        list,
-                        filter
-                    ).map { it.ben.benId }
-                }
-            }
+    val benList = allBenList
+        .combine(filter) { list, f ->
+            list.filter { it.ben.benId in filterEcTrackingList(list, f).map { d -> d.ben.benId } }
+        }
+        .combine(sortFilter) { list, sort -> sortEcTrackingList(list, sort) }
 
     val bottomSheetList = allBenList.combineTransform(selectedBenId) { list, benId ->
         if (benId != 0L) {
@@ -56,17 +54,17 @@ class EligibleCoupleTrackingListViewModel @Inject constructor(
     }
 
     fun filterText(text: String) {
-        viewModelScope.launch {
-            filter.emit(text)
-        }
+        viewModelScope.launch { filter.emit(text) }
     }
+
+    fun setSortFilter(type: EcFilterType) {
+        viewModelScope.launch { sortFilter.emit(type) }
+    }
+
+    fun getCurrentSort(): EcFilterType = sortFilter.value
 
     fun setClickedBenId(benId: Long) {
-        viewModelScope.launch {
-            selectedBenId.emit(benId)
-        }
-
+        viewModelScope.launch { selectedBenId.emit(benId) }
     }
-
 
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
@@ -84,7 +85,7 @@ class TbSuspectedListAdapter(
                 }
             }
 
-            binding.btnFormTb.text = if (item.tbSuspected == null) "Track" else "View"
+            binding.btnFormTb.text = if (item.tbSuspected == null) binding.root.resources.getString(R.string.track) else binding.root.resources.getString(R.string.view)
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbSuspected == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 

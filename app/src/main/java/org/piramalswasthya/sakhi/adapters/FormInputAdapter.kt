@@ -488,7 +488,8 @@ class FormInputAdapter(
                         if (item.value == it) rdBtn.isChecked = true
                         rdBtn.setOnCheckedChangeListener { _, b ->
                             if (b) {
-                                binding.root.clearFocus()
+                                // Clear focus from any previously focused EditText to prevent auto-scroll
+                                binding.root.rootView.findFocus()?.clearFocus()
                                 val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
@@ -1071,14 +1072,14 @@ class FormInputAdapter(
 
                     if (internalUpdate) return
                     if (editable.isNullOrBlank()) {
-                        item.errorText = "Value cannot be empty"
+                        item.errorText = binding.root.resources.getString(R.string.value_cannot_be_empty)
                         showError(item.errorText!!)
                         return
                     }
 
                     val inputValue = editable.toString().toIntOrNull()
                     if (inputValue == null) {
-                        item.errorText = "Enter a valid number"
+                        item.errorText = binding.root.resources.getString(R.string.enter_a_valid_number)
                         showError(item.errorText!!)
                         return
                     }
@@ -1087,9 +1088,9 @@ class FormInputAdapter(
 
                     if (validated != inputValue) {
                         val msg = if (maxValue != null)
-                            "Allowed range: $minValue to $maxValue"
+                            binding.root.resources.getString(R.string.allowed_range, minValue, maxValue)
                         else
-                            "Minimum allowed value: $minValue"
+                            binding.root.resources.getString(R.string.minimum_allowed_value, minValue)
                         item.errorText = msg
                         showError(msg)
 
@@ -1254,7 +1255,7 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (item.value != null) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE

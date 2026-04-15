@@ -3,7 +3,19 @@
     <string name="ectdset_fin_yrs">বিত্তীয় বৰ্ষ</string>
     <string name="ectdset_month">মাহ</string>
     <string name="ectdset_is_preg_tst_done">গৰ্ভাৱস্থা পৰীক্ষা কৰা হয়নে?</string>
+    <array name="ectdset_yes_no_dont">
+        <item>হয়</item>
+        <item>নহয়</item>
+    </array>
+    <array name="ectdset_yes_no">
+        <item>হয়</item>
+        <item>নহয়</item>
+    </array>
     <string name="ectdset_preg_tst_rlt">গৰ্ভাৱস্থা পৰীক্ষাৰ ফলাফল</string>
+    <array name="ectdset_po_neg">
+        <item>ধনাত্মক</item>
+        <item>ঋণাত্মক</item>
+    </array>
     <string name="ectdset_name_wo_preg">মহিলাগৰাকী গৰ্ভৱতী নেকি?</string>
     <string name="ectdset_fly_plan_mthd">আপুনি পৰিয়াল পৰিকল্পনা ব্যৱহাৰ কৰি আছে নে কৰিব বিচাৰে?</string>
     <string name="ectdset_mthd_conpt">এফ পি পদ্ধতি</string>
