@@ -30,7 +30,7 @@ class PregnantWomanAncVisitDataset(
     private val ancDate = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
-        title = "ANC Date",
+        title = resources.getString(R.string.anc_date),
         required = true,
         hasDependants = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -40,7 +40,7 @@ class PregnantWomanAncVisitDataset(
     private val placeOfAnc = FormElement(
         id = 45,
         inputType = InputType.DROPDOWN,
-        title = "Place of ANC",
+        title = resources.getString(R.string.place_of_anc),
         arrayId = R.array.place_of_anc_array,
         entries = resources.getStringArray(R.array.place_of_anc_array),
         required = true,
@@ -50,7 +50,7 @@ class PregnantWomanAncVisitDataset(
     private val weekOfPregnancy = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Weeks of Pregnancy",
+        title = resources.getString(R.string.weeks_of_pregnancy),
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -60,7 +60,7 @@ class PregnantWomanAncVisitDataset(
     private val ancVisit = FormElement(
         id = 3,
         inputType = InputType.DROPDOWN,
-        title = "ANC Period",
+        title = resources.getString(R.string.anc_period),
         required = true,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -69,7 +69,7 @@ class PregnantWomanAncVisitDataset(
     private val isAborted = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Abortion If Any",
+        title = resources.getString(R.string.abortion_if_any),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false,
@@ -78,7 +78,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionType = FormElement(
         id = 5,
         inputType = InputType.DROPDOWN,
-        title = "Abortion Type",
+        title = resources.getString(R.string.abortion_type),
         arrayId = R.array.anc_abortion_type_array,
         entries = resources.getStringArray(R.array.anc_abortion_type_array),
         required = true,
@@ -90,7 +90,7 @@ class PregnantWomanAncVisitDataset(
     private val placeOfDeath = FormElement(
         id = 42,
         inputType = DROPDOWN,
-        title = context.getString(R.string.place_of_death),
+        title = resources.getString(R.string.place_of_death),
         arrayId = R.array.death_place_array,
         entries = resources.getStringArray(R.array.death_place_array),
         required = true,
@@ -98,7 +98,7 @@ class PregnantWomanAncVisitDataset(
     private val otherPlaceOfDeath = FormElement(
         id = 43,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.other_place_of_death),
+        title = resources.getString(R.string.other_place_of_death),
         required = true,
         hasDependants = true,
     )
@@ -107,7 +107,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionFacility = FormElement(
         id = 6,
         inputType = InputType.DROPDOWN,
-        title = "Facility (Place of Abortion)",
+        title = resources.getString(R.string.facility_place_of_abortion),
         arrayId = R.array.abortion_place_array,
         entries = resources.getStringArray(R.array.abortion_place_array),
         required = true,
@@ -116,7 +116,7 @@ class PregnantWomanAncVisitDataset(
     private val abortionDate = FormElement(
         id = 7,
         inputType = InputType.DATE_PICKER,
-        title = "Abortion Date",
+        title = resources.getString(R.string.abortion_date),
         required = true,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -127,7 +127,7 @@ class PregnantWomanAncVisitDataset(
     private val weight = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Weight of PW (Kg) at time Registration",
+        title = resources.getString(R.string.weight_of_pw_kg),
         arrayId = -1,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
@@ -141,7 +141,7 @@ class PregnantWomanAncVisitDataset(
     private val bp = FormElement(
         id = 9,
         inputType = InputType.EDIT_TEXT,
-        title = "BP of PW – Systolic/ Diastolic (mm Hg) ",
+        title = resources.getString(R.string.bp_of_pw),
 //        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 7,
         required = true,
@@ -183,7 +183,7 @@ class PregnantWomanAncVisitDataset(
     private val pulseRate = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "Pulse Rate (BPM)",
+        title = resources.getString(R.string.pulse_rate_bpm),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 3,
         minDecimal = 40.0,
@@ -198,7 +198,7 @@ class PregnantWomanAncVisitDataset(
     private val hb = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
-        title = "HB (gm/dl)",
+        title = resources.getString(R.string.hb_gm_dl),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL,
         etMaxLength = 4,
         minDecimal = 2.0,
@@ -212,7 +212,7 @@ class PregnantWomanAncVisitDataset(
     private val fundalHeight = FormElement(
         id = 13,
         inputType = InputType.EDIT_TEXT,
-        title = "Fundal Height / Size of the Uterus weeks",
+        title = resources.getString(R.string.fundal_height_uterus),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 2,
         min = 1,
@@ -225,7 +225,7 @@ class PregnantWomanAncVisitDataset(
     private val urineAlbumin = FormElement(
         id = 14,
         inputType = InputType.RADIO,
-        title = "Urine Albumin",
+        title = resources.getString(R.string.urine_albumin),
         arrayId = R.array.anc_urine_albumin_array,
         entries = resources.getStringArray(R.array.anc_urine_albumin_array),
         required = false,
@@ -234,7 +234,7 @@ class PregnantWomanAncVisitDataset(
     private val randomBloodSugarTest = FormElement(
         id = 15,
         inputType = InputType.RADIO,
-        title = "Random Blood Sugar Test",
+        title = resources.getString(R.string.random_blood_sugar_test),
         arrayId = R.array.anc_random_blood_sugar_test_array,
         entries = resources.getStringArray(R.array.anc_random_blood_sugar_test_array),
         required = false,
@@ -243,7 +243,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTd1 = FormElement(
         id = 16,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (1st Dose)",
+        title = resources.getString(R.string.date_td_tt_1st_dose),
         required = false,
         hasDependants = true,
         max = System.currentTimeMillis(),
@@ -254,7 +254,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTd2 = FormElement(
         id = 17,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (2nd Dose)",
+        title = resources.getString(R.string.date_td_tt_2nd_dose),
         required = false,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -264,7 +264,7 @@ class PregnantWomanAncVisitDataset(
     private val dateOfTTOrTdBooster = FormElement(
         id = 18,
         inputType = InputType.DATE_PICKER,
-        title = "Date of Td TT (Boooster Dose)",
+        title = resources.getString(R.string.date_td_tt_booster_dose),
         required = false,
         hasDependants = true,
 
@@ -276,7 +276,7 @@ class PregnantWomanAncVisitDataset(
     private val numFolicAcidTabGiven = FormElement(
         id = 19,
         inputType = InputType.EDIT_TEXT,
-        title = "No. of Folic Acid Tabs given",
+        title = resources.getString(R.string.no_of_folic_acid_tabs),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 2,
         required = false,
@@ -289,7 +289,7 @@ class PregnantWomanAncVisitDataset(
     private val numIfaAcidTabGiven = FormElement(
         id = 20,
         inputType = InputType.EDIT_TEXT,
-        title = "No. of IFA Tabs given",
+        title = resources.getString(R.string.no_of_ifa_tabs),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
         required = false,
@@ -302,14 +302,14 @@ class PregnantWomanAncVisitDataset(
     private val anyHighRisk = FormElement(
         id = 21,
         inputType = InputType.RADIO,
-        title = "Any High Risk conditions",
+        title = resources.getString(R.string.any_high_risk_conditions),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false,
         hasDependants = true
     )
     private val highRiskCondition = FormElement(
-        id = 22, inputType = InputType.DROPDOWN, title = "High Risk Conditions",
+        id = 22, inputType = InputType.DROPDOWN, title = resources.getString(R.string.high_risk_conditions),
         arrayId = R.array.anc_high_risk_array,
         entries = resources.getStringArray(R.array.anc_high_risk_array),
         required = false, hasDependants = true,
@@ -320,7 +320,7 @@ class PregnantWomanAncVisitDataset(
     private val otherHighRiskCondition = FormElement(
         id = 23,
         inputType = InputType.EDIT_TEXT,
-        title = "Any other High Risk conditions",
+        title = resources.getString(R.string.any_other_high_risk_conditions),
         required = true,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -329,7 +329,7 @@ class PregnantWomanAncVisitDataset(
     private val highRiskReferralFacility = FormElement(
         id = 24,
         inputType = InputType.DROPDOWN,
-        title = "Referral Facility",
+        title = resources.getString(R.string.referral_facility),
         arrayId = R.array.anc_referral_facility_array,
         entries = resources.getStringArray(R.array.anc_referral_facility_array),
         required = false,
@@ -338,7 +338,7 @@ class PregnantWomanAncVisitDataset(
         iconDrawableRes = R.drawable.ic_referral,
     )
     private val hrpConfirm = FormElement(
-        id = 25, inputType = InputType.RADIO, title = "Is HRP Confirmed?",
+        id = 25, inputType = InputType.RADIO, title = resources.getString(R.string.is_hrp_confirmed),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false, hasDependants = true
@@ -346,7 +346,7 @@ class PregnantWomanAncVisitDataset(
     private val hrpConfirmedBy = FormElement(
         id = 26,
         inputType = InputType.DROPDOWN,
-        title = "Who had identified as HRP?",
+        title = resources.getString(R.string.who_identified_hrp),
         arrayId = R.array.anc_confirmed_by_array,
         entries = resources.getStringArray(R.array.anc_confirmed_by_array),
         required = true,
@@ -356,7 +356,7 @@ class PregnantWomanAncVisitDataset(
     )
     private val maternalDeath = FormElement(
         id = 27, inputType = InputType.RADIO,
-        title = "Maternal Death",
+        title = resources.getString(R.string.maternal_death),
         arrayId = R.array.anc_confirmation_array1,
         entries = resources.getStringArray(R.array.anc_confirmation_array1),
         required = false, hasDependants = true
@@ -364,7 +364,7 @@ class PregnantWomanAncVisitDataset(
     private val maternalDeathProbableCause = FormElement(
         id = 28,
         inputType = InputType.DROPDOWN,
-        title = "Probable Cause of Death",
+        title = resources.getString(R.string.probable_cause_of_death),
         arrayId = R.array.anc_death_cause_array,
         entries = resources.getStringArray(R.array.anc_death_cause_array),
         required = true,
@@ -376,7 +376,7 @@ class PregnantWomanAncVisitDataset(
     private val otherMaternalDeathProbableCause = FormElement(
         id = 29,
         inputType = InputType.EDIT_TEXT,
-        title = "Other Death Cause",
+        title = resources.getString(R.string.other_death_cause),
         required = true,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
@@ -385,7 +385,7 @@ class PregnantWomanAncVisitDataset(
     private val maternalDateOfDeath = FormElement(
         id = 30,
         inputType = InputType.DATE_PICKER,
-        title = "Death Date",
+        title = resources.getString(R.string.death_date),
         required = true,
         max = System.currentTimeMillis(),
         showDrawable = true,
@@ -396,7 +396,7 @@ class PregnantWomanAncVisitDataset(
     private val deliveryDone = FormElement(
         id = 31,
         inputType = InputType.RADIO,
-        title = "Has the pregnant woman delivered?",
+        title = resources.getString(R.string.has_pw_delivered),
         arrayId = R.array.anc_confirmation_array,
         entries = resources.getStringArray(R.array.anc_confirmation_array),
         required = false,
@@ -405,21 +405,21 @@ class PregnantWomanAncVisitDataset(
     private val headLine = FormElement(
         id = 34,
         inputType = InputType.HEADLINE,
-        title = "MCP Cards",
+        title = resources.getString(R.string.mcp_cards),
         headingLine = false,
         required = false,
     )
     private val fileUploadFront = FormElement(
         id = 31,
         inputType = InputType.FILE_UPLOAD,
-        title = "Front Side",
+        title = resources.getString(R.string.front_side),
         required = false,
     )
 
     private val fileUploadBack = FormElement(
         id = 32,
         inputType = InputType.FILE_UPLOAD,
-        title = "Back Side",
+        title = resources.getString(R.string.back_side),
         required = false,
     )
 
@@ -468,12 +468,12 @@ class PregnantWomanAncVisitDataset(
             fileUploadFront,
             fileUploadBack,
 
-        )
+            )
 
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-           list.remove(fileUploadFront)
-           list.remove(fileUploadBack)
-           list.remove(headLine)
+            list.remove(fileUploadFront)
+            list.remove(fileUploadBack)
+            list.remove(headLine)
         }
         if (BuildConfig.FLAVOR.contains("xushrukha", ignoreCase = true)) {
             bp.required=true
@@ -554,7 +554,7 @@ class PregnantWomanAncVisitDataset(
         ancVisit.value = visitNumber.toString()
 
         saved?.let { savedAnc ->
-            placeOfAnc.value=savedAnc.placeOfAnc
+            placeOfAnc.value = getLocalValueInArray(placeOfAnc.arrayId, savedAnc.placeOfAnc)
             val woP = getWeeksOfPregnancy(savedAnc.ancDate, regis.lmpDate)
             if (woP <= 12) {
                 list.remove(fundalHeight)
@@ -622,7 +622,7 @@ class PregnantWomanAncVisitDataset(
             }
             savedAnc.maternalDeath?.let {
                 maternalDeath.value = if (it) maternalDeath.entries!!.last() else maternalDeath.entries!!.first()
-                  if (it) {
+                if (it) {
                     maternalDeathProbableCause.value =
                         getLocalValueInArray(
                             maternalDeathProbableCause.arrayId,
@@ -634,11 +634,11 @@ class PregnantWomanAncVisitDataset(
                         list.indexOf(maternalDeath) + 1,
                         listOf(maternalDeathProbableCause, maternalDateOfDeath)
                     )
-                      placeOfDeath.entries?.indexOf(savedAnc.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
-                          if (index == 8) {
-                              list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
-                          }
-                      }
+                    placeOfDeath.entries?.indexOf(savedAnc.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                        if (index == 8) {
+                            list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
+                        }
+                    }
                     otherMaternalDeathProbableCause.value =
                         savedAnc.otherMaternalDeathProbableCause
                     if (maternalDeathProbableCause.value == maternalDeathProbableCause.entries!!.last()) list.add(
@@ -719,8 +719,8 @@ class PregnantWomanAncVisitDataset(
                         in Konstants.minAnc4Week..Konstants.maxAnc4Week -> 4
                         else -> 0
                     }
-                    if (isAborted.value.equals("No", ignoreCase = true) &&
-                        maternalDeath.value.equals("No", ignoreCase = true)
+                    if (isAborted.value == isAborted.entries!!.first() &&
+                        maternalDeath.value == maternalDeath.entries!!.first()
                     ) {
                         ancVisit.value = calcVisitNumber.toString()
 
@@ -801,14 +801,23 @@ class PregnantWomanAncVisitDataset(
                     hrpConfirm
                 )
 
-                if (isAborted.value.equals("Yes", ignoreCase = true) ||
-                    maternalDeath.value.equals("Yes", ignoreCase = true)
-                ) {
+                val isAbortedYes = isAborted.value == isAborted.entries!!.last()
+                val isMaternalDeathYes = maternalDeath.value == maternalDeath.entries!!.last()
+                val abortionFields = listOf(abortionType, abortionFacility, abortionDate)
+
+                if (isAbortedYes) {
                     triggerDependants(
                         source = maternalDeath,
-                        addItems = listOf(abortionType, abortionFacility, abortionDate),
+                        addItems = abortionFields,
                         removeItems = commonAddItems + deliveryDone,
                         position = getIndexById(isAborted.id).coerceAtLeast(0) + 1 // safe
+                    )
+                } else if (isMaternalDeathYes) {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = emptyList(),
+                        removeItems = abortionFields + commonAddItems + deliveryDone,
+                        position = -1
                     )
                 } else {
                     val week = weekOfPregnancy.value?.toIntOrNull()
@@ -819,7 +828,7 @@ class PregnantWomanAncVisitDataset(
                         commonAddItems
                     }
 
-                    val removeItems = listOf(abortionType, abortionFacility, abortionDate) +
+                    val removeItems = abortionFields +
                             if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
 
                     triggerDependants(
@@ -946,14 +955,22 @@ class PregnantWomanAncVisitDataset(
 
                 val week = weekOfPregnancy.value?.toIntOrNull()
 
-                if (maternalDeath.value.equals("Yes", ignoreCase = true) ||
-                    isAborted.value.equals("Yes", ignoreCase = true)
-                ) {
+                val isMaternalDeathYes = maternalDeath.value == maternalDeath.entries!!.last()
+                val isAbortedYes = isAborted.value == isAborted.entries!!.last()
+
+                if (isMaternalDeathYes) {
                     triggerDependants(
                         source = maternalDeath,
                         addItems = maternalDeathFields,
                         removeItems = commonAddItems + deliveryDone,
                         position = getIndexById(maternalDeath.id).coerceAtLeast(0) + 1
+                    )
+                } else if (isAbortedYes) {
+                    triggerDependants(
+                        source = maternalDeath,
+                        addItems = emptyList(),
+                        removeItems = maternalDeathFields + commonAddItems + deliveryDone,
+                        position = -1
                     )
                 } else {
                     val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
@@ -999,11 +1016,11 @@ class PregnantWomanAncVisitDataset(
 
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as PregnantWomanAncCache).let { cache ->
-            cache.placeOfDeath = placeOfDeath.value
+            cache.placeOfDeath = getEnglishValueInArray(placeOfDeath.arrayId, placeOfDeath.value)
             cache.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
                 ?.takeIf { it != -1 }
 
-            cache.placeOfAnc = placeOfAnc.value
+            cache.placeOfAnc = getEnglishValueInArray(placeOfAnc.arrayId, placeOfAnc.value)
             cache.placeOfAncId = placeOfAnc.entries?.indexOf(placeOfAnc.value ?: "")
                 ?.takeIf { it != -1 }
             cache.otherPlaceOfDeath = otherPlaceOfDeath.value
@@ -1011,9 +1028,9 @@ class PregnantWomanAncVisitDataset(
             cache.visitNumber = ancVisit.value!!.toInt()
             cache.ancDate = getLongFromDate(ancDate.value)
             cache.isAborted = isAborted.value == isAborted.entries!!.last()
-            cache.abortionType = abortionType.value
+            cache.abortionType = getEnglishValueInArray(abortionType.arrayId, abortionType.value)
             cache.abortionTypeId = abortionType.getPosition()
-            cache.abortionFacility = abortionFacility.value
+            cache.abortionFacility = getEnglishValueInArray(abortionFacility.arrayId, abortionFacility.value)
             cache.abortionFacilityId = abortionFacility.getPosition()
             cache.abortionDate = abortionDate.value?.let { getLongFromDate(it) }
             cache.weight = weight.value?.toInt()
@@ -1022,9 +1039,9 @@ class PregnantWomanAncVisitDataset(
             cache.pulseRate = pulseRate.value?.takeIf { it.isNotEmpty() }
             cache.hb = hb.value?.toDouble()
             cache.fundalHeight = fundalHeight.value?.toInt()
-            cache.urineAlbumin = urineAlbumin.value
+            cache.urineAlbumin = getEnglishValueInArray(urineAlbumin.arrayId, urineAlbumin.value)
             cache.urineAlbuminId = urineAlbumin.getPosition()
-            cache.randomBloodSugarTest = randomBloodSugarTest.value
+            cache.randomBloodSugarTest = getEnglishValueInArray(randomBloodSugarTest.arrayId, randomBloodSugarTest.value)
             cache.randomBloodSugarTestId = randomBloodSugarTest.getPosition()
             updateRegistrationForTdX()
             cache.numFolicAcidTabGiven = numFolicAcidTabGiven.value?.toInt() ?: 0
@@ -1032,16 +1049,16 @@ class PregnantWomanAncVisitDataset(
             anyHighRisk.value?.let {
                 cache.anyHighRisk = it == anyHighRisk.entries!!.last()
             }
-            cache.highRisk = highRiskCondition.value
+            cache.highRisk = getEnglishValueInArray(highRiskCondition.arrayId, highRiskCondition.value)
             cache.highRiskId = highRiskCondition.getPosition()
             cache.otherHighRisk = otherHighRiskCondition.value
-            cache.referralFacility = highRiskReferralFacility.value
+            cache.referralFacility = getEnglishValueInArray(highRiskReferralFacility.arrayId, highRiskReferralFacility.value)
             cache.referralFacilityId = highRiskReferralFacility.getPosition()
             cache.hrpConfirmed = hrpConfirm.value?.let { it == hrpConfirm.entries!!.last() }
-            cache.hrpConfirmedBy = hrpConfirmedBy.value
+            cache.hrpConfirmedBy = getEnglishValueInArray(hrpConfirmedBy.arrayId, hrpConfirmedBy.value)
             cache.hrpConfirmedById = hrpConfirmedBy.getPosition()
             cache.maternalDeath = maternalDeath.value == maternalDeath.entries!!.last()
-            cache.maternalDeathProbableCause = maternalDeathProbableCause.value
+            cache.maternalDeathProbableCause = getEnglishValueInArray(maternalDeathProbableCause.arrayId, maternalDeathProbableCause.value)
             cache.maternalDeathProbableCauseId = maternalDeathProbableCause.getPosition()
             cache.otherMaternalDeathProbableCause = otherMaternalDeathProbableCause.value
             cache.deathDate = maternalDateOfDeath.value?.let { getLongFromDate(it) }

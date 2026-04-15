@@ -29,7 +29,7 @@ class MDSRFormDataset(
     private val dateOfDeath = FormElement(
         id = 1,
         inputType = InputType.TEXT_VIEW,
-        title = "Date of death ",
+        title = resources.getString(R.string.date_of_death),
         min = 0L,
         max = System.currentTimeMillis(),
         required = true
@@ -37,35 +37,36 @@ class MDSRFormDataset(
     private val address = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Address",
+        title = resources.getString(R.string.address),
         required = false
     )
     private val husbandName = FormElement(
         id = 3,
         inputType = InputType.TEXT_VIEW,
         etMaxLength = 50,
-        title = "Husband’s Name",
+        title = resources.getString(R.string.mdsr_husband_name),
         required = false
     )
     private val causeOfDeath = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Cause of death",
+        title = resources.getString(R.string.mdsr_cause),
         required = true,
         isEnabled = false,
         hasDependants = true,
-        entries = arrayOf("Suspected Maternal death", "Non-maternal death")
+        arrayId = R.array.mdsr_cause_of_death_type,
+        entries = resources.getStringArray(R.array.mdsr_cause_of_death_type)
     )
     private val reasonOfDeath = FormElement(
         id = 5,
         inputType = InputType.EDIT_TEXT,
-        title = "Specify Reason",
+        title = resources.getString(R.string.mdsr_reason_death),
         required = true
     )
     private val investigationDate = FormElement(
         id = 6,
         inputType = InputType.DATE_PICKER,
-        title = "Date of field investigation",
+        title = resources.getString(R.string.mdsr_field_investigation),
         min = 0L,
         max = System.currentTimeMillis(),
         required = false
@@ -73,15 +74,15 @@ class MDSRFormDataset(
     private val actionTaken = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Action Take",
+        title = resources.getString(R.string.mdsr_action),
         required = false,
         orientation = LinearLayout.VERTICAL,
-        entries = arrayOf("Yes", "No")
+        entries = resources.getStringArray(R.array.yes_no)
     )
     private val blockMOSign = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Signature of MO I/C of the block",
+        title = resources.getString(R.string.mdsr_signature),
         required = false
     )
     private val dateIc = FormElement(
@@ -89,13 +90,13 @@ class MDSRFormDataset(
         inputType = InputType.DATE_PICKER,
         min = 0L,
         max = System.currentTimeMillis(),
-        title = "Date",
+        title = resources.getString(R.string.mdsr_ic_date),
         required = false
     )
     private val duringPregnancy = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.a_during_pregnancy),
+        title = resources.getString(R.string.a_during_pregnancy),
         required = false,
         isEnabled = false,
         entries = resources.getStringArray(R.array.yes_no)
@@ -104,7 +105,7 @@ class MDSRFormDataset(
     private val duringDelivery = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.b_during_delivery),
+        title = resources.getString(R.string.b_during_delivery),
         required = false,
         isEnabled = false,
         entries = resources.getStringArray(R.array.yes_no)
@@ -112,7 +113,7 @@ class MDSRFormDataset(
     private val duringDelivery42Days = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.c_within_42_days_after_delivery),
+        title = resources.getString(R.string.c_within_42_days_after_delivery),
         required = false,
         isEnabled = false,
         entries = resources.getStringArray(R.array.yes_no)
@@ -120,7 +121,7 @@ class MDSRFormDataset(
     private val duringAbortion6Weeks = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.d_during_abortion_or_within_6_weeks_after_abortion),
+        title = resources.getString(R.string.d_during_abortion_or_within_6_weeks_after_abortion),
         required = false,
         isEnabled = false,
         entries = resources.getStringArray(R.array.yes_no)
@@ -129,52 +130,52 @@ class MDSRFormDataset(
     private val nameOfReportingPerson = FormElement(
         id = 18,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.name_of_reporting_person),
+        title = resources.getString(R.string.name_of_reporting_person),
         required = false
     )
 
     private val designation = FormElement(
         id = 18,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.designation),
+        title = resources.getString(R.string.designation),
         required = false
     )
 
     private val veryficationByANM = FormElement(
         id = 18,
         inputType = InputType.HEADLINE,
-        title = context.getString(R.string.verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion),
+        title = resources.getString(R.string.verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion),
         required = false
     )
     private val nameOdANM = FormElement(
         id = 18,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.name_of_anm),
+        title = resources.getString(R.string.name_of_anm),
         required = false
     )
     private val nameOfSubCenter = FormElement(
         id = 18,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.name_of_the_sub_center),
+        title = resources.getString(R.string.name_of_the_sub_center),
         required = false
     )
 
     private val mdsrFileUpload1 = FormElement(
         id = 21,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mdsr_form_from_anm_1),
+        title = resources.getString(R.string.mdsr_form_from_anm_1),
         required = false,
     )
     private val mdsrFileUpload2 = FormElement(
         id = 22,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mdsr_form_from_anm_2),
+        title = resources.getString(R.string.mdsr_form_from_anm_2),
         required = false,
     )
     private val mdsrDeathFileUpload = FormElement(
         id = 23,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.death_certificate),
+        title = resources.getString(R.string.death_certificate),
         required = false,
     )
 
@@ -182,45 +183,45 @@ class MDSRFormDataset(
     private val state = FormElement(
         id = 24,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.state),
+        title = resources.getString(R.string.state),
         required = false
     )
     private val district = FormElement(
         id = 25,
         inputType = InputType.TEXT_VIEW,
-        title =  context.getString(R.string.district),
+        title =  resources.getString(R.string.district),
         required = false
     )
     private val block = FormElement(
         id = 26,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.block),
+        title = resources.getString(R.string.block),
         required = false
     )
     private val village = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.village_town_city),
+        title = resources.getString(R.string.village_town_city),
         required = false
     )
 
     private val fatherName = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.father_name),
+        title = resources.getString(R.string.father_name),
         required = false
     )
     private val ageOfWomen = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.age_of_woman),
+        title = resources.getString(R.string.age_of_woman),
         required = false
     )
 
     private val rchID = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.rch_id),
+        title = resources.getString(R.string.rch_id),
         required = false
     )
 
@@ -228,33 +229,33 @@ class MDSRFormDataset(
     private val mobileNo = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.mobile_number),
+        title = resources.getString(R.string.mobile_number),
         required = false
     )
 
     private val timeOfDeath = FormElement(
         id = 16,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.time_of_death),
+        title = resources.getString(R.string.time_of_death),
         required = false
     )
     private val placeOfDate = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.place_of_death),
+        title = resources.getString(R.string.place_of_death),
         required = false
     )
 
     private val whenDidDeathOccur = FormElement(
         id = 27,
         inputType = InputType.HEADLINE,
-        title = context.getString(R.string.when_did_death_occur),
+        title = resources.getString(R.string.when_did_death_occur),
         required = false
     )
     private val nameOfDeceased  = FormElement(
         id = 27,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.name_of_the_deceased_woman),
+        title = resources.getString(R.string.name_of_the_deceased_woman),
         required = false
     )
 
@@ -325,32 +326,32 @@ class MDSRFormDataset(
         dateOfDeath.value=ben.dateOfDeath
         timeOfDeath.value=ben.timeOfDeath
         nameOfDeceased.value = "${ben.firstName} ${ben.lastName}"
-        duringPregnancy.value = if (pregnancyDeath) "Yes" else "No"
-        duringDelivery.value = if (deliveryDeath) "Yes" else "No"
-        duringDelivery42Days.value = if (pncDeath) "Yes" else "No"
-        duringAbortion6Weeks.value = if (abortionDeath) "Yes" else "No"
+        duringPregnancy.value = if (pregnancyDeath) duringPregnancy.entries!![0] else duringPregnancy.entries!![1]
+        duringDelivery.value = if (deliveryDeath) duringDelivery.entries!![0] else duringDelivery.entries!![1]
+        duringDelivery42Days.value = if (pncDeath) duringDelivery42Days.entries!![0] else duringDelivery42Days.entries!![1]
+        duringAbortion6Weeks.value = if (abortionDeath) duringAbortion6Weeks.entries!![0] else duringAbortion6Weeks.entries!![1]
 
         val causeOfDeathValue = if (pregnancyDeath || abortionDeath || deliveryDeath || pncDeath) {
             if(pncDeathCause || ancDeathCause)
-                "Non-maternal death"
+                causeOfDeath.entries!![1]
             else
-                "Suspected Maternal death"
+                causeOfDeath.entries!![0]
         } else {
-            "Non-maternal death"
+            causeOfDeath.entries!![1]
         }
         causeOfDeath.value = causeOfDeathValue
         saved?.let { mdsr ->
             dateOfDeath.value = mdsr.dateOfDeath?.let { getDateFromLong(it) }
             this.address.value = mdsr.address
             husbandName.value = mdsr.husbandName
-            causeOfDeath.value = mdsr.causeOfDeath
+            causeOfDeath.value = getLocalValueInArray(R.array.mdsr_cause_of_death_type, mdsr.causeOfDeath)
             reasonOfDeath.value = mdsr.reasonOfDeath
             mdsrFileUpload1.value=mdsr.mdsr1File
             mdsrFileUpload2.value=mdsr.mdsr2File
             mdsrDeathFileUpload.value=mdsr.mdsrDeathCertFile
             investigationDate.value = mdsr.investigationDate?.let { getDateFromLong(it) }
             actionTaken.value = mdsr.actionTaken?.let {
-                if (it) resources.getString(R.string.yes) else resources.getString(R.string.no)
+                if (it) actionTaken.entries!![0] else actionTaken.entries!![1]
             }
             blockMOSign.value = mdsr.blockMOSign
             dateIc.value = mdsr.dateIc?.let { getDateFromLong(it) }
@@ -379,9 +380,9 @@ class MDSRFormDataset(
             mdsrCache.mdsr1File = mdsrFileUpload1.value
             mdsrCache.mdsr2File = mdsrFileUpload2.value
             mdsrCache.mdsrDeathCertFile = mdsrDeathFileUpload.value
-            mdsrCache.causeOfDeath = causeOfDeath.value
+            mdsrCache.causeOfDeath = getEnglishValueInArray(R.array.mdsr_cause_of_death_type, causeOfDeath.value)
             mdsrCache.reasonOfDeath = reasonOfDeath.value
-            mdsrCache.actionTaken = actionTaken.value?.let { actionTaken.value == "Yes" }
+            mdsrCache.actionTaken = actionTaken.value?.let { actionTaken.value == actionTaken.entries!![0] }
             mdsrCache.investigationDate = investigationDate.value?.let { getLongFromDate(it) }
             mdsrCache.blockMOSign = blockMOSign.value
             mdsrCache.dateIc = dateIc.value?.let { getLongFromDate(it) }

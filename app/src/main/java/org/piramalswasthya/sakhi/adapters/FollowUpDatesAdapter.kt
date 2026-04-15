@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.ItemFollowUpDateBinding
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +37,13 @@ class FollowUpDatesAdapter :
 
         fun bind(followUp: LeprosyFollowUpCache) {
             binding.tvFollowUpDate.text = dateFormat.format(Date(followUp.followUpDate))
-            binding.tvTreatmentStatus.text = followUp.treatmentStatus ?: "Pending"
+            val ctx = binding.root.context
+            val englishArray = HelperUtil.getLocalizedResources(ctx, Languages.ENGLISH)
+                .getStringArray(R.array.leprosy_treatment_status_before_time)
+            val localizedArray = ctx.resources.getStringArray(R.array.leprosy_treatment_status_before_time)
+            val idx = englishArray.indexOf(followUp.treatmentStatus)
+            binding.tvTreatmentStatus.text = if (idx >= 0) localizedArray[idx]
+            else ctx.getString(R.string.pending)
         }
     }
 

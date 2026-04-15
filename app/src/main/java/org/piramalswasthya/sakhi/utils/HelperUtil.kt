@@ -227,9 +227,10 @@ object HelperUtil {
     }
 
 
-    fun getTrackDate(long: Long?): String? {
+    fun getTrackDate(long: Long?, resources: android.content.res.Resources): String? {
         long?.let {
-            return " on ${dateFormat.format(long)}"
+            val on = resources.getString(org.piramalswasthya.sakhi.R.string.track_on)
+            return "${on}${dateFormat.format(long)}"
         }
         return null
     }
@@ -744,9 +745,12 @@ object HelperUtil {
         onCameraSelected: () -> Unit,
         onFileSelected: () -> Unit
     ) {
-        val options = arrayOf("Take Photo", "Choose File (PDF / Image)")
+        val options = arrayOf(
+            context.getString(R.string.take_photo),
+            context.getString(R.string.choose_file_pdf_image)
+        )
         AlertDialog.Builder(context)
-            .setTitle("Select File")
+            .setTitle(context.getString(R.string.select_file))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> onCameraSelected()
@@ -762,8 +766,8 @@ object HelperUtil {
         if (muac <= 11.5f) {
             showAlertDialog(
                 context,
-                "SAM Case Detected",
-                "MUAC is $muac cm. Please refer the Child to NRC as SAM case."
+                context.getString(R.string.sam_case_detected),
+                context.getString(R.string.muac_sam_alert_message, muac)
             )
             return true
         }
@@ -774,8 +778,8 @@ object HelperUtil {
         if (status == "SAM") {
             showAlertDialog(
                 context,
-                "SAM Case Detected",
-                "Weight-for-Height Status is SAM. Please refer the Child to NRC as SAM case."
+                context.getString(R.string.sam_case_detected),
+                context.getString(R.string.weight_height_sam_alert_message)
             )
             return true
         }

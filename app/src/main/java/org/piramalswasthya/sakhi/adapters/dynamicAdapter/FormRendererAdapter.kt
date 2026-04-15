@@ -3,6 +3,7 @@
     import android.app.AlertDialog
     import android.app.DatePickerDialog
     import android.content.ActivityNotFoundException
+    import android.content.Context
     import android.content.Intent
     import android.graphics.BitmapFactory
     import android.graphics.Color
@@ -11,6 +12,7 @@
     import android.text.*
     import android.text.style.ForegroundColorSpan
     import android.view.*
+    import android.view.inputmethod.InputMethodManager
     import android.util.Base64
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
@@ -97,6 +99,11 @@
         override fun onViewRecycled(holder: FormViewHolder) {
             holder.clear()
             super.onViewRecycled(holder)
+        }
+
+        override fun onViewDetachedFromWindow(holder: FormViewHolder) {
+            holder.clear()
+            super.onViewDetachedFromWindow(holder)
         }
 
         override fun getItemCount(): Int = fields.size
@@ -188,6 +195,8 @@
             }
 
             fun clear() {
+                muacDebounceJob?.cancel()
+                muacDebounceJob = null
                 viewHolderScope.coroutineContext.cancelChildren()
             }
 
@@ -229,6 +238,7 @@
                     wrapper.addView(inputView)
 
                     val errorTextView = TextView(itemView.context).apply {
+                        tag = "field_error_tv"
                         setTextColor(android.graphics.Color.RED)
                         textSize = 12f
                         text = field.errorMessage ?: ""
@@ -282,7 +292,7 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        val selectedOptions: MutableSet<String> = when (val v = field.value) {
+                        val selectedValues: MutableSet<String> = when (val v = field.value) {
                             is Set<*> -> v.filterIsInstance<String>().toMutableSet()
                             is List<*> -> v.filterIsInstance<String>().toMutableSet()
                             is String -> v.split(",").map { it.trim() }.toMutableSet()
@@ -290,8 +300,8 @@
                         }
                         field.options?.forEach { option ->
                             val checkBox = CheckBox(context).apply {
-                                text = option
-                                isChecked = selectedOptions.contains(option)
+                                text = option.label
+                                isChecked = selectedValues.contains(option.value)
                                 isEnabled = !isViewOnly && field.isEditable
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -302,12 +312,12 @@
                             if (!isViewOnly && field.isEditable) {
                                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                                     if (isChecked) {
-                                        selectedOptions.add(option)
+                                        selectedValues.add(option.value)
                                     } else {
-                                        selectedOptions.remove(option)
+                                        selectedValues.remove(option.value)
                                     }
-                                    field.value = selectedOptions
-                                    onValueChanged(field, selectedOptions)
+                                    field.value = selectedValues
+                                    onValueChanged(field, selectedValues)
                                 }
                             }
 
@@ -316,6 +326,7 @@
 
                         // Error TextView
                         val errorTextView = TextView(context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""
@@ -369,7 +380,8 @@
                         if (!isViewOnly) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     onValueChanged(field, s.toString())
 
@@ -416,7 +428,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText((field.value as? Number)?.toString() ?: "")
+                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                             isEnabled = !isViewOnly
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
@@ -427,7 +439,8 @@
 
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                                     muacDebounceJob?.cancel()
@@ -478,7 +491,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText((field.value as? Number)?.toString() ?: "")
+                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                             val isIFABottleCount = field.fieldId == "ifa_bottle_count"
@@ -498,11 +511,12 @@
                         if (editText.isEnabled) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
-                                    val value = s.toString().toFloatOrNull()
+                                    val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
+                                    val value = normalized.toFloatOrNull()
                                     field.value = value
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                         muacDebounceJob?.cancel()
-                                        muacDebounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                        muacDebounceJob = viewHolderScope.launch {
                                             delay(1500)
                                             onValueChanged(field, value)
                                         }
@@ -535,7 +549,7 @@
                             ).apply {
                                 setMargins(0, 16, 0, 8)
                             }
-                            hint = field.placeholder ?: "Select ${field.label}"
+                            hint = field.placeholder ?: context.getString(R.string.dynamic_form_select, field.label)
                             boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                             boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
                             boxStrokeWidthFocused = 2
@@ -550,7 +564,9 @@
                             isFocusable = false
                             isClickable = isEditableField
                             isEnabled = isEditableField
-                            setText(field.value?.toString() ?: "")
+                            val displayText = field.options?.find { it.value == field.value?.toString() }?.label
+                                ?: field.value?.toString() ?: ""
+                            setText(displayText)
                             background = null
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
                             setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
@@ -572,14 +588,14 @@
                         if (isEditableField) {
                             editText.setOnClickListener {
                                 val options = field.options ?: emptyList()
+                                val labels = options.map { it.label }.toTypedArray()
                                 val builder = AlertDialog.Builder(context)
-                                builder.setTitle("Select ${field.label}")
-                                builder.setItems(options.toTypedArray()) { _, which ->
+                                builder.setTitle(context.getString(R.string.dynamic_form_select, field.label))
+                                builder.setItems(labels) { _, which ->
                                     val selected = options[which]
-                                    editText.setText(selected)
-                                    field.value = selected
-                                    onValueChanged(field, selected)
-
+                                    editText.setText(selected.label)
+                                    field.value = selected.value
+                                    onValueChanged(field, selected.value)
                                 }
                                 builder.show()
                             }
@@ -614,7 +630,7 @@
                                 ViewGroup.LayoutParams.WRAP_CONTENT
                             ).apply { setMargins(0, 16, 0, 8) }
 
-                            hint = field.placeholder ?: "Select ${field.label}"
+                            hint = field.placeholder ?: context.getString(R.string.dynamic_form_select, field.label)
                             boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                             boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
                             boxStrokeWidthFocused = 2
@@ -652,14 +668,16 @@
                         fun setError(fieldId: String, msg: String) {
                             val f = fields.find { it.fieldId == fieldId }
                             f?.errorMessage = msg
-                            notifyItemChanged(fields.indexOf(f))
+                            val idx = fields.indexOf(f)
+                            if (idx >= 0) notifyItemChanged(idx)
                         }
 
                         fun clearError(fieldId: String) {
                             val f = fields.find { it.fieldId == fieldId }
                             if (f?.errorMessage != null) {
                                 f.errorMessage = null
-                                notifyItemChanged(fields.indexOf(f))
+                                val idx = fields.indexOf(f)
+                                if (idx >= 0) notifyItemChanged(idx)
                             }
                         }
 
@@ -691,7 +709,7 @@
                                 else {
 
 
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID || formId == FormConstants.MDA_DISTRIBUTION_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -733,7 +751,7 @@
                                     else{
                                         minDate = when (field.fieldId) {
                                             "visit_date" -> {
-                                                if (formId == FormConstants.HBNC_FORM_ID) {
+                                                if (formId == FormConstants.HBNC_FORM_ID || formId == FormConstants.HBYC_FORM_ID) {
                                                     val dueDate = getDate("due_date")
                                                     when {
                                                         dueDate != null && minVisitDate != null ->
@@ -759,7 +777,7 @@
                                 DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-
+                                      try {
                                         val dateStr = String.format(
                                             Locale.ENGLISH,
                                             "%02d-%02d-%04d",
@@ -770,8 +788,8 @@
 
                                         editText.setText(dateStr)
                                         field.value = dateStr
-                                        onValueChanged(field, dateStr)
                                         field.errorMessage = null
+                                        onValueChanged(field, dateStr)
 
                                         if (field.fieldId == "ifa_provision_date") {
                                             val selectedDate = sdf.parse(dateStr)
@@ -840,7 +858,8 @@
                                                             minEndDate.time = startDateParsed
                                                             minEndDate.add(Calendar.DAY_OF_MONTH, 1)
                                                             endDateField.validation?.minDate = sdf.format(minEndDate.time)
-                                                            notifyItemChanged(fields.indexOf(endDateField))
+                                                            val endIdx = fields.indexOf(endDateField)
+                                                            if (endIdx >= 0) notifyItemChanged(endIdx)
 
                                                             val existingEndDate = getDate("end_date")
                                                             if (existingEndDate != null) {
@@ -872,14 +891,16 @@
                                             "visit_date" -> {
                                                 val admission = fields.find { it.fieldId == "nrc_admission_date" }
                                                 admission?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(admission))
+                                                val admIdx = fields.indexOf(admission)
+                                                if (admIdx >= 0) notifyItemChanged(admIdx)
                                                 clearError("nrc_admission_date")
                                             }
 
                                             "nrc_admission_date" -> {
                                                 val discharge = fields.find { it.fieldId == "nrc_discharge_date" }
                                                 discharge?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(discharge))
+                                                val disIdx = fields.indexOf(discharge)
+                                                if (disIdx >= 0) notifyItemChanged(disIdx)
 
                                                 val dischargeDate = getDate("nrc_discharge_date")
                                                 val admissionDate = sdf.parse(dateStr)
@@ -894,7 +915,8 @@
                                             "nrc_discharge_date" -> {
                                                 val followUp = fields.find { it.fieldId == "follow_up_visit_date" }
                                                 followUp?.validation?.minDate = dateStr
-                                                notifyItemChanged(fields.indexOf(followUp))
+                                                val fuIdx = fields.indexOf(followUp)
+                                                if (fuIdx >= 0) notifyItemChanged(fuIdx)
 
                                                 val followDate = getDate("follow_up_visit_date")
                                                 val dischargeDate = sdf.parse(dateStr)
@@ -906,16 +928,24 @@
                                                 }
                                             }
                                         }
+                                      } catch (e: Exception) {
+                                        Timber.tag("FormRendererAdapter").e(e, "Error in DatePicker callback for field: ${field.fieldId}")
+                                      }
                                     },
                                     calendar.get(Calendar.YEAR),
                                     calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH)
                                 ).apply {
-                                    minDate?.let { datePicker.minDate = it.time }
-                                    maxDate?.let { datePicker.maxDate = it.time }
-
-                                    if (minDate != null && maxDate != null && minDate.after(maxDate)) {
-                                        datePicker.minDate = maxDate.time
+                                    try {
+                                        datePicker.minDate = 0
+                                        maxDate?.let { datePicker.maxDate = it.time }
+                                        if (minDate != null && maxDate != null && minDate.after(maxDate)) {
+                                            datePicker.minDate = maxDate.time
+                                        } else {
+                                            minDate?.let { datePicker.minDate = it.time }
+                                        }
+                                    } catch (e: Exception) {
+                                        Timber.tag("FormRendererAdapter").e(e, "Error setting date constraints for field: ${field.fieldId}")
                                     }
 
                                     setOnDismissListener {
@@ -952,31 +982,38 @@
 
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
-                                text = option
-                                isChecked = field.value == option
+                                id = View.generateViewId()
+                                text = option.label
                                 isEnabled = !isViewOnly && !isFieldDisabled
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                                 ).apply { setMargins(0, 0, if (index != field.options!!.lastIndex) 24 else 0, 0) }
                             }
+                            radioGroup.addView(radioButton)
+                        }
 
-                            radioButton.setOnCheckedChangeListener(null)
+                        // Set checked state AFTER all buttons are added to the group
+                        field.options?.forEachIndexed { index, option ->
+                            val rb = radioGroup.getChildAt(index) as RadioButton
+                            if (field.value?.toString() == option.value) {
+                                radioGroup.check(rb.id)
+                            }
+                        }
 
-                            if (!isViewOnly && !isFieldDisabled) {
-                                radioButton.setOnCheckedChangeListener { _, isChecked ->
-                                    if (isChecked && field.value != option) {
-                                        field.value = option
-                                        onValueChanged(field, option)
-                                        for (i in 0 until radioGroup.childCount) {
-                                            val child = radioGroup.getChildAt(i) as RadioButton
-                                            if (child.text != option) child.isChecked = false
-                                        }
-                                    }
+                        if (!isViewOnly && !isFieldDisabled) {
+                            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                                // Clear focus from any previously focused EditText to prevent auto-scroll
+                                itemView.rootView.findFocus()?.clearFocus()
+                                val imm = itemView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(itemView.windowToken, 0)
+                                val checkedIndex = (0 until group.childCount).firstOrNull { (group.getChildAt(it) as RadioButton).id == checkedId } ?: return@setOnCheckedChangeListener
+                                val selectedOption = field.options?.getOrNull(checkedIndex) ?: return@setOnCheckedChangeListener
+                                if (field.value?.toString() != selectedOption.value) {
+                                    field.value = selectedOption.value
+                                    onValueChanged(field, selectedOption.value)
                                 }
                             }
-
-                            radioGroup.addView(radioButton)
                         }
 
                         val wrapper = LinearLayout(itemView.context).apply {
@@ -989,6 +1026,7 @@
                         wrapper.addView(radioGroup)
 
                         val errorTextView = TextView(itemView.context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""
@@ -1046,7 +1084,7 @@
 
                             if (!isViewOnly && field.isEditable) {
                                 val pickButton = Button(context).apply {
-                                    text = "Pick Image"
+                                    text = context.getString(R.string.pick_image)
                                     layoutParams = LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.WRAP_CONTENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -1071,7 +1109,7 @@
                             }
 
                             val pickButton = Button(context).apply {
-                                text = "Pick Image"
+                                text = context.getString(R.string.pick_image)
                                 isEnabled = !isViewOnly && field.isEditable
                                 setOnClickListener {
                                     if (!isViewOnly && field.isEditable) {
@@ -1097,11 +1135,7 @@
         }
 
         init {
-            setHasStableIds(true)
-        }
-
-        override fun getItemId(position: Int): Long {
-            return fields[position].fieldId.hashCode().toLong()
+            setHasStableIds(false)
         }
 
 

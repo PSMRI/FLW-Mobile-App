@@ -188,5 +188,26 @@
     <string name="str_home">Home</string>
     <string name="str_sub_district_hospital">Sub District Hospital</string>
     <string name="str_medical_college_hospital">Medical College Hospital</string>
+    <string name="cr_birth_cert_uploads">Birth Certificate Uploads</string>
+
+    <string-array name="cr_mobile_no_of_array">
+        <item>Mother</item>
+        <item>Father</item>
+        <item>Others</item>
+    </string-array>
+
+    <string-array name="cr_place_of_birth_array">
+        <item>District Hospital</item>
+        <item>Community Health Centre</item>
+        <item>Primary Health Centre</item>
+        <item>Sub Centre</item>
+        <item>Other Public Facility</item>
+        <item>Accredited Private Hospital</item>
+        <item>Other Private Hospital</item>
+        <item>Home</item>
+        <item>Sub District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>In Transit</item>
+    </string-array>
 
 </resources>

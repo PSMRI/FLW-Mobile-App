@@ -60,11 +60,11 @@ data class HRPPregnantTrackCache(
     var syncState: SyncState = SyncState.UNSYNCED
 ) : FormDataModel {
 
-    fun asDomainModel(): HRPPregnantTrackDomain {
+    fun asDomainModel(resources: android.content.res.Resources): HRPPregnantTrackDomain {
         return HRPPregnantTrackDomain(
             id = id,
             dateOfVisit = visit + " : " + getDateStrFromLong(visitDate),
-            filledOnString = visit + HelperUtil.getTrackDate(visitDate),
+            filledOnString = visit + HelperUtil.getTrackDate(visitDate, resources),
             syncState = syncState
         )
     }
@@ -147,12 +147,13 @@ data class BenWithHRPTrackingCache(
     companion object {
         private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 
-        private fun getHRPTFilledDateFromLong(long: Long?): String {
-            return "Visited on ${dateFormat.format(long)}"
+        private fun getHRPTFilledDateFromLong(long: Long?, resources: android.content.res.Resources): String {
+            val visitedOn = resources.getString(org.piramalswasthya.sakhi.R.string.track_visited_on)
+            return "$visitedOn ${dateFormat.format(long)}"
         }
     }
 
-    fun asDomainModel(): BenWithHRPTListDomain {
+    fun asDomainModel(resources: android.content.res.Resources): BenWithHRPTListDomain {
         return BenWithHRPTListDomain(
             ben.asBasicDomainModel(),
             lmpString = getDateString(assessCache.lmpDate),
@@ -163,7 +164,7 @@ data class BenWithHRPTrackingCache(
                 HRPTDomain(
                     it.benId,
                     it.visitDate,
-                    getHRPTFilledDateFromLong(it.visitDate),
+                    getHRPTFilledDateFromLong(it.visitDate, resources),
                     it.syncState
                 )
             }
