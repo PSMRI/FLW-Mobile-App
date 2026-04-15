@@ -80,7 +80,7 @@ class SchedulerFragment : Fragment() {
         }
 
         binding.cvImm.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment())
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment(showDueOnly = true))
         }
         binding.cvHrp.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
