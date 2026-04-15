@@ -78,4 +78,100 @@ class ImmunizationDueTypeViewModelTest : BaseViewModelTest() {
         assertFalse(viewModel.navigateToChildrenImmunization.value!!)
         assertFalse(viewModel.navigateToMotherImmunization.value!!)
     }
+
+    // =====================================================
+    // Extended navToChildren() Tests
+    // =====================================================
+
+    @Test
+    fun `navToChildren called twice keeps flag true`() {
+        viewModel.navToChildren()
+        viewModel.navToChildren()
+        assertTrue(viewModel.navigateToChildrenImmunization.value!!)
+    }
+
+    @Test
+    fun `navToChildren does not affect mother flag`() {
+        viewModel.navToChildren()
+        assertFalse(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    @Test
+    fun `navToChildren then resetNavigation clears flag`() {
+        viewModel.navToChildren()
+        assertTrue(viewModel.navigateToChildrenImmunization.value!!)
+        viewModel.resetNavigation()
+        assertFalse(viewModel.navigateToChildrenImmunization.value!!)
+    }
+
+    // =====================================================
+    // Extended navToMother() Tests
+    // =====================================================
+
+    @Test
+    fun `navToMother called twice keeps flag true`() {
+        viewModel.navToMother()
+        viewModel.navToMother()
+        assertTrue(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    @Test
+    fun `navToMother does not affect children flag`() {
+        viewModel.navToMother()
+        assertFalse(viewModel.navigateToChildrenImmunization.value!!)
+    }
+
+    @Test
+    fun `navToMother then resetNavigation clears flag`() {
+        viewModel.navToMother()
+        assertTrue(viewModel.navigateToMotherImmunization.value!!)
+        viewModel.resetNavigation()
+        assertFalse(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    // =====================================================
+    // Combined Navigation Tests
+    // =====================================================
+
+    @Test
+    fun `both flags can be true simultaneously`() {
+        viewModel.navToChildren()
+        viewModel.navToMother()
+        assertTrue(viewModel.navigateToChildrenImmunization.value!!)
+        assertTrue(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    @Test
+    fun `resetNavigation after only children set clears both`() {
+        viewModel.navToChildren()
+        viewModel.resetNavigation()
+        assertFalse(viewModel.navigateToChildrenImmunization.value!!)
+        assertFalse(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    @Test
+    fun `resetNavigation after only mother set clears both`() {
+        viewModel.navToMother()
+        viewModel.resetNavigation()
+        assertFalse(viewModel.navigateToChildrenImmunization.value!!)
+        assertFalse(viewModel.navigateToMotherImmunization.value!!)
+    }
+
+    @Test
+    fun `multiple instances are independent`() {
+        val vm1 = ImmunizationDueTypeViewModel()
+        val vm2 = ImmunizationDueTypeViewModel()
+        vm1.navToChildren()
+        assertFalse(vm2.navigateToChildrenImmunization.value!!)
+    }
+
+    @Test
+    fun `set reset set cycle works`() {
+        viewModel.navToChildren()
+        assertTrue(viewModel.navigateToChildrenImmunization.value!!)
+        viewModel.resetNavigation()
+        assertFalse(viewModel.navigateToChildrenImmunization.value!!)
+        viewModel.navToMother()
+        assertTrue(viewModel.navigateToMotherImmunization.value!!)
+    }
 }

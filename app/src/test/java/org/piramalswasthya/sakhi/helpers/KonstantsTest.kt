@@ -148,4 +148,105 @@ class KonstantsTest {
     fun `min week to show delivered is 23`() {
         assertEquals(23, Konstants.minWeekToShowDelivered)
     }
+
+    // =====================================================
+    // Extended Age Relationship Tests
+    // =====================================================
+
+    @Test fun `eligible couple min is same as reproductive min`() {
+        assertEquals(Konstants.minAgeForEligibleCouple, Konstants.minAgeForReproductiveAge)
+    }
+
+    @Test fun `eligible couple max is same as reproductive max`() {
+        assertEquals(Konstants.maxAgeForEligibleCouple, Konstants.maxAgeForReproductiveAge)
+    }
+
+    @Test fun `ncd min age is greater than adolescent max`() {
+        assertTrue(Konstants.minAgeForNcd > Konstants.maxAgeForAdolescentlist)
+    }
+
+    @Test fun `adolescent range is subset of adolescent list range`() {
+        assertTrue(Konstants.minAgeForAdolescent >= 10)
+        assertTrue(Konstants.maxAgeForAdolescent <= Konstants.maxAgeForAdolescentlist)
+    }
+
+    @Test fun `infant max age is less than child min age`() {
+        assertTrue(Konstants.maxAgeForInfant < Konstants.minAgeForChild)
+    }
+
+    @Test fun `gen ben max age is 99`() {
+        assertEquals(99, Konstants.maxAgeForGenBen)
+    }
+
+    @Test fun `marriage min age is less than eligible couple min`() {
+        assertTrue(Konstants.minAgeForMarriage < Konstants.minAgeForEligibleCouple)
+    }
+
+    // =====================================================
+    // Extended ANC Week Tests
+    // =====================================================
+
+    @Test fun `anc1 week range is valid`() {
+        assertTrue(Konstants.minAnc1Week < Konstants.maxAnc1Week)
+    }
+
+    @Test fun `anc2 week range is valid`() {
+        assertTrue(Konstants.minAnc2Week < Konstants.maxAnc2Week)
+    }
+
+    @Test fun `anc3 week range is valid`() {
+        assertTrue(Konstants.minAnc3Week < Konstants.maxAnc3Week)
+    }
+
+    @Test fun `anc4 week range is valid`() {
+        assertTrue(Konstants.minAnc4Week < Konstants.maxAnc4Week)
+    }
+
+    @Test fun `max anc week is greater than anc4 max`() {
+        assertTrue(Konstants.maxAncWeek >= Konstants.maxAnc4Week)
+    }
+
+    @Test fun `anc1 starts at week 5`() {
+        assertEquals(5, Konstants.minAnc1Week)
+    }
+
+    @Test fun `anc4 ends at week 40`() {
+        assertEquals(40, Konstants.maxAnc4Week)
+    }
+
+    // =====================================================
+    // Extended Business Logic Tests
+    // =====================================================
+
+    @Test fun `baby low weight is positive`() {
+        assertTrue(Konstants.babyLowWeight > 0)
+    }
+
+    @Test fun `pnc ec gap is positive`() {
+        assertTrue(Konstants.pncEcGap > 0)
+    }
+
+    @Test fun `ben id capacity is positive`() {
+        assertTrue(Konstants.benIdCapacity > 0)
+    }
+
+    @Test fun `ben id worker trigger limit is positive`() {
+        assertTrue(Konstants.benIdWorkerTriggerLimit > 0)
+    }
+
+    @Test fun `cbac filing interval is positive`() {
+        assertTrue(Konstants.minMillisBwtweenCbacFiling > 0)
+    }
+
+    @Test fun `non follow up duration is positive`() {
+        assertTrue(Konstants.nonFollowUpDuration > 0)
+    }
+
+    @Test fun `cbac interval is greater than follow up duration`() {
+        assertTrue(Konstants.minMillisBwtweenCbacFiling > Konstants.nonFollowUpDuration)
+    }
+
+    @Test fun `min week to show delivered is before anc4 max`() {
+        assertTrue(Konstants.minWeekToShowDelivered < Konstants.maxAnc4Week)
+    }
 }

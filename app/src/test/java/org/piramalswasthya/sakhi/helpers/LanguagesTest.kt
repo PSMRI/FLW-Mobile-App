@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LanguagesTest {
@@ -48,4 +49,15 @@ class LanguagesTest {
             assertEquals(2, it.symbol.length)
         }
     }
+
+    @Test fun `ENGLISH name is ENGLISH`() { assertEquals("ENGLISH", Languages.ENGLISH.name) }
+    @Test fun `HINDI name is HINDI`() { assertEquals("HINDI", Languages.HINDI.name) }
+    @Test fun `ASSAMESE name is ASSAMESE`() { assertEquals("ASSAMESE", Languages.ASSAMESE.name) }
+    @Test fun `ENGLISH ordinal is 0`() { assertEquals(0, Languages.ENGLISH.ordinal) }
+    @Test fun `symbols are lowercase`() { Languages.values().forEach { assertEquals(it.symbol, it.symbol.lowercase()) } }
+    @Test fun `ENGLISH symbol is not empty`() { assertTrue(Languages.ENGLISH.symbol.isNotEmpty()) }
+    @Test fun `HINDI symbol is not empty`() { assertTrue(Languages.HINDI.symbol.isNotEmpty()) }
+    @Test fun `ASSAMESE symbol is not empty`() { assertTrue(Languages.ASSAMESE.symbol.isNotEmpty()) }
+    @Test fun `all names are uppercase`() { Languages.values().forEach { assertEquals(it.name, it.name.uppercase()) } }
+    @Test fun `all names are not blank`() { Languages.values().forEach { assertTrue(it.name.isNotBlank()) } }
 }
