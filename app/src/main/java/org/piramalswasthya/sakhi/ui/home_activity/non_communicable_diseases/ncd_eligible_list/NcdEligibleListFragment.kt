@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
     private val viewModel: NcdEligibleListViewModel by viewModels()
 
     private val bottomSheet: NcdBottomSheetFragment by lazy { NcdBottomSheetFragment() }
+    private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
@@ -53,6 +55,11 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f is NcdBottomSheetFragment) isBottomSheetShowing = false
+            }
+        }, false)
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnNextPage.visibility = View.GONE
@@ -67,13 +74,15 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
             NcdCbacBenListAdapter(
                 clickListener = NcdCbacBenListAdapter.CbacFormClickListener(
                     clickedView = {
-                        Timber.d("ClickListener Triggered!")
-                        viewModel.setSelectedBenId(it)
-                        if (!bottomSheet.isVisible)
+                        if (!isBottomSheetShowing) {
+                            isBottomSheetShowing = true
+                            Timber.d("ClickListener Triggered!")
+                            viewModel.setSelectedBenId(it)
                             bottomSheet.show(
                                 childFragmentManager,
                                 resources.getString(R.string.cbac)
                             )
+                        }
                     },
                     clickedNew = { benId, nextFillDateMillis ->
                         if (nextFillDateMillis != null) {
@@ -82,7 +91,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
                                 "Available on ${getDateStrFromLong(nextFillDateMillis)}",
                                 Toast.LENGTH_LONG
                             ).show()
-                        } else {
+                        } else if (findNavController().currentDestination?.id == R.id.ncdEligibleListFragment) {
                             findNavController().navigate(
                                 NcdEligibleListFragmentDirections.actionNcdEligibleListFragmentToCbacFragment(
                                     benId = benId,

@@ -209,6 +209,13 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     }
 
+    fun saveStateId(villageId: Int) {
+        pref.edit().putInt("PREF_VILLAGE_ID", villageId).apply()
+    }
+    fun getStateId(): Int {
+        return pref.getInt("PREF_VILLAGE_ID", -1)
+    }
+
     var isFullPullComplete: Boolean
         get() = pref.getBoolean("FIRST TIME FULL PULL DONE", false)
         set(value) {
@@ -239,4 +246,162 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             pref.edit().putLong("last asha update timestamp ", value).apply()
         }
 
+    fun saveUserGender(gender: String) {
+        pref.edit().putString("PREF_USER_GENDER", gender).apply()
+    }
+
+    fun getUserGender(): String? {
+        return pref.getString("PREF_USER_GENDER", null)
+    }
+
+    fun saveUserDob(dob: String) {
+        pref.edit().putString("PREF_USER_DOB", dob).apply()
+    }
+
+    fun getUserDob(): String? {
+        return pref.getString("PREF_USER_DOB", null)
+    }
+
+    fun saveUserMobile(mobile: String) {
+        pref.edit().putString("PREF_USER_MOBILE", mobile).apply()
+    }
+
+    fun getUserMobile(): String? {
+        return pref.getString("PREF_USER_MOBILE", null)
+    }
+
+    fun saveEmployeeId(mobile: String) {
+        pref.edit().putString("PREF_EMPID", mobile).apply()
+    }
+
+    fun getEmployeeId(): String? {
+        return pref.getString("PREF_EMPID", null)
+    }
+
+    fun saveUserEmail(email: String) {
+        pref.edit().putString("PREF_USER_EMAIL", email).apply()
+    }
+
+    fun getUserEmail(): String? {
+        return pref.getString("PREF_USER_EMAIL", null)
+    }
+
+    fun saveSupervisorName(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_NAME", name).apply()
+    }
+
+    fun getSupervisorName(): String? {
+        return pref.getString("PREF_SUPERVISOR_NAME", null)
+    }
+
+    fun saveSupervisorEmpID(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_EMPID", name).apply()
+    }
+
+    fun getSupervisorEmpID(): String? {
+        return pref.getString("PREF_SUPERVISOR_EMPID", null)
+    }
+
+    fun saveSupervisorContact(name: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_Contact", name).apply()
+    }
+
+    fun getSupervisorContact(): String? {
+        return pref.getString("PREF_SUPERVISOR_Contact", null)
+    }
+
+    fun saveSupervisorId(id: Int) {
+        pref.edit().putInt("PREF_SUPERVISOR_ID", id).apply()
+    }
+
+    fun getSupervisorId(): Int {
+        return pref.getInt("PREF_SUPERVISOR_ID", -1)
+    }
+
+    fun saveSupervisorDistrict(district: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_DISTRICT", district).apply()
+    }
+
+    fun getSupervisorDistrict(): String? {
+        return pref.getString("PREF_SUPERVISOR_DISTRICT", null)
+    }
+
+    fun saveSupervisorBlock(block: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_BLOCK", block).apply()
+    }
+
+    fun getSupervisorBlock(): String? {
+        return pref.getString("PREF_SUPERVISOR_BLOCK", null)
+    }
+
+    fun saveSupervisorState(state: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_STATE", state).apply()
+    }
+
+    fun getSupervisorState(): String? {
+        return pref.getString("PREF_SUPERVISOR_STATE", null)
+    }
+
+
+    fun saveSupervisorSubcenter(subcenter: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_SUBCENTER", subcenter).apply()
+    }
+
+    fun getSupervisorSubcenter(): String? {
+        return pref.getString("PREF_SUPERVISOR_SUBCENTER", null)
+    }
+
+    fun saveSupervisorFacilityType(type: String?) {
+        pref.edit().putString("PREF_SUPERVISOR_FACILITY_TYPE", type).apply()
+    }
+
+    fun getSupervisorFacilityType(): String? {
+        return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", null)
+    }
+
+    fun saveFacilityId(facilityId: Int) {
+        pref.edit().putInt("facilityId", facilityId).apply()
+    }
+
+    fun getFacilityId(): Int {
+        return pref.getInt("facilityId", -1)
+    }
+
+    fun saveDesignationId(designationId: Int) {
+        pref.edit().putInt("designation_id", designationId).apply()
+    }
+
+    fun getDesignationId(): Int {
+        return pref.getInt("designation_id", -1)
+    }
+    fun saveLocationType(locationType: String) {
+        pref.edit().putString("location_type", locationType).apply()
+    }
+
+    fun getLocationType(): String {
+        return pref.getString("location_type", "") ?: ""
+    }
+
+    fun saveDistrict(district: String) {
+        pref.edit().putString("district", district).apply()
+    }
+
+    fun getDistrict(): String {
+        return pref.getString("district", "") ?: ""
+    }
+
+    fun saveBlock(block: String) {
+        pref.edit().putString("block", block).apply()
+    }
+
+    fun getBlock(): String {
+        return pref.getString("block", "") ?: ""
+    }
+    fun saveState(state: String) {
+        pref.edit().putString("state", state).apply()
+    }
+
+    fun getState(): String {
+        return pref.getString("state", "") ?: ""
+    }
 }

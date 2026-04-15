@@ -116,18 +116,22 @@ class PwAncVisitsListFragment : Fragment() {
                     )
                 },
                 addVisit = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                            benId, hhId.toString(), visitNumber,false
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
+                                benId, hhId.toString(), visitNumber, false
+                            )
                         )
-                    )
+                    }
                 },
                 pmsma = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
-                            benId, hhId, visitNumber
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
+                                benId, hhId, visitNumber
+                            )
                         )
-                    )
+                    }
                 }, showPmsmaVisits = { benId, hhId ->
                     viewModel.showAncBottomSheet(
                         benId,
@@ -155,11 +159,13 @@ class PwAncVisitsListFragment : Fragment() {
                         ).show()
                     }
               }, addHomeVisit = {benId ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
-                            benId,0
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
+                                benId, 0
+                            )
                         )
-                    )
+                    }
 
                  },
                 showHomeVisit = { benId ->

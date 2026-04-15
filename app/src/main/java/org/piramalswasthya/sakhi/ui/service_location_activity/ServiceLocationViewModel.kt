@@ -28,15 +28,15 @@ class ServiceTypeViewModel @Inject constructor(
         SUCCESS
     }
 
-    private lateinit var stateDropdownEntry: String
+    lateinit var stateDropdownEntry: String
     val stateList: Array<String>
         get() = arrayOf(stateDropdownEntry)
 
-    private lateinit var districtDropdownEntry: String
+     lateinit var districtDropdownEntry: String
     val districtList: Array<String>
         get() = arrayOf(districtDropdownEntry)
 
-    private lateinit var blockDropdownEntry: String
+     lateinit var blockDropdownEntry: String
     val blockList: Array<String>
         get() = arrayOf(blockDropdownEntry)
 
@@ -47,6 +47,10 @@ class ServiceTypeViewModel @Inject constructor(
     private lateinit var _userName: String
     val userName: String
         get() = _userName
+
+    private lateinit var _facilityName: String
+    val facilityName: String
+        get() = _facilityName
 
     private var _selectedVillage: LocationEntity? = null
     val selectedVillage: LocationEntity?
@@ -72,13 +76,14 @@ class ServiceTypeViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 user = pref.getLoggedInUser()!!
                 _userName = user.name
+                _facilityName = pref.getSupervisorSubcenter().toString()
                 currentLocation = pref.getLocationRecord()
                 _selectedVillage = currentLocation?.village
                 when (pref.getCurrentLanguage()) {
                     ENGLISH -> {
-                        stateDropdownEntry = user.state.name
-                        districtDropdownEntry = user.district.name
-                        blockDropdownEntry = user.block.name
+                        stateDropdownEntry = pref.getState()
+                        districtDropdownEntry = pref.getDistrict()
+                        blockDropdownEntry = pref.getBlock()
                         villageDropdownEntries = user.villages.map { it.name }.toTypedArray()
 
                     }
@@ -87,7 +92,7 @@ class ServiceTypeViewModel @Inject constructor(
                         stateDropdownEntry =
                             user.state.let { it.nameHindi ?: it.name }
                         districtDropdownEntry =
-                            user.district.let { it.nameHindi ?: it.name }
+                            pref.getDistrict()
                         blockDropdownEntry =
                             user.block.let { it.nameHindi ?: it.name }
                         villageDropdownEntries =

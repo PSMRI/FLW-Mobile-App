@@ -65,7 +65,7 @@ class AshaProfileViewModel @Inject constructor(
         get() = _recordExists
 
     private val dataset =
-        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo)
+        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo,preferenceDao)
     val formList = dataset.listFlow
 
     var isPregnant: Boolean = false
@@ -106,8 +106,14 @@ class AshaProfileViewModel @Inject constructor(
                 }
 
             } ?: run {
+                profileActivityCache = ProfileActivityCache(id = asha.userId.toLong(), employeeId = asha.userId)
                 _recordExists.value = false
-
+                currentUser?.let {
+                    dataset.setUpPage(
+                        asha,
+                        profileActivityCache
+                    )
+                }
             }
 
 

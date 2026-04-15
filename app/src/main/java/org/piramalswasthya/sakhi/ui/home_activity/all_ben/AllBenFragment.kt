@@ -31,6 +31,7 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.EyeSurgeryFormViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.RoleConstants
@@ -78,7 +79,7 @@ class AllBenFragment : Fragment() {
         ALL,
         WITH,
         WITHOUT,
-        AGE_ABOVE_30,
+        AGE_ABOVE_40,
 //        WARA
     }
 
@@ -90,7 +91,7 @@ class AllBenFragment : Fragment() {
                 filterAlertBinding.rbAll.id -> Abha.ALL
                 filterAlertBinding.rbWith.id -> Abha.WITH
                 filterAlertBinding.rbWithout.id -> Abha.WITHOUT
-                filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_30
+                filterAlertBinding.rbAgeAboveThirty.id -> Abha.AGE_ABOVE_40
 //                filterAlertBinding.rbWara.id -> Abha.WARA
                 else -> Abha.ALL
             }
@@ -108,7 +109,7 @@ class AllBenFragment : Fragment() {
             val filter = when (selectedAbha) {
                 Abha.WITH -> 1
                 Abha.WITHOUT -> 2
-                Abha.AGE_ABOVE_30 -> 3
+                Abha.AGE_ABOVE_40 -> 3
 //                Abha.WARA -> 4
                 else -> 0
             }
@@ -152,7 +153,7 @@ class AllBenFragment : Fragment() {
         benAdapter = BenPagingAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item,hhId, benId, relToHeadId ->
-
+                    if (findNavController().currentDestination?.id != R.id.allBenFragment) return@BenClickListener
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -168,7 +169,7 @@ class AllBenFragment : Fragment() {
                 clickedWifeBen = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -186,7 +187,7 @@ class AllBenFragment : Fragment() {
                 clickedHusbandBen = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(
                                 hhId = hhId,
@@ -203,7 +204,7 @@ class AllBenFragment : Fragment() {
                 clickedChildben = {
                         item, hhId, benId, relToHeadId ->
 
-                    if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+                    if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allBenFragment) {
                         findNavController().navigate(
                             AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
@@ -225,6 +226,7 @@ class AllBenFragment : Fragment() {
                     checkAndGenerateABHA(benId)
                 },
                 {item, benId, hhId , isViewMode, isIFA->
+                    if (findNavController().currentDestination?.id != R.id.allBenFragment) return@BenClickListener
                         if (isIFA){
                             findNavController().navigate(
                                 AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(
@@ -234,13 +236,8 @@ class AllBenFragment : Fragment() {
                                 )
                             )
                         }else{
-                            findNavController().navigate(
-                                AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
-                                    hhId = hhId,
-                                    benId = benId,
-                                    isViewMode = isViewMode,
-                                )
-                            )
+
+                            showEyeSurgeryBottomSheet(benId, hhId,item.benFullName, item.gender, item.age)
                         }
 
                 },
@@ -392,6 +389,25 @@ class AllBenFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {
+        val bottomSheet = EyeSurgeryBottomSheetFragment.newInstance(benId, hhId, benName, gender, age)
+        bottomSheet.setNavigationCallback(object : EyeSurgeryBottomSheetFragment.NavigationCallback {
+            override fun navigateToEyeSurgeryForm(
+                benId: Long, hhId: Long, eyeSide: String, isViewMode: Boolean,
+                formDataJson: String?, recordId: Int, benName: String, gender: String, age: String
+            ) {
+                findNavController().navigate(
+                    AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(
+                        benId = benId, hhId = hhId, eyeSide = eyeSide,
+                        isViewMode = isViewMode, formDataJson = formDataJson,
+                        recordId = recordId, benName = benName, gender = gender, age = age
+                    )
+                )
+            }
+        })
+        bottomSheet.show(childFragmentManager, "EyeSurgeryBottomSheet")
     }
 
     override fun onDestroy() {
