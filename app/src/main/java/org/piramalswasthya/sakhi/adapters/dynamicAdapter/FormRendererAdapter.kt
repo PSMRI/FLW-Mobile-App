@@ -3,6 +3,7 @@
     import android.app.AlertDialog
     import android.app.DatePickerDialog
     import android.content.ActivityNotFoundException
+    import android.content.Context
     import android.content.Intent
     import android.graphics.BitmapFactory
     import android.graphics.Color
@@ -11,6 +12,7 @@
     import android.text.*
     import android.text.style.ForegroundColorSpan
     import android.view.*
+    import android.view.inputmethod.InputMethodManager
     import android.util.Base64
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
@@ -236,6 +238,7 @@
                     wrapper.addView(inputView)
 
                     val errorTextView = TextView(itemView.context).apply {
+                        tag = "field_error_tv"
                         setTextColor(android.graphics.Color.RED)
                         textSize = 12f
                         text = field.errorMessage ?: ""
@@ -323,6 +326,7 @@
 
                         // Error TextView
                         val errorTextView = TextView(context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""
@@ -1009,6 +1013,10 @@
 
                         if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
                             radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                                // Clear focus from any previously focused EditText to prevent auto-scroll
+                                itemView.rootView.findFocus()?.clearFocus()
+                                val imm = itemView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(itemView.windowToken, 0)
                                 val checkedIndex = (0 until group.childCount).firstOrNull { (group.getChildAt(it) as RadioButton).id == checkedId } ?: return@setOnCheckedChangeListener
                                 val selectedOption = field.options?.getOrNull(checkedIndex) ?: return@setOnCheckedChangeListener
                                 if (field.value?.toString() != selectedOption.value) {
@@ -1038,6 +1046,7 @@
                         wrapper.addView(radioGroup)
 
                         val errorTextView = TextView(itemView.context).apply {
+                            tag = "field_error_tv"
                             setTextColor(Color.RED)
                             textSize = 12f
                             text = field.errorMessage ?: ""

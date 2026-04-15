@@ -200,11 +200,17 @@ class FilariaMDAFormFragment : Fragment() {
                         showImagePickerDialog()
                     } else {
                         field.value = value
-                        val oldCount = adapter.itemCount
+                        field.errorMessage = null
                         viewModel.updateFieldValue(field.fieldId, value)
                         val newVisibleFields = viewModel.getVisibleFields()
-                        if (newVisibleFields.size != oldCount) {
-                            adapter.updateFields(newVisibleFields)
+                        adapter.updateFields(newVisibleFields)
+                        val pos = newVisibleFields.indexOfFirst { it.fieldId == field.fieldId }
+                        if (pos >= 0) {
+                            binding.recyclerView
+                                .findViewHolderForAdapterPosition(pos)
+                                ?.itemView
+                                ?.findViewWithTag<View>("field_error_tv")
+                                ?.visibility = View.GONE
                         }
                     }
                 },
@@ -238,10 +244,10 @@ class FilariaMDAFormFragment : Fragment() {
                         }
 
                         val errorMessage = when {
-                            visitDate == null -> "Invalid visit date"
-                            today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
+                            visitDate == null -> getString(R.string.error_invalid_visit_date)
+                            visitDate.after(today) -> getString(R.string.error_visit_date_after_today)
                             previousVisitDate != null && !visitDate.after(previousVisitDate) ->
-                                "Visit Date must be after previous visit (${sdf.format(previousVisitDate)})"
+                                getString(R.string.error_visit_date_after_previous, sdf.format(previousVisitDate))
                             else -> null
                         }
                         schemaField.errorMessage = errorMessage

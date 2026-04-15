@@ -229,11 +229,11 @@ class VHNDDataset(
             pic1.value = it.image1
             pic2.value = it.image2
             place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
-            noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
+            noOfBeneficiariesAttended.value = (it.noOfBeneficiariesAttended ?: 0).toString()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                noOfPWAttended.value = it.pregnantWomenAnc
-                noOflactingMotherAttended.value = it.lactatingMothersPnc
-                noOfchildrenAttended.value = it.childrenImmunization
+                noOfPWAttended.value = it.pregnantWomenAnc?.takeIf { v -> v.isNotEmpty() && v != "null" } ?: "0"
+                noOflactingMotherAttended.value = it.lactatingMothersPnc?.takeIf { v -> v.isNotEmpty() && v != "null" } ?: "0"
+                noOfchildrenAttended.value = it.childrenImmunization?.takeIf { v -> v.isNotEmpty() && v != "null" } ?: "0"
                 val parsedKBDList = parseSelections(it.knowledgeBalancedDiet, knowOfBalanceDiet.entries!!)
                 knowOfBalanceDiet.value = if (parsedKBDList.isNotEmpty()) {
                     parsedKBDList.joinToString("|")
@@ -323,9 +323,9 @@ class VHNDDataset(
             form.vhndPlaceId = place.getPosition()
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                form.pregnantWomenAnc = noOfPWAttended.value.toString()
-                form.lactatingMothersPnc = noOflactingMotherAttended.value.toString()
-                form.childrenImmunization = noOfchildrenAttended.value.toString()
+                form.pregnantWomenAnc = noOfPWAttended.value?.takeUnless { it.isBlank() } ?: "0"
+                form.lactatingMothersPnc = noOflactingMotherAttended.value?.takeUnless { it.isBlank() } ?: "0"
+                form.childrenImmunization = noOfchildrenAttended.value?.takeUnless { it.isBlank() } ?: "0"
                 form.knowledgeBalancedDiet = toCsv(knowOfBalanceDiet.value,knowOfBalanceDiet.entries!!)
                 form.careDuringPregnancy = toCsv(careDuringPregnancy.value,careDuringPregnancy.entries!!)
                 form.importanceBreastfeeding = toCsv(importBreastFeeding.value,importBreastFeeding.entries!!)

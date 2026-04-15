@@ -34,7 +34,6 @@ class AshaProfileDataset(
         title = resources.getString(R.string.ashaname),
         required = true,
         allCaps = true,
-       
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
 
     )
@@ -97,7 +96,7 @@ class AshaProfileDataset(
     private val alternameMobileNumber = FormElement(
         id = 6,
         inputType = InputType.EDIT_TEXT,
-        title = "Alternate Mobile No.",
+        title = resources.getString(R.string.alternate_mobile_no),
         required = false,
         etMaxLength = 10,
         isMobileNumber = true,
@@ -108,7 +107,7 @@ class AshaProfileDataset(
     private val fatherOrspouse = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Father or Spouse",
+        title = resources.getString(R.string.father_or_spouse),
         required = false,
         arrayId = R.array.fathers_spouse,
         value = resources.getStringArray(R.array.fathers_spouse)[0],
@@ -119,7 +118,7 @@ class AshaProfileDataset(
     private val spouseOrFatherNameEdt = FormElement(
         id = 8,
         inputType = InputType.EDIT_TEXT,
-        title = "Father or Spouse",
+        title = resources.getString(R.string.father_or_spouse),
         required = false,
         arrayId = R.array.fathers_spouse,
         hasDependants = true,
@@ -130,7 +129,7 @@ class AshaProfileDataset(
     private val dateOfJoining = FormElement(
         id = 9,
         inputType = InputType.TEXT_VIEW,
-        title = "Date of Joining",
+        title = resources.getString(R.string.date_of_joining),
         required = false,
 
         )
@@ -152,14 +151,14 @@ class AshaProfileDataset(
     private val Ifsc = FormElement(
         id = 11,
         inputType = InputType.EDIT_TEXT,
-        title = "IFSC",
+        title = resources.getString(R.string.ifsc_code),
         required = false,
         etMaxLength = 11
-        )
+    )
     private val populationCovered = FormElement(
         id = 12,
         inputType = InputType.EDIT_TEXT,
-        title = "Population Covered under ASHA",
+        title = resources.getString(R.string.population_covered_under_asha),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false,
         etMaxLength = 4,
@@ -167,7 +166,7 @@ class AshaProfileDataset(
     private val ashaSupervisorName = FormElement(
         id = 13,
         inputType = InputType.EDIT_TEXT,
-        title = "Asha Supervisor name",
+        title = resources.getString(R.string.asha_supervisor_name),
         required = false,
         allCaps = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -176,7 +175,7 @@ class AshaProfileDataset(
     private val ashaSupervisorContactNumber = FormElement(
         id = 14,
         inputType = InputType.EDIT_TEXT,
-        title = "Asha Supervisor Contact No.",
+        title = resources.getString(R.string.asha_supervisor_contact_no),
         required = false,
         etMaxLength = 10,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
@@ -185,16 +184,16 @@ class AshaProfileDataset(
     private val ChoName = FormElement(
         id = 15,
         inputType = InputType.EDIT_TEXT,
-        title = "CHO name.",
+        title = resources.getString(R.string.cho_name),
         required = false,
         allCaps = true,
-       
+
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val ChoMobileNo = FormElement(
         id = 16,
         inputType = InputType.EDIT_TEXT,
-        title = "Mobile No. of CHO",
+        title = resources.getString(R.string.mobile_no_of_cho),
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 10,
@@ -202,7 +201,7 @@ class AshaProfileDataset(
     private val nameOfAWW = FormElement(
         id = 17,
         inputType = InputType.EDIT_TEXT,
-        title = "Name of AWW",
+        title = resources.getString(R.string.name_of_aww),
         required = false,
         allCaps = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -210,7 +209,7 @@ class AshaProfileDataset(
     private val  mobieNoOfAWW = FormElement(
         id = 18,
         inputType = InputType.EDIT_TEXT,
-        title = "Mobile No. AWW",
+        title = resources.getString(R.string.mobile_no_aww),
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 10,
@@ -218,7 +217,7 @@ class AshaProfileDataset(
     private val nameOfANM1 = FormElement(
         id = 19,
         inputType = InputType.EDIT_TEXT,
-        title = "Name of ANM1",
+        title = resources.getString(R.string.name_of_anm1),
         required = false,
         allCaps = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -226,7 +225,7 @@ class AshaProfileDataset(
     private val  mobileNoOfANM1 = FormElement(
         id = 20,
         inputType = InputType.EDIT_TEXT,
-        title = "Mobile number of ANM1",
+        title = resources.getString(R.string.mobile_number_of_anm1),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false,
         etMaxLength = 10,
@@ -234,16 +233,16 @@ class AshaProfileDataset(
     private val nameOfANM2 = FormElement(
         id = 21,
         inputType = InputType.EDIT_TEXT,
-        title = "Name of ANM2",
+        title = resources.getString(R.string.name_of_anm2),
         required = false,
         allCaps = true,
-       
+
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
     )
     private val  mobileNoOfANM2 = FormElement(
         id = 22,
         inputType = InputType.EDIT_TEXT,
-        title = "Mobile number of ANM2",
+        title = resources.getString(R.string.mobile_number_of_anm2),
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         required = false,
         etMaxLength = 10,
@@ -251,7 +250,7 @@ class AshaProfileDataset(
     private val  abhaNumber = FormElement(
         id = 23,
         inputType = InputType.EDIT_TEXT,
-        title = "ABHA number",
+        title = resources.getString(R.string.abha_number),
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 14,
