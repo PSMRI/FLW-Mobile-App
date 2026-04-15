@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemAdolscentHealthListBinding
 import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 
@@ -61,17 +62,23 @@ class AdolescentHealthListAdapter(
             binding.hasAbha = !item.ben.abhaId.isNullOrEmpty()
             binding.role = role
 
+            if (item.ben.gender == "MALE") {
+                binding.btnFormTb.visibility = View.GONE
+            } else {
+                binding.btnFormTb.visibility = View.VISIBLE
+            }
+
             if (showBeneficiaries) {
                 if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                     binding.father = true
                     binding.husband = false
                     binding.spouse = false
+
                 } else {
                     if (item.ben.gender == "MALE") {
                         binding.father = true
                         binding.husband = false
                         binding.spouse = false
-                        binding.btnFormTb.visibility = View.GONE
                     } else if (item.ben.gender == "FEMALE") {
                         if (item.ben.ageInt > 15) {
                             binding.father =
@@ -83,7 +90,6 @@ class AdolescentHealthListAdapter(
                             binding.husband = false
                             binding.spouse = false
                         }
-                        binding.btnFormTb.visibility = View.VISIBLE
 
                     } else {
                         binding.father =
@@ -97,7 +103,7 @@ class AdolescentHealthListAdapter(
                 binding.husband = false
                 binding.spouse = false
             }
-            binding.btnFormTb.text = if (item.adolescent == null) "Register" else "View"
+            binding.btnFormTb.text = if (item.adolescent == null) binding.root.context.getString(R.string.register) else binding.root.context.getString(R.string.view)
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.adolescent == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
 
@@ -105,6 +111,8 @@ class AdolescentHealthListAdapter(
 
         }
     }
+
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int

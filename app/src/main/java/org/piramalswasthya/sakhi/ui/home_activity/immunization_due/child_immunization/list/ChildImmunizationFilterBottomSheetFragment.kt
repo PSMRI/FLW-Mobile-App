@@ -42,15 +42,9 @@ class ChildImmunizationFilterBottomSheetFragment : BottomSheetDialogFragment(),I
     }
 
     override fun onClicked(catDataList: String) {
-       viewModel.selectedFilter.value = catDataList
-        if (catDataList.contains("ALL")) {
-            viewModel.filterText("")
-
-        } else {
-            catTxt = catDataList
-            viewModel.filterText(catTxt)
-
-        }
+        viewModel.selectedFilter.value = catDataList
+        val englishKey = viewModel.toEnglishCategory(catDataList)
+        viewModel.filterText(englishKey)
         dismiss()
     }
 }

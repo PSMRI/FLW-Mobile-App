@@ -130,7 +130,16 @@ class HBYCFormFragment : Fragment() {
             viewModel.schema.collectLatest { schema ->
                 if (schema == null) return@collectLatest
                 val visibleFields = viewModel.getVisibleFields().toMutableList()
-                val minVisitDate = viewModel.getMinVisitDate()
+                val dueDateMillis = viewModel.calculateDueDate(dob, viewModel.visitMonth)
+                val dueDateAsDate = dueDateMillis?.let { Date(it) }
+                val previousMinDate = viewModel.getMinVisitDate()
+                val minVisitDate = when {
+                    dueDateAsDate != null && previousMinDate != null ->
+                        if (dueDateAsDate.after(previousMinDate)) dueDateAsDate else previousMinDate
+                    dueDateAsDate != null -> dueDateAsDate
+                    previousMinDate != null -> previousMinDate
+                    else -> null
+                }
                 val maxVisitDate = viewModel.getMaxVisitDate()
 
                 adapter = FormRendererAdapter(
@@ -201,7 +210,7 @@ class HBYCFormFragment : Fragment() {
             section.fields.orEmpty().forEach { schemaField ->
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
-                    val result = FieldValidator.validate(updated, dobString)
+                    val result = FieldValidator.validate(updated, dobString, context = requireContext())
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
 

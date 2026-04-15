@@ -13,12 +13,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.filterBenList
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.ChildOption
 import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 import javax.inject.Inject
 
@@ -27,6 +30,7 @@ import javax.inject.Inject
 class CUFYListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
     repository: CUFYFormRepository,
+    private val pref: PreferenceDao,
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
@@ -80,7 +84,7 @@ class CUFYListViewModel @Inject constructor(
                     val status = try {
                         _recordsRepo.getCurrentSamStatus(ben.benId)
                     } catch (e: Exception) {
-                        "Check SAM"
+                        HelperUtil.getLocalizedResources(_context, pref.getCurrentLanguage()).getString(R.string.check_sam_)
                     }
                     BenWithSamStatus(ben, status)
                 }
@@ -98,7 +102,7 @@ class CUFYListViewModel @Inject constructor(
                 val status = try {
                     _recordsRepo.getCurrentSamStatus(ben.benId)
                 } catch (e: Exception) {
-                    "Check SAM"
+                    HelperUtil.getLocalizedResources(_context, pref.getCurrentLanguage()).getString(R.string.check_sam_)
                 }
                 BenWithSamStatus(ben, status)
             }
@@ -110,7 +114,7 @@ class CUFYListViewModel @Inject constructor(
         return try {
             _recordsRepo.getCurrentSamStatus(benId)
         } catch (e: Exception) {
-            "Check SAM"
+            HelperUtil.getLocalizedResources(_context, pref.getCurrentLanguage()).getString(R.string.check_sam_)
         }
     }
 

@@ -261,40 +261,37 @@ class BenRepo @Inject constructor(
             val originalImagePath = ben.userImage
             val finalImagePath = originalImagePath?.let { imagePath ->
                 val uri = Uri.parse(imagePath)
-                val filePath = uri.path
-                    ?: throw IllegalStateException("Invalid image URI: $imagePath")
 
-                val file = File(filePath)
+                // Check if image is already in permanent storage (filesDir)
+                val isAlreadyPermanent = uri.scheme == "file" && uri.path?.let {
+                    File(it).absolutePath.startsWith(context.filesDir.absolutePath)
+                } == true
 
-                when {
-                    file.absolutePath.startsWith(context.cacheDir.absolutePath) -> {
-                        val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
-                            context = context,
-                            uriString = imagePath,
-                            benId = ben.beneficiaryId
-                        )
+                if (isAlreadyPermanent) {
+                    imagePath
+                } else {
+                    // Save to permanent storage (handles both content:// and file:// URIs)
+                    val savedPath = ImageUtils.saveBenImageFromCameraToStorage(
+                        context = context,
+                        uriString = imagePath,
+                        benId = ben.beneficiaryId
+                    )
 
-                        if (savedPath.isNullOrBlank()) {
-                            Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
+                    if (savedPath.isNullOrBlank()) {
+                        Timber.e("Image compression/save failed for beneficiaryId=${ben.beneficiaryId}")
 
-                            // Cleanup orphaned cache file
-                            runCatching { file.delete() }
-                                .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
-
-                            throw IllegalStateException("Failed to save beneficiary image")
+                        // Cleanup orphaned cache file if it's a file URI
+                        if (uri.scheme == "file") {
+                            uri.path?.let { File(it) }?.let { file ->
+                                runCatching { file.delete() }
+                                    .onFailure { Timber.w(it, "Failed to delete orphaned cache image") }
+                            }
                         }
 
-                        savedPath
+                        throw IllegalStateException("Failed to save beneficiary image")
                     }
 
-                    file.absolutePath.startsWith(context.filesDir.absolutePath) -> {
-                        imagePath
-                    }
-
-                    else -> {
-                        Timber.w("Unknown image path source: $imagePath")
-                        imagePath
-                    }
+                    savedPath
                 }
             }
             ben.userImage = finalImagePath

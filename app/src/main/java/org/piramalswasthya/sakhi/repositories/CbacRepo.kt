@@ -122,7 +122,11 @@ class CbacRepo @Inject constructor(
                 val dto = gson.fromJson(item.toString(), CbacResponseDto::class.java)
                 cbacEntities.add(dto.toEntity())
             }
-            database.cbacDao.insertAll(cbacEntities)
+            val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId })
+            val validEntities = cbacEntities.filter { it.benId in existingBenIds }
+            if (validEntities.isNotEmpty()) {
+                database.cbacDao.insertAll(validEntities)
+            }
 
 
         }

@@ -297,9 +297,9 @@ open class DeliveryOutcomeDataset(
 //            hadComplications.value = if (saved.hadComplications == true) "Yes" else "No"
             if (saved.hadComplications == true) {
                 list.add(list.indexOf(hadComplications) + 1 ,complication)
-                hadComplications.value = "Yes"
+                hadComplications.value = hadComplications.entries!![0]
             } else {
-                hadComplications.value = "No"
+                hadComplications.value = hadComplications.entries!![1]
             }
 
 
@@ -312,7 +312,8 @@ open class DeliveryOutcomeDataset(
                 list.add(list.indexOf(complication) + 1 ,causeOfDeath)
                 list.add(list.indexOf(causeOfDeath) + 1 ,dateOfDeath)
                 list.add(list.indexOf(dateOfDeath) + 1 ,placeOfDeath)
-                placeOfDeath.entries?.indexOf(saved.placeOfDeath)?.takeIf { it >= 0 }?.let { index ->
+                val localPlaceOfDeath = getLocalValueInArray(R.array.death_place_array, saved.placeOfDeath)
+                placeOfDeath.entries?.indexOf(localPlaceOfDeath)?.takeIf { it >= 0 }?.let { index ->
                     if (index == 8) {
                         list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
                     }
@@ -323,7 +324,7 @@ open class DeliveryOutcomeDataset(
             mcpFileUpload2.value=saved.mcp2File
             jsyFileUpload.value=saved.jsyFile
             dateOfDeath.value=saved.dateOfDeath
-            placeOfDeath.value=saved.placeOfDeath
+            placeOfDeath.value=getLocalValueInArray(R.array.death_place_array, saved.placeOfDeath)
             otherPlaceOfDeath.value=saved.otherPlaceOfDeath
 
 
@@ -347,9 +348,9 @@ open class DeliveryOutcomeDataset(
             timeOfDischarge.value = saved.timeOfDischarge
             if (saved.isJSYBenificiary == true) {
                 list.add(list.indexOf(isJSYBenificiary) + 1 ,jsyFileUpload)
-                isJSYBenificiary.value = "Yes"
+                isJSYBenificiary.value = isJSYBenificiary.entries!![0]
             } else {
-                isJSYBenificiary.value = "No"
+                isJSYBenificiary.value = isJSYBenificiary.entries!![1]
             }
         }
         dateOfDeath.min=pwr.lmpDate
@@ -431,7 +432,7 @@ open class DeliveryOutcomeDataset(
             }
 
             isJSYBenificiary.id -> {
-                val isYes = isJSYBenificiary.value.equals("Yes", ignoreCase = true)
+                val isYes = isJSYBenificiary.value == isJSYBenificiary.entries!![0]
                 if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                     triggerDependants(
                         source = isJSYBenificiary,
@@ -524,7 +525,7 @@ open class DeliveryOutcomeDataset(
             form.timeOfDelivery = timeOfDelivery.value
             form.placeOfDelivery = getEnglishValueInArray(R.array.do_place_of_delivery_array, placeOfDelivery.value)
             form.typeOfDelivery = getEnglishValueInArray(R.array.do_type_of_delivery_array, typeOfDelivery.value)
-            form.hadComplications = hadComplications.value == "Yes"
+            form.hadComplications = hadComplications.value == hadComplications.entries!![0]
             form.complication = englishComplication
             form.causeOfDeath = getEnglishValueInArray(R.array.do_cause_of_death_array, causeOfDeath.value)
             form.otherCauseOfDeath = otherCauseOfDeath.value
@@ -536,7 +537,7 @@ open class DeliveryOutcomeDataset(
                 getLongFromDate(it)
             }
             form.timeOfDischarge = timeOfDischarge.value
-            form.isJSYBenificiary = isJSYBenificiary.value == "Yes"
+            form.isJSYBenificiary = isJSYBenificiary.value == isJSYBenificiary.entries!![0]
         }
     }
     fun getIndexOfMCP1() = getIndexById(mcpFileUpload1.id)

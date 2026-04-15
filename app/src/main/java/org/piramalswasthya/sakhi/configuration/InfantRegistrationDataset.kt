@@ -21,7 +21,7 @@ class InfantRegistrationDataset(
     private var babyName = FormElement(
         id = 1,
         inputType = InputType.TEXT_VIEW,
-        title = "Name of Baby",
+        title = resources.getString(R.string.ir_baby_name),
         required = false,
         hasDependants = false
     )
@@ -29,8 +29,9 @@ class InfantRegistrationDataset(
     private var infantTerm = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
-        title = "Infant Term",
-        entries = arrayOf("Full Term", "Pre Term"),
+        title = resources.getString(R.string.ir_infant_term),
+        arrayId = R.array.ir_infant_term,
+        entries = resources.getStringArray(R.array.ir_infant_term),
         required = false,
         hasDependants = false
     )
@@ -38,8 +39,9 @@ class InfantRegistrationDataset(
     private var corticosteroidGiven = FormElement(
         id = 3,
         inputType = InputType.RADIO,
-        title = "Was Corticosteroid Inj. given?",
-        entries = arrayOf("Yes", "No", "Don't Know"),
+        title = resources.getString(R.string.ir_corticosteroid_given),
+        arrayId = R.array.ir_confirmation_array3,
+        entries = resources.getStringArray(R.array.ir_confirmation_array3),
         required = false,
         hasDependants = false
     )
@@ -47,7 +49,7 @@ class InfantRegistrationDataset(
     private var gender = FormElement(
         id = 4,
         inputType = InputType.RADIO,
-        title = "Sex of Infant",
+        title = resources.getString(R.string.ir_gender),
         entries = resources.getStringArray(R.array.ecr_gender_array),
         required = true,
         hasDependants = true,
@@ -56,8 +58,8 @@ class InfantRegistrationDataset(
     private var babyCriedAtBirth = FormElement(
         id = 5,
         inputType = InputType.RADIO,
-        title = "Baby Cried Immediately after Birth",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_baby_cried_at_birth),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = false,
         hasDependants = true
     )
@@ -65,8 +67,8 @@ class InfantRegistrationDataset(
     private var resuscitation = FormElement(
         id = 6,
         inputType = InputType.RADIO,
-        title = "If No, Resuscitation Done",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_resuscitation),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = true,
         hasDependants = false
     )
@@ -74,8 +76,9 @@ class InfantRegistrationDataset(
     private var referred = FormElement(
         id = 7,
         inputType = InputType.RADIO,
-        title = "Referred to higher facility for further management",
-        entries = arrayOf("Yes", "No", "NA"),
+        title = resources.getString(R.string.ir_referred),
+        arrayId = R.array.ir_confirmation_array2,
+        entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = false
     )
@@ -83,28 +86,27 @@ class InfantRegistrationDataset(
     private var hadBirthDefect = FormElement(
         id = 8,
         inputType = InputType.RADIO,
-        title = "Any birth defect seen in at birth?",
-        entries = arrayOf("Yes", "No", "NA"),
+        title = resources.getString(R.string.ir_had_birth_defect),
+        arrayId = R.array.ir_confirmation_array2,
+        entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
         hasDependants = true
     )
 
     private var birthDefect = FormElement(
-        id = 9, inputType = InputType.DROPDOWN, title = "Defect seen at birth", entries = arrayOf(
-            "Cleft Lip / Cleft Palate",
-            "Club Foot",
-            "Down's Syndrome",
-            "Hydrocephalus",
-            "Imperforate Anus",
-            "Neural Tube Defect (Spinal Bifida)",
-            "Other"
-        ), required = false, hasDependants = true
+        id = 9,
+        inputType = InputType.DROPDOWN,
+        title = resources.getString(R.string.ir_birth_defect),
+        arrayId = R.array.ir_birth_defect_array,
+        entries = resources.getStringArray(R.array.ir_birth_defect_array),
+        required = false,
+        hasDependants = true
     )
 
     private var otherDefect = FormElement(
         id = 10,
         inputType = InputType.EDIT_TEXT,
-        title = "Other defect seen at Birth",
+        title = resources.getString(R.string.ir_other_defect),
         required = false,
         hasDependants = false,
     )
@@ -124,15 +126,16 @@ class InfantRegistrationDataset(
     private var breastFeedingStarted = FormElement(
         id = 12,
         inputType = InputType.RADIO,
-        title = "Breast feeding started within 1 hour of birth",
-        entries = arrayOf("Yes", "No"),
+        title = resources.getString(R.string.ir_breast_feeding_started),
+        entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = true,
         hasDependants = false,
     )
     private var isSncu = FormElement(
         id = 13,
         inputType = InputType.RADIO,
-        title = context.getString(R.string.is_baby_discharge_from_sncu),
+        title = resources.getString(R.string.is_baby_discharge_from_sncu),
+        arrayId = R.array.do_is_jsy_beneficiary_array,
         entries = resources.getStringArray(R.array.do_is_jsy_beneficiary_array),
         required = false,
         hasDependants = true
@@ -142,7 +145,7 @@ class InfantRegistrationDataset(
     private val deliveryDischargeSummary1  = FormElement(
         id = 58,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 1",
+        title = resources.getString(R.string.delivery_discharge_summary_1),
         required = false
 
     )
@@ -150,21 +153,21 @@ class InfantRegistrationDataset(
     private val deliveryDischargeSummary2 = FormElement(
         id =59,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 2",
+        title = resources.getString(R.string.delivery_discharge_summary_2),
         required = false
     )
 
     private val deliveryDischargeSummary3 = FormElement(
         id =60,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 3",
+        title = resources.getString(R.string.delivery_discharge_summary_3),
         required = false
     )
 
     private val deliveryDischargeSummary4 = FormElement(
         id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = "Delivery Discharge Summary 4",
+        title = resources.getString(R.string.delivery_discharge_summary_4),
         required = false
     )
 
@@ -287,18 +290,18 @@ class InfantRegistrationDataset(
                 vitkDose*/
             )
             babyName.value = saved.babyName
-            infantTerm.value = saved.infantTerm
-            corticosteroidGiven.value = saved.corticosteroidGiven
+            infantTerm.value = getLocalValueInArray(R.array.ir_infant_term, saved.infantTerm)
+            corticosteroidGiven.value = getLocalValueInArray(R.array.ir_confirmation_array3, saved.corticosteroidGiven)
             gender.value = saved.gender?.let { gender.entries?.get(it.ordinal) }
-            babyCriedAtBirth.value = if (saved.babyCriedAtBirth == true) "Yes" else "No"
-            resuscitation.value = if (saved.resuscitation == true) "Yes" else "No"
-            referred.value = saved.referred
-            hadBirthDefect.value = saved.hadBirthDefect
-            birthDefect.value = saved.birthDefect
+            babyCriedAtBirth.value = if (saved.babyCriedAtBirth == true) babyCriedAtBirth.entries!![0] else babyCriedAtBirth.entries!![1]
+            resuscitation.value = if (saved.resuscitation == true) resuscitation.entries!![0] else resuscitation.entries!![1]
+            referred.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.referred)
+            hadBirthDefect.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.hadBirthDefect)
+            birthDefect.value = getLocalValueInArray(R.array.ir_birth_defect_array, saved.birthDefect)
             otherDefect.value = saved.otherDefect
             weight.value = saved.weight.toString()
-            breastFeedingStarted.value = if (saved.breastFeedingStarted == true) "Yes" else "No"
-            isSncu.value=saved.isSNCU
+            breastFeedingStarted.value = if (saved.breastFeedingStarted == true) breastFeedingStarted.entries!![0] else breastFeedingStarted.entries!![1]
+            isSncu.value = getLocalValueInArray(R.array.do_is_jsy_beneficiary_array, saved.isSNCU)
             if (saved.isSNCU=="Yes")
             {
                 deliveryDischargeSummary1.value = saved.deliveryDischargeSummary1
@@ -346,7 +349,7 @@ class InfantRegistrationDataset(
             }
 
             isSncu.id -> {
-                val isYes = isSncu.value.equals("Yes", ignoreCase = true)
+                val isYes = isSncu.value == isSncu.entries!![0]
                 if(isYes){
                     triggerDependants(
                         source = isSncu,
@@ -389,27 +392,27 @@ class InfantRegistrationDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as InfantRegCache).let { form ->
             form.babyName = babyName.value
-            form.infantTerm = infantTerm.value
-            form.corticosteroidGiven = corticosteroidGiven.value
+            form.infantTerm = getEnglishValueInArray(R.array.ir_infant_term, infantTerm.value)
+            form.corticosteroidGiven = getEnglishValueInArray(R.array.ir_confirmation_array3, corticosteroidGiven.value)
             form.gender = gender.value?.let {
                 Gender.values()[gender.getPosition() - 1]
             }
-            form.babyCriedAtBirth = babyCriedAtBirth.value == "Yes"
-            form.resuscitation = resuscitation.value == "Yes"
-            form.referred = referred.value
+            form.babyCriedAtBirth = babyCriedAtBirth.value == babyCriedAtBirth.entries!![0]
+            form.resuscitation = resuscitation.value == resuscitation.entries!![0]
+            form.referred = getEnglishValueInArray(R.array.ir_confirmation_array2, referred.value)
 
-            form.isSNCU = isSncu.value?:"No"
+            form.isSNCU = getEnglishValueInArray(R.array.do_is_jsy_beneficiary_array, isSncu.value) ?: "No"
             form.deliveryDischargeSummary1 = deliveryDischargeSummary1.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary2 = deliveryDischargeSummary2.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary3 = deliveryDischargeSummary3.value?.takeIf { it.isNotEmpty() }
             form.deliveryDischargeSummary4 = deliveryDischargeSummary4.value?.takeIf { it.isNotEmpty() }
 
 
-            form.hadBirthDefect = hadBirthDefect.value
-            form.birthDefect = birthDefect.value
+            form.hadBirthDefect = getEnglishValueInArray(R.array.ir_confirmation_array2, hadBirthDefect.value)
+            form.birthDefect = getEnglishValueInArray(R.array.ir_birth_defect_array, birthDefect.value)
             form.otherDefect = otherDefect.value
             form.weight = weight.value?.toDouble()
-            form.breastFeedingStarted = breastFeedingStarted.value == "Yes"
+            form.breastFeedingStarted = breastFeedingStarted.value == breastFeedingStarted.entries!![0]
            /* form.opv0Dose = getLongFromDate(opv0Dose.value)
             form.bcgDose = getLongFromDate(bcgDose.value)
             form.hepBDose = getLongFromDate(hepBDose.value)

@@ -8,7 +8,7 @@
         android:id="@+id/btnAddNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add New"
+        android:text="@string/add_new"
         android:layout_margin="12dp"
         android:layout_gravity="center" />
 
@@ -48,7 +48,7 @@
                     android:id="@+id/btnSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Submit"
+                    android:text="@string/submit"
                     android:layout_marginTop="@dimen/_15sdp"
                     android:layout_gravity="center"
                     android:visibility="visible" />
@@ -68,7 +68,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="IFA Distribution"
+            android:text="@string/ifa_distribution"
             android:textStyle="bold"
             android:textSize="16sp"
             android:gravity="center"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="S. No"
+                android:text="@string/s_no"
                 android:textStyle="bold" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Date"
+                android:text="@string/date"
                 android:textStyle="bold" />
 
             <TextView
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="IFA Quantity"
+                android:text="@string/ifa_quantity"
                 android:textStyle="bold" />
         </LinearLayout>
 

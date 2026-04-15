@@ -98,6 +98,9 @@ class NewHouseholdFragment : Fragment() {
             .setView(alertBinding.root)
             .setCancelable(false)
             .create()
+        alertBinding.scrollableText.setOnClickListener {
+            alertBinding.checkBox.isChecked = !alertBinding.checkBox.isChecked
+        }
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             findNavController().navigateUp()

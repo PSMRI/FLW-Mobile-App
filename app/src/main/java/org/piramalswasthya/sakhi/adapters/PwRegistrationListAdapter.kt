@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenPwRegistrationListWithFormBinding
 import org.piramalswasthya.sakhi.model.BenWithPwrDomain
@@ -58,7 +59,7 @@ class PwRegistrationListAdapter(
 
             binding.benWithPwr = item
             binding.ivSyncState.visibility = if (item.pwr == null) View.INVISIBLE else View.VISIBLE
-            binding.btnFormEc1.text = if (item.pwr == null) "Register" else "View"
+            binding.btnFormEc1.text = if (item.pwr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
 
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.pwr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener

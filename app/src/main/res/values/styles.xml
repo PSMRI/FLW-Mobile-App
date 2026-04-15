@@ -69,7 +69,7 @@
     <style name="cbac_ed_asterisk">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:textColor">@android:color/holo_green_light</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:paddingRight">5dp</item>
         <item name="android:textAppearance">@style/TextAppearance.Material3.BodyLarge</item>

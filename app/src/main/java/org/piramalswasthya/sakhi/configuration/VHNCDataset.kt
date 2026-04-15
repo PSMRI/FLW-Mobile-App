@@ -40,7 +40,7 @@ class VHNCDataset(
     private val vhncDate = FormElement(
         id = 2,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.vhsnc_meeting_date),
+        title = resources.getString(R.string.vhsnc_meeting_date),
         arrayId = -1,
         required = true,
         min = getTwoMonthsBackMillis(),
@@ -58,7 +58,7 @@ class VHNCDataset(
     private val villageName = FormElement(
         id = 9,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.village_name),
+        title = resources.getString(R.string.village_name),
         arrayId = -1,
         required = false,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
@@ -81,7 +81,7 @@ class VHNCDataset(
     private val noOfANM = FormElement(
         id = 11,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_anm_mpw_attended),
+        title = resources.getString(R.string.number_of_anm_mpw_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -94,7 +94,7 @@ class VHNCDataset(
     private val noOfAWW = FormElement(
         id = 12,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_aww_attended),
+        title = resources.getString(R.string.number_of_aww_attended),
         arrayId = -1,
         value = "0",
         required = false,
@@ -107,7 +107,7 @@ class VHNCDataset(
     private val noOfPW = FormElement(
         id = 13,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_pregnant_woman),
+        title = resources.getString(R.string.number_of_pregnant_woman),
         arrayId = -1,
         value = "0",
         required = false,
@@ -120,7 +120,7 @@ class VHNCDataset(
   private val noOfLM = FormElement(
         id = 14,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_lactating_mothers),
+        title = resources.getString(R.string.number_of_lactating_mothers),
         arrayId = -1,
         value = "0",
         required = false,
@@ -133,7 +133,7 @@ class VHNCDataset(
     private val noOfCommentte = FormElement(
         id = 15,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.number_of_committee_members_present),
+        title = resources.getString(R.string.number_of_committee_members_present),
         arrayId = -1,
         value = "0",
         required = false,
@@ -147,7 +147,7 @@ class VHNCDataset(
     private val followupPrevius = FormElement(
         id = 16,
         inputType = RADIO,
-        title = context.getString(R.string.follow_up_the_previous_meeting_minutes),
+        title = resources.getString(R.string.follow_up_the_previous_meeting_minutes),
         arrayId = R.array.yes_no,
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
@@ -155,14 +155,14 @@ class VHNCDataset(
     )
     private val pic1 = FormElement(
         id = 1,
-        inputType = IMAGE_VIEW,
+        inputType =  InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
     )
     private val pic2 = FormElement(
         id = 2,
-        inputType = IMAGE_VIEW,
+        inputType = InputType.FILE_UPLOAD,
         title = resources.getString(R.string.upload_image),
         arrayId = -1,
         required = false,
@@ -212,14 +212,14 @@ class VHNCDataset(
             vhncDate.value = it.vhncDate
             pic1.value = it.image1
             pic2.value = it.image2
-            place.value = it.place
-            villageName.value = it.villageName
-            noOfBeneficiariesAttended.value = it.noOfBeneficiariesAttended.toString()
-            noOfANM.value = it.anm.toString()
-            noOfAWW.value = it.aww.toString()
-            noOfPW.value = it.noOfPragnentWoment.toString()
-            noOfLM.value = it.noOfLactingMother.toString()
-            noOfCommentte.value = it.noOfCommittee.toString()
+            place.value = getLocalValueInArray(R.array.place_of_vhsnc, it.place)
+            villageName.value = it.villageName?.takeIf { v -> v.isNotEmpty() && v != "null" } ?: ""
+            noOfBeneficiariesAttended.value = (it.noOfBeneficiariesAttended ?: 0).toString()
+            noOfANM.value = (it.anm ?: 0).toString()
+            noOfAWW.value = (it.aww ?: 0).toString()
+            noOfPW.value = (it.noOfPragnentWoment ?: 0).toString()
+            noOfLM.value = (it.noOfLactingMother ?: 0).toString()
+            noOfCommentte.value = (it.noOfCommittee ?: 0).toString()
             followupPrevius.value = it.followupPrevius?.let { value ->
                 val options = resources.getStringArray(R.array.yes_no)
                 if (value) options[0] else options[1]
@@ -252,7 +252,7 @@ class VHNCDataset(
         (cacheModel as VHNCCache).let { form ->
 
             form.vhncDate = vhncDate.value!!
-            form.place = place.value
+            form.place = getEnglishValueInArray(R.array.place_of_vhsnc, place.value)
             form.noOfBeneficiariesAttended = noOfBeneficiariesAttended.value!!.toInt()
             form.image1 = pic1.value?.takeIf { it.isNotEmpty() }
             form.image2 = pic2.value?.takeIf { it.isNotEmpty() }

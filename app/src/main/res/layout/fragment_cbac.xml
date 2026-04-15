@@ -508,7 +508,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat_note"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -516,7 +516,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast1"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -524,7 +524,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast2"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_red_light" />
+                                android:textColor="@android:color/holo_green_light" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -550,215 +550,215 @@
                                 android:id="@+id/cbac_histb"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_histb}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_coughing"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_coughing}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_blsputum"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_blsputum}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_feverwks"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_feverwks}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_lsweight"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_lsweight}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_ntswets"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_ntswets}"
-                                app:numAsterisk="@{1}" />
+                                app:numAsteriskAlt="@{1}" />
 
                             <include
                                 android:id="@+id/cbac_fh_tb"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_fh_tb}"
-                                app:numAsterisk="@{2}" />
+                                app:numAsteriskAlt="@{2}" />
 
                             <include
                                 android:id="@+id/cbac_taking_tb_drug"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_taking_tb_drug}"
-                                app:numAsterisk="@{2}" />
+                                app:numAsteriskAlt="@{2}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_ulceration"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_ulceration}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_tingling"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_tingling}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_cloudy"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_cloudy}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_diffculty_reading"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_diffculty_reading}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_pain_eyes"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_pain_eyes}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_redness_eyes"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_redness_eyes}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_recurrent_diff_hearing"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_recurrent_diff_hearing}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
 
                             <include
                                 android:id="@+id/cbac_breath"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_breath}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_hifits"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_hifits}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_difmouth"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_difmouth}"
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_heald"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_heald}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_voice"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_voice}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Any_Growth"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Any_Growth}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Any_white"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Any_white}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Pain_while_chewing"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Pain_while_chewing}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Any_hyper_pigmented"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Any_hyper_pigmented}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_any_thickend_skin"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_any_thickend_skin}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_any_nodules_skin"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_any_nodules_skin}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Recurrent_numbness"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Recurrent_numbness}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Clawing_of_fingers"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Clawing_of_fingers}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Tingling_or_Numbness"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Tingling_or_Numbness}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Inability_close_eyelid"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Inability_close_eyelid}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_diff_holding_objects"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_diff_holding_objects}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_Weekness_in_feet"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_Weekness_in_feet}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <include
                                 android:id="@+id/cbac_suspected_leprosy"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_is_leprosy_suspected}"
 
-                                app:numAsterisk="@{0}" />
+                                app:numAsteriskAlt="@{0}" />
 
                             <LinearLayout
                                 android:id="@+id/cbac_ll_ed_women"
@@ -780,47 +780,47 @@
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_lumpbrest}"
 
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_nipple"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_nipple}"
 
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_breast"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_breast}"
 
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_blperiods"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_blperiods}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_blmenopause"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_blmenopause}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_blintercorse"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_blintercorse}"
 
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_fouldis"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_fouldis}"
 
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                          <!--       <LinearLayout
                                     android:layout_width="match_parent"
@@ -863,25 +863,25 @@
                                     android:id="@+id/cbac_unsteady"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_unsteady}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_pd_rm"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_pd_rm}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_nhop"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_nhop}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
                                 <include
                                     android:id="@+id/cbac_forget_names"
                                     layout="@layout/fragment_cbac_element_radio"
                                     app:fieldName="@{@string/cbac_forget_names}"
-                                    app:numAsterisk="@{0}" />
+                                    app:numAsteriskAlt="@{0}" />
 
 
 
@@ -1183,7 +1183,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/hrp_sug_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1192,7 +1192,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diab"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1200,7 +1200,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_hyper"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1208,7 +1208,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_hyperstroke"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1216,7 +1216,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/hrp_sug_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1224,7 +1224,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_tbcancer"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1232,7 +1232,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diabm"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1240,7 +1240,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_diabcancer"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1248,7 +1248,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_cansthyroid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1256,7 +1256,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_tb"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1264,7 +1264,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_oc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1272,7 +1272,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_bc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1280,7 +1280,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_mentalhealth"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1289,7 +1289,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_cc"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1297,7 +1297,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1305,7 +1305,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_dia_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1313,7 +1313,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_can_thy"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1321,7 +1321,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_dia_can"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1329,7 +1329,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_can_lep"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1337,7 +1337,7 @@
                     <!--                    android:layout_width="match_parent"-->
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:text="@string/ncd_all_display"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1347,7 +1347,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_hyper_stk_display"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1356,7 +1356,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_tb_can"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
                     <!--                <TextView-->
@@ -1365,7 +1365,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/ncd_hyper_only"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1375,7 +1375,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/ncd_sus_valid"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <!--                <TextView-->
@@ -1384,7 +1384,7 @@
                     <!--                    android:layout_height="wrap_content"-->
                     <!--                    android:layout_marginTop="0dp"-->
                     <!--                    android:text="@string/hrpncd_sus_valid"-->
-                    <!--                    android:textColor="@android:color/holo_red_light"-->
+                    <!--                    android:textColor="@android:color/holo_green_light"-->
                     <!--                    android:visibility="gone" />-->
 
 
@@ -1394,7 +1394,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tbcase"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1403,7 +1403,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tb_collect_sputum"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1412,7 +1412,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tv_moic_treat"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                     <TextView
@@ -1421,7 +1421,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
                         android:text="@string/cbac_tv_bl_menopause"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textColor="@android:color/holo_green_light"
                         android:visibility="gone" />
 
                 </LinearLayout>

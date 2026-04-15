@@ -166,8 +166,9 @@ class FilariaMDAFormFragment : Fragment() {
 
     private fun tableRender() {
         binding.includeBottleTable.tableHeading.visibility = View.GONE
-        binding.includeBottleTable.bottleNum.text = "Is Medicine Distributed? (Yes/No)"
-        binding.includeBottleTable.date.text = "Distribution Date"
+        binding.includeBottleTable.bottleNum.text =
+            getString(R.string.is_medicine_distributed_yes_no)
+        binding.includeBottleTable.date.text = getString(R.string.distribution_date)
 
         binding.includeBottleTable.tableRv.layoutManager = LinearLayoutManager(requireContext())
         viewModel.bottleList.observe(viewLifecycleOwner) { list ->
@@ -199,10 +200,21 @@ class FilariaMDAFormFragment : Fragment() {
                         showImagePickerDialog()
                     } else {
                         field.value = value
+                        field.errorMessage = null
                         viewModel.updateFieldValue(field.fieldId, value)
-                        adapter.updateFields(viewModel.getVisibleFields())
+                        val newVisibleFields = viewModel.getVisibleFields()
+                        adapter.updateFields(newVisibleFields)
+                        val pos = newVisibleFields.indexOfFirst { it.fieldId == field.fieldId }
+                        if (pos >= 0) {
+                            binding.recyclerView
+                                .findViewHolderForAdapterPosition(pos)
+                                ?.itemView
+                                ?.findViewWithTag<View>("field_error_tv")
+                                ?.visibility = View.GONE
+                        }
                     }
-                },)
+                },
+            formId = FormConstants.MDA_DISTRIBUTION_FORM_ID)
 
         binding.recyclerView.adapter = adapter
     }
@@ -220,7 +232,7 @@ class FilariaMDAFormFragment : Fragment() {
                 updatedFields.find { it.fieldId == schemaField.fieldId }?.let { updated ->
                     schemaField.value = updated.value
 
-                    val result = FieldValidator.validate(updated, null)
+                    val result = FieldValidator.validate(updated, null, context = requireContext())
                     updated.errorMessage = if (!result.isValid) result.errorMessage else null
                     schemaField.errorMessage = updated.errorMessage
                     if (schemaField.fieldId == "visit_date" && schemaField.value is String) {
@@ -232,10 +244,10 @@ class FilariaMDAFormFragment : Fragment() {
                         }
 
                         val errorMessage = when {
-                            visitDate == null -> "Invalid visit date"
-                            today != null && visitDate.after(today) -> "Visit Date cannot be after today's date"
+                            visitDate == null -> getString(R.string.error_invalid_visit_date)
+                            visitDate.after(today) -> getString(R.string.error_visit_date_after_today)
                             previousVisitDate != null && !visitDate.after(previousVisitDate) ->
-                                "Visit Date must be after previous visit (${sdf.format(previousVisitDate)})"
+                                getString(R.string.error_visit_date_after_previous, sdf.format(previousVisitDate))
                             else -> null
                         }
                         schemaField.errorMessage = errorMessage

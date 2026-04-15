@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_new_visit">नई भ्रमण जोड़ें</string>
+    <string name="visit">भ्रमण %1$d</string>
+    <string name="visit_2">भ्रमण देखें या जोड़ें</string>
+    <string name="check_sam_">सैम की जांच</string>
+    <string name="severe_acute_malnutrition">गंभीर तीव्र कुपोषण</string>
+    <string name="sam_form">सैम फॉर्म</string>
+    <string name="ors_form">ओआरएस फॉर्म</string>
+    <string name="oral_rehydration_solution">ओरल रिहाइड्रेशन सॉल्यूशन (ORS)</string>
+    <string name="ifa_form">आईएफए फॉर्म</string>
+    <string name="iron_folic_acid">आयरन फोलिक एसिड</string>
+    <string name="sam_form_">सैम फॉर्म</string>
+    <string name="take_photo">फोटो लो</string>
+    <string name="select_image">छवि चुनें</string>
+    <string name="choose_from_gallery">गैलरी से चुनें</string>
+    <string name="pick_image">फ़ोटो चुनें</string>
+    <string name="select_file">फ़ाइल चुनें</string>
+    <string name="choose_file_pdf_image">फ़ाइल चुनें (PDF / छवि)</string>
+    <string name="invalid_visit_date">अमान्य भ्रमण तिथि</string>
+    <string name="delivery_date_is_missing">प्रसव की तिथि अनुपस्थित है</string>
+    <string name="visit_date_cannot_be_after_today_s_date">भ्रमण की तिथि आज की तिथि के बाद नहीं हो सकती</string>
+    <string name="visit_date_cannot_be_before_delivery_date">भ्रमण की तिथि प्रसव की तिथि से पहले नहीं हो सकती</string>
+    <string name="visit_date_must_be_after_previous_visit">भ्रमण की तिथि पिछले भ्रमण के बाद होनी चाहिए (%1$s)</string>
+    <string name="visit_already_exists_for_this_date">इस तिथि के लिए भ्रमण पहले से मौजूद है: %1$s</string>
+    <string name="visit_date_must_be_greater_then_the_last_visit_dates">भ्रमण की तिथि पिछली सभी भ्रमण तिथियों से अधिक होनी चाहिए</string>
+    <string name="visit_date_must_be_after_all_existing_visit_dates">भ्रमण की तिथि सभी मौजूदा भ्रमण तिथियों के बाद होनी चाहिए</string>
+    <string name="is_child_referred_nrc">क्या बच्चे को एनआरसी को भेजा गया है?</string>
+    <string name="is_child_admitted_nrc">क्या बच्चे को एनआरसी में भर्ती किया गया है</string>
+    <string name="is_child_discharged_nrc">क्या बच्चे को एनआरसी से छुट्टी मिली है</string>
+    <string name="sam_status">सैम स्थिति</string>
+    <string name="follow_up_sam">सैम फॉलो-अप</string>
+    <string name="nrc_admitted">एनआरसी में भर्ती</string>
+    <string name="referred_to_nrc">एनआरसी में रेफर किया गया</string>
+    <string name="visit_date_cannot_be_more_than_2_months_old">भ्रमण की तिथि 2 महीने से अधिक पुरानी नहीं हो सकती</string>
+    <string name="only_one_visit_per_month_allowed">प्रति माह केवल एक भ्रमण की अनुमति है</string>
+    <string name="bottle_count">आईएफए बोतलों की संख्या</string>
+    <string name="sam_case_detected">सैम केस का पता चला</string>
+    <string name="muac_sam_alert_message">MUAC %1$.1f सेमी है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>
+    <string name="weight_height_sam_alert_message">वज़न-ऊंचाई स्थिति सैम है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>
+</resources>

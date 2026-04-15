@@ -24,7 +24,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
     private val uWinSessionDate = FormElement(
         id = 117,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.u_win_session_date),
+        title = resources.getString(R.string.u_win_session_date),
         max = System.currentTimeMillis(),
         min = getMinDate(2),
         required = true,
@@ -34,7 +34,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
     private val place = FormElement(
         id = 118,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.place),
+        title = resources.getString(R.string.place),
         arrayId = R.array.place_of_delivery_options,
         entries = resources.getStringArray(R.array.place_of_delivery_options),
         required = true,
@@ -43,7 +43,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
     private val participant = FormElement(
         id = 119,
         inputType = InputType.EDIT_TEXT,
-        title = context.getString(R.string.no_of_participants_attended),
+        title = resources.getString(R.string.no_of_participants_attended),
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
         etMaxLength = 3,
@@ -53,14 +53,14 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
     private val uploadSummary1 = FormElement(
         id = 120,
         inputType = InputType.FILE_UPLOAD,
-        title = "File Upload 1",
+        title = resources.getString(R.string.file_upload_n, 1),
         required = false
     )
 
     private val uploadSummary2 = FormElement(
         id = 121,
         inputType = InputType.FILE_UPLOAD,
-        title = "File Upload 2",
+        title = resources.getString(R.string.file_upload_n, 2),
         required = false
     )
 
@@ -75,7 +75,7 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
 
         if (saved && cache != null) {
             uWinSessionDate.value = getDateFromLong(cache.sessionDate)
-            place.value = cache.place
+            place.value = getLocalValueInArray(R.array.place_of_delivery_options, cache.place)
             participant.value = cache.participantsCount.toString()
             uploadSummary1.value = cache.uploadedFiles1
             uploadSummary2.value = cache.uploadedFiles2
