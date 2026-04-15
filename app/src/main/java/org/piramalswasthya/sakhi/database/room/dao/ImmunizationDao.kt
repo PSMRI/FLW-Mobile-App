@@ -36,8 +36,8 @@ interface ImmunizationDao {
     @Query("SELECT * FROM IMMUNIZATION WHERE  syncState = :syncState")
     suspend fun getUnsyncedImmunization(syncState: SyncState): List<ImmunizationCache>
 
-    @Query("select count(*) as count from (select * from beneficiary b inner join vaccine v on  (strftime('%s', 'now') * 1000)  - b.dob between v.minAllowedAgeInMillis and v.overdueDurationSinceMinInMillis and v.vaccineId not in (select vaccineId from immunization i where i.beneficiaryId = b.beneficiaryId) group by b.beneficiaryId)")
-    fun getChildrenImmunizationDueListCount(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM (SELECT ben.benId FROM BEN_BASIC_CACHE ben INNER JOIN VACCINE v ON v.category = 'CHILD' AND (strftime('%s', 'now') * 1000) - ben.dob BETWEEN v.minAllowedAgeInMillis AND v.maxAllowedAgeInMillis AND v.vaccineId NOT IN (SELECT vaccineId FROM IMMUNIZATION i WHERE i.beneficiaryId = ben.benId) WHERE ben.dob BETWEEN :minDob AND :maxDob GROUP BY ben.benId)")
+    fun getChildrenImmunizationDueListCount(minDob: Long, maxDob: Long): Flow<Int>
 
 
     @Transaction

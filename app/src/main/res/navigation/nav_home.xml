@@ -894,6 +894,10 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list.ChildImmunizationListFragment"
         android:label="@string/child_immunization"
         tools:layout="@layout/fragment_child_immunization_list">
+        <argument
+            android:name="showDueOnly"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_childImmunizationListFragment_to_immunizationFormFragment"
             app:destination="@id/immunizationFormFragment" />
