@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -338,6 +339,10 @@ class FormInputAdapterWithBgIcon (
                         if (item.value == it) rdBtn.isChecked = true
                         rdBtn.setOnCheckedChangeListener { _, b ->
                             if (b) {
+                                // Clear focus from any previously focused EditText to prevent auto-scroll
+                                binding.root.rootView.findFocus()?.clearFocus()
+                                val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
                                 item.value = it
                                 if (item.hasDependants || item.hasAlertError) {
                                     Timber.d(

@@ -549,7 +549,7 @@ fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStat
         (gender.equals("female", ignoreCase = true)) &&
                 ((age ?: 0) in 20..49) &&
                 (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
-                isDeath.equals("false", ignoreCase = true)
+                (isDeath == null || isDeath.equals("false", ignoreCase = true))
 
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }

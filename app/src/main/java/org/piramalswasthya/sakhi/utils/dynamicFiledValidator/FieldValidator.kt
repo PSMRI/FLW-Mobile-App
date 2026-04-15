@@ -26,7 +26,8 @@ object FieldValidator {
     )
 
     fun validate(field: FormField, dob: String?, todayStr: String = getToday(), context: Context? = null): ValidationResult {
-        if (field.isRequired && (field.value == null || field.value.toString().isBlank())) {
+        if (field.isRequired && (field.value == null || field.value.toString().isBlank()
+                    || (field.value is Collection<*> && (field.value as Collection<*>).isEmpty()))) {
             val msg = context?.getString(R.string.field_is_required, field.label)
                 ?: "${field.label} is required"
             return ValidationResult(false, msg)

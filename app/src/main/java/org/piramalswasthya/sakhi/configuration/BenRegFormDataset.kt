@@ -2138,6 +2138,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                                 husbandName,
                                 wifeName,
                                 ageAtMarriage,
+                                haveChildren,
                             )
                         )
                     }
@@ -2606,7 +2607,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             ageAtMarriage,
                             dateOfMarriage,
                             maritalStatus,
-                            reproductiveStatus
+                            reproductiveStatus,
+                            haveChildren
                         ),
                         position = -2
                     )
@@ -3190,7 +3192,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                                 ageAtMarriage,
                                 dateOfMarriage,
                                 maritalStatus,
-                                reproductiveStatus
+                                reproductiveStatus,
+                                haveChildren
                             ),
                             position = -2
                         )

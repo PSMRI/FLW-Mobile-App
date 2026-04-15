@@ -545,6 +545,9 @@ interface BenDao {
     @Query("SELECT beneficiaryId FROM BENEFICIARY WHERE beneficiaryId IN (:list)")
     fun getAllBeneficiaryFromList(list: List<Long>): LiveData<List<Long>>
 
+    @Query("SELECT beneficiaryId FROM BENEFICIARY WHERE beneficiaryId IN (:list)")
+    suspend fun getExistingBenIds(list: List<Long>): List<Long>
+
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and reproductiveStatusId = 1  and villageId=:selectedVillage")
     fun getAllEligibleCoupleList(
         selectedVillage: Int,
@@ -709,7 +712,13 @@ interface BenDao {
         AND villageId = :selectedVillage
 """)
     fun getAllNonMaternalDeathsCount(selectedVillage: Int): Flow<Int>
-    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and isDeactivate=0 and ben.villageId=:selectedVillage")
+    @Query("""
+        SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben
+        inner join pregnancy_register pwr on pwr.benId = ben.benId
+        where pwr.active = 1 and ben.reproductiveStatusId=2
+        and isDeactivate=0 and ben.villageId=:selectedVillage
+        AND ben.benId NOT IN (SELECT benId FROM PREGNANCY_ANC WHERE maternalDeath = 1)
+    """)
     fun getAllRegisteredPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
 
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and pwr.abortionDate is not null and ben.villageId=:selectedVillage and isDeactivate=0")

@@ -62,17 +62,23 @@ class AdolescentHealthListAdapter(
             binding.hasAbha = !item.ben.abhaId.isNullOrEmpty()
             binding.role = role
 
+            if (item.ben.gender == "MALE") {
+                binding.btnFormTb.visibility = View.GONE
+            } else {
+                binding.btnFormTb.visibility = View.VISIBLE
+            }
+
             if (showBeneficiaries) {
                 if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                     binding.father = true
                     binding.husband = false
                     binding.spouse = false
+
                 } else {
                     if (item.ben.gender == "MALE") {
                         binding.father = true
                         binding.husband = false
                         binding.spouse = false
-                        binding.btnFormTb.visibility = View.GONE
                     } else if (item.ben.gender == "FEMALE") {
                         if (item.ben.ageInt > 15) {
                             binding.father =
@@ -84,7 +90,6 @@ class AdolescentHealthListAdapter(
                             binding.husband = false
                             binding.spouse = false
                         }
-                        binding.btnFormTb.visibility = View.VISIBLE
 
                     } else {
                         binding.father =
@@ -106,6 +111,8 @@ class AdolescentHealthListAdapter(
 
         }
     }
+
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
