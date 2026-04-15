@@ -70,7 +70,7 @@ class NewBenRegFragment : Fragment() {
         val listIndex =
             viewModel.updateValueByIdAndReturnListIndex(micClickedElementId, formattedValue)
         listIndex.takeIf { it >= 0 }?.let {
-            binding.form.rvInputForm.adapter?.notifyItemChanged(it)
+            _binding?.form?.rvInputForm?.adapter?.notifyItemChanged(it)
         }
     }
 
@@ -97,11 +97,12 @@ class NewBenRegFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
+                val currentBinding = _binding ?: return@registerForActivityResult
                 if(viewModel.getDocumentFormId() == 46) {
                     frontViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -111,7 +112,7 @@ class NewBenRegFragment : Fragment() {
                     backViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -121,7 +122,7 @@ class NewBenRegFragment : Fragment() {
                     latestTmpUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -136,6 +137,7 @@ class NewBenRegFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val currentBinding = _binding ?: return
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
             if(viewModel.getDocumentFormId() == 46) {
                 data?.data?.let { pdfUri ->
@@ -146,7 +148,7 @@ class NewBenRegFragment : Fragment() {
                         frontViewFileUri = pdfUri
                         frontViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
@@ -164,7 +166,7 @@ class NewBenRegFragment : Fragment() {
                         backViewFileUri = pdfUri
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
@@ -178,6 +180,7 @@ class NewBenRegFragment : Fragment() {
         }
     }
     private fun showAddSpouseAlert() {
+        if (!isAdded) return
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
@@ -194,14 +197,16 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setPositiveButton(
             resources.getString(R.string.yes)
         ) { dialog, _ ->
-            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
-            findNavController().navigate(
-                NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
-                    hhId = viewModel.hhId,
-                    gender = spouseGender,
-                    relToHeadId = if (spouseGender == 1) 5 else 4
+            if (isAdded && findNavController().currentDestination?.id == R.id.newBenRegFragment) {
+                val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+                findNavController().navigate(
+                    NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
+                        hhId = viewModel.hhId,
+                        gender = spouseGender,
+                        relToHeadId = if (spouseGender == 1) 5 else 4
+                    )
                 )
-            )
+            }
             dialog.dismiss()
         }
 
@@ -701,14 +706,15 @@ class NewBenRegFragment : Fragment() {
 
 
     private fun validateCurrentPage(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
+        val currentBinding = _binding ?: return false
+        val result = currentBinding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapter).validateInput(resources)
         }
         Timber.d("Validation : $result")
         return if (result == -1) true
         else {
             if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
+                currentBinding.form.rvInputForm.scrollToPosition(result)
             }
             false
         }

@@ -26,6 +26,7 @@
     <string name="signature_of_bpm">बीपीएम के हस्ताक्षर</string>
     <string name="signature_of_sdm_ho">एसडीएम एवं एचओ के हस्ताक्षर</string>
     <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">रु.________________(रुपये_________मात्र) की राशि ____________से_____________की अवधि के लिए आशा प्रोत्साहन के भुगतान के लिए अनुमोदित की गई है और राशि डीबीटी के माध्यम से खाते में जमा की गई है।</string>
+    <string name="village_new">गाँव</string>
 
     <string name="incentive_fragment_title">प्रोत्साहन</string>
     <string name="incentive_processed">संसाधित\nकुल : ₹ %1d</string>

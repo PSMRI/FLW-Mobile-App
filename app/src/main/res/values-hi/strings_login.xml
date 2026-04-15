@@ -2,7 +2,11 @@
 <resources>
     <!--    Login-->
     <string name="tv_text_welcome">स्वागत</string>
-    <string name="tv_text_welcome_user">स्वागत, %s</string>
+    <string name="tv_text_welcome_user">स्वागत\n%s</string>
+    <string name="tv_text_facility">Facility : %s</string>
+    <string name="tv_text_state">राज्य : %s</string>
+    <string name="tv_text_district">ज़िला : %s</string>
+    <string name="tv_text_block">उप जिला : %s</string>
     <string name="tv_text_sign_in">जारी रखने के लिए लॉग इन करें</string>
     <string name="tv_text_select_language">कृपया अपनी भाषा का चयन कीजिए</string>
     <string name="text_english" translatable="false">English</string>

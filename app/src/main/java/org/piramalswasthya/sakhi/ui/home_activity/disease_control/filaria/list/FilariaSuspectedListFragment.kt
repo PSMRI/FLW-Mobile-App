@@ -39,11 +39,13 @@ class FilariaSuspectedListFragment : Fragment() {
 
         val benAdapter = FilariaMemberListAdapter(
             clickListener = FilariaMemberListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    FilariaSuspectedListFragmentDirections.actionFilariaSuspectedListFragmentToFilariaFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.filariaSuspectedListFragment) {
+                    findNavController().navigate(
+                        FilariaSuspectedListFragmentDirections.actionFilariaSuspectedListFragmentToFilariaFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter

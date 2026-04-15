@@ -745,7 +745,7 @@
     <string name="all">সকলো</string>
     <string name="with_abha">ABHA সহ</string>
     <string name="without_abha">ABHA বিহীন</string>
-    <string name="age_above_30_years">৩০ বছৰৰ ওপৰত বয়স</string>
+    <string name="age_above_30_years">৪০ বছৰৰ ওপৰত বয়স</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">কোনো ভিজিট কৰা হোৱা নাই</string>
     <string name="filter_list">ফিল্টাৰ</string>
@@ -904,6 +904,11 @@
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
+
+
     <string name="visit_number_label">Visit -%d</string>
     <string name="vaccine_fill">FILL</string>
     <string name="malaria_confirmed">Confirmed</string>

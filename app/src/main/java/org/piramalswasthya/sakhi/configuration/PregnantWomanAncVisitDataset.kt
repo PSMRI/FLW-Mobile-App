@@ -356,9 +356,9 @@ class PregnantWomanAncVisitDataset(
     )
     private val maternalDeath = FormElement(
         id = 27, inputType = InputType.RADIO,
-        title = resources.getString(R.string.maternal_death),
-        arrayId = R.array.anc_confirmation_array1,
-        entries = resources.getStringArray(R.array.anc_confirmation_array1),
+        title = resources.getString(R.string.is_pw_currently_alive),
+        arrayId = R.array.anc_alive_array,
+        entries = resources.getStringArray(R.array.anc_alive_array),
         required = false, hasDependants = true
     )
     private val maternalDeathProbableCause = FormElement(
@@ -528,7 +528,7 @@ class PregnantWomanAncVisitDataset(
                 minOf(getEddFromLmp(regis.lmpDate), System.currentTimeMillis())
 
             isAborted.value = resources.getStringArray(R.array.yes_no)[1]
-            maternalDeath.value = resources.getStringArray(R.array.yes_no)[1]
+            maternalDeath.value = resources.getStringArray(R.array.yes_no)[0]
 
         }
 

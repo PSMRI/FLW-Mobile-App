@@ -2,7 +2,11 @@
 <resources>
     <!--    Login-->
     <string name="tv_text_welcome">Welcome, please login</string>
-    <string name="tv_text_welcome_user">Welcome, %s</string>
+    <string name="tv_text_welcome_user">Welcome\n%s</string>
+    <string name="tv_text_facility">Facility : %s</string>
+    <string name="tv_text_state">State : %s</string>
+    <string name="tv_text_district">District : %s</string>
+    <string name="tv_text_block">Block : %s</string>
     <string name="tv_text_sign_in">Login</string>
     <string name="tv_text_select_language">Please Select Your language</string>
     <string name="text_english" translatable="false">English</string>

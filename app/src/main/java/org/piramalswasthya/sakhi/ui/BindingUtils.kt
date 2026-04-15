@@ -534,7 +534,11 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
 
 @BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
 fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
-    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    val isAlive = isDeath.isNullOrBlank()
+            || isDeath.equals("false", ignoreCase = true)
+            || isDeath == "0"
+            || isDeath.equals("undefined", ignoreCase = true)
+    val shouldShow = (age ?: 0) >= 40 && isAlive
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }
 
