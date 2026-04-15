@@ -260,9 +260,24 @@ dependencies {
 
     implementation("com.google.firebase:firebase-messaging:24.0.0")
 
+    // Unit Testing
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'com.google.truth:truth:1.4.4'
+    testImplementation 'io.mockk:mockk:1.13.5'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation 'app.cash.turbine:turbine:0.12.1'
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+    testImplementation "androidx.work:work-testing:$work_version"
+
+    // Instrumented Testing
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+    androidTestImplementation 'io.mockk:mockk-android:1.13.8'
 
     //Image compressor
     implementation 'id.zelory:compressor:3.0.1'
