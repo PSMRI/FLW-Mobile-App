@@ -94,7 +94,6 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
-            app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:text="@string/contact_info"
@@ -127,7 +126,7 @@
                     android:id="@+id/icon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_call_icon"
                     android:layout_centerVertical="true"/>
 
@@ -183,7 +182,7 @@
                     android:id="@+id/emailIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/baseline_email_24"
                     android:layout_centerVertical="true"/>
 
@@ -239,7 +238,7 @@
                     android:id="@+id/districIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/baseline_location_on_24"
                     android:layout_centerVertical="true"/>
 
@@ -296,7 +295,7 @@
                     android:id="@+id/blockIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_home"
                     android:layout_centerVertical="true"/>
 
@@ -352,7 +351,7 @@
                     android:id="@+id/subcenterIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_home"
                     android:layout_centerVertical="true"/>
 
@@ -393,7 +392,7 @@
             android:paddingTop="@dimen/padding_small"
             android:visibility="gone"
             android:paddingBottom="@dimen/padding_small"
-            app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
+            app:tint="@color/md_theme_dark_inversePrimary"
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:text="@string/bank_details"
@@ -427,7 +426,7 @@
                     android:id="@+id/bankIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_bank_name"
                     />
 
@@ -480,7 +479,7 @@
                     android:layout_height="24dp"
                     android:layout_below="@+id/underLine"
                     android:layout_marginTop="10dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_bank_name"
                     android:layout_centerVertical="true"/>
 
@@ -519,8 +518,7 @@
                     android:layout_below="@+id/underLine"
                     android:layout_marginTop="15dp"
                     android:src="@drawable/outline_keyboard_arrow_right_24"
-                    android:layout_alignParentEnd="true"
-                    />
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
@@ -531,7 +529,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
-            app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
+            app:tint="@color/md_theme_dark_inversePrimary"
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:text="@string/app_settings"
@@ -552,24 +550,19 @@
             app:cardCornerRadius="8dp"
             android:layout_marginStart="20dp"
             android:background="@color/md_theme_light_onError"
-            android:layout_marginEnd="20dp"
-            >
+            android:layout_marginEnd="20dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="12dp"
                 android:paddingLeft="12dp">
-
-
-
                 <ImageView
                     android:id="@+id/logoutIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_below="@+id/underLineTwo"
                     android:layout_marginTop="10dp"
-                    android:tint="@color/md_theme_dark_inversePrimary"
+                    app:tint="@color/md_theme_dark_inversePrimary"
                     android:src="@drawable/ic_logout"
                     android:layout_centerVertical="true"/>
 
@@ -580,7 +573,6 @@
                     android:orientation="vertical"
                     android:layout_toEndOf="@id/logoutIcon"
                     android:layout_marginTop="5dp"
-                    android:layout_below="@+id/underLineTwo"
                     android:layout_marginStart="16dp"
                     android:layout_centerVertical="true">
 
@@ -606,11 +598,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignRight="@+id/logoutlayout"
-                    android:layout_below="@+id/underLineTwo"
                     android:layout_marginTop="15dp"
                     android:src="@drawable/outline_keyboard_arrow_right_24"
                     android:layout_alignParentEnd="true"
                     />
+
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
