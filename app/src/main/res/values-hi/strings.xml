@@ -1081,6 +1081,21 @@
         <item>आईएनएच मोनो (6 महीने)</item>
     </string-array>
 
+    <string-array name="sync_records">
+        <item>लाभार्थी</item>
+        <item>CBAC</item>
+        <item>टीबी की जाँच</item>
+        <item>TB का संदेह</item>
+        <item>EC पंजीकरण</item>
+        <item>EC ट्रैकिंग</item>
+        <item>PW पंजीकरण</item>
+        <item>पीडब्लू एएनसी</item>
+        <item>HRP मूल्यांकन</item>
+        <item>HRP ट्रैक</item>
+        <item>HR (हृदय गति) - गैर-गर्भवती: मूल्यांकन</item>
+        <item>HR नॉन-प्रेग्नेंसी ट्रैक</item>
+    </string-array>
+
     <string name="btn_cancel">रद्द करें</string>
     <string name="filter_sort_by">क्रमबद्ध करें</string>
     <string name="filter_newest_first">नवीनतम पहले</string>

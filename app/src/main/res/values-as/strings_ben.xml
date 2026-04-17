@@ -54,8 +54,8 @@
     <string name="agree">সম্মত</string>
     <string name="name_ben">নাম</string>
     <string name="age_ben">বয়স</string>
-    <string name="title_new_ben_reg_hof">HoF Registration</string>
-    <string name="title_new_ben_reg_non_hof">Family Member Registration</string>
+    <string name="title_new_ben_reg_hof">HoF পঞ্জীয়ন</string>
+    <string name="title_new_ben_reg_non_hof">পৰিয়ালৰ সদস্যৰ পঞ্জীয়ন</string>
 
     <string-array name="nbr_gender_array">
         <item name="nbr_gender_1">পুৰুষ</item>
@@ -119,6 +119,16 @@
         <item>পিতৃ</item>
         <item>পৰিৱাৰ প্ৰধান</item>
         <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>পৰিয়ালৰ মুৰব্বী</item>
+        <item>নিজক</item>
+        <item>পতি বা পত্নী</item>
+        <item>মা</item>
+        <item>পিতৃ</item>
+        <item>চুবুৰীয়া</item>
+        <item>বন্ধু/আত্মীয়</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head">
