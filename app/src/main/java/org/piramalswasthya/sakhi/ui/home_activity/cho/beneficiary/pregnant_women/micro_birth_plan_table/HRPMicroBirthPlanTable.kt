@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +29,6 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_women.micro_birth_plan.HRPMicroBirthPlanViewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 import java.util.Date
 
 
@@ -218,34 +218,46 @@ class HRPMicroBirthPlanTable : Fragment() {
 
     private fun saveMediaToStorage(bitmap: Bitmap) {
         val filename = "${System.currentTimeMillis()}.jpg"
-        var fos: OutputStream? = null
+        var imageUri: Uri? = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             activity?.contentResolver?.also { resolver ->
-
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
 
-                val imageUri: Uri? =
-                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                shareImage(imageUri!!)
-                fos = imageUri?.let { resolver.openOutputStream(it) }
+                imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                imageUri?.let { uri ->
+                    resolver.openOutputStream(uri)?.use { fos ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                    }
+                    contentValues.clear()
+                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    resolver.update(uri, contentValues, null, null)
+                }
             }
         } else {
             val imagesDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val image = File(imagesDir, filename)
-            var uriFile = Uri.fromFile(image)
-            shareImage(uriFile)
-            fos = FileOutputStream(image)
+            FileOutputStream(image).use { fos ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            }
+            imageUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                image
+            )
         }
 
-        fos?.use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        if (imageUri != null) {
             Toast.makeText(activity, "Captured View and saved to Gallery", Toast.LENGTH_SHORT)
                 .show()
+            shareImage(imageUri!!)
+        } else {
+            Toast.makeText(activity, "Failed to save image", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -254,14 +266,15 @@ class HRPMicroBirthPlanTable : Fragment() {
             val captionText = " ${getString(R.string.micro_birth_plan)} " +
                     "\n ASHA Name : ${viewModel.currentUser!!.name} " +
                     "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.putExtra(Intent.EXTRA_STREAM, imageUri)
-            intent.putExtra(Intent.EXTRA_TEXT, captionText)
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
-            intent.setPackage("com.whatsapp")
-            intent.setType("image/*")
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_STREAM, imageUri)
+                putExtra(Intent.EXTRA_TEXT, captionText)
+                putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
+                setPackage("com.whatsapp")
+                type = "image/*"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
             startActivity(intent)
-
         } else {
             Toast.makeText(
                 requireContext(),
