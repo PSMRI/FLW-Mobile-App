@@ -181,6 +181,9 @@ class SignInViewModelTest : BaseViewModelTest() {
 
         viewModel.rememberUser("user1", "pass1")
         advanceUntilIdle()
+        testDispatcher.scheduler.runCurrent()
+        Thread.sleep(100)
+        testDispatcher.scheduler.runCurrent()
 
         coVerify { pref.registerLoginCred("user1", "pass1") }
     }
@@ -195,6 +198,9 @@ class SignInViewModelTest : BaseViewModelTest() {
 
         viewModel.forgetUser()
         advanceUntilIdle()
+        testDispatcher.scheduler.runCurrent()
+        Thread.sleep(100)
+        testDispatcher.scheduler.runCurrent()
 
         coVerify { pref.deleteLoginCred() }
     }

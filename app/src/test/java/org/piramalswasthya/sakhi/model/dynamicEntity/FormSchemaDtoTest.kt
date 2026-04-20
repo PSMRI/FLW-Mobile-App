@@ -131,7 +131,7 @@ class FormSchemaDtoTest {
 
     @Test fun `FormFieldDto with options`() {
         val field = FormFieldDto(fieldId = "gender", options = listOf("Male", "Female", "Other"))
-        assertEquals(3, field.options!!.size)
+        assertEquals(3, (field.options as List<*>).size)
     }
 
     @Test fun `FormFieldDto errorMessage can be set`() {
@@ -233,23 +233,23 @@ class FormSchemaDtoTest {
     @Test fun `OptionItem creation with defaults`() {
         val item = OptionItem()
         assertEquals("", item.label)
-        assertNull(item.value)
+        assertEquals("", item.value)
     }
 
     @Test fun `OptionItem creation with values`() {
-        val item = OptionItem(label = "Yes", value = true)
+        val item = OptionItem(label = "Yes", value = "true")
         assertEquals("Yes", item.label)
-        assertEquals(true, item.value)
+        assertEquals("true", item.value)
     }
 
     @Test fun `OptionItem equals`() {
-        val a = OptionItem("A", 1)
-        val b = OptionItem("A", 1)
+        val a = OptionItem("A", "1")
+        val b = OptionItem("A", "1")
         assertEquals(a, b)
     }
 
     @Test fun `OptionItem copy`() {
-        val item = OptionItem("Old", 1)
+        val item = OptionItem("Old", "1")
         val copy = item.copy(label = "New")
         assertEquals("New", copy.label)
     }
