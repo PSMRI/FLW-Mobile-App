@@ -30,7 +30,7 @@
     <string name="cbac_recurrent_redness_eyes">आंखों में एक सप्ताह से अधिक समय तक लालिमा</string>
     <string name="cbac_recurrent_diff_hearing">सुनने में कठिनाई</string>
     <string name="cbac_breath">सांस फूलना</string>
-    <string name="cbac_hifits">दौरे का इतिहास</string>
+    <string name="cbac_hifits">झटके का इतिहास</string>
     <string name="cbac_difmouth">मुंह खोलने में कठिनाई</string>
     <string name="cbac_heald">मुंह में अल्सर/धब्बा/गांठ जो दो सप्ताह में ठीक न हुई हो</string>
     <string name="cbac_voice">आपकी आवाज़ के स्वर में कोई बदलाव</string>
@@ -118,7 +118,7 @@
     <string name="cbac_validation_rie">कृपया चुनें – आंख में 1 हफ्ते से ज्यादा लालपन</string>
     <string name="cbac_validation_dih">कृपया चुनें – सुनने में दिक्कत</string>
     <string name="cbac_validation_sob">कृपया चुनें – सांस लेने में दिक्कत</string>
-    <string name="cbac_validation_hif">कृपया चुनें – दौरे पड़ने का इतिहास</string>
+    <string name="cbac_validation_hif">कृपया चुनें – झटके पड़ने का इतिहास</string>
     <string name="cbac_validation_diom">कृपया चुनें – मुंह खोलने में दिक्कत</string>
     <string name="cbac_validation_upgm">कृपया चुनें – मुंह में छाला/धब्बा/गांठ</string>
     <string name="cbac_validation_tov">कृपया चुनें – आवाज में बदलाव</string>

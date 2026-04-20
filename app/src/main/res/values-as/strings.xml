@@ -944,4 +944,11 @@
     <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
     <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="str_delete_household">ঘৰুৱা মচি পেলাওক</string>
+    <string name="str_delete_beneficiary">হিতাধিকাৰীক মচি পেলাওক</string>
+    <string name="str_delete_household_msg">আপুনি নিশ্চিত নেকি যে আপুনি মচি পেলাব বিচাৰে?</string>
+    <string name="str_hof_cant_delete">আন সদস্য থাকিলে Head of Family ডিলিট কৰিব নোৱাৰিব।</string>
+    <string name="str_pls_allow_permissions">অনুগ্ৰহ কৰি প্ৰথমে অনুমতি দিয়ক</string>
+    <string name="str_delivery_outcome_err_msg">প্ৰসৱৰ ফলাফল জীৱিত আৰু মৃত জন্মৰ যোগফলৰ সমান হ’ব লাগে</string>
+    <string name="str_dose_one">Dose-1</string>
 </resources>

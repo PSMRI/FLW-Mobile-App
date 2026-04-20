@@ -433,7 +433,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_1_child_sex),
         arrayId = -1,
         isEnabled = false,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -494,7 +494,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_2_child_sex),
         arrayId = -1,
         isEnabled = false,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -552,7 +552,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_3_child_sex),
         arrayId = -1,
         isEnabled = false,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -610,7 +610,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_4_child_sex),
         arrayId = -1,
         isEnabled = false,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -668,7 +668,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_5_child_sex),
         isEnabled = false,
         arrayId = -1,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -726,7 +726,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_6_child_sex),
         isEnabled = false,
         arrayId = -1,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -784,7 +784,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_7_child_sex),
         arrayId = -1,
         isEnabled = false,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -842,7 +842,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_8_child_sex),
         isEnabled = false,
         arrayId = -1,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -900,7 +900,7 @@ class EligibleCoupleRegistrationDataset(
         title = resources.getString(R.string.ecrdset_9_child_sex),
         isEnabled = false,
         arrayId = -1,
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )
@@ -2282,57 +2282,57 @@ class EligibleCoupleRegistrationDataset(
                 maleChild = 0
                 femaleChild = 0
 
-                if (gender1.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender1.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender1.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender1.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender2.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender2.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender2.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender2.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender3.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender3.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender3.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender3.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender4.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender4.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender4.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender4.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender5.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender5.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender5.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender5.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender6.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender6.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender6.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender6.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender7.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender7.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender7.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender7.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender8.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender8.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender8.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender8.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 
-                if (gender9.value == resources.getStringArray(R.array.ecr_gender_array)[0]) {
+                if (gender9.value == resources.getStringArray(R.array.ecr_baby_gender_array)[0]) {
                     maleChild += 1
-                } else if (gender9.value == resources.getStringArray(R.array.ecr_gender_array)[1]) {
+                } else if (gender9.value == resources.getStringArray(R.array.ecr_baby_gender_array)[1]) {
                     femaleChild += 1
                 }
 

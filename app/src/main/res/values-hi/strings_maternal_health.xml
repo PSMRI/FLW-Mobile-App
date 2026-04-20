@@ -109,7 +109,7 @@
 
     <string-array name="select_high_risk_condition">
         <item>उच्च बीपी (सिस्टोलिक>=140 और/या डायस्टोलिक>=90mmHg)</item>
-        <item>दौरे</item>
+        <item>झटके</item>
         <item>योनि से रक्तस्राव</item>
         <item>बदबूदार डिस्चार्ज</item>
         <item>गंभीर रक्त की कमी (हीमोग्लोबिन 7 gm/dl से कम)</item>
@@ -177,11 +177,11 @@
     <string name="pmsma_lmp">अंतिम माहवारी (LMP) की तिथि</string>
     <string name="pmsma_last_mestrual_period">अंतिम माहवारी की तिथि</string>
     <string name="pmsma_expected_delivery_date">प्रसव की अपेक्षित तिथि</string>
-    <string name="pmsma_high_risk_factors">उच्च जोखिम के कारकों की पहचान</string>
-    <string name="pmsma_high_risk_symbols">उच्च जोखिम प्रतीकों की पहचान</string>
+    <string name="pmsma_high_risk_factors">खतरे के लक्षण के कारकों की पहचान</string>
+    <string name="pmsma_high_risk_symbols">खतरे के लक्षण प्रतीकों की पहचान</string>
     <string name="pmsma_high_risk_reason">हां, नीचे दिए गए कारण का चयन करें और लिखें</string>
-    <string name="pmsma_high_risk_pregnant">उच्च जोखिम श्रेणी में गर्भवती</string>
-    <string name="pmsma_high_risk_pregnancy_referred">उच्च जोखिम श्रेणी में गर्भवती को संदर्भित किया गया था</string>
+    <string name="pmsma_high_risk_pregnant">खतरे के लक्षण श्रेणी में गर्भवती</string>
+    <string name="pmsma_high_risk_pregnancy_referred">खतरे के लक्षण श्रेणी में गर्भवती को संदर्भित किया गया था</string>
     <string name="pmsma_advice">सलाह</string>
     <string name="pmsma_birth_complications_and_planning">प्रसव की तैयारी और कठिनाइयों, पोषण और परिवार नियोजन</string>
     <string name="pmsma_medical_officer_sign">अधिशासी चिकित्साधिकारी की हस्ताक्षर</string>
@@ -243,14 +243,14 @@
         <item>बाधित प्रसव</item>
         <item>प्रोलैप्स्ड कॉर्ड</item>
         <item>जुड़वा गर्भावस्था</item>
-        <item>दौरे</item>
+        <item>झटके</item>
         <item>मौत</item>
         <item>कोई अन्य (विशिष्ट करें)</item>
         <item>मालूम नहीं</item>
     </string-array>
     <string-array name="maternal_health_past_del_complications">
         <item>कोई नहीं</item>
-        <item>दौरे</item>
+        <item>झटके</item>
         <item>एपीएच (गर्भावस्था के दौरान रक्तस्राव)</item>
         <item>गर्भावस्था जनित उच्च रक्तचाप (पीआईएच)</item>
         <item>बार-बार गर्भपात</item>
@@ -357,7 +357,7 @@
     <string name="ir_baby_cried_at_birth">शिशु प्रसव के समय तुरंत रोता था</string>
     <string name="ir_resuscitation">यदि नहीं, तो क्या पुनर्जीवन (रेससिटेशन) किया गया?</string>
     <string name="ir_referred">उच्च सुविधा के लिए और प्रबंधन के लिए संदर्भित किया गया?</string>
-    <string name="ir_had_birth_defect">प्रसव के समय क्या कोई जन्म दोष दिखा?</string>
+    <string name="ir_had_birth_defect">प्रसव के समय क्या कोई जन्मजात विकृति दिखा?</string>
     <string name="ir_birth_defect">प्रसव के समय दोष दिखा</string>
     <string name="ir_other_defect">प्रसव के समय अन्य दोष दिखा</string>
     <string name="ir_weight">जन्म पर वजन (किलोग्राम में)</string>
@@ -411,7 +411,7 @@
     <string name="pmsma_form">पीएमएसएमए (PMSMA) फॉर्म</string>
     <string name="general_op">सामान्य बाह्य रोगी</string>
     <string name="saving_pmsma_to_database_failed">पीएमएसएमए (PMSMA) डेटा सेव करने में विफल</string>
-    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">उच्च जोखिम गर्भावस्था – नजदीकी एचडब्ल्यूसी जाएं या 104 पर कॉल करें</string>
+    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">खतरे के लक्षण गर्भावस्था – नजदीकी एचडब्ल्यूसी जाएं या 104 पर कॉल करें</string>
 
     <string name="str_anc_period">एएनसी अवधि</string>
     <string name="str_abortion_if_any">गर्भपात, यदि कोई हो</string>
@@ -431,12 +431,12 @@
     <string name="str_date_of_tt_booster_dose">टीडी/टीटी (बूस्टर खुराक) की तिथि</string>
     <string name="str_no_of_acid_tab">दी गई फोलिक एसिड गोलियों की संख्या</string>
     <string name="str_no_of_ifa_tab">दी गई आईएफए गोलियों की संख्या</string>
-    <string name="str_any_high_risk_cond">कोई उच्च जोखिम वाली स्थितियाँ</string>
-    <string name="str_high_risk_cond">उच्च जोखिम वाली स्थितियाँ</string>
-    <string name="str_any_other_high_risk_cond">कोई अन्य उच्च जोखिम वाली स्थितियाँ</string>
+    <string name="str_any_high_risk_cond">कोई खतरे के लक्षण वाली स्थितियाँ</string>
+    <string name="str_high_risk_cond">खतरे के लक्षण वाली स्थितियाँ</string>
+    <string name="str_any_other_high_risk_cond">कोई अन्य खतरे के लक्षण वाली स्थितियाँ</string>
     <string name="str_referral_facility">रेफरल सुविधा / संदर्भित स्वास्थ्य केंद्र</string>
-    <string name="str_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
-    <string name="str_identified_as_hrp">एचआरपी (उच्च जोखिम वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
+    <string name="str_hrp_confirmed">क्या खतरे के लक्षण गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
+    <string name="str_identified_as_hrp">एचआरपी (खतरे के लक्षण वाली गर्भावस्था) के रूप में पहचानने वाला व्यक्ति</string>
     <string name="str_maternal_death">मातृ मृत्यु</string>
     <string name="str_cause_of_death">मृत्यु का संभावित कारण</string>
     <string name="str_other_cause_of_death">मृत्यु का अन्य कारण</string>
@@ -458,5 +458,6 @@
     <string name="fill_required_fields">कृपया सभी आवश्यक फ़ील्ड सही से भरें</string>
     <string name="danger_signs_identified">खतरे के संकेत पहचाने गए!</string>
     <string name="is_pw_currently_alive">क्या गर्भवती महिला जीवित है?</string>
+    <string name="str_suspected_high_risk_pregnancy">संभावित खतरे के लक्षण गर्भावस्था</string>
 
 </resources>
