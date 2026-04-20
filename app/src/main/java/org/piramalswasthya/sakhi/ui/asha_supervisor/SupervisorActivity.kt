@@ -194,7 +194,7 @@ class SupervisorActivity : AppCompatActivity() {
         )
 
 
-        if (isDeviceRootedOrEmulator()) {
+        if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
                 .setMessage("This app cannot run on rooted devices or emulators.")
@@ -330,7 +330,7 @@ class SupervisorActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         window.decorView.alpha = 1f
-        if (isDeviceRootedOrEmulator()) {
+        if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
                 .setMessage("This app cannot run on rooted devices or emulators.")
