@@ -941,6 +941,13 @@ object HelperUtil {
     fun String.toRequestBody(): RequestBody =
         this.toRequestBody("text/plain".toMediaType())
 
+    fun showImageLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.image_uploaded), Toast.LENGTH_SHORT).show()
+    }
+
+    fun showFileLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.file_uploaded), Toast.LENGTH_SHORT).show()
+    }
 
 
 }

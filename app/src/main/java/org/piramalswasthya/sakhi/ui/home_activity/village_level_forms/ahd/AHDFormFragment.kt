@@ -26,6 +26,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import timber.log.Timber
 import java.io.File
 
@@ -211,7 +212,7 @@ class AHDFormFragment : Fragment() {
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                         }
 
-
+                        showImageLoadedMessage(requireContext())
                         if (updatedIndex != -1) {
                             binding.form.rvInputForm.adapter?.notifyItemChanged(updatedIndex)
                         }
@@ -264,7 +265,7 @@ class AHDFormFragment : Fragment() {
 
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                         }
-
+                        showImageLoadedMessage(requireContext())
 
                         if (updatedIndex != -1) {
                             binding.form.rvInputForm.adapter?.notifyItemChanged(updatedIndex)
