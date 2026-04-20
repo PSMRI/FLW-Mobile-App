@@ -696,6 +696,11 @@
         <item name="nbr_gender_2">Female</item>
     </string-array>
 
+    <string-array name="ecr_baby_gender_array">
+        <item name="nbr_gender_1">Male</item>
+        <item name="nbr_gender_2">Female</item>
+    </string-array>
+
     <string name="str_subcenter_name">Subcenter name</string>
     <string name="str_subcenter">Sub-center</string>
     <string name="str_primary_health_center_name">Primary Health Center Name </string>
@@ -1402,6 +1407,16 @@
     <string name="mobile_number_of_anm1">Mobile Number of ANM1</string>
     <string name="name_of_anm2">Name of ANM2</string>
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
+    <string name="str_delete_household">Delete Household</string>
+    <string name="str_delete_beneficiary">Delete Beneficiary</string>
+    <string name="str_dose_one">Dose-1</string>
+    <string name="str_dose">Dose</string>
+    <string name="str_no_more_dose">No More Doses</string>
+
+    <string name="str_delete_household_msg">Are you sure you want to delete</string>
+    <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
+    <string name="str_pls_allow_permissions">Please allow permissions first</string>
+    <string name="str_delivery_outcome_err_msg">Outcome of Delivery should be equal to sum of Live and Still births</string>
 
 </resources>
 

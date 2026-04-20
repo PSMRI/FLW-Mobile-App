@@ -375,6 +375,11 @@
         <item>पूर्ण</item>
     </string-array>
 
+    <string-array name="beneficiary_status">
+        <item>जीवित</item>
+        <item>मृत्यु</item>
+    </string-array>
+
     <string-array name="temp_mobile_no_relation_array">
         <item>परिवार के मुखिया</item>
         <item>स्वयं</item>

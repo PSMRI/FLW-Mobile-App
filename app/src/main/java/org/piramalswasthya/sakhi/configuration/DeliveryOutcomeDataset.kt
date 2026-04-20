@@ -490,8 +490,7 @@ open class DeliveryOutcomeDataset(
             !deliveryOutcome.value.isNullOrEmpty() && formElement.errorText.isNullOrEmpty()
         ) {
             if (deliveryOutcome.value!!.toInt() != liveBirth.value!!.toInt() + stillBirth.value!!.toInt()) {
-                formElement.errorText =
-                    "Outcome of Delivery should be equal to sum of Live and Still births"
+                formElement.errorText = resources.getString(R.string.str_delivery_outcome_err_msg)
             }else{
                 deliveryOutcome.errorText = null
                 liveBirth.errorText = null

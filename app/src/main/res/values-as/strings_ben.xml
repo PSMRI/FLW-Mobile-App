@@ -131,6 +131,11 @@
         <item>বন্ধু/আত্মীয়</item>
     </string-array>
 
+    <string-array name="beneficiary_status">
+        <item>জীৱন্ত</item>
+        <item>মৃত্যু</item>
+    </string-array>
+
     <string-array name="nbr_relationship_to_head">
         <item>মাতৃ</item>
         <item>পিতৃ</item>
