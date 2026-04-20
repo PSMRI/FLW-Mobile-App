@@ -102,7 +102,7 @@
     <string name="any_high_risk_conditions">कोई उच्च जोखिम की स्थिति</string>
     <string name="is_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
     <string name="who_identified_hrp">एचआरपी के रूप में किसने पहचाना?</string>
-    <string name="probable_cause_of_death">मृत्यु का संभावित कारण</string>
+    <string name="probable_cause_of_death">मृत्यु का कारण</string>
     <string name="other_death_cause">मृत्यु का अन्य कारण</string>
     <string name="has_pw_delivered">क्या गर्भवती महिला ने प्रसव कर लिया है?</string>
     <string name="mcp_cards">MCP कार्ड</string>

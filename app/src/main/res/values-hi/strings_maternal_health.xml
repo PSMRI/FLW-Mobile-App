@@ -68,7 +68,7 @@
         <item>उच्च बुखार</item>
         <item>गर्भपात</item>
         <item>दुर्घटना</item>
-        <item>अन्य</item>
+        <item>मातृ मृत्यु</item>
     </string-array>
     <string-array name="anc_termination_done_by">
         <item>डॉक्टर</item>

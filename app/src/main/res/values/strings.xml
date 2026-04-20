@@ -559,7 +559,7 @@
     <string name="any_high_risk_conditions">Any High Risk conditions</string>
     <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
     <string name="who_identified_hrp">Who had identified as HRP?</string>
-    <string name="probable_cause_of_death">Probable Cause of Death</string>
+    <string name="probable_cause_of_death">Reason for Death</string>
     <string name="other_death_cause">Other Death Cause</string>
     <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
     <string name="mcp_cards">MCP Cards</string>
