@@ -10,6 +10,7 @@
     <string name="reproductive_status">Status Of Women</string>
     <string name="birth_certificate_number">Birth Certificate No.</string>
     <string name="beneficiary_details">Beneficiary Details</string>
+    <string name="str_beneficiary_status">Beneficiary Status</string>
     <string name="wife_s_name">Wife\'s Name</string>
     <string name="spouse_s_name">Spouse\'s Name</string>
     <string name="age_at_marriage">Age At Marriage</string>

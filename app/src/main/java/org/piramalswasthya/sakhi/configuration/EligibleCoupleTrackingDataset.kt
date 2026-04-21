@@ -147,7 +147,7 @@ class EligibleCoupleTrackingDataset(
     private val antraDoses = FormElement(
         id = 11,
         inputType = InputType.DROPDOWN,
-        title = "Antra injection",
+        title = resources.getString(R.string.antra_injection),
         arrayId = R.array.antra_doses,
         entries = resources.getStringArray(R.array.antra_doses),
         required = true,
@@ -878,21 +878,22 @@ class EligibleCoupleTrackingDataset(
     private fun getNextDose(lastDose: String?, lastDate: String?, visitDate: String): String {
 
         if (lastDose == null || lastDate == null) {
-            return "Dose-1"
+            return resources.getString(R.string.str_dose_one)
         }
 
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
-        val last = sdf.parse(lastDate) ?: return "Dose-1"
-        val visit = sdf.parse(visitDate) ?: return "Dose-1"
+        val last = sdf.parse(lastDate) ?:   return resources.getString(R.string.str_dose_one)
+        val visit = sdf.parse(visitDate) ?:  return resources.getString(R.string.str_dose_one)
 
         val diffDays = ((visit.time - last.time) / (1000 * 60 * 60 * 24))
         if (diffDays > 120) {
-            return "Dose-1"
+            return resources.getString(R.string.str_dose_one)
         }
         val doseNum = lastDose.filter { it.isDigit() }.toIntOrNull() ?: 0
         val next = doseNum + 1
-        return if (next in 1..10) "Dose-$next" else "No More Doses"
+        return if (next in 1..10) "${resources.getString(R.string.str_dose)}-$next" else resources.getString(R.string.str_no_more_dose)
+
     }
 
 }

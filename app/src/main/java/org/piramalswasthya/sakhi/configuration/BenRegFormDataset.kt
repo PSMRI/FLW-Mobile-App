@@ -1696,7 +1696,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val beneficiaryStatus = FormElement(
         id = 50,
         inputType = RADIO,
-        title = context.getString(R.string.beneficiary_status),
+        title = resources.getString(R.string.str_beneficiary_status),
         arrayId = R.array.beneficiary_status,
         entries = resources.getStringArray(R.array.beneficiary_status),
         required = false,

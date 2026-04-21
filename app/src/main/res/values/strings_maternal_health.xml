@@ -194,7 +194,7 @@
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
         <item>Accident</item>
-        <item>OTHER</item>
+        <item>Maternal Death</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>Yes</item>
@@ -521,5 +521,6 @@
     <string name="invalid_visit_date_format">Invalid visit date format</string>
     <string name="fill_required_fields">Please fill all required fields correctly</string>
     <string name="danger_signs_identified">Danger Signs Identified!</string>
+    <string name="str_suspected_high_risk_pregnancy">Suspected high-risk pregnancy</string>
 
 </resources>

@@ -14,6 +14,63 @@ enum class ChildImmunizationCategory {
     BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12, MONTH_16_24, YEAR_5_6, YEAR_10, YEAR_16, CATCH_UP
 }
 
+enum class VaccineType {
+    BCG,
+    HEPB_BIRTH,
+    OPV_0,
+    PENTA_1, OPV_1, RVV_1, FIPV_1,
+    PENTA_2, OPV_2, RVV_2,
+    PENTA_3, OPV_3, RVV_3, FIPV_2,
+    MR_1, JE_1, VIT_A_1,
+    DPT_BOOSTER_1, MR_2, JE_2, OPV_BOOSTER, VIT_A_2,
+    DPT_BOOSTER_2,
+    TD,
+    VIT_K,
+    VIT_A_3, VIT_A_4, VIT_A_5, VIT_A_6, VIT_A_7, VIT_A_8,
+    PCV_1, PCV_2, PCV_BOOSTER,
+    UNKNOWN
+}
+
+fun String.toVaccineType(): VaccineType {
+    return when (this.trim()) {
+        "BCG Vaccine" -> VaccineType.BCG
+        "Hepatitis-B Vaccine (HBV)-Birth" -> VaccineType.HEPB_BIRTH
+        "Oral Polio Vaccine (OPV)-0" -> VaccineType.OPV_0
+        "Pentavalent-1" -> VaccineType.PENTA_1
+        "OPV-1" -> VaccineType.OPV_1
+        "Rotavirus Vaccine (RVV)-1" -> VaccineType.RVV_1
+        "fractional Dose of IPV (fIPV)-1" -> VaccineType.FIPV_1
+        "Pentavalent-2" -> VaccineType.PENTA_2
+        "OPV-2" -> VaccineType.OPV_2
+        "Rotavirus Vaccine (RVV)-2" -> VaccineType.RVV_2
+        "Pentavalent-3" -> VaccineType.PENTA_3
+        "OPV-3" -> VaccineType.OPV_3
+        "Rotavirus Vaccine (RVV)-3" -> VaccineType.RVV_3
+        "fractional Dose of IPV (fIPV)-2" -> VaccineType.FIPV_2
+        "Measles & Rubella (MR)-1" -> VaccineType.MR_1
+        "JE-1" -> VaccineType.JE_1
+        "Oral Vitamin A (1st Dose)" -> VaccineType.VIT_A_1
+        "DPT Booster-1" -> VaccineType.DPT_BOOSTER_1
+        "Measles & Rubella (MR)-2" -> VaccineType.MR_2
+        "JE-2" -> VaccineType.JE_2
+        "OPV Booster" -> VaccineType.OPV_BOOSTER
+        "Oral Vitamin A (2nd Dose)" -> VaccineType.VIT_A_2
+        "DPT Booster-2" -> VaccineType.DPT_BOOSTER_2
+        "Tetanus & adult Diphtheria (Td)" -> VaccineType.TD
+        "Vitamin K" -> VaccineType.VIT_K
+        "Oral Vitamin A (3rd Dose)" -> VaccineType.VIT_A_3
+        "Oral Vitamin A (4th Dose)" -> VaccineType.VIT_A_4
+        "Oral Vitamin A (5th Dose)" -> VaccineType.VIT_A_5
+        "Oral Vitamin A (6th Dose)" -> VaccineType.VIT_A_6
+        "Oral Vitamin A (7th Dose)" -> VaccineType.VIT_A_7
+        "Oral Vitamin A (8th Dose)" -> VaccineType.VIT_A_8
+        "PCV-1" -> VaccineType.PCV_1
+        "PCV-2" -> VaccineType.PCV_2
+        "PCV-Booster" -> VaccineType.PCV_BOOSTER
+        else -> VaccineType.UNKNOWN
+    }
+}
+
 enum class ImmunizationCategory {
     CHILD,
     MOTHER
