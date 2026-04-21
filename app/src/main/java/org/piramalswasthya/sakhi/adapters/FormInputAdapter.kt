@@ -1045,7 +1045,10 @@ class FormInputAdapter(
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 
-            binding.etNumberInput.setText(minValue.toString())
+            if (item.value.isNullOrEmpty()) {
+                item.value = minValue.toString()
+            }
+            binding.etNumberInput.setText(item.value)
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             var currentValue = item.value?.toIntOrNull() ?: minValue
 
