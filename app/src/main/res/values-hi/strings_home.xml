@@ -132,5 +132,7 @@
     <string name="com_feeding_title">अनुपूरक आहार</string>
     <string name="imp_brestfeeding_title">स्तनपान का महत्व</string>
     <string name="cluster_review">क्लस्टर बैठकें</string>
+    <string name="image_uploaded">छवि सफलतापूर्वक अपलोड की गई</string>
+    <string name="file_uploaded">फ़ाइल सफलतापूर्वक अपलोड की गई</string>
 
 </resources>

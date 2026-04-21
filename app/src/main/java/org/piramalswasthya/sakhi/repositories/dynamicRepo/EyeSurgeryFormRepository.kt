@@ -126,6 +126,7 @@ class EyeSurgeryFormRepository @Inject constructor(
                     val visitMonth = toMonthKey(visitDate)
                     val benId = item.beneficiaryId
                     val hhId = item.houseHoldId
+                    val eyeSide = item.eyeSide
 
                     val fieldsJson = JSONObject()
                     item.fields.entrySet().forEach { (key, jsonElement) ->
@@ -158,6 +159,7 @@ class EyeSurgeryFormRepository @Inject constructor(
                         hhId = hhId,
                         visitDate = visitDate,
                         visitMonth = visitMonth,
+                        eyeSide = eyeSide,
                         formId = formId,
                         version = 1,
                         formDataJson = fullJson.toString(),

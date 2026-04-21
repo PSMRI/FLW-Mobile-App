@@ -1196,5 +1196,6 @@
     <string name="str_dose_one">खुराक-1</string>
     <string name="str_dose">खुराक</string>
 
+    <string name="location_type">लोकेशन प्रकार</string>
 
 </resources>

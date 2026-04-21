@@ -820,6 +820,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(System.currentTimeMillis())
 
             noOfChildren.value = childList.size.toString()
+            noOfChildren.min = childList.size.toLong()
 
             elderChildrenCount.value = elderChildCount.coerceAtMost(5).toString()
 

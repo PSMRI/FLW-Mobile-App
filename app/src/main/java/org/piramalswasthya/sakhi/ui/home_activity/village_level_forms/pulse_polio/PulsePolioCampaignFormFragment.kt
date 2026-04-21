@@ -29,6 +29,8 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.showPickerDialog
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import com.google.gson.Gson
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 
 @AndroidEntryPoint
@@ -94,6 +96,9 @@ class PulsePolioCampaignFormFragment : Fragment() {
         }
         adapter.updateFields(viewModel.getVisibleFields())
         adapter.notifyDataSetChanged()
+        showImageLoadedMessage(requireContext())
+
+
     }
 
     private fun handleImageSelection(uri: Uri) {
@@ -131,6 +136,9 @@ class PulsePolioCampaignFormFragment : Fragment() {
         }
         adapter.updateFields(viewModel.getVisibleFields())
         adapter.notifyDataSetChanged()
+        showFileLoadedMessage(requireContext())
+
+
     }
 
     private fun showImagePickerDialog() {

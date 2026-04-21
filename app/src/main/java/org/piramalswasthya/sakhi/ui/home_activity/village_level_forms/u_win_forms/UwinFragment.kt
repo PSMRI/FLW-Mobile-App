@@ -22,7 +22,9 @@ import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.createTempImageUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.hasUploadedFile
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import org.piramalswasthya.sakhi.utils.HelperUtil.showMediaOptionsDialog
 import org.piramalswasthya.sakhi.utils.HelperUtil.showToast
 import org.piramalswasthya.sakhi.utils.HelperUtil.showUploadReminderDialog
@@ -169,6 +171,15 @@ class UwinFragment : Fragment() {
         uwinSummary[formId] = uri
         viewModel.setImageUriToFormElement(uri)
         binding.form.rvInputForm.adapter?.notifyDataSetChanged()
+        val mimeType = requireContext().contentResolver.getType(uri)
+
+        if (mimeType!!.contains("/pdf")) {
+            showFileLoadedMessage(requireContext())
+
+        } else {
+            showImageLoadedMessage(requireContext())
+
+        }
     }
     private fun handleViewDocument(formId: Int) {
         if (uwinId != 0) {

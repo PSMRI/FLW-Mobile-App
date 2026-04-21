@@ -986,4 +986,6 @@
     <string name="vac_pcv_1">পিচিভি-1</string>
     <string name="vac_pcv_2">পিচিভি-2</string>
     <string name="vac_pcv_booster">পিচিভি বুস্টাৰ</string>
+    <string name="location_type">অৱস্থানৰ ধৰণ</string>
+
 </resources>
