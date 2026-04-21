@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import timber.log.Timber
 import java.io.File
 
@@ -174,7 +175,7 @@ class DewormingFormFragment : Fragment() {
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
                         }
 
-
+                        showImageLoadedMessage(requireContext())
                         if (updatedIndex != -1) {
                             binding.form.rvInputForm.adapter?.notifyItemChanged(updatedIndex)
                         }
@@ -225,7 +226,7 @@ class DewormingFormFragment : Fragment() {
 
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
                         }
-
+                        showImageLoadedMessage(requireContext())
 
                         if (updatedIndex!=-1) {
                             binding.form.rvInputForm.adapter?.notifyItemChanged(updatedIndex)

@@ -130,5 +130,7 @@
     <string name="com_feeding_title">পৰিপূৰক আহাৰ</string>
     <string name="imp_brestfeeding_title">স্তন্যপানৰ গুৰুত্ব</string>
     <string name="cluster_review">ক্লাষ্টাৰ সভা</string>
+    <string name="image_uploaded">ছবি সফলভাৱে আপলোড কৰা হৈছে</string>
+    <string name="file_uploaded">ফাইল সফলভাৱে আপলোড কৰা হৈছে</string>
 
 </resources>

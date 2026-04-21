@@ -944,4 +944,6 @@
     <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
     <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="location_type">অৱস্থানৰ ধৰণ</string>
+
 </resources>

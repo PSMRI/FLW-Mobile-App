@@ -33,6 +33,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import timber.log.Timber
 import java.io.File
 
@@ -47,7 +48,7 @@ class VHNDFormFragement:Fragment() {
     private val binding: FragmentNewFormBinding
         get() = _binding!!
     private var latestTmpUri: Uri? = null
-    private var imgValue=0
+    private var imgValue = 0
     private val viewModel: VHNDViewModel by viewModels()
 
     override fun onCreateView(
@@ -194,6 +195,7 @@ class VHNDFormFragement:Fragment() {
                         binding.form.rvInputForm.apply {
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                         }
+                        showImageLoadedMessage(requireContext())
                     }
                     else{
                         Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
@@ -246,6 +248,7 @@ class VHNDFormFragement:Fragment() {
                     binding.form.rvInputForm.apply {
                         (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                     }
+                    showImageLoadedMessage(requireContext())
                 }
                 else{
                     Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()

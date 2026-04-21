@@ -76,6 +76,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
@@ -1255,7 +1256,9 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty() && item.value != "default") View.VISIBLE else View.GONE
+
+            Log.e("ItemValue",item.value.toString())
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE

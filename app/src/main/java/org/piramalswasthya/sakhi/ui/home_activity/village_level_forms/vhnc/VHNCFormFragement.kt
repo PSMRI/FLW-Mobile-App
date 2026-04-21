@@ -31,6 +31,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import timber.log.Timber
 import java.io.File
 
@@ -45,7 +46,7 @@ class VHNCFormFragement:Fragment() {
     private val binding: FragmentNewFormBinding
         get() = _binding!!
     private var latestTmpUri: Uri? = null
-    private var imgValue=0
+    private var imgValue = 0
     private val viewModel: VHNCViewModel by viewModels()
 
     override fun onCreateView(
@@ -67,13 +68,13 @@ class VHNCFormFragement:Fragment() {
                 },
                 imageClickListener = FormInputAdapter.ImageClickListener{
 
-                    imgValue=it
+                    imgValue = it
                     showImagePickerDialog()
 //                    Toast.makeText(context,"Image$it",Toast.LENGTH_LONG).show()
 
                 },
                 selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
-                    imgValue=it
+                    imgValue = it
                     showImagePickerDialog()
                 },
                 viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
@@ -191,6 +192,7 @@ class VHNCFormFragement:Fragment() {
                         binding.form.rvInputForm.apply {
                             (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                         }
+                        showImageLoadedMessage(requireContext())
                     }
                     else{
                         Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
@@ -232,6 +234,7 @@ class VHNCFormFragement:Fragment() {
                     binding.form.rvInputForm.apply {
                         (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
                     }
+                    showImageLoadedMessage(requireContext())
                 }
                 else{
                     Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
