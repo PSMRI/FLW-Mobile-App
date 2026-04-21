@@ -37,7 +37,6 @@
     <string name="m_test_type">Malaria Test Type</string>
     <string name="place_of_Death">Place of Death</string>
     <string name="reason_of_Death">Reason for Death</string>
-    <string name="beneficiary_status">Beneficiary Status</string>
     <string name="aes_case_status">AES / JE  Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
@@ -324,6 +323,47 @@
     <string name="imm_cat_10_years">10 YEARS</string>
     <string name="imm_cat_16_years">16 YEARS</string>
     <string name="imm_cat_catch_up">Catch Up</string>
+
+
+
+    <string name="vac_bcg">BCG Vaccine</string>
+    <string name="vac_hepb_birth">Hepatitis-B Vaccine (HBV)-Birth</string>
+    <string name="vac_opv_0">Oral Polio Vaccine (OPV)-0</string>
+    <string name="vac_penta_1">Pentavalent-1</string>
+    <string name="vac_opv_1">OPV-1</string>
+    <string name="vac_rvv_1">Rotavirus Vaccine (RVV)-1</string>
+    <string name="vac_fipv_1">fractional Dose of IPV (fIPV)-1</string>
+    <string name="vac_penta_2">Pentavalent-2</string>
+    <string name="vac_opv_2">OPV-2</string>
+    <string name="vac_rvv_2">Rotavirus Vaccine (RVV)-2</string>
+    <string name="vac_penta_3">Pentavalent-3</string>
+    <string name="vac_opv_3">OPV-3</string>
+    <string name="vac_rvv_3">Rotavirus Vaccine (RVV)-3</string>
+    <string name="vac_fipv_2">fractional Dose of IPV (fIPV)-2</string>
+    <string name="vac_mr_1">Measles &amp; Rubella (MR)-1</string>
+    <string name="vac_je_1">JE-1</string>
+    <string name="vac_vit_a_1">Oral Vitamin A (1st Dose)</string>
+    <string name="vac_dpt_booster_1">DPT Booster-1</string>
+    <string name="vac_mr_2">Measles &amp; Rubella (MR)-2</string>
+    <string name="vac_je_2">JE-2</string>
+    <string name="vac_opv_booster">OPV Booster</string>
+    <string name="vac_vit_a_2">Oral Vitamin A (2nd Dose)</string>
+    <string name="vac_dpt_booster_2">DPT Booster-2</string>
+    <string name="vac_td_1">Tetanus &amp; adult Diphtheria (Td)</string>
+    <string name="vac_td_2">Tetanus &amp; adult Diphtheria (Td)</string>
+    <string name="vac_vit_k">Vitamin K</string>
+    <string name="vac_vit_a_3">Oral Vitamin A (3rd Dose)</string>
+    <string name="vac_vit_a_4">Oral Vitamin A (4th Dose)</string>
+    <string name="vac_vit_a_5">Oral Vitamin A (5th Dose)</string>
+    <string name="vac_vit_a_6">Oral Vitamin A (6th Dose)</string>
+    <string name="vac_vit_a_7">Oral Vitamin A (7th Dose)</string>
+    <string name="vac_vit_a_8">Oral Vitamin A (8th Dose)</string>
+    <string name="vac_pcv_1">PCV-1</string>
+    <string name="vac_pcv_2">PCV-2</string>
+    <string name="vac_pcv_booster">PCV-Booster</string>
+    <string name="unknown">unknown</string>
+
+
     <string name="children">Children</string>
     <string name="mother">Mother</string>
     <string name="patient_information">Patient Information</string>
