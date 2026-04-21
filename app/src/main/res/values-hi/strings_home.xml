@@ -17,7 +17,7 @@
 
     <string name="icon_title_household">सभी घरेलू सूची</string>
     <string name="icon_title_ben">सभी लाभार्थियों की सूची</string>
-    <string name="icon_title_ec">पात्र युगल सूची</string>
+    <string name="icon_title_ec">लक्ष दंपति सूची</string>
     <string name="icon_title_mc">माता की देखभाल</string>
     <string name="icon_title_cc">बच्चे की देखभाल</string>
     <string name="icon_title_ncd">गैर संक्रामक रोग</string>
@@ -34,7 +34,7 @@
     <string name="children_under_five_years">5 वर्ष से कम उम्र के बच्चे</string>
     <!--    <string name="icon_title_pmc">गर्भावस्था सूची</string>-->
     <string name="icon_title_dmc">प्रसव अवस्था सूची</string>
-    <string name="icon_title_pncmc">प्रसवोत्तर माँ की सूची</string>
+    <string name="icon_title_pncmc">शिशु माता की सूची</string>
     <string name="icon_title_rmc">प्रजनन आयु सूची</string>
 
     <string name="icon_title_ncd_list">गैर संक्रामक रोग सूची</string>
@@ -76,12 +76,12 @@
     <string name="icon_title_ect">लक्ष दंपत्ति ट्रैकिंग</string>
     <string name="icon_title_video_tutorial">वीडियो ट्यूटोरियल</string>
     <string name="icon_title_ncd_tb_screening">टीबी जांच</string>
-    <string name="icon_title_ncd_tb_suspected">संदेहास्पद टीबी मामले</string>
-    <string name="icon_title_hrp_pregnant">उच्च जोखिम\ गर्भवती महिलाएं</string>
-    <string name="icon_title_hrp_non_pregnant">उच्च जोखिम\ गैर-गर्भवती महिलाएं</string>
-    <string name="icon_title_hrp_pregnant_assess">गर्भवती महिलाओं में उच्च जोखिम का आकलन</string>
+    <string name="icon_title_ncd_tb_suspected">संदिग्ध टीबी केस</string>
+    <string name="icon_title_hrp_pregnant">खतरे के लक्षण\ गर्भवती महिलाएं</string>
+    <string name="icon_title_hrp_non_pregnant">खतरे के लक्षण\ गैर-गर्भवती महिलाएं</string>
+    <string name="icon_title_hrp_pregnant_assess">गर्भवती महिलाओं में खतरे के लक्षण का आकलन</string>
     <string name="icon_title_hrp_pregnant_track">गर्भवती महिलाओं का अनुवर्ती कार्रवाई</string>
-    <string name="icon_title_hrp_non_pregnant_assess">गैर-गर्भवती महिलाओं में उच्च जोखिम का आकलन</string>
+    <string name="icon_title_hrp_non_pregnant_assess">गैर-गर्भवती महिलाओं में खतरे के लक्षण का आकलन</string>
     <string name="icon_title_hrp_non_pregnant_track">गैर-गर्भवती महिलाओं का अनुवर्ती कार्रवाई</string>
     <string name="icon_title_sr">सर्वेक्षण रजिस्टर</string>
     <string name="icon_title_ahd_list">एएचडी फॉर्म सूची</string>

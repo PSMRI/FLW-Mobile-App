@@ -383,6 +383,14 @@
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
                                     val value = normalized.toFloatOrNull()
                                     field.value = value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     onValueChanged(field, s.toString())
 
                                 }
@@ -514,6 +522,14 @@
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
                                     val value = normalized.toFloatOrNull()
                                     field.value = value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                         muacDebounceJob?.cancel()
                                         muacDebounceJob = viewHolderScope.launch {
@@ -595,6 +611,14 @@
                                     val selected = options[which]
                                     editText.setText(selected.label)
                                     field.value = selected.value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     onValueChanged(field, selected.value)
                                 }
                                 builder.show()
@@ -791,6 +815,11 @@
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
                                         onValueChanged(field, dateStr)
 
                                         if (field.fieldId == "ifa_provision_date") {

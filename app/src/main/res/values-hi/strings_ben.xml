@@ -11,6 +11,7 @@
     <string name="reproductive_status">जननांग स्थिति</string>
     <string name="birth_certificate_number">जन्म प्रमाण पत्र संख्या.</string>
     <string name="beneficiary_details">लाभार्थी विवरण</string>
+    <string name="str_beneficiary_status">लाभार्थी की स्थिति</string>
     <string name="wife_s_name">पत्नी का नाम</string>
     <string name="spouse_s_name">पति / पत्नी का नाम</string>
     <string name="age_at_marriage">विवाह की आयु</string>
@@ -206,6 +207,16 @@
         <item>अप्रकटित</item>
     </string-array>
 
+    <string-array name="death_reason_array">
+        <item>मातृ मृत्यु</item>
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु के काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+    </string-array>
+
     <string-array name="death_place_array">
         <item>घर</item>
         <item>उप-केंद्र</item>
@@ -373,6 +384,11 @@
     <string-array name="ahd_referral_status_array">
         <item>लंबित</item>
         <item>पूर्ण</item>
+    </string-array>
+
+    <string-array name="beneficiary_status">
+        <item>जीवित</item>
+        <item>मृत्यु</item>
     </string-array>
 
     <string-array name="temp_mobile_no_relation_array">

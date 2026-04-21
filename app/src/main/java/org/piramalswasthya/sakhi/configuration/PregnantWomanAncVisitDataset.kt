@@ -368,7 +368,6 @@ class PregnantWomanAncVisitDataset(
         arrayId = R.array.anc_death_cause_array,
         entries = resources.getStringArray(R.array.anc_death_cause_array),
         required = true,
-        hasDependants = true,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
         iconDrawableRes = R.drawable.ic_bmi,
@@ -639,12 +638,6 @@ class PregnantWomanAncVisitDataset(
                             list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
                         }
                     }
-                    otherMaternalDeathProbableCause.value =
-                        savedAnc.otherMaternalDeathProbableCause
-                    if (maternalDeathProbableCause.value == maternalDeathProbableCause.entries!!.last()) list.add(
-                        list.indexOf(maternalDeathProbableCause) + 1,
-                        otherMaternalDeathProbableCause
-                    )
                 }
             }
             deliveryDone.value =
@@ -991,18 +984,6 @@ class PregnantWomanAncVisitDataset(
                 }
             }
 
-
-            maternalDeathProbableCause.id -> triggerDependants(
-                source = maternalDeathProbableCause,
-                passedIndex = index,
-                triggerIndex = maternalDeathProbableCause.entries!!.lastIndex,
-                target = otherMaternalDeathProbableCause,
-            )
-
-            otherMaternalDeathProbableCause.id -> {
-                validateEmptyOnEditText(otherMaternalDeathProbableCause)
-                validateAllAlphabetsSpaceOnEditText(otherMaternalDeathProbableCause)
-            }
 
             else -> -1
         }

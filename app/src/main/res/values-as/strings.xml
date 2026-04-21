@@ -285,7 +285,7 @@
     <string name="any_high_risk_conditions">Any High Risk conditions</string>
     <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
     <string name="who_identified_hrp">Who had identified as HRP?</string>
-    <string name="probable_cause_of_death">Probable Cause of Death</string>
+    <string name="probable_cause_of_death">মৃত্যুৰ কাৰণ</string>
     <string name="other_death_cause">Other Death Cause</string>
     <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
     <string name="mcp_cards">MCP Cards</string>
@@ -654,7 +654,6 @@
     <string name="m_test_type">মেলেৰিয়া পৰীক্ষাৰ প্ৰকাৰ</string>
     <string name="place_of_Death">মৃত্যুৰ স্থান</string>
     <string name="reason_of_Death">মৃত্যুৰ কাৰণ</string>
-    <string name="beneficiary_status">হিতাধিকাৰীৰ স্থিতি</string>
     <string name="aes_case_status">AES / JE কেছ স্থিতি</string>
     <string name="refer_to">ৰেফাৰ কৰা হৈছে</string>
     <string name="day_wise_tracking_pf">Pf - দৈনিক ট্ৰেকিং</string>
@@ -906,7 +905,7 @@
     <string name="claim">Claim</string>
     <string name="cataract_surgery">Cataract Surgery</string>
     <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
-    <string name="due_date_label">Due: %1$s</string>
+    <string name="due_date_label">দেয়: %1$s</string>
 
 
     <string name="visit_number_label">Visit -%d</string>
@@ -944,6 +943,49 @@
     <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
     <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="str_delete_household">ঘৰুৱা মচি পেলাওক</string>
+    <string name="str_delete_beneficiary">হিতাধিকাৰীক মচি পেলাওক</string>
+    <string name="str_delete_household_msg">আপুনি নিশ্চিত নেকি যে আপুনি মচি পেলাব বিচাৰে?</string>
+    <string name="str_hof_cant_delete">আন সদস্য থাকিলে Head of Family ডিলিট কৰিব নোৱাৰিব।</string>
+    <string name="str_pls_allow_permissions">অনুগ্ৰহ কৰি প্ৰথমে অনুমতি দিয়ক</string>
+    <string name="str_delivery_outcome_err_msg">প্ৰসৱৰ ফলাফল জীৱিত আৰু মৃত জন্মৰ যোগফলৰ সমান হ’ব লাগে</string>
+    <string name="str_dose_one">Dose-1</string>
+
+    <string name="vac_bcg">বিচিজি ভেকচিন</string>
+    <string name="vac_hepb_birth">হেপাটাইটিছ বি (জন্ম)</string>
+    <string name="vac_opv_0">অ\'পিভি-0</string>
+    <string name="vac_penta_1">পেন্টাভেলেন্ট-1</string>
+    <string name="vac_opv_1">অ\'পিভি-1</string>
+    <string name="vac_rvv_1">ৰোটাভাইৰাছ-1</string>
+    <string name="vac_fipv_1">আইপিভি-1</string>
+    <string name="vac_penta_2">পেন্টাভেলেন্ট-2</string>
+    <string name="vac_opv_2">অ\'পিভি-2</string>
+    <string name="vac_rvv_2">ৰোটাভাইৰাছ-2</string>
+    <string name="vac_penta_3">পেন্টাভেলেন্ট-3</string>
+    <string name="vac_opv_3">অ\'পিভি-3</string>
+    <string name="vac_rvv_3">ৰোটাভাইৰাছ-3</string>
+    <string name="vac_fipv_2">আইপিভি-2</string>
+    <string name="vac_mr_1">এম আৰ-1</string>
+    <string name="vac_je_1">জে ই-1</string>
+    <string name="vac_vit_a_1">ভিটামিন এ-1</string>
+    <string name="vac_dpt_booster_1">ডিপিটি বুস্টাৰ-1</string>
+    <string name="vac_mr_2">এম আৰ-2</string>
+    <string name="vac_je_2">জে ই-2</string>
+    <string name="vac_opv_booster">অ\'পিভি বুস্টাৰ</string>
+    <string name="vac_vit_a_2">ভিটামিন এ-2</string>
+    <string name="vac_dpt_booster_2">ডিপিটি বুস্টাৰ-2</string>
+    <string name="vac_td_1">টিডি</string>
+    <string name="vac_td_2">টিডি</string>
+    <string name="vac_vit_k">ভিটামিন কে</string>
+    <string name="vac_vit_a_3">ভিটামিন এ-3</string>
+    <string name="vac_vit_a_4">ভিটামিন এ-4</string>
+    <string name="vac_vit_a_5">ভিটামিন এ-5</string>
+    <string name="vac_vit_a_6">ভিটামিন এ-6</string>
+    <string name="vac_vit_a_7">ভিটামিন এ-7</string>
+    <string name="vac_vit_a_8">ভিটামিন এ-8</string>
+    <string name="vac_pcv_1">পিচিভি-1</string>
+    <string name="vac_pcv_2">পিচিভি-2</string>
+    <string name="vac_pcv_booster">পিচিভি বুস্টাৰ</string>
     <string name="location_type">অৱস্থানৰ ধৰণ</string>
 
 </resources>

@@ -26,7 +26,7 @@ class KalaAzarFormDataset(
     private val beneficiaryStatus = FormElement(
         id = 2,
         inputType = InputType.DROPDOWN,
-        title = resources.getString(R.string.beneficiary_status),
+        title = resources.getString(R.string.str_beneficiary_status),
         arrayId = R.array.benificary_case_status_kalaazar,
         entries = resources.getStringArray(R.array.benificary_case_status_kalaazar),
         required = true,

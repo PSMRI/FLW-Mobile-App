@@ -81,13 +81,13 @@
     <string name="number_of_children_label">बच्चों की संख्या: %s</string>
     <string name="pulse_polio_campaign">पल्स पोलियो अभियान</string>
     <string name="u_win_sessions_list">यू-विन सत्र सूची</string>
-    <string name="any_other_high_risk_conditions">कोई अन्य उच्च जोखिम की स्थिति</string>
+    <string name="any_other_high_risk_conditions">कोई अन्य खतरे के लक्षण की स्थिति</string>
     <string name="details_of_pregnant_women">Details of Pregnant women</string>
     <string name="anc_period">एएनसी अवधि</string>
     <string name="anc_date">एएनसी तिथि</string>
     <string name="place_of_anc">एएनसी का स्थान</string>
     <string name="abortion_if_any">गर्भपात (यदि कोई हो)</string>
-    <string name="weight_of_pw_kg">पंजीकरण के समय PW का वजन (किग्रा)</string>
+    <string name="weight_of_pw_kg">पंजीकरण के समय गर्भवती महिला का वजन (किग्रा)</string>
     <string name="bp_of_pw">PW का रक्तचाप – सिस्टोलिक/डायस्टोलिक (mm Hg)</string>
     <string name="pulse_rate_bpm">नाड़ी दर (BPM)</string>
     <string name="hb_gm_dl">हीमोग्लोबिन (ग्राम/डीएल)</string>
@@ -99,10 +99,10 @@
     <string name="date_td_tt_booster_dose">टीडी/टीटी (बूस्टर खुराक) की तिथि</string>
     <string name="no_of_folic_acid_tabs">दी गई फोलिक एसिड गोलियों की संख्या</string>
     <string name="no_of_ifa_tabs">दी गई IFA गोलियों की संख्या</string>
-    <string name="any_high_risk_conditions">कोई उच्च जोखिम की स्थिति</string>
+    <string name="any_high_risk_conditions">कोई खतरे के लक्षण की स्थिति</string>
     <string name="is_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
     <string name="who_identified_hrp">एचआरपी के रूप में किसने पहचाना?</string>
-    <string name="probable_cause_of_death">मृत्यु का संभावित कारण</string>
+    <string name="probable_cause_of_death">मृत्यु का कारण</string>
     <string name="other_death_cause">मृत्यु का अन्य कारण</string>
     <string name="has_pw_delivered">क्या गर्भवती महिला ने प्रसव कर लिया है?</string>
     <string name="mcp_cards">MCP कार्ड</string>
@@ -110,7 +110,7 @@
     <string name="back_side">पिछला पृष्ठ</string>
     <string name="ahd_health_status">स्वास्थ्य की स्थिति</string>
     <string name="ahd_ifa_tablet_distribution">आईएफए (आयरन फोलिक एसिड) टैबलेट का वितरण</string>
-    <string name="ahd_ifa_tablet_quantity">आईएफए टैबलेट की संख्या</string>
+    <string name="ahd_ifa_tablet_quantity">आयरन की गोलियों की संख्या</string>
     <string name="ahd_menstrual_hygiene_awareness">मासिक धर्म के दौरान साफ-सफाई की जानकारी</string>
     <string name="ahd_sanitary_napkin_distributed">सैनिटरी पैड बांटे गए</string>
     <string name="ahd_no_of_packets_distributed">वितरित पैकेट की संख्या</string>
@@ -223,7 +223,7 @@
     <string name="hbnc_mother_temp_case_2">माँ को अस्पताल भेजें</string>
     <string name="hbnc_baby_temp_97_alert">माँ को सलाह दें कि बच्चे को गर्म रखें — कमरे का तापमान बढ़ाएँ, त्वचा से त्वचा का संपर्क दें, बच्चे को गर्म बैग में रखें और बार-बार दूध पिलाएँ</string>
     <string name="hbnc_baby_temp_96_alert">माँ को सलाह दें कि बच्चे को गर्म रखें (कमरा गर्म, त्वचा से त्वचा संपर्क, गर्म बैग, बार-बार दूध)। जब बच्चा गर्म हो जाए तो उसे कपड़े पहनाकर पहले से गर्म किए बिस्तर में माँ के पास रखें</string>
-    <string name="hbnc_baby_temp_99_alert">फिर सेप्सिस के लक्षण देखें। अगर लक्षण नहीं हैं तो ¼ चम्मच पैरासिटामोल दें और तुरंत नजदीकी एसएनसीयू भेजें</string>
+    <string name="hbnc_baby_temp_99_alert">फिर संक्रमण के लक्षण देखें। अगर लक्षण नहीं हैं तो ¼ चम्मच पैरासिटामोल दें और तुरंत नजदीकी एसएनसीयू भेजें</string>
     <string name="form_input_missing_entry_error">फ़ील्ड में %1$d अंक होने चाहिए</string>
     <string name="form_input_alphabet_space_only_error">केवल अक्षर और खाली जगह मान्य</string>
     <string name="form_input_alphabet_special_only_error">केवल अक्षर और विशेष चिन्ह मान्य</string>
@@ -267,6 +267,43 @@
     <string name="imm_cat_10_years">10 वर्ष</string>
     <string name="imm_cat_16_years">16 वर्ष</string>
     <string name="imm_cat_catch_up">कैच अप</string>
+
+    <string name="vac_bcg">बीसीजी वैक्सीन</string>
+    <string name="vac_hepb_birth">हेपेटाइटिस-बी वैक्सीन (जन्म)</string>
+    <string name="vac_opv_0">ओपीवी-0</string>
+    <string name="vac_penta_1">पेंटावेलेंट-1</string>
+    <string name="vac_opv_1">ओपीवी-1</string>
+    <string name="vac_rvv_1">रोटावायरस-1</string>
+    <string name="vac_fipv_1">आईपीवी-1</string>
+    <string name="vac_penta_2">पेंटावेलेंट-2</string>
+    <string name="vac_opv_2">ओपीवी-2</string>
+    <string name="vac_rvv_2">रोटावायरस-2</string>
+    <string name="vac_penta_3">पेंटावेलेंट-3</string>
+    <string name="vac_opv_3">ओपीवी-3</string>
+    <string name="vac_rvv_3">रोटावायरस-3</string>
+    <string name="vac_fipv_2">आईपीवी-2</string>
+    <string name="vac_mr_1">एमआर-1</string>
+    <string name="vac_je_1">जेई-1</string>
+    <string name="vac_vit_a_1">विटामिन ए-1</string>
+    <string name="vac_dpt_booster_1">डीपीटी बूस्टर-1</string>
+    <string name="vac_mr_2">एमआर-2</string>
+    <string name="vac_je_2">जेई-2</string>
+    <string name="vac_opv_booster">ओपीवी बूस्टर</string>
+    <string name="vac_vit_a_2">विटामिन ए-2</string>
+    <string name="vac_dpt_booster_2">डीपीटी बूस्टर-2</string>
+    <string name="vac_td_1">टीडी</string>
+    <string name="vac_td_2">टीडी</string>
+    <string name="vac_vit_k">विटामिन के</string>
+    <string name="vac_vit_a_3">विटामिन ए-3</string>
+    <string name="vac_vit_a_4">विटामिन ए-4</string>
+    <string name="vac_vit_a_5">विटामिन ए-5</string>
+    <string name="vac_vit_a_6">विटामिन ए-6</string>
+    <string name="vac_vit_a_7">विटामिन ए-7</string>
+    <string name="vac_vit_a_8">विटामिन ए-8</string>
+    <string name="vac_pcv_1">पीसीवी-1</string>
+    <string name="vac_pcv_2">पीसीवी-2</string>
+    <string name="vac_pcv_booster">पीसीवी बूस्टर</string>
+
     <string name="children">बच्चे</string>
     <string name="mother">माँ</string>
     <string name="patient_information">रोगी की जानकारी</string>
@@ -280,10 +317,10 @@
     <string name="to_do_list">कार्य सूची</string>
     <string name="beneficiaries_due_for_anc">एएनसी के लिए लाभार्थी बकाया</string>
     <string name="beneficiaries_due_for_immunization">टीकाकरण के लिए देय लाभार्थी</string>
-    <string name="high_risk_cases">उच्च जोखिम वाले मामले</string>
-    <string name="high_risk_pregnant_women">उच्च जोखिम वाली गर्भवती महिलाएं</string>
-    <string name="high_risk_non_pregnant_women">उच्च जोखिम वाली गैर-गर्भवती महिलाएं</string>
-    <string name="high_risk_babies">उच्च जोखिम वाले शिशु</string>
+    <string name="high_risk_cases">खतरे के लक्षण वाले मामले</string>
+    <string name="high_risk_pregnant_women">खतरे के लक्षण वाली गर्भवती महिलाएं</string>
+    <string name="high_risk_non_pregnant_women">खतरे के लक्षण वाली गैर-गर्भवती महिलाएं</string>
+    <string name="high_risk_babies">खतरे के लक्षण वाले शिशु</string>
     <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
     <string name="registration_date">पंजीकरण तिथि</string>
     <string name="beneficiary_id">लाभार्थी आईडी</string>
@@ -357,7 +394,7 @@
     <string name="eligible_couple_tracking_list">पात्र दंपत्ति ट्रैकिंग सूची</string>
     <string name="eligible_couple_tracking_form">पात्र दंपत्ति ट्रैकिंग फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
-    <string name="tb_suspected_list">संदेहास्पद टीबी मामले</string>
+    <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_form">संदिग्ध टीबी मामला</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
@@ -561,7 +598,7 @@
     <string name="m_test_type">मलेरिया जांच प्रकार</string>
     <string name="place_of_Death">मृत्यु का स्थान</string>
     <string name="reason_of_Death">मृत्यु का कारण</string>
-    <string name="beneficiary_status">लाभार्थी स्थिति</string>
+
     <string name="aes_case_status">एईएस/जेएस केस स्थिति</string>
     <string name="refer_to">रेफर किया गया</string>
     <string name="day_wise_tracking_pf">Pf - दैनिक ट्रैकिंग</string>
@@ -800,12 +837,12 @@
     <string name="str_baby_urination_per_day">क्या बच्चा लगातार रोता है या दिन में 6 बार से कम पेशाब करता है? कार्रवाई - माता को स्तनपान की सलाह दें</string>
     <string name="str_mother_body_temperature">तापमान मापें और जांचें। कार्रवाई - यदि तापमान 100.4°F से अधिक है तो रोगी को पैरासिटामोल टैबलेट दें</string>
     <string name="str_water_discharge">दुर्गंधयुक्त पानी का स्राव और 102°F (38.9°C) बुखार।</string>
-    <string name="str_is_mother_speaking_abnormally">क्या माता असामान्य बोल रही है या दौरे पड़ रहे हैं?</string>
+    <string name="str_is_mother_speaking_abnormally">क्या माता असामान्य बोल रही है या झटके पड़ रहे हैं?</string>
     <string name="str_mother_milk_is_not_produced">प्रसव के बाद माता का दूध नहीं बन रहा है या उसे लगता है कि कम दूध बन रहा है।</string>
     <string name="str_mother_cracked_nipple">क्या माता के निपल फटे हैं / दर्द है और / या स्तन कठोर हैं</string>
     <string name="str_respiratory_rate">श्वसन दर प्रति मिनट 60 से अधिक</string>
-    <string name="str_d_sepsis">(D) सेप्सिस</string>
-    <string name="str_symptoms_of_sepsis">सेप्सिस के निम्नलिखित लक्षणों की जांच करें। यदि लक्षण मौजूद हैं, तो हाँ लिखें, यदि नहीं तो नहीं लिखें</string>
+    <string name="str_d_sepsis">(D) संक्रमण</string>
+    <string name="str_symptoms_of_sepsis">संक्रमण के निम्नलिखित लक्षणों की जांच करें। यदि लक्षण मौजूद हैं, तो हाँ लिखें, यदि नहीं तो नहीं लिखें</string>
     <string name="str_distended_abdomen">पेट फूला हुआ है या माता कहती है कि बच्चा अक्सर उल्टी करता है</string>
     <string name="str_child_feels_cold">माता बताती है कि बच्चा छूने पर ठंडा लगता है या बच्चे का तापमान अधिक है</string>
     <string name="str_chest_is_pulled">और सांस लेते समय छाती अंदर खिंचती है।</string>
@@ -863,11 +900,11 @@
     <string name="bank_details">Bank Details</string>
     <string name="date_of_delivery">प्रसव की तिथि</string>
     <string name="any_danger_signs">क्या कोई खतरे के संकेत हैं?\n</string>
-    <string name="any_high_risk_identified">क्या कोई उच्च जोखिम पहचाना गया है?</string>
+    <string name="any_high_risk_identified">क्या कोई खतरे के लक्षण पहचाना गया है?</string>
     <string name="claim">Claim</string>
     <string name="cataract_surgery">Cataract Surgery</string>
     <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
-    <string name="due_date_label">Due: %1$s</string>
+    <string name="due_date_label">देय: %1$s</string>
     <string name="delivery_discharge_summary_1">प्रसव छुट्टी सारांश 1</string>
     <string name="delivery_discharge_summary_2">प्रसव छुट्टी सारांश 2</string>
     <string name="delivery_discharge_summary_3">प्रसव छुट्टी सारांश 3</string>
@@ -905,11 +942,21 @@
         <item>ड्रग-रेजिस्टेंट टीबी (DR-TB) का मामला</item>
     </string-array>
 
+    <string-array name="place_array">
+        <item>स्वास्थ्य केंद्र</item>
+        <item>आंगनवाड़ी सेंटर</item>
+        <item>कम्युनिटी सेंटर</item>
+
+    </string-array>
+
     <string-array name="ecr_gender_array">
         <item name="nbr_gender_1">पुरुष</item>
         <item name="nbr_gender_2">महिला</item>
     </string-array>
-
+    <string-array name="ecr_baby_gender_array">
+        <item name="nbr_gender_1">बालक</item>
+        <item name="nbr_gender_2">बालिका</item>
+    </string-array>
 
     <string-array name="referral_facility">
         <item>जिला टीबी केंद्र (DTC)</item>
@@ -938,6 +985,12 @@
         <item name="dc_confirmed">पुष्टि हुई</item>
         <item name="dc_not_confirmed">पुष्टि नहीं हुई</item>
         <item name="dc_treatment">उपचार शुरू हुआ</item>
+    </string-array>
+
+    <string-array name="test_type">
+        <item name="rdt">आरडीटी टेस्ट</item>
+        <item name="slide">स्लाइड टेस्ट</item>
+        <item name="both">दोनों</item>
     </string-array>
 
     <string-array name="benificary_case_status_kalaazar">
@@ -1081,6 +1134,21 @@
         <item>आईएनएच मोनो (6 महीने)</item>
     </string-array>
 
+    <string-array name="sync_records">
+        <item>लाभार्थी</item>
+        <item>CBAC</item>
+        <item>टीबी की जाँच</item>
+        <item>TB का संदेह</item>
+        <item>EC पंजीकरण</item>
+        <item>EC फॉलो-अप</item>
+        <item>PW पंजीकरण</item>
+        <item>पीडब्लू एएनसी</item>
+        <item>HRP मूल्यांकन</item>
+        <item>HRP ट्रैक</item>
+        <item>HR (हृदय गति) - गैर-गर्भवती: मूल्यांकन</item>
+        <item>HR नॉन-प्रेग्नेंसी ट्रैक</item>
+    </string-array>
+
     <string name="btn_cancel">रद्द करें</string>
     <string name="filter_sort_by">क्रमबद्ध करें</string>
     <string name="filter_newest_first">नवीनतम पहले</string>
@@ -1119,6 +1187,15 @@
     <string name="mobile_number_of_anm1">एएनएम1 का मोबाइल नंबर</string>
     <string name="name_of_anm2">एएनएम2 का नाम</string>
     <string name="mobile_number_of_anm2">एएनएम2 का मोबाइल नंबर</string>
+    <string name="str_delete_household">परिवार हटाएं</string>
+    <string name="str_delete_beneficiary">लाभार्थी हटाएं</string>
+    <string name="str_delete_household_msg">क्या आप वाकई हटाना चाहते हैं?</string>
+    <string name="str_hof_cant_delete">जब परिवार के अन्य सदस्य मौजूद हों, तो परिवार के मुखिया को हटाया नहीं जा सकता।</string>
+    <string name="str_pls_allow_permissions">कृपया पहले अनुमतियाँ दें।</string>
+    <string name="str_delivery_outcome_err_msg">प्रसव का परिणाम जीवित जन्म और मृत जन्म के योग के बराबर होना चाहिए</string>
+    <string name="str_dose_one">खुराक-1</string>
+    <string name="str_dose">खुराक</string>
+
     <string name="location_type">लोकेशन प्रकार</string>
 
 </resources>

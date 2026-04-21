@@ -1,14 +1,21 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemImmVaccineBinding
+import org.piramalswasthya.sakhi.helpers.DynamicLocalizationHelper.toLocalizedString
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.model.VaccineState
+import org.piramalswasthya.sakhi.model.VaccineType
+import org.piramalswasthya.sakhi.model.toVaccineType
+import timber.log.Timber
 
 class ImmunizationVaccineAdapter(var isDeath: Boolean,private val clickListener: ImmunizationCategoryAdapter.ImmunizationIconClickListener? = null) :
     ListAdapter<VaccineDomain, ImmunizationVaccineAdapter.IconViewHolder>(
@@ -42,6 +49,11 @@ class ImmunizationVaccineAdapter(var isDeath: Boolean,private val clickListener:
             binding.vaccine = item
             binding.isDeath = isDeath
             binding.clickListener = clickListener
+
+            binding.tvName.text = item.vaccineName
+                .toVaccineType()
+                .toLocalizedString(binding.root.context)
+
             binding.executePendingBindings()
            
         }
