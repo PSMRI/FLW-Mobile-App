@@ -267,6 +267,43 @@
     <string name="imm_cat_10_years">10 वर्ष</string>
     <string name="imm_cat_16_years">16 वर्ष</string>
     <string name="imm_cat_catch_up">कैच अप</string>
+
+    <string name="vac_bcg">बीसीजी वैक्सीन</string>
+    <string name="vac_hepb_birth">हेपेटाइटिस-बी वैक्सीन (जन्म)</string>
+    <string name="vac_opv_0">ओपीवी-0</string>
+    <string name="vac_penta_1">पेंटावेलेंट-1</string>
+    <string name="vac_opv_1">ओपीवी-1</string>
+    <string name="vac_rvv_1">रोटावायरस-1</string>
+    <string name="vac_fipv_1">आईपीवी-1</string>
+    <string name="vac_penta_2">पेंटावेलेंट-2</string>
+    <string name="vac_opv_2">ओपीवी-2</string>
+    <string name="vac_rvv_2">रोटावायरस-2</string>
+    <string name="vac_penta_3">पेंटावेलेंट-3</string>
+    <string name="vac_opv_3">ओपीवी-3</string>
+    <string name="vac_rvv_3">रोटावायरस-3</string>
+    <string name="vac_fipv_2">आईपीवी-2</string>
+    <string name="vac_mr_1">एमआर-1</string>
+    <string name="vac_je_1">जेई-1</string>
+    <string name="vac_vit_a_1">विटामिन ए-1</string>
+    <string name="vac_dpt_booster_1">डीपीटी बूस्टर-1</string>
+    <string name="vac_mr_2">एमआर-2</string>
+    <string name="vac_je_2">जेई-2</string>
+    <string name="vac_opv_booster">ओपीवी बूस्टर</string>
+    <string name="vac_vit_a_2">विटामिन ए-2</string>
+    <string name="vac_dpt_booster_2">डीपीटी बूस्टर-2</string>
+    <string name="vac_td_1">टीडी</string>
+    <string name="vac_td_2">टीडी</string>
+    <string name="vac_vit_k">विटामिन के</string>
+    <string name="vac_vit_a_3">विटामिन ए-3</string>
+    <string name="vac_vit_a_4">विटामिन ए-4</string>
+    <string name="vac_vit_a_5">विटामिन ए-5</string>
+    <string name="vac_vit_a_6">विटामिन ए-6</string>
+    <string name="vac_vit_a_7">विटामिन ए-7</string>
+    <string name="vac_vit_a_8">विटामिन ए-8</string>
+    <string name="vac_pcv_1">पीसीवी-1</string>
+    <string name="vac_pcv_2">पीसीवी-2</string>
+    <string name="vac_pcv_booster">पीसीवी बूस्टर</string>
+
     <string name="children">बच्चे</string>
     <string name="mother">माँ</string>
     <string name="patient_information">रोगी की जानकारी</string>
@@ -357,7 +394,7 @@
     <string name="eligible_couple_tracking_list">पात्र दंपत्ति ट्रैकिंग सूची</string>
     <string name="eligible_couple_tracking_form">पात्र दंपत्ति ट्रैकिंग फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
-    <string name="tb_suspected_list">संदेहास्पद टीबी मामले</string>
+    <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_form">संदिग्ध टीबी मामला</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
@@ -561,7 +598,7 @@
     <string name="m_test_type">मलेरिया जांच प्रकार</string>
     <string name="place_of_Death">मृत्यु का स्थान</string>
     <string name="reason_of_Death">मृत्यु का कारण</string>
-    <string name="beneficiary_status">लाभार्थी स्थिति</string>
+
     <string name="aes_case_status">एईएस/जेएस केस स्थिति</string>
     <string name="refer_to">रेफर किया गया</string>
     <string name="day_wise_tracking_pf">Pf - दैनिक ट्रैकिंग</string>
@@ -867,7 +904,7 @@
     <string name="claim">Claim</string>
     <string name="cataract_surgery">Cataract Surgery</string>
     <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
-    <string name="due_date_label">Due: %1$s</string>
+    <string name="due_date_label">देय: %1$s</string>
     <string name="delivery_discharge_summary_1">प्रसव छुट्टी सारांश 1</string>
     <string name="delivery_discharge_summary_2">प्रसव छुट्टी सारांश 2</string>
     <string name="delivery_discharge_summary_3">प्रसव छुट्टी सारांश 3</string>
@@ -903,6 +940,13 @@
         <item>टीबी का नया मामला</item>
         <item>पहले से इलाज कराए गए टीबी का मामला</item>
         <item>ड्रग-रेजिस्टेंट टीबी (DR-TB) का मामला</item>
+    </string-array>
+
+    <string-array name="place_array">
+        <item>स्वास्थ्य केंद्र</item>
+        <item>आंगनवाड़ी सेंटर</item>
+        <item>कम्युनिटी सेंटर</item>
+
     </string-array>
 
     <string-array name="ecr_gender_array">
@@ -941,6 +985,12 @@
         <item name="dc_confirmed">पुष्टि हुई</item>
         <item name="dc_not_confirmed">पुष्टि नहीं हुई</item>
         <item name="dc_treatment">उपचार शुरू हुआ</item>
+    </string-array>
+
+    <string-array name="test_type">
+        <item name="rdt">आरडीटी टेस्ट</item>
+        <item name="slide">स्लाइड टेस्ट</item>
+        <item name="both">दोनों</item>
     </string-array>
 
     <string-array name="benificary_case_status_kalaazar">
