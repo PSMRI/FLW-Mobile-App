@@ -69,8 +69,7 @@ class IncentiveDashboardFragment : Fragment() {
         observeNetwork()          // ← new
 
         val user = preferenceDao.getLoggedInUser()
-        binding.tvSupervisorName.text = "Supervisor: ${user?.userName}"
-        binding.tvSupervisorId.text   = "Supervisor ID: ${user?.userId}"
+
     }
 
     // -------------------------------------------------------------------------
@@ -162,9 +161,9 @@ class IncentiveDashboardFragment : Fragment() {
 
                     facilityId = data.facilities.firstOrNull()?.facilityId ?: 0
 
-                    binding.tvSupervisorName.text  = "Supervisor: ${data.supervisor.fullName}"
+                  /*  binding.tvSupervisorName.text  = "Supervisor: ${data.supervisor.fullName}"
                     binding.tvSupervisorId.text    = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
-                    binding.tvTotalAshasCount.text = data.totalAshaCount.toString()
+                 */   binding.tvTotalAshasCount.text = data.totalAshaCount.toString()
 
                     binding.tvVerifiedCount.text = summary.verified.toString()
                     binding.tvPendingCount.text  = summary.pending.toString()

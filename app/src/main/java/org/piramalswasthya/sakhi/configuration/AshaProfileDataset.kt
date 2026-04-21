@@ -45,6 +45,14 @@ class AshaProfileDataset(
         required = false,
     )
 
+    private val locationType = FormElement(
+        id = 190,
+        inputType = InputType.TEXT_VIEW,
+        title = resources.getString(R.string.location_type),
+        required = false,
+    )
+
+
     private val loginuserName = FormElement(
         id = 2,
         inputType = InputType.TEXT_VIEW,
@@ -300,6 +308,7 @@ class AshaProfileDataset(
             pic,
             ashaName,
             village,
+            locationType,
             loginuserName,
             userId,
             dob,
@@ -348,6 +357,7 @@ class AshaProfileDataset(
         fatherOrspouse.value = fatherOrspouse.getStringSpauseFromPosition(if(ashaProfile?.isFatherOrSpouse==true) 1 else 0)
         ashaSupervisorName.value = preferenceDao.getSupervisorName().toString()
         ashaSupervisorContactNumber.value = preferenceDao.getSupervisorContact().toString()
+        locationType.value = preferenceDao.getLocationType()
         ChoName.value = ashaProfile?.choName.toString()
         ChoMobileNo.value = ashaProfile?.choMobile.toString()
         nameOfAWW.value = ashaProfile?.awwName.toString()

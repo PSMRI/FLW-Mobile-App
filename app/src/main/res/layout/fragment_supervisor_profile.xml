@@ -19,8 +19,8 @@
             >
             <ImageView
                 android:id="@+id/iv_nhm_logo"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_margin="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/padding_small"
-                android:paddingBottom="@dimen/padding_small"
                 app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
@@ -64,7 +63,7 @@
                 app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo"
                 android:layout_marginStart="10dp"
                 android:text="@string/id_details"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textStyle="normal"
                 android:gravity="center"
                 />

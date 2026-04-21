@@ -508,6 +508,7 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
+    <string name="location_type">Location Type</string>
     <string name="email">Email</string>
 
     //................VHND........................
