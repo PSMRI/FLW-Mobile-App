@@ -1119,6 +1119,6 @@
     <string name="mobile_number_of_anm1">एएनएम1 का मोबाइल नंबर</string>
     <string name="name_of_anm2">एएनएम2 का नाम</string>
     <string name="mobile_number_of_anm2">एएनएम2 का मोबाइल नंबर</string>
-    <string name="location_type">Location Type</string>
+    <string name="location_type">लोकेशन प्रकार</string>
 
 </resources>
