@@ -303,7 +303,6 @@ class IncentivesFragment : Fragment() {
         binding.fetchData.setOnClickListener {
             binding.claimlayout.visibility = View.VISIBLE
 
-
             val calendar = Calendar.getInstance()
             calendar.set(
                 Calendar.MONTH,
@@ -319,8 +318,36 @@ class IncentivesFragment : Fragment() {
             calendar.setToEndOfTheDay()
             val lastDay = calendar.timeInMillis
             viewModel.setRange(firstDay, lastDay)
+
+            val today = Calendar.getInstance()
+            val currentMonth = today.get(Calendar.MONTH)
+            val currentYear = today.get(Calendar.YEAR)
+            val currentDay = today.get(Calendar.DAY_OF_MONTH)
+
+            val selectedMonthIndex = resources.getStringArray(R.array.months)
+                .indexOf(fromMonth.selectedItem)
+            val selectedYearInt = fromYear.selectedItem.toString().toInt()
+
+            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
+                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
+
+            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
+                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
+
+            val isPreviousMonth = when {
+                isExactlyLastMonth -> currentDay <= 12
+                isSelectedPreviousMonth -> true
+                else -> false
+            }
+
+            binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
+
             binding.claimbtn.setOnClickListener {
-                viewModel.claimIncentive(selectedMonth,selectedYear)
+                if (!isPreviousMonth) {
+                    Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                   return@setOnClickListener
+                     }
+                viewModel.claimIncentive(selectedMonth, selectedYear)
             }
 
             if (incentiveRecordList.isNotEmpty()) {
@@ -332,20 +359,20 @@ class IncentivesFragment : Fragment() {
                     binding.approved.setOnClickListener {
                         showRejectedDialog(
                             incentiveRecordList.get(0).record.approvalStatus,
-                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})" ,
+                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})",
                             incentiveRecordList.get(0).record.reason,
                             incentiveRecordList.get(0).record.approvalDate,
                             incentiveRecordList.get(0).record.calimedDate,
                         )
                     }
                     when (incentiveRecordList.get(0).record.approvalStatus) {
-                        101 ->  {
+                        101 -> {
                             binding.approved.text = "Verified"
                             binding.approved.setBackgroundColor(
                                 ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
                             )
                         }
-                        102 ->  {
+                        102 -> {
                             binding.approved.text = "Pending"
                             binding.approved.setBackgroundColor(
                                 ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
@@ -357,14 +384,12 @@ class IncentivesFragment : Fragment() {
                                 ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
                             )
                         }
-
                     }
                 } else {
                     binding.claimbtn.text = "Claim"
                     binding.claimbtn.isClickable = true
                     binding.claimStatus.visibility = View.GONE
                 }
-
             }
         }
 

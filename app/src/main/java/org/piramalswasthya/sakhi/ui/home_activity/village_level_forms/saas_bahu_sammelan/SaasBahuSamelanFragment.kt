@@ -21,6 +21,8 @@ import org.piramalswasthya.sakhi.databinding.FragmentSaasBahuSamelanBinding
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import org.piramalswasthya.sakhi.work.WorkerUtils
 
 
@@ -71,6 +73,13 @@ class SaasBahuSamelanFragment : Fragment() {
                     return
                 }
                 viewModel.setUploadUriFor(lastFileFormId, uri)
+                if (mime.contains("/pdf")) {
+                    showFileLoadedMessage(requireContext())
+
+                } else {
+                    showImageLoadedMessage(requireContext())
+
+                }
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
         }

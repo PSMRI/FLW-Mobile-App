@@ -24,6 +24,8 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 
 @AndroidEntryPoint
 class MaaMeetingFormFragment : Fragment() {
@@ -189,6 +191,13 @@ class MaaMeetingFormFragment : Fragment() {
                     return
                 }
                 viewModel.setUploadUriFor(lastFileFormId, uri)
+                if (mime.contains("/pdf")) {
+                    showFileLoadedMessage(requireContext())
+
+                } else {
+                    showImageLoadedMessage(requireContext())
+
+                }
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
         }
