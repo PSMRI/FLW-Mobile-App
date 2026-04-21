@@ -343,6 +343,10 @@ class IncentivesFragment : Fragment() {
             binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
 
             binding.claimbtn.setOnClickListener {
+                if (!isPreviousMonth) {
+                    Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                   return@setOnClickListener
+                     }
                 viewModel.claimIncentive(selectedMonth, selectedYear)
             }
 
