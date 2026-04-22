@@ -443,11 +443,12 @@ class PregnantWomanAncVisitDataset(
         this.regis = regis
         val list = mutableListOf(
             ancDate,
+            maternalDeath,
             placeOfAnc,
             weekOfPregnancy,
             ancVisit,
 //            isAborted,
-            maternalDeath,
+
             weight,
             bp,
 //            pulseRate,
@@ -692,13 +693,13 @@ class PregnantWomanAncVisitDataset(
 
                     if (weeks > 24) {
                         triggerDependants(
-                            source = ancVisit,
+                            source = ancDate,
                             removeItems = listOf(isAborted,abortionDate,abortionType,abortionFacility),
                             addItems = emptyList()
                         )
                     } else {
                         triggerDependants(
-                            source = ancVisit,
+                            source = ancDate,
                             addItems = listOf(isAborted),
                             removeItems = emptyList()
                         )
@@ -719,20 +720,20 @@ class PregnantWomanAncVisitDataset(
 
                         val listChanged2 = if (weeks <= 12) {
                             triggerDependants(
-                                source = ancVisit,
+                                source = ancDate,
                                 addItems = listOf(numFolicAcidTabGiven),
                                 removeItems = listOf(fundalHeight, numIfaAcidTabGiven),
                                 position = getIndexById(dateOfTTOrTdBooster.id) + 1
                             )
                         } else {
                             triggerDependants(
-                                source = ancVisit,
+                                source = ancDate,
                                 removeItems = listOf(numFolicAcidTabGiven),
                                 addItems = listOf(fundalHeight),
                                 position = getIndexById(hb.id) + 1
                             )
                             triggerDependants(
-                                source = ancVisit,
+                                source = ancDate,
                                 removeItems = listOf(),
                                 addItems = listOf(numIfaAcidTabGiven),
                                 position = getIndexById(dateOfTTOrTdBooster.id) + 1
@@ -807,7 +808,7 @@ class PregnantWomanAncVisitDataset(
                     )
                 } else if (isMaternalDeathYes) {
                     triggerDependants(
-                        source = maternalDeath,
+                        source = ancVisit,
                         addItems = emptyList(),
                         removeItems = abortionFields + commonAddItems + deliveryDone,
                         position = -1
@@ -825,7 +826,7 @@ class PregnantWomanAncVisitDataset(
                             if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
 
                     triggerDependants(
-                        source = maternalDeath,
+                        source = ancVisit,
                         addItems = addItems,
                         removeItems = removeItems,
                         position = -1
@@ -937,7 +938,8 @@ class PregnantWomanAncVisitDataset(
                     numIfaAcidTabGiven,
                     anyHighRisk,
                     highRiskReferralFacility,
-                    hrpConfirm
+                    hrpConfirm,
+
                 )
 
                 val maternalDeathFields = listOf(
@@ -962,7 +964,7 @@ class PregnantWomanAncVisitDataset(
                     triggerDependants(
                         source = maternalDeath,
                         addItems = emptyList(),
-                        removeItems = maternalDeathFields + commonAddItems + deliveryDone,
+                        removeItems = maternalDeathFields + commonAddItems + deliveryDone + otherPlaceOfDeath  ,
                         position = -1
                     )
                 } else {
@@ -976,7 +978,7 @@ class PregnantWomanAncVisitDataset(
                             if (week == null || week < Konstants.minWeekToShowDelivered) listOf(deliveryDone) else emptyList()
 
                     triggerDependants(
-                        source = maternalDeath,
+                        source = ancVisit,
                         addItems = addItems,
                         removeItems = removeItems,
                         position = -1
