@@ -2734,11 +2734,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.firstName = firstName.value
             ben.lastName = lastName.value
             val dobValue = agePopup.value
-            if (dobValue.isNullOrBlank()) {
-                Timber.e("DOB (agePopup) is null or blank — skipping dob/age assignment")
+            val actualDob = when {
+                dobValue.isNullOrBlank() -> dobReadOnly.value
+                dobValue.contains("Year", ignoreCase = true) -> dobReadOnly.value
+                else -> dobValue
+            }
+            if (actualDob.isNullOrBlank()) {
+                Timber.e("DOB is null or blank — skipping")
             } else {
-                ben.dob = getLongFromDate(dobValue)
-                ben.age = (getAgeFromDob(getLongFromDate(dobValue)))
+                ben.dob = getLongFromDate(actualDob)
+                ben.age = getAgeFromDob(getLongFromDate(actualDob))
             }
             ben.ageUnitId = 3
             ben.ageUnit = AgeUnit.YEARS
