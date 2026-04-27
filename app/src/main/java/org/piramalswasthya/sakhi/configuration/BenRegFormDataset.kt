@@ -2000,7 +2000,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             ageAtMarriage.id -> {
 
-                val dobMillis = getLongFromDate(agePopup.value)
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
                 val currentAge = getAgeFromDob(dobMillis)
 
                 currentAge.takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
