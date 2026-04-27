@@ -35,6 +35,7 @@ import org.piramalswasthya.sakhi.model.InputType.IMAGE_VIEW
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
+import timber.log.Timber
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -247,6 +248,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = true,
         max = System.currentTimeMillis(),
         min = getMinDobMillis(),
+        hasDependants = true,
     )
     private val fatherName = FormElement(
         id = 10,
@@ -1999,7 +2001,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             ageAtMarriage.id -> {
 
-                val dobMillis = getLongFromDate(agePopup.value)
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
                 val currentAge = getAgeFromDob(dobMillis)
 
                 currentAge.takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
@@ -2038,6 +2046,26 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             target = dateOfMarriage
                         )
                     } ?: -1
+
+                return 0
+            }
+
+            dateOfMarriage.id -> {
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
+                val marriageDateMillis = getLongFromDate(dateOfMarriage.value ?: "")
+
+                if (dobMillis > 0L && marriageDateMillis > 0L) {
+                    val calculatedAge = calculateAgeAtMarriage(dobMillis, marriageDateMillis)
+                    calculatedAge?.let {
+                        ageAtMarriage.value = it.toString()
+                    }
+                }
 
                 return 0
             }
@@ -2732,8 +2760,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.regDate = getLongFromDate(dateOfReg.value!!)
             ben.firstName = firstName.value
             ben.lastName = lastName.value
-            ben.dob = getLongFromDate(agePopup.value!!)
-            ben.age = (getAgeFromDob(getLongFromDate(agePopup.value)))
+            val dobValue = agePopup.value
+            val actualDob = when {
+                dobValue.isNullOrBlank() -> dobReadOnly.value
+                dobValue.contains("Year", ignoreCase = true) -> dobReadOnly.value
+                else -> dobValue
+            }
+            if (actualDob.isNullOrBlank()) {
+                Timber.e("DOB is null or blank — skipping")
+            } else {
+                ben.dob = getLongFromDate(actualDob)
+                ben.age = getAgeFromDob(getLongFromDate(actualDob))
+            }
             ben.ageUnitId = 3
             ben.ageUnit = AgeUnit.YEARS
             ben.isAdult = ben.ageUnit == AgeUnit.YEARS && ben.age >= 15
