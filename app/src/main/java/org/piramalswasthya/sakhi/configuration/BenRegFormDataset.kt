@@ -248,6 +248,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = true,
         max = System.currentTimeMillis(),
         min = getMinDobMillis(),
+        hasDependants = true,
     )
     private val fatherName = FormElement(
         id = 10,
@@ -2045,6 +2046,26 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             target = dateOfMarriage
                         )
                     } ?: -1
+
+                return 0
+            }
+
+            dateOfMarriage.id -> {
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
+                val marriageDateMillis = getLongFromDate(dateOfMarriage.value ?: "")
+
+                if (dobMillis > 0L && marriageDateMillis > 0L) {
+                    val calculatedAge = calculateAgeAtMarriage(dobMillis, marriageDateMillis)
+                    calculatedAge?.let {
+                        ageAtMarriage.value = it.toString()
+                    }
+                }
 
                 return 0
             }
