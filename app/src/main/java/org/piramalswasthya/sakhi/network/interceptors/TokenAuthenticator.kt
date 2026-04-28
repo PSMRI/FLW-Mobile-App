@@ -69,18 +69,21 @@ class TokenAuthenticator @Inject constructor(
                             dataObject!!.optString("jwtToken")
                         else -> json.optString("jwtToken", "")
                     }
-                    val newRefresh = when {
+                    val newRefreshCandidate = when {
                         !dataObject?.optString("refreshToken").isNullOrBlank() ->
-                            dataObject!!.optString("refreshToken")
-                        else -> json.optString("refreshToken", refreshToken)
+                            dataObject.optString("refreshToken")
+                        else -> json.optString("refreshToken", "")
                     }
+                    val newRefresh = newRefreshCandidate.ifBlank { refreshToken }
 
                     if (jwt.isBlank()) {
                         tokenExpiryManager.onRefreshFailed()
                         null
                     } else {
                         pref.registerJWTAmritToken(jwt)
-                        pref.registerRefreshToken(newRefresh)
+                        if (newRefresh.isNotBlank()) {
+                            pref.registerRefreshToken(newRefresh)
+                        }
                         tokenExpiryManager.onRefreshSuccess()
                         jwt
                     }

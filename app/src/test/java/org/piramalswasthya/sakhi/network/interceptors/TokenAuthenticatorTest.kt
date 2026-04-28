@@ -98,6 +98,26 @@ class TokenAuthenticatorTest {
     }
 
     @Test
+    fun `authenticate does not overwrite refresh token when response refresh token is blank`() {
+        every { pref.getRefreshToken() } returns "old-refresh"
+        every { pref.getJWTAmritToken() } returns "old-jwt"
+        coEvery { authApi.getRefreshToken(TmcRefreshTokenRequest("old-refresh")) } returns
+            RetrofitResponse.success(
+                """
+                    {"statusCode":200,"data":{"jwtToken":"new-jwt","refreshToken":""}}
+                """.trimIndent().toResponseBody("application/json".toMediaType())
+            )
+
+        val request = tokenAuthenticator.authenticate(null, buildUnauthorizedResponse("old-jwt"))
+
+        assertNotNull(request)
+        assertEquals("new-jwt", request!!.header("Jwttoken"))
+        verify(exactly = 0) { pref.registerRefreshToken("") }
+        verify { pref.registerRefreshToken("old-refresh") }
+        verify { tokenExpiryManager.onRefreshSuccess() }
+    }
+
+    @Test
     fun `authenticate skips refresh when request has No-Auth header`() {
         val response = buildUnauthorizedResponse(
             oldJwt = "old-jwt",
