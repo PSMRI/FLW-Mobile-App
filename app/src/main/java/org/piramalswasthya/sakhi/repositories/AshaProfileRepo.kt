@@ -150,6 +150,8 @@ class AshaProfileRepo @Inject constructor(
         if (activitiesCache != null) {
             // Preserve local profileImage — server stores the URI string which is
             // only meaningful on this device, so always prefer the local file.
+            if (activitiesCache.abhaNumber == null) activitiesCache.abhaNumber = ""
+
             val existingRecord = profileDao.getProfileActivityById(activitiesCache.employeeId.toLong())
             if (existingRecord != null && existingRecord.profileImage.isNotEmpty()) {
                 activitiesCache.profileImage = existingRecord.profileImage
