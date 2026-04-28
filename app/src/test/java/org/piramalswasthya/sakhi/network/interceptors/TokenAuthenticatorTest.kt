@@ -81,6 +81,26 @@ class TokenAuthenticatorTest {
     }
 
     @Test
+    fun `authenticate treats missing statusCode as success for backward compatibility`() {
+        every { pref.getRefreshToken() } returns "old-refresh"
+        every { pref.getJWTAmritToken() } returns "old-jwt"
+        coEvery { authApi.getRefreshToken(TmcRefreshTokenRequest("old-refresh")) } returns
+            RetrofitResponse.success(
+                """
+                    {"data":{"jwtToken":"new-jwt","refreshToken":"new-refresh"}}
+                """.trimIndent().toResponseBody("application/json".toMediaType())
+            )
+
+        val request = tokenAuthenticator.authenticate(null, buildUnauthorizedResponse("old-jwt"))
+
+        assertNotNull(request)
+        assertEquals("new-jwt", request!!.header("Jwttoken"))
+        verify { pref.registerJWTAmritToken("new-jwt") }
+        verify { pref.registerRefreshToken("new-refresh") }
+        verify { tokenExpiryManager.onRefreshSuccess() }
+    }
+
+    @Test
     fun `authenticate returns null and marks failure when body statusCode is not 200`() {
         every { pref.getRefreshToken() } returns "old-refresh"
         every { pref.getJWTAmritToken() } returns "old-jwt"
