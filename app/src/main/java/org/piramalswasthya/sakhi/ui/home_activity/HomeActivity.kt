@@ -266,6 +266,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }?: run {
+                viewModel.profilePicUri?.let { savedUri ->
+                    Glide.with(this).load(savedUri)
+                        .signature(ObjectKey(System.currentTimeMillis()))
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_person).circleCrop()
+                        .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                }
             }
         }
         binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
