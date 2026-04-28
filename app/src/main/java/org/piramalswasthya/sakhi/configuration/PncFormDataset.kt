@@ -381,6 +381,10 @@ class PncFormDataset(
             anySignOfDanger.value?.let { dangerSignValue ->
                 val isDangerSignYes = dangerSignValue == anySignOfDanger.entries!!.first()
                 referralFacility.required = isDangerSignYes
+                if (isDangerSignYes) {
+                    list.add(list.indexOf(anySignOfDanger) + 1, motherDangerSign)
+
+                }
             }
             motherDangerSign.value = it.motherDangerSign
             if (it.motherDangerSign == motherDangerSign.entries!!.last()) {
@@ -779,6 +783,7 @@ class PncFormDataset(
             form.otherPpcMethod = otherPpcMethod.value?.takeIf { it.isNotEmpty() }
             form.motherDangerSign = motherDangerSign.value?.takeIf { it.isNotEmpty() }
             form.otherDangerSign = otherDangerSign.value?.takeIf { it.isNotEmpty() }
+            form.anyDangerSign = anySignOfDanger.value?.takeIf { it.isNotEmpty() }
             form.referralFacility = referralFacility.value?.takeIf { it.isNotEmpty() }
             form.motherDeath =
                 motherDeath.value?.let { it == motherDeath.entries!!.last() } ?: false
