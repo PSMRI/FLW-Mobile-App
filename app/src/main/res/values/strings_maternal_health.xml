@@ -194,7 +194,7 @@
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
         <item>Accident</item>
-        <item>Maternal Death</item>
+        <item>Other Maternal Death</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>Yes</item>
@@ -361,7 +361,7 @@
         <item>HIGH FEVER</item>
         <item>Sepsis</item>
         <item>Accident</item>
-        <item>Maternal Death</item>
+        <item>Other Maternal Death</item>
     </string-array>
 
     <string-array name="pnc_death_place_array">
