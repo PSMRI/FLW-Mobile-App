@@ -900,7 +900,7 @@ class PregnantWomanAncVisitDataset(
 
             otherHighRiskCondition.id -> {
                 validateEmptyOnEditText(otherHighRiskCondition)
-                validateAllAlphabetsSpaceOnEditText(otherHighRiskCondition)
+              //  validateAllAlphabetsSpaceOnEditText(otherHighRiskCondition)
             }
 
             hrpConfirm.id -> triggerDependants(
