@@ -712,17 +712,31 @@
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
-        <item>CBAC</item>
-        <item>TB Screening</item>
-        <item>TB Suspected</item>
         <item>EC Registration</item>
         <item>EC Tracking</item>
         <item>PW Registration</item>
         <item>PW ANC</item>
+        <item>PMSMA</item>
+        <item>Delivery Outcome</item>
+        <item>PNC</item>
+        <item>Infant Reg</item>
+        <item>CBAC</item>
+        <item>TB Screening</item>
+        <item>TB Suspected</item>
         <item>HRP Assess</item>
         <item>HRP Track</item>
-        <item>HR NonPreg. Assess</item>
+        <item>HR NonPreg Assess</item>
         <item>HR NonPreg Track</item>
+        <item>Immunization</item>
+        <item>HBYC</item>
+        <item>HBNC</item>
+        <item>Micro Birth Plan</item>
+        <item>VHND</item>
+        <item>VHSNC</item>
+        <item>PHC</item>
+        <item>AHD</item>
+        <item>Deworming</item>
+        <item>NCD Follow Up</item>
     </string-array>
 
     <string-array name="place_array">
