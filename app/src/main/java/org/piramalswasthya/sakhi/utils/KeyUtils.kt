@@ -43,5 +43,6 @@ object KeyUtils {
 
     external fun chatUrl(): String
 
+    external fun chatApiKey(): String
 
 }

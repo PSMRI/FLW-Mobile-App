@@ -59,7 +59,9 @@ import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.ChatApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
+import org.piramalswasthya.sakhi.network.interceptors.ChatAuthInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenAuthenticator
@@ -82,6 +84,7 @@ object AppModule {
     const val AUTH_API = "authApi"
     const val UAT_CLIENT = "uatClient"
     const val ABHA_CLIENT = "abhaClient"
+    const val CHAT_CLIENT = "chatClient"
 
     // AUTH client (NO interceptors, for refresh calls only)
     @Singleton
@@ -229,6 +232,38 @@ object AppModule {
             .client(httpClient)
             .build()
             .create(AmritApiService::class.java)
+    }
+
+    // ── Chat API client ──
+
+    @Singleton
+    @Provides
+    @Named(CHAT_CLIENT)
+    fun provideChatHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(ChatAuthInterceptor())
+            .addInterceptor(ContentTypeInterceptor())
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideChatApiService(
+        moshi: Moshi,
+        @Named(CHAT_CLIENT) httpClient: OkHttpClient
+    ): ChatApiService {
+        return Retrofit.Builder()
+            .baseUrl(KeyUtils.chatUrl())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(httpClient)
+            .build()
+            .create(ChatApiService::class.java)
     }
 
     @Singleton

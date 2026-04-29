@@ -122,6 +122,7 @@ jobs:
           ABHA_TOKEN_URL: ${{ vars.ABHA_TOKEN_URL }}
           ABHA_AUTH_URL: ${{ vars.ABHA_AUTH_URL }}
           CHAT_URL: ${{ vars.CHAT_URL }}
+          CHAT_API_KEY: ${{ secrets.CHAT_API_KEY }}
           # Signing env vars (used by Fastlane for release builds)
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}

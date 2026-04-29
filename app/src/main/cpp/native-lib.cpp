@@ -18,7 +18,8 @@
  const char* M_BASE_ABHA_URL = "https://abhasbx.abdm.gov.in/abha/api/";
  const char* M_ABHA_TOKEN_URL = "https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions";
  const char* M_ABHA_AUTH_URL = "https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate";
- const char* M_CHAT_URL = "https://piramalvoicebot.yugasa.org/";
+ const char* M_CHAT_URL = CHAT_URL;
+ const char* M_CHAT_API_KEY = CHAT_API_KEY;
 // ================== Production Constants (from Environment) ================== //
  #else
  const char* M_ENCRYPTED_PASS_KEY = ENCRYPTED_PASS_KEY;
@@ -29,6 +30,7 @@
  const char* M_ABHA_TOKEN_URL = ABHA_TOKEN_URL;
  const char* M_ABHA_AUTH_URL = ABHA_AUTH_URL;
  const char* M_CHAT_URL = CHAT_URL;
+ const char* M_CHAT_API_KEY = CHAT_API_KEY;
  #endif
 
 // =================================================================== //
@@ -80,4 +82,10 @@ extern "C"
 JNIEXPORT jstring JNICALL
 Java_org_piramalswasthya_sakhi_utils_KeyUtils_chatUrl(JNIEnv* env, jobject thiz) {
     return env->NewStringUTF(M_CHAT_URL);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_org_piramalswasthya_sakhi_utils_KeyUtils_chatApiKey(JNIEnv* env, jobject thiz) {
+    return env->NewStringUTF(M_CHAT_API_KEY);
 }
