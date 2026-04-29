@@ -1136,17 +1136,31 @@
 
     <string-array name="sync_records">
         <item>लाभार्थी</item>
-        <item>CBAC</item>
-        <item>टीबी की जाँच</item>
-        <item>TB का संदेह</item>
         <item>EC पंजीकरण</item>
-        <item>EC फॉलो-अप</item>
+        <item>EC ट्रैकिंग</item>
         <item>PW पंजीकरण</item>
-        <item>पीडब्लू एएनसी</item>
-        <item>HRP मूल्यांकन</item>
-        <item>HRP ट्रैक</item>
-        <item>HR (हृदय गति) - गैर-गर्भवती: मूल्यांकन</item>
-        <item>HR नॉन-प्रेग्नेंसी ट्रैक</item>
+        <item>PW एएनसी</item>
+        <item>पीएमएसएमए</item>
+        <item>प्रसव परिणाम</item>
+        <item>पीएनसी</item>
+        <item>शिशु पंजीकरण</item>
+        <item>सीबीएसी</item>
+        <item>टीबी की जाँच</item>
+        <item>टीबी संदिग्ध</item>
+        <item>एचआरपी मूल्यांकन</item>
+        <item>एचआरपी ट्रैक</item>
+        <item>HR गैर-गर्भवती मूल्यांकन</item>
+        <item>HR गैर-गर्भवती ट्रैक</item>
+        <item>टीकाकरण</item>
+        <item>एचबीवाईसी</item>
+        <item>एचबीएनसी</item>
+        <item>सूक्ष्म जन्म योजना</item>
+        <item>वीएचएनडी</item>
+        <item>वीएचएसएनसी</item>
+        <item>पीएचसी</item>
+        <item>एएचडी</item>
+        <item>कीड़ा मुक्ति</item>
+        <item>एनसीडी फॉलो-अप</item>
     </string-array>
 
     <string name="btn_cancel">रद्द करें</string>

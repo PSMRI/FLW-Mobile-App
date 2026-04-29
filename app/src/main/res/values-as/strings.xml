@@ -187,17 +187,31 @@
     <string name="service_location">সেৱা অবস্থান</string>
     <string-array name="sync_records">
         <item>লাভানী</item>
-        <item>সিবিএসি</item>
-        <item>টি বি স্ক্রীনিং</item>
-        <item>টি বি সন্দেহভবিত</item>
-        <item>ইসি নিবন্ধন</item>
-        <item>ইসি ট্র্যাকিং</item>
-        <item>পি ডাব্লু নিবন্ধন</item>
-        <item>পি ডাব্লু এ এন সি</item>
-        <item>এইচআরপি মূল্যায়ন</item>
-        <item>এইচআরপি ট্র্যাক</item>
-        <item>এইচআর গৈরগর্ভ মূল্যায়ন</item>
-        <item>এইচআর গৈরগর্ভ ট্র্যাক</item>
+        <item>ইচি নিবন্ধন</item>
+        <item>ইচি ট্রেকিং</item>
+        <item>পি ডাব্লিউ নিবন্ধন</item>
+        <item>পি ডাব্লিউ এএনচি</item>
+        <item>PMSMA</item>
+        <item>প্ৰসূতি ফলাফল</item>
+        <item>PNC</item>
+        <item>শিশু নিবন্ধন</item>
+        <item>সিবিএচিএচ</item>
+        <item>টি বি স্ক্ৰিনিং</item>
+        <item>টি বি সন্দেহজনক</item>
+        <item>এইচ আৰ পি মূল্যায়ন</item>
+        <item>এইচ আৰ পি ট্রেক</item>
+        <item>অগর্ভাৱস্থা মূল্যায়ন</item>
+        <item>অগর্ভাৱস্থা ট্রেক</item>
+        <item>টিকাকৰণ</item>
+        <item>HBYC</item>
+        <item>HBNC</item>
+        <item>মাইক্রো বার্থ প্লেন</item>
+        <item>VHND</item>
+        <item>VHSNC</item>
+        <item>PHC</item>
+        <item>AHD</item>
+        <item>ডিৱৰ্মিং</item>
+        <item>NCD ফ\'ল আপ</item>
     </string-array>
 
     <string-array name="temp_array">
