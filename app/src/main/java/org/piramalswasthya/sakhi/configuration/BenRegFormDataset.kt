@@ -650,10 +650,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatus
-//            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-//                reproductiveStatus.getStringFromPosition(it)
-//            }
+           // reproductiveStatus.value = saved.genDetails?.reproductiveStatus
+            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
+                reproductiveStatus.getStringFromPosition(it)
+            }
 
             // Restore haveChildren value for married females
             val maritalStatusIdForChildren = saved.genDetails?.maritalStatusId
@@ -1854,7 +1854,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             beneficiaryStatus.id -> {
-                val isDeath = beneficiaryStatus.value == BenStatus.Death.name
+               // val isDeath = beneficiaryStatus.value == BenStatus.Death.name
+                val isDeath = beneficiaryStatus.getPosition() == 2
 
                 if (isDeath) {
                     dateOfDeath.min = getMinDateFromRegistration(dateOfReg.value!!)
