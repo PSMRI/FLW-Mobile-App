@@ -1708,7 +1708,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         id = 51,
         arrayId = -1,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.date_of_death),
+        title = resources.getString(R.string.date_of_death),
         max = System.currentTimeMillis(),
         required = true,
     )
@@ -1716,14 +1716,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val timeOfDeath = FormElement(
         id = 52,
         inputType = org.piramalswasthya.sakhi.model.InputType.TIME_PICKER,
-        title = context.getString(R.string.time_of_death),
+        title = resources.getString(R.string.time_of_death),
         required = false,
     )
 
     private val reasonOfDeath = FormElement(
         id = 53,
         inputType = DROPDOWN,
-        title = context.getString(R.string.reason_for_death),
+        title = resources.getString(R.string.reason_for_death),
         arrayId = R.array.reason_of_death_array,
         entries = resources.getStringArray(R.array.reason_of_death_array),
         required = true
@@ -1733,7 +1733,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val placeOfDeath = FormElement(
         id = 54,
         inputType = DROPDOWN,
-        title = context.getString(R.string.place_of_death),
+        title = resources.getString(R.string.place_of_death),
         arrayId = R.array.death_place_array,
         entries = resources.getStringArray(R.array.death_place_array),
         required = true,
@@ -1742,7 +1742,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val otherPlaceOfDeath = FormElement(
         id = 55,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.other_place_of_death),
+        title = resources.getString(R.string.other_place_of_death),
         required = true,
         hasDependants = true,
     )
