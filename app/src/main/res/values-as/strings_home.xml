@@ -84,7 +84,7 @@
     <string name="place">স্থান</string>
     <string name="participants">অংশগ্ৰহণকাৰীসকল</string>
     <string name="no_b_attended">উপকাৰভোগীসকলৰ উপস্থিতিৰ সংখ্যা</string>
-    <string name="total_no_b_attended">Total No. of Beneficiaries Attended</string>
+    <string name="total_no_b_attended">উপস্থিত হিতাধিকাৰীৰ মুঠ সংখ্যা</string>
     <string name="vhnd">ভি.এইচ.এন.ডি/ভি.এইচ.এস.এন.ডি</string>
     <string name="vnhc">VHSNC</string>
     <string name="phc_review">PHC পৰ্যালোচনা বৈঠক</string>
@@ -94,16 +94,16 @@
     <string name="maa_meeting_list">মা সভাৰ প্ৰ-পত্ৰ তালিকা</string>
     <string name="saas_bahu_list">সাস বহু সন্মিলন</string>
     <string name="saas_bahu_reg">সাস বহু সন্মিলন পঞ্জীয়ন</string>
-    <string name="icon_cluster_phc_list">Cluster Meeting Forms List</string>
-    <string name="icon_cluster_phc">Cluster Meeting Forms</string>
-    <string name="place_of_meeting">Place of meeting</string>
-    <string name="mitanin">Mitanins</string>
-    <string name="mt">Mitanin Activity check list</string>
+    <string name="icon_cluster_phc_list">ক্লাষ্টাৰ মিটিং প্ৰ-পত্ৰৰ তালিকা</string>
+    <string name="icon_cluster_phc">ক্লাষ্টাৰ সভাৰ প্ৰ-পত্ৰ</string>
+    <string name="place_of_meeting">সভাৰ স্থান</string>
+    <string name="mitanin">মিটানিন</string>
+    <string name="mt">মিটানিন কাৰ্য্যকলাপ পৰীক্ষা তালিকা</string>
     <string name="anmrho">ANM/ RHO</string>
-    <string name="participants_attended">Participants Attended</string>
-    <string name="leprosy_title">Check if the person has any of these symptoms</string>
-    <string name="no_of_individuals">Number of Individuals</string>
-    <string name="no_of_familes">Number of Families</string>
+    <string name="participants_attended">অংশগ্ৰহণকাৰীসকল উপস্থিত</string>
+    <string name="leprosy_title">ব্যক্তিজনৰ এনে কোনো লক্ষণ আছে নে নাই পৰীক্ষা কৰক</string>
+    <string name="no_of_individuals">ব্যক্তিৰ সংখ্যা</string>
+    <string name="no_of_familes">পৰিয়ালৰ সংখ্যা</string>
 
     <string name="navigation_drawer_open">নেভিগেশ্বন ড্ৰয়াৰ খোলক</string>
     <string name="navigation_drawer_close">নেভিগেশ্বন ড্ৰয়াৰ বন্ধ কৰক</string>
