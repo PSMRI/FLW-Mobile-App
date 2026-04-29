@@ -796,54 +796,28 @@ fun getAgeDisplayString(dob: Long): String {
     val calDob = Calendar.getInstance().apply { timeInMillis = dob }
     val calNow = Calendar.getInstance()
 
-    val diffDays =
-        TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - dob).toInt()
-
-    if (diffDays < 31) {
-        return "$diffDays Day${if (diffDays != 1) "s" else ""}"
-    }
-
     var years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
     var months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
     var days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
 
     if (days < 0) {
-        months -= 1
+        months--
         val tempCal = calNow.clone() as Calendar
         tempCal.add(Calendar.MONTH, -1)
         days += tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
 
     if (months < 0) {
-        years -= 1
+        years--
         months += 12
     }
 
-    return when {
-        years >= 1 -> {
-            buildString {
-                append("$years Year${if (years != 1) "s" else ""}")
-                if (months >= 1) {
-                    append(" $months Month${if (months != 1) "s" else ""}")
-                }
-                if (days >= 1) {
-                    append(" $days Day${if (days != 1) "s" else ""}")
-                }
-            }
-        }
-        else -> {
-            buildString {
-                if (months >= 1) {
-                    append("$months Month${if (months != 1) "s" else ""}")
-                }
-                if (days >= 1) {
-                    append(" $days Day${if (days != 1) "s" else ""}")
-                }
-            }
-        }
+    return if (years < 6) {
+        "$years Years $months Months $days Days"
+    } else {
+        "$years Years"
     }
 }
-
 
 
 @Parcelize
@@ -924,7 +898,7 @@ data class BenBasicDomainForForm(
     val dob: Long,
     val ageInt: Int = getAgeFromDob(dob),
     val ageUnit: AgeUnit = getAgeUnitFromDob(dob),
-    val age: String = "$ageInt $ageUnit",
+    val age: String = "${getAgeDisplayString(dob)}",
     val mobileNo: String,
     val fatherName: String? = null,
     val spouseName: String? = null,
