@@ -1,9 +1,11 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.list
 
 import android.content.Context
+import android.content.res.Resources
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -12,10 +14,12 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NcdRefferedListViewModelTest : BaseViewModelTest() {
@@ -23,12 +27,23 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var recordsRepo: RecordsRepo
     @MockK private lateinit var preferenceDao: PreferenceDao
     @MockK private lateinit var context: Context
+    @MockK private lateinit var mockResources: Resources
 
     private lateinit var viewModel: NcdRefferedListViewModel
 
     @Before
     override fun setUp() {
         super.setUp()
+        mockkObject(HelperUtil)
+        every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
+        every { mockResources.getString(any()) } returns ""
+        every { mockResources.getString(R.string.all) } returns "ALL"
+        every { mockResources.getString(R.string.cat_ncd) } returns "NCD"
+        every { mockResources.getString(R.string.cat_tb) } returns "TB"
+        every { mockResources.getString(R.string.cat_leprosy) } returns "LEPROSY"
+        every { mockResources.getString(R.string.cat_geriatric) } returns "GERIATRIC"
+        every { mockResources.getString(R.string.cat_hrp) } returns "HRP"
+        every { mockResources.getString(R.string.cat_maternal) } returns "MATERNAL"
         val user = mockk<User>(relaxed = true)
         every { user.userId } returns 456
         every { user.name } returns "TestUser"
