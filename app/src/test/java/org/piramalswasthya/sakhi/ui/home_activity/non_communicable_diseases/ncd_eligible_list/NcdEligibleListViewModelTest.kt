@@ -1,9 +1,12 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_eligible_list
 
+import android.content.Context
+import android.content.res.Resources
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -12,27 +15,37 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NcdEligibleListViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var recordsRepo: RecordsRepo
     @MockK private lateinit var preferenceDao: PreferenceDao
+    @MockK private lateinit var context: Context
+    @MockK private lateinit var mockResources: Resources
 
     private lateinit var viewModel: NcdEligibleListViewModel
 
     @Before
     override fun setUp() {
         super.setUp()
+        mockkObject(HelperUtil)
+        every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
+        every { mockResources.getString(any()) } returns ""
+        every { mockResources.getString(R.string.all) } returns "ALL"
+        every { mockResources.getString(R.string.screened) } returns "Screened"
+        every { mockResources.getString(R.string.not_screened) } returns "Not Screened"
         val user = mockk<User>(relaxed = true)
         every { user.userId } returns 123
         every { preferenceDao.getLoggedInUser() } returns user
         every { recordsRepo.getNcdEligibleList } returns flowOf(emptyList())
-        viewModel = NcdEligibleListViewModel(recordsRepo, preferenceDao)
+        viewModel = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
     }
 
     // =====================================================

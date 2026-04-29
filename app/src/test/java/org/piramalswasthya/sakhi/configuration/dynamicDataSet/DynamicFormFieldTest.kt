@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration.dynamicDataSet
 
 import org.junit.Assert.assertEquals
+import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItem
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -38,7 +39,7 @@ class DynamicFormFieldTest {
     @Test fun `FormField with all fields`() {
         val validation = FieldValidation(min = 0f, max = 100f)
         val conditional = ConditionalLogic("dep", "val")
-        val f = FormField("id", "Label", "number", "0", true, listOf("A", "B"), 42, true, conditional, "err", "placeholder", validation, true)
+        val f = FormField("id", "Label", "number", "0", true, listOf(OptionItem("A"), OptionItem("B")), 42, true, conditional, "err", "placeholder", validation, true)
         assertEquals("id", f.fieldId)
         assertEquals("0", f.defaultValue)
         assertEquals(42, f.value)
@@ -76,9 +77,9 @@ class DynamicFormFieldTest {
     }
 
     @Test fun `FormField with options`() {
-        val f = FormField("f", "L", "dropdown", isRequired = false, options = listOf("Yes", "No"))
+        val f = FormField("f", "L", "dropdown", isRequired = false, options = listOf(OptionItem("Yes"), OptionItem("No")))
         assertEquals(2, f.options!!.size)
-        assertEquals("Yes", f.options!![0])
+        assertEquals(OptionItem("Yes"), f.options!![0])
     }
 
     @Test fun `FormField copy changes fieldId`() {
