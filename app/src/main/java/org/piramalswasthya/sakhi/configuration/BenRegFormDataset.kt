@@ -1722,7 +1722,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val reasonOfDeath = FormElement(
         id = 53,
         inputType = DROPDOWN,
-        title = context.getString(R.string.reason_for_death),
+        title = resources.getString(R.string.reason_for_death),
         arrayId = R.array.reason_of_death_array,
         entries = resources.getStringArray(R.array.reason_of_death_array),
         required = true
