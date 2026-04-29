@@ -176,8 +176,8 @@
         <item>Grand Daughter</item>
         <item>Son in Law</item>
         <item>Daughter in Law</item>
-        <item>Sister in Law</item>
         <item>Self</item>
+        <item>Sister in Law</item>
         <item>Other</item>
 
     </string-array>
