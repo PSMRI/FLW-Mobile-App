@@ -59,5 +59,6 @@
     <string name="activity_name">Activity</string>
     <string name="incentive_rch_id_details">RCH আইডি: %1s</string>
     <string name="incentive_abha_id_details">ABHA নম্বৰ: %1s</string>
+    <string name="contact_info">যোগাযোগৰ তথ্য</string>
 
 </resources>

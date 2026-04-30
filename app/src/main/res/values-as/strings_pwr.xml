@@ -21,11 +21,11 @@
     <string name="pwrdst_other">অন্যান্য</string>
     <string name="pwrdst_is_prag">এইটো আপোনাৰ ১ম গৰ্ভাৱস্থা নেকি?</string>
     <string name="pwrdst_no_of_prev_prag">মুঠ নং। পূৰ্বৰ গৰ্ভাৱস্থাৰ</string>
-    <string name="pwrdst_any_lst_pregnancy">Last Pregnancy ত যিকোনো জটিলতা</string>
+    <string name="pwrdst_any_lst_pregnancy">শেষ গৰ্ভাৱস্থা ত যিকোনো জটিলতা</string>
     <string name="pwrdst_any_other_comp">আন যিকোনো জটিলতা</string>
     <array name="pwrdst_yes_no">
-        <item>Yes</item>
-        <item>No</item>
+        <item>হয়</item>
+        <item>নহয়</item>
     </array>
     <string name="pwrdst_is_id_as_hrp_cse">এইচ আৰ পি কেছ হিচাপে চিনাক্ত কৰা হৈছেনে?</string>
     <string name="pwrdst_who_id_as_hrp">কোনে এইচ আৰ পি বুলি চিনাক্ত কৰিছিল?</string>
