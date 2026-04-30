@@ -1371,11 +1371,11 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         }
 
         if (formId == noOfChildren.id) {
-            noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
-            validateIntMinMax(noOfChildren)
+
 
             if (isExistingRecord) {
-
+                noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
+                validateIntMinMax(noOfChildren)
                 val newCount = noOfChildren.value?.toIntOrNull() ?: 0
 
                 val oldCount = children.count { child ->
@@ -1409,11 +1409,26 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                     )
                 }
             } else {
+
+                val filledCount = children.count { child ->
+                    child.dob.value != null ||
+                            child.gender.value != null ||
+                            child.age.value != null
+                }
+                noOfChildren.min = if (filledCount >= 1) filledCount.toLong() else 1L
+                validateIntMinMax(noOfChildren)
                 val count = noOfChildren.value?.toIntOrNull() ?: 0
+                val effectiveCount = maxOf(count, filledCount)
+                val addItems = children.take(effectiveCount).flatMap { it.toFormList() }
+                val removeItems = children.drop(effectiveCount).flatMap { it.toFormList() }
+                triggerDependants(source = noOfChildren, addItems = addItems, removeItems = removeItems)
+                children.drop(effectiveCount).forEach { it.clearValues() }
+
+              /*  val count = noOfChildren.value?.toIntOrNull() ?: 0
                 val addItems = children.take(count).flatMap { it.toFormList() }
                 val removeItems = children.drop(count).flatMap { it.toFormList() }
                 triggerDependants( source = noOfChildren, addItems = addItems, removeItems = removeItems )
-                children.drop(count).forEach { it.clearValues() }
+                children.drop(count).forEach { it.clearValues() }*/
 
             }
 
