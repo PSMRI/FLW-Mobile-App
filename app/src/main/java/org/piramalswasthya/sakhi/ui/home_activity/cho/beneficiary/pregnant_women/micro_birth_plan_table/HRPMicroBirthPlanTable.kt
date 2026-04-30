@@ -262,7 +262,12 @@ class HRPMicroBirthPlanTable : Fragment() {
     }
 
     private fun shareImage(imageUri: Uri) {
-        if (isPackageExist(requireContext(), "com.whatsapp") || isPackageExist(requireContext(), "com.whatsapp.w4b")) {
+        val whatsappPackage = when {
+            isPackageExist(requireContext(), "com.whatsapp") -> "com.whatsapp"
+            isPackageExist(requireContext(), "com.whatsapp.w4b") -> "com.whatsapp.w4b"
+            else -> null
+        }
+        if (whatsappPackage != null) {
             val captionText = " ${getString(R.string.micro_birth_plan)} " +
                     "\n ASHA Name : ${viewModel.currentUser!!.name} " +
                     "\n Sub-center : ${viewModel.currentLocation!!.village.name}"
@@ -270,7 +275,7 @@ class HRPMicroBirthPlanTable : Fragment() {
                 putExtra(Intent.EXTRA_STREAM, imageUri)
                 putExtra(Intent.EXTRA_TEXT, captionText)
                 putExtra(Intent.EXTRA_SUBJECT, "Subject Here")
-                setPackage("com.whatsapp")
+                setPackage(whatsappPackage)
                 type = "image/*"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
