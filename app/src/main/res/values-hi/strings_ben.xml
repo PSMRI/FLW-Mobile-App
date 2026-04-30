@@ -217,6 +217,25 @@
         <item>अनिर्धारित</item>
     </string-array>
 
+    <string-array name="reason_of_death_array">
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+        <item>मातृ मृत्यु</item>
+    </string-array>
+
     <string-array name="death_place_array">
         <item>घर</item>
         <item>उप-केंद्र</item>
