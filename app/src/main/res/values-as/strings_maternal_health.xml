@@ -8,24 +8,24 @@
         <item>Incomplete</item>
     </string-array>
     <string-array name="place_of_anc_array">
-        <item>Sub-Centre</item>
-        <item>VHND/VHSND</item>
-        <item>PHC</item>
-        <item>PMSMA Visit</item>
-        <item>CHC</item>
-        <item>District Hospital</item>
-        <item>Medical College Hospital</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>VHND/VHSND (গ্ৰাম স্বাস্থ্য আৰু পুষ্টি দিৱস)</item>
+        <item>PHC (প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>PMSMA ভিজিট</item>
+        <item>CHC (সমষ্টিগত স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
     </string-array>
     <string-array name="abortion_place_array">
-        <item>Home</item>
-        <item>Subcenter</item>
-        <item>PHC</item>
-        <item>CHC</item>
-        <item>District Hospital</item>
-        <item>Medical College Hospital</item>
-        <item>Private Hospital</item>
-        <item>In Transit</item>
-        <item>Other Place of Abortion</item>
+        <item>ঘৰ</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>PHC (প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>CHC (সমষ্টিগত স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>যাত্ৰাপথত</item>
+        <item>গৰ্ভপাতৰ অন্য স্থান</item>
     </string-array>
 
     <string-array name="anc_abortion_facility_array">
@@ -86,15 +86,25 @@
     </string-array>
 
     <string-array name="select_high_risk_condition">
-        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
-        <item>CONVULSIONS</item>
-        <item>VAGINAL BLEEDING</item>
-        <item>FOUL SMELLING DISCHARGE</item>
-        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
-        <item>DIABETES</item>
-        <item>TWINS</item>
-        <item>OTHER</item>
+        <item>উচ্চ ৰক্তচাপ (সিষ্ট’লিক ≥140 আৰু/বা ডায়াষ্ট’লিক ≥90 mmHg)</item>
+        <item>খিঁচুনি</item>
+        <item>যোনিৰ পৰা ৰক্তস্ৰাৱ</item>
+        <item>দুৰ্গন্ধযুক্ত স্ৰাৱ</item>
+        <item>গম্ভীৰ ৰক্তাল্পতা (HB &lt;7 gm/dl)</item>
+        <item>ডায়াবেটিছ</item>
+        <item>যমজ সন্তান</item>
+        <item>অন্যান্য</item>
     </string-array>
+
+    <string name="anc_form_submitted">ফৰ্ম সফলভাৱে জমা দিয়া হৈছে</string>
+    <string name="something_went_wrong_try_again">কিবা ভুল হৈছে। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
+    <string name="continue_anc_visit">ANC পৰিদৰ্শন অব্যাহত ৰাখক</string>
+    <string name="continue_anc_visit_message">আপুনি ANC পৰিদৰ্শন অব্যাহত ৰাখিব বিচাৰে নেকি?</string>
+    <string name="next_anc_visit_due">পৰৱৰ্তী ANC পৰিদৰ্শন বাকী আছে</string>
+    <string name="visit_date_required">পৰিদৰ্শনৰ তাৰিখ আৱশ্যক</string>
+    <string name="invalid_visit_date_format">অবৈধ পৰিদৰ্শনৰ তাৰিখৰ ফৰ্মেট</string>
+    <string name="fill_required_fields">অনুগ্ৰহ কৰি সকলো আৱশ্যক ক্ষেত্ৰ সঠিকভাৱে পূৰণ কৰক</string>
+    <string name="danger_signs_identified">বিপদৰ লক্ষণ চিনাক্ত কৰা হৈছে!</string>
 
     <!--  PMSMA  -->
     <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>

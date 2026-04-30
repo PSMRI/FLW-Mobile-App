@@ -272,5 +272,15 @@
     <string name="none_of">এইবোৰৰ কোনোটোৱেই নহয়</string>
     <string name="cbac_is_leprosy_suspected">কুষ্ঠ ৰোগৰ কোনো লক্ষণ আছে নেকি?</string>
     <string name="refer_to_hwc_facility_alert">আপুনি HWC সুবিধালৈ ৰেফাৰ কৰিব বিচাৰে নেকি?</string>
+
+    <string name="view_screen">স্ক্ৰিন চাওক</string>
+    <string name="screened">স্ক্ৰিন কৰা হৈছে</string>
+    <string name="not_screened">স্ক্ৰিন কৰা হোৱা নাই</string>
+    <string name="cat_ncd">অ-সংক্রামক ৰোগ</string>
+    <string name="cat_tb">যক্ষ্মা</string>
+    <string name="cat_leprosy">কুষ্ঠ ৰোগ</string>
+    <string name="cat_geriatric">বৃদ্ধজন</string>
+    <string name="cat_hrp">উচ্চ ঝুঁকিপূর্ণ গৰ্ভাৱস্থা</string>
+    <string name="cat_maternal">মাতৃ</string>
 </resources>
 

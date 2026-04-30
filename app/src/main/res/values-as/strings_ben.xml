@@ -9,7 +9,7 @@
     <string name="has_aadhaar_number">আধাৰ নম্বৰ আছে</string>
     <string name="enter_aadhaar_number_ben">আধাৰ নম্বৰ লিখক</string>
     <string name="reproductive_status">প্ৰজনন স্থিতি</string>
-    <string name="birth_certificate_number">Birth Certificate No.</string>
+    <string name="birth_certificate_number">জন্মৰ প্ৰমাণ পত্ৰ নং।</string>
     <string name="beneficiary_details">সুবিধা প্ৰাপ্তবোৰ বিৱৰণ</string>
     <string name="str_beneficiary_status">হিতাধিকাৰীৰ স্থিতি</string>
     <string name="wife_s_name">বাইৰ নাম</string>
@@ -65,29 +65,29 @@
     </string-array>
 
     <string-array name="nbr_reproductive_status_array1">
-        <item>Adolescent Girl</item>
+        <item>কিশোৰী ছোৱালী</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array2">
-        <item>Eligible Couple</item>
-        <item>Pregnant Woman</item>
-        <item>Postnatal Mother</item>
-        <item>Permanently Sterilised</item>
+        <item>যোগ্য দম্পতি</item>
+        <item>গৰ্ভৱতী মহিলা</item>
+        <item>প্ৰসূতি মা</item>
+        <item>স্থায়ীভাৱে নিষ্ক্ৰিয় কৰা</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array3">
-        <item>Not Applicable</item>
+        <item>প্ৰযোজ্য নহয়</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array4">
-        <item>Eligible Couple</item>
-        <item>Pregnant Woman</item>
-        <item>Postnatal Mother</item>
-        <item>Permanently Sterilised</item>
+        <item>যোগ্য দম্পতি</item>
+        <item>গৰ্ভৱতী মহিলা</item>
+        <item>প্ৰসূতি উত্তৰ মাক</item>
+        <item>স্থায়ী বন্ধ্যাকৰণ কৰা ব্যক্তি</item>
     </string-array>
 
     <string-array name="nbr_reproductive_status_array5">
-        <item>Elderly Woman</item>
+        <item>বয়স্ক মহিলা</item>
     </string-array>
 
     <string-array name="nbr_marital_status_male_array">
@@ -99,10 +99,10 @@
     </string-array>
 
     <string-array name="place_of_vhsnc">
-        <item>Anganwadi Centre</item>
-        <item>HWC</item>
-        <item>School</item>
-        <item>Community center</item>
+        <item>অংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>এইচ ডব্লিউ চি (স্বাস্থ্য আৰু কল্যাণ কেন্দ্ৰ)</item>
+        <item>বিদ্যালয়</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
     </string-array>
 
     <string-array name="nbr_marital_status_female_array">
@@ -266,45 +266,44 @@
     <string name="days">দিন</string>
     <string name="mother_rch_id">মা RCH ID</string>
     <string-array name="diet_plane">
-    <item>What to eat, what to avoid, importance of dietary diversity.</item>
+        <item>কি খাব লাগে, কি এৰাব লাগে, আৰু খাদ্য বৈচিত্ৰ্যৰ গুৰুত্ব</item>
 
     </string-array>
     <string-array name="care_pregnancy">
-        <item>Prevention of Anemia, weakness, importance of rest and nutrition.</item>
+        <item>ৰক্তাল্পতা আৰু দুৰ্বলতা প্ৰতিৰোধ, বিশ্ৰাম আৰু পুষ্টিৰ গুৰুত্ব</item>
 
     </string-array>
     <string-array name="select_all">
         <item>Select All</item>
     </string-array>
     <string-array name="maa_breastfeeding">
-        <item>Select All</item>
-        <item>The baby should be breastfed immediately within the first hour of birth</item>
-        <item>The baby should be given only mother’s milk for the first 6 months.</item>
-        <item>After 6 months, along with mother’s milk, nutritious complementary food should be given.</item>
-        <item>Breastfeeding should be continued for 2 years or more.</item>
-        <item>The family should support and encourage the mother.</item>
-        <item>For the first 6 months, the baby should not be given honey, water, or ghutti (herbal concoctions).</item>
-        <item>Breastfeeding protects the baby from many diseases.</item>
-        <item>Mother’s milk is the best for the complete development of the baby.</item>
-        <item>Information was given about KMC (Kangaroo Mother Care).</item>
+        <item>সকলো বাছনি কৰক</item>
+        <item>শিশুক জন্মৰ প্ৰথম ঘণ্টাৰ ভিতৰতে মাকৰ গাখীৰ খুৱাব লাগে</item>
+        <item>প্ৰথম ৬ মাহলৈকে শিশুক কেৱল মাকৰ গাখীৰেই দিব লাগে</item>
+        <item>৬ মাহৰ পাছত মাকৰ গাখীৰৰ সৈতে পুষ্টিকৰ পৰিপূৰক খাদ্য দিব লাগে</item>
+        <item>স্তনপান ২ বছৰ বা তাৰ অধিক সময়লৈকে অব্যাহত ৰাখিব লাগে</item>
+        <item>পৰিয়ালে মাকক সমৰ্থন আৰু উৎসাহ যোগাব লাগে</item>
+        <item>প্ৰথম ৬ মাহলৈকে শিশুক মৌ, পানী বা ঘুটি (ঔষধীয় মিশ্ৰণ) দিব নালাগে</item>
+        <item>স্তনপানে শিশুক বহুতো ৰোগৰ পৰা সুৰক্ষা দিয়ে</item>
+        <item>মাকৰ গাখীৰ শিশুৰ সম্পূৰ্ণ বিকাশৰ বাবে সৰ্বশ্ৰেষ্ঠ</item>
+        <item>KMC (কেংগাৰু মাদাৰ কেয়াৰ) বিষয়ে তথ্য দিয়া হৈছিল</item>
 
     </string-array>
 
     <string-array name="import_brestfeeding">
-        <item>Early initiation after birth, exclusive breastfeeding for 6 months.</item>
+        <item>জন্মৰ পাছত তৎক্ষণাত স্তনপান আৰম্ভ কৰা, আৰু প্ৰথম ৬ মাহলৈকে কেৱল মাকৰ গাখীৰ দিয়াটো</item>
     </string-array>
 
     <string-array name="complementary_feeding">
-        <item>Starting home-based nutritious food after 6 months along with breastfeeding</item>
+        <item>৬ মাহৰ পাছত স্তনপানৰ সৈতে ঘৰুৱা পুষ্টিকৰ খাদ্য আৰম্ভ কৰা</item>
 
     </string-array>
     <string-array name="hygiene_senetigation">
-        <item>Maintaining cleanliness while preparing and feeding food</item>
+        <item>খাদ্য প্ৰস্তুত কৰা আৰু খুৱোৱাৰ সময়ত পৰিচ্ছন্নতা বজাই ৰখা</item>
 
     </string-array>
     <string-array name="family_planning_health">
-        <item>Importance of small family and regular health check-ups</item>
-
+        <item>সৰু পৰিয়ালৰ গুৰুত্ব আৰু নিয়মিত স্বাস্থ্য পৰীক্ষাৰ প্ৰয়োজনীয়তা</item>
     </string-array>
 
     <string name="age_at_marriagee">বিবাহৰ সময়ত আপোনাৰ বয়স</string>
@@ -330,26 +329,26 @@
     <string name="dd_ps">স্থায়ী বন্ধ্যাকৰণ কৰা</string>
 
     <string-array name="ahd_health_status_array">
-        <item>Healthy</item>
-        <item>Anemic</item>
-        <item>Malnourished</item>
+        <item>সুস্থ</item>
+        <item>ৰক্তাল্প</item>
+        <item>অপুষ্ট</item>
     </string-array>
 
     <string-array name="ahd_place_array">
-        <item>Home</item>
-        <item>Community center</item>
-        <item>School</item>
-        <item>Subcenter</item>
+        <item>ঘৰ</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
+        <item>বিদ্যালয়</item>
+        <item>উপ-কেন্দ্ৰ</item>
     </string-array>
 
     <string-array name="ahd_counseling_type_array">
-        <item>Individual</item>
-        <item>Group</item>
+        <item>ব্যক্তিগত</item>
+        <item>গোটীয়া</item>
     </string-array>
 
     <string-array name="ahd_referral_status_array">
-        <item>Pending</item>
-        <item>Completed</item>
+        <item>অপেক্ষমাণ</item>
+        <item>সম্পূৰ্ণ</item>
     </string-array>
 
 </resources>
