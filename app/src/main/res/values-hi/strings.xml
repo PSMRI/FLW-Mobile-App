@@ -1215,5 +1215,9 @@
     <string name="no_internet_connection">कोई इंटरनेट कनेक्शन नहीं</string>
     <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">कृपया अपनी नेटवर्क सेटिंग्स जांचें। कनेक्टिविटी बहाल होने पर यह डायलॉग अपने आप बंद हो जाएगा।</string>
 
-
+    <string name="sammelan_photo1">सम्मेलन की तस्वीरें / MoM (1)</string>
+    <string name="sammelan_photo2">सम्मेलन की तस्वीरें / MoM (2)</string>
+    <string name="sammelan_photo3">सम्मेलन की तस्वीरें / MoM (3)</string>
+    <string name="sammelan_photo4">सम्मेलन की तस्वीरें / MoM (4)</string>
+    <string name="sammelan_photo5">सम्मेलन की तस्वीरें / MoM (5)</string>
 </resources>
