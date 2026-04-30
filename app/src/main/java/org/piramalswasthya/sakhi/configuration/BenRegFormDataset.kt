@@ -248,6 +248,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         required = true,
         max = System.currentTimeMillis(),
         min = getMinDobMillis(),
+        hasDependants = true,
     )
     private val fatherName = FormElement(
         id = 10,
@@ -649,10 +650,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatus
-//            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-//                reproductiveStatus.getStringFromPosition(it)
-//            }
+           // reproductiveStatus.value = saved.genDetails?.reproductiveStatus
+            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
+                reproductiveStatus.getStringFromPosition(it)
+            }
 
             // Restore haveChildren value for married females
             val maritalStatusIdForChildren = saved.genDetails?.maritalStatusId
@@ -1696,7 +1697,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val beneficiaryStatus = FormElement(
         id = 50,
         inputType = RADIO,
-        title = context.getString(R.string.beneficiary_status),
+        title = resources.getString(R.string.str_beneficiary_status),
         arrayId = R.array.beneficiary_status,
         entries = resources.getStringArray(R.array.beneficiary_status),
         required = false,
@@ -1707,7 +1708,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         id = 51,
         arrayId = -1,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.date_of_death),
+        title = resources.getString(R.string.date_of_death),
         max = System.currentTimeMillis(),
         required = true,
     )
@@ -1715,14 +1716,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val timeOfDeath = FormElement(
         id = 52,
         inputType = org.piramalswasthya.sakhi.model.InputType.TIME_PICKER,
-        title = context.getString(R.string.time_of_death),
+        title = resources.getString(R.string.time_of_death),
         required = false,
     )
 
     private val reasonOfDeath = FormElement(
         id = 53,
         inputType = DROPDOWN,
-        title = context.getString(R.string.reason_for_death),
+        title = resources.getString(R.string.reason_for_death),
         arrayId = R.array.reason_of_death_array,
         entries = resources.getStringArray(R.array.reason_of_death_array),
         required = true
@@ -1732,7 +1733,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val placeOfDeath = FormElement(
         id = 54,
         inputType = DROPDOWN,
-        title = context.getString(R.string.place_of_death),
+        title = resources.getString(R.string.place_of_death),
         arrayId = R.array.death_place_array,
         entries = resources.getStringArray(R.array.death_place_array),
         required = true,
@@ -1741,7 +1742,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
     private val otherPlaceOfDeath = FormElement(
         id = 55,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.other_place_of_death),
+        title = resources.getString(R.string.other_place_of_death),
         required = true,
         hasDependants = true,
     )
@@ -1853,7 +1854,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             beneficiaryStatus.id -> {
-                val isDeath = beneficiaryStatus.value == BenStatus.Death.name
+               // val isDeath = beneficiaryStatus.value == BenStatus.Death.name
+                val isDeath = beneficiaryStatus.getPosition() == 2
 
                 if (isDeath) {
                     dateOfDeath.min = getMinDateFromRegistration(dateOfReg.value!!)
@@ -2000,7 +2002,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             ageAtMarriage.id -> {
 
-                val dobMillis = getLongFromDate(agePopup.value)
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
                 val currentAge = getAgeFromDob(dobMillis)
 
                 currentAge.takeIf { it > 0 && !ageAtMarriage.value.isNullOrEmpty() }
@@ -2039,6 +2047,26 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             target = dateOfMarriage
                         )
                     } ?: -1
+
+                return 0
+            }
+
+            dateOfMarriage.id -> {
+                val rawDob = agePopup.value
+                val dobMillis = when {
+                    rawDob.isNullOrBlank() -> getLongFromDate(dobReadOnly.value ?: "")
+                    rawDob.contains("Year", ignoreCase = true) -> getLongFromDate(dobReadOnly.value ?: "")
+                    else -> getLongFromDate(rawDob)
+                }
+
+                val marriageDateMillis = getLongFromDate(dateOfMarriage.value ?: "")
+
+                if (dobMillis > 0L && marriageDateMillis > 0L) {
+                    val calculatedAge = calculateAgeAtMarriage(dobMillis, marriageDateMillis)
+                    calculatedAge?.let {
+                        ageAtMarriage.value = it.toString()
+                    }
+                }
 
                 return 0
             }
@@ -2734,11 +2762,16 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.firstName = firstName.value
             ben.lastName = lastName.value
             val dobValue = agePopup.value
-            if (dobValue.isNullOrBlank()) {
-                Timber.e("DOB (agePopup) is null or blank — skipping dob/age assignment")
+            val actualDob = when {
+                dobValue.isNullOrBlank() -> dobReadOnly.value
+                dobValue.contains("Year", ignoreCase = true) -> dobReadOnly.value
+                else -> dobValue
+            }
+            if (actualDob.isNullOrBlank()) {
+                Timber.e("DOB is null or blank — skipping")
             } else {
-                ben.dob = getLongFromDate(dobValue)
-                ben.age = (getAgeFromDob(getLongFromDate(dobValue)))
+                ben.dob = getLongFromDate(actualDob)
+                ben.age = getAgeFromDob(getLongFromDate(actualDob))
             }
             ben.ageUnitId = 3
             ben.ageUnit = AgeUnit.YEARS

@@ -84,7 +84,7 @@ class AntenatalCounsellingFragment : Fragment() {
     private var hasAnyDangerSign = false
     private var isSelectAllChecked = false
     private var lmpDate :Long? =null
-    private var referralForReason = "Suspected high-risk pregnancy"
+    private var referralForReason = resources.getString(R.string.str_suspected_high_risk_pregnancy)
     private var referType = "Maternal"
 
     override fun onCreateView(

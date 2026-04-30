@@ -297,7 +297,7 @@ class EyeSurgeryFormViewModel @Inject constructor(
     suspend fun saveFormResponses(
         benId: Long,
         hhId: Long,
-        eyeSide: String = "",
+        eyeSide: String,
         recordId: Int = 0
     ): Boolean {
         return try {

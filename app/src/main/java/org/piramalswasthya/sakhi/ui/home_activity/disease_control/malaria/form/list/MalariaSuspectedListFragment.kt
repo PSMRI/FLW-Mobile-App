@@ -135,8 +135,8 @@ class MalariaSuspectedListFragment : Fragment() {
             binding.switchButton.visibility = View.VISIBLE
             binding.switchBtnMosquito.visibility = View.VISIBLE
         } else if(viewModel.isFromDisease == 1) {
-            binding.switchButton.visibility = View.GONE
-            binding.switchBtnMosquito.visibility = View.GONE
+            binding.switchButton.visibility = View.VISIBLE
+            binding.switchBtnMosquito.visibility = View.VISIBLE
         } else {
             binding.switchButton.visibility = View.GONE
             binding.switchBtnMosquito.visibility = View.GONE

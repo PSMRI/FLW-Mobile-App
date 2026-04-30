@@ -17,7 +17,6 @@ import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.model.LocationEntity
-import org.piramalswasthya.sakhi.model.LocationRecord
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -32,9 +31,7 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
         villageList = villages
         val villageNames = villages.map { it.name }.toTypedArray()
         villageDropdown.entries = villageNames
-        if (villages.size == 1) {
-            villageDropdown.value = villageNames[0]
-        }
+        villageDropdown.value = if (villages.size == 1) villageNames[0] else null
     }
 
     companion object {
@@ -169,8 +166,15 @@ class HouseholdFormDataset(context: Context, language: Languages,var preferenceD
             )
         }
         list.addAll(firstPage)
-        hh?.locationRecord?.let { loc ->
+       /* hh?.locationRecord?.let { loc ->
             villageDropdown.value = loc.village.name
+        }*/
+        hh?.let { savedHh ->
+            if (!savedHh.isDraft || savedHh.householdId != 0L) {
+                savedHh.locationRecord.let { loc ->
+                    villageDropdown.value = loc.village.name
+                }
+            }
         }
         hh?.family?.let { saved ->
             firstNameHeadOfFamily.value = saved.familyHeadName

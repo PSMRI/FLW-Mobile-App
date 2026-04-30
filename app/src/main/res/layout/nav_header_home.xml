@@ -16,8 +16,7 @@
         android:layout_centerVertical="true"
         android:background="@drawable/bg_circular"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic__menopause"
-        android:tint="@color/seed"
+        android:src="@drawable/ic__menopause2"
         app:shapeAppearanceOverlay="@style/CircleImage"/>
 
     <LinearLayout

@@ -271,6 +271,22 @@ class UserRepo @Inject constructor(
 
                 }
 
+                if (facilityData.has("facilities")) {
+                    val facilitiesArray = facilityData.getJSONArray("facilities")
+
+                    if (facilitiesArray.length() > 0) {
+                        val facilityObj = facilitiesArray.getJSONObject(0)
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+                    }
+                }
+
                 if (facilityData.has("supervisor")) {
                     val facilityObj = facilityData.getJSONObject("supervisor")
 

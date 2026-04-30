@@ -266,6 +266,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }?: run {
+                viewModel.profilePicUri?.let { savedUri ->
+                    Glide.with(this).load(savedUri)
+                        .signature(ObjectKey(System.currentTimeMillis()))
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_person).circleCrop()
+                        .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                }
             }
         }
         binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
@@ -311,7 +320,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
 
 
-        if (isDeviceRootedOrEmulator()) {
+        if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
                 .setMessage("This app cannot run on rooted devices or emulators.")
@@ -539,7 +548,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     override fun onResume() {
         super.onResume()
         window.decorView.alpha = 1f
-        if (isDeviceRootedOrEmulator()) {
+        if (!BuildConfig.DEBUG && isDeviceRootedOrEmulator()) {
             AlertDialog.Builder(this)
                 .setTitle("Unsupported Device")
                 .setMessage("This app cannot run on rooted devices or emulators.")

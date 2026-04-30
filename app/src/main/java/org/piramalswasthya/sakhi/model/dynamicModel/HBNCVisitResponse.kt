@@ -17,6 +17,10 @@ data class HBNCVisitResponse(
     @SerializedName("visitDate")
     val visitDate: String,
 
+    @SerializedName("eyeSide")
+    val eyeSide: String,
+
+
     @SerializedName("fields")
     val fields: JsonObject
 )

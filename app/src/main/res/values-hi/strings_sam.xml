@@ -34,7 +34,7 @@
     <string name="referred_to_nrc">एनआरसी में रेफर किया गया</string>
     <string name="visit_date_cannot_be_more_than_2_months_old">भ्रमण की तिथि 2 महीने से अधिक पुरानी नहीं हो सकती</string>
     <string name="only_one_visit_per_month_allowed">प्रति माह केवल एक भ्रमण की अनुमति है</string>
-    <string name="bottle_count">आईएफए बोतलों की संख्या</string>
+    <string name="bottle_count">आयरन सिरप बोतलों की संख्या</string>
     <string name="sam_case_detected">सैम केस का पता चला</string>
     <string name="muac_sam_alert_message">MUAC %1$.1f सेमी है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>
     <string name="weight_height_sam_alert_message">वज़न-ऊंचाई स्थिति सैम है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>

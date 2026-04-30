@@ -383,8 +383,9 @@ class PwAncFormFragment : Fragment() {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
                 1 -> {
-                    notifyItemChanged(viewModel.getIndexOfWeeksOfPregnancy())
-                    notifyItemChanged(viewModel.getIndexOfWeeksOfPregnancy() + 1)
+                    notifyDataSetChanged()
+//                    notifyItemChanged(viewModel.getIndexOfWeeksOfPregnancy())
+//                    notifyItemChanged(viewModel.getIndexOfWeeksOfPregnancy() + 1)
                 }
 
                 16 -> {

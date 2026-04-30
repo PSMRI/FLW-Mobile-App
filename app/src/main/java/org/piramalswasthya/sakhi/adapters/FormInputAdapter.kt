@@ -76,6 +76,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
@@ -375,6 +376,7 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
+                item.errorText = null
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
@@ -1045,7 +1047,10 @@ class FormInputAdapter(
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 
-            binding.etNumberInput.setText(minValue.toString())
+            if (item.value.isNullOrEmpty()) {
+                item.value = minValue.toString()
+            }
+            binding.etNumberInput.setText(item.value)
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             var currentValue = item.value?.toIntOrNull() ?: minValue
 
@@ -1255,7 +1260,9 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty() && item.value != "default") View.VISIBLE else View.GONE
+
+            Log.e("ItemValue",item.value.toString())
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE

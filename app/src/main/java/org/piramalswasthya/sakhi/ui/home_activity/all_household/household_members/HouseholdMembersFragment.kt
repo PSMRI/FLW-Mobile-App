@@ -174,8 +174,8 @@ class HouseholdMembersFragment : Fragment() {
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Beneficiary")
-            .setMessage("Are you sure you want to delete ${benBasicDomain.benFullName}")
+            .setTitle(getString(R.string.str_delete_beneficiary))
+            .setMessage("${getString(R.string.str_delete_household_msg)} ${benBasicDomain.benFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateBeneficiary(benBasicDomain)
             }
@@ -327,7 +327,8 @@ class HouseholdMembersFragment : Fragment() {
                             activity?.let {
                                 (it as HomeActivity).askForPermissions()
                             }
-                            Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),
+                                getString(R.string.str_pls_allow_permissions), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -342,7 +343,7 @@ class HouseholdMembersFragment : Fragment() {
                             } else {
                                 Toast.makeText(
                                     requireContext(),
-                                    "Head of Family cannot be deleted when other members exist.",
+                                    getString(R.string.str_hof_cant_delete),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
