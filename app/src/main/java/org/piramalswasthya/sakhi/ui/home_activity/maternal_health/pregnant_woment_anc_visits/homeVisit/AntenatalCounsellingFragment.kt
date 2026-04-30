@@ -167,7 +167,7 @@ class AntenatalCounsellingFragment : Fragment() {
                     binding.tvRegDateValue.text = benList.ben.regDate
                     binding.tvPhoneValue.text =benList.ben.mobileNo
                     binding.tvLmpValue.text = benList.lmpString
-                    binding.tvWeeksValue.text = benList.weekOfPregnancy.toString()
+                    binding.tvWeeksValue.text = benList.weeksOfPregnancy.toString()
                     binding.tvEddValue.text = benList.eddString
                     lmpDate = try {
                         if (!benList.lmpString.isNullOrBlank()) {
