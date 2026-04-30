@@ -75,6 +75,54 @@
         <item>স্থায়ীভাৱে নিষ্ক্ৰিয় কৰা</item>
     </string-array>
 
+    <string-array name="death_reason_array">
+        <item>মাতৃ মৃত্যু</item>
+        <item>প্ৰাকৃতিক মৃত্যু</item>
+        <item>দুৰ্ঘটনা</item>
+        <item>সংক্রামক ৰোগ</item>
+        <item>জন্তুৰ কামুৰাৰ ফলত মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনিৰ্ধাৰিত</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>প্ৰাকৃতিক মৃত্যু</item>
+        <item>দুৰ্ঘটনা</item>
+        <item>সংক্রামক ৰোগ</item>
+        <item>জন্তুৰ কামুৰাৰ ফলত মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনিৰ্ধাৰিত</item>
+        <item>মাতৃ মৃত্যু</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array">
+        <item>প্ৰাকৃতিক মৃত্যু</item>
+        <item>দুৰ্ঘটনা</item>
+        <item>সংক্রামক ৰোগ</item>
+        <item>জন্তুৰ কামুৰাৰ ফলত মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনিৰ্ধাৰিত</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>ধনাত্মক</item>
+        <item>ঋণাত্মক</item>
+        <item>সম্পাদন কৰা হোৱা নাই</item>
+    </string-array>
+
+    <string-array name="activity_checklist">
+        <item>সকলো নিৰ্বাচন কৰক</item>
+        <item>স্বাস্থ্য বিভাগে জাৰি কৰা নতুন আঁচনি বা নিৰ্দেশনা সম্পৰ্কে তথ্য ভাগ-বতৰা কৰা হৈছিল।</item>
+        <item>তথ্য ৰেজিষ্টাৰ আৰু ৰেকৰ্ডসমূহ পৰীক্ষা কৰা হৈছিল।</item>
+        <item>প্ৰশিক্ষণ আৰু সক্ষমতা বৃদ্ধিৰ বিষয়ে আলোচনা কৰা হৈছিল।</item>
+        <item>দৱা পেটি (ঔষধ কিট) ৰ পৰ্যালোচনা কৰা হৈছিল।</item>
+        <item>যোগান বিতৰণ আৰু সংশ্লিষ্ট কাৰ্যকলাপসমূহ সম্পন্ন কৰা হৈছিল।</item>
+        <item>গৰ্ভৱতী আৰু স্তনপান কৰোৱা মাতৃসকলৰ অগ্ৰগতি আলোচনা কৰা হৈছিল।</item>
+        <item>বিশেষ কেছ (গম্ভীৰ ৰোগী) ৰ ৰেফাৰেল বিষয়ে আলোচনা কৰা হৈছিল।</item>
+        <item>শিশুৰ টিকাকৰণ সম্পৰ্কে আপডেট দিয়া হৈছিল।</item>
+
+    </string-array>
+
     <string-array name="nbr_reproductive_status_array3">
         <item>প্ৰযোজ্য নহয়</item>
     </string-array>

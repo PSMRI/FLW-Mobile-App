@@ -348,6 +348,7 @@
         <item>District Hospital</item>
         <item>Medical College Hospital</item>
     </string-array>
+
     <string-array name="reason_of_death_array">
         <item>Natural Death</item>
         <item>Accident</item>
@@ -356,6 +357,7 @@
         <item>Suicide</item>
         <item>Undetermined</item>
     </string-array>
+
     <string-array name="reason_of_death_array_with_maternal">
         <item>Natural Death</item>
         <item>Accident</item>
@@ -364,7 +366,6 @@
         <item>Suicide</item>
         <item>Undetermined</item>
         <item>Maternal Death</item>
-
     </string-array>
 
     <string-array name="beneficiary_status">
