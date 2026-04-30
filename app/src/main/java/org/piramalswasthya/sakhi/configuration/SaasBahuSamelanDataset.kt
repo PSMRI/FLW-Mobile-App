@@ -53,13 +53,13 @@ class SaasBahuSamelanDataset(context: Context, language: Languages) : Dataset(co
     val upload1 = FormElement(
         id = 10,
         inputType = InputType.FILE_UPLOAD,
-        title = "Sammelan Photos / MoM (1)",
+        title = resources.getString(R.string.sammelan_photo1),
         required = false,
     )
-    val upload2 = upload1.copy(id = 11, title = "Sammelan Photos / MoM (2)")
-    val upload3 = upload1.copy(id = 12, title = "Sammelan Photos / MoM (3)")
-    val upload4 = upload1.copy(id = 13, title = "Sammelan Photos / MoM (4)")
-    val upload5 = upload1.copy(id = 14, title = "Sammelan Photos / MoM (5)")
+    val upload2 = upload1.copy(id = 11, title = resources.getString(R.string.sammelan_photo2),)
+    val upload3 = upload1.copy(id = 12, title = resources.getString(R.string.sammelan_photo3),)
+    val upload4 = upload1.copy(id = 13, title = resources.getString(R.string.sammelan_photo4),)
+    val upload5 = upload1.copy(id = 14, title = resources.getString(R.string.sammelan_photo5),)
 
 
     suspend fun setUpPage(

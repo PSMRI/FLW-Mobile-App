@@ -440,6 +440,11 @@
         <item name="hbnc_anm">এ.এন.এম (সহায়ক নার্স মিজৱাইফ)</item>
         <item name="hbnc_mpw">এম.পি.ডব্লিউ (বহুমুখী কৰ্মী)</item>
     </string-array>
+    <string-array name="ahd_place_options">
+        <item>বিদ্যালয়</item>
+        <item>আঙনৱাড়ী কেন্দ্ৰ</item>
+        <item>সমাজ কেন্দ্ৰ</item>x
+    </string-array>
 
     <string-array name="hbnc_place_of_baby_death">
         <item name="hbnc_home">গৃহ</item>
@@ -480,6 +485,13 @@
         <item name="hbnc_unusual_with_baby_3">অন্য</item>
     </string-array>
 
+    <string-array name="referal_health_center_array">
+        <item>এপ\'ল\' (Apollo)</item>
+        <item>CHC</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>PHC</item>
+    </string-array>
+
     <string-array name="hbnc_place_of_baby_referral">
         <item name="hbnc_place_of_baby_referral_1">উপ-কেন্দ্ৰ</item>
         <item name="hbnc_place_of_baby_referral_2">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
@@ -493,6 +505,17 @@
         <item name="hbnc_place_of_baby_referral_10">অন্য</item>
     </string-array>
 
+    <string name="imm_cat_birth_dose">জন্ম ডোজ</string>
+    <string name="imm_cat_6_weeks">৬ সপ্তাহ</string>
+    <string name="imm_cat_10_weeks">১০ সপ্তাহ</string>
+    <string name="imm_cat_14_weeks">১৪ সপ্তাহ</string>
+    <string name="imm_cat_9_12_months">৯-১২ মাহ</string>
+    <string name="imm_cat_16_24_months">১৬-২৪ মাহ</string>
+    <string name="imm_cat_5_6_years">৫-৬ বছৰ</string>
+    <string name="imm_cat_10_years">১০ বছৰ</string>
+    <string name="imm_cat_16_years">১৬ বছৰ</string>
+    <string name="imm_cat_catch_up">কেচ আপ</string>
+    
     <string name="str_yay_it_is_working">বাহ্‌, এইটো কাম কৰি আছে!!!</string>
     <string name="str_yay_it_is_not_working">বাহ্‌, এইটো কাম নকৰে!</string>
     <string name="str_health_subcenter_name">স্বাস্থ্য উপকেন্দ্ৰৰ নাম</string>
@@ -1072,6 +1095,14 @@
     <string name="name_of_anm2">ANM2 ৰ নাম</string>
     <string name="mobile_number_of_anm2">ANM2 ৰ মোবাইল নম্বৰ</string>
     <string name="str_dose">ডোজ</string>
+    <string name="refer_date">প্ৰেৰণৰ তাৰিখ</string>
     <string name="str_no_more_dose">আৰু ডোজ নাই</string>
-
+    <string name="sammelan_photo1">সম্মিলন ফটোসমূহ / MoM (1)</string>
+    <string name="sammelan_photo2">সম্মিলন ফটোসমূহ / MoM (2)</string>
+    <string name="sammelan_photo3">সম্মিলন ফটোসমূহ / MoM (3)</string>
+    <string name="sammelan_photo4">সম্মিলন ফটোসমূহ / MoM (4)</string>
+    <string name="sammelan_photo5">সম্মিলন ফটোসমূহ / MoM (5)</string>
+    <string name="add_new">নতুন যোগ কৰক</string>
+    <string name="ifa_distribution">IFA বিতৰণ</string>
+    <string name="ifa_quantity">IFA পৰিমাণ</string>
 </resources>
