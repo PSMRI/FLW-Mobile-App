@@ -102,16 +102,16 @@
     <string name="hemoglobin_test">হিম’গ্লবিন (Hb) পৰীক্ষা (g/dl)</string>
     <string name="whether_ifa_supplement_provided">আই এফ এ পৰিপূৰক প্ৰদান কৰা হৈছেনে?</string>
     <string name="issued_quantity_ifa">আই এফ এৰ পৰিপূৰক জাৰি কৰা পৰিমাণ</string>
-    <string name="whether_ifa_supplement_or_folic_acid_provided">Whether IFA or Folic Acid supplement is provided?</string>
-    <string name="issued_quantity_ifa_or_folic_acid">Issued quantity of IFA or Folic Acid supplement</string>
-    <string name="using_75gm_ogtt">Using 75 gm OGTT</string>
-    <string name="after_2hrs">After 2 Hours (mg/dL)</string>
-    <string name="micro_birth_plan_table">Micro Birth Plan Table</string>
-    <string name="share">Share</string>
-    <string name="pw_name"><b>PW name:</b></string>
-    <string name="b_age"><b>Age:</b></string>
-    <string name="c_no"><b>Contact no:\n1-</b></string>
-    <string name="b_blood_donor"><b>Blood donor identified\n1:</b></string>
+    <string name="whether_ifa_supplement_or_folic_acid_provided">IFA বা ফ’লিক এচিড পৰিপূৰক দিয়া হৈছে নে?</string>
+    <string name="issued_quantity_ifa_or_folic_acid">IFA বা ফ’লিক এচিড পৰিপূৰকৰ প্ৰদান কৰা পৰিমাণ</string>
+    <string name="using_75gm_ogtt">৭৫ গ্ৰাম OGTT ব্যৱহাৰ কৰি</string>
+    <string name="after_2hrs">২ ঘণ্টাৰ পাছত (mg/dL)</string>
+    <string name="micro_birth_plan_table">মাইক্ৰ’ জন্ম পৰিকল্পনা তালিকা</string>
+    <string name="share">ভাগ-বতৰা কৰা</string>
+    <string name="pw_name"><b>গৰ্ভৱতী মহিলাৰ নাম:</b></string>
+    <string name="b_age"><b>বয়স:</b></string>
+    <string name="c_no"><b>যোগাযোগ নম্বৰ:\n1-</b></string>
+    <string name="b_blood_donor"><b>ৰক্ত দাতা চিনাক্ত কৰা হৈছে\n1:</b></string>
     <string name="pregnant_women_pw_section">গৰ্ভৱতী মহিলা (PW) অংশ</string>
     <string name="round">ৰাউণ্ডছ</string>
     <string name="irs_round">আইআৰএছ ৰাউণ্ডছ</string>
@@ -122,14 +122,19 @@
     <string name="user_guide">ইউজাৰ গাইড</string>
     <string name="video_tutorial">ভিডিঅ\' পাঠ্যক্ৰম</string>
 
+    <string name="track_visited_on">পৰিদৰ্শন কৰা তাৰিখ</string>
+    <string name="track_on"> তাৰিখে </string>
+    <string name="track_follow_up_label">অনুসৰণ</string>
+
     <string-array name="sugar_test_types">
-        <item>RBS</item>
-        <item>FBS &amp; PPBS</item>
+        <item>RBS (ৰেণ্ডম ব্লাড সুগাৰ)</item>
+        <item>FBS &amp; PPBS (ফাষ্টিং আৰু খোৱাৰ পাছৰ ব্লাড সুগাৰ)</item>
     </string-array>
 
     <string-array name="sugar_test_preg_types">
-        <item>RBS</item>
-        <item>FBS &amp; PPBS</item>
-        <item>OGTT</item>
+        <item>RBS (ৰেণ্ডম ব্লাড সুগাৰ)</item>
+        <item>FBS &amp; PPBS (ফাষ্টিং আৰু খোৱাৰ পাছৰ ব্লাড সুগাৰ)</item>
+        <item>OGTT (অৰেল গ্লুক’জ ট’লাৰেন্স টেষ্ট)</item>
     </string-array>
+
 </resources>

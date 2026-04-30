@@ -323,6 +323,7 @@ class PregnantWomanAncVisitDataset(
         title = resources.getString(R.string.any_other_high_risk_conditions),
         required = true,
         showDrawable = true,
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
         backgroundDrawable = R.drawable.ic_bg_circular,
         iconDrawableRes = R.drawable.ic_bmi,
     )
@@ -900,7 +901,7 @@ class PregnantWomanAncVisitDataset(
 
             otherHighRiskCondition.id -> {
                 validateEmptyOnEditText(otherHighRiskCondition)
-              //  validateAllAlphabetsSpaceOnEditText(otherHighRiskCondition)
+                validateEditTextWithTextNonNumericHindiEnabled(otherHighRiskCondition)
             }
 
             hrpConfirm.id -> triggerDependants(
