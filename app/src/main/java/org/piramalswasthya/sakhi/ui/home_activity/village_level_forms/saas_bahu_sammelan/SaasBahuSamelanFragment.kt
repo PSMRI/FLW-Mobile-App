@@ -196,14 +196,14 @@ class SaasBahuSamelanFragment : Fragment() {
         if (place?.value.isNullOrEmpty()) { place?.errorText = getString(R.string.form_input_empty_error); valid = false }
         if (participants?.value.isNullOrEmpty()) { participants?.errorText = getString(R.string.form_input_empty_error); valid = false }
 
-        val uploads = list.filter { it.id in 10..14 }
-        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
-        if (uploadCount < 2) {
-            uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
-            valid = false
-        } else {
-            uploads.forEach { it.errorText = null }
-        }
+//        val uploads = list.filter { it.id in 10..14 }
+//        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+//        if (uploadCount < 2) {
+//            uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
+//            valid = false
+//        } else {
+//            uploads.forEach { it.errorText = null }
+//        }
 
         if (!valid) {
             (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()

@@ -286,7 +286,7 @@ class ChildRegistrationDataset(
             fatherName.id -> validateAllCapsOrSpaceOnEditText(fatherName)
             weightAtBirth.id -> validateWeightOnEditText(weightAtBirth)
             //validateDoubleMinMax(weightAtBirth)
-            birthCertificateNo.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNo)
+            birthCertificateNo.id -> validateBirthCertificateNumber(birthCertificateNo)
 
             else -> -1
         }

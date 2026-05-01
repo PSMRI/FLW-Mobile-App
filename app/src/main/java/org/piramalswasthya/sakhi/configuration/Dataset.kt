@@ -814,6 +814,42 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateBirthCertificateNumber(formElement: FormElement): Int {
+        val value = formElement.value?.trim() ?: ""
+
+        formElement.errorText = null
+
+        if (value.isEmpty()) {
+            return 0
+        }
+
+        if (!value.matches(Regex("^[A-Za-z0-9]+$"))) {
+            formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+            return -1
+        }
+
+        if (value.length !in 6..20) {
+            formElement.errorText = resources.getString(R.string.error_birth_cert_length)
+            return -1
+        }
+
+        if (value.all { it == value[0] }) {
+            formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+            return -1
+        }
+
+        val digitOnly = value.all { it.isDigit() }
+        if (digitOnly) {
+            val freq = value.groupingBy { it }.eachCount()
+            if (freq.any { it.value > value.length / 2 }) {
+                formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+                return -1
+            }
+        }
+
+        formElement.errorText = null
+        return 0
+    }
     protected fun validateAllDigitOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.all { it.isDigit() }?.let {
             if (it) formElement.errorText = null

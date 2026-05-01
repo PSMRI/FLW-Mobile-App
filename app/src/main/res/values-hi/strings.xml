@@ -224,6 +224,9 @@
     <string name="hbnc_baby_temp_97_alert">माँ को सलाह दें कि बच्चे को गर्म रखें — कमरे का तापमान बढ़ाएँ, त्वचा से त्वचा का संपर्क दें, बच्चे को गर्म बैग में रखें और बार-बार दूध पिलाएँ</string>
     <string name="hbnc_baby_temp_96_alert">माँ को सलाह दें कि बच्चे को गर्म रखें (कमरा गर्म, त्वचा से त्वचा संपर्क, गर्म बैग, बार-बार दूध)। जब बच्चा गर्म हो जाए तो उसे कपड़े पहनाकर पहले से गर्म किए बिस्तर में माँ के पास रखें</string>
     <string name="hbnc_baby_temp_99_alert">फिर संक्रमण के लक्षण देखें। अगर लक्षण नहीं हैं तो ¼ चम्मच पैरासिटामोल दें और तुरंत नजदीकी एसएनसीयू भेजें</string>
+    <string name="error_only_numeric">केवल संख्यात्मक मान ही मान्य हैं</string>
+    <string name="error_birth_cert_length">जन्म प्रमाण पत्र संख्या 6 से 20 अंकों की होनी चाहिए</string>
+    <string name="error_invalid_birth_cert">अमान्य जन्म प्रमाण पत्र संख्या</string>
     <string name="form_input_missing_entry_error">फ़ील्ड में %1$d अंक होने चाहिए</string>
     <string name="form_input_alphabet_space_only_error">केवल अक्षर और खाली जगह मान्य</string>
     <string name="form_input_alphabet_special_only_error">केवल अक्षर और विशेष चिन्ह मान्य</string>
@@ -236,6 +239,9 @@
     <string name="field_date_invalid">%s तारीख अमान्य है</string>
     <string name="field_date_before">%1$s %2$s से पहले नहीं हो सकता</string>
     <string name="field_date_after">%1$s %2$s के बाद नहीं हो सकता</string>
+    <string name="app_settings">ऐप सेटिंग्स</string>
+    <string name="incentive_dashboard">प्रोत्साहन डैशबोर्ड</string>
+    <string name="facilitator">सुविधाकर्ता</string>
     <string name="form_input__no_alpha_space_error">अक्षर या खाली जगह मान्य नहीं</string>
     <string name="form_input_digit_only_error">केवल अंक मान्य</string>
     <string name="form_input_min_limit_error_decimal">%1$s %2$.1f से अधिक या बराबर होना चाहिए</string>
@@ -511,28 +517,30 @@
     <string name="treatment_status">उपचार की स्थिति</string>
     <string name="follow_up_date">फॉलो-अप तिथि</string>
     <string name="follow_up_history">फॉलो-अप रिकॉर्ड </string>
+    <string name="sub_center_under_you_4">आपके अधीन उप-केंद्र</string>
 
-    <string name="incentive_verification">Incentive Verification</string>
-    <string name="no_activities_found">No activities found</string>
-    <string name="supervisor_id">Supervisor ID:</string>
-    <string name="activity">Activity</string>
-    <string name="amount_rs">Amount (Rs.)</string>
-    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
-    <string name="verify">✓ Verify</string>
-    <string name="reject">✕ Reject</string>
-    <string name="reason_for_rejection">Reason for Rejection</string>
-    <string name="confirm_rejection">Confirm Rejection</string>
-    <string name="search_asha">Search ASHA....</string>
-    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
-    <string name="jan_2026">Jan, 2026</string>
-    <string name="verified_0">Verified: 0</string>
-    <string name="pending_0">Pending: 0</string>
-    <string name="rejected_0">Rejected: 0</string>
-    <string name="total_ashas">Total ASHAs</string>
-    <string name="select_month">Select Month</string>
+    <string name="incentive_verification">प्रोत्साहन सत्यापन</string>
+    <string name="no_activities_found">कोई गतिविधियाँ नहीं मिलीं</string>
+    <string name="supervisor_id">पर्यवेक्षक आईडी:</string>
+    <string name="activity">गतिविधि</string>
+    <string name="amount_rs">राशि (रु.)</string>
+    <string name="i_have_verified_supporting_documents_on_asha_s_device">मैंने आशा के डिवाइस पर सहायक दस्तावेज़ों का सत्यापन कर लिया है</string>
+    <string name="verify">✓ सत्यापित करें</string>
+    <string name="reject">✕ अस्वीकार करें</string>
+    <string name="reason_for_rejection">अस्वीकृति का कारण</string>
+    <string name="confirm_rejection">अस्वीकृति की पुष्टि करें</string>
+    <string name="search_asha">आशा खोजें....</string>
+    <string name="asha_monthly_detail">आशा मासिक विवरण</string>
+    <string name="jan_2026">जनवरी, 2026</string>
+    <string name="verified_0">सत्यापित: 0</string>
+    <string name="pending_0">लंबित: 0</string>
+    <string name="rejected_0">अस्वीकृत: 0</string>
+    <string name="total_ashas">कुल आशाएँ</string>
+    <string name="select_month">माह चुनें</string>
+    <string name="overdue">अवधि से अधिक लंबित</string>
+    <string name="rejected">अस्वीकृत</string>
+
     <string name="pending">बाकी है</string>
-    <string name="overdue">OverDue</string>
-    <string name="rejected">Rejected</string>
 
 
     <string-array name="leprosy_status">
@@ -1076,15 +1084,6 @@
         <item name="hbnc_place_of_delivery_4">प्राथमिक स्वास्थ्य केंद्र</item>
     </string-array>
 
-    <string-array name="hbnc_visit_days">
-        <item>पहला दिन</item>
-        <item>तीसरा दिन</item>
-        <item>सातवां दिन</item>
-        <item>चौदहवां दिन</item>
-        <item>इक्कीसवां दिन</item>
-        <item>अट्ठाईसवां दिन</item>
-        <item>बयालीसवां दिन</item>
-    </string-array>
 
     <string-array name="body_part_male">
         <item>दाएं हाथ</item>
@@ -1120,11 +1119,6 @@
         <item>गैर-मातृ मृत्यु</item>
     </string-array>
 
-    <string-array name="ahd_place_options">
-        <item>स्कूल</item>
-        <item>आंगनवाड़ी केंद्र</item>
-        <item>सामुदायिक केंद्र</item>
-    </string-array>
 
     <string-array name="tb_regimen_types">
         <item>डीएस-टीबी (6 महीने)</item>
@@ -1132,6 +1126,21 @@
         <item>लंबा रेजिमेन (18–24 महीने)</item>
         <item>बीपीएएल रेजिमेन (6 महीने)</item>
         <item>आईएनएच मोनो (6 महीने)</item>
+    </string-array>
+
+    <string-array name="ahd_place_options">
+        <item>स्कूल</item>
+        <item>आंगनवाड़ी केंद्र</item>
+        <item>सामुदायिक केंद्र</item>
+    </string-array>
+    <string-array name="hbnc_visit_days">
+        <item>पहला दिन</item>
+        <item>तीसरा दिन</item>
+        <item>सातवां दिन</item>
+        <item>चौदहवां दिन</item>
+        <item>इक्कीसवां दिन</item>
+        <item>अट्ठाईसवां दिन</item>
+        <item>बयालीसवां दिन</item>
     </string-array>
 
     <string-array name="sync_records">
