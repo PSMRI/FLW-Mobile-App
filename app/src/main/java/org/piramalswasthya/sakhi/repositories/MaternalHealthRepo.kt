@@ -62,6 +62,12 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
+    suspend fun getLastVisitRecordANC(benId: Long): PregnantWomanAncCache? {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getLastVisitAncRecord(benId)
+        }
+    }
+
     suspend fun getLatestAncRecord(benId: Long): PregnantWomanAncCache? {
         return withContext(Dispatchers.IO) {
             maternalHealthDao.getLatestAnc(benId)
