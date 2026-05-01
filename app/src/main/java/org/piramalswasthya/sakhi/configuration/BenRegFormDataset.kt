@@ -2380,7 +2380,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             otherReligion.id -> validateEmptyOnEditText(otherReligion)
             rchId.id -> validateRchIdOnEditText(rchId)
-            birthCertificateNumber.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNumber)
+            birthCertificateNumber.id -> validateBirthCertificateNumber(birthCertificateNumber)
 
             else -> -1
         }

@@ -237,6 +237,7 @@
     <string name="cbac_tv_bl_menopause">ASHA ফেচিলিটেটৰলৈ জানাক</string>
     <string name="cbac_form">CBAC ফর্ম</string>
     <string name="alert">সতৰ্কতা!</string>
+    <string name="alert_message_fill_required_fields">জমা দিয়াৰ আগতে সকলো বাধ্যতামূলক ক্ষেত্ৰ পূৰণ কৰক।</string>
     <string name="missing_field">অনুপস্থিত ক্ষেত্ৰ</string>
     <string name="suspected_hrp_and_ncd_case">সন্দেহভৰা HRP আৰু NCD মৌখিক!</string>
     <string name="ok">ঠিক</string>
