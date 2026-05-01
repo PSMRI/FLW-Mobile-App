@@ -141,12 +141,12 @@ class NcdRefferedList : Fragment() {
             if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             } else {
                 (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             }
         }
