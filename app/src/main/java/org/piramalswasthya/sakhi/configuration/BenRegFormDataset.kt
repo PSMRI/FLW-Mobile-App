@@ -1858,7 +1858,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 val isDeath = beneficiaryStatus.getPosition() == 2
 
                 if (isDeath) {
-                    dateOfDeath.min = getMinDateFromRegistration(dateOfReg.value!!)
+                    val actualDob = when {
+                        agePopup.value.isNullOrBlank() -> dobReadOnly.value
+                        agePopup.value!!.contains("Year", ignoreCase = true) -> dobReadOnly.value
+                        agePopup.value!!.contains("Month", ignoreCase = true) -> dobReadOnly.value
+                        agePopup.value!!.contains("Day", ignoreCase = true) -> dobReadOnly.value
+                        else -> agePopup.value
+                    }
+
+                    val dobMillis = getLongFromDate(actualDob ?: "")
+
+                    dateOfDeath.min = if (dobMillis > 0L) dobMillis else getMinDateFromRegistration(dateOfReg.value ?: "")
+                    //dateOfDeath.min = getMinDateFromRegistration(dateOfReg.value!!)
                     val gender = gender.value
                     val age = agePopup.value
                     val showMaternal = shouldShowMaternalDeath(gender, age)
