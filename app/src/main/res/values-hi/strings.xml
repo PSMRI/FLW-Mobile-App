@@ -983,6 +983,11 @@
         <item>सरकारी मेडिकल कॉलेज</item>
     </string-array>
 
+    <string-array name="yes_no_options">
+        <item>हाँ</item>
+        <item>नहीं</item>
+    </string-array>
+
     <string-array name="adherence_options">
         <item>नियमित</item>
         <item>अनियमित</item>
