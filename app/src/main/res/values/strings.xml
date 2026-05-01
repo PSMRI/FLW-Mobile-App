@@ -641,6 +641,13 @@
     <string name="saas_date">Saas Bahu Sammelan Date</string>
     <string name="saas_samelan">Saas Bahu Sammelan</string>
     <string name="no_participent">No. of Participants Attended</string>
+
+    <string name="sammelan_photo1">Sammelan Photos / MoM (1)</string>
+    <string name="sammelan_photo2">Sammelan Photos / MoM (2)</string>
+    <string name="sammelan_photo3">Sammelan Photos / MoM (3)</string>
+    <string name="sammelan_photo4">Sammelan Photos / MoM (4)</string>
+    <string name="sammelan_photo5">Sammelan Photos / MoM (5)</string>
+
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>

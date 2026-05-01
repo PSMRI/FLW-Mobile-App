@@ -146,7 +146,7 @@
         private val bp = FormElement(
             id = 10,
             inputType = EDIT_TEXT,
-            title = "BP of PW – Systolic/ Diastolic (mm Hg) ",
+            title = resources.getString(R.string.str_bp_of_pw),
     //        etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_NORMAL,
             etMaxLength = 7,
             required = false,

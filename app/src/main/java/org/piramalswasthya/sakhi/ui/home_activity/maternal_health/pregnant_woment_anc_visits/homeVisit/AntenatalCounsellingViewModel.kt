@@ -383,7 +383,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     suspend fun getLastVisitDates(benId: Long): String
     {val visits = repository.getLastVisitForBenANC(benId)
-        return  visits?.visitDate.toString()
+        return  visits?.visitDate?:"NA"
     }
     private fun evaluateFieldVisibility(field: FormFieldDto, allFields: List<FormFieldDto>): Boolean {
         val cond = field.conditional

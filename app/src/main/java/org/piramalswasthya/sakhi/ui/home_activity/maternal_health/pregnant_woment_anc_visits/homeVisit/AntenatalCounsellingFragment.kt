@@ -84,7 +84,7 @@ class AntenatalCounsellingFragment : Fragment() {
     private var hasAnyDangerSign = false
     private var isSelectAllChecked = false
     private var lmpDate :Long? =null
-    private var referralForReason = resources.getString(R.string.str_suspected_high_risk_pregnancy)
+   // private var referralForReason = getString(R.string.str_suspected_high_risk_pregnancy)
     private var referType = "Maternal"
 
     override fun onCreateView(
@@ -167,7 +167,7 @@ class AntenatalCounsellingFragment : Fragment() {
                     binding.tvRegDateValue.text = benList.ben.regDate
                     binding.tvPhoneValue.text =benList.ben.mobileNo
                     binding.tvLmpValue.text = benList.lmpString
-                    binding.tvWeeksValue.text = benList.weekOfPregnancy.toString()
+                    binding.tvWeeksValue.text = benList.weeksOfPregnancy.toString()
                     binding.tvEddValue.text = benList.eddString
                     lmpDate = try {
                         if (!benList.lmpString.isNullOrBlank()) {
@@ -193,7 +193,7 @@ class AntenatalCounsellingFragment : Fragment() {
             visitNumber = args.visitNumber
 
             binding.btnSave.isVisible = false
-            binding.tvLastVisitValue.text = visitDate
+            binding.tvLastVisitValue.text = visitDate?:"NA"
             binding.cbSelectAll.isVisible = false
             viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber)
             lifecycleScope.launch {
