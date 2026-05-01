@@ -44,8 +44,11 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
+import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import timber.log.Timber
 import java.io.File
@@ -56,6 +59,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 object HelperUtil {
 
@@ -949,5 +953,29 @@ object HelperUtil {
         Toast.makeText(context, context.resources.getString(R.string.file_uploaded), Toast.LENGTH_SHORT).show()
     }
 
+    fun isAncDue(benWithAnc: BenWithAncVisitCache): Boolean {
+
+        val ancRecords = benWithAnc.savedAncRecords
+
+        if (ancRecords.any { it.maternalDeath == true }) return false
+        if (ancRecords.any { it.pregnantWomanDelivered == true }) return false
+
+        val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return false
+
+        return if (ancRecords.isEmpty()) {
+            TimeUnit.MILLISECONDS.toDays(
+                getTodayMillis() - activePwr.lmpDate
+            ) >= Konstants.minAnc1Week * 7
+        } else {
+            val lastAncRecord = ancRecords.maxBy { it.visitNumber }
+
+            (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) >
+                    (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
+                    lastAncRecord.visitNumber < 4 &&
+                    TimeUnit.MILLISECONDS.toDays(
+                        getTodayMillis() - lastAncRecord.ancDate
+                    ) > 28
+        }
+    }
 
 }

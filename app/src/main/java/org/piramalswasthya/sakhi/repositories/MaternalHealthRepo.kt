@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -19,6 +20,7 @@ import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.isAncDue
 import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -112,31 +114,44 @@ class MaternalHealthRepo @Inject constructor(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val ancDueCount = maternalHealthDao.getAllPregnancyRecords().transformLatest {
+   /* val ancDueCount = maternalHealthDao.getAllPregnancyRecords().transformLatest {
         var count = 0
-        val notDeliveredList = it.filter { !it.value.any { it.pregnantWomanDelivered == true } }
-        notDeliveredList.keys.forEach { activePwrRecrod ->
-            val savedAncRecords = it[activePwrRecrod] ?: emptyList()
-            val isDue = if (savedAncRecords.isEmpty())
+
+        val filteredList = it.filter { entry ->
+            !entry.value.any { rec -> rec.pregnantWomanDelivered == true } &&
+                    !entry.value.any { rec -> rec.maternalDeath == true }
+        }
+
+        filteredList.keys.forEach { activePwrRecrod ->
+            val savedAncRecords = filteredList[activePwrRecrod] ?: emptyList()
+
+            val isDue = if (savedAncRecords.isEmpty()) {
                 TimeUnit.MILLISECONDS.toDays(
                     getTodayMillis() - activePwrRecrod.lmpDate
                 ) >= Konstants.minAnc1Week * 7
-            else {
+            } else {
                 val lastAncRecord = savedAncRecords.maxBy { it.visitNumber }
-                (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(
-                    28
-                )) &&
-                        lastAncRecord.visitNumber < 4 && TimeUnit.MILLISECONDS.toDays(
-                    getTodayMillis() - lastAncRecord.ancDate
-                ) > 28
+                (activePwrRecrod.lmpDate + TimeUnit.DAYS.toMillis(280)) >
+                        (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
+                        lastAncRecord.visitNumber < 4 &&
+                        TimeUnit.MILLISECONDS.toDays(
+                            getTodayMillis() - lastAncRecord.ancDate
+                        ) > 28
             }
-            if (isDue)
-                count++
+
+            if (isDue) count++
         }
+
         emit(count)
-    }
+    }*/
 
+    private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
 
+    val ancDueCount =
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+            .map { list ->
+                list.count { isAncDue(it) }
+            }
     suspend fun processNewAncVisit(): Boolean {
         return withContext(Dispatchers.IO) {
             val user = preferenceDao.getLoggedInUser()

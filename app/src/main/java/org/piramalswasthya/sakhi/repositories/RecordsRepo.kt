@@ -26,6 +26,7 @@ import org.piramalswasthya.sakhi.model.HomeVisitUiState
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.isAncDue
 import org.piramalswasthya.sakhi.utils.HomeVisitHelper
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -463,26 +464,8 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
     fun getDuePregnantWomanList() =
         benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
             .map { list ->
-                list.filter { benWithAnc ->
-                    // Exclude maternal deaths
-                    if (benWithAnc.savedAncRecords.any { it.maternalDeath == true }) return@filter false
-                    // Exclude delivered women
-                    if (benWithAnc.savedAncRecords.any { it.pregnantWomanDelivered == true }) return@filter false
-
-                    val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return@filter false
-                    val ancRecords = benWithAnc.savedAncRecords
-
-                    if (ancRecords.isEmpty()) {
-                        // First ANC: due if >= minAnc1Week weeks from LMP
-                        TimeUnit.MILLISECONDS.toDays(getTodayMillis() - activePwr.lmpDate) >= Konstants.minAnc1Week * 7
-                    } else {
-                        val lastAncRecord = ancRecords.maxBy { it.visitNumber }
-                        // Subsequent ANCs: due if EDD > lastAnc+28days, visitNumber < 4, and > 28 days since last ANC
-                        (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
-                                lastAncRecord.visitNumber < 4 &&
-                                TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lastAncRecord.ancDate) > 28
-                    }
-                }.map { it.asDomainModel() }
+                list.filter { isAncDue(it) }
+                    .map { it.asDomainModel() }
             }
 
     val hrpCases = benDao.getHrpCases(selectedVillage)
