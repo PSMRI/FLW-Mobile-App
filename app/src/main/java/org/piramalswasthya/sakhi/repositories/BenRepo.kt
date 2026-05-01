@@ -1859,30 +1859,32 @@ class BenRepo @Inject constructor(
     }
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
-
-            var validateOtp = ValidateOtpRequest(otp,mobileNo)
+        val validateOtp = ValidateOtpRequest(otp,mobileNo)
         val response = tmcNetworkApiService.validateOtp(validateOtp)
-            if (response.isSuccessful) {
-                val responseBody = response.body()?.string()
-                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
-                    200 -> {
-                        val jsonObj = JSONObject(responseBody)
-                        val data = jsonObj.getJSONObject("data").toString()
-                        val myresponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
-                        NewBenRegViewModel.isOtpVerified = true
-                        return myresponse
-                    }
+        if (response.isSuccessful) {
+            val responseBody = response.body()?.string()
+            val json = JSONObject(responseBody.toString())
+            val statusCode = json.getInt("statusCode")
+            when (statusCode) {
+                200 -> {
+                    val jsonObj = JSONObject(responseBody)
+                    val data = jsonObj.getJSONObject("data").toString()
+                    val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                    NewBenRegViewModel.isOtpVerified = true
+                    return myResponse
+                }
 
-                    5000, 5002 -> {
-                        Toast.makeText(context,"Please enter valid OTP.",Toast.LENGTH_SHORT).show()
-
-                    }
-
-                    else -> {
-                        NetworkResult.Error(0, responseBody.toString())
+                500, 502, 5000, 5002 -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                else -> {
+                    NetworkResult.Error(0, responseBody.toString())
+                }
             }
+        }
 
         return null
     }
