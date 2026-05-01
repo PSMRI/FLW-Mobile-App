@@ -606,6 +606,11 @@
         <item>কোনো নহয়</item>
     </string-array>
 
+    <string-array name="yes_no_options">
+        <item>হয়</item>
+        <item>নহয়</item>
+    </string-array>
+
     <string-array name="mdsr_cause_of_death_type">
         <item>সন্দেহজনক মাতৃ মৃত্যু</item>
         <item>অ-মাতৃ মৃত্যু</item>
@@ -643,10 +648,10 @@
         <item name="hbnc_other">অন্য</item>
     </string-array>
     <string-array name="deworming_location_options">
-        <item>School</item>
-        <item>Anganwadi Centre</item>
-        <item>Community center</item>
-        <item>Home Visit</item>
+        <item>বিদ্যালয়</item>
+        <item>অংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সমাজ কেন্দ্ৰ</item>
+        <item>ঘৰ ভ্ৰমণ</item>
     </string-array>
 
     <string-array name="hbnc_gestational_age">
@@ -819,37 +824,37 @@
     <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
-    <string name="hwc_referred_list">HWC Referred List</string>
-    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
-    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
-    <string name="village_name">Village Name</string>
-    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
-    <string name="number_of_aww_attended">Number of AWW attended</string>
-    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
-    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
-    <string name="number_of_committee_members_present">Number of Committee members present</string>
-    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
-    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
-    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
-    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
-    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
-    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
-    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
-    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
-    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
-    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
-    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
-    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
-    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
-    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
-    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
-    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
-    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
-    <string name="place_of_ndd">Place of NDD</string>
-    <string name="date_of_ndd">Date of NDD</string>
-    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
+    <string name="hwc_referred_list">এইচডব্লিউচি ৰেফাৰ কৰা তালিকা</string>
+    <string name="vhsnc_meeting_date">VHSNC বৈঠকৰ তাৰিখ</string>
+    <string name="place_of_vhsnc_meeting">VHSNC বৈঠকৰ স্থান</string>
+    <string name="village_name">গাঁওৰ নাম</string>
+    <string name="number_of_anm_mpw_attended">উপস্থিত ANM/MPW ৰ সংখ্যা</string>
+    <string name="number_of_aww_attended">উপস্থিত AWW ৰ সংখ্যা</string>
+    <string name="number_of_pregnant_woman">গৰ্ভৱতী মহিলাৰ সংখ্যা</string>
+    <string name="number_of_lactating_mothers">দুগ্ধদান কৰা মাতৃৰ সংখ্যা</string>
+    <string name="number_of_committee_members_present">উপস্থিত কমিটি সদস্যৰ সংখ্যা</string>
+    <string name="follow_up_the_previous_meeting_minutes">পূৰ্বৰ বৈঠকৰ কাৰ্যবিবৰণীৰ অনুসৰণ</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">VHSNC বৈঠকত অংশগ্ৰহণ কৰা ASHA ৰ সংখ্যা</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">VHSNC বৈঠকত অংশগ্ৰহণ কৰা Mitanin ৰ সংখ্যা</string>
+    <string name="mitanin_village_meetings">Mitanin/গাঁও বৈঠকসমূহ</string>
+    <string name="asha_village_meetings">ASHA/গাঁও বৈঠকসমূহ</string>
+    <string name="number_of_pregnant_woman_attended">উপস্থিত গৰ্ভৱতী মহিলাৰ সংখ্যা</string>
+    <string name="number_of_lactating_mothers_attended">উপস্থিত দুগ্ধদান কৰা মাতৃৰ সংখ্যা</string>
+    <string name="during_breastfeeding_counseling_check_list">স্তনপান পৰামৰ্শৰ সময়ত পৰীক্ষা তালিকা</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">শিশুটিক জন্মৰ প্ৰথম ঘণ্টাৰ ভিতৰতেই স্তনপান কৰোৱা উচিত</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">প্ৰথম ৬ মাহলৈকে শিশুটিক কেৱল মাতৃদুগ্ধহে দিয়া উচিত।</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">৬ মাহৰ পিছত মাতৃদুগ্ধৰ লগতে পুষ্টিকৰ পৰিপূৰক খাদ্য দিব লাগে।</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">স্তনপান ২ বছৰ বা তাৰো অধিক সময়লৈকে অব্যাহত ৰাখিব লাগে।</string>
+    <string name="the_family_should_support_and_encourage_the_mother">পৰিয়ালে মাতৃক সমৰ্থন আৰু উৎসাহ দিব লাগে</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">মাতৃদুগ্ধ শিশুৰ সম্পূৰ্ণ বিকাশৰ বাবে সৰ্বোত্তম।</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">KMC (Kangaroo Mother Care) সম্পৰ্কে তথ্য দিয়া হৈছিল।</string>
+    <string name="place_of_maa_meeting">MAA বৈঠকৰ স্থান</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">বিদ্যালয়ৰ বাহিৰত থকা শিশুসকলক অংগনৱাড়ীলৈ পঠোৱা সংখ্যা</string>
+    <string name="place_of_ndd">NDD ৰ স্থান</string>
+    <string name="date_of_ndd">NDD ৰ তাৰিখ</string>
+    <string name="was_the_deworming_round_conducted">কৃমিনাশক ৰাউণ্ডটো কৰা হৈছিল নেকি?</string>
     <string name="mda_title">ফাইলেৰিয়াছিছ MDA অভিযান</string>
-    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+    <string name="mda_form_campagain_title">লিম্ফেটিক ফাইলাৰিয়াছিছ (LF) গণ ঔষধ প্ৰদান (MDA) অভিযান</string>
     <string name="PREF_NAME">Sakhi-pref-1</string>
     <string name="PREF_D2D_API_KEY">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY">JWT-Token_B</string>
