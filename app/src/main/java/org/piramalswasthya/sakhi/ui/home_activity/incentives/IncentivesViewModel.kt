@@ -328,7 +328,7 @@ IncentivesViewModel @Inject constructor(
                         val updated = jsonObj.optInt("updatedRecords", 0)
 
                         _actionState.value =
-                            ActionState.Success("Successfully claimed $updated records")
+                            ActionState.Success("Successfully claimed")
                         pullIncentives()
                     } else {
                         _actionState.value =

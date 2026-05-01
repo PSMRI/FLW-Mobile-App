@@ -1393,6 +1393,7 @@ class EligibleCoupleRegistrationDataset(
 //
 //    }
 
+
     suspend fun setUpPage(
         ben: BenRegCache?,
         assess: HRPNonPregnantAssessCache?,
@@ -1533,8 +1534,9 @@ class EligibleCoupleRegistrationDataset(
             val bundle = children[index]
             bundle.dob.value = getDateFromLong(child.dob)
             bundle.age.value = child.age?.toString()
+
             bundle.gender.value = getLocalValueInArray(
-                R.array.ecr_gender_array,
+                R.array.ecr_baby_gender_array,
                 child.gender?.name?.lowercase()?.replaceFirstChar { it.uppercase() }
             )
             if (index == 0) {

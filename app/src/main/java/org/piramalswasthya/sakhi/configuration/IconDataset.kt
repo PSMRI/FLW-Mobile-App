@@ -701,7 +701,7 @@ class IconDataset @Inject constructor(
         ),
         Icon(
             R.drawable.ic_ncd_noneligible,
-            resources.getString(R.string.ncd_refer_list),
+            resources.getString(R.string.hwc_refer_list),
             recordsRepo.getNcdrefferedListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdReferredListFragment()
         ),
