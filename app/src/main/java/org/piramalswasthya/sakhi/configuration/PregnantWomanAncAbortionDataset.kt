@@ -73,7 +73,7 @@ class PregnantWomanAncAbortionDataset(
         arrayId = -1,
         etInputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED,
         etMaxLength = 10,
-        required = false,
+        required = true,
     )
 
     private val methodOfTermination = FormElement(
@@ -82,7 +82,7 @@ class PregnantWomanAncAbortionDataset(
         title = resources.getString(R.string.method_of_termination),
         arrayId = R.array.anc_method_of_termination,
         entries = resources.getStringArray(R.array.anc_method_of_termination),
-        required = false,
+        required = true,
         hasDependants = true,
     )
 
@@ -92,7 +92,7 @@ class PregnantWomanAncAbortionDataset(
         title = resources.getString(R.string.termination_done_by),
         arrayId = R.array.anc_termination_done_by,
         entries = resources.getStringArray(R.array.anc_termination_done_by),
-        required = false,
+        required = true,
     )
 
     private val isPlanig = FormElement(
@@ -264,6 +264,9 @@ class PregnantWomanAncAbortionDataset(
                 )
             }
 
+            serialNoAsPerAdmission.id -> {
+                validateIntMinMax(serialNoAsPerAdmission)
+            }
 
             isYesOrNo.id -> {
                 val isPaiucdSecondOption = (isPaiucd.entries?.indexOf(isPaiucd.value ?: "") ?: -1) == 1
