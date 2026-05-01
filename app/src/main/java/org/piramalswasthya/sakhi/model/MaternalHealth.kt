@@ -787,7 +787,7 @@ data class BenWithAncListDomain(
     val abortionDateString: String? get() = abortionDate?.let { getDateString(it) }
 
     val isAbortionFormFilled: Boolean
-        get() = savedAncRecords.firstOrNull { it.isAborted }?.terminationDoneBy != null
+        get() = savedAncRecords.any { it.terminationDoneBy != null }
 }
 
 
