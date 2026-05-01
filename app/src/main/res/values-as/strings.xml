@@ -362,6 +362,9 @@
     <string name="hbnc_baby_temp_96_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব। শিশুটি গৰম হোৱা পাছত, তাক কাপোৰ পৰাই আগতেই গৰম কৰা খাটত মাকৰ ওচৰত ৰাখিব।</string>
     <string name="hbnc_baby_temp_99_alert">তেতিয়া sepsis ৰ লক্ষণ আছে নে নাই সেয়া পৰীক্ষা কৰক। যদি sepsis ৰ লক্ষণ দেখা নাযায়, তেন্তে কেৱল ১/৪ চামুচ paracetamol দি ব্যৱস্থাপনা কৰক আৰু তৎক্ষণাৎ নিকটতম স্বাস্থ্য কেন্দ্ৰৰ SNCU লৈ প্ৰেৰণ কৰক।</string>
     <string name="form_input_alphabet_special_only_error">কেৱল বৰ্ণমালা আৰু বিশেষ চিহ্নসমূহ অনুমোদিত!</string>
+    <string name="error_only_numeric">কেৱল সংখ্যাসূচক মানহে গ্ৰহণযোগ্য</string>
+    <string name="error_birth_cert_length">জন্মৰ প্ৰমাণ পত্ৰ নম্বৰ ৬ৰ পৰা ২০ সংখ্যা হ’ব লাগিব</string>
+    <string name="error_invalid_birth_cert">অবৈধ জন্ম প্ৰমাণ পত্ৰ নম্বৰ</string>
     <string name="form_input__no_alpha_space_error">বৰ্ণমালা বা খালী ঠাই অনুমোদিত নহয়!</string>
     <string name="form_input_digit_only_error">কেৱল সংখ্যা অনুমোদিত!</string>
     <string name="enter_pin">PIN দিয়ক</string>
@@ -440,10 +443,196 @@
         <item name="hbnc_anm">এ.এন.এম (সহায়ক নার্স মিজৱাইফ)</item>
         <item name="hbnc_mpw">এম.পি.ডব্লিউ (বহুমুখী কৰ্মী)</item>
     </string-array>
+
+    <string-array name="type_of_tb_case">
+        <item>টিবিৰ নতুন কেচ</item>
+        <item>পূৰ্বতে চিকিৎসা কৰা টিবিৰ কেচ</item>
+        <item>ড্ৰাগ-ৰেজিষ্টেন্ট টিবি (DR-TB) কেচ</item>
+    </string-array>
+
+    <string-array name="place_array">
+        <item>স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>আংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
+    </string-array>
+
+    <string-array name="ecr_gender_array">
+        <item>পুৰুষ</item>
+        <item>মহিলা</item>
+    </string-array>
+
+    <string-array name="ecr_baby_gender_array">
+        <item>পুত্ৰ</item>
+        <item>কন্যা</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>জিলা টিবি কেন্দ্ৰ (DTC)</item>
+        <item>এইচডব্লিউচি</item>
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>এইচডব্লিউচি</item>
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>নিয়মিত</item>
+        <item>অনিয়মিত</item>
+    </string-array>
+
+    <string-array name="dc_case_status">
+        <item>সন্দেহজনক</item>
+        <item>নিশ্চিত</item>
+        <item>নিশ্চিত নহয়</item>
+        <item>চিকিৎসা আৰম্ভ হৈছে</item>
+    </string-array>
+
+    <string-array name="test_type">
+        <item>RDT পৰীক্ষা</item>
+        <item>স্লাইড পৰীক্ষা</item>
+        <item>দুয়োটা</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_kalaazar">
+        <item>প্ৰযোজ্য নহয়</item>
+        <item>সুস্থ হৈ আছে</item>
+        <item>সম্পূৰ্ণ সুস্থ</item>
+        <item>মৃত্যু</item>
+        <item>পুনৰ লক্ষণ দেখা দিছে</item>
+    </string-array>
+
+    <string-array name="death_place">
+        <item>ঘৰ</item>
+        <item>স্বাস্থ্য সুবিধা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="reason_death">
+        <item>জ্বৰ</item>
+        <item>অন্যান্য ৰোগ</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="benificary_case_status">
+        <item>পৰীক্ষা</item>
+        <item>মৃত্যু</item>
+    </string-array>
+
+    <string-array name="dc_refer">
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ আৰু চিকিৎসালয়</item>
+        <item>ৰেফাৰেল চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="dc_refer_malaria">
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ আৰু চিকিৎসালয়</item>
+        <item>ৰেফাৰেল চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য</item>
+        <item>কোনো নহয়</item>
+    </string-array>
+
+    <string-array name="daysPv">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+    </string-array>
+
+    <string-array name="hbyc_month_array">
+        <item>৩ মাহ</item>
+        <item>৪ মাহ</item>
+        <item>৫ মাহ</item>
+        <item>৬ মাহ</item>
+        <item>৭ মাহ</item>
+        <item>৮ মাহ</item>
+        <item>৯ মাহ</item>
+        <item>১০ মাহ</item>
+        <item>১১ মাহ</item>
+        <item>১২ মাহ</item>
+        <item>১৩ মাহ</item>
+        <item>১৪ মাহ</item>
+        <item>১৫ মাহ</item>
+    </string-array>
+
+
+    <string-array name="body_part_male">
+        <item>সোঁ হাত</item>
+        <item>বাওঁ হাত</item>
+        <item>সোঁ ভৰি</item>
+        <item>বাওঁ ভৰি</item>
+        <item>হাইড্ৰোচিল</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>সোঁ হাত</item>
+        <item>বাওঁ হাত</item>
+        <item>সোঁ ভৰি</item>
+        <item>বাওঁ ভৰি</item>
+        <item>সোঁ স্তন</item>
+        <item>বাওঁ স্তন</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (জ্বৰ)</item>
+        <item>H (মূৰৰ বিষ)</item>
+        <item>B (শৰীৰত বিষ)</item>
+        <item>V (বমি)</item>
+        <item>N (নাকৰ পানী)</item>
+        <item>O (অন্যান্য)</item>
+        <item>কোনো নহয়</item>
+    </string-array>
+
+    <string-array name="mdsr_cause_of_death_type">
+        <item>সন্দেহজনক মাতৃ মৃত্যু</item>
+        <item>অ-মাতৃ মৃত্যু</item>
+    </string-array>
+
+    <string-array name="tb_regimen_types">
+        <item>DS-TB (৬ মাহ)</item>
+        <item>সৰু ৰেজিমেন (৯–১২ মাহ)</item>
+        <item>ডাঙৰ ৰেজিমেন (১৮–২৪ মাহ)</item>
+        <item>BPaL ৰেজিমেন (৬ মাহ)</item>
+        <item>INH Mono (৬ মাহ)</item>
+    </string-array>
+
     <string-array name="ahd_place_options">
         <item>বিদ্যালয়</item>
-        <item>আঙনৱাড়ী কেন্দ্ৰ</item>
-        <item>সমাজ কেন্দ্ৰ</item>x
+        <item>আংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
+    </string-array>
+
+    <string-array name="hbnc_visit_days">
+        <item>প্ৰথম দিন</item>
+        <item>তৃতীয় দিন</item>
+        <item>সপ্তম দিন</item>
+        <item>চতুৰ্দশ দিন</item>
+        <item>একবিংশ দিন</item>
+        <item>আঠাশ দিন</item>
+        <item>বিয়াল্লিশ দিন</item>
     </string-array>
 
     <string-array name="hbnc_place_of_baby_death">
@@ -880,6 +1069,7 @@
     <string name="sync_dashboard_clear_logs">লগ মচক</string>
     <string name="sync_dashboard_export_logs">লগ ৰপ্তানি কৰক</string>
     <string name="sync_dashboard_no_log_files">ৰপ্তানি কৰিবলৈ কোনো লগ ফাইল নাই</string>
+    <string name="sub_center_under_you_4">আপোনাৰ অধীনত থকা উপ-কেন্দ্ৰ</string>
 <string name="home_visit_date">ঘৰ ভিজিটৰ তাৰিখ</string>
     <string name="home_visit_date_screening">ঘৰ ভিজিটৰ তাৰিখ (স্ক্ৰীনিং তাৰিখ)</string>
     <string name="type_of_leprocy">নিশ্চিত কুষ্ঠ ৰোগৰ প্ৰকাৰ</string>
@@ -1026,9 +1216,17 @@
     <string name="location_type">অৱস্থানৰ ধৰণ</string>
     <string name="reg_date">নিবন্ধনৰ তাৰিখ</string>
     <string name="ifsc_code">আইএফএছচি</string>
-    <string name="app_settings">এপ ছেটিংছ</string>
+    <string name="field_is_required">%s প্ৰয়োজনীয়</string>
+    <string name="field_is_invalid">%s অবৈধ</string>
+    <string name="field_must_be_number">%s এটা সংখ্যা হ\'ব লাগিব</string>
+    <string name="field_min_value">%1$s কমেও %2$s হ\'ব লাগিব</string>
+    <string name="field_max_value">%1$s সৰ্বাধিক %2$s হ\'ব পাৰে</string>
+    <string name="field_date_invalid">%s তাৰিখ অবৈধ</string>
+    <string name="field_date_before">%1$s %2$s ৰ আগতে হ\'ব নোৱাৰে</string>
+    <string name="field_date_after">%1$s %2$s ৰ পিছত হ\'ব নোৱাৰে</string>
     <string name="incentive_dashboard">প্ৰেৰণা ডেছবোর্ড</string>
-    <string name="facilitator">সহায়ক</string>
+    <string name="facilitator">সহায়ক</string>
+    <string name="app_settings">এপ ছেটিংছ</string>
     <string name="number_of_families_label">পৰিয়ালৰ সংখ্যা : %s</string>
     <string name="number_of_children_label">শিশুৰ সংখ্যা : %s</string>
     <string name="follow_up_date_required_or_invalid">অনুসৰণৰ তাৰিখ আৱশ্যক বা অবৈধ</string>

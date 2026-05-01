@@ -156,8 +156,8 @@
     <string name="cbac_risk_assessment_tv">भाग अ: जोखिम मूल्यांकन</string>
     <string name="cbac_tv_bl_menopause">मितानिन प्रशिक्षक को सूचित करें</string>
     <string name="cbac_form">सीबीएसी फॉर्म</string>
-
     <string name="alert">चेतावनी!</string>
+    <string name="alert_message_fill_required_fields">कृपया सबमिट करने से पहले सभी अनिवार्य फ़ील्ड भरें।</string>
     <string name="missing_field">जरूरी जानकारी भरी नहीं गई</string>
     <string name="suspected_hrp_and_ncd_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
     <string name="ok">ठीक है</string>
