@@ -203,11 +203,16 @@ class ImmunizationFormViewModel @Inject constructor(
 
     val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
         vaccineIdList.map { cache ->
+
+            val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
+
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
                 vaccineStateList = vaccinesList.filter {
                     it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
+                    val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis
+                    val dueDateStr = sdf.format(java.util.Date(dueDateMillis))
                     VaccineDomain(
                         vaccine.vaccineId,
                         vaccine.vaccineName,
@@ -217,9 +222,13 @@ class ImmunizationFormViewModel @Inject constructor(
                             VaccineState.PENDING
                         } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
                             VaccineState.OVERDUE
-                        } else VaccineState.MISSED
+                        } else VaccineState.MISSED,
+                        dueDate = dueDateStr
+
                     )
-                })
+                }
+
+            )
         }
     }
     val bottomSheetContent = clickedBenId.combine(benWithVaccineDetails) { a, b ->
