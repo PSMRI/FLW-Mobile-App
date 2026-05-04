@@ -124,7 +124,7 @@ class IncentivesFragment : Fragment() {
                 binding.rejectedTitle.visibility = View.GONE
             }
 
-            101 -> {
+            102 -> {
                 binding.tvTitle.text = "Claim Status"
                 binding.date.visibility = View.GONE
                 binding.tvRejectedReason.visibility = View.GONE
@@ -380,6 +380,8 @@ class IncentivesFragment : Fragment() {
                         }
                         103 -> {
                             binding.approved.text = "Rejected"
+                            binding.claimbtn.text = "Claim"
+                            binding.claimbtn.isClickable = true
                             binding.approved.setBackgroundColor(
                                 ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
                             )
@@ -390,6 +392,9 @@ class IncentivesFragment : Fragment() {
                     binding.claimbtn.isClickable = true
                     binding.claimStatus.visibility = View.GONE
                 }
+            } else {
+                binding.claimStatus.visibility = View.GONE
+
             }
         }
 
@@ -441,6 +446,7 @@ class IncentivesFragment : Fragment() {
                                 }
                                 103 -> {
                                     binding.approved.text = "Rejected"
+
                                     binding.approved.setBackgroundColor(
                                         ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
                                     )
