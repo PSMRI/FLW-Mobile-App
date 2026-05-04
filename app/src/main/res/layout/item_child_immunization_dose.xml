@@ -53,11 +53,25 @@
                     android:id="@+id/tvVaccineName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="@{vaccine.vaccineName}"
                     android:layout_marginStart="@dimen/_10sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/idSwitch"/>
+
+                <TextView
+                    android:id="@+id/tvVaccineDueDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/due_date_label(vaccine.dueDate)}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="@color/md_theme_light_outline"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toBottomOf="@id/tvVaccineName"
                     app:layout_constraintEnd_toStartOf="@+id/idSwitch"/>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -68,8 +82,8 @@
                     app:trackTint="@color/switch_track_selector"
                     app:thumbTint="@color/switch_thumb_selector"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tvVaccineName"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvVaccineName"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 <!--                android:theme="@style/SCBSwitch"-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
