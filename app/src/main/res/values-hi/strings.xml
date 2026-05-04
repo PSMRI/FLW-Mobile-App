@@ -910,8 +910,8 @@
     <string name="any_danger_signs">क्या कोई खतरे के संकेत हैं?\n</string>
     <string name="any_high_risk_identified">क्या कोई खतरे के लक्षण पहचाना गया है?</string>
     <string name="claim">Claim</string>
-    <string name="cataract_surgery">Cataract Surgery</string>
-    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="cataract_surgery">मोतियाबिंद की सर्जरी</string>
+    <string name="cataract_surgery_visits">मोतियाबिंद सर्जरी के लिए विज़िट</string>
     <string name="due_date_label">देय: %1$s</string>
     <string name="delivery_discharge_summary_1">प्रसव छुट्टी सारांश 1</string>
     <string name="delivery_discharge_summary_2">प्रसव छुट्टी सारांश 2</string>

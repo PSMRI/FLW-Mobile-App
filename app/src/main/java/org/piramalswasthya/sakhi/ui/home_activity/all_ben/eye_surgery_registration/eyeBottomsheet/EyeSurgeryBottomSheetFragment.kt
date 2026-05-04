@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentEyeSurgeryBottomSheetBinding
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.adapter.EyeSurgeryVisitListAdapter
@@ -117,7 +118,7 @@ class EyeSurgeryBottomSheetFragment : BottomSheetDialogFragment() {
 
             val finalList = if (availableEyes.isNotEmpty()) {
                 viewOptions + EyeSurgeryVisitOption(
-                    title = "Add New Visit",
+                    title = resources.getString(R.string.add_new_visit),
                     visitDate = "",
                     eyeSide = null,
                     isAddNew = true,
