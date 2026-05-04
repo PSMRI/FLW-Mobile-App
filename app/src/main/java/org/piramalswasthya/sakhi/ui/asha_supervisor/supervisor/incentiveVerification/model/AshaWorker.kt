@@ -38,6 +38,7 @@ data class Activity(
     @SerializedName("otherReason") val otherReason: String?,
     @SerializedName("claimedDate") val claimedDate: String?,
     @SerializedName("approvalDate") val approvalDate: String?,
+    @SerializedName("verifiedByUserName") val verifiedByUserName: String?,
     @SerializedName("role") val role: String?,
     @SerializedName("isClaimed") val isClaimed: Boolean?
 )
@@ -50,6 +51,7 @@ data class AshaWorker(
     val OtherReason: String,
     val reason: String,
     val serviceCenter: String,
+    val verifiedByUserName: String,
     val role: String,
     val amount: Int,
     val pending: Int,
