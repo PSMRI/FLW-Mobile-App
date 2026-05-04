@@ -53,7 +53,7 @@ class AshaWorkerAdapter(
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
                     tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
                     tvRejectedReason.visibility = View.GONE
-                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+                    tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${worker.role})"
                 }
 
                 VerificationStatus.PENDING -> {
