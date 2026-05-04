@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemEyeSurgeryVisitBinding
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.model.EyeSurgeryVisitOption
 
@@ -36,7 +37,7 @@ class EyeSurgeryVisitListAdapter(
         holder.binding.apply {
             tvVisitTitle.text = item.title
             tvVisitDate.text = item.visitDate
-            btnAction.text = if (item.isAddNew) "Add" else "View/Edit"
+            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.add) else "View/Edit"
             btnAction.setOnClickListener { clickListener.onClick(item) }
         }
     }

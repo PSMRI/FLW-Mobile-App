@@ -107,7 +107,7 @@
     <string name="submitted">দাখিল কৰা হৈছে</string>
     <string name="add_eye_surgery">চকুৰ অস্ত্ৰোপচাৰ যোগ কৰক</string>
     <string name="mda_form_title">MDA ফৰ্ম</string>
-    <string name="view_edit_eye_surgery">চকুৰ অস্ত্ৰোপচাৰ চাওক/সম্পাদনা কৰক</string>
+    <string name="view_edit_eye_surgery">চাওক/সম্পাদনা কৰক</string>
     <string name="eye_surgery_details_saved_successfully">চকুৰ অস্ত্ৰোপচাৰৰ বিৱৰণ সফলভাৱে সংৰক্ষণ কৰা হৈছে।</string>
     <string name="failed_to_submit_form">ফৰ্ম দাখিল কৰিবলৈ বিফল। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
     <string name="data_saved_successfully">তথ্য সফলভাৱে সংৰক্ষণ কৰা হৈছে।</string>
