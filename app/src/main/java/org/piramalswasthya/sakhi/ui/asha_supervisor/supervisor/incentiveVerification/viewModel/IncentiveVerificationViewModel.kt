@@ -109,6 +109,7 @@ class IncentiveVerificationViewModel @Inject constructor(
                             approvalDate  = formatDate(latestActivity?.approvalDate),
                             reason        = latestActivity?.reason ?: "",
                             OtherReason   = latestActivity?.otherReason ?: "",
+                            verifiedByUserName   = latestActivity?.verifiedByUserName ?: "",
                             status        = mapStatus(worker.approvalStatus)
                         )
                     } ?: emptyList()
