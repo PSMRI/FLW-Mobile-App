@@ -20,7 +20,6 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
-import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -38,11 +37,8 @@ import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class BenRegFormDataset(context: Context, language: Languages) : Dataset(context, language) {
 
@@ -587,7 +583,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             saved.motherName?.takeIf { it.isNotEmpty() }?.let { motherName.inputType = TEXT_VIEW }
 
             if (saved.isSpouseAdded || saved.isChildrenAdded || saved.doYouHavechildren) {
-                maritalStatus.inputType = TEXT_VIEW
+                // Allow editing
+                maritalStatus.inputType = DROPDOWN
             }
             saved.genDetails?.spouseName?.let {
                 when (saved.genderId) {
@@ -885,11 +882,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             gender.value = gender.getStringFromPosition(saved.genderId)
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
                 gender.inputType = TEXT_VIEW
-                agePopup.inputType = TEXT_VIEW
-                agePopup.value = getAgeStringFromDob(saved.dob)
-                dobReadOnly.value = getDateFromLong(saved.dob)
-                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
-                maritalStatus.inputType = TEXT_VIEW
+                agePopup.inputType = org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
+                maritalStatus.inputType = DROPDOWN
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
@@ -1054,14 +1048,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (isAddspouse == 1) {
             isAddSpouse = true
             gender.inputType = TEXT_VIEW
-            maritalStatus.inputType = TEXT_VIEW
+            maritalStatus.inputType = DROPDOWN
             reproductiveStatus.inputType = DROPDOWN
         }
         if (relationToHeadId == 4 || relationToHeadId == 5) hoF?.let {
             isAddSpouse = true
 //            agePopup.inputType = TEXT_VIEW
             gender.inputType = TEXT_VIEW
-            maritalStatus.inputType = TEXT_VIEW
+            maritalStatus.inputType = DROPDOWN
             reproductiveStatus.inputType = DROPDOWN
             setUpForSpouse(it, hoFSpouse,list)
         }
@@ -1095,8 +1089,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             list.add(list.indexOf(placeOfDeath) + 1, otherPlaceOfDeath)
                         }
                     }
-
-
             }
 
             beneficiaryStatus.value = when (saved.isDeath) {
@@ -1123,12 +1115,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             gender.value = gender.getStringFromPosition(saved.genderId)
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
-                gender.inputType = TEXT_VIEW
-                agePopup.inputType = TEXT_VIEW
-                agePopup.value = getAgeStringFromDob(saved.dob)
-                dobReadOnly.value = getDateFromLong(saved.dob)
-                list.add(list.indexOf(agePopup) + 1, dobReadOnly)
-                maritalStatus.inputType = TEXT_VIEW
+                gender.inputType = TEXT_VIEW   // keep locked
+                agePopup.inputType = org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
+                maritalStatus.inputType = DROPDOWN
             }
             fatherName.value = saved.fatherName
             fileUploadFront.value = saved.kidDetails?.birthCertificateFileFrontView
@@ -1424,10 +1413,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         if (benGender == MALE) wifeName.value = hof?.motherName
         if (benGender == FEMALE) husbandName.value = hof?.fatherName
         maritalStatus.value = maritalStatus.getStringFromPosition(2)
-
         if (hoF.isSpouseAdded || hoF.isChildrenAdded || hoF.doYouHavechildren) {
-            maritalStatus.inputType = TEXT_VIEW
-            agePopup.inputType = TEXT_VIEW
+            maritalStatus.inputType = DROPDOWN
+            agePopup.inputType = org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
         }
 
         lastName.value = hoF.lastName?.also { lastName.inputType = TEXT_VIEW }
@@ -1460,7 +1448,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
             if (hoFSpouse.isSpouseAdded || hoFSpouse.isChildrenAdded || hoFSpouse.doYouHavechildren) {
-                maritalStatus.inputType = TEXT_VIEW
+                maritalStatus.inputType = DROPDOWN
             }
 //            maritalStatus.inputType = TEXT_VIEW
             if (hoFSpouse.gender == MALE) {
@@ -1498,9 +1486,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value = maritalStatus.getStringFromPosition(2)
             if (selectedben.isSpouseAdded || selectedben.isChildrenAdded || selectedben.doYouHavechildren) {
-                maritalStatus.inputType = TEXT_VIEW
+                maritalStatus.inputType = DROPDOWN
             }
-//            maritalStatus.inputType = TEXT_VIEW
             if (selectedben?.gender  == MALE) {
                 list1.add(list1.indexOf(maritalStatus) + 1 ,haveChildren)
 
@@ -1907,17 +1894,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
 
             agePopup.id -> {
-//                assignValuesToAgeAndAgeUnitFromDob(
-//                    getLongFromDate(agePopup.value),
-//                    ageAtMarriage,
-//                    timeStampDateOfMarriageFromSpouse
-//                )
+                val dob = getLongFromDate(agePopup.value)
+                val age = getAgeFromDob(dob)
 
                 if (benIfDataExist != null || !isAddSpouse) {
                     if (gender.value != null) {
-                        // Gender already set (editing OR add member with pre-selected relation)
-                        // Preserve gender, maritalStatus, relationToHead
-                        // reproductiveStatus will be handled in updateReproductiveOptionsBasedOnAgeGender
 
                         val genderIndex = when (gender.value) {
                             gender.entries?.get(0) -> 0  // Male
@@ -1943,6 +1924,24 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                             1 -> R.array.nbr_relationship_to_head_female
                             else -> R.array.nbr_relationship_to_head
                         }
+
+                        maritalStatus.value = null
+
+                        husbandName.value = null
+                        wifeName.value = null
+                        spouseName.value = null
+
+                        ageAtMarriage.value = null
+                        dateOfMarriage.value = null
+
+                        haveChildren.value = null
+                        _isAddingChildren.value = false
+
+                        // Reset reproductive only for female
+                        if (genderIndex == 1) {
+                            reproductiveStatus.value = null
+                        }
+
                     } else {
                         // Gender not set yet: reset all values
                         gender.value = null
@@ -1977,18 +1976,21 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                 if (isAddSpouse) {
                     ageAtMarriage.max = getAgeFromDob(getLongFromDate(agePopup.value)).toLong()
-                    ageAtMarriage.value = calculateAgeAtMarriage(getLongFromDate(agePopup.value), timeStampDateOfMarriageFromSpouse)?.toString()
-                        ?: Konstants.minAgeForMarriage.toString()
+                    ageAtMarriage.value = calculateAgeAtMarriage(
+                        getLongFromDate(agePopup.value),
+                        timeStampDateOfMarriageFromSpouse
+                    )?.toString() ?: Konstants.minAgeForMarriage.toString()
+
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0
                     )
+
                     triggerDependants(
                         source = agePopup,
                         addItems = listOf(ageAtMarriage),
                         removeItems = emptyList(),
                         position = 13
                     )
-
                 }
 
                 try {
@@ -1997,9 +1999,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     e.printStackTrace()
                     return 1
                 }
-
             }
-
             ageAtMarriage.id -> {
 
                 val rawDob = agePopup.value
