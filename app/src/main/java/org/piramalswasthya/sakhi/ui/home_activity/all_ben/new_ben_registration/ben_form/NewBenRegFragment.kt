@@ -580,7 +580,7 @@ class NewBenRegFragment : Fragment() {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
                 1008 -> {
-                    notifyDataSetChanged()
+                 //   notifyDataSetChanged()
 
                 }
                 1012 -> {
