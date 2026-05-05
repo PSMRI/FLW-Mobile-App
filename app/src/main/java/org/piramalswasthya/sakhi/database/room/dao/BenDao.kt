@@ -603,6 +603,23 @@ interface BenDao {
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben  inner join pregnancy_register pwr on pwr.benId = ben.benId inner join pregnancy_anc anc on ben.benId = anc.benId WHERE ben.reproductiveStatusId =3 and ben.isDeactivate=0 and anc.pregnantWomanDelivered =1 and anc.isActive = 1 and pwr.active = 1 and villageId=:selectedVillage")
     fun getAllDeliveredWomenListCount(selectedVillage: Int): Flow<Int>
 
+    @Query("""
+        SELECT COUNT(DISTINCT ben.benId)
+        FROM BEN_BASIC_CACHE ben
+        INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
+        WHERE pwr.active = 1
+          AND ben.reproductiveStatusId = 2
+          AND ben.isDeactivate = 0
+          AND ben.villageId = :selectedVillage
+          AND (ben.isDeath = 0 OR ben.isDeath IS NULL OR ben.isDeath = 'undefined')
+          AND (pwr.lmpDate + 24192000000) <= (strftime('%s','now') * 1000)
+          AND ben.benId NOT IN (
+              SELECT benId FROM pregnancy_anc
+              WHERE pregnantWomanDelivered = 1 OR maternalDeath = 1
+          )
+    """)
+    fun getDeliveryDueWomenCount(selectedVillage: Int): Flow<Int>
+
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 1 and  isDeactivate=0  and gender = 'FEMALE' and villageId=:selectedVillage")
     fun getAllNonPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithHRNPACache>>

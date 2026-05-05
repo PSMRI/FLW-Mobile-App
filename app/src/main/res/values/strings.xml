@@ -1387,6 +1387,12 @@
     <string name="mobile_number_of_anm1">Mobile Number of ANM1</string>
     <string name="name_of_anm2">Name of ANM2</string>
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
+    <string name="asha_dashboard">ASHA Dashboard</string>
+    <string name="asha_dashboard_summary">Current maternal health workload from offline records.</string>
+    <string name="total_anc_women">Total ANC Women</string>
+    <string name="delivery_due_list">Delivery Due List</string>
+    <string name="total_delivery_women">Total Delivery Women</string>
+    <string name="pnc_women">PNC Women</string>
 
 </resources>
 
