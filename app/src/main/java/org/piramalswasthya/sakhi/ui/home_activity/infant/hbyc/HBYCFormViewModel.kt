@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc
 
+import timber.log.Timber
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -215,7 +216,7 @@ fun updateFieldValue(fieldId: String, value: Any?) {
                     }
                     benRepo.updateRecord(ben)
                 }
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) { Timber.e(e) }
         }
 
         val wrappedJson = JSONObject().apply {

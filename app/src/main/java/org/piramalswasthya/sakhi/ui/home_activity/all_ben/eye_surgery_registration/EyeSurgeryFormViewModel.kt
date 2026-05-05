@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration
 
+import timber.log.Timber
 import android.content.Context
     import android.util.Log
     import androidx.lifecycle.LiveData
@@ -201,7 +202,7 @@ class EyeSurgeryFormViewModel @Inject constructor(
 
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Timber.e(e)
             false
         }
     }

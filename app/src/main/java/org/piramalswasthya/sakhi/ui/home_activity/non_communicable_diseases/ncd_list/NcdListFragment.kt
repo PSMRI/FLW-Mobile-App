@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_list
 
+import timber.log.Timber
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -95,7 +96,7 @@ class NcdListFragment : Fragment() {
                         callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
                         startActivity(callIntent)
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Timber.e(e)
                         activity?.let {
                             (it as HomeActivity).askForPermissions()
                         }

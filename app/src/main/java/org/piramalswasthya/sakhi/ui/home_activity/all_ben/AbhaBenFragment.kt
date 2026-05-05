@@ -190,7 +190,7 @@ class AbhaBenFragment : Fragment() {
                         callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
                         startActivity(callIntent)
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Timber.e(e)
                         activity?.let {
                             (it as HomeActivity).askForPermissions()
                         }
@@ -250,7 +250,7 @@ class AbhaBenFragment : Fragment() {
                         callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
                         startActivity(callIntent)
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Timber.e(e)
                         activity?.let {
                             (it as HomeActivity).askForPermissions()
                         }

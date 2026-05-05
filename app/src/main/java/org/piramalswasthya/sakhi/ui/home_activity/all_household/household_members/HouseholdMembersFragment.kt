@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_household.household_members
 
+import timber.log.Timber
 import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -318,7 +319,7 @@ class HouseholdMembersFragment : Fragment() {
                             callIntent.setData(Uri.parse("tel:${it.mobileNo}"))
                             startActivity(callIntent)
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            Timber.e(e)
                             activity?.let {
                                 (it as HomeActivity).askForPermissions()
                             }

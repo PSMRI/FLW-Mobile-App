@@ -191,7 +191,7 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
                 list.addAll(mList)
                 _listFlow.emit(list.toMutableList())
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
         }
     }

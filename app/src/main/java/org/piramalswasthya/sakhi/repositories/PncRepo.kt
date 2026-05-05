@@ -135,9 +135,9 @@ class PncRepo @Inject constructor(
                         }
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 }
             } else {
                 //server_resp5();

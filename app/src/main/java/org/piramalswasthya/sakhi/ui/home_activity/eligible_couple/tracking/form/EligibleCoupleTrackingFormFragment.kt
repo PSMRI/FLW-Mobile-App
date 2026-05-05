@@ -324,7 +324,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                         viewImage(uri)
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                     Toast.makeText(requireContext(), "Unable to open document", Toast.LENGTH_SHORT).show()
                 }
             }

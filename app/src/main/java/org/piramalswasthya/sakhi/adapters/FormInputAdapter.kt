@@ -1323,7 +1323,7 @@ class FormInputAdapter(
                 )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
 
         }
     }

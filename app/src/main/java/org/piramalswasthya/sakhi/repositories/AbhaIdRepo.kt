@@ -95,7 +95,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -127,7 +127,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -154,7 +154,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -191,7 +191,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -229,7 +229,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -258,7 +258,7 @@ class AbhaIdRepo @Inject constructor(
 //                NetworkResult.Error(-3, "Request Timed out! Please try again!")
                 NetworkResult.NetworkError
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -285,7 +285,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -319,7 +319,7 @@ class AbhaIdRepo @Inject constructor(
             encryptedTextBase64 =
                 Base64.encodeToString(encryptedText, Base64.DEFAULT).replace("\n", "")
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
         return encryptedTextBase64
     }
@@ -343,7 +343,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -400,7 +400,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -454,7 +454,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }
@@ -486,7 +486,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 NetworkResult.Error(-4, e.message ?: "Unknown Error")
             }
         }

@@ -1,6 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years
 
-
+import timber.log.Timber
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -191,7 +191,7 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
                 )
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 

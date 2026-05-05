@@ -456,7 +456,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
             _state.postValue(State.SUCCESS)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             _state.postValue( State.FAIL)
         }
         loadSyncedVisitList(benId)

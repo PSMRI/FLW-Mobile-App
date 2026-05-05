@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.helpers.dynamicMapper
 
+import timber.log.Timber
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
@@ -70,7 +71,7 @@ object FormSubmitRequestMapper {
                 fields = englishFieldsMap
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }

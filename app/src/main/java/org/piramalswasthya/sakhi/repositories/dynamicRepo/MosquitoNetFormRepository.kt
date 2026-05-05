@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
+import timber.log.Timber
 import android.content.Context
 import androidx.annotation.WorkerThread
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -52,7 +53,7 @@ class MosquitoNetFormRepository @Inject constructor(
                 }
             }
         } catch (e : Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
 
         if (result == null) {
@@ -168,7 +169,7 @@ class MosquitoNetFormRepository @Inject constructor(
                     version = 1
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
                 null
             }
         }

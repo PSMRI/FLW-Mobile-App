@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
+import timber.log.Timber
 import android.content.Context
 import androidx.annotation.WorkerThread
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -166,7 +167,7 @@ class EyeSurgeryFormRepository @Inject constructor(
                         isSynced = true
                     )
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                     null
                 }
             }
@@ -176,7 +177,7 @@ class EyeSurgeryFormRepository @Inject constructor(
             }
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 

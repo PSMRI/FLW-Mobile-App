@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.village_level_forms.filaria_mda
 
+import timber.log.Timber
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -240,7 +241,7 @@ class FilariaMdaFormCampaignViewModel @Inject constructor(
             true
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             false
         }
     }

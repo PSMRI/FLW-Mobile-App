@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.configuration
 
+import timber.log.Timber
 import android.content.Context
 import android.net.Uri
 import android.text.InputType
@@ -1111,7 +1112,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             try {
                 handleForAgeDob(formId = agePopup.id)
             } catch(e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
             pic.value = saved.userImage
             dateOfReg.value = getDateFromLong(saved.regDate)
@@ -1268,7 +1269,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     try {
                         handleForAgeDob(formId = reproductiveStatus.id)
                     } catch(e: Exception) {
-                        e.printStackTrace()
+                        Timber.e(e)
                     }
 //                    handleForAgeDob(formId = reproductiveStatus.id)
                 } else {
@@ -1991,7 +1992,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 try {
                     return updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                     return 1
                 }
 

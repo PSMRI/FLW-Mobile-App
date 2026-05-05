@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.ben_ifa
 
+import timber.log.Timber
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -192,7 +193,7 @@ class BenIfaFormViewModel @Inject constructor(
 
             true
         }catch (e: Exception){
-            e.printStackTrace()
+            Timber.e(e)
             false
         }
     }

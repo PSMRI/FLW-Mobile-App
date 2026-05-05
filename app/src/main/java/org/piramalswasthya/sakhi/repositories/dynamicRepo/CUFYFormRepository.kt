@@ -119,7 +119,7 @@ class CUFYFormRepository @Inject constructor(
                     )
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
         }
         return result

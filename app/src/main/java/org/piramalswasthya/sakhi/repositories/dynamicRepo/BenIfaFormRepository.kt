@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
+import timber.log.Timber
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -145,7 +146,7 @@ class BenIfaFormRepository @Inject constructor(
                     )
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
         }
 
@@ -212,7 +213,7 @@ class BenIfaFormRepository @Inject constructor(
                 insertOrUpdateFormResponse(entity)
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
         }
     }

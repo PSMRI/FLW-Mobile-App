@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
+import timber.log.Timber
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Environment
@@ -142,7 +143,7 @@ class AllBenViewModel @Inject constructor(
 
             file
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }

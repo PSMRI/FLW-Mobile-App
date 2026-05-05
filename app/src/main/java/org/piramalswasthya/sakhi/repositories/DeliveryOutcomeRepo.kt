@@ -159,13 +159,13 @@ class DeliveryOutcomeRepo @Inject constructor(
 //                    HelperUtil.deliveryOutcomeRepo.append("\n")
 //                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
 
-                    e.printStackTrace()
+                    Timber.e(e)
                 } catch (e: Exception) {
 //                    HelperUtil.deliveryOutcomeRepo.append("Caught exception:Exception $e \n")
 //                    HelperUtil.deliveryOutcomeRepo.append("\n")
 //                    HelperUtil.deliveryOutcomeRepoMethod(context, "deliveryOutcomeRepoMethod.txt", HelperUtil.deliveryOutcomeRepo.toString())
 
-                    e.printStackTrace()
+                    Timber.e(e)
                 }
             } else {
                 //server_resp5();

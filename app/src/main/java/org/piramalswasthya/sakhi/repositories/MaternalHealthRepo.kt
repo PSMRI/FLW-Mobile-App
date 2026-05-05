@@ -228,13 +228,13 @@ class MaternalHealthRepo @Inject constructor(
                         }
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 } catch (e: SocketTimeoutException) {
                     if (retryCount > 0) return postDataToAmritServer(ancPostList, retryCount - 1)
                     Timber.e("postDataToAmritServer: max retries exhausted")
                     return false
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 }
             } else {
                 //server_resp5();
@@ -338,9 +338,9 @@ class MaternalHealthRepo @Inject constructor(
                         }
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Timber.e(e)
                 }
             } else {
                 //server_resp5();

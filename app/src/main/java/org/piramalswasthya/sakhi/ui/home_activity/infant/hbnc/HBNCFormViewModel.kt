@@ -279,7 +279,7 @@ class HBNCFormViewModel @Inject constructor(
             calendar.add(Calendar.DAY_OF_MONTH, daysToAdd)
             calendar.timeInMillis
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             null
         }
     }

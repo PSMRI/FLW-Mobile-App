@@ -100,7 +100,7 @@ class LmsFragment: Fragment() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.e(e)
             }
         }
 

@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.general_op_care
 
+import timber.log.Timber
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -60,7 +61,7 @@ class GeneralOpCareFragment : Fragment() {
                         callIntent.setData(Uri.parse("tel:${mobileno}"))
                         startActivity(callIntent)
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Timber.e(e)
                         activity?.let {
                             (it as HomeActivity).askForPermissions()
                         }

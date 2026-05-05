@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
+import timber.log.Timber
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
@@ -851,7 +852,7 @@ class IncentivesFragment : Fragment() {
                             .show()
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Timber.e(e)
                     Toast.makeText(context, "Failed to save file: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             } else {
@@ -874,7 +875,7 @@ class IncentivesFragment : Fragment() {
             snackbar.show()
 
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.e(e)
             Toast.makeText(context, " ${e.message}", Toast.LENGTH_LONG).show()
         }
         }
