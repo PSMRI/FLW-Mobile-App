@@ -62,7 +62,7 @@
                 android:id="@+id/cl_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_wide">
+                android:padding="@dimen/padding_normal">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_sign_in"
@@ -93,9 +93,7 @@
                     android:checkedButton="@id/rb_eng"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/padding_wide"
-                    android:paddingEnd="@dimen/padding_wide"
-                    android:weightSum="3"
+                    android:weightSum="4"
                     app:layout_constraintTop_toBottomOf="@id/tv_lang">
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
@@ -112,6 +110,11 @@
                         android:id="@+id/rb_assamese"
                         style="@style/radio_item_lang"
                         android:text="@string/text_assamese" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/rb_bangala"
+                        style="@style/radio_item_lang"
+                        android:text="@string/text_bangali" />
 
                 </RadioGroup>
 

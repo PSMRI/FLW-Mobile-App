@@ -89,7 +89,9 @@ class SupervisorActivity : AppCompatActivity() {
             resources.getString(R.string.hindi) to Languages.HINDI,
         )
         if (!isMitanin) {
+            languageOptions.add(resources.getString(R.string.text_bangali) to Languages.BANGLA)
             languageOptions.add(resources.getString(R.string.assamese) to Languages.ASSAMESE)
+
         }
         val currentLanguageIndex = languageOptions.indexOfFirst { it.second == pref.getCurrentLanguage() }.coerceAtLeast(0)
 

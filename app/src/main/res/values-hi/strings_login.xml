@@ -12,6 +12,8 @@
     <string name="text_english" translatable="false">English</string>
     <string name="text_hindi" translatable="false">हिंदी</string>
     <string name="text_assamese" translatable="false">অসমীয়া</string>
+    <string name="text_bangali" translatable="false">বাংলা</string>
+
     <string name="til_username_hint_text">उपयोगकर्ता नाम</string>
     <string name="til_password_hint_text">पासवर्ड</string>
     <string name="cb_login_remember_me_text">मुझे याद रखना</string>
