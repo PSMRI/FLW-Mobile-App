@@ -154,11 +154,13 @@ object AppModule {
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
-            level =
-                //if (BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BODY
-                //else
-                    //HttpLoggingInterceptor.Level.NONE
+            // Restrict verbose HTTP payload logging to debug builds only.
+            // In release builds, BODY logs can expose sensitive healthcare data.
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
         return loggingInterceptor
     }
