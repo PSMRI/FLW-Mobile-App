@@ -152,7 +152,10 @@ To run this project, Follow these steps:
 
 ## 🔧 Additional Setup Steps (After Cloning)
 
-### 1. Run Setup Script
+### 1. Open Project in Android Studio
+Open the cloned project in **Android Studio** and wait for the Gradle sync to complete. This step is required to generate `local.properties` with your Android SDK path.
+
+### 2. Run Setup Script
 Open **Git Bash** and run the following commands:
 
 ```bash
@@ -163,7 +166,7 @@ bash setup.sh
 > Replace `YOUR_PROJECT_PATH` with the actual path where you cloned the repository.  
 > Example: `cd "D:/Projects/FLW-Mobile-App"`
 
-### 2. Build & Run in Android Studio
+### 3. Build & Run in Android Studio
 1. Open the project in **Android Studio**
 2. Switch build variant to **`sakshamUat`** (bottom-left dropdown)
 3. Click **Run**
