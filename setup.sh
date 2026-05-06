@@ -29,6 +29,6 @@ export $(grep -v '^#' .env | xargs)
 
 # Step 5 - Build
 echo "🔨 Starting Gradle build..."
-./gradlew assembleSakshamUatDebug
+./gradlew clean assembleSakshamUatDebug
 
 echo "✅ Done! APK is ready."
