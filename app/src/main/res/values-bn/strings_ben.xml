@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="relation_with_family_head">পরিবারের প্রধানের সাথে সম্পর্ক</string>
+    <string name="other_enter_relation_to_head">অন্যান্য - প্রধানের সাথে সম্পর্ক লিখুন</string>
+    <string name="community">সম্প্রদায়</string>
+    <string name="religion">ধর্ম</string>
+    <string name="other_enter_religion">অন্যান্য - ধর্ম লিখুন</string>
+    <string name="has_aadhaar_number">আধার নম্বর আছে</string>
+    <string name="enter_aadhaar_number_ben">আধার নম্বর লিখুন</string>
+    <string name="reproductive_status">মহিলার অবস্থা</string>
+    <string name="birth_certificate_number">জন্ম সনদ নম্বর</string>
+    <string name="beneficiary_details">সুবিধাভোগীর বিবরণ</string>
+    <string name="str_beneficiary_status">সুবিধাভোগীর অবস্থা</string>
+    <string name="wife_s_name">স্ত্রীর নাম</string>
+    <string name="spouse_s_name">স্বামী/স্ত্রীর নাম</string>
+    <string name="age_at_marriage">বিবাহের সময় বয়স</string>
+    <string name="age_at_marriagee">বিবাহের সময় আপনার বয়স</string>
+    <string name="date_of_marriage">বিবাহের তারিখ</string>
+    <string name="father_s_name">পিতার নাম</string>
+    <string name="mother_s_name">মাতার নাম</string>
+    <string name="mobile_number_of">মোবাইল নম্বর</string>
+    <string name="other_mobile_number_of">অন্যান্য - মোবাইল নম্বর</string>
+    <string name="rch_id_ben">আরসিএইচ আইডি</string>
+    <string name="nbr_age">বয়স</string>
+    <string name="nbr_dob">জন্ম তারিখ</string>
+    <string name="nbr_gender">লিঙ্গ</string>
+    <string name="nbr_image">ছবি</string>
+    <string name="nbr_abortion_image">গর্ভপাত ছাড়পত্র</string>
+    <string name="nbr_image_cam_gal">ক্যামেরা/গ্যালারি ব্যবহার করতে ট্যাপ করুন</string>
+    <string name="nbr_image_sub">ক্যামেরা ব্যবহার করতে ট্যাপ করুন</string>
+    <string name="nbr_dor">নিবন্ধনের তারিখ</string>
+    <string name="vhnd_date">ভিএইচএনডি তারিখ</string>
+    <string name="vhnc_date">ভিএইচএসএনসি সভার তারিখ</string>
+    <string name="phc_review_meeting_date">সভার তারিখ</string>
+    <string name="nbr_nb_first_name">প্রথম নাম</string>
+    <string name="nbr_child_first_name">শিশুর নাম</string>
+    <string name="nbr_nb_last_name">শেষ নাম / পদবি</string>
+    <string name="beneficiary_details_ben">সুবিধাভোগীর বিবরণ</string>
+    <string name="id_details">পরিচয়পত্রের বিবরণ</string>
+    <string name="reproductive_status_ben">মহিলার অবস্থা</string>
+    <string name="enable_gps">জিপিএস চালু করুন</string>
+    <string name="gps_is_not_enabled_do_you_want_to_go_to_settings_menu">জিপিএস চালু নেই। আপনি কি সেটিংস মেনুতে যেতে চান?</string>
+    <string name="settings">সেটিংস</string>
+    <string name="cancel">বাতিল করুন</string>
+    <string name="please_tick_the_checkbox">অনুগ্রহ করে চেকবক্সে টিক দিন</string>
+    <string name="incomplete_form_found">অসম্পূর্ণ ফর্ম পাওয়া গেছে</string>
+    <string name="do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form">আপনি কি আগের ফর্মটি চালিয়ে যেতে চান, নাকি নতুন ফর্ম তৈরি করে আগেরটি বাতিল করতে চান?</string>
+    <string name="open_draft">খসড়া খুলুন</string>
+    <string name="create_new">নতুন তৈরি করুন</string>
+    <string name="warning_id_running_low_connect_to_internet_at_the_earliest">সতর্কতা: দুর্বল ইন্টারনেট সংযোগ</string>
+    <string name="error_no_more_ben_ids_available_connect_to_internet_to_get_some">ত্রুটি: বেন আইডি পেতে ইন্টারনেট সংযোগ পরীক্ষা করুন।</string>
+    <string name="please_select_type_of_beneficiary">অনুগ্রহ করে সুবিধাভোগীর ধরন নির্বাচন করুন</string>
+    <string name="frag_new_ben_type_kid_text">নবজাতক / শিশু / বাচ্চা / কিশোর\n( ০ - ১৫ বছরের কম বয়সী )</string>
+    <string name="frag_new_ben_type_adult_text">সাধারণ নিবন্ধন\n( ১৫ বছর ও তদূর্ধ্ব )</string>
+    <string name="frag_new_ben_type_select_text">সুবিধাভোগীর ধরন নির্বাচন করুন</string>
+    <string name="frag_new_ben_reg_type_title">নিবন্ধনের জন্য সুবিধাভোগীর ধরন</string>
+    <string name="consent_text">সম্মতি:\nআশা কর্মী আমাকে আমার ব্যক্তিগত স্বাস্থ্য প্রোফাইলে তথ্য ও পরিমাপ সংগ্রহের উদ্দেশ্য আমার বোধগম্য ভাষায় ব্যাখ্যা করেছেন এবং আমি তথ্য ও পরিমাপ সংগ্রহে সম্মতি দিচ্ছি।</string>
+    <string name="disagree">অসম্মত</string>
+    <string name="other_place_of_death">মৃত্যুর অন্যান্য স্থান</string>
+    <string name="agree">সম্মত</string>
+
+    <string name="deworming_done">কৃমিনাশক রাউন্ড সম্পন্ন হয়েছে?</string>
+    <string name="deworming_date">কৃমিনাশকের তারিখ</string>
+    <string name="deworming_location">কৃমিনাশকের স্থান</string>
+    <string name="age_group">বয়স গোষ্ঠী</string>
+    <string name="deworming_title">জাতীয় কৃমিনাশক দিবস ফর্ম</string>
+    <string name="deworming_list_title">জাতীয় কৃমিনাশক দিবস ফর্মের তালিকা</string>
+    <string name="ndd_list_title">এনডিডি ফর্ম</string>
+
+    <string-array name="deworming_location_options">
+        <item>বিদ্যালয়</item>
+        <item>অঙ্গনওয়াড়ি কেন্দ্র</item>
+        <item>কমিউনিটি সেন্টার</item>
+        <item>বাড়ি পরিদর্শন</item>
+    </string-array>
+
+    <string-array name="nbr_gender_array">
+        <item name="nbr_gender_1">পুরুষ</item>
+        <item name="nbr_gender_2">মহিলা</item>
+        <item name="nbr_gender_3">তৃতীয় লিঙ্গ</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array1">
+        <item>কিশোরী মেয়ে</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array2">
+        <item name="ec">যোগ্য দম্পতি</item>
+        <item>গর্ভবতী মহিলা</item>
+        <item>প্রসবোত্তর মা</item>
+        <item>স্থায়ীভাবে নির্বীজিত</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array3">
+        <item>প্রযোজ্য নয়</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array4">
+        <item>যোগ্য দম্পতি</item>
+        <item>গর্ভবতী মহিলা</item>
+        <item>প্রসবোত্তর মা</item>
+        <item>স্থায়ীভাবে নির্বীজিত</item>
+    </string-array>
+
+    <string-array name="nbr_reproductive_status_array5">
+        <item>বয়স্ক মহিলা</item>
+    </string-array>
+
+    <string name="dd_ec">যোগ্য দম্পতি</string>
+    <string name="dd_pw">গর্ভবতী মহিলা</string>
+    <string name="dd_pm">প্রসবোত্তর মা</string>
+    <string name="dd_ew">বয়স্ক মহিলা</string>
+    <string name="dd_ag">কিশোরী মেয়ে</string>
+    <string name="dd_ps">স্থায়ীভাবে নির্বীজিত</string>
+
+    <string-array name="nbr_marital_status_male_array">
+        <item>অবিবাহিত</item>
+        <item>বিবাহিত</item>
+        <item>তালাকপ্রাপ্ত</item>
+        <item>বিচ্ছিন্ন</item>
+        <item>বিধুর</item>
+    </string-array>
+
+    <string-array name="place_of_vhsnc">
+        <item>অঙ্গনওয়াড়ি কেন্দ্র</item>
+        <item>এইচডব্লিউসি</item>
+        <item>বিদ্যালয়</item>
+        <item>কমিউনিটি সেন্টার</item>
+    </string-array>
+
+    <string-array name="nbr_marital_status_female_array">
+        <item>অবিবাহিত</item>
+        <item>বিবাহিত</item>
+        <item>তালাকপ্রাপ্ত</item>
+        <item>বিচ্ছিন্ন</item>
+        <item>বিধবা</item>
+    </string-array>
+
+    <string-array name="nbr_mobile_no_relation_array">
+        <item>নিজে</item>
+        <item>স্বামী</item>
+        <item>মা</item>
+        <item>বাবা</item>
+        <item>পরিবারের প্রধান</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="temp_mobile_no_relation_array">
+        <item>পরিবারের প্রধান</item>
+        <item>নিজে</item>
+        <item>স্বামী/স্ত্রী</item>
+        <item>মা</item>
+        <item>বাবা</item>
+        <item>প্রতিবেশী</item>
+        <item>বন্ধু/আত্মীয়</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head_src">
+        <item>মা</item>
+        <item>বাবা</item>
+        <item>ভাই</item>
+        <item>বোন</item>
+        <item>স্ত্রী</item>
+        <item>স্বামী</item>
+        <item>ভাগ্নে/ভাতিজা</item>
+        <item>ভাগ্নি/ভাতিজি</item>
+        <item>ছেলে</item>
+        <item>মেয়ে</item>
+        <item>দাদা/নানা</item>
+        <item>দাদি/নানি</item>
+        <item>শ্বশুর</item>
+        <item>শাশুড়ি</item>
+        <item>নাতি</item>
+        <item>নাতনি</item>
+        <item>জামাই</item>
+        <item>পুত্রবধূ</item>
+        <item>নিজে</item>
+        <item>ননদ/শালি</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head">
+        <item>মা</item>
+        <item>বাবা</item>
+        <item>ভাই</item>
+        <item>বোন</item>
+        <item>স্ত্রী</item>
+        <item>স্বামী</item>
+        <item>ভাগ্নে/ভাতিজা</item>
+        <item>ভাগ্নি/ভাতিজি</item>
+        <item>ছেলে</item>
+        <item>মেয়ে</item>
+        <item>দাদা/নানা</item>
+        <item>দাদি/নানি</item>
+        <item>শ্বশুর</item>
+        <item>শাশুড়ি</item>
+        <item>নাতি</item>
+        <item>নাতনি</item>
+        <item>জামাই</item>
+        <item>পুত্রবধূ</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head_unmarried_filter">
+        <item>স্ত্রী</item>
+        <item>স্বামী</item>
+        <item>ছেলে</item>
+        <item>মেয়ে</item>
+        <item>শ্বশুর</item>
+        <item>শাশুড়ি</item>
+        <item>নাতি</item>
+        <item>নাতনি</item>
+        <item>জামাই</item>
+        <item>পুত্রবধূ</item>
+    </string-array>
+
+    <string-array name="nbr_relationship_to_head_male">
+        <item>বাবা</item>
+        <item>ভাই</item>
+        <item>স্বামী</item>
+        <item>ভাগ্নে/ভাতিজা</item>
+        <item>ছেলে</item>
+        <item>দাদা/নানা</item>
+        <item>শ্বশুর</item>
+        <item>নাতি</item>
+        <item>জামাই</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string name="marital_status">বৈবাহিক অবস্থা</string>
+    <string name="name_ben">নাম</string>
+    <string name="age_ben">বয়স</string>
+    <string name="title_new_ben_reg_hof">পরিবার প্রধান নিবন্ধন</string>
+    <string name="title_new_ben_reg_non_hof">পরিবারের সদস্য নিবন্ধন</string>
+    <string name="year">বছর</string>
+    <string name="years">বছরসমূহ</string>
+    <string name="month">মাস</string>
+    <string name="months">মাসসমূহ</string>
+    <string name="day">দিন</string>
+    <string name="days">দিনসমূহ</string>
+    <string name="mother_rch_id">মায়ের আরসিএইচ আইডি</string>
+
+    <string-array name="nbr_relationship_to_head_female">
+        <item>মা</item>
+        <item>বোন</item>
+        <item>স্ত্রী</item>
+        <item>ভাগ্নি/ভাতিজি</item>
+        <item>মেয়ে</item>
+        <item>দাদি/নানি</item>
+        <item>শাশুড়ি</item>
+        <item>নাতনি</item>
+        <item>পুত্রবধূ</item>
+        <item>ননদ/শালি</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="community_array">
+        <item>সাধারণ</item>
+        <item>তফসিলি জাতি (SC)</item>
+        <item>তফসিলি উপজাতি (ST)</item>
+        <item>পিছিয়ে পড়া শ্রেণি (BC)</item>
+        <item>অন্যান্য পিছিয়ে পড়া শ্রেণি (OBC)</item>
+        <item>অন্যান্য শ্রেণি (OC)</item>
+        <item>পিভিটিজি – আদিম দুর্বল উপজাতি গোষ্ঠী</item>
+        <item>দেওয়া হয়নি</item>
+    </string-array>
+
+    <string-array name="religion_array">
+        <item>হিন্দু</item>
+        <item>মুসলিম</item>
+        <item>খ্রিস্টান</item>
+        <item>শিখ ধর্ম</item>
+        <item>বৌদ্ধ ধর্ম</item>
+        <item>জৈন ধর্ম</item>
+        <item>পার্সি</item>
+        <item>অন্যান্য</item>
+        <item>প্রকাশ করা হয়নি</item>
+    </string-array>
+
+    <string-array name="yes_no_donno">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+        <item>জানি না</item>
+    </string-array>
+
+    <string-array name="yes_no">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </string-array>
+
+    <string-array name="fathers_spouse">
+        <item>বাবা</item>
+        <item>স্বামী/স্ত্রী</item>
+    </string-array>
+
+    <string-array name="pf_pv">
+        <item>পিএফ</item>
+        <item>পিভি</item>
+    </string-array>
+
+    <string-array name="positive_negative">
+        <item>পজিটিভ</item>
+        <item>নেগেটিভ</item>
+        <item>করা হয়নি</item>
+    </string-array>
+
+    <string-array name="yes">
+        <item>হ্যাঁ</item>
+    </string-array>
+
+    <string-array name="death_reason_array">
+        <item>মাতৃমৃত্যু</item>
+        <item>স্বাভাবিক মৃত্যু</item>
+        <item>দুর্ঘটনা</item>
+        <item>সংক্রামক রোগ</item>
+        <item>পশু কামড়ে মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনির্ধারিত</item>
+    </string-array>
+
+    <string-array name="death_place_array">
+        <item>বাড়ি</item>
+        <item>সাব-সেন্টার</item>
+        <item>পিএইচসি</item>
+        <item>সিএইচসি</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>মেডিকেল কলেজ হাসপাতাল</item>
+        <item>বেসরকারি হাসপাতাল</item>
+        <item>পথিমধ্যে</item>
+        <item>মৃত্যুর অন্যান্য স্থান</item>
+    </string-array>
+
+    <string-array name="abortion_place_array">
+        <item>বাড়ি</item>
+        <item>সাব-সেন্টার</item>
+        <item>পিএইচসি</item>
+        <item>সিএইচসি</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>মেডিকেল কলেজ হাসপাতাল</item>
+        <item>বেসরকারি হাসপাতাল</item>
+        <item>পথিমধ্যে</item>
+        <item>গর্ভপাতের অন্যান্য স্থান</item>
+    </string-array>
+
+    <string-array name="place_of_anc_array">
+        <item>সাব-সেন্টার</item>
+        <item>ভিএইচএনডি/ভিএইচএসএনডি</item>
+        <item>পিএইচসি</item>
+        <item>পিএমএসএমএ ভিজিট</item>
+        <item>সিএইচসি</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>মেডিকেল কলেজ হাসপাতাল</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array">
+        <item>স্বাভাবিক মৃত্যু</item>
+        <item>দুর্ঘটনা</item>
+        <item>সংক্রামক রোগ</item>
+        <item>পশু কামড়ে মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনির্ধারিত</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>স্বাভাবিক মৃত্যু</item>
+        <item>দুর্ঘটনা</item>
+        <item>সংক্রামক রোগ</item>
+        <item>পশু কামড়ে মৃত্যু</item>
+        <item>আত্মহত্যা</item>
+        <item>অনির্ধারিত</item>
+        <item>মাতৃমৃত্যু</item>
+    </string-array>
+
+    <string-array name="beneficiary_status">
+        <item>জীবিত</item>
+        <item>মৃত</item>
+    </string-array>
+
+    <string-array name="diet_plane">
+        <item>কী খাবেন, কী এড়িয়ে চলবেন, খাদ্য বৈচিত্র্যের গুরুত্ব।</item>
+    </string-array>
+
+    <string-array name="mitanin_array">
+        <item>মিতানিন</item>
+        <item>এমটি</item>
+        <item>এএনএম / আরএইচও</item>
+    </string-array>
+
+    <string-array name="activity_checklist">
+        <item>সব নির্বাচন করুন</item>
+        <item>স্বাস্থ্য বিভাগ কর্তৃক জারি করা নতুন প্রকল্প বা নির্দেশিকা সম্পর্কে তথ্য ভাগ করা হয়েছে।</item>
+        <item>ডেটা রেজিস্টার ও রেকর্ড পরীক্ষা করা হয়েছে।</item>
+        <item>প্রশিক্ষণ ও সক্ষমতা বৃদ্ধি নিয়ে আলোচনা করা হয়েছে।</item>
+        <item>দাওয়া পেটি (ওষুধ কিট) পর্যালোচনা।</item>
+        <item>সরবরাহ বিতরণ ও সংশ্লিষ্ট কার্যক্রম পরিচালিত হয়েছে।</item>
+        <item>গর্ভবতী ও বুকের দুধ পান করানো মায়েদের অগ্রগতি নিয়ে আলোচনা করা হয়েছে।</item>
+        <item>বিশেষ ক্ষেত্রে (গুরুতর রোগী) রেফারেল নিয়ে আলোচনা করা হয়েছে।</item>
+        <item>শিশু টিকাদানের আপডেট দেওয়া হয়েছে।</item>
+    </string-array>
+
+    <string-array name="care_pregnancy">
+        <item>রক্তাল্পতা প্রতিরোধ, দুর্বলতা, বিশ্রাম ও পুষ্টির গুরুত্ব।</item>
+    </string-array>
+
+    <string-array name="select_all">
+        <item>সব নির্বাচন করুন</item>
+    </string-array>
+
+    <string-array name="maa_breastfeeding">
+        <item>সব নির্বাচন করুন</item>
+        <item>জন্মের প্রথম ঘণ্টার মধ্যে শিশুকে বুকের দুধ দেওয়া উচিত।</item>
+        <item>প্রথম ৬ মাস শিশুকে শুধুমাত্র মায়ের দুধ দেওয়া উচিত।</item>
+        <item>৬ মাসের পর, মায়ের দুধের পাশাপাশি পুষ্টিকর পরিপূরক খাবার দেওয়া উচিত।</item>
+        <item>বুকের দুধ দেওয়া ২ বছর বা তার বেশি সময় ধরে চালিয়ে যাওয়া উচিত।</item>
+        <item>পরিবারের উচিত মাকে সহায়তা করা এবং উৎসাহ দেওয়া।</item>
+        <item>প্রথম ৬ মাস শিশুকে মধু, পানি বা ঘুট্টি (ভেষজ মিশ্রণ) দেওয়া উচিত নয়।</item>
+        <item>বুকের দুধ শিশুকে অনেক রোগ থেকে রক্ষা করে।</item>
+        <item>মায়ের দুধ শিশুর সম্পূর্ণ বিকাশের জন্য সর্বোত্তম।</item>
+        <item>কেএমসি (ক্যাঙ্গারু মাদার কেয়ার) সম্পর্কে তথ্য দেওয়া হয়েছে।</item>
+    </string-array>
+
+    <string-array name="import_brestfeeding">
+        <item>জন্মের পরপরই প্রারম্ভিক দুধ দান, ৬ মাস পর্যন্ত একচেটিয়া বুকের দুধ পান।</item>
+    </string-array>
+
+    <string-array name="complementary_feeding">
+        <item>বুকের দুধের পাশাপাশি ৬ মাস পরে ঘরে তৈরি পুষ্টিকর খাবার শুরু করা।</item>
+    </string-array>
+
+    <string-array name="hygiene_senetigation">
+        <item>খাবার প্রস্তুত ও পরিবেশনের সময় পরিষ্কার-পরিচ্ছন্নতা বজায় রাখা।</item>
+    </string-array>
+
+    <string-array name="family_planning_health">
+        <item>ছোট পরিবারের গুরুত্ব এবং নিয়মিত স্বাস্থ্য পরীক্ষা।</item>
+    </string-array>
+
+    <string-array name="ahd_health_status_array">
+        <item>সুস্থ</item>
+        <item>রক্তাল্পতা</item>
+        <item>অপুষ্টি</item>
+    </string-array>
+
+    <string-array name="ahd_place_array">
+        <item>বাড়ি</item>
+        <item>কমিউনিটি সেন্টার</item>
+        <item>বিদ্যালয়</item>
+        <item>সাব-সেন্টার</item>
+    </string-array>
+
+    <string-array name="ahd_counseling_type_array">
+        <item>ব্যক্তিগত</item>
+        <item>দলগত</item>
+    </string-array>
+
+    <string-array name="ahd_referral_status_array">
+        <item>অপেক্ষমাণ</item>
+        <item>সম্পন্ন</item>
+    </string-array>
+
+</resources>

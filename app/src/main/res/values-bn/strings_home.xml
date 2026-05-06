@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="navigation_drawer_open">নেভিগেশন ড্রয়ার খুলুন</string>
+    <string name="navigation_drawer_close">নেভিগেশন ড্রয়ার বন্ধ করুন</string>
+
+    <string name="frag_service_type_title">গ্রাম নির্বাচন করুন</string>
+    <string name="tv_text_select_village">অনুগ্রহ করে নিচ থেকে গ্রাম নির্বাচন করুন।</string>
+
+    <string name="loginusername">লগইন ব্যবহারকারীর নাম</string>
+    <string name="asha_empid">আশা কর্মীর আইডি</string>
+
+    <string name="service_type_dd_state_text">রাজ্য</string>
+    <string name="service_type_dd_district_text">জেলা</string>
+    <string name="service_type_dd_block_text">ব্লক</string>
+    <string name="service_type_dd_village_text">গ্রাম</string>
+
+    <string name="btn_continue_text">চালিয়ে যান</string>
+
+    <string name="menu_home">হোম</string>
+    <string name="menu_supervisor">আশা সুপারভাইজার</string>
+    <string name="menu_home_scheduler">ড্যাশবোর্ড</string>
+
+    <string name="til_hint_selected_village">নির্বাচিত গ্রাম</string>
+
+    <string name="icon_title_household">সব\nপরিবার</string>
+    <string name="icon_title_ben">সব\nউপকারভোগী</string>
+    <string name="icon_title_ec">যোগ্য\nদম্পতি তালিকা</string>
+    <string name="icon_title_mc">মাতৃ স্বাস্থ্য</string>
+    <string name="icon_title_cc">শিশু যত্ন</string>
+    <string name="icon_title_ncd">NCD</string>
+    <string name="icon_title_cd">সংক্রামক রোগ</string>
+    <string name="icon_title_imm">নিয়মিত টিকাকরণ</string>
+    <string name="icon_title_hrp">উচ্চ ঝুঁকি মূল্যায়ন</string>
+    <string name="icon_title_gop">সাধারণ OPD তালিকা</string>
+    <string name="icon_title_msl">মেনোপজ পর্যায় তালিকা</string>
+
+    <string name="btn_new_maa_meeting">নতুন মা মিটিং নিবন্ধন</string>
+
+    <string name="icon_title_dr">মৃত্যু রিপোর্ট</string>
+    <string name="icon_title_vlf">গ্রাম সভা</string>
+    <string name="icon_title_vhnd">VHND ফর্ম</string>
+    <string name="icon_title_ahd">AHD ফর্ম</string>
+    <string name="icon_title_vhnc">VHSNC মিটিং</string>
+    <string name="icon_title_phc">PHC রিভিউ মিটিং ফর্ম</string>
+    <string name="icon_cluster_phc">ক্লাস্টার মিটিং ফর্ম</string>
+
+    <string name="icon_title_vhnd_list">VHND ফর্ম তালিকা</string>
+    <string name="icon_title_vhnc_list">VHSNC ফর্ম তালিকা</string>
+    <string name="icon_title_phc_list">PHC রিভিউ ফর্ম তালিকা</string>
+    <string name="icon_cluster_phc_list">ক্লাস্টার মিটিং ফর্ম তালিকা</string>
+
+    <string name="icon_title_disease">রোগ নিয়ন্ত্রণ</string>
+    <string name="icon_title_maleria">ম্যালেরিয়া</string>
+    <string name="icon_title_kalaazar">কালা আজার</string>
+    <string name="icon_title_filaria">ফাইলেরিয়া</string>
+    <string name="icon_title_leprosy">কুষ্ঠরোগ</string>
+    <string name="icon_title_malaria_confirmed">নিশ্চিত ম্যালেরিয়া কেস</string>
+    <string name="icon_title_dearming">কৃমিনাশক কার্যক্রম</string>
+
+    <string name="icon_title_abha">ABHA\nসংখ্যা</string>
+    <string name="icon_title_abhas">ABHA\nউপকারভোগী</string>
+    <string name="icon_title_rch">RCH ID\nসংখ্যা</string>
+    <string name="icon_title_rchs">RCH ID\nউপকারভোগী</string>
+
+    <string name="icon_title_no_follow_up">গত ৩ মাসে কোনো ভিজিট নেই</string>
+    <string name="icon_title_missed_period">মাসিক বন্ধ</string>
+
+    <string name="icon_title_icc">নবজাতক তালিকা</string>
+    <string name="icon_title_ccc">শিশু তালিকা</string>
+    <string name="icon_title_acc">কিশোর/কিশোরী তালিকা</string>
+    <string name="children_under_five_years">৫ বছরের নিচের শিশু</string>
+
+    <string name="icon_title_pmr">গর্ভবতী নারী নিবন্ধন</string>
+    <string name="icon_title_pmt">ANC ভিজিট</string>
+    <string name="icon_title_pmp">PMSMA</string>
+    <string name="icon_title_pmdo">প্রসব ফলাফল</string>
+    <string name="icon_title_pmir">নবজাতক নিবন্ধন</string>
+    <string name="icon_title_pmcr">শিশু নিবন্ধন</string>
+
+    <string name="icon_title_abortion">গর্ভপাত তালিকা</string>
+    <string name="icon_title_pmsma">e-PMSMA তালিকা</string>
+
+    <string name="icon_title_ecr">যোগ্য দম্পতি নিবন্ধন</string>
+    <string name="icon_title_ect">যোগ্য দম্পতি ট্র্যাকিং</string>
+
+    <string name="icon_title_user_guid">ব্যবহার নির্দেশিকা</string>
+    <string name="icon_title_video_tutorial">ভিডিও টিউটোরিয়াল</string>
+
+    <string name="icon_title_dmc">প্রসব পর্যায় তালিকা</string>
+    <string name="icon_title_pncmc">PNC মা তালিকা</string>
+    <string name="icon_title_rmc">প্রজনন বয়স তালিকা</string>
+
+    <string name="home_fragment_percent_download_text">%1d%% ডাউনলোড হয়েছে</string>
+
+    <string name="error_sign_in_invalid_u_p">ভুল ব্যবহারকারীর নাম / পাসওয়ার্ড!</string>
+    <string name="error_sign_in_timeout">সার্ভার টাইম আউট, আবার চেষ্টা করুন!</string>
+    <string name="error_sign_in_disconnected_network">নেটওয়ার্কে সংযোগ করা যায়নি!</string>
+
+    <string name="not_processed">রেকর্ড সিঙ্ক হয়নি!</string>
+    <string name="all_records_synced">সব রেকর্ড সিঙ্ক হয়েছে</string>
+
+    <string name="are_you_sure_to_logout">আপনি কি লগআউট করতে চান?</string>
+
+    <string name="place">স্থান</string>
+    <string name="no_of_individuals">ব্যক্তির সংখ্যা</string>
+    <string name="no_of_familes">পরিবারের সংখ্যা</string>
+    <string name="place_of_meeting">মিটিংয়ের স্থান</string>
+
+    <string name="participants">অংশগ্রহণকারী</string>
+    <string name="participants_attended">উপস্থিত অংশগ্রহণকারী</string>
+
+    <string name="health_nutrition">স্বাস্থ্য ও পুষ্টি শিক্ষা</string>
+    <string name="know_balance_diet">সুষম খাদ্য সম্পর্কে জ্ঞান</string>
+    <string name="care_d_pregnancy">গর্ভাবস্থা ও প্রসবকালীন যত্ন</string>
+
+    <string name="family_planning_title">পরিবার পরিকল্পনা ও স্বাস্থ্যসেবা</string>
+    <string name="hygiene_title">স্বাস্থ্যবিধি ও পরিচ্ছন্নতা</string>
+    <string name="com_feeding_title">সম্পূরক খাদ্য</string>
+    <string name="imp_brestfeeding_title">স্তন্যপানের গুরুত্ব</string>
+
+    <string name="vhnd">VHND/VHSND</string>
+    <string name="vnhc">VHSNC</string>
+
+    <string name="phc_review">PHC রিভিউ মিটিং</string>
+    <string name="cluster_review">ক্লাস্টার মিটিং</string>
+
+    <string name="national_deworming_day">জাতীয় কৃমিনাশক দিবস</string>
+    <string name="maa_meeting">মা মিটিং</string>
+    <string name="maa_meeting_list">মা মিটিং ফর্ম তালিকা</string>
+
+    <string name="saas_bahu_list">সাস-বাহু সম্মেলন</string>
+    <string name="saas_bahu_reg">সাস-বাহু সম্মেলন নিবন্ধন</string>
+
+    <string name="image_uploaded">ছবি সফলভাবে আপলোড হয়েছে</string>
+    <string name="file_uploaded">ফাইল সফলভাবে আপলোড হয়েছে</string>
+
+</resources>

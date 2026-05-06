@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="incentive_fragment_title">প্রণোদনা</string>
+    <string name="incentive_processed">প্রক্রিয়াকৃত \nমোট : ৳ %1d</string>
+    <string name="incentive_pending">মুলতুবি \nমোট : ৳ %1d</string>
+    <string name="incentive_amount">৳ %1d</string>
+    <string name="incentive_ben_details">বেন আইডি: %1$d\nনাম: %2$s</string>
+    <string name="incentive_activity_details">কার্যক্রম: %1s</string>
+    <string name="incentive_rch_id_details">RCH আইডি: %1s</string>
+    <string name="incentive_abha_id_details">ABHA নম্বর: %1s</string>
+    <string name="incentive_last_updated">সর্বশেষ আপডেট %1s</string>
+    <string name="asha_incentive_master_claim_form">আশা প্রণোদনা মাস্টার দাবি ফর্ম</string>
+    <string name="to">প্রাপক</string>
+    <string name="sdm_ho_or_i_c_block_phc"><![CDATA[SDM&HO অথবা i/c ব্লক PHC]]></string>
+    <string name="sub_submission_of_asha_incentive_claim_for_the_period_from">"বিষয়: নির্দিষ্ট সময়ের জন্য আশা প্রণোদনা দাবির জমা "</string>
+    <string name="for_the_period_from">"সময়ের জন্য "</string>
+    <string name="as_per_statement_mentioned_below">" নিম্নে উল্লেখিত বিবরণ অনুযায়ী।"</string>
+    <string name="with_reference_to_">"উপরোক্ত বিষয়ের প্রেক্ষিতে, আমি আশা প্রণোদনার দাবি জমা দিচ্ছি নির্দিষ্ট সময়ের জন্য "</string>
+    <string name="as_per_statement">" নিম্নে উল্লেখিত বিবরণ অনুযায়ী।"</string>
+    <string name="to_small">" থেকে "</string>
+    <string name="sir_madam">মহোদয়/মহোদয়া,</string>
+
+    <string name="providing_hbnc_up_to_days_after_birth_discharge_from_sncu">জন্মের পর ৪২ দিন পর্যন্ত HBNC প্রদান / SNCU থেকে ছাড়পত্রের পর</string>
+    <string name="incentive_to_asha_for_quarterly_visits_of_hbyc">HBYC-এর ত্রৈমাসিক ভিজিটের জন্য আশা প্রণোদনা</string>
+    <string name="incentive_to_asha_for_follow_up_of_sncu_discharge_babies_and_for_follow_up_of_lbw_babies">SNCU থেকে ছাড়প্রাপ্ত শিশু ও LBW শিশুর ফলো-আপের জন্য আশা প্রণোদনা</string>
+    <string name="asha_incentive_for_referral_of_sam_cases_to_nrc_and_for_follow_up_of_discharged_sam_children_from_nrc">SAM কেস NRC-তে রেফার করা এবং NRC থেকে ছাড়প্রাপ্ত SAM শিশুর ফলো-আপের জন্য আশা প্রণোদনা</string>
+    <string name="child_death_reporting">শিশু মৃত্যুর রিপোর্টিং</string>
+    <string name="incentive_for_e_hbnc_only_for_cachar">E-HBNC এর জন্য প্রণোদনা (শুধুমাত্র Cachar এর জন্য)</string>
+
+    <string name="activity_wise_claim_forms_along_with_supporting_documents_are_also_enclosed_as_per_guideline">নির্দেশিকা অনুযায়ী কার্যক্রমভিত্তিক দাবি ফর্ম ও সহায়ক নথিপত্র সংযুক্ত করা হয়েছে।</string>
+    <string name="cetify_that_all_claims_are_genuine_and_services_are_rendered_by_me_regarding_the_activities_against_which_the_claim_submitted_kindly_make_the_payment">আমি প্রত্যয়ন করছি যে সমস্ত দাবি সঠিক এবং উল্লিখিত কার্যক্রমের জন্য আমি সেবা প্রদান করেছি। অনুগ্রহ করে অর্থ প্রদান করুন।</string>
+
+    <string name="yours_faithfully">বিনীত,</string>
+    <string name="account_no">অ্যাকাউন্ট নম্বর:</string>
+    <string name="bank_name_branch_name">ব্যাংকের নাম ও শাখা:</string>
+    <string name="contact_no">যোগাযোগ নম্বর:</string>
+    <string name="contact_info">যোগাযোগের তথ্য</string>
+    <string name="village">গ্রাম: %1$s</string>
+    <string name="village_new">গ্রাম</string>
+    <string name="name_of_the_asha">আশার নাম : %1$s</string>
+    <string name="sc_name">SC নাম:</string>
+
+    <string name="certify_that_the_claims_mentioned_above_are_correct">উপরোক্ত দাবিগুলি সঠিক বলে প্রত্যয়ন করা হলো।</string>
+    <string name="signature_of_asha_supervisor">আশা সুপারভাইজারের স্বাক্ষর</string>
+    <string name="signature_of_anm">ANM এর স্বাক্ষর</string>
+    <string name="signature_of_cho">CHO এর স্বাক্ষর</string>
+
+    <string name="for_office_use_only">শুধুমাত্র অফিস ব্যবহারের জন্য</string>
+    <string name="signature_of_abpm">ABPM এর স্বাক্ষর</string>
+    <string name="signature_of_bam">BAM এর স্বাক্ষর</string>
+    <string name="signature_of_bcm">BCM এর স্বাক্ষর</string>
+    <string name="signature_of_bpm">BPM এর স্বাক্ষর</string>
+    <string name="signature_of_sdm_ho">SDM ও HO এর স্বাক্ষর</string>
+
+    <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">মোট Rs________________(রুপি_________মাত্র) আশা প্রণোদনা প্রদানের জন্য অনুমোদিত হয়েছে নির্দিষ্ট সময়ের জন্য____________থেকে_____________এবং DBT এর মাধ্যমে অ্যাকাউন্টে জমা হয়েছে।</string>
+
+    <string-array name="months">
+        <item>জানুয়ারি</item>
+        <item>ফেব্রুয়ারি</item>
+        <item>মার্চ</item>
+        <item>এপ্রিল</item>
+        <item>মে</item>
+        <item>জুন</item>
+        <item>জুলাই</item>
+        <item>আগস্ট</item>
+        <item>সেপ্টেম্বর</item>
+        <item>অক্টোবর</item>
+        <item>নভেম্বর</item>
+        <item>ডিসেম্বর</item>
+    </string-array>
+
+    <string name="incentive_amount_claimed">দাবিকৃত অর্থ (টাকা)</string>
+    <string name="incentive_no_of_claims">দাবির সংখ্যা</string>
+    <string name="incentive_parameter_for_payment">প্রদানের মানদণ্ড</string>
+    <string name="incentive_rate_rs">হার (টাকা)</string>
+    <string name="incentive_document_submitted">জমাকৃত নথি</string>
+
+    <string name="incentive_sub_submission_of_asha_incentive_claim_for_the_period_from_to">বিষয়: নির্দিষ্ট সময়ের জন্য আশা প্রণোদনা দাবি জমা</string>
+    <string name="incentive_with_reference_to_the_subject_cited_above">উপরোক্ত বিষয়ের প্রেক্ষিতে, আমি আশা প্রণোদনার দাবি নির্দিষ্ট সময়ের জন্য জমা দিচ্ছি।</string>
+    <string name="incentive_an_amount_of_rs">মোট টাকা অনুমোদিত হয়েছে আশা প্রণোদনার জন্য নির্দিষ্ট সময়ে এবং DBT এর মাধ্যমে জমা হয়েছে।</string>
+
+    <string name="activity_name">কার্যক্রম: %1s</string>
+
+</resources>

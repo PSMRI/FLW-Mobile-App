@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ecrdset_date_of_reg">নিবন্ধনের তারিখ</string>
+    <string name="ecrdset_rch_id_wo">মহিলার RCH আইডি নম্বর</string>
+    <string name="ecrdset_name_of_wo">মহিলার নাম</string>
+    <string name="ecrdset_name_of_hu">স্বামীর নাম</string>
+
+    <string name="ecrdset_cur_ag_of_wo">মহিলার বর্তমান বয়স</string>
+    <string name="ecrdset_cur_ag_of_wo_marr">বিবাহের সময় মহিলার বয়স</string>
+
+    <string name="ecrdset_dts_of_wo">মহিলার বিস্তারিত</string>
+    <string name="ecrdset_aad_num_of_wo">মহিলার আধার নম্বর</string>
+
+    <string name="ecrdset_bank_ac">ব্যাংক অ্যাকাউন্ট / পোস্ট অফিস অ্যাকাউন্ট নম্বর</string>
+    <string name="ecrdset_bank_name">ব্যাংকের নাম</string>
+    <string name="ecrdset_branch_name">শাখার নাম</string>
+    <string name="ecrdset_ifsc_code">IFSC কোড</string>
+
+    <string name="ecrdset_ttl_child_born">মোট জীবিত সন্তানের সংখ্যা</string>
+    <string name="ecrdset_no_live_child">জীবিত সন্তানের সংখ্যা</string>
+
+    <string name="ecrdset_reg_children_15_below">১৫ বছরের নিচের শিশুদের নিবন্ধন</string>
+
+    <string name="ecrdset_male">পুরুষ</string>
+    <string name="ecrdset_female">মহিলা</string>
+
+    <!-- Child Details -->
+    <string name="ecrdset_dls_1_child">১ম সন্তানের বিবরণ</string>
+    <string name="ecrdset_1_child_bth">১ম সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_1_child_age_in_yrs">১ম সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_1_child_sex">১ম সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_1_child_marr">বিবাহ ও ১ম সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_2_child">২য় সন্তানের বিবরণ</string>
+    <string name="ecrdset_2_child_bth">২য় সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_2_child_age_yrs">২য় সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_2_child_sex">২য় সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_1_child_2_child">১ম ও ২য় সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_3_child">৩য় সন্তানের বিবরণ</string>
+    <string name="ecrdset_3_child_bth">৩য় সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_3_child_age_yrs">৩য় সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_3_child_sex">৩য় সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_bet_2_3_child_sex">২য় ও ৩য় সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_4_child">৪র্থ সন্তানের বিবরণ</string>
+    <string name="ecrdset_4_child_bth">৪র্থ সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_4_child_age_yrs">৪র্থ সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_4_child_sex">৪র্থ সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_bet_3_4_child">৩য় ও ৪র্থ সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_5_child">৫ম সন্তানের বিবরণ</string>
+    <string name="ecrdset_5_child_bth">৫ম সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_5_child_age_yrs">৫ম সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_5_child_sex">৫ম সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_4_5_child">৪র্থ ও ৫ম সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_6_child">৬ষ্ঠ সন্তানের বিবরণ</string>
+    <string name="ecrdset_dts_6_bth">৬ষ্ঠ সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_6_child_age">৬ষ্ঠ সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_6_child_sex">৬ষ্ঠ সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_5_6_child">৫ম ও ৬ষ্ঠ সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="childrens">আপনার কি সন্তান আছে?</string>
+
+    <string name="ecrdset_7_dts_child">৭ম সন্তানের বিবরণ</string>
+    <string name="ecrdset_7_child_bth">৭ম সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_7_child_age_yrs">৭ম সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_7_child_sex">৭ম সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_6_7_child">৬ষ্ঠ ও ৭ম সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_8_child">৮ম সন্তানের বিবরণ</string>
+    <string name="ecrdset_8_child_bth">৮ম সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_8_child_age">৮ম সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_8_child_sex">৮ম সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_7_8_child">৭ম ও ৮ম সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_dts_9_child">৯ম সন্তানের বিবরণ</string>
+    <string name="ecrdset_9_bth">৯ম সন্তানের জন্ম তারিখ</string>
+    <string name="ecrdset_9_age_yrs">৯ম সন্তানের বয়স (বছরে)</string>
+    <string name="ecrdset_9_child_sex">৯ম সন্তানের লিঙ্গ</string>
+    <string name="ecrdset_gap_8_9_child">৮ম ও ৯ম সন্তানের মধ্যে ব্যবধান</string>
+
+    <string name="ecrdset_is_nai_pahel_kit_handover">দম্পতিকে কি "নয়ি पहल" কিট প্রদান করা হয়েছে?</string>
+    <string name="ecrdset_is_nai_pahel_kit_handover_date">"নয়ি पहल" কিট প্রদানের তারিখ</string>
+
+    <string name="asha_photo">"নয়ি पहल" কিট প্রদান করার সময় দম্পতির সাথে ASHA-এর ছবি</string>
+    <string name="asha_photo_one">ASHA ছবি ১</string>
+    <string name="asha_photo_two">ASHA ছবি ২</string>
+
+</resources>
