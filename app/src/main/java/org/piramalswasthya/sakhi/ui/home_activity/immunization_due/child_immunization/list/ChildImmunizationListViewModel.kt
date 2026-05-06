@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immuni
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,11 @@ class ChildImmunizationListViewModel @Inject constructor(
     vaccineDao: ImmunizationDao,
     private val preferenceDao: PreferenceDao,
     @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val showDueOnly: Boolean =
+        savedStateHandle.get<Boolean>("showDueOnly") ?: false
 
     private val resources get() = getLocalizedResources(context, preferenceDao.getCurrentLanguage())
 
@@ -119,7 +124,14 @@ class ChildImmunizationListViewModel @Inject constructor(
         }*/
 
     val immunizationBenList = benWithVaccineDetails.combine(filter) { list, filter ->
-        filterImmunList(list, filter)
+        val filtered = if (showDueOnly) {
+            list.filter { ben ->
+                ben.vaccineStateList.any { it.state == VaccineState.OVERDUE }
+            }
+        } else {
+            list
+        }
+        filterImmunList(filtered, filter)
     }
 
     fun filterText(text: String) {

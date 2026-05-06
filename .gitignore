@@ -16,3 +16,5 @@ app/keystore/*
 keystore.properties
 debug-keystore.jks
 debug-keystore-base64.txt
+.env
+app/src/main/cpp/native-lib.cpp
