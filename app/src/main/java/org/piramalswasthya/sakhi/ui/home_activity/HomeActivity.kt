@@ -3,7 +3,6 @@ package org.piramalswasthya.sakhi.ui.home_activity
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
@@ -13,15 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
-import android.webkit.PermissionRequest
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -70,6 +61,7 @@ import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
+import org.piramalswasthya.sakhi.ui.chat.ChatActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
@@ -77,7 +69,6 @@ import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationAct
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
 
@@ -85,7 +76,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity(), MessageUpdate {
 
-    var isChatSupportEnabled : Boolean = false
+    var isChatSupportEnabled : Boolean = true
     private lateinit var updateHelper: InAppUpdateHelper
     @Inject lateinit var analyticsHelper: AnalyticsHelper
 
@@ -290,21 +281,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         askForPermissions()
 
-        if (isChatSupportEnabled)
-        {
-            binding.addFab.visibility = View.VISIBLE
-
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
+        if (isChatSupportEnabled) {
             binding.addFab.setOnClickListener {
-
-                displaychatdialog()
-
+                startActivity(Intent(this, ChatActivity::class.java))
             }
-
-        }
-        else
-        {
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                binding.addFab.visibility =
+                    if (destination.id == R.id.homeFragment) View.VISIBLE else View.GONE
+            }
+        } else {
             binding.addFab.visibility = View.GONE
         }
 
@@ -424,109 +409,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
 
 
-   private fun displaychatdialog() {
-
-        val dialog = BottomSheetDialog(this)
-
-        // on below line we are inflating a layout file which we have created.
-        val view = layoutInflater.inflate(R.layout.bottomsheet_chat_window, null)
-
-        val web = view.findViewById<WebView>(R.id.webv)
-        val progress = view.findViewById<ProgressBar>(R.id.progressBarv)
-
-
-       web.setWebChromeClient(object : WebChromeClient() {
-           override fun onPermissionRequest(request: PermissionRequest) {
-               request.grant(request.resources)
-           }
-       })
-
-
-
-// Enable JavaScript
-        web.settings.javaScriptEnabled = true
-        web.settings.javaScriptCanOpenWindowsAutomatically = true
-        web.isVerticalScrollBarEnabled = true
-
-
-
-
-// Load URL
-       web.loadUrl(KeyUtils.chatUrl())
-
-
-// Handle WebView events
-       web.webViewClient = object : WebViewClient() {
-           override fun shouldOverrideUrlLoading(
-               view: WebView,
-               request: WebResourceRequest
-           ): Boolean {
-               return if (request.url.host == URI(KeyUtils.chatUrl()).host) {
-                   false  // Let WebView handle same-origin URLs
-               } else {
-                   startActivity(Intent(Intent.ACTION_VIEW, request.url))
-                   true
-               }
-           }
-
-           override fun onReceivedError(
-               view: WebView?,
-               request: WebResourceRequest?,
-               error: WebResourceError?
-           ) {
-               super.onReceivedError(view, request, error)
-               progress.visibility = View.GONE
-               // Show error view
-               Toast.makeText(
-                   this@HomeActivity,
-                   R.string.chat_error,
-                   Toast.LENGTH_SHORT
-               ).show()
-           }
-
-            override fun onPageStarted(webview: WebView, url: String, favicon: Bitmap?) {
-                super.onPageStarted(webview, url, favicon)
-                // Show ProgressBar when the page starts loading
-                progress.visibility = View.VISIBLE
-                web.visibility = View.GONE
-            }
-
-            override fun onPageFinished(webview: WebView, url: String) {
-                super.onPageFinished(webview, url)
-                // Hide ProgressBar when the page finishes loading
-                progress.visibility = View.GONE
-                web.visibility = View.VISIBLE
-            }
-        }
-
-
-        // on below line we are creating a variable for our button
-        // which we are using to dismiss our dialog.
-        // on below line we are adding on click listener
-        // for our dismissing the dialog button.
-
-        // below line is use to set cancelable to avoid
-        // closing of dialog box when clicking on the screen.
-        dialog.setCancelable(true)
-
-        // on below line we are setting
-        // content view to our view.
-        dialog.setContentView(view)
-     //  dialog.behavior.setPeekHeight(6000)
-
-       val displayMetrics = resources.displayMetrics
-       val screenHeight = displayMetrics.heightPixels
-       dialog.behavior.setPeekHeight((screenHeight * 0.85).toInt())
-
-
-        // on below line we are calling
-        // a show method to display a dialog.
-
-
-        dialog.show()
-
-
-        }
+    // Old WebView chat dialog removed — replaced by native ChatActivity
 
 
     override fun onPause() {
@@ -765,12 +648,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         if (isChatSupportEnabled) {
             binding.navView.menu.findItem(R.id.ChatFragment).setVisible(true)
             binding.navView.menu.findItem(R.id.ChatFragment).setOnMenuItemClickListener {
-                displaychatdialog()
-                /*navController.popBackStack(R.id.homeFragment, false)
-            startActivity(Intent(this, ChatSupport::class.java))*/
+                startActivity(Intent(this, ChatActivity::class.java))
                 binding.drawerLayout.close()
                 true
-
             }
         }
     }

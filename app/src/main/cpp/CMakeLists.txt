@@ -10,6 +10,7 @@ set(BASE_ABHA_URL "$ENV{BASE_ABHA_URL}")
 set(ABHA_TOKEN_URL "$ENV{ABHA_TOKEN_URL}")
 set(ABHA_AUTH_URL "$ENV{ABHA_AUTH_URL}")
 set(CHAT_URL "$ENV{CHAT_URL}")
+set(CHAT_API_KEY "$ENV{CHAT_API_KEY}")
 
 # Pass the values to the compiler using add_definitions
 add_definitions(
@@ -21,6 +22,7 @@ add_definitions(
         -DABHA_TOKEN_URL=\"${ABHA_TOKEN_URL}\"
         -DABHA_AUTH_URL=\"${ABHA_AUTH_URL}\"
         -DCHAT_URL=\"${CHAT_URL}\"
+        -DCHAT_API_KEY=\"${CHAT_API_KEY}\"
         -DIS_DEVELOPMENT=0
 )
 #DIS_DEVELOPMENT=0 -For Production use 0 , For Development use 1
