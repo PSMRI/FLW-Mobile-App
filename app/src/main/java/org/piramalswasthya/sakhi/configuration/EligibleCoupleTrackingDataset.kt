@@ -439,7 +439,9 @@ class EligibleCoupleTrackingDataset(
             pregnancyTestResult.id -> {
                 antraDoses.value = antraDoseValue
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
+//                    isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
+//                    isPregnant.isEnabled = false
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[0]
                     isPregnant.isEnabled = false
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -477,7 +479,7 @@ class EligibleCoupleTrackingDataset(
                 }
                 else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = false
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[1]
 
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -539,7 +541,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanning,
                             targetSideEffect = list1
                         )
@@ -547,7 +549,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanningMitanin,
                             targetSideEffect = list1
                         )
