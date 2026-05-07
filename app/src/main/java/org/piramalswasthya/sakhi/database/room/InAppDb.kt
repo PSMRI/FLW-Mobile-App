@@ -333,8 +333,10 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+
             val MIGRATION_58_59 = object : Migration(58, 59) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
 
                     try {
                         database.execSQL(
@@ -370,6 +372,12 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     } catch (_: Exception) {
                     }
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_district_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_village_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_country_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_block_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_state_nameBangla TEXT")
+
                 }
             }
 
