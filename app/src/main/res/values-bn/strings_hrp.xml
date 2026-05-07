@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hrp_dor">নিবন্ধনের তারিখ</string>
+    <string name="hrp_name">উপকারভোগীর নাম</string>
+    <string name="hrp_dob">জন্ম তারিখ</string>
+    <string name="high_risk">উচ্চ ঝুঁকি</string>
+    <string name="is_pregnant">গর্ভবতী কি না</string>
+    <string name="age_in_years">বয়স (বছরে)</string>
+    <string name="name_of_the_pw">গর্ভবতী নারীর নাম</string>
+    <string name="blood_group">রক্তের গ্রুপ</string>
+    <string name="contact_number_1">যোগাযোগ নম্বর ১</string>
+    <string name="contact_number_2">যোগাযোগ নম্বর ২</string>
+    <string name="sc_hwc_tg_hosp">SC/HWC/TG হাসপাতাল</string>
+    <string name="bank_acc_no">ব্যাংক অ্যাকাউন্ট নম্বর</string>
+    <string name="bank_acc">ব্যাংক অ্যাকাউন্ট</string>
+    <string name="nearest_24x7_phc">নিকটস্থ ২৪x৭ PHC</string>
+    <string name="nearest_fru">নিকটস্থ FRU</string>
+    <string name="nearest_usg_centre">নিকটস্থ USG কেন্দ্র</string>
+    <string name="nearest_sc_hwc">নিকটস্থ SC/HWC</string>
+    <string name="blood_donors_identified_1">চিহ্নিত রক্তদাতা ১</string>
+    <string name="blood_donors_identified_2">চিহ্নিত রক্তদাতা ২</string>
+    <string name="birth_companion">প্রসব সহায়ক</string>
+    <string name="person_who_will_take_care_of_children_if_any_when_the_pw_is_admitted_for_delivery">প্রসবের সময় ভর্তি হলে শিশুদের দেখাশোনা করবেন যিনি</string>
+    <string name="name_of_vhsnd_community_member_for_support_during_emergency">জরুরি সহায়তার জন্য VHSND/কমিউনিটি সদস্যের নাম</string>
+    <string name="contact_number_of_vhsnd_community_member_for_support_during_emergency">জরুরি সহায়তার জন্য VHSND/কমিউনিটি সদস্যের যোগাযোগ নম্বর</string>
+    <string name="mode_of_transportation_in_case_of_labour_pain">প্রসব বেদনার সময় যাতায়াতের মাধ্যম</string>
+
+    <string name="no_of_deliveries_is_more_than_3">প্রসবের সংখ্যা ৩ এর বেশি</string>
+    <string name="time_from_last_delivery_is_less_than_18_months">শেষ প্রসবের পর ১৮ মাসের কম সময়</string>
+    <string name="height_is_very_short_or_less_than_140_cms">উচ্চতা ১৪০ সেমি-এর কম</string>
+    <string name="age_is_less_than_18_or_more_than_35_years">বয়স ১৮-এর কম বা ৩৫-এর বেশি</string>
+    <string name="miscarriage_abortion">গর্ভপাত</string>
+    <string name="home_delivery_of_previous_pregnancy">পূর্ববর্তী গর্ভধারণে বাড়িতে প্রসব</string>
+    <string name="during_pregnancy_or_delivery_you_faced_any_medical_issues">গর্ভাবস্থা বা প্রসবের সময় কোনো চিকিৎসাজনিত সমস্যা হয়েছে কি</string>
+    <string name="past_c_section_cs">পূর্ববর্তী সিজারিয়ান (CS)</string>
+
+    <string name="information_on_children">শিশুদের তথ্য</string>
+    <string name="physical_observation">শারীরিক পর্যবেক্ষণ</string>
+    <string name="obstetric_history">প্রসূতি ইতিহাস</string>
+
+    <string name="assess_for_high_risk_conditions_in_the_non_pregnant_women">অগর্ভবতী নারীদের উচ্চ ঝুঁকি মূল্যায়ন</string>
+    <string name="visible_signs_of_anemia_as_per_appearance">দেখে রক্তাল্পতার লক্ষণ</string>
+    <string name="for_clinical_assessment_to_be_filled_consulting_with_anm">ক্লিনিক্যাল মূল্যায়নের জন্য</string>
+    <string name="to_be_filled_consulting_with_anm">(ANM-এর সাথে পরামর্শ করে পূরণ করতে হবে)</string>
+
+    <string name="hypertension">উচ্চ রক্তচাপ</string>
+    <string name="risk_status">ঝুঁকির অবস্থা</string>
+    <string name="missed_period">মাসিক বন্ধ</string>
+    <string name="lmp">শেষ মাসিক (LMP)</string>
+    <string name="adoption_of_family_planning">পরিবার পরিকল্পনা গ্রহণ</string>
+    <string name="current_fp_pregnancy_status">বর্তমান FP/গর্ভাবস্থা অবস্থা</string>
+
+    <string name="severe_anemia">গুরুতর রক্তাল্পতা</string>
+    <string name="round">পর্ব</string>
+    <string name="irs_round">IRS পর্ব</string>
+    <string name="diabetes">ডায়াবেটিস</string>
+    <string name="rh_negative">Rh নেগেটিভ</string>
+    <string name="bad_obstetric_history">খারাপ প্রসূতি ইতিহাস</string>
+    <string name="multiple_pregnancy">একাধিক গর্ভধারণ</string>
+
+    <string name="lmp_date">LMP তারিখ</string>
+    <string name="last_visit_date">শেষ ভিজিটের তারিখ</string>
+    <string name="edd">সম্ভাব্য প্রসব তারিখ (EDD)</string>
+
+    <string name="assess_for_high_risk_conditions_in_the_pregnant_women">গর্ভবতী নারীদের উচ্চ ঝুঁকি মূল্যায়ন</string>
+    <string name="rd_pmsa">RD ম্যালেরিয়া</string>
+    <string name="rd_dengue">RD ডেঙ্গু</string>
+    <string name="rd_filaria">RD ফাইলেরিয়া</string>
+
+    <string name="pregnancy_induced_hypertension">গর্ভাবস্থাজনিত উচ্চ রক্তচাপ</string>
+    <string name="hiv_syphilis_hep_b">HIV/সিফিলিস/হেপাটাইটিস B</string>
+    <string name="mal_presentation">ভুল ভ্রূণ অবস্থান</string>
+    <string name="antepartum_hemorrhage">প্রসব-পূর্ব রক্তক্ষরণ</string>
+    <string name="oligohydromnios">কম অ্যামনিওটিক তরল</string>
+    <string name="polyhydromnios">অতিরিক্ত অ্যামনিওটিক তরল</string>
+    <string name="hypothyrodism">হাইপোথাইরয়েডিজম</string>
+    <string name="gestational_diabetes_mellitus">গর্ভকালীন ডায়াবেটিস</string>
+
+    <string name="register_new">নতুন নিবন্ধন</string>
+    <string name="non_pregnant_women">অগর্ভবতী নারী</string>
+    <string name="pregnant_women">গর্ভবতী নারী</string>
+
+    <string name="follow_up_non_pregnant">ফলো-আপ (অগর্ভবতী)</string>
+    <string name="follow_up_pregnant">ফলো-আপ (গর্ভবতী)</string>
+
+    <string name="non_pregnant_list">অগর্ভবতী তালিকা</string>
+    <string name="assess">মূল্যায়ন</string>
+    <string name="high_risk_list_npw">উচ্চ ঝুঁকি তালিকা (NPW)</string>
+    <string name="high_risk_list_pw">উচ্চ ঝুঁকি তালিকা (PW)</string>
+
+    <string name="micro_birth_plan">মাইক্রো জন্ম পরিকল্পনা</string>
+    <string name="add_beneficiary">উপকারভোগী যুক্ত করুন</string>
+    <string name="assessment_form_filled_successfully">মূল্যায়ন ফর্ম সফলভাবে পূরণ হয়েছে</string>
+
+    <string name="visit_on">"ভিজিট তারিখ "</string>
+    <string name="follow_up">ফলো-আপ</string>
+    <string name="supervisor_visit_date">সুপারভাইজারের ভিজিটের তারিখ</string>
+    <string name="test_up_date">পরীক্ষার তারিখ</string>
+
+    <string name="history">ইতিহাস</string>
+    <string name="micro">মাইক্রো জন্ম পরিকল্পনা</string>
+
+    <string name="_1st_anc">১ম ANC</string>
+    <string name="_1st_pmsma">১ম PMSMA</string>
+    <string name="_2nd_pmsma">২য় PMSMA</string>
+    <string name="_3rd_pmsma">৩য় PMSMA</string>
+
+    <string name="beneficiary_registration">উপকারভোগী নিবন্ধন</string>
+    <string name="show_details">বিস্তারিত দেখুন</string>
+    <string name="husband">স্বামী</string>
+
+    <string name="micro_birth_plan_for_all_pregnant_women">সকল গর্ভবতী নারীর জন্য মাইক্রো জন্ম পরিকল্পনা</string>
+
+    <string name="help_support">সহায়তা ও সমর্থন</string>
+    <string name="user_guide">ব্যবহার নির্দেশিকা</string>
+    <string name="video_tutorial">ভিডিও টিউটোরিয়াল</string>
+
+    <string name="track_visited_on">ভিজিট করা হয়েছে</string>
+    <string name="track_on"> তারিখে </string>
+    <string name="track_follow_up_label">ফলো-আপ</string>
+
+</resources>
