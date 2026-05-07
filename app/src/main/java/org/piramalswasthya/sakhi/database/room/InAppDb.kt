@@ -203,7 +203,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 58, exportSchema = false
+    version = 59, exportSchema = false
 )
 
 @TypeConverters(
@@ -333,6 +333,45 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+            val MIGRATION_58_59 = object : Migration(58, 59) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_country_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_state_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_district_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_block_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_village_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
 
 
             val MIGRATION_57_58 = object : Migration(57, 58) {
@@ -3337,7 +3376,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_54_55,
                         MIGRATION_55_56,
                         MIGRATION_56_57,
-                        MIGRATION_57_58
+                        MIGRATION_57_58,
+                        MIGRATION_58_59
 
 
                     ).build()
