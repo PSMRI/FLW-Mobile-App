@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="anc_visit_number">ANC ভিজিট %1$d</string>
+    <string name="sr_no">ক্রমিক নং : %1$d</string>
+    <string name="date_no">তারিখ : %1$s</string>
+    <string name="round_no">রাউন্ড : %1$d</string>
+    <string name="pnc_visit_number">PNC ভিজিট (দিন %1$d)</string>
+
+    <string name="register">নিবন্ধন করুন</string>
+    <string name="tracking_form_filled_successfully">ট্র্যাকিং ফর্ম সফলভাবে পূরণ হয়েছে</string>
+
+    <string name="pmsma_form">PMSMA ফর্ম</string>
+    <string name="general_op">সাধারণ OP</string>
+    <string name="saving_pmsma_to_database_failed">PMSMA ডেটাবেসে সংরক্ষণ ব্যর্থ হয়েছে!</string>
+
+    <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">HRP কেস, অনুগ্রহ করে নিকটস্থ HWC-তে যান অথবা ১০৪ নম্বরে কল করুন</string>
+
+    <!-- Pregnancy Weeks -->
+    <string-array name="maternal_health_pregnancy_week">
+        <item>১২ সপ্তাহ</item>
+        <item>১৪ – ২২ সপ্তাহ</item>
+        <item>২৮ – ৩৪ সপ্তাহ</item>
+        <item>৩৬ – ৪০ সপ্তাহ</item>
+    </string-array>
+
+    <!-- Test Result -->
+    <string-array name="maternal_health_test_result">
+        <item>রিঅ্যাক্টিভ</item>
+        <item>নন-রিঅ্যাক্টিভ</item>
+        <item>পরীক্ষা করা হয়নি</item>
+    </string-array>
+
+    <string-array name="maternal_health_test_result_2">
+        <item>পজিটিভ</item>
+        <item>নেগেটিভ</item>
+        <item>পরীক্ষা করা হয়নি</item>
+    </string-array>
+
+    <!-- Past Illness -->
+    <string-array name="maternal_health_past_illness">
+        <item>কিছুই নয়</item>
+        <item>TB</item>
+        <item>ডায়াবেটিস</item>
+        <item>উচ্চ রক্তচাপ</item>
+        <item>হৃদরোগ</item>
+        <item>মৃগী</item>
+        <item>STI/RTI</item>
+        <item>হেপাটাইটিস-B</item>
+        <item>অ্যাজমা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <!-- Yes No -->
+    <string-array name="anc_confirmation_array">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </string-array>
+
+    <string-array name="anc_confirmation_array1">
+        <item>না</item>
+        <item>হ্যাঁ</item>
+    </string-array>
+
+    <!-- Months -->
+    <string-array name="visit_months">
+        <item>জানু</item>
+        <item>ফেব</item>
+        <item>মার্চ</item>
+        <item>এপ্রিল</item>
+        <item>মে</item>
+        <item>জুন</item>
+        <item>জুলাই</item>
+        <item>আগস্ট</item>
+        <item>সেপ্টে</item>
+        <item>অক্টো</item>
+        <item>নভে</item>
+        <item>ডিসে</item>
+    </string-array>
+
+    <!-- Contraception -->
+    <string-array name="method_of_contraception">
+        <item>নিজে</item>
+        <item>ANTRA ইনজেকশন</item>
+        <item>কপার টি (IUCD)</item>
+        <item>কনডম</item>
+        <item>Mala N</item>
+        <item>Chaya</item>
+        <item>ECP</item>
+        <item>পুরুষ বন্ধ্যাকরণ</item>
+        <item>মহিলা বন্ধ্যাকরণ</item>
+        <item>অন্যান্য পদ্ধতি</item>
+    </string-array>
+
+    <!-- PNC -->
+    <string name="pnc_period">PNC সময়কাল</string>
+    <string name="pnc_visit_date">PNC ভিজিট তারিখ</string>
+    <string name="pnc_ifa_tabs_given">প্রদত্ত IFA ট্যাবলেট সংখ্যা</string>
+    <string name="pnc_contraception_method">গর্ভনিরোধের পদ্ধতি</string>
+
+    <string-array name="pnc_period_array">
+        <item>১ম দিন</item>
+        <item>৩য় দিন</item>
+        <item>৭ম দিন</item>
+        <item>১৪তম দিন</item>
+        <item>২১তম দিন</item>
+        <item>২৮তম দিন</item>
+        <item>৪২তম দিন</item>
+    </string-array>
+
+    <!-- Delivery -->
+    <string name="do_delivery_date">প্রসবের তারিখ</string>
+    <string name="do_delivery_time">প্রসবের সময়</string>
+    <string name="do_delivery_place">প্রসবের স্থান</string>
+    <string name="do_delivery_type">প্রসবের ধরন</string>
+
+    <string-array name="do_type_of_delivery_array">
+        <item>স্বাভাবিক</item>
+        <item>সিজারিয়ান</item>
+    </string-array>
+
+    <!-- Infant -->
+    <string name="ir_baby_name">শিশুর নাম</string>
+    <string name="ir_gender">শিশুর লিঙ্গ</string>
+    <string name="ir_weight">জন্মের সময় ওজন (কেজি)</string>
+
+    <string-array name="ir_infant_term">
+        <item>পূর্ণ মেয়াদ</item>
+        <item>অকাল</item>
+    </string-array>
+
+    <!-- Common -->
+    <string name="anc_form_submitted">ফর্ম সফলভাবে জমা হয়েছে</string>
+    <string name="something_went_wrong_try_again">কিছু ভুল হয়েছে। আবার চেষ্টা করুন।</string>
+    <string name="continue_anc_visit">ANC ভিজিট চালিয়ে যান</string>
+    <string name="continue_anc_visit_message">আপনি কি ANC ভিজিট চালিয়ে যেতে চান?</string>
+
+    <string name="next_anc_visit_due">পরবর্তী ANC ভিজিট নির্ধারিত</string>
+    <string name="visit_date_required">ভিজিট তারিখ প্রয়োজন</string>
+    <string name="invalid_visit_date_format">ভুল তারিখ ফরম্যাট</string>
+    <string name="fill_required_fields">অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন</string>
+
+    <string name="danger_signs_identified">বিপজ্জনক লক্ষণ শনাক্ত হয়েছে!</string>
+    <string name="str_suspected_high_risk_pregnancy">সন্দেহভাজন উচ্চ ঝুঁকির গর্ভাবস্থা</string>
+
+</resources>

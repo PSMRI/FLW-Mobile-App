@@ -160,6 +160,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
             Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
+            Languages.BANGLA.symbol -> Languages.BANGLA
             else -> Languages.ENGLISH
         }
     }
