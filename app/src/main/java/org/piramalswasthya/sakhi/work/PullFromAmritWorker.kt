@@ -15,6 +15,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -36,6 +37,8 @@ class PullFromAmritWorker @AssistedInject constructor(
         const val Progress = "Progress"
         const val NumPages = "Total Pages"
         const val n = 4 // Number of threads!
+        private const val MAX_TRANSIENT_RETRIES_PER_PAGE = 5
+        private const val TRANSIENT_RETRY_DELAY_MS = 500L
     }
 
     private var page1: Int = 0
@@ -117,10 +120,25 @@ class PullFromAmritWorker @AssistedInject constructor(
 
             try {
                 while (page <= numPages) {
-                    val ret = benRepo.getBeneficiariesFromServerForWorker(page)
+                    var retries = 0
+                    var ret: Int
+                    do {
+                        ret = benRepo.getBeneficiariesFromServerForWorker(page)
+                        if (ret == -2) {
+                            retries++
+                            if (retries > MAX_TRANSIENT_RETRIES_PER_PAGE) {
+                                Timber.e("Pull failed: retries exhausted for page=$page on thread=$rem")
+                                return@withContext false
+                            }
+                            delay(TRANSIENT_RETRY_DELAY_MS)
+                        }
+                    } while (ret == -2)
 
-                    if (ret == -1)
-                        throw IllegalStateException("benRepo.getBeneficiariesFromServerForWorker(page) returned -1 ")
+                    if (ret == -1) {
+                        Timber.e("Pull failed: hard error for page=$page on thread=$rem")
+                        return@withContext false
+                    }
+
                     if (ret != -2) {
                         val finalPage = (page1 + page2 + page3 + page4) / 4
                         val minPageSynced = min(min(page1, page2), min(page3, page4))
@@ -138,6 +156,10 @@ class PullFromAmritWorker @AssistedInject constructor(
                 }
             } catch (e: SQLiteConstraintException) {
                 Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                return@withContext false
+            } catch (e: Exception) {
+                Timber.e("exception $e raised ${e.message} with stacktrace : ${e.stackTrace}")
+                return@withContext false
             }
             true
         }
