@@ -226,6 +226,7 @@ class PregnantWomanRegistrationDataset(
         id = 20,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_other),
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
         required = true,
     )
 
@@ -262,6 +263,7 @@ class PregnantWomanRegistrationDataset(
         id = 24,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_any_other_comp),
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
         required = true,
     )
 
@@ -858,7 +860,8 @@ class PregnantWomanRegistrationDataset(
 
             otherPastIllness.id -> {
                 validateEmptyOnEditText(otherPastIllness)
-                validateAllAlphabetsSpaceOnEditText(otherPastIllness)
+                validateEditTextWithTextNonNumericHindiEnabled(otherPastIllness)
+                //validateAllAlphabetsSpaceOnEditText(otherPastIllness)
             }
 
             isFirstPregnancy.id -> {
@@ -916,7 +919,8 @@ class PregnantWomanRegistrationDataset(
 
             otherComplicationsDuringLastPregnancy.id -> {
                 validateEmptyOnEditText(otherComplicationsDuringLastPregnancy)
-                validateAllAlphabetsSpaceOnEditText(otherComplicationsDuringLastPregnancy)
+                validateEditTextWithTextNonNumericHindiEnabled(otherComplicationsDuringLastPregnancy)
+                //validateAllAlphabetsSpaceOnEditText(otherComplicationsDuringLastPregnancy)
             }
 
             noOfDeliveries.id, timeLessThan18m.id -> {
