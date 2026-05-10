@@ -20,7 +20,7 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
-    <string name="case_date">Maleria Screening Date</string>
+    <string name="case_date">Malaria Screening Date</string>
     <string name="start_t_date">Date of Starting Treatment</string>
     <string name="treatment_given">Treatment Given</string>
     <string name="aes_submitted">AES/JS Form submitted</string>
@@ -30,7 +30,7 @@
     <string name="home_visit_date">Home Visit Date</string>
     <string name="home_visit_date_screening">Home Visit Date (Screening Date)</string>
     <string name="visit_date">Visit Date</string>
-    <string name="home_visit_date_mda_program">Home Visit Date(MDA Program)</string>
+    <string name="home_visit_date_mda_program">Home Visit Date (MDA Program)</string>
     <string name="case_date_malaria">Malaria Case Status Date</string>
     <string name="aes_case_status_date">AES / JE Case Status Date</string>
     <string name="case_status">Case Status</string>
@@ -38,7 +38,7 @@
     <string name="place_of_Death">Place of Death</string>
     <string name="reason_of_Death">Reason for Death</string>
     <string name="beneficiary_status">Beneficiary Status</string>
-    <string name="aes_case_status">AES / JE  Case Status</string>
+    <string name="aes_case_status">AES / JE Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
     <string name="mdsr_state">State</string>
@@ -48,7 +48,7 @@
     <string name="mdsr_age">Age</string>
     <string name="mdsr_date_of_deceased">Date of death</string>
     <string name="mdsr_address">Address</string>
-    <string name="mdsr_husband_name">Husband’s name</string>
+    <string name="mdsr_husband_name">Husband's name</string>
     <string name="mdsr_cause">Cause of death</string>
     <string name="mdsr_maternal">Maternal</string>
     <string name="mdsr_non_maternal">Non-maternal</string>
@@ -65,8 +65,8 @@
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
-    <string name="body_part">Which part of Body	</string>
-    <string name="medicine_side_effect">Medicine  Side Effect</string>
+    <string name="body_part">Which part of Body</string>
+    <string name="medicine_side_effect">Medicine Side Effect</string>
 
     <string name="filaria_submitted">Filaria Form submitted</string>
     <string name="leprosy_submitted">Leprosy Form submitted</string>
@@ -233,7 +233,7 @@
 
 
 
-    <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
+    <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India's vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
     <string name="text_help"> <b>Q - Is this app available offline?</b> \n Yes, once the app is downloaded and login is completed, you can use the app offline to collect the data. Please not for downloading and first login, internet is required. \n\n
         <b>Q - Is it mandatory to fill all the details?</b> \n No, it is not mandatory to fill all the details. But there are few fields which are marked by asterisk (star-shaped symbol * ) and it is mandatory to fill them otherwise you will not be able submit the details. \n\n
@@ -448,7 +448,7 @@
     <string name="aes_screening_form">AES Form</string>
     <string name="filaria_screening_form">Filaria Form</string>
     <string name="leprosy_screening_form">Leprosy Form</string>
-    <string name="follow_up_form">Follow-up  Form</string>
+    <string name="follow_up_form">Follow-up Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
@@ -465,7 +465,7 @@
 
     <string name="save_successful">Save Successful</string>
     <string name="otp_resent">OTP Resent</string>
-    <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
+    <string name="something_wend_wong_contact_testing">Something went wrong! Contact testing!</string>
     <string name="error_input">Error Input</string>
     <string name="exit_application">Exit Application</string>
     <string name="do_you_want_to_exit_application">Do you want to exit application</string>
@@ -596,7 +596,7 @@
     <string name="additional_services">Additional Services</string>
     <string name="refer_date">Refer Date</string>
     <string-array name="referal_health_center_array">
-        <item>Apolo</item>
+        <item>Apollo</item>
         <item>CHC</item>
         <item>District Hospital</item>
         <item>PHC</item>
@@ -611,7 +611,7 @@
     <string name="bottle_number">Bottle Number</string>
     <string name="s_no">S. No</string>
     <string name="follow_up_date">Follow Up Dates</string>
-    <string name="last_follow_up_date">Last Follow Up Date"</string>
+    <string name="last_follow_up_date">Last Follow Up Date</string>
     <string name="referred_to">Referred to</string>
     <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>
@@ -701,7 +701,7 @@
     <string name="str_suppliments_given_to_child">Supplements given to the child according to age</string>
     <string name="str_by_height_length">By height / length (color inscribed in mcp card)</string>
     <string name="str_no_of_children_weighing_less">Number of children weighing less than –3SD orange color indicated in MCCP card referred to VHSND/PHC/NRC</string>
-    <string name="str_weight_acc_to_child">Weight according to child’s age (color inscribed in MCP card)</string>
+    <string name="str_weight_acc_to_child">Weight according to child's age (color inscribed in MCP card)</string>
     <string name="str_delay_constraint_found">Delay / constraint found in the physical and mental development of the child according to age</string>
     <string name="str_if_yes_then_health_institute">If yes then Health Institute R.B.S.K. Team / A.N.M. referred to</string>
     <string name="str_vit_a_suppliment">Vitamin – A supplements given to the child according to age</string>
@@ -858,11 +858,11 @@
     <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
     <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
     <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
-    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
-    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother's milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother's milk, nutritious complementary food should be given.</string>
     <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
     <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
-    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother's milk is the best for the complete development of the baby.</string>
     <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
     <string name="place_of_maa_meeting">Place of MAA Meeting</string>
     <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
@@ -1389,4 +1389,3 @@
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
 
 </resources>
-
