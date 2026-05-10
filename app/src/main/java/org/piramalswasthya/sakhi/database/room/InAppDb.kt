@@ -130,7 +130,10 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJ
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
-
+import org.piramalswasthya.sakhi.database.room.dao.GamificationDao
+import org.piramalswasthya.sakhi.model.GamificationBadge
+import org.piramalswasthya.sakhi.model.GamificationProfile
+import org.piramalswasthya.sakhi.model.PointsTransaction
 @Database(
     entities = [
         HouseholdCache::class,
@@ -200,10 +203,13 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class,
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
-        TBConfirmedTreatmentCache::class
+        TBConfirmedTreatmentCache::class,
+        GamificationProfile::class,
+        GamificationBadge::class,
+        PointsTransaction::class,
     ],
     views = [BenBasicCache::class],
-    version = 57, exportSchema = false
+    version = 58, exportSchema = false
 )
 
 @TypeConverters(
@@ -268,6 +274,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
+    abstract val gamificationDao: GamificationDao
 
     companion object {
         @Volatile
@@ -310,6 +317,69 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+
+            val MIGRATION_57_58 = object : Migration(57, 58) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    if (!tableExists(database, "GAMIFICATION_PROFILE")) {
+                        database.execSQL("""
+                            CREATE TABLE `GAMIFICATION_PROFILE` (
+                                `userId` INTEGER NOT NULL,
+                                `totalPoints` INTEGER NOT NULL DEFAULT 0,
+                                `currentStreakDays` INTEGER NOT NULL DEFAULT 0,
+                                `longestStreakDays` INTEGER NOT NULL DEFAULT 0,
+                                `lastActivityDate` TEXT,
+                                `level` INTEGER NOT NULL DEFAULT 1,
+                                `createdAt` INTEGER NOT NULL,
+                                `updatedAt` INTEGER NOT NULL,
+                                `syncState` INTEGER NOT NULL DEFAULT 0,
+                                PRIMARY KEY(`userId`)
+                            )
+                        """.trimIndent())
+                    }
+
+                    if (!tableExists(database, "GAMIFICATION_BADGE")) {
+                        database.execSQL("""
+                            CREATE TABLE `GAMIFICATION_BADGE` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `userId` INTEGER NOT NULL,
+                                `badgeType` TEXT NOT NULL,
+                                `badgeNameEn` TEXT NOT NULL,
+                                `badgeNameHi` TEXT NOT NULL,
+                                `badgeNameAs` TEXT NOT NULL,
+                                `earnedAt` INTEGER NOT NULL,
+                                `syncState` INTEGER NOT NULL DEFAULT 0,
+                                FOREIGN KEY(`userId`) REFERENCES `GAMIFICATION_PROFILE`(`userId`)
+                                    ON UPDATE CASCADE ON DELETE CASCADE
+                            )
+                        """.trimIndent())
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `idx_gamification_badge_userId` ON `GAMIFICATION_BADGE` (`userId`)"
+                        )
+                    }
+
+                    if (!tableExists(database, "GAMIFICATION_POINTS_TX")) {
+                        database.execSQL("""
+                            CREATE TABLE `GAMIFICATION_POINTS_TX` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `userId` INTEGER NOT NULL,
+                                `points` INTEGER NOT NULL,
+                                `eventType` TEXT NOT NULL,
+                                `eventRefId` TEXT,
+                                `reason` TEXT NOT NULL,
+                                `createdAt` INTEGER NOT NULL,
+                                `syncState` INTEGER NOT NULL DEFAULT 0,
+                                FOREIGN KEY(`userId`) REFERENCES `GAMIFICATION_PROFILE`(`userId`)
+                                    ON UPDATE CASCADE ON DELETE CASCADE
+                            )
+                        """.trimIndent())
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `idx_gamification_tx_userId` ON `GAMIFICATION_POINTS_TX` (`userId`)"
+                        )
+                    }
+                }
+            }
+
 
             val MIGRATION_56_57 = object : Migration(56, 57) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3214,7 +3284,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_53_54,
                         MIGRATION_54_55,
                         MIGRATION_55_56,
-                        MIGRATION_56_57
+                        MIGRATION_56_57,
+                        MIGRATION_57_58
 
 
                     ).build()

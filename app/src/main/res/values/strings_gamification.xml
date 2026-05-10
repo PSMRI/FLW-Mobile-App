@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gamification strings — English (values/strings_gamification.xml) -->
+<resources>
+    <string name="gamification_dashboard_title">My Progress</string>
+    <string name="gamification_level">Level %1$d</string>
+    <string name="gamification_total_points">Total XP</string>
+    <string name="gamification_streak_label">Active Streak</string>
+    <string name="gamification_badges_label">Badges Earned</string>
+    <string name="gamification_recent_activity">Recent Activity</string>
+    <string name="gamification_badge_earned">🏅 Badge earned: %1$s</string>
+    <string name="gamification_points_earned">+%1$d XP</string>
+    <string name="gamification_no_badges">Complete tasks to earn your first badge!</string>
+
+    <plurals name="gamification_streak_days">
+        <item quantity="one">%d day streak 🔥</item>
+        <item quantity="other">%d day streak 🔥</item>
+    </plurals>
+</resources>

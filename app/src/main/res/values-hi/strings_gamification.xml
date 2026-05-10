@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gamification strings — Hindi (values-hi/strings_gamification.xml) -->
+<resources>
+    <string name="gamification_dashboard_title">मेरी प्रगति</string>
+    <string name="gamification_level">स्तर %1$d</string>
+    <string name="gamification_total_points">कुल XP</string>
+    <string name="gamification_streak_label">सक्रिय लय</string>
+    <string name="gamification_badges_label">अर्जित बैज</string>
+    <string name="gamification_recent_activity">हाल की गतिविधि</string>
+    <string name="gamification_badge_earned">🏅 बैज अर्जित: %1$s</string>
+    <string name="gamification_points_earned">+%1$d XP</string>
+    <string name="gamification_no_badges">पहला बैज अर्जित करने के लिए कार्य पूरे करें!</string>
+
+    <plurals name="gamification_streak_days">
+        <item quantity="one">%d दिन की लय 🔥</item>
+        <item quantity="other">%d दिन की लय 🔥</item>
+    </plurals>
+</resources>
