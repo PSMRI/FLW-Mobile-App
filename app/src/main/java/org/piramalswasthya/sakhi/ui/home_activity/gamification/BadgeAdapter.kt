@@ -13,15 +13,13 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 
 class BadgeAdapter : ListAdapter<GamificationBadge, BadgeAdapter.BadgeViewHolder>(DiffCallback) {
 
+    var language: String = "en"
+
     inner class BadgeViewHolder(private val binding: ItemBadgeBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(badge: GamificationBadge) {
-            val lang = itemView.context
-                .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                .getString("language", "en")
-            
-            binding.tvBadgeName.text = when (lang) {
+            binding.tvBadgeName.text = when (language) {
                 "hi" -> badge.badgeNameHi
                 "as" -> badge.badgeNameAs
                 else -> badge.badgeNameEn

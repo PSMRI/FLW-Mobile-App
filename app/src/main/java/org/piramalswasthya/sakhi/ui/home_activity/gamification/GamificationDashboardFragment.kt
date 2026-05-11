@@ -82,8 +82,12 @@ class GamificationDashboardFragment : Fragment() {
             binding.tvNoBadges.visibility = View.GONE
             binding.rvBadges.visibility = View.VISIBLE
 
+            val lang = preferenceDao.getCurrentLanguage().symbol
             val adapter = binding.rvBadges.adapter as? BadgeAdapter
-                ?: BadgeAdapter().also { binding.rvBadges.adapter = it }
+                ?: BadgeAdapter().also { 
+                    it.language = lang
+                    binding.rvBadges.adapter = it 
+                }
             adapter.submitList(state.badges)
         }
     }

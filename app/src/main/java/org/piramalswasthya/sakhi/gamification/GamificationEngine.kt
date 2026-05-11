@@ -42,7 +42,9 @@ class GamificationEngine @Inject constructor(
 ) {
 
     companion object {
-        private val DATE_FMT = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        private val DATE_FMT = ThreadLocal.withInitial { 
+            SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH) 
+        }
 
         /** Points table. Weights reflect health-outcome importance. */
         private val POINTS_MAP = mapOf(
@@ -73,7 +75,7 @@ class GamificationEngine @Inject constructor(
             3000  // Level 8
         )
 
-        private fun today(): String = DATE_FMT.format(Date())
+        private fun today(): String = DATE_FMT.get()!!.format(Date())
 
         /**
          * Returns the difference in calendar days between two ISO date strings.
@@ -82,10 +84,10 @@ class GamificationEngine @Inject constructor(
         fun daysBetween(from: String, to: String): Long {
             return try {
                 val fromMs = Calendar.getInstance().apply { 
-                    time = DATE_FMT.parse(from) ?: return 0L 
+                    time = DATE_FMT.get()!!.parse(from) ?: return 0L 
                 }.timeInMillis
                 val toMs = Calendar.getInstance().apply { 
-                    time = DATE_FMT.parse(to) ?: return 0L 
+                    time = DATE_FMT.get()!!.parse(to) ?: return 0L 
                 }.timeInMillis
                 (toMs - fromMs) / (1000 * 60 * 60 * 24)
             } catch (e: Exception) {
