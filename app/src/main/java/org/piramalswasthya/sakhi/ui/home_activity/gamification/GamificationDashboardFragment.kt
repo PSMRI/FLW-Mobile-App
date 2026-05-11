@@ -102,10 +102,10 @@ class GamificationDashboardFragment : Fragment() {
         }
     }
 
-    private fun levelThreshold(level: Int): Int {
-        val thresholds = listOf(0, 100, 300, 600, 1000, 1500, 2200, 3000)
-        return thresholds.getOrElse(level - 1) { thresholds.last() }
-    }
+    private fun levelThreshold(level: Int): Int =
+        GamificationEngine.LEVEL_THRESHOLDS.getOrElse(level - 1) { 
+            GamificationEngine.LEVEL_THRESHOLDS.last() 
+        }
 
     override fun onStart() {
         super.onStart()

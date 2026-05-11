@@ -62,7 +62,7 @@ class GamificationEngine @Inject constructor(
          * XP thresholds for each level (index = level number).
          * Level 1 starts at 0 XP.
          */
-        private val LEVEL_THRESHOLDS = listOf(
+        val LEVEL_THRESHOLDS = listOf(
             0,    // Level 1
             100,  // Level 2
             300,  // Level 3
@@ -80,11 +80,17 @@ class GamificationEngine @Inject constructor(
          * Uses Calendar to stay compatible with min SDK 25.
          */
         fun daysBetween(from: String, to: String): Long {
-            val fromCal = Calendar.getInstance().apply { time = DATE_FMT.parse(from)!! }
-            val toCal   = Calendar.getInstance().apply { time = DATE_FMT.parse(to)!! }
-            val fromMs  = fromCal.timeInMillis
-            val toMs    = toCal.timeInMillis
-            return (toMs - fromMs) / (1000 * 60 * 60 * 24)
+            return try {
+                val fromMs = Calendar.getInstance().apply { 
+                    time = DATE_FMT.parse(from) ?: return 0L 
+                }.timeInMillis
+                val toMs = Calendar.getInstance().apply { 
+                    time = DATE_FMT.parse(to) ?: return 0L 
+                }.timeInMillis
+                (toMs - fromMs) / (1000 * 60 * 60 * 24)
+            } catch (e: Exception) {
+                0L
+            }
         }
     }
 

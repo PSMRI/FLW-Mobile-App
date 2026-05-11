@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.gamification
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -16,8 +17,15 @@ class BadgeAdapter : ListAdapter<GamificationBadge, BadgeAdapter.BadgeViewHolder
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(badge: GamificationBadge) {
-            // Show badge name in current app language
-            binding.tvBadgeName.text = badge.badgeNameEn
+            val lang = itemView.context
+                .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                .getString("language", "en")
+            
+            binding.tvBadgeName.text = when (lang) {
+                "hi" -> badge.badgeNameHi
+                "as" -> badge.badgeNameAs
+                else -> badge.badgeNameEn
+            }
             binding.tvBadgeEmoji.text = emojiForBadge(badge.badgeType)
         }
     }

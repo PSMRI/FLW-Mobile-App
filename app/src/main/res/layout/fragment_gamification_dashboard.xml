@@ -65,8 +65,10 @@
                         android:textStyle="bold"
                         android:textColor="@color/colorPrimary"
                         android:background="@drawable/bg_level_chip"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="6dp" />
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp" />
 
                 </LinearLayout>
 

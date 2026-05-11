@@ -82,24 +82,26 @@ class GamificationSyncWorker @AssistedInject constructor(
     private suspend fun syncProfiles() {
         val unsynced = repo.getUnsyncedProfiles()
         if (unsynced.isEmpty()) return
-        Timber.d("GamificationSyncWorker: syncing ${unsynced.size} profiles")
+        Timber.d("GamificationSyncWorker: ${unsynced.size} profiles pending sync")
+        // NOTE: Records are NOT marked synced here.
+        // They will be marked synced only after confirmed API success.
         // TODO: apiService.syncGamificationProfiles(unsynced)
-        unsynced.forEach { repo.markProfileSynced(it.userId) }
+        //       repo.markProfileSynced(it.userId) — call AFTER API success
     }
 
     private suspend fun syncBadges() {
         val unsynced = repo.getUnsyncedBadges()
         if (unsynced.isEmpty()) return
-        Timber.d("GamificationSyncWorker: syncing ${unsynced.size} badges")
+        Timber.d("GamificationSyncWorker: ${unsynced.size} badges pending sync")
         // TODO: apiService.syncGamificationBadges(unsynced)
-        repo.markBadgesSynced(unsynced.map { it.id })
+        //       repo.markBadgesSynced(unsynced.map { it.id }) — call AFTER API success
     }
 
     private suspend fun syncTransactions() {
         val unsynced = repo.getUnsyncedTransactions()
         if (unsynced.isEmpty()) return
-        Timber.d("GamificationSyncWorker: syncing ${unsynced.size} transactions")
+        Timber.d("GamificationSyncWorker: ${unsynced.size} transactions pending sync")
         // TODO: apiService.syncGamificationTransactions(unsynced)
-        repo.markTransactionsSynced(unsynced.map { it.id })
+        //       repo.markTransactionsSynced(unsynced.map { it.id }) — call AFTER API success
     }
 }
