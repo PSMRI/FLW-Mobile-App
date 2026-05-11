@@ -329,6 +329,7 @@ abstract class InAppDb : RoomDatabase() {
                                 `currentStreakDays` INTEGER NOT NULL DEFAULT 0,
                                 `longestStreakDays` INTEGER NOT NULL DEFAULT 0,
                                 `lastActivityDate` TEXT,
+                                `lastLoginDate` TEXT,
                                 `level` INTEGER NOT NULL DEFAULT 1,
                                 `createdAt` INTEGER NOT NULL,
                                 `updatedAt` INTEGER NOT NULL,

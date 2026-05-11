@@ -34,6 +34,14 @@ data class GamificationProfile(
     @ColumnInfo(name = "lastActivityDate")
     val lastActivityDate: String? = null,
 
+    /**
+     * ISO date string "yyyy-MM-dd" of the last day the worker claimed a daily login bonus.
+     * Used to deduplicate login bonuses to once per calendar day.
+     * Null means the worker has not claimed a login bonus yet.
+     */
+    @ColumnInfo(name = "lastLoginDate")
+    val lastLoginDate: String? = null,
+
     @ColumnInfo(name = "level")
     val level: Int = 1,
 

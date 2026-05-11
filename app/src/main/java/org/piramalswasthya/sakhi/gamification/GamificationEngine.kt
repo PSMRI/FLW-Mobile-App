@@ -42,8 +42,8 @@ class GamificationEngine @Inject constructor(
 ) {
 
     companion object {
-        private val DATE_FMT = ThreadLocal.withInitial { 
-            SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH) 
+        private val DATE_FMT = object : ThreadLocal<SimpleDateFormat>() {
+            override fun initialValue() = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         }
 
         /** Points table. Weights reflect health-outcome importance. */
@@ -112,7 +112,7 @@ class GamificationEngine @Inject constructor(
 
         // 2. Deduplicate daily login — only award once per calendar day
         if (event is GamificationEvent.DailyLogin &&
-            existing.lastActivityDate == today) return
+            existing.lastLoginDate == today) return
 
         // 3. Update streak
         val streakUpdated = updateStreak(existing, today)
@@ -126,6 +126,7 @@ class GamificationEngine @Inject constructor(
             totalPoints      = newTotal,
             level            = newLevel,
             lastActivityDate = today,
+            lastLoginDate    = if (event is GamificationEvent.DailyLogin) today else streakUpdated.lastLoginDate,
             updatedAt        = System.currentTimeMillis(),
             syncState        = 0   // mark dirty for sync
         )
