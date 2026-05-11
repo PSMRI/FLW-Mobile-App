@@ -159,6 +159,7 @@ class SupervisorFragment : Fragment() {
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
                         binding.tietVillage.apply {
+                            contentDescription = "village_dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())

@@ -135,6 +135,7 @@ class ServiceLocationActivity : AppCompatActivity() {
                             setText(viewModel.blockList.first())
                         }*/
                         binding.actvVillageDropdown.apply {
+                            contentDescription = "Village Dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())

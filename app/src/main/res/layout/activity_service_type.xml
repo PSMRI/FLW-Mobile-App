@@ -113,6 +113,7 @@
                     android:layout_height="wrap_content"
                     app:endIconMode="dropdown_menu"
                     android:hint="@string/service_type_dd_village_text"
+                    android:importantForAccessibility="yes"
                     android:layout_marginBottom="20dp">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -121,6 +122,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:padding="14dp"
+                        android:importantForAccessibility="yes"
+                        android:contentDescription="Village Dropdown"
                         listItems="@{viewModel.villageList}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
