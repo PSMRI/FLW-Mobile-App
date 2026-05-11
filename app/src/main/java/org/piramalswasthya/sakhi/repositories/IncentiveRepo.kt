@@ -43,7 +43,7 @@ class IncentiveRepo @Inject constructor(
     val activity_list = incentiveDao.getAllActivity()
 
 
-    suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveActivities(user: User, retryCount: Int = 3): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val currentLang = preferenceDao.getCurrentLanguage().symbol
@@ -94,8 +94,11 @@ class IncentiveRepo @Inject constructor(
 
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                pullAndSaveAllIncentiveActivities(user)
-                return@withContext true
+                if (retryCount > 0) {
+                    return@withContext pullAndSaveAllIncentiveActivities(user,retryCount - 1)
+                } else {
+                    return@withContext false
+                }
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
                 return@withContext false
@@ -114,7 +117,7 @@ class IncentiveRepo @Inject constructor(
 
     }
 
-    suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveRecords(user: User,retryCount: Int = 3): Boolean {
         return withContext(Dispatchers.IO) {
             try {
 
@@ -171,8 +174,11 @@ class IncentiveRepo @Inject constructor(
                 }
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                pullAndSaveAllIncentiveRecords(user)
-                return@withContext true
+                if (retryCount > 0) {
+                    return@withContext pullAndSaveAllIncentiveRecords(user, retryCount - 1)
+                } else {
+                    return@withContext false
+                }
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
                 return@withContext false
