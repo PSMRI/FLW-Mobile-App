@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesSubBinding
@@ -54,6 +55,8 @@ class IncentivesSubFragment : Fragment() {
     private var currentSelectedItem: IncentiveDomain? = null
 
     private var currentPhotoUri: Uri? = null
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     companion object {
         private const val MAX_FILE_SIZE_MB = 5
@@ -116,6 +119,11 @@ class IncentivesSubFragment : Fragment() {
         setupUploadSourceListener()
         setupFileDeleteListener()
 
+        if (isMitanin) {
+            binding.tvAmountActivity.visibility = View.GONE
+        } else {
+            binding.tvAmountActivity.visibility = View.VISIBLE
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uploadState.collect { state ->
