@@ -1492,12 +1492,16 @@ class VLFRepo @Inject constructor(
         return combine(vhnd, vhnc, phc, ahd, deworming) { vhndList, vhncList, phcList, ahdList, dewormingCount ->
 
             fun isInCurrentMonth(dateStr: String?): Boolean {
-                return try {
-                    val date = LocalDate.parse(dateStr, formatter)
-                    YearMonth.from(date) == current
-                } catch (e: Exception) {
-                    false
+                if (dateStr.isNullOrBlank()) return false
+                for (formatter in formats) {
+                    try {
+                        val date = LocalDate.parse(dateStr, formatter)
+                        if (YearMonth.from(date) == current) return true
+                    } catch (e: Exception) {
+                        continue 
+                    }
                 }
+                return false
             }
 
             mapOf(
