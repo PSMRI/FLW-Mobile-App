@@ -831,30 +831,42 @@ class PregnantWomanRegistrationDataset(
                     ?: mutableSetOf()
 
                 if (index == noneIndex) {
-                    // "None" selected: clear all others, keep only None
                     pastIllness.value = "0"
-                } else {
-                    // Other option selected: remove None
-                    selectedIndexes.remove(noneIndex)
-                    pastIllness.value =
-                        if (selectedIndexes.isEmpty()) "0"
-                        else selectedIndexes.sorted().joinToString("|")
-                }
-
-                if (selectedIndexes.contains(otherIndex)) {
-                    triggerDependants(
-                        source = pastIllness,
-                        passedIndex = index,
-                        triggerIndex = index,
-                        target = otherPastIllness
-                    )
-                } else {
+                    // ✅ None selected: explicitly hide otherPastIllness
                     triggerDependants(
                         source = pastIllness,
                         passedIndex = index,
                         triggerIndex = -230,
                         target = otherPastIllness
                     )
+                } else {
+                    selectedIndexes.remove(noneIndex)
+                    pastIllness.value =
+                        if (selectedIndexes.isEmpty()) "0"
+                        else selectedIndexes.sorted().joinToString("|")
+
+                    // ✅ Recalculate from updated value
+                    val updatedIndexes = pastIllness.value
+                        ?.split("|")
+                        ?.mapNotNull { it.trim().toIntOrNull() }
+                        ?.toSet()
+                        ?: emptySet()
+
+                    if (updatedIndexes.contains(otherIndex)) {
+                        triggerDependants(
+                            source = pastIllness,
+                            passedIndex = index,
+                            triggerIndex = index,
+                            target = otherPastIllness
+                        )
+                    } else {
+                        triggerDependants(
+                            source = pastIllness,
+                            passedIndex = index,
+                            triggerIndex = -230,
+                            target = otherPastIllness
+                        )
+                    }
                 }
             }
 
