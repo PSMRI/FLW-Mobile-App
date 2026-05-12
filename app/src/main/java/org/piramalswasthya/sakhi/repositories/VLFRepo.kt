@@ -1493,15 +1493,16 @@ class VLFRepo @Inject constructor(
 
             fun isInCurrentMonth(dateStr: String?): Boolean {
                 if (dateStr.isNullOrBlank()) return false
-                for (formatter in formats) {
+                val parsedDate = try {
+                    LocalDate.parse(dateStr, formatIndian)
+                } catch (e: java.time.format.DateTimeParseException) {
                     try {
-                        val date = LocalDate.parse(dateStr, formatter)
-                        if (YearMonth.from(date) == current) return true
-                    } catch (e: Exception) {
-                        continue 
+                        LocalDate.parse(dateStr, formatIso)
+                    } catch (e2: java.time.format.DateTimeParseException) {
+                        null
                     }
                 }
-                return false
+                return parsedDate != null && YearMonth.from(parsedDate) == current
             }
 
             mapOf(
