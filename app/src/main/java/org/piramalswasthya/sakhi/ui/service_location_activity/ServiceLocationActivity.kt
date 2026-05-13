@@ -48,6 +48,7 @@ class ServiceLocationActivity : AppCompatActivity() {
             }
         }
     }
+
     private val incompleteLocationAlert by lazy {
         MaterialAlertDialogBuilder(this)
             .setTitle("Missing Detail")
