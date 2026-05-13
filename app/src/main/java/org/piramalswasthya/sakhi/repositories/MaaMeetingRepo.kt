@@ -143,7 +143,7 @@ class MaaMeetingRepo @Inject constructor(
 
         serverList.forEach { item ->
 
-            val imageUriList = (item.meetingImages ?: emptyList()).mapNotNull { base64 ->
+            val imageUriList = withContext(Dispatchers.IO){ (item.meetingImages ?: emptyList()).mapNotNull { base64 ->
                 try {
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
@@ -151,7 +151,7 @@ class MaaMeetingRepo @Inject constructor(
 
                     val file = File(
                         appContext.cacheDir,
-                        "meeting_${System.currentTimeMillis()}.$ext"
+                        "meeting_${item.id}_img${index}.$ext"
                     )
 
                     file.outputStream().use { it.write(bytes) }
@@ -164,7 +164,7 @@ class MaaMeetingRepo @Inject constructor(
 
                 } catch (e: Exception) {
                     null
-                }
+                }}
             }
 
             val entity = MaaMeetingEntity(

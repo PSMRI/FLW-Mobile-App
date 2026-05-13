@@ -219,7 +219,7 @@ class UwinRepo @Inject constructor(
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
                     val (ext, _) = detectExtAndMime(bytes)
-                    val file = File(appContext.cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
+                    val file = File(appContext.cacheDir, "uwin_${item.id}_img${index}.$ext")
                     file.outputStream().use { it.write(bytes) }
                     val uri = FileProvider.getUriForFile(
                         appContext,
