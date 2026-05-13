@@ -1231,6 +1231,7 @@
     <string name="field_date_after">%1$s %2$s ৰ পিছত হ\'ব নোৱাৰে</string>
     <string name="incentive_dashboard">প্ৰেৰণা ডেছবোর্ড</string>
     <string name="facilitator">সহায়ক</string>
+    <string name="kpi_dashboard">KPI Dashboard</string>
     <string name="app_settings">এপ ছেটিংছ</string>
     <string name="number_of_families_label">পৰিয়ালৰ সংখ্যা : %s</string>
     <string name="number_of_children_label">শিশুৰ সংখ্যা : %s</string>

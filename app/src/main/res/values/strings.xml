@@ -293,6 +293,7 @@
     <string name="app_settings">App Settings</string>
     <string name="incentive_dashboard">Incentive Dashboard</string>
     <string name="facilitator">Facilitator</string>
+    <string name="kpi_dashboard">KPI Dashboard</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1$s should be greater than or equal to %2$.1f</string>
@@ -1464,8 +1465,8 @@
     <string name="father_or_spouse">Father or Spouse</string>
     <string name="date_of_joining">Date of Joining</string>
     <string name="population_covered_under_asha">Population Covered under ASHA</string>
-    <string name="asha_supervisor_name">Asha Supervisor Name</string>
-    <string name="asha_supervisor_contact_no">Asha Supervisor Contact No.</string>
+    <string name="asha_supervisor_name">ASHA Supervisor Name</string>
+    <string name="asha_supervisor_contact_no">ASHA Supervisor Contact No.</string>
     <string name="cho_name">CHO Name</string>
     <string name="mobile_no_of_cho">Mobile No. of CHO</string>
     <string name="name_of_aww">Name of AWW</string>

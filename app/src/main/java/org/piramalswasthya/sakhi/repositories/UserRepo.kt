@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -11,6 +13,7 @@ import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.model.PeerAtFacility
 import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -121,6 +124,42 @@ class UserRepo @Inject constructor(
             preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
             preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
         }
+
+         val choList = mutableListOf<PeerAtFacility>()
+         val anmList = mutableListOf<PeerAtFacility>()
+
+         facilityData?.peersAtFacility?.forEach { peer ->
+
+             when (peer.role?.trim()?.uppercase()) {
+
+                 "CHO" -> {
+                     choList.add(peer)
+                 }
+
+                 "ANM" -> {
+                     anmList.add(peer)
+                 }
+             }
+         }
+
+         val moshi = Moshi.Builder().build()
+
+         val choAdapter = moshi.adapter<List<PeerAtFacility>>(
+             Types.newParameterizedType(
+                 List::class.java,
+                 PeerAtFacility::class.java
+             )
+         )
+
+         val anmAdapter = moshi.adapter<List<PeerAtFacility>>(
+             Types.newParameterizedType(
+                 List::class.java,
+                 PeerAtFacility::class.java
+             )
+         )
+
+         preferenceDao.saveChoList(choAdapter.toJson(choList))
+         preferenceDao.saveAnmList(anmAdapter.toJson(anmList))
     }
 
 

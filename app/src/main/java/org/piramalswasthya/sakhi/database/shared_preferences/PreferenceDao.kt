@@ -404,4 +404,22 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     fun getState(): String {
         return pref.getString("state", "") ?: ""
     }
+
+    fun saveChoList(data: String) {
+        pref.edit().putString("CHO_LIST", data).apply()
+    }
+
+    fun saveAnmList(data: String) {
+        pref.edit().putString("ANM_LIST", data).apply()
+    }
+
+    // ---------------- GET ----------------
+
+    fun getChoList(): String {
+        return pref.getString("CHO_LIST", "") ?: ""
+    }
+
+    fun getAnmList(): String {
+        return pref.getString("ANM_LIST", "") ?: ""
+    }
 }

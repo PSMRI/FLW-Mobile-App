@@ -307,6 +307,7 @@ data class Supervisor(
 data class PeerAtFacility(
     val role: String?,
     val fullName: String?,
+    val mobile: String?,
     val userId: Int?
 )
 @JsonClass(generateAdapter = true)

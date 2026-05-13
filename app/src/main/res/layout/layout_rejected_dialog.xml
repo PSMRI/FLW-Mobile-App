@@ -35,8 +35,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="REJECTED"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textColor="#A32D2D"
+                android:textStyle="bold"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp" />
 
@@ -63,9 +64,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="REJECTED BY"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     android:letterSpacing="0.07"
-                    android:textColor="?android:attr/textColorHint" />
+                    android:textColor="#000000" />
 
                 <TextView
                     android:id="@+id/tvRejectedBy"
@@ -101,9 +103,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="REJECTION REASON"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     android:letterSpacing="0.07"
-                    android:textColor="?android:attr/textColorHint" />
+                    android:textColor="#000000" />
 
                 <TextView
                     android:id="@+id/tvRejectedReason"
@@ -143,9 +146,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CLAIM DATE"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
                         android:letterSpacing="0.07"
-                        android:textColor="?android:attr/textColorHint" />
+                        android:textColor="#000000" />
 
                     <TextView
                         android:id="@+id/tvClaimDate"
@@ -173,9 +177,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="REJECTED DATE"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
                         android:letterSpacing="0.07"
-                        android:textColor="?android:attr/textColorHint" />
+                        android:textColor="#000000" />
 
                     <TextView
                         android:id="@+id/tvRejectedDate"

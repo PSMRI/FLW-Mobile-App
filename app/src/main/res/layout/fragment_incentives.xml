@@ -193,7 +193,7 @@
             android:id="@+id/claimedStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Incentive claimed status"
+            android:text="Incentive claim status"
             android:textSize="16sp"
             app:layout_constraintTop_toTopOf="@+id/approved"
             app:layout_constraintBottom_toBottomOf="@+id/approved"
