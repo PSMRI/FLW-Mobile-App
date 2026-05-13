@@ -77,6 +77,11 @@ class MalariaFormFragment : Fragment() {
             }
         }
 
+
+        viewModel.isSubmitVisible.observe(viewLifecycleOwner) { isVisible ->
+            binding.btnSubmit.isEnabled = isVisible
+        }
+
         val visitAdapter = VisitsListAdapter()
         binding.visitsRV.adapter = visitAdapter
 

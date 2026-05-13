@@ -323,7 +323,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     }
 
     fun getSupervisorDistrict(): String? {
-        return pref.getString("PREF_SUPERVISOR_DISTRICT", null)
+        return pref.getString("PREF_SUPERVISOR_DISTRICT", "")
     }
 
     fun saveSupervisorBlock(block: String?) {
@@ -331,7 +331,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     }
 
     fun getSupervisorBlock(): String? {
-        return pref.getString("PREF_SUPERVISOR_BLOCK", null)
+        return pref.getString("PREF_SUPERVISOR_BLOCK", "")
     }
 
     fun saveSupervisorState(state: String?) {
@@ -339,7 +339,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     }
 
     fun getSupervisorState(): String? {
-        return pref.getString("PREF_SUPERVISOR_STATE", null)
+        return pref.getString("PREF_SUPERVISOR_STATE", "")
     }
 
 
@@ -348,7 +348,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     }
 
     fun getSupervisorSubcenter(): String? {
-        return pref.getString("PREF_SUPERVISOR_SUBCENTER", null)
+        return pref.getString("PREF_SUPERVISOR_SUBCENTER", "")
     }
 
     fun saveSupervisorFacilityType(type: String?) {
@@ -356,7 +356,7 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
     }
 
     fun getSupervisorFacilityType(): String? {
-        return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", null)
+        return pref.getString("PREF_SUPERVISOR_FACILITY_TYPE", "")
     }
 
     fun saveFacilityId(facilityId: Int) {

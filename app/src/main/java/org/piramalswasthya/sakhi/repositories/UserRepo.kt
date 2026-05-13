@@ -90,11 +90,74 @@ class UserRepo @Inject constructor(
         }
     }
 
+     suspend fun setFacilityData(userId: Int) {
+        val response = amritApiService.getUserDetailsById(userId = userId)
+        val userData = response.data
+        val facilityData = userData.facilityData
+        facilityData?.location?.let { location ->
+
+            preferenceDao.saveLocationType(location.locationType ?: "")
+            preferenceDao.saveBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveState(location.state ?: "")
+            preferenceDao.saveDistrict(location.district ?: "")
+
+            preferenceDao.saveSupervisorDistrict(location.district ?: "")
+            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveSupervisorState(location.state ?: "")
+        }
+
+        // ---------- FACILITY ----------
+        facilityData?.facility?.let { facility ->
+
+            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+        }
+
+        // ---------- SUPERVISOR ----------
+        facilityData?.supervisor?.let { supervisor ->
+
+            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+        }
+    }
+
+
     private suspend fun setUserRole(userId: Int, password: String): User {
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
         preferenceDao.saveStateId(response.data.stateId)
+        val userData = response.data
+        val facilityData = userData.facilityData
+        facilityData?.location?.let { location ->
+
+            preferenceDao.saveLocationType(location.locationType ?: "")
+            preferenceDao.saveBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveState(location.state ?: "")
+            preferenceDao.saveDistrict(location.district ?: "")
+
+            preferenceDao.saveSupervisorDistrict(location.district ?: "")
+            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveSupervisorState(location.state ?: "")
+        }
+
+        // ---------- FACILITY ----------
+        facilityData?.facility?.let { facility ->
+
+            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+        }
+
+        // ---------- SUPERVISOR ----------
+        facilityData?.supervisor?.let { supervisor ->
+
+            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+        }
         return user
     }
 
