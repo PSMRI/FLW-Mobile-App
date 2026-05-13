@@ -2,7 +2,10 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import org.piramalswasthya.sakhi.R
+import com.squareup.moshi.JsonAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -10,6 +13,7 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
+import org.piramalswasthya.sakhi.model.PeerAtFacility
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
@@ -307,6 +311,8 @@ class AshaProfileDataset(
         val list = mutableListOf(
             pic,
             ashaName,
+            facilityName,
+            facilityId,
             village,
             locationType,
             loginuserName,
@@ -321,8 +327,6 @@ class AshaProfileDataset(
             bankAccount,
             Ifsc,
             populationCovered,
-            facilityName,
-            facilityId,
             ashaSupervisorName,
             ashaSupervisorContactNumber,
             ChoName,
@@ -358,17 +362,56 @@ class AshaProfileDataset(
         ashaSupervisorName.value = preferenceDao.getSupervisorName().toString()
         ashaSupervisorContactNumber.value = preferenceDao.getSupervisorContact().toString()
         locationType.value = preferenceDao.getLocationType()
-        ChoName.value = ashaProfile?.choName.toString()
-        ChoMobileNo.value = ashaProfile?.choMobile.toString()
         nameOfAWW.value = ashaProfile?.awwName.toString()
         mobieNoOfAWW.value = ashaProfile?.awwMobile.toString()
-        nameOfANM1.value = ashaProfile?.anm1Name.toString()
-        mobileNoOfANM1.value = ashaProfile?.anm1Mobile.toString()
-        nameOfANM2.value = ashaProfile?.anm2Name.toString()
-        mobileNoOfANM2.value = ashaProfile?.anm2Mobile.toString()
         abhaNumber.value = ashaProfile?.abhaNumber.toString()
         facilityName.value = preferenceDao.getSupervisorSubcenter()
         facilityId.value = preferenceDao.getFacilityId().toString()
+
+        try {
+
+            val moshi = Moshi.Builder().build()
+
+            val type = Types.newParameterizedType(
+                List::class.java,
+                PeerAtFacility::class.java
+            )
+
+            val adapter: JsonAdapter<List<PeerAtFacility>> =
+                moshi.adapter(type)
+
+            val choList = try {
+                adapter.fromJson(preferenceDao.getChoList().orEmpty()) ?: emptyList()
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+            val anmList = try {
+                adapter.fromJson(preferenceDao.getAnmList().orEmpty()) ?: emptyList()
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+            ChoName.value = choList.firstOrNull()?.fullName.orEmpty()
+            ChoMobileNo.value = choList.firstOrNull()?.mobile.orEmpty()
+
+            nameOfANM1.value = anmList.getOrNull(0)?.fullName.orEmpty()
+            mobileNoOfANM1.value = anmList.getOrNull(0)?.mobile.orEmpty()
+
+            nameOfANM2.value = anmList.getOrNull(1)?.fullName.orEmpty()
+            mobileNoOfANM2.value = anmList.getOrNull(1)?.mobile.orEmpty()
+
+        } catch (e: Exception) {
+
+            ChoName.value = ""
+            ChoMobileNo.value = ""
+
+            nameOfANM1.value = ""
+            mobileNoOfANM1.value = ""
+
+            nameOfANM2.value = ""
+            mobileNoOfANM2.value = ""
+        }
 //        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
 //        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
         setUpPage(list)

@@ -143,7 +143,7 @@ class MalariaSuspectedListFragment : Fragment() {
         }
 
         binding.apply {
-            switchButton.text = if (switchButton.isChecked) "IRS ON" else "IRS OFF"
+            switchButton.text = if (switchButton.isChecked) getString(R.string.irs_on) else getString(R.string.irs_off)
             switchButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     if (switchBtnMosquito.isChecked) {
@@ -151,7 +151,7 @@ class MalariaSuspectedListFragment : Fragment() {
                     }
                 }
 
-                switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
+                switchButton.text = if (isChecked) getString(R.string.irs_on) else getString(R.string.irs_off)
                 llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
             }
 

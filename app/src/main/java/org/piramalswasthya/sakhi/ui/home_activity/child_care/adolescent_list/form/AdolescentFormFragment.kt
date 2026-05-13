@@ -118,7 +118,7 @@ class AdolescentHealthFormFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__adolescent, // Add a relevant icon
-                "Adolescent Health Form"
+                getString(R.string.adolescent_health_form)
             )
         }
     }

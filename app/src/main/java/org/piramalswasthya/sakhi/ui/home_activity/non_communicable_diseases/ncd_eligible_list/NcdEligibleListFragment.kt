@@ -65,7 +65,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         binding.btnNextPage.visibility = View.GONE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, viewModel.yearsList())
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, viewModel.yearsList(requireContext()))
         binding.tilRvDropdown.setAdapter(adapter)
 
         binding.rvCat.adapter = NCDCategoryAdapter(viewModel.categoryData(),this,viewModel)
@@ -135,7 +135,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         binding.tilRvDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem != "Select Years") {
+                if (selectedItem != getString(R.string.select_years)) {
                     viewModel.filterText(selectedItem)
                 }
 

@@ -19,6 +19,7 @@
     <string name="father_s_name">Father\'s Name</string>
     <string name="mother_s_name">Mother\'s Name</string>
     <string name="mobile_number_of">Mobile Number Of</string>
+    <string name="select_all">Select All</string>
     <string name="other_mobile_number_of">Other - Mobile Number of</string>
     <string name="rch_id_ben">RCH ID</string>
     <string name="nbr_age">Age</string>

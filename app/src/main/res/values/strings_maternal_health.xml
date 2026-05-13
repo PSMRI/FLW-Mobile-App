@@ -11,6 +11,7 @@
     <string name="pmsma_form">PMSMA Form</string>
     <string name="general_op">General OP</string>
     <string name="saving_pmsma_to_database_failed">Saving pmsma to database Failed!</string>
+    <string name="high_risk_pregnancy">High-Risk Pregnancy</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">HRP Case, please visit the nearest HWC or call 104</string>
 
     <string-array name="maternal_health_pregnancy_week">

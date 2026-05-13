@@ -15,6 +15,7 @@ class MalariaFormDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
+    var onSubmitVisibilityChanged: ((Boolean) -> Unit)? = null
 
 
     private val dateOfCase = FormElement(
@@ -103,9 +104,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isFluLikeIllness = FormElement(
         id = 8,
@@ -114,9 +113,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isShakingchills = FormElement(
         id = 9,
@@ -125,9 +122,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isHeadache = FormElement(
         id = 10,
@@ -136,9 +131,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isMuscleaches = FormElement(
         id = 11,
@@ -147,9 +140,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isTiredness = FormElement(
         id = 12,
@@ -158,9 +149,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
     private var isNausea = FormElement(
         id = 13,
         inputType = InputType.RADIO,
@@ -168,9 +157,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
     private var isVomiting = FormElement(
         id = 14,
         inputType = InputType.RADIO,
@@ -178,9 +165,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private var isDiarrhea = FormElement(
         id = 15,
@@ -189,9 +174,7 @@ class MalariaFormDataset(
         entries = resources.getStringArray(R.array.yes_no),
         required = false,
         hasDependants = true
-    ).apply {
-        value = resources.getStringArray(R.array.yes_no)[1]
-    }
+    )
 
     private val caseStatus = FormElement(
         id = 16,
@@ -350,7 +333,7 @@ class MalariaFormDataset(
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             beneficiaryStatus.value = resources.getStringArray(R.array.benificary_case_status)[0]
             visitId = 0
-            caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
+            caseStatus.value = null
         } else {
             dateOfCase.value = getDateFromLong(saved.caseDate)
             followUpdate.value = getDateFromLong(saved.followUpDate)
@@ -479,57 +462,63 @@ class MalariaFormDataset(
 
 
                 if (caseStatus.value == resources.getStringArray(R.array.dc_case_status)[0] || caseStatus.value == resources.getStringArray(R.array.dc_case_status)[1] || caseStatus.value == resources.getStringArray(R.array.dc_case_status)[2]) {
-                    list.add(list.indexOf(caseStatus) + 1, testType)
-                    if (testType.value ==  resources.getStringArray(R.array.test_type)[0]) {
-                        list.add(list.indexOf(testType) + 1, rapidDiagnostic)
-                        if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
-                            dateOfTest.value = getDateFromLong(saved.dateOfRdt)
+                    if (index != 0) {
+                        list.add(list.indexOf(caseStatus) + 1, testType)
 
-                        }
+                        if (testType.value ==  resources.getStringArray(R.array.test_type)[0]) {
+                            list.add(list.indexOf(testType) + 1, rapidDiagnostic)
+                            if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
+                                dateOfTest.value = getDateFromLong(saved.dateOfRdt)
+
+                            }
 
 
-                    } else if (testType.value == resources.getStringArray(R.array.test_type)[1]) {
-                        list.add(list.indexOf(testType) + 1, slideTestOptions)
-                        if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
-                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
+                        } else if (testType.value == resources.getStringArray(R.array.test_type)[1]) {
+                            list.add(list.indexOf(testType) + 1, slideTestOptions)
+                            if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
+                                list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
+                            } else {
+                                list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
+                            }
+                            if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
+                                dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                            }
+
+                            if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
+                                dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                            }
+
                         } else {
-                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
-                        }
-                        if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
-                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                        }
+                            list.add(list.indexOf(testType) + 1, rapidDiagnostic)
+                            if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
+                                dateOfTest.value = getDateFromLong(saved.dateOfRdt)
+                                list.add(list.indexOf(rapidDiagnostic) + 2, slideTestOptions)
 
-                        if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
-                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                        }
+                            }
 
+                            if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
+                                list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
+                            } else {
+                                list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
+                            }
+                            if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
+                                dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                            }
+
+                            if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
+                                list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
+                                dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
+                            }
+                        }
                     } else {
-                        list.add(list.indexOf(testType) + 1, rapidDiagnostic)
-                        if (rapidDiagnostic.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(rapidDiagnostic) + 1, dateOfTest)
-                            dateOfTest.value = getDateFromLong(saved.dateOfRdt)
-                            list.add(list.indexOf(rapidDiagnostic) + 2, slideTestOptions)
-
-                        }
-
-                        if (slideTestOptions.value ==  resources.getStringArray(R.array.pf_pv)[0]) {
-                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPf)
-                        } else {
-                            list.add(list.indexOf(slideTestOptions) + 1, slideTestPv)
-                        }
-                        if (slideTestPv.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(slideTestPv) + 1, dateOfSlidetest)
-                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                        }
-
-                        if (slideTestPf.value != resources.getStringArray(R.array.positive_negative)[2]) {
-                            list.add(list.indexOf(slideTestPf) + 1, dateOfSlidetest)
-                            dateOfSlidetest.value = getDateFromLong(saved.dateOfSlideTest)
-                        }
+                        list.add(list.indexOf(caseStatus) + 1, testType)
                     }
+
 
                 } else if (caseStatus.value == resources.getStringArray(R.array.dc_case_status)[1]) {
                     list.add(list.indexOf(caseStatus) + 1, testType)
@@ -577,11 +566,15 @@ class MalariaFormDataset(
 
                 val yesValue = resources.getStringArray(R.array.yes_no)[0]
                 val suspectedValue = resources.getStringArray(R.array.dc_case_status)[0]
-                val notConfirmedValue = resources.getStringArray(R.array.dc_case_status)[2]
 
-                val symptoms = listOf(
+
+                val primarySymptoms = listOf(
+                    isFever.value,
                     isFluLikeIllness.value,
-                    isShakingchills.value,
+                    isShakingchills.value
+                )
+
+                val secondarySymptoms = listOf(
                     isHeadache.value,
                     isMuscleaches.value,
                     isTiredness.value,
@@ -590,13 +583,25 @@ class MalariaFormDataset(
                     isDiarrhea.value
                 )
 
-                val nonFeverYesCount = symptoms.count { it == yesValue }
+                val allSymptoms = primarySymptoms + secondarySymptoms
+                val anyAnswered = allSymptoms.any { it != null }
+                val anyPrimaryYes = primarySymptoms.any { it == yesValue }
+                val secondaryYesCount = secondarySymptoms.count { it == yesValue }
+                val isSuspected = anyPrimaryYes || secondaryYesCount >= 2
+
 
                 caseStatus.value = when {
-                    isFever.value == yesValue -> suspectedValue
-                    nonFeverYesCount >= 2 -> suspectedValue
-                    else -> notConfirmedValue
+                    !anyAnswered -> null
+                    isSuspected -> suspectedValue
+                    else -> "Not Suspected"
                 }
+
+               /* val allNo = anyAnswered && allSymptoms.none { it == yesValue }
+                val noneSelected = !anyAnswered
+                setSubmitButtonVisibility(!(allNo || noneSelected))*/
+                val anyYes = allSymptoms.any { it == yesValue }
+                val shouldShow = anyAnswered && anyYes
+                onSubmitVisibilityChanged?.invoke(shouldShow)
 
                 if(caseStatus.value == suspectedValue){
                     triggerDependants(
@@ -726,6 +731,8 @@ class MalariaFormDataset(
                         addItems = listOf(),
                         removeItems = listOf(dateOfTest,slideTestOptions,slideTestPf,slideTestPv,dateOfSlidetest)
                     )
+                    caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
+
                 } else if (rapidDiagnostic.value == resources.getStringArray(R.array.positive_negative)[1]) {
                     if (testType.value == resources.getStringArray(R.array.test_type)[2]) {
                         triggerDependants(
@@ -824,7 +831,7 @@ class MalariaFormDataset(
                         removeItems = listOf(dateOfSlidetest)
                     )
 
-                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
 
 
 
@@ -864,7 +871,7 @@ class MalariaFormDataset(
                         removeItems = listOf(dateOfSlidetest)
                     )
 
-                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[2]
+                        caseStatus.value = resources.getStringArray(R.array.dc_case_status)[0]
 
 
 

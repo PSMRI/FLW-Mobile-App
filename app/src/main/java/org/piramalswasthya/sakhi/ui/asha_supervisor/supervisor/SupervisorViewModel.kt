@@ -125,6 +125,8 @@ class SupervisorViewModel @Inject constructor(
     init {
         viewModelScope.launch {
 //            _user = pref.getLoggedInUser()!!
+            userRepo.setFacilityData(currentUser!!.userId)
+
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
                     _unprocessedRecordsCount.value =

@@ -92,6 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:hint="@string/aadhaar"
+                        android:importantForAccessibility="yes"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@id/cl_content_aadhar_id">
@@ -103,6 +104,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:inputType="none"
+                            android:importantForAccessibility="yes"
+                            android:contentDescription="aadhaar dropdown"
                             android:text="@{viewModel.aadhaarVerificationTypeValues[0]}" />
                     </com.google.android.material.textfield.TextInputLayout>
 

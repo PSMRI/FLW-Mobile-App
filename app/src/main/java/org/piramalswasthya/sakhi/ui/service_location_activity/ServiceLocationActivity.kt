@@ -48,10 +48,11 @@ class ServiceLocationActivity : AppCompatActivity() {
             }
         }
     }
+
     private val incompleteLocationAlert by lazy {
         MaterialAlertDialogBuilder(this)
             .setTitle("Missing Detail")
-            .setMessage("At least one of the following is missing value:\n \n\tState\n\tDistrict\n\tBlock\n\tVillage")
+            .setMessage("Please select Village")
             .setPositiveButton("Understood") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -135,6 +136,7 @@ class ServiceLocationActivity : AppCompatActivity() {
                             setText(viewModel.blockList.first())
                         }*/
                         binding.actvVillageDropdown.apply {
+                            contentDescription = "Village Dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())

@@ -370,7 +370,7 @@ class HBNCFormFragment : Fragment() {
             .setTitle("Infant Death Reported")
             .setMessage("Child marked as deceased. Please complete the CDR form.")
             .setCancelable(false)
-            .setPositiveButton("OK") { dialog, _ ->
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
                 navigateToCDRForm()
             }

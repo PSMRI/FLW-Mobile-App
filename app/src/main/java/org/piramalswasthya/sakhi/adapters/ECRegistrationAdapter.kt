@@ -60,7 +60,7 @@ class ECRegistrationAdapter(
                 binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.ecr.lmpDate)
                 if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
-                    binding.benStatus.text = "Missed Period"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.missed_period)
                 } else {
                     binding.ivMissState.visibility = View.GONE
                     binding.benStatus.text = "Under Review"

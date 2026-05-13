@@ -114,7 +114,7 @@
     <string name="place_of_meeting">बैठक का स्थान</string>
     <string name="mitanin">Mitanins</string>
     <string name="mt">मितानिन गतिविधि जांच सूची</string>
-    <string name="anmrho">ANM/ RHO</string>
+    <string name="anmrho">एएनएम / आरएचओ</string>
     <string name="participants_attended">उपस्थित प्रतिभागी</string>
     <string name="leprosy_title">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
     <string name="no_of_individuals">व्यक्तियों की संख्या</string>
@@ -122,7 +122,7 @@
 <string name="icon_title_ncd_tb_confirmed">पुष्टि किए गए टीबी मामले</string>
     <string name="place_of_vhnd">वीएचएनडी सत्र का स्थान</string>
     <string name="total_no_pw_attended">एएनसी जांच हेतु उपस्थित गर्भवती महिलाओं की संख्या</string>
-    <string name="total_no_lacting_mother_attended">PNC जांच के लिए उपस्थित स्तनपान कराने वाली माताओं की संख्या</string>
+    <string name="total_no_lacting_mother_attended">प्रसवोत्तर देखभाल जांच के लिए उपस्थित स्तनपान कराने वाली माताओं की संख्या</string>
     <string name="total_no_children_attended">टीकाकरण हेतु उपस्थित बच्चों की संख्या</string>
     <string name="health_nutrition">स्वास्थ्य एवं पोषण शिक्षा (गर्भवती महिलाएँ, धात्री माताएँ, किशोरी बालिकाओं पर विशेष ध्यान)</string>
     <string name="know_balance_diet">संतुलित आहार का ज्ञान</string>

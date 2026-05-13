@@ -242,7 +242,7 @@ class EligibleCoupleRegFragment : Fragment() {
 
         viewModel.showDialogEvent.observe(viewLifecycleOwner) { msg ->
             if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                showAlertDialog(requireContext(), "Alert!", msg)
+                showAlertDialog(requireContext(), getString(R.string.str_alert), msg)
             }
         }
         viewModel.benName.observe(viewLifecycleOwner) {
@@ -434,7 +434,7 @@ class EligibleCoupleRegFragment : Fragment() {
         MaterialAlertDialogBuilder(context)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ ->
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
             .setCancelable(false)

@@ -74,6 +74,18 @@ class MalariaFormViewModel @Inject constructor(
     var isDeath = false
 
 
+    private val _isSubmitVisible = MutableLiveData<Boolean>(true)
+    val isSubmitVisible: LiveData<Boolean> = _isSubmitVisible
+
+    init {
+        dataset.onSubmitVisibilityChanged = { isVisible ->
+            _isSubmitVisible.postValue(isVisible)
+        }
+
+        viewModelScope.launch {
+
+        }
+    }
     val allVisitsList = malariaDao.getAllVisitsForBen(benId)
         .map { list ->
             if (list.isNotEmpty()) {

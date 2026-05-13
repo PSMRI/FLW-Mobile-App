@@ -782,7 +782,7 @@ class FormInputAdapter(
                     binding.invalidateAll()
 
                 }, hour, minute, false)
-                mTimePicker.setTitle("Select Time")
+                mTimePicker.setTitle(binding.root.context.getString(R.string.select_time))
                 mTimePicker.show()
             }
             binding.executePendingBindings()

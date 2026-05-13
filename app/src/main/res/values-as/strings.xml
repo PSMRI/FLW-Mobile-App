@@ -25,6 +25,8 @@
     <string name="cd_icon_grid_icon">চিহ্ন</string>
     <string name="nav_item_1_text">নাম : <b>%s</b></string>
     <string name="nav_item_2_text">ব্যৱহাৰকাৰী : <b>%s</b></string>
+    <string name="nav_item_facility_text">সুবিধা : <b>%s</b></string>
+    <string name="nav_item_emp_text">কৰ্মচাৰী আইডি : <b>%s</b></string>
     <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%s</b></string>
     <string name="nav_item_4_text">ভাৰ্সন : %s</string>
     <string name="tv_required_text_asterisk">*</string>
@@ -165,6 +167,7 @@
     <string name="hbyc_month_list">HBYC মাহৰ তালিকা</string>
     <string name="immunization">পৰিস্কৃতি</string>
     <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
+    <string name="immunization_cant_done_as_missed">টিকাকৰণ বাদ পৰাৰ বাবে কৰিব নোৱাৰি</string>
     <string name="anc_visit">ANC দৰকাৰি</string>
     <string name="home_visit">ঘৰ ভিজিট</string>
     <string name="cac_form">CAC Form</string>
@@ -227,6 +230,9 @@
     <string name="monthly_claim_summary">মাহেকীয়া দাবীৰ সাৰাংশ</string>
     <string name="support">সহায়</string>
     <string name="to_do_list">কৰণীয়ৰ তালিকা</string>
+    <string name="irs_off">আই আৰ এছ অফ</string>
+    <string name="irs_on">আই আৰ এছ চালু</string>
+    <string name="adolescent_health_form">কিশোৰ স্বাস্থ্য ফৰ্ম</string>
     <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
     <string name="beneficiaries_due_for_immunization">টিকাকৰণৰ বাবে বঁটা পাবলগীয়া লাভান্বিত</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকিপূৰ্ণ কেচ</string>
@@ -259,6 +265,7 @@
     <string name="mdsr_form_from_anm_2">ANM ২ৰ পৰা MDSR ফৰ্ম</string>
     <string name="father_name">পিতৃৰ নাম</string>
     <string name="age_of_woman">মহিলাৰ বয়স</string>
+    <string name="select_time">সময় নিৰ্ব্বাচন কৰক</string>
     <string name="when_did_death_occur">মৃত্যু কেতিয়া হ’ল</string>
     <string name="name_of_the_deceased_woman">মৃত মহিলাগৰাকীৰ নাম</string>
     <string name="date_of_antra_injection">ANTRA বেজী দিয়াৰ তাৰিখ</string>
@@ -416,6 +423,13 @@
         <item name="hbnc_assisted">সহায়তাপ্ৰদান</item>
     </string-array>
 
+    <string-array name="hbnc_started_breastfeeding">
+        <item name="hbnc_breastfeeding_time_1">এঘণ্টাৰ ভিতৰত</item>
+        <item name="hbnc_breastfeeding_time_2">১ - ৪ ঘণ্টা</item>
+        <item name="hbnc_breastfeeding_time_3">৪.১ - ২৪ ঘণ্টা</item>
+        <item name="hbnc_breastfeeding_time_4">২৪ ঘণ্টাৰ পিছত</item>
+    </string-array>
+
     <string-array name="hbnc_feeding_of_baby">
         <item name="hbnc_feeding_of_baby_1">মাতৃৰ দুধ</item>
         <item name="hbnc_feeding_of_baby_2">পানী</item>
@@ -488,6 +502,23 @@
         <item>অনিয়মিত</item>
     </string-array>
 
+    <string-array name="tb_treatment_outcomes">
+        <item>সুস্থ হৈছে</item>
+        <item>বিফল হৈছে</item>
+        <item>ফ\'ল\'আপ হেৰুৱাইছে (LFU)</item>
+        <item>মৃত্যু</item>
+    </string-array>
+    <string-array name="place_of_death">
+        <item>घर</item>
+        <item>उपकेंद्र</item>
+        <item>पीएचसी</item>
+        <item>सीएचसी</item>
+        <item>जिला अस्पताल</item>
+        <item>मेडिकल कॉलेज अस्पताल</item>
+        <item>निजी अस्पताल</item>
+        <item>अन्य स्थान</item>
+    </string-array>
+
     <string-array name="dc_case_status">
         <item>সন্দেহজনক</item>
         <item>নিশ্চিত</item>
@@ -508,7 +539,53 @@
         <item>মৃত্যু</item>
         <item>পুনৰ লক্ষণ দেখা দিছে</item>
     </string-array>
+    <string-array name="irs_rounds">
+        <item name="one">প্ৰথম পৰ্যায়</item>
+        <item name="two">দ্বিতীয় পৰ্যায়</item>
+        <item name="three">তৃতীয় পৰ্যায়</item>
+        <item name="four">চতুৰ্থ পৰ্যায়</item>
+    </string-array>
 
+    <string-array name="benificary_case_status_leprosy">
+        <item name="dc_not_app">প্ৰযোজ্য নহয়</item>
+        <item name="dc_recovering">সুস্থ হৈ আছে</item>
+        <item name="dc_cured">সুস্থ হৈছে</item>
+        <item name="dc_death">মৃত্যু</item>
+        <item name="dc_symp">লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item name="dc_reg">নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item name="dc_n_Reg">নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+        <item name="dc_treatment">চিকিৎসা সম্পূৰ্ণ হৈছে</item>
+        <item name="dc_other">অন্যান্য</item>
+    </string-array>
+
+    <string-array name="kala_case_status">
+        <item name="dc_recovering">সুস্থ হৈ আছে</item>
+        <item name="dc_cured">সুস্থ হৈছে</item>
+        <item name="dc_dead">মৃত</item>
+        <item name="dc_r_symptoms">লক্ষণ পুনৰ দেখা দিয়া</item>
+    </string-array>
+
+    <string-array name="type_of_leprocy">
+        <item name="mb">MB (বহু-বেচিলাৰী)</item>
+        <item name="pb">PB (স্বল্প-বেচিলাৰী)</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>সুস্থ হৈ আছে</item>
+        <item>সুস্থ হৈছে</item>
+        <item>লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+        <item>চিকিৎসা সম্পূৰ্ণ হৈছে</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status_before_time">
+        <item>সুস্থ হৈ আছে</item>
+        <item>সুস্থ হৈছে</item>
+        <item>লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+    </string-array>
     <string-array name="death_place">
         <item>ঘৰ</item>
         <item>স্বাস্থ্য সুবিধা</item>
@@ -534,6 +611,19 @@
         <item>ৰেফাৰেল চিকিৎসালয়</item>
         <item>ব্যক্তিগত চিকিৎসালয়</item>
         <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>চিকিৎসাৰ বিফলতা</item>
+        <item>টিবি পুনৰাবৃত্তি / পুনৰ লক্ষণ দেখা দিয়া</item>
+        <item>ডি আৰ-টিবি ৰোগীৰ সংস্পৰ্শ</item>
+        <item>LFU (ফ’ল’আপ হেৰুৱা) পিছত চিকিৎসা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>চিকিৎসাগতভাৱে টিবি চিনাক্ত</item>
+        <item>টিবি সন্দেহ কৰা হোৱা নাই</item>
     </string-array>
 
     <string-array name="dc_refer_malaria">
@@ -1015,6 +1105,7 @@
     <string name="select_visit">ভিজিট বাছনি কৰক</string>
     <string name="no_previous_visits_available">কোনো পূৰ্বৰ ভিজিট উপলব্ধ নহয়</string>
     <string name="str_subcenter_name">উপ-কেন্দ্ৰৰ নাম</string>
+    <string name="str_subcenter">উপ-কেন্দ্ৰ</string>
     <string name="str_primary_health_center_name">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰৰ নাম</string>
     <string name="str_village_population">গাঁৱৰ জনসংখ্যা</string>
     <string name="str_total_no_of_childrens">গাঁৱত ৩ ৰ পৰা ১৫ মাহৰ শিশুৰ মুঠ সংখ্যা</string>
@@ -1129,6 +1220,7 @@
     <string name="verified_0">সত্যাপন কৰা: 0</string>
     <string name="pending_0">বাকী থকা: 0</string>
     <string name="rejected_0">বাতিল কৰা: 0</string>
+    <string name="overdue_0">অতিৰিক্ত সময়সীমা: 0</string>
     <string name="total_ashas">মুঠ আশা</string>
     <string name="select_month">মাহ বাছনি কৰক</string>
     <string name="pending">বাকী থকা</string>
@@ -1182,6 +1274,9 @@
     <string name="str_pls_allow_permissions">অনুগ্ৰহ কৰি প্ৰথমে অনুমতি দিয়ক</string>
     <string name="str_delivery_outcome_err_msg">প্ৰসৱৰ ফলাফল জীৱিত আৰু মৃত জন্মৰ যোগফলৰ সমান হ’ব লাগে</string>
     <string name="str_dose_one">মাত্ৰা-১</string>
+    <string name="str_alert">সতৰ্ক!</string>
+    <string name="str_pls_wait_for_the_record_to_sync_and_try_again">অনুগ্ৰহ কৰি ৰেকৰ্ডটো ছিঙ্ক হোৱালৈ অপেক্ষা কৰক আৰু পুনৰ চেষ্টা কৰক।</string>
+
 
     <string name="vac_bcg">বিচিজি ভেকচিন</string>
     <string name="vac_hepb_birth">হেপাটাইটিছ বি (জন্ম)</string>
@@ -1231,6 +1326,7 @@
     <string name="field_date_after">%1$s %2$s ৰ পিছত হ\'ব নোৱাৰে</string>
     <string name="incentive_dashboard">প্ৰেৰণা ডেছবোর্ড</string>
     <string name="facilitator">সহায়ক</string>
+    <string name="kpi_dashboard">KPI Dashboard</string>
     <string name="app_settings">এপ ছেটিংছ</string>
     <string name="number_of_families_label">পৰিয়ালৰ সংখ্যা : %s</string>
     <string name="number_of_children_label">শিশুৰ সংখ্যা : %s</string>

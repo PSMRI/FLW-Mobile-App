@@ -177,7 +177,7 @@ class EligibleCoupleTrackingDataset(
     private var dueDateOfAntraInjection = FormElement(
         id = 14,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.due_date_of_next_injection),
+        title = resources.getString(R.string.due_date_of_next_injection),
         required = false,
 
         )
@@ -185,7 +185,7 @@ class EligibleCoupleTrackingDataset(
     private val mpaFileUpload1 = FormElement(
         id = 23,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mpa_card),
+        title = resources.getString(R.string.mpa_card),
         required = false,
     )
 
@@ -439,7 +439,7 @@ class EligibleCoupleTrackingDataset(
             pregnancyTestResult.id -> {
                 antraDoses.value = antraDoseValue
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[0]
                     isPregnant.isEnabled = false
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -477,7 +477,7 @@ class EligibleCoupleTrackingDataset(
                 }
                 else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = false
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[1]
 
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -539,7 +539,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanning,
                             targetSideEffect = list1
                         )
@@ -547,7 +547,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanningMitanin,
                             targetSideEffect = list1
                         )
