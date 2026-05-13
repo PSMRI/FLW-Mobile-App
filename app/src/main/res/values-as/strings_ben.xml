@@ -19,6 +19,7 @@
     <string name="father_s_name">পিতৃৰ নাম</string>
     <string name="mother_s_name">মাতৃৰ নাম</string>
     <string name="mobile_number_of">ৰ মোবাইল নম্বৰ</string>
+    <string name="select_all">সকলো নিৰ্ব্বাচন কৰক</string>
     <string name="other_mobile_number_of">অন্যান্য - মোবাইল নম্বৰ</string>
     <string name="form_name">ফৰ্মৰ নাম</string>
     <string name="rch_id_ben">RCH ID</string>
@@ -322,7 +323,7 @@
 
     </string-array>
     <string-array name="select_all">
-        <item>Select All</item>
+        <item>সকলো নিৰ্ব্বাচন কৰক</item>
     </string-array>
     <string-array name="maa_breastfeeding">
         <item>সকলো বাছনি কৰক</item>

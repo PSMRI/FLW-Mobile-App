@@ -5,4 +5,5 @@
     <string name="u_win_session_list">U-win চেচন তালিকা</string>
     <string name="u_win_session_detail">U-win চেচন বিৱৰণ</string>
     <string name="do_you_want_to_upload_uwin_form_immunization_page_section_photo_copy_to_claim_your_incentive">আপোনাৰ প্ৰণোদনা দাবী কৰিবলৈ Uwin ফৰ্ম - টীকাকৰণ পৃষ্ঠা/অংশৰ ফটোকপি আপলোড কৰিব বিচাৰে নেকি</string>
+    <string name="file_upload_n">ফাইল আপল\'ড %1$d</string>
 </resources>

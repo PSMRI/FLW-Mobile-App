@@ -113,6 +113,7 @@
     <string name="tracking_form_filled_successfully">ট্ৰেকিং ফৰ্ম সফলতাৰে পূৰণ কৰা হৈছে</string>
     <string name="pmsma_form">পিএমএছএমএ প্ৰ-পত্ৰ</string>
     <string name="general_op">জেনেৰেল অ’ পি</string>
+    <string name="high_risk_pregnancy">উচ্চ বিপদজনক গৰ্ভাৱস্থা</string>
     <string name="saving_pmsma_to_database_failed">pmsma ক ডাটাবেছত সংৰক্ষণ কৰা ব্যৰ্থ!</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">এইচ আৰ পি কেছ, অনুগ্ৰহ কৰি ওচৰৰ এইচ ডব্লিউ চিলৈ যাওক বা ১০৪ নম্বৰত ফোন কৰক</string>
     <string name="pmsma_mcts_rch_number">MCTS নম্বৰ / RCH নম্বৰ</string>

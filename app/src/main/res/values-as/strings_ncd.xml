@@ -260,6 +260,7 @@
     <string name="tb_suspected_alert">MOলৈ গৈ স্পুতম নমুনা প্ৰাপ্ত কৰক</string>
     <string name="tb_suspected_alert_positive">MOলৈ গৈ যাওক</string>
     <string name="tb_suspected_family_alert">MOলৈ গৈ যাওক অথবা সকলো পৰিৱাৰ সদস্যৰ নমোলকৈ এএনএম/এমপিডবল জানাওক</string>
+    <string name="ncd_follow_up_hostory">এনচিডি ফ\'ল\'আপ ইতিহাস</string>
     <string name="filled_on">"ভৰা হৈছে "</string>
     <string name="save">সংৰক্ষণ কৰক</string>
     <string name="track">অনুসৰণ</string>
@@ -283,5 +284,17 @@
     <string name="cat_geriatric">বৃদ্ধজন</string>
     <string name="cat_hrp">উচ্চ ঝুঁকিপূর্ণ গৰ্ভাৱস্থা</string>
     <string name="cat_maternal">মাতৃ</string>
+
+    <string name="select_years">বছৰ বাছনি কৰক</string>
+    <string name="years_35">৩৫ বছৰ</string>
+    <string name="years_40">৪০ বছৰ</string>
+    <string name="years_45">৪৫ বছৰ</string>
+    <string name="years_50">৫০ বছৰ</string>
+    <string name="years_55">৫৫ বছৰ</string>
+    <string name="years_60">৬০ বছৰ</string>
+    <string name="years_65">৬৫ বছৰ</string>
+    <string name="years_70">৭০ বছৰ</string>
+    <string name="years_75">৭৫ বছৰ</string>
+    <string name="years_80">৮০ বছৰ</string>
 </resources>
 

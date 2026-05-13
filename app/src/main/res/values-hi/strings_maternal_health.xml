@@ -8,7 +8,7 @@
         <item>अधूरा</item>
     </string-array>
     <string-array name="place_of_anc_array">
-        <item>उप केंद्र</item>
+        <item>उप स्वास्थ्य केंद्र</item>
         <item>वीएचएनडी / वीएचएसएनडी</item>
         <item>पी.एच.सी</item>
         <item>पीएमएसएमए का दौरा</item>
@@ -220,7 +220,7 @@
         <item>जिला अस्पताल</item>
         <item>समुदाय स्वास्थ्य केंद्र</item>
         <item>प्राथमिक स्वास्थ्य केंद्र</item>
-        <item>उप केंद्र</item>
+        <item>उप स्वास्थ्य केंद्र</item>
         <item>अन्य सार्वजनिक सुविधा</item>
         <item>मान्यता प्राप्त निजी अस्पताल</item>
         <item>अन्य निजी अस्पताल</item>
@@ -277,8 +277,8 @@
     </string-array>
 
     <!--  Post Natal Care Strings -->
-    <string name="pnc_period">PNC अवधि</string>
-    <string name="pnc_visit_date">PNC दौरे की तारीख</string>
+    <string name="pnc_period">प्रसवोत्तर देखभाल अवधि</string>
+    <string name="pnc_visit_date">प्रसवोत्तर देखभाल दौरे की तारीख</string>
     <string name="pnc_ifa_tabs_given">दी गई आयरन-फोलिक एसिड (आईएफए) गोलियों की संख्या</string>
     <string name="pnc_contraception_method">गर्भनिरोध का तरीका</string>
     <string name="pnc_any_contraception_method">क्या प्रसव के बाद दंपति ने कोई परिवार नियोजन विधि अपनाई है? \n कोई भी गर्भनिरोध का तरीका</string>
@@ -306,13 +306,26 @@
         <item>नहीं</item>
     </string-array>
     <string-array name="pnc_contraception_method_array">
-        <item>पोस्ट पार्टम IUCD (PPIUCD) प्रसव के 48 घंटों के भीतर</item>
+        <item>पोस्ट पार्टम आईयूसीडी (पीपीआईयूसीडी) / गर्भनिरोधक यंत्र प्रसव के 48 घंटों के भीतर</item>
         <item>कंडोम</item>
         <item>पुरुष निषेकरण</item>
         <item>महिला निषेकरण</item>
         <item>पोस्ट पार्टम स्टेरिलाइजेशन (PPS प्रसव के 7 दिनों के भीतर)</item>
-        <item>MiniLap</item>
+        <item>मिनीलैप / स्थायी परिवार नियोजन</item>
         <item>कोई अन्य (स्पष्ट करें)</item>
+    </string-array>
+
+    <string-array name="sterilization_methods_array">
+        <item>पुरुष नसबंदी</item>
+        <item>महिला नसबंदी</item>
+        <item>प्रसवोत्तर नसबंदी (पीपीएस)</item>
+        <item>मिनीलैप / स्थायी परिवार नियोजन</item>
+    </string-array>
+
+    <string-array name="female_sterilization_methods_array">
+        <item>महिला नसबंदी</item>
+        <item>प्रसवोत्तर नसबंदी (पीपीएस)</item>
+        <item>मिनीलैप / स्थायी परिवार नियोजन</item>
     </string-array>
 
     <string-array name="pnc_mother_danger_sign_array">
@@ -411,6 +424,7 @@
     <string name="pmsma_form">पीएमएसएमए (PMSMA) फॉर्म</string>
     <string name="general_op">सामान्य बाह्य रोगी</string>
     <string name="saving_pmsma_to_database_failed">पीएमएसएमए (PMSMA) डेटा सेव करने में विफल</string>
+    <string name="high_risk_pregnancy">उच्च जोखिम वाली गर्भावस्था</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">खतरे के लक्षण गर्भावस्था – नजदीकी एचडब्ल्यूसी जाएं या 104 पर कॉल करें</string>
 
     <string name="str_anc_period">एएनसी अवधि</string>
@@ -430,7 +444,7 @@
     <string name="str_date_of_tt_second_dose">टीडी टीटी (दूसरी खुराक) की तिथि</string>
     <string name="str_date_of_tt_booster_dose">टीडी/टीटी (बूस्टर खुराक) की तिथि</string>
     <string name="str_no_of_acid_tab">दी गई फोलिक एसिड गोलियों की संख्या</string>
-    <string name="str_no_of_ifa_tab">दी गई आईएफए गोलियों की संख्या</string>
+    <string name="str_no_of_ifa_tab">दी गई आयरन फोलिक एसिड गोलियों की संख्या</string>
     <string name="str_any_high_risk_cond">कोई खतरे के लक्षण वाली स्थितियाँ</string>
     <string name="str_high_risk_cond">खतरे के लक्षण वाली स्थितियाँ</string>
     <string name="str_any_other_high_risk_cond">कोई अन्य खतरे के लक्षण वाली स्थितियाँ</string>

@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.ItemChildImmunizationDoseBinding
 import org.piramalswasthya.sakhi.model.VaccineDomain
 
@@ -70,7 +71,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
                     binding.idSwitch.setOnClickListener {
                         Toast.makeText(
                             binding.root.context,
-                            "Immunization cannot be done as it is missed",
+                            binding.root.context.getString(R.string.immunization_cant_done_as_missed),
                             Toast.LENGTH_SHORT
                         ).show()
                         binding.idSwitch.isChecked = false // always force back to off

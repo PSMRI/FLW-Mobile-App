@@ -177,7 +177,7 @@ class EligibleCoupleTrackingDataset(
     private var dueDateOfAntraInjection = FormElement(
         id = 14,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.due_date_of_next_injection),
+        title = resources.getString(R.string.due_date_of_next_injection),
         required = false,
 
         )
@@ -185,7 +185,7 @@ class EligibleCoupleTrackingDataset(
     private val mpaFileUpload1 = FormElement(
         id = 23,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mpa_card),
+        title = resources.getString(R.string.mpa_card),
         required = false,
     )
 
