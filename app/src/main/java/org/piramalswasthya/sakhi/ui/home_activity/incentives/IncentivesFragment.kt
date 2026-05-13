@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -120,23 +121,36 @@ class IncentivesFragment : Fragment() {
             101 -> {
                 binding.tvTitle.text = "Verified By"
                 binding.date.text = "Verified Date"
+                binding.cliamStatusTV.text = "Verified"
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_green_dark))
                 binding.tvRejectedReason.visibility = View.GONE
                 binding.rejectedTitle.visibility = View.GONE
+                binding.rejectedTitleView.visibility = View.GONE
             }
 
             102 -> {
                 binding.tvTitle.text = "Claim Status"
                 binding.date.visibility = View.GONE
+                binding.cliamStatusTV.text = "Pending"
+                binding.tvRejectedBy.text = "Pending"
+
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_orange_dark))
+
                 binding.tvRejectedReason.visibility = View.GONE
                 binding.rejectedTitle.visibility = View.GONE
+                binding.rejectedTitleView.visibility = View.GONE
             }
 
             103 -> {
                 binding.tvTitle.text = "Rejected By"
                 binding.date.text = "Rejected Date"
                 binding.tvRejectedReason.text = rejectedReason
+                binding.cliamStatusTV.text = "Rejected"
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+
                 binding.tvRejectedReason.visibility = View.VISIBLE
                 binding.rejectedTitle.visibility = View.VISIBLE
+                binding.rejectedTitleView.visibility = View.VISIBLE
             }
         }
 
@@ -160,6 +174,15 @@ class IncentivesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val calendar = Calendar.getInstance()
+
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentYears = calendar.get(Calendar.YEAR)
+
+        binding.et1.setText(
+            "${resources.getStringArray(R.array.months)[currentMonth]} $currentYears"
+        )
         // from month
         val fromMonth: Spinner = binding.fromMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -281,8 +304,16 @@ class IncentivesFragment : Fragment() {
                 val activityList = it.map { it.activity }
                 val pending = activityList.filter { !it.isPaid }.sumOf { it.rate }
                 val processed = activityList.filter { it.isPaid }.sumOf { it.rate }
-                binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
-                binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
+                if (isMitaninVariant) {
+                    binding.tvTotalPending.visibility = View.GONE
+                    binding.tvTotalProcessed.visibility = View.GONE
+                } else {
+                    binding.tvTotalPending.visibility = View.VISIBLE
+                    binding.tvTotalProcessed.visibility = View.VISIBLE
+                    binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
+                    binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
+                }
+
                 binding.tvLastupdated.text =
                     getString(R.string.incentive_last_updated, viewModel.lastUpdated)
 
@@ -354,6 +385,7 @@ class IncentivesFragment : Fragment() {
                 if (incentiveRecordList.get(0).record.isClaimed) {
                     binding.claimbtn.text = "Claimed"
                     binding.claimbtn.isClickable = false
+                    binding.claimbtn.isEnabled = false
                     binding.claimStatus.visibility = View.VISIBLE
                     binding.approved.text = ""
                     binding.approved.setOnClickListener {
@@ -381,6 +413,8 @@ class IncentivesFragment : Fragment() {
                         103 -> {
                             binding.approved.text = "Rejected"
                             binding.claimbtn.text = "Claim"
+                            binding.claimbtn.isEnabled = true
+
                             binding.claimbtn.isClickable = true
                             binding.approved.setBackgroundColor(
                                 ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
@@ -389,6 +423,8 @@ class IncentivesFragment : Fragment() {
                     }
                 } else {
                     binding.claimbtn.text = "Claim"
+                    binding.claimbtn.isEnabled = true
+
                     binding.claimbtn.isClickable = true
                     binding.claimStatus.visibility = View.GONE
                 }
@@ -434,22 +470,36 @@ class IncentivesFragment : Fragment() {
                             when (incentiveRecordList.get(0).record.approvalStatus) {
                                 101 ->  {
                                     binding.approved.text = "Verified"
-                                    binding.approved.setBackgroundColor(
-                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
-                                    )
+
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_green_dark
+                                            )
+                                        )
                                 }
                                 102 ->  {
                                     binding.approved.text = "Pending"
-                                    binding.approved.setBackgroundColor(
-                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
-                                    )
+
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_orange_light
+                                            )
+                                        )
                                 }
                                 103 -> {
                                     binding.approved.text = "Rejected"
 
-                                    binding.approved.setBackgroundColor(
-                                        ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
-                                    )
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_red_dark
+                                            )
+                                        )
                                 }
 
                             }

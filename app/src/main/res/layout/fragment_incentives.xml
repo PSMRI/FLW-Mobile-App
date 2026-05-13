@@ -193,17 +193,18 @@
             android:id="@+id/claimedStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Incentive claimed status"
+            android:text="Incentive claim status"
             android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="@+id/approved"
+            app:layout_constraintBottom_toBottomOf="@+id/approved"
             android:textStyle="bold"/>
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/approved"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             android:text=''
             android:textColor="@color/md_theme_light_onPrimary"
-            android:background='@color/holo_green_dark'
             android:textSize="16sp"
             android:textStyle="bold"/>
 

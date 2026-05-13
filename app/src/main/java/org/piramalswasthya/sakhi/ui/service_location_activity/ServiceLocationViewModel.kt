@@ -75,40 +75,67 @@ class ServiceTypeViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 user = pref.getLoggedInUser()!!
+
                 _userName = user.name
                 _facilityName = pref.getSupervisorSubcenter().toString()
                 currentLocation = pref.getLocationRecord()
                 _selectedVillage = currentLocation?.village
                 when (pref.getCurrentLanguage()) {
                     ENGLISH -> {
-                        stateDropdownEntry = pref.getState()
-                        districtDropdownEntry = pref.getDistrict()
-                        blockDropdownEntry = pref.getBlock()
-                        villageDropdownEntries = user.villages.map { it.name }.toTypedArray()
+                        stateDropdownEntry =
+                            pref.getState().ifEmpty { user.state.name }
+
+                        districtDropdownEntry =
+                            pref.getDistrict().ifEmpty { user.district.name }
+
+                        blockDropdownEntry =
+                            pref.getBlock().ifEmpty { user.block.name }
+
+                        villageDropdownEntries =
+                            user.villages.map { it.name }.toTypedArray()
 
                     }
 
-                   Languages.HINDI -> {
+                    Languages.HINDI -> {
                         stateDropdownEntry =
-                            user.state.let { it.nameHindi ?: it.name }
+                            pref.getState().ifEmpty {
+                                user.state.nameHindi ?: user.state.name
+                            }
+
                         districtDropdownEntry =
-                            pref.getDistrict()
+                            pref.getDistrict().ifEmpty {
+                                user.district.nameHindi ?: user.district.name
+                            }
+
                         blockDropdownEntry =
-                            user.block.let { it.nameHindi ?: it.name }
+                            pref.getBlock().ifEmpty {
+                                user.block.nameHindi ?: user.block.name
+                            }
+
                         villageDropdownEntries =
                             user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
                     }
 
                     ASSAMESE -> {
                         stateDropdownEntry =
-                            user.state.let { it.nameAssamese ?: it.name }
+                            pref.getState().ifEmpty {
+                                user.state.nameAssamese ?: user.state.name
+                            }
+
                         districtDropdownEntry =
-                            user.district.let { it.nameAssamese ?: it.name }
+                            pref.getDistrict().ifEmpty {
+                                user.district.nameAssamese ?: user.district.name
+                            }
+
                         blockDropdownEntry =
-                            user.block.let { it.nameAssamese ?: it.name }
+                            pref.getBlock().ifEmpty {
+                                user.block.nameAssamese ?: user.block.name
+                            }
+
                         villageDropdownEntries =
                             user.villages.map { it.nameAssamese ?: it.name }.toTypedArray()
-                   }
+                    }
+
                 }
 
             }

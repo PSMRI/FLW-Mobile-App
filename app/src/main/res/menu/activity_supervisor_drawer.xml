@@ -10,7 +10,7 @@
         <item
             android:id="@+id/supervisorFragment"
             android:icon="@drawable/ic_home"
-            android:title="@string/menu_supervisor" />
+            android:title="@string/home" />
 
         <item
             android:id="@+id/supervisorProfileFragment"
