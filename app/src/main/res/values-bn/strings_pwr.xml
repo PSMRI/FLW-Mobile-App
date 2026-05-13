@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pwrdst_rich_id">RCH আইডি</string>
+    <string name="pwrdst_mcp_card_no">MCP কার্ড নম্বর</string>
+    <string name="pwrdst_name_prag_wo">গর্ভবতী মহিলার নাম</string>
+    <string name="pwrdst_name_hus">স্বামীর নাম</string>
+    <string name="pwrdst_curr_age_wo">মহিলার বর্তমান বয়স</string>
+    <string name="pwrdst_lmp_date">LMP তারিখ</string>
+    <string name="pwrdst_wk_of_prag_reg">নিবন্ধনের সময় গর্ভাবস্থার সপ্তাহ</string>
+    <string name="pwrdst_edd">EDD (প্রসবের সম্ভাব্য তারিখ)</string>
+    <string name="pwrdst_bld_grp">রক্তের গ্রুপ</string>
+    <string name="pwrdst_wht_of_tm_reg">নিবন্ধনের সময় গর্ভবতীর ওজন (কেজি)</string>
+    <string name="pwrdst_hht_of_pw">গর্ভবতীর উচ্চতা (সেমি)</string>
+    <string name="pwrdst_vdrl_rpr_tst_rlts">VDRL/RPR পরীক্ষার ফলাফল</string>
+    <string name="pwrdst_vdrl_tst_done">VDRL পরীক্ষার তারিখ</string>
+    <string name="pwrdst_hiv_tst_rlt">HIV পরীক্ষার ফলাফল</string>
+    <string name="pwrdst_date_hiv_tst_done">HIV পরীক্ষার তারিখ</string>
+    <string name="pwrdst_hbsag_tst_rlt">HBsAg পরীক্ষার ফলাফল</string>
+    <string name="pwrdst_hbsag_tst_done">HBsAg পরীক্ষার তারিখ</string>
+    <string name="pwrdst_pst_illness">পূর্ববর্তী অসুস্থতা</string>
+    <string name="pwrdst_other">অন্যান্য</string>
+    <string name="pwrdst_is_prag">এটি কি আপনার প্রথম গর্ভাবস্থা?</string>
+    <string name="pwrdst_no_of_prev_prag">পূর্ববর্তী গর্ভাবস্থার মোট সংখ্যা</string>
+    <string name="pwrdst_any_lst_pregnancy">গত গর্ভাবস্থায় কোনো জটিলতা ছিল কি?</string>
+    <string name="pwrdst_any_other_comp">অন্যান্য কোনো জটিলতা</string>
+    <string name="pwrdst_is_id_as_hrp_cse">এটি কি HRP (High Risk Pregnancy) হিসেবে চিহ্নিত?</string>
+
+    <array name="pwrdst_yes_no">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </array>
+
+    <string name="pwrdst_who_id_as_hrp">কে HRP হিসেবে চিহ্নিত করেছেন?</string>
+</resources>

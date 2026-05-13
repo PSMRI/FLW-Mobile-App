@@ -271,6 +271,8 @@ class SupervisorFragment : Fragment() {
                         ENGLISH -> it.name
                         Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
+                        Languages.BANGLA -> it.nameBangla ?: it.name
+
 
                     }
                 )
