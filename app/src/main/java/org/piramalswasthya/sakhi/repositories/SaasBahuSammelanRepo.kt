@@ -166,6 +166,7 @@ class SaasBahuSammelanRepo @Inject constructor(
         Log.e("AHJAHA",body)
         val adapter = moshi.adapter(SaasBahuSammelanGetAllResponse::class.java)
         val parsed = adapter.fromJson(body) ?: return@withContext
+        val unsyncedRecords = saasBahuDao.getBySyncState(SyncState.UNSYNCED)
         saasBahuDao.clearAll()
         parsed.data?.forEach { item ->
             val imageBase64List = item.meetingImages ?: emptyList()
@@ -199,6 +200,9 @@ class SaasBahuSammelanRepo @Inject constructor(
             )
 
             saasBahuDao.insertSammelan(entity)
+        }
+        unsyncedRecords.forEach {
+            saasBahuDao.insertSammelan(it)
         }
     }
 
