@@ -92,9 +92,9 @@
             viewModel.showHighRiskAlert.observe(viewLifecycleOwner) { show ->
                 if (show) {
                     MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("High-Risk Pregnancy")
-                        .setMessage("HRP Case, please visit the nearest HWC or call 104")
-                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                        .setTitle(getString(R.string.high_risk_pregnancy))
+                        .setMessage(getString(R.string.hrp_case_please_visit_the_nearest_hwc_or_call_104))
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
                         .show()
                 }
             }

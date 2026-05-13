@@ -6,6 +6,8 @@
     <string name="nav_item_1_text">Name : %s</string>
     <string name="nav_item_2_text">Role : %s</string>
     <string name="nav_item_3_text">ID : %s</string>
+    <string name="nav_item_facility_text">सुविधा : <b>%s</b></string>
+    <string name="nav_item_emp_text">कर्मचारी आईडी : <b>%s</b></string>
     <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
     <string name="rv_item_hh_entry_1">%1$d</string>
@@ -53,6 +55,7 @@
     <string name="mdsr_form_from_anm_2">एएनएम 2 से एमडीएसआर फॉर्म</string>
     <string name="father_name">पिता का नाम</string>
     <string name="age_of_woman">महिला की आयु</string>
+    <string name="select_time">समय चुनें</string>
     <string name="when_did_death_occur">मृत्यु कब हुई</string>
     <string name="name_of_the_deceased_woman">मृत महिला का नाम</string>
     <string name="date_of_antra_injection">अंतरा इंजेक्शन की तारीख</string>
@@ -143,9 +146,9 @@
     <string name="refer_date">रेफर तिथि</string>
     <string-array name="referal_health_center_array">
         <item>अपोलो</item>
-        <item>सीएचसी</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
         <item>जिला अस्पताल</item>
-        <item>पीएचसी</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
     </string-array>
     <string name="home_visit_number">गृह भ्रमण %d</string>
     <string name="home_visit_date">गृह भ्रमण तिथि </string>
@@ -205,6 +208,9 @@
     <string name="hbnc_baby_weight_2_5_alert">माँ को शिशु को अतिरिक्त गर्मी देने और उसे बार-बार दूध पिलाने की सलाह दें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
     <string name="str_weight_at_birth_gram">जन्म के समय वजन (ग्राम)</string>
     <string name="btn_submit">सबमिट करें</string>
+    <string name="irs_off">आईआरएस बंद</string>
+    <string name="adolescent_health_form">किशोर स्वास्थ्य प्रपत्र</string>
+    <string name="irs_on">आईआरएस चालू</string>
     <string name="ben_pending_sync">सिंक लंबित</string>
     <string name="tv_husband_name_ph">पति का नाम</string>
     <string name="tv_spouse_name_ph">पति/पत्नी का नाम</string>
@@ -337,9 +343,9 @@
     <string name="weeks_of_pregnancy">गर्भावस्था के सप्ताह</string>
     <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
     <string name="anc_visits">एएनसी भ्रमण</string>
-    <string name="pnc_visits">पीएनसी भ्रमण</string>
+    <string name="pnc_visits">प्रसवोत्तर देखभाल भ्रमण</string>
     <string name="add_anc_visits">एएनसी भ्रमण जोड़ें</string>
-    <string name="add_pnc_visits">पीएनसी भ्रमण जोड़ें</string>
+    <string name="add_pnc_visits">प्रसवोत्तर देखभाल भ्रमण जोड़ें</string>
     <string name="id">आईडी</string>
     <string name="no_of_children">बच्चों की संख्या</string>
     <string name="view_visit">भ्रमण देखें</string>
@@ -367,7 +373,7 @@
     <string name="adult_registration">वयस्क पंजीकरण</string>
     <string name="pregnancy_list">गर्भावस्था सूची</string>
     <string name="delivery_stage_list">प्रसव अवस्था सूची</string>
-    <string name="pnc_mother_list">PNC माँ सूची</string>
+    <string name="pnc_mother_list">प्रसवोत्तर देखभाल माँ सूची</string>
     <string name="reproductive_age_list">प्रजनन आयु सूची</string>
     <string name="ncd_eligible_list">गैर संक्रामक रोग पात्र सूची</string>
     <string name="ncd_list">गैर संक्रामक रोग सूची</string>
@@ -393,6 +399,7 @@
     <string name="hbyc_month_list">एचबीवाईसी माह सूची</string>
     <string name="immunization">टीकाकरण</string>
     <string name="pregnancy_registration_form">गर्भावस्था पंजीकरण फॉर्म</string>
+    <string name="immunization_cant_done_as_missed">टीकाकरण नहीं किया जा सकता, क्योंकि यह छूट गया है।</string>
     <string name="anc_visit">एएनसी विजिट</string>
     <string name="home_visit">गृह भ्रमण</string>
     <string name="eligible_couple_list">लक्ष्य दंपति सूची</string>
@@ -535,6 +542,7 @@
     <string name="verified_0">सत्यापित: 0</string>
     <string name="pending_0">लंबित: 0</string>
     <string name="rejected_0">अस्वीकृत: 0</string>
+    <string name="overdue_0">बकाया: 0</string>
     <string name="total_ashas">कुल आशाएँ</string>
     <string name="select_month">माह चुनें</string>
     <string name="overdue">अवधि से अधिक लंबित</string>
@@ -657,7 +665,7 @@
     <string name="file_size">फ़ाइल का आकार 5 MB से कम या बराबर होना चाहिए।</string>
     <string name="other_place">मृत्यु का अन्य स्थान</string>
     <string name="other_reason">मृत्यु का अन्य कारण</string>
-    <string name="pnc">PNC</string>
+    <string name="pnc">प्रसवोत्तर देखभाल</string>
     <string name="no_of_elderly_children">वयस्क बच्चों की संख्या (15 वर्ष से ऊपर)</string>
     <string name="no_of_younger_children">बच्चों की संख्या</string>
     <string name="visit_no">विजिट संख्या</string>
@@ -724,10 +732,10 @@
     <string name="place_new">स्थान</string>
     <string name="check_sam">सैम जांचें</string>
     <string name="ors">ओआरएस</string>
-    <string name="ifa">आईएफए</string>
+    <string name="ifa">आयरन फोलिक एसिड</string>
     <string name="add_new">नया जोड़ें</string>
-    <string name="ifa_distribution">आईएफए वितरण</string>
-    <string name="ifa_quantity">आईएफए मात्रा</string>
+    <string name="ifa_distribution">आयरन फोलिक एसिड वितरण</string>
+    <string name="ifa_quantity">आयरन फोलिक एसिड मात्रा</string>
     <string name="date_of_provision">प्रदान करने की तारीख</string>
     <string name="bottle_number">बोतल नंबर</string>
     <string name="s_no">क्रम संख्या</string>
@@ -743,12 +751,13 @@
     <string name="uwin_session_format">UWIN सत्र %s</string>
     <string name="add_wife">पत्नी पंजीकरण</string>
     <string name="add_husband">पति पंजीकरण</string>
-    <string name="hof">एचओएफ</string>
+    <string name="hof">मुखिया</string>
     <string name="download_not_available_for_this_variant">इस वेरिएंट के लिए डाउनलोड उपलब्ध नहीं है</string>
     <string name="leprosy_visit">कुष्ठ रोग विजिट</string>
     <string name="select_visit">विजिट चुनें</string>
     <string name="no_previous_visits_available">कोई पिछली विजिट उपलब्ध नहीं</string>
     <string name="str_subcenter_name">उप-केंद्र का नाम</string>
+    <string name="str_subcenter">उप-केन्द्र</string>
     <string name="str_primary_health_center_name">प्राथमिक स्वास्थ्य केंद्र का नाम</string>
     <string name="str_village_population">गांव की जनसंख्या</string>
     <string name="str_total_no_of_childrens">गांव में 3 से 15 महीने की आयु के बच्चों की कुल संख्या</string>
@@ -902,10 +911,10 @@
     <string name="str_date_of_mother_referral">माता के रेफरल की तारीख</string>
     <string name="str_place_of_mother_referral">माता के रेफरल का स्थान</string>
     <string name="str_other_place_of_mother_referral">अन्य - माता के रेफरल का स्थान</string>
-    <string name="no_of_childrens">No of children</string>
-    <string name="marriage_date">Marriage Date</string>
-    <string name="children_details">Children Details</string>
-    <string name="bank_details">Bank Details</string>
+    <string name="no_of_childrens">बच्चों की संख्या</string>
+    <string name="marriage_date">विवाह की तिथि</string>
+    <string name="children_details">बच्चों का विवरण</string>
+    <string name="bank_details">बैंक विवरण</string>
     <string name="date_of_delivery">प्रसव की तिथि</string>
     <string name="any_danger_signs">क्या कोई खतरे के संकेत हैं?\n</string>
     <string name="any_high_risk_identified">क्या कोई खतरे के लक्षण पहचाना गया है?</string>
@@ -993,6 +1002,24 @@
         <item>अनियमित</item>
     </string-array>
 
+    <string-array name="tb_treatment_outcomes">
+        <item>ठीक हो गया</item>
+        <item>विफल</item>
+        <item>फॉलो-अप में खो गया (LFU)</item>
+        <item>मृत्यु</item>
+    </string-array>
+
+    <string-array name="place_of_death">
+        <item>घर</item>
+        <item>उप-केंद्र</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र (PHC)</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र (CHC)</item>
+        <item>जिला अस्पताल</item>
+        <item>मेडिकल कॉलेज अस्पताल</item>
+        <item>निजी अस्पताल</item>
+        <item>अन्य स्थान</item>
+    </string-array>
+
     <string-array name="dc_case_status">
         <item name="dc_suspected">संदिग्ध</item>
         <item name="dc_confirmed">पुष्टि हुई</item>
@@ -1012,6 +1039,32 @@
         <item name="dc_cured">ठीक हो गए</item>
         <item name="dc_death">मृत्यु</item>
         <item name="dc_symp">लक्षण फिर से आए</item>
+    </string-array>
+
+    <string-array name="irs_rounds">
+        <item name="one">पहला चरण</item>
+        <item name="two">दूसरा चरण</item>
+        <item name="three">तीसरा चरण</item>
+        <item name="four">चौथा चरण</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_leprosy">
+        <item name="dc_not_app">लागू नहीं</item>
+        <item name="dc_recovering">स्वस्थ हो रहा है</item>
+        <item name="dc_cured">ठीक हो गया</item>
+        <item name="dc_death">मृत्यु</item>
+        <item name="dc_symp">लक्षणों की पुनरावृत्ति</item>
+        <item name="dc_reg">नियमित रूप से दवा ले रहा है</item>
+        <item name="dc_n_Reg">नियमित रूप से दवा नहीं ले रहा है</item>
+        <item name="dc_treatment">उपचार पूरा हुआ</item>
+        <item name="dc_other">अन्य</item>
+    </string-array>
+
+    <string-array name="kala_case_status">
+        <item name="dc_recovering">स्वस्थ हो रहा है</item>
+        <item name="dc_cured">ठीक हो गया</item>
+        <item name="dc_dead">मृत</item>
+        <item name="dc_r_symptoms">लक्षणों की पुनरावृत्ति</item>
     </string-array>
 
     <string-array name="death_place">
@@ -1089,6 +1142,25 @@
         <item name="hbnc_place_of_delivery_4">प्राथमिक स्वास्थ्य केंद्र</item>
     </string-array>
 
+    <string-array name="hbnc_baby_gender">
+        <item name="hbnc_male">Male</item>
+        <item name="hbnc_female">Female</item>
+        <item name="hbnc_transgender">Transgender</item>
+    </string-array>
+
+    <string-array name="hbnc_type_of_delivery">
+        <item name="hbnc_normal_delivery">सामान्य प्रसव</item>
+        <item name="hbnc_c_section">सी-सेक्शन</item>
+        <item name="hbnc_assisted">सहायता प्राप्त प्रसव</item>
+    </string-array>
+
+    <string-array name="hbnc_started_breastfeeding">
+        <item name="hbnc_breastfeeding_time_1">एक घंटे के भीतर</item>
+        <item name="hbnc_breastfeeding_time_2">1 - 4 घंटे</item>
+        <item name="hbnc_breastfeeding_time_3">4.1 - 24 घंटे</item>
+        <item name="hbnc_breastfeeding_time_4">24 घंटे के बाद</item>
+    </string-array>
+
 
     <string-array name="body_part_male">
         <item>दाएं हाथ</item>
@@ -1097,6 +1169,19 @@
         <item>बाएं पैर</item>
         <item>हाइड्रोसील</item>
         <item>अन्य</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>उपचार विफलता</item>
+        <item>टीबी पुनरावृत्ति / दोबारा लक्षण</item>
+        <item>डीआर-टीबी रोगी के संपर्क में</item>
+        <item>LFU (फॉलो-अप छूटने) के बाद उपचार</item>
+        <item>अन्य</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>चिकित्सकीय रूप से टीबी निदान</item>
+        <item>टीबी संदिग्ध नहीं</item>
     </string-array>
 
     <string-array name="body_part_female">
@@ -1171,7 +1256,7 @@
         <item>सूक्ष्म जन्म योजना</item>
         <item>वीएचएनडी</item>
         <item>वीएचएसएनसी</item>
-        <item>पीएचसी</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
         <item>एएचडी</item>
         <item>कीड़ा मुक्ति</item>
         <item>एनसीडी फॉलो-अप</item>
@@ -1223,6 +1308,8 @@
     <string name="str_delivery_outcome_err_msg">प्रसव का परिणाम जीवित जन्म और मृत जन्म के योग के बराबर होना चाहिए</string>
     <string name="str_dose_one">खुराक-1</string>
     <string name="str_dose">खुराक</string>
+    <string name="str_alert">चेतावनी!</string>
+    <string name="str_pls_wait_for_the_record_to_sync_and_try_again">कृपया रिकॉर्ड के सिंक होने का इंतज़ार करें और फिर से कोशिश करें।</string>
 
     <string name="location_type">लोकेशन प्रकार</string>
     <string name="str_no_more_dose">अब और खुराक नहीं</string>

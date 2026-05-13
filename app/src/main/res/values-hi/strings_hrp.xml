@@ -12,6 +12,7 @@
     <string name="contact_number_2">संपर्क संख्या 2</string>
     <string name="sc_hwc_tg_hosp">सब-सेंटर/एचडब्ल्यूसी</string>
     <string name="bank_acc_no">बैंक खाता संख्या</string>
+    <string name="under_review">समीक्षा में</string>
     <string name="bank_acc">बैंक खाता</string>
     <string name="nearest_24x7_phc">निकटतम 24x7 पीएचसी</string>
     <string name="nearest_fru">निकटतम एफआरयू</string>
@@ -41,7 +42,7 @@
     <string name="to_be_filled_consulting_with_anm">(आर एच ओ से परामर्श कर भरें)</string>
     <string name="hypertension">उच्च रक्तचाप</string>
     <string name="risk_status">जोखिम की स्थिति</string>
-    <string name="missed_period">मासिक धर्म रुकना</string>
+    <string name="missed_period">माहवारी रुकी</string>
     <string name="lmp">अंतिम मासिक धर्म (LMP)</string>
     <string name="adoption_of_family_planning">परिवार नियोजन अपनाना</string>
     <string name="current_fp_pregnancy_status">वर्तमान परिवार नियोजन/गर्भावस्था की स्थिति</string>

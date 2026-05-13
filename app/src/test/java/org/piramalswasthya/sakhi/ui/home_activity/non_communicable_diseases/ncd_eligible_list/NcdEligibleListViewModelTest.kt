@@ -151,7 +151,9 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `yearsList returns 11 entries starting with Select Years`() {
-        val years = viewModel.yearsList()
+        val years = viewModel.yearsList(
+            context = TODO()
+        )
         assertEquals(11, years.size)
         assertEquals("Select Years", years[0])
         assertEquals("35 YEARS", years[1])
@@ -160,8 +162,8 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `yearsList clears and rebuilds on each call`() {
-        viewModel.yearsList()
-        val years = viewModel.yearsList()
+        viewModel.yearsList(    context = TODO())
+        val years = viewModel.yearsList(    context = TODO())
         assertEquals(11, years.size)
     }
 }

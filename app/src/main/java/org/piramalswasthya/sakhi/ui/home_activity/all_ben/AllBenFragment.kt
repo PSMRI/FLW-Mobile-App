@@ -351,10 +351,10 @@ class AllBenFragment : Fragment() {
         lifecycleScope.launch {
             if (viewModel.getBenFromId(benId) == 0L) {
                 androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Alert!")
-                    .setMessage("Please wait for the record to sync and try again.")
+                    .setTitle(getString(R.string.str_alert))
+                    .setMessage(getString(R.string.str_pls_wait_for_the_record_to_sync_and_try_again))
                     .setCancelable(false)
-                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
                 viewModel.fetchAbha(benId)

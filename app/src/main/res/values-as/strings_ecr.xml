@@ -11,6 +11,7 @@
     <string name="ecrdset_bank_ac">বেংক এচি নং বা ডাকঘৰৰ এচি নং</string>
     <string name="ecrdset_bank_name">বেংকৰ নাম</string>
     <string name="ecrdset_branch_name">শাখাৰ নাম</string>
+    <string name="ecrdset_already_filled">এই মাহৰ বাবে ইতিমধ্যে ভৰি পৰিছে!</string>
     <string name="ecrdset_ifsc_code">আই এফ এছ চি ক\'ড</string>
     <string name="ecrdset_ttl_child_born">জন্ম হোৱা শিশুৰ মুঠ সংখ্যা</string>
     <string name="ecrdset_no_live_child">জীৱন্ত শিশুৰ সংখ্যা</string>

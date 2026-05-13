@@ -11,6 +11,7 @@
     <string name="ecrdset_bank_ac">बैंक या पोस्ट ऑफिस खाता संख्या</string>
     <string name="ecrdset_bank_name">बैंक का नाम</string>
     <string name="ecrdset_branch_name">शाखा का नाम</string>
+    <string name="ecrdset_already_filled">इस माह के लिए पहले ही भरा जा चुका है!</string>
     <string name="ecrdset_ifsc_code">IFSC कोड</string>
     <string name="ecrdset_ttl_child_born">अब तक पैदा हुए बच्चों की कुल संख्या</string>
     <string name="ecrdset_no_live_child">जीवित बच्चों की संख्या</string>
