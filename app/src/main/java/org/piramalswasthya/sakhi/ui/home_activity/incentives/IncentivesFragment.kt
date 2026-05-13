@@ -304,16 +304,16 @@ class IncentivesFragment : Fragment() {
                 val activityList = it.map { it.activity }
                 val pending = activityList.filter { !it.isPaid }.sumOf { it.rate }
                 val processed = activityList.filter { it.isPaid }.sumOf { it.rate }
-                if (isMitaninVariant) {
+               /* if (isMitaninVariant) {
                     binding.tvTotalPending.visibility = View.GONE
                     binding.tvTotalProcessed.visibility = View.GONE
                 } else {
                     binding.tvTotalPending.visibility = View.VISIBLE
                     binding.tvTotalProcessed.visibility = View.VISIBLE
-                    binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
-                    binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
-                }
 
+                }*/
+                binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
+                binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
                 binding.tvLastupdated.text =
                     getString(R.string.incentive_last_updated, viewModel.lastUpdated)
 
@@ -542,9 +542,9 @@ class IncentivesFragment : Fragment() {
         }
 
         if (isMitaninVariant) {
-            binding.tvHeaderAmount.visibility = View.GONE
-            binding.tvHeaderDoc.visibility = View.GONE
-            binding.guideline75.setGuidelinePercent(0.9f)
+            binding.tvHeaderAmount.visibility = View.VISIBLE
+            binding.tvHeaderDoc.visibility = View.VISIBLE
+//            binding.guideline75.setGuidelinePercent(0.9f)
         }
     }
 
