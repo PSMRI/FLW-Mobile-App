@@ -167,7 +167,7 @@ class EligibleCoupleTrackingDataset(
     private var dateOfAntraInjection = FormElement(
         id = 13,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.date_of_antra_injection),
+        title = resources.getString(R.string.date_of_antra_injection),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
