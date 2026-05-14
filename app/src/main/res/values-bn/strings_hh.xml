@@ -110,4 +110,58 @@
 
     <string name="add_head_of_family_message">আপনি কি <b>%1s</b> কে পরিবার প্রধান (HoF) হিসেবে যোগ করতে চান?</string>
 
+    <string-array name="nhhr_type_residential_area_array">
+        <item>@string/nhhr_type_residential_area_1</item>
+        <item>@string/nhhr_type_residential_area_2</item>
+        <item>@string/nhhr_type_residential_area_3</item>
+        <item>@string/nhhr_type_residential_area_4</item>
+        <item>@string/nhhr_type_residential_area_5</item>
+    </string-array>
+    <string-array name="nhhr_type_of_house_array">
+        <item>@string/nhhr_type_of_house_1</item>
+        <item>@string/nhhr_type_of_house_2</item>
+        <item>@string/nhhr_type_of_house_3</item>
+        <item>@string/nhhr_type_of_house_4</item>
+    </string-array>
+    <string-array name="nhhr_fuel_cooking_array">
+        <item>@string/nhhr_fuel_cooking_1</item>
+        <item>@string/nhhr_fuel_cooking_2</item>
+        <item>@string/nhhr_fuel_cooking_3</item>
+        <item>@string/nhhr_fuel_cooking_4</item>
+        <item>@string/nhhr_fuel_cooking_5</item>
+        <item>@string/nhhr_fuel_cooking_6</item>
+        <item>@string/nhhr_fuel_cooking_7</item>
+        <item>@string/nhhr_fuel_cooking_8</item>
+    </string-array>
+    <string-array name="nhhr_primary_water_array">
+        <item>@string/nhhr_primary_water_1</item>
+        <item>@string/nhhr_primary_water_2</item>
+        <item>@string/nhhr_primary_water_3</item>
+        <item>@string/nhhr_primary_water_4</item>
+        <item>@string/nhhr_primary_water_5</item>
+        <item>@string/nhhr_primary_water_6</item>
+        <item>@string/nhhr_primary_water_7</item>
+        <item>@string/nhhr_primary_water_8</item>
+    </string-array>
+    <string-array name="nhhr_avail_electricity_array">
+        <item>@string/nhhr_avail_electricity_1</item>
+        <item>@string/nhhr_avail_electricity_2</item>
+        <item>@string/nhhr_avail_electricity_3</item>
+        <item>@string/nhhr_avail_electricity_4</item>
+        <item>@string/nhhr_avail_electricity_5</item>
+    </string-array>
+    <string-array name="nhhr_avail_toilet_array">
+        <item>@string/nhhr_avail_toilet_1</item>
+        <item>@string/nhhr_avail_toilet_2</item>
+        <item>@string/nhhr_avail_toilet_3</item>
+        <item>@string/nhhr_avail_toilet_4</item>
+        <item>@string/nhhr_avail_toilet_5</item>
+        <item>@string/nhhr_avail_toilet_6</item>
+    </string-array>
+    <string name="nhhr_type_residential_area_other">অন্যান্য ধরণের আবাসিক এলাকা</string>
+    <string name="nhhr_fuel_cooking_other">রান্নার জন্য ব্যবহৃত অন্য ধরণের জ্বালানি</string>
+    <string name="nhhr_primary_water_other">পানির অন্য প্রাথমিক উৎস</string>
+    <string name="nhhr_avail_electricity_other">বিদ্যুতের অন্য প্রাপ্যতা</string>
+    <string name="nhhr_avail_toilet_other">টয়লেটের অন্য প্রাপ্যতা</string>
+
 </resources>
