@@ -1326,4 +1326,6 @@
     <string name="str_right">दाईं</string>
     <string name="str_both">दोनों</string>
     <string name="str_eye_visit">आँख - भ्रमण</string>
+    <string name="check_sympt">जांच करें कि व्यक्ति में इनमें से कोई भी लक्षण है या नहीं:</string>
+
 </resources>

@@ -1491,6 +1491,7 @@
     <string name="str_pls_allow_permissions">Please allow permissions first</string>
     <string name="str_delivery_outcome_err_msg">Outcome of Delivery should be equal to sum of Live and Still births</string>
     <string name="str_alert">Alert!</string>
+    <string name="check_sympt">Check if the person has any of these Symptoms:</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
     <string name="str_left">Left</string>
     <string name="str_right">Right</string>
