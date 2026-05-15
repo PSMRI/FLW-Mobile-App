@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gamification strings — Assamese (values-as/strings_gamification.xml) -->
+<resources>
+    <string name="gamification_dashboard_title">মোৰ অগ্ৰগতি</string>
+    <string name="gamification_level">স্তৰ %1$d</string>
+    <string name="gamification_total_points">মুঠ XP</string>
+    <string name="gamification_streak_label">সক্ৰিয় ধাৰা</string>
+    <string name="gamification_badges_label">অৰ্জিত বেজ</string>
+    <string name="gamification_recent_activity">শেহতীয়া কাৰ্যকলাপ</string>
+    <string name="gamification_badge_earned">🏅 বেজ অৰ্জিত: %1$s</string>
+    <string name="gamification_points_earned">+%1$d XP</string>
+    <string name="gamification_no_badges">প্ৰথম বেজ অৰ্জন কৰিবলৈ কাৰ্য সম্পূৰ্ণ কৰক!</string>
+
+    <plurals name="gamification_streak_days">
+        <item quantity="one">%d দিনৰ ধাৰা 🔥</item>
+        <item quantity="other">%d দিনৰ ধাৰা 🔥</item>
+    </plurals>
+</resources>
