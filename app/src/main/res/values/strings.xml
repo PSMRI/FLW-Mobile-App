@@ -1493,6 +1493,10 @@
     <string name="str_alert">Alert!</string>
     <string name="check_sympt">Check if the person has any of these Symptoms:</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
+    <string name="str_left">Left</string>
+    <string name="str_right">Right</string>
+    <string name="str_both">Both</string>
+    <string name="str_eye_visit">Eye - Visit</string>
 
 
 

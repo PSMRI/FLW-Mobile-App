@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="verify_aadhaar_number">আধার নম্বর যাচাই করুন</string>
+    <string name="verify_aadhaar_otp">আধার OTP যাচাই করুন</string>
+    <string name="verify_mobile_number">মোবাইল নম্বর যাচাই করুন</string>
+    <string name="enter_otp">OTP লিখুন</string>
+    <string name="verify_otp">OTP যাচাই করুন</string>
+    <string name="resend_otp">OTP পুনরায় পাঠান</string>
+    <string name="exit">বাহির</string>
+    <string name="timer">টাইমার</string>
+    <string name="aadhaar">আধার</string>
+    <string name="asha">আশা</string>
+    <string name="ashaname">আশার নাম</string>
+    <string name="gov">সরকার</string>
+    <string name="enter_aadhaar_number">আধার নম্বর লিখুন</string>
+    <string name="aadhaar_number">আধার নম্বর</string>
+    <string name="verified">যাচাইকৃত</string>
+    <string name="generate_otp">OTP পাঠান</string>
+    <string name="send_otp">OTP পাঠান</string>
+    <string name="select_abha">নাম নির্বাচন করুন</string>
+    <string name="pid">PID</string>
+    <string name="generate_abha">ABHA</string>
+    <string name="_30">30</string>
+    <string name="date">তারিখ</string>
+    <string name="abha_number_generated_successfully">ABHA নম্বর সফলভাবে তৈরি হয়েছে</string>
+    <string name="name">নাম :</string>
+    <string name="abha_number">ABHA নম্বর :</string>
+    <string name="abha_id">ABHA আইডি</string>
+    <string name="linked_toO_beneficiary">লাভভোগীর সাথে সংযুক্ত</string>
+    <string name="linked_to_beneficiary">এই ABHA সফলভাবে নিম্নলিখিত রেকর্ডের সাথে সংযুক্ত হয়েছে</string>
+    <string name="not_linked_to_beneficiary">এই ABHA নম্বর ইতিমধ্যে অন্য কারো সাথে সংযুক্ত আছে, সঠিক আধার নম্বর ব্যবহার করে আবার চেষ্টা করুন</string>
+    <string name="do_you_want_to_download_the_abha_card">আপনি কি ABHA কার্ড ডাউনলোড করতে চান?</string>
+    <string name="yes">হ্যাঁ</string>
+    <string name="no">না</string>
+    <string name="submit">জমা দিন</string>
+    <string name="submitted">জমা হয়েছে</string>
+    <string name="enter_mobile_number">মোবাইল নম্বর লিখুন</string>
+    <string name="enter_number_for_abha">ABHA নিবন্ধনের জন্য আধার নম্বর</string>
+    <string name="aadhaar_linked_mobile">আধার সংযুক্ত মোবাইল নম্বর বা অন্য মোবাইল নম্বর</string>
+    <string name="check_and_generate_otp">যাচাই করুন এবং OTP তৈরি করুন</string>
+    <string name="textview">টেক্সটভিউ</string>
+    <string name="download_abha_channel_id">ABHA কার্ড ডাউনলোড হচ্ছে</string>
+    <string name="generate_abha_id">ABHA নম্বর তৈরি করুন</string>
+    <string name="create_abha_number">ABHA নম্বর তৈরি করুন</string>
+
+    <string name="aadhar_consent_text">আমি নিশ্চিত করছি যে আমি ব্যক্তিকে ABHA নম্বর তৈরির সম্মতি প্রক্রিয়া ব্যাখ্যা করেছি</string>
+    <string name="aadhar_disclaimer_consent_disclaimer">আপনার ABHA নম্বর তৈরির জন্য সম্মতি</string>
+
+    <string name="abha">ABHA</string>
+    <string name="add_eye_surgery">চোখের অপারেশন যোগ করুন</string>
+    <string name="mda_form_title">MDA ফর্ম</string>
+    <string name="history_of_mda_form_campaign">ফাইলেরিয়া MDA প্রচারাভিযানের ইতিহাস</string>
+    <string name="history_of_mda_form_campaign_title">লিম্ফ্যাটিক ফাইলেরিয়াসিস (LF) এর জন্য বার্ষিক গণ ঔষধ বিতরণ (MDA) প্রচার</string>
+    <string name="add_mda_filaria_form_title">ফাইলেরিয়া MDA প্রচার যোগ করুন</string>
+    <string name="view_edit_eye_surgery">দেখুন/সম্পাদনা করুন</string>
+    <string name="eye_surgery_details_saved_successfully">চোখের অপারেশনের তথ্য সফলভাবে সংরক্ষিত হয়েছে</string>
+    <string name="failed_to_submit_form">ফর্ম জমা দিতে ব্যর্থ হয়েছে, আবার চেষ্টা করুন</string>
+
+    <string name="d_o_b">জন্ম তারিখ</string>
+    <string name="beneficiary_abha_number">লাভভোগীর ABHA নম্বর</string>
+    <string name="offline">অফলাইন</string>
+    <string name="check_circle">চেক</string>
+
+    <string name="validate_fp">FP যাচাই করুন</string>
+    <string name="data_saved_successfully">ডাটা সফলভাবে সংরক্ষিত হয়েছে</string>
+    <string name="data_already_exist">ডাটা ইতিমধ্যে বিদ্যমান</string>
+    <string name="generating_abha_for">লিখুন</string>
+
+    <string name="otp_sent_to">"OTP পাঠানো হয়েছে "</string>
+    <string name="otp_was_resent">OTP পুনরায় পাঠানো হয়েছে</string>
+    <string name="do_you_want_to_go_back">আপনি কি ফিরে যেতে চান?</string>
+
+    <string name="downloading_abha_card">ABHA কার্ড ডাউনলোড হচ্ছে</string>
+    <string name="str_create_abha">ABHA তৈরি করুন</string>
+    <string name="str_search_abha">ABHA খুঁজুন</string>
+    <string name="search_ben">লাভভোগী খুঁজুন</string>
+
+    <string name="str_invalid_aadhaar_no">সঠিক আধার নম্বর লিখুন</string>
+    <string name="str_invalid_mobile_no">সঠিক মোবাইল নম্বর লিখুন</string>
+    <string name="str_invalid_ben_name">সঠিক নাম লিখুন</string>
+
+    <string name="str_here_abha_no">এখানে আপনার ABHA নম্বর</string>
+    <string name="str_abha_already_exist">এই ABHA ইতিমধ্যে বিদ্যমান</string>
+
+    <string name="str_abha_successfully_created">ABHA সফলভাবে তৈরি হয়েছে</string>
+    <string name="str_abha_card_downloaded">ডাউনলোড ফোল্ডারে ABHA কার্ড দেখুন</string>
+
+    <string name="str_abha_otp_note">এই OTP ১০ মিনিটের জন্য বৈধ</string>
+    <string name="str_enter_otp">OTP লিখুন:</string>
+
+    <string name="str_find_abha">আগেই ABHA আছে?\nএখনই খুঁজুন!</string>
+    <string name="str_get_your_abha">মোবাইল নম্বর দিয়ে ABHA নম্বর পান</string>
+
+    <string name="enter_ben_name">লাভভোগীর নাম লিখুন</string>
+    <string name="str_didnt_receive_otp">OTP পাননি? অনুগ্রহ করে অপেক্ষা করুন</string>
+
+    <string name="str_declaration">আমি ঘোষণা করছি:</string>
+
+    <string name="str_seconds">" সেকেন্ড"</string>
+
+    <string name="str_aadhaar_otp_number">"OTP পাঠানো হয়েছে আধার সংযুক্ত নম্বরে যার শেষ @mobileNumber"</string>
+    <string name="str_abha_otp_number">"OTP পাঠানো হয়েছে ABHA সংযুক্ত নম্বরে যার শেষ @mobileNumber"</string>
+    <string name="str_otp_number_message">"OTP পাঠানো হয়েছে নম্বরে যার শেষ @mobileNumber"</string>
+
+</resources>

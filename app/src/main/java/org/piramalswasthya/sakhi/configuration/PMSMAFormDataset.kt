@@ -74,7 +74,7 @@
             id = 43,
             etMaxLength = 50,
             inputType = EDIT_TEXT,
-            title = context.getString(R.string.any_other_high_risk_conditions),
+            title = resources.getString(R.string.any_other_high_risk_conditions),
             required = true,
             hasDependants = true,
         )

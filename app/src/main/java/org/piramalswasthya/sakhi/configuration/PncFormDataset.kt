@@ -230,14 +230,14 @@ class PncFormDataset(
     private val deliveryDischargeSummary3 = FormElement(
         id =60,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.delivery_discharge_summary_3),
+        title = resources.getString(R.string.delivery_discharge_summary_3),
         required = false
     )
 
     private val deliveryDischargeSummary4 = FormElement(
         id =61,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.delivery_discharge_summary_4),
+        title = resources.getString(R.string.delivery_discharge_summary_4),
         required = false
     )
 
@@ -311,7 +311,7 @@ class PncFormDataset(
                 42
             ).filter { if (daysSinceDelivery == 0L) it <= 1 else it <= daysSinceDelivery }
                 .filter { it > (previousPnc?.pncPeriod ?: 0) }
-                .map { "Day $it" }.toTypedArray()
+                .map { "${resources.getString(R.string.day)} $it" }.toTypedArray()
 
         if (hasPreviousPermanentSterilization) {
 
@@ -350,7 +350,7 @@ class PncFormDataset(
 
 
         saved?.let {
-            pncPeriod.value = "Day ${it.pncPeriod}"
+            pncPeriod.value = "${resources.getString(R.string.day)} ${it.pncPeriod}"
             visitDate.value = getDateFromLong(it.pncDate)
             ifaTabsGiven.value = it.ifaTabsGiven?.toString()
             anyContraceptionMethod.value = it.anyContraceptionMethod?.let {

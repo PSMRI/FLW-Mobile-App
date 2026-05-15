@@ -143,12 +143,13 @@ class SignInFragment : Fragment() {
 
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
             binding.rbAssamese.visibility = android.view.View.GONE
+            binding.rbBangala!!.visibility = android.view.View.GONE
         }
-
         when (prefDao.getCurrentLanguage()) {
             ENGLISH -> binding.rgLangSelect.check(binding.rbEng.id)
             Languages.HINDI -> binding.rgLangSelect.check(binding.rbHindi.id)
             ASSAMESE -> binding.rgLangSelect.check(binding.rbAssamese.id)
+            Languages.BANGLA -> binding.rgLangSelect.check(binding.rbBangala!!.id)
         }
 
         binding.rgLangSelect.setOnCheckedChangeListener { _, i ->
@@ -156,6 +157,7 @@ class SignInFragment : Fragment() {
                 binding.rbEng.id -> ENGLISH
                 binding.rbHindi.id -> Languages.HINDI
                 binding.rbAssamese.id -> ASSAMESE
+                binding.rbBangala!!.id -> Languages.BANGLA
                 else -> ENGLISH
             }
             prefDao.saveSetLanguage(currentLanguage)

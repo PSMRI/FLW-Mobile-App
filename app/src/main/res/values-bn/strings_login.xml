@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login -->
+
+    <string name="tv_text_welcome">স্বাগতম, অনুগ্রহ করে লগইন করুন</string>
+    <string name="tv_text_welcome_user">স্বাগতম\n%s</string>
+    <string name="tv_text_facility">সুবিধা কেন্দ্র : %s</string>
+    <string name="tv_text_state">রাজ্য : %s</string>
+    <string name="tv_text_district">জেলা : %s</string>
+    <string name="tv_text_block">ব্লক : %s</string>
+
+    <string name="tv_text_sign_in">লগইন</string>
+    <string name="tv_text_select_language">অনুগ্রহ করে আপনার ভাষা নির্বাচন করুন</string>
+
+    <!-- Keep language names as-is -->
+    <string name="text_english" translatable="false">English</string>
+    <string name="text_hindi" translatable="false">हिंदी</string>
+    <string name="text_assamese" translatable="false">অসমীয়া</string>
+    <string name="text_bangali" translatable="false">বাংলা</string>
+
+    <string name="cd_assam_nhm_logo" translatable="false">ASSAM NHM_LOGO</string>
+    <string name="cd_piramal" translatable="false">Piramal Logo</string>
+
+    <string name="til_username_hint_text">ব্যবহারকারীর নাম</string>
+    <string name="til_password_hint_text">পাসওয়ার্ড</string>
+
+    <string name="cb_login_remember_me_text">মনে রাখুন</string>
+    <string name="btn_login_forgot_password_text">পাসওয়ার্ড ভুলে গেছেন?</string>
+    <string name="btn_login_text">লগইন</string>
+
+    <string name="pwr_by_text" translatable="false">Powered by\n <b>Piramal Foundation</b></string>
+
+    <string name="login_diff_user">আপনি পূর্বে @username ব্যবহারকারীর মাধ্যমে @asha হিসেবে লগইন করেছেন। আপনি কি অন্য ব্যবহারকারী দিয়ে লগইন করতে চান?</string>
+
+    <string name="unsync_record_count">হ্যালো! @count টি আনসিঙ্কড রেকর্ড রয়েছে, অনুগ্রহ করে সব রেকর্ড সিঙ্ক হওয়া পর্যন্ত অপেক্ষা করুন।</string>
+
+    <string name="account_deactivated_title">অ্যাকাউন্ট নিষ্ক্রিয় করা হয়েছে</string>
+
+    <string name="session_expired_title">সেশন মেয়াদ শেষ</string>
+    <string name="session_expired_message">আপনার সেশন মেয়াদ শেষ হয়েছে। অনুগ্রহ করে আবার লগইন করুন।</string>
+
+</resources>

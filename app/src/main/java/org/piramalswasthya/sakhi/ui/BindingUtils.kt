@@ -562,3 +562,21 @@ fun setDynamicBackground(view: View, isEligible: Boolean) {
         view.background = null
     }
 }
+
+@BindingAdapter("localizedGender")
+fun TextView.setLocalizedGender(gender: String?) {
+
+    text = when (gender?.uppercase()) {
+
+        "MALE" ->
+            context.getString(R.string.male)
+
+        "FEMALE" ->
+            context.getString(R.string.female)
+
+        "TRANSGENDER" ->
+            context.getString(R.string.transgender)
+
+        else -> gender ?: ""
+    }
+}

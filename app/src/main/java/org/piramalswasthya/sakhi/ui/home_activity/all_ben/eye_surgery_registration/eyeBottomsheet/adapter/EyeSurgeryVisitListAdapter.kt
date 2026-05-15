@@ -37,7 +37,7 @@ class EyeSurgeryVisitListAdapter(
         holder.binding.apply {
             tvVisitTitle.text = item.title
             tvVisitDate.text = item.visitDate
-            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.add) else "View/Edit"
+            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.add) else holder.binding.root.context.getString(R.string.view_edit_eye_surgery)
             btnAction.setOnClickListener { clickListener.onClick(item) }
         }
     }

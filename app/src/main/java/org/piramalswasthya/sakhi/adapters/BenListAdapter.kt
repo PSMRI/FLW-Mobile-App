@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,13 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenBinding
 import org.piramalswasthya.sakhi.helpers.getDateFromLong
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.helpers.getPatientTypeByAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.utils.RoleConstants
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 
 class BenListAdapter(
@@ -93,6 +97,7 @@ class BenListAdapter(
                 binding.ivCall.visibility = View.GONE
             }
 
+            binding.age.text = getLocalizedAge(context, item.dob)
             val isMatched = benIdList.contains(item.benId)
             binding.isMatched = isMatched
 

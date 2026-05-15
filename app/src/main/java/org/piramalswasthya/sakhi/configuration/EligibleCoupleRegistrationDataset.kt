@@ -230,19 +230,19 @@ class EligibleCoupleRegistrationDataset(
     private val kitPhotoUploadOne = FormElement(
         id = 75,
         inputType = org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
-        title = context.getString(R.string.asha_photo_one),
+        title = resources.getString(R.string.asha_photo_one),
         required = false,
     )
     private val kitPhotoUploadTwo = FormElement(
         id = 76,
         inputType = org.piramalswasthya.sakhi.model.InputType.FILE_UPLOAD,
-        title = context.getString(R.string.asha_photo_two),
+        title = resources.getString(R.string.asha_photo_two),
         required = false,
     )
     private val womanDetails = FormElement(
         id = 6,
         inputType = HEADLINE,
-        title = context.getString(R.string.children_details),
+        title = resources.getString(R.string.children_details),
         arrayId = -1,
         required = false
     )
@@ -263,7 +263,7 @@ class EligibleCoupleRegistrationDataset(
     private val bankDetailsLabel = FormElement(
         id = 79,  // naya unique id
         inputType = HEADLINE,
-        title = context.getString(R.string.bank_details),
+        title = resources.getString(R.string.bank_details),
         arrayId = -1,
         required = false
     )
