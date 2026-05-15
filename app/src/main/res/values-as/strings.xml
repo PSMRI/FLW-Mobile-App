@@ -1404,4 +1404,6 @@
     <string name="add_new">নতুন যোগ কৰক</string>
     <string name="ifa_distribution">IFA বিতৰণ</string>
     <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="check_sympt">ব্যক্তিজনৰ এই লক্ষণসমূহৰ কোনো এটা আছে নে নাই পৰীক্ষা কৰক:</string>
+
 </resources>

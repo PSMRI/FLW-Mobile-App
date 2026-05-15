@@ -1321,4 +1321,6 @@
     <string name="sammelan_photo3">सम्मेलन की तस्वीरें / MoM (3)</string>
     <string name="sammelan_photo4">सम्मेलन की तस्वीरें / MoM (4)</string>
     <string name="sammelan_photo5">सम्मेलन की तस्वीरें / MoM (5)</string>
+    <string name="check_sympt">जांच करें कि व्यक्ति में इनमें से कोई भी लक्षण है या नहीं:</string>
+
 </resources>

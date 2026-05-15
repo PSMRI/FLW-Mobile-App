@@ -91,7 +91,7 @@ class MalariaFormDataset(
     private var headline = FormElement(
         id = 27,
         inputType = InputType.HEADLINE,
-        title = resources.getString(R.string.sympt),
+        title = resources.getString(R.string.check_sympt),
         required = false,
         headingLine = false,
         hasDependants = false
@@ -102,7 +102,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.cbac_feverwks),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -111,7 +111,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.flu_like_illness),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -120,7 +120,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.shakingchills),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -129,7 +129,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.headache),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -138,7 +138,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.muscleaches),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -147,7 +147,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.tiredness),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
     private var isNausea = FormElement(
@@ -155,7 +155,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.nausea),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
     private var isVomiting = FormElement(
@@ -163,7 +163,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.vomiting),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -172,7 +172,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.diarrhea),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
