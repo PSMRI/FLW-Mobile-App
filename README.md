@@ -150,19 +150,26 @@ To run this project, Follow these steps:
     - `keystore.jks`
 
 
-## 🔧 Additional Setup Steps (After Cloning)
+## 🔧 Project Setup Steps (After Cloning)
 
 ### 1. Open Project in Android Studio
-Open the cloned project in **Android Studio** and wait for the Gradle sync to complete. This step is required to generate `local.properties` with your Android SDK path.
+- Open the cloned project in **Android Studio** 
+- Set Gradle JDK to **JDK 21** (Settings -> Build, Execution, Deployment -> Build Tools -> Gradle -> Gradle JDK). This make sure that AndroidStudio will use JDK 21 for this project.
+- Sync the project and wait for the Gradle sync to complete. This step is required to generate `local.properties` with your Android SDK path.
 
 ### 2. Run Setup Script
-Open **Git Bash** and run the following commands:
-
+- Open **Git Bash** 
+- Make sure your current session using **JDK 21**
+```bash
+export JAVA_HOME="PATH_TO_YOUR_JDK_21"
+export PATH="$JAVA_HOME/bin:$PATH"
+java --version // This will show jdk 21.x
+```
+- Then run the setup script
 ```bash
 cd "YOUR_PROJECT_PATH/FLW-Mobile-App"
 bash setup.sh
 ```
-
 > Replace `YOUR_PROJECT_PATH` with the actual path where you cloned the repository.  
 > Example: `cd "D:/Projects/FLW-Mobile-App"`
 
