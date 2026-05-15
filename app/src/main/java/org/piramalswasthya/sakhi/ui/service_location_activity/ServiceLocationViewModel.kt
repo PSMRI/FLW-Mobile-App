@@ -60,6 +60,7 @@ class ServiceTypeViewModel @Inject constructor(
             ENGLISH -> selectedVillage?.name
             Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
+            Languages.BANGLA -> selectedVillage?.nameBangla ?: selectedVillage?.name
         }
 
 
@@ -134,8 +135,18 @@ class ServiceTypeViewModel @Inject constructor(
 
                         villageDropdownEntries =
                             user.villages.map { it.nameAssamese ?: it.name }.toTypedArray()
-                    }
+                   }
 
+                    Languages.BANGLA ->  {
+                        stateDropdownEntry =
+                            user.state.let { it.nameBangla ?: it.name }
+                        districtDropdownEntry =
+                            user.district.let { it.nameBangla ?: it.name }
+                        blockDropdownEntry =
+                            user.block.let { it.nameBangla ?: it.name }
+                        villageDropdownEntries =
+                            user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
+                    }
                 }
 
             }

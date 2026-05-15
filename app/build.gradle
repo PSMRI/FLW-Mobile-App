@@ -29,7 +29,7 @@ android {
         targetSdk 35
         versionCode buildVersionCode()
         versionName buildVersionName()
-        resourceConfigurations += ['en', 'hi', 'as']
+        resourceConfigurations += ['en', 'hi', 'as','bn']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -152,7 +152,7 @@ android {
             path file("src/main/cpp/CMakeLists.txt")
         }
     }
-    ndkVersion '29.0.14033849'
+    ndkVersion '28.2.13676358'
 
 }
 

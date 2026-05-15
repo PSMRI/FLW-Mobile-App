@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- HOUSEHOLD -->
+    <string name="btn_text_frag_home_nhhr">নতুন পরিবার নিবন্ধন</string>
+    <string name="no_records_found">কোনো রেকর্ড পাওয়া যায়নি</string>
+    <string name="household_search">অনুসন্ধান</string>
+
+    <string name="rv_item_hh_ph_1">HHID : </string>
+    <string name="rv_item_hh_ph_2">পরিবার প্রধানের নাম :</string>
+    <string name="rv_item_hh_ph_3">পদবি : </string>
+    <string name="hh_members_text">সদস্য : %1d</string>
+
+    <string name="btn_rv_item_hh_add_ben">উপকারভোগী যোগ করুন</string>
+    <string name="str_duplicate_record">মুছে ফেলা রেকর্ড</string>
+    <string name="add_mda">MDA যোগ করুন</string>
+
+    <string name="frag_nhhr_title">নতুন পরিবার নিবন্ধন</string>
+
+    <string name="nhhr_title_page_1">পরিবারের বিবরণ</string>
+    <string name="nhhr_village">গ্রাম</string>
+    <string name="nhhr_title_page_2">পরিবারের বিস্তারিত</string>
+    <string name="nhhr_title_page_3">পরিবারের সুবিধাসমূহ</string>
+
+    <string name="nhhr_first_name_hof">পরিবার প্রধানের প্রথম নাম</string>
+    <string name="nhhr_last_name_hof">পরিবার প্রধানের পদবি</string>
+    <string name="nhhr_mob_no_hof">পরিবার প্রধানের মোবাইল নম্বর</string>
+
+    <string name="nhhr_house_no">বাড়ি নম্বর</string>
+    <string name="nhhr_ward_no">ওয়ার্ড নম্বর</string>
+    <string name="nhhr_ward_name">ওয়ার্ডের নাম</string>
+    <string name="nhhr_mohalla_name">মহল্লার নাম</string>
+
+    <string name="nhhr_poverty_line">অর্থনৈতিক অবস্থা</string>
+    <string-array name="nhhr_poverty_line_array">
+        <item>APL</item>
+        <item>BPL</item>
+        <item>জানা নেই</item>
+    </string-array>
+
+    <string name="btn_frag_nhhr_prev">পূর্ববর্তী</string>
+    <string name="btn_frag_nhhr_next">পরবর্তী</string>
+
+    <string name="nhhr_type_residential_area">বাসস্থানের ধরন</string>
+    <string name="nhhr_type_residential_area_1">গ্রামীণ</string>
+    <string name="nhhr_type_residential_area_2">শহর</string>
+    <string name="nhhr_type_residential_area_3">আদিবাসী এলাকা</string>
+    <string name="nhhr_type_residential_area_4">অন্যান্য</string>
+    <string name="nhhr_type_residential_area_5">চা বাগান</string>
+
+    <string name="nhhr_type_of_house">বাড়ির ধরন</string>
+    <string name="nhhr_type_of_house_1">কিছুই নেই</string>
+    <string name="nhhr_type_of_house_2">কাঁচা</string>
+    <string name="nhhr_type_of_house_3">পাকা</string>
+    <string name="nhhr_type_of_house_4">অন্যান্য</string>
+
+    <string name="nhhr_house_own">বাড়ির মালিকানা</string>
+    <string-array name="nhhr_house_own_array">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </string-array>
+
+    <string name="nhhr_separate_kitchen">আলাদা রান্নাঘর</string>
+    <string-array name="nhhr_separate_kitchen_array">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </string-array>
+
+    <string name="nhhr_fuel_cooking">রান্নার জ্বালানির ধরন</string>
+    <string name="nhhr_fuel_cooking_1">জ্বালানি কাঠ</string>
+    <string name="nhhr_fuel_cooking_2">ফসলের অবশিষ্টাংশ</string>
+    <string name="nhhr_fuel_cooking_3">গোবরের কেক</string>
+    <string name="nhhr_fuel_cooking_4">কয়লা</string>
+    <string name="nhhr_fuel_cooking_5">কেরোসিন</string>
+    <string name="nhhr_fuel_cooking_6">LPG</string>
+    <string name="nhhr_fuel_cooking_7">ইনডাকশন</string>
+    <string name="nhhr_fuel_cooking_8">অন্যান্য</string>
+
+    <string name="nhhr_primary_water">প্রধান পানির উৎস</string>
+    <string name="nhhr_primary_water_1">নলকূপের পানি</string>
+    <string name="nhhr_primary_water_2">বাড়ির ভিতরে হ্যান্ডপাম্প</string>
+    <string name="nhhr_primary_water_3">বাড়ির বাইরে হ্যান্ডপাম্প</string>
+    <string name="nhhr_primary_water_4">কুয়া</string>
+    <string name="nhhr_primary_water_5">ট্যাঙ্ক</string>
+    <string name="nhhr_primary_water_6">নদী</string>
+    <string name="nhhr_primary_water_7">পুকুর</string>
+    <string name="nhhr_primary_water_8">অন্যান্য</string>
+
+    <string name="nhhr_avail_electricity">বিদ্যুতের প্রাপ্যতা</string>
+    <string name="nhhr_avail_electricity_1">বিদ্যুৎ সরবরাহ</string>
+    <string name="nhhr_avail_electricity_2">জেনারেটর</string>
+    <string name="nhhr_avail_electricity_3">সোলার পাওয়ার</string>
+    <string name="nhhr_avail_electricity_4">কেরোসিন ল্যাম্প</string>
+    <string name="nhhr_avail_electricity_5">অন্যান্য</string>
+
+    <string name="nhhr_avail_toilet">টয়লেটের প্রাপ্যতা</string>
+    <string name="nhhr_avail_toilet_1">পানিসহ ফ্লাশ টয়লেট</string>
+    <string name="nhhr_avail_toilet_2">পানি ছাড়া ফ্লাশ টয়লেট</string>
+    <string name="nhhr_avail_toilet_3">পানিসহ পিট টয়লেট</string>
+    <string name="nhhr_avail_toilet_4">পানি ছাড়া পিট টয়লেট</string>
+    <string name="nhhr_avail_toilet_5">অন্যান্য</string>
+    <string name="nhhr_avail_toilet_6">কোনোটি নেই</string>
+
+    <string name="btn_frag_nhhr_to_ben">উপকারভোগী অংশে এগিয়ে যান</string>
+
+    <string name="consent_alert_title">সম্মতি ফর্ম</string>
+    <string name="add_head_of_family">পরিবার প্রধান যোগ করুন</string>
+    <string name="add_asha_head">আশা পরিবার নিবন্ধন</string>
+    <string name="hh_no_members">পরিবারে কোনো সদস্য নেই!</string>
+
+    <string name="add_head_of_family_message">আপনি কি <b>%1s</b> কে পরিবার প্রধান (HoF) হিসেবে যোগ করতে চান?</string>
+
+</resources>

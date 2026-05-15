@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="cbac_ask_pat">রোগীর মধ্যে নিম্নলিখিত উপসর্গগুলির কোনোটি আছে কি জিজ্ঞাসা করুন</string>
+    <string name="cbac_early_detection">অংশ B1: প্রাথমিক শনাক্তকরণ</string>
+    <string name="cbac_early_detection_2">অংশ B2: শুধুমাত্র মহিলাদের জন্য</string>
+    <string name="cbac_early_detection_3">অংশ B3: প্রবীণদের জন্য</string>
+
+    <string name="cbac_hint_age">আপনার বয়স কত?</string>
+    <string name="cbac_hint_smoke">আপনি কি ধূমপান করেন বা গুটখা/খৈনি ইত্যাদি ব্যবহার করেন?</string>
+    <string name="cbac_hint_alcohol">আপনি কি প্রতিদিন মদ্যপান করেন?</string>
+    <string name="cbac_hint_waist">কোমরের মাপ (সেমি)</string>
+    <string name="cbac_hint_pa">আপনি কি সপ্তাহে কমপক্ষে ১৫০ মিনিট শারীরিক কার্যকলাপ করেন?</string>
+    <string name="cbac_hint_fh">আপনার পরিবারে (মা/বাবা/ভাই/বোন) কারও উচ্চ রক্তচাপ, ডায়াবেটিস বা হৃদরোগ আছে কি?</string>
+
+    <string name="cbac_ask_pat_note">নোট :</string>
+
+    <string name="cbac_ast1">* নিচের যেকোনো প্রশ্নে “হ্যাঁ” নির্বাচন করলে “MO-তে রেফার করুন এবং স্পুটাম স্যাম্পল সংগ্রহ করুন” বার্তা দেখান</string>
+    <string name="cbac_ast2">** নিচের যেকোনো প্রশ্নে “হ্যাঁ” নির্বাচন করলে “MO-তে রেফার করুন অথবা ANM/MPW-কে জানিয়ে পরিবারের সকল সদস্যকে ট্রেস করুন” বার্তা দেখান</string>
+
+    <string name="cbac_select">নির্বাচন করুন …</string>
+
+    <string name="cbac_fh_tb">পরিবারে কেউ বর্তমানে TB-তে আক্রান্ত</string>
+    <string name="cbac_taking_tb_drug">আপনি কি বর্তমানে TB-এর ওষুধ নিচ্ছেন</string>
+    <string name="cbac_histb">TB-এর ইতিহাস</string>
+    <string name="cbac_coughing">২ সপ্তাহের বেশি কাশি</string>
+    <string name="cbac_blsputum">কফে রক্ত</string>
+    <string name="cbac_feverwks">২ সপ্তাহের বেশি জ্বর</string>
+    <string name="cbac_lsweight">ওজন কমে যাওয়া</string>
+    <string name="cbac_ntswets">রাতে ঘাম হওয়া</string>
+
+    <string name="cbac_breath">শ্বাসকষ্ট</string>
+    <string name="cbac_hifits">খিঁচুনির ইতিহাস</string>
+
+    <string name="cbac_lumpbrest">স্তনে গাঁট</string>
+    <string name="cbac_nipple">নিপল থেকে রক্ত মিশ্রিত স্রাব</string>
+    <string name="cbac_breast">স্তনের আকার বা আকৃতির পরিবর্তন</string>
+
+    <string name="cbac_blperiods">পিরিয়ডের মাঝে রক্তপাত</string>
+    <string name="cbac_blmenopause">মেনোপজের পর রক্তপাত</string>
+    <string name="cbac_blintercorse">সহবাসের পর রক্তপাত</string>
+    <string name="cbac_fouldis">দুর্গন্ধযুক্ত যোনি স্রাব</string>
+
+    <string name="none_of">এগুলোর কোনোটিই নয়</string>
+
+    <string name="cbac_yes">হ্যাঁ</string>
+    <string name="cbac_no">না</string>
+
+    <string name="cbac_risk_Factors_COPD">অংশ C: COPD-এর ঝুঁকির কারণ</string>
+    <string name="cbac_occupational_exposure">পেশাগত এক্সপোজার</string>
+
+    <string name="cbac_PHQ2">অংশ D: PHQ2</string>
+    <string name="cbac_last_two_weeks">গত দুই সপ্তাহে নিচের সমস্যাগুলো কতবার হয়েছে?</string>
+    <string name="cbac_little_interest">কোনো কাজে আগ্রহ বা আনন্দ কমে গেছে?</string>
+    <string name="cbac_feeling_down">মনে হতাশা বা দুঃখ অনুভব করেছেন?</string>
+
+    <!-- Alerts -->
+    <string name="alert">সতর্কতা !</string>
+    <string name="alert_message_fill_required_fields">দয়া করে জমা দেওয়ার আগে সব প্রয়োজনীয় ঘর পূরণ করুন।</string>
+
+    <string name="suspected_hrp_case">সন্দেহভাজন HRP কেস!</string>
+    <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">সন্দেহভাজন NCD কেস, নিকটস্থ HWC-তে যান বা ১০৪ নম্বরে কল করুন</string>
+
+    <!-- TB -->
+    <string name="tb_screening">TB স্ক্রিনিং</string>
+    <string name="tb_screening_submitted">TB স্ক্রিনিং জমা হয়েছে</string>
+    <string name="tb_suspected_alert">MO-তে রেফার করুন এবং স্পুটাম স্যাম্পল সংগ্রহ করুন</string>
+
+    <!-- Common -->
+    <string name="save">সংরক্ষণ করুন</string>
+    <string name="ok">ঠিক আছে</string>
+
+    <!-- Arrays -->
+    <string-array name="cbac_age">
+        <item>০-২৯ বছর</item>
+        <item>৩০-৩৯ বছর</item>
+        <item>৪০-৪৯ বছর</item>
+        <item>৫০-৫৯ বছর</item>
+        <item>≥ ৬০ বছর</item>
+    </string-array>
+
+    <string-array name="cbac_smoke">
+        <item>কখনো নয়</item>
+        <item>আগে মাঝে মাঝে ব্যবহার করতেন</item>
+        <item>প্রতিদিন</item>
+    </string-array>
+
+    <string-array name="cbac_alcohol">
+        <item>না</item>
+        <item>হ্যাঁ</item>
+    </string-array>
+
+    <string-array name="cbac_pa">
+        <item>সপ্তাহে কমপক্ষে ১৫০ মিনিট</item>
+        <item>১৫০ মিনিটের কম</item>
+    </string-array>
+
+    <string-array name="cbac_type_Cooking_fuel">
+        <item>জ্বালানি কাঠ</item>
+        <item>ফসলের অবশিষ্টাংশ</item>
+        <item>গোবর গ্যাস</item>
+        <item>কয়লা</item>
+        <item>কেরোসিন তেল</item>
+        <item>LPG</item>
+    </string-array>
+
+    <string name="cbac">CBAC</string>
+    <string name="cat_ncd">NCD</string>
+    <string name="cat_tb">TB</string>
+    <string name="cat_leprosy">কুষ্ঠ</string>
+    <string name="cat_geriatric">প্রবীণ</string>
+    <string name="cat_hrp">HRP</string>
+    <string name="cat_maternal">মাতৃস্বাস্থ্য</string>
+
+</resources>
