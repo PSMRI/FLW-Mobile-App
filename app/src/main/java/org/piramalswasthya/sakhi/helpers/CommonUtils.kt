@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.core.text.isDigitsOnly
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.ChildRegDomain
@@ -926,6 +927,70 @@ fun isInternetAvailable(activity: Context): Boolean {
         // below API Level 23
         return (conMgr.activeNetworkInfo != null && conMgr.activeNetworkInfo!!.isAvailable
                 && conMgr.activeNetworkInfo!!.isConnected)
+    }
+}
+
+
+fun getLocalizedAge(context: Context, dob: Long): String {
+
+    val calDob = Calendar.getInstance().apply {
+        timeInMillis = dob
+    }
+
+    val calNow = Calendar.getInstance()
+
+    val diffDays =
+        TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - dob).toInt()
+
+    if (diffDays < 31) {
+        return "$diffDays ${
+            context.getString(
+                if (diffDays == 1) R.string.day else R.string.days
+            )
+        }"
+    }
+
+    var years = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
+    var months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
+    var days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
+
+    if (days < 0) {
+        months--
+    }
+
+    if (months < 0) {
+        years--
+        months += 12
+    }
+
+    return buildString {
+
+        if (years > 0) {
+            append("$years ")
+            append(
+                context.getString(
+                    if (years == 1) R.string.year else R.string.years
+                )
+            )
+        }
+
+        if (months > 0) {
+            append(" $months ")
+            append(
+                context.getString(
+                    if (months == 1) R.string.month else R.string.months
+                )
+            )
+        }
+
+        if (days > 0) {
+            append(" $days ")
+            append(
+                context.getString(
+                    if (days == 1) R.string.day else R.string.days
+                )
+            )
+        }
     }
 }
 

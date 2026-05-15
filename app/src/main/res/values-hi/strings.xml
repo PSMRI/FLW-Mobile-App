@@ -101,9 +101,9 @@
     <string name="date_td_tt_2nd_dose">Td TT की तिथि (दूसरी खुराक)</string>
     <string name="date_td_tt_booster_dose">टीडी/टीटी (बूस्टर खुराक) की तिथि</string>
     <string name="no_of_folic_acid_tabs">दी गई फोलिक एसिड गोलियों की संख्या</string>
-    <string name="no_of_ifa_tabs">दी गई IFA गोलियों की संख्या</string>
+    <string name="no_of_ifa_tabs">दी गई फोलिक एसिड गोलियों की संख्या</string>
     <string name="any_high_risk_conditions">कोई खतरे के लक्षण की स्थिति</string>
-    <string name="is_hrp_confirmed">क्या उच्च जोखिम गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
+    <string name="is_hrp_confirmed">क्या खतरे के लक्षण वाली गर्भावस्था (एचआरपी) की पुष्टि हुई है?</string>
     <string name="who_identified_hrp">एचआरपी के रूप में किसने पहचाना?</string>
     <string name="probable_cause_of_death">मृत्यु का कारण</string>
     <string name="other_death_cause">मृत्यु का अन्य कारण</string>
@@ -145,7 +145,7 @@
     <string name="additional_services">अतिरिक्त सेवाएं</string>
     <string name="refer_date">रेफर तिथि</string>
     <string-array name="referal_health_center_array">
-        <item>अपोलो</item>
+        <item>निची अस्पताल</item>
         <item>सामुदायिक स्वास्थ्य केंद्र</item>
         <item>जिला अस्पताल</item>
         <item>प्राथमिक स्वास्थ्य केंद्र</item>
@@ -204,7 +204,7 @@
     <string name="hbnc_mother_less_no_milk_alert">माँ को बच्चे को अधिक बार दूध पिलाने के लिए कहें और स्तनपान के दौरान उचित लगाव और स्थिति के बारे में सलाह दें।</string>
     <string name="hbnc_mother_breast_problem_alert">निप्पल फटने की स्थिति में, माँ को स्तन को साफ़ और चिकना रखने की सलाह दें।</string>
     <string name="hbnc_baby_eye_pus_alert">अगर आँख में मवाद है, तो एंटीबायोटिक मरहम लगाया जा सकता है।</string>
-    <string name="hbnc_baby_weight_1_8_alert">शिशु को नज़दीकी स्वास्थ्य केंद्र के बीमार नवजात शिशु देखभाल इकाई (एसएनसीयू) में रेफर करें और उच्च जोखिम वाले शिशु के अनुसार अतिरिक्त घरेलू दौरे भी करें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
+    <string name="hbnc_baby_weight_1_8_alert">शिशु को नज़दीकी स्वास्थ्य केंद्र के बीमार नवजात शिशु देखभाल इकाई (एसएनसीयू) में रेफर करें और खतरे के लक्षण वाले शिशु के अनुसार अतिरिक्त घरेलू दौरे भी करें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
     <string name="hbnc_baby_weight_2_5_alert">माँ को शिशु को अतिरिक्त गर्मी देने और उसे बार-बार दूध पिलाने की सलाह दें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
     <string name="str_weight_at_birth_gram">जन्म के समय वजन (ग्राम)</string>
     <string name="btn_submit">सबमिट करें</string>
@@ -254,7 +254,7 @@
     <string name="form_input_max_limit_error">%1$s %2$d से कम या बराबर होना चाहिए</string>
     <string name="form_input_max_limit_error_decimal">%1$s %2$.1f से कम या बराबर होना चाहिए</string>
     <string name="form_input_error_invalid_mobile">अमान्य मोबाइल संख्या!</string>
-    <string name="form_input_error_invalid_rch">अमान्य RCH ID!</string>
+    <string name="form_input_error_invalid_rch">अमान्य आरसीएच आईडी!</string>
     <string name="form_input_error_invalid_mcp">अमान्य MCP संख्या!</string>
     <string name="form_input_error_invalid_aadhar">अमान्य आधार संख्या!</string>
 <string name="version_2_0_0">APK वर्जन 2.0.0</string>
@@ -402,10 +402,10 @@
     <string name="immunization_cant_done_as_missed">टीकाकरण नहीं किया जा सकता, क्योंकि यह छूट गया है।</string>
     <string name="anc_visit">एएनसी विजिट</string>
     <string name="home_visit">गृह भ्रमण</string>
-    <string name="eligible_couple_list">लक्ष्य दंपति सूची</string>
-    <string name="eligible_couple_registration">पात्र दंपत्ति पंजीकरण</string>
-    <string name="eligible_couple_tracking_list">पात्र दंपत्ति ट्रैकिंग सूची</string>
-    <string name="eligible_couple_tracking_form">पात्र दंपत्ति ट्रैकिंग फॉर्म</string>
+    <string name="eligible_couple_list">लक्ष्य दम्पति सूची</string>
+    <string name="eligible_couple_registration">लक्ष्य दम्पति पंजीकरण</string>
+    <string name="eligible_couple_tracking_list">लक्ष्य दम्पति ट्रैकिंग सूची</string>
+    <string name="eligible_couple_tracking_form">लक्ष्य दम्पति ट्रैकिंग फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
     <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
@@ -439,7 +439,7 @@
     <string name="family_member_registration">परिवार सदस्य पंजीकरण</string>
     <string name="relation_with_hof">"मुखिया" से सम्बन्ध</string>
     <string name="add_family_member">परिवार के सदस्य जोड़ें</string>
-    <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (पात्र दंपत्ति) अनुभाग</string>
+    <string name="non_pregnant_women_eligible_couple_section">गैर-गर्भवती महिलाएं (लक्ष्य दम्पति) अनुभाग</string>
     <string name="about_us">पिरामल स्वास्थ्य सभी के लिए सार्वभौमिक स्वास्थ्य देखभाल को पूरा करने के लिए भारत सरकार के दृष्टिकोण को पूरक और संपूरित करके सार्वजनिक स्वास्थ्य सेवा के अंतराल को पाटने पर ध्यान केंद्रित कर रहा है। पिरामल स्वास्थ्य भारत में प्राथमिक सार्वजनिक स्वास्थ्य देखभाल क्षेत्र में मातृ स्वास्थ्य, बाल और किशोर स्वास्थ्य, गैर-संचारी रोगों पर ध्यान केंद्रित करने वाले सबसे बड़े गैर-लाभकारी संगठनों में से एक है। पिरामल स्वास्थ्य के पास कई स्वास्थ्य सेवा नवाचारों को बड़े पैमाने पर संचालित करने का एक दशक से अधिक का अनुभव है, जो पूरे भारत में सबसे कम सेवा प्राप्त और हाशिए पर रहने वाली आबादी की प्राथमिक स्वास्थ्य देखभाल जरूरतों को पूरा कर रहा है। पिरामल स्वास्थ्य भारत के 20 राज्यों में 35 नवीन सार्वजनिक स्वास्थ्य देखभाल वितरण कार्यक्रमों के माध्यम से कार्यरत है और अब तक 10.7 करोड़ से अधिक लाभार्थियों को सेवा प्रदान कर चुका है| पिरामल स्वास्थ्य में 250 चिकित्सकों सहित 2260 कर्मचारी कार्यरत हैं जो परिणामोन्मुखी दृष्टिकोण के माध्यम से सेवा भाव (लाभार्थी-केंद्रित) के मूल मूल्य पर काम करते हैं। पिछले बारह वर्षों में, फोकस निम्नलिखित पर रहा है, बड़े पैमाने पर स्थायी प्रभाव के लिए प्लेटफॉर्म का निर्माण, एक यात्रा के रूप में पैमाने पर नवाचार, नीति आयोग के ज्ञान और कार्यान्वयन भागीदार के रूप में नीतियों, शासन और सार्वजनिक स्वास्थ्य देखभाल प्रणाली की जवाबदेही को प्रभावित करना। हस्तक्षेप डिजाइन, मॉडलिंग, पायलटिंग और उन पायलटों को बढ़ाने के रूप में नवाचार पिरामल स्वास्थ्य में एक दृष्टिकोण रहा है। पिरामल स्वास्थ्य प्राथमिक स्वास्थ्य सेवा को न केवल सस्ती, सुलभ और सभी के लिए उपलब्ध बनाने के लिए प्रतिबद्ध है, बल्कि यह भी सुनिश्चित करता है कि यह पूर्ण, निरंतर और व्यापक हो।</string>
     <string name="flu_like_illness">फ्लू जैसी बीमारी</string>
     <string name="shakingchills">कंपकंपी</string>
@@ -637,11 +637,11 @@
     <string name="iv_case_status_tv">केस स्थिति</string>
     <string name="maternal_deaths">मातृ मृत्यु (MDSR)</string>
     <string name="please_select_value">कृपया एक मान चुनें</string>
-    <string name="mobilized_for_ahd">AHD के लिए जुटाए गए</string>
-    <string name="ahd_place">AHD स्थान</string>
+    <string name="mobilized_for_ahd">एएचडी के लिए जुटाए गए</string>
+    <string name="ahd_place">एएचडी स्थान</string>
     <string name="asha_Id">आशा आईडी</string>
     <string name="meeting_date">बैठक की तिथि</string>
-    <string name="ahd_date">AHD तारीख</string>
+    <string name="ahd_date">एएचडी तारीख</string>
     <string name="upload_image">छवि अपलोड करें</string>
     <string name="upload_image_sub">JPEG या PNG फाइल अपलोड करें (अधिकतम: 5MB)</string>
     <string name="visit_date_2">भ्रमण की तिथि</string>
@@ -671,7 +671,7 @@
     <string name="visit_no">विजिट संख्या</string>
     <string name="sup_households">घर</string>
     <string name="sup_beneficiaries">लाभार्थी</string>
-    <string name="sup_eligible_couples">पात्र दंपत्ति</string>
+    <string name="sup_eligible_couples">लक्ष्य दम्पति</string>
     <string name="sup_pregnant_women">गर्भवती महिलाएं</string>
     <string name="sup_anc_visits">एएनसी विजिट</string>
     <string name="sup_hrp_woman">एचआरपी महिला</string>
@@ -718,7 +718,7 @@
     <string name="wara">WARA</string>
     <string name="no_visit_made">कोई विजिट नहीं की गई</string>
     <string name="filter_list">फ़िल्टर</string>
-    <string name="ben_with_rch_id">RCH आईडी वाले लाभार्थी</string>
+    <string name="ben_with_rch_id">आरसीएच आईडी वाले लाभार्थी</string>
     <string name="call">कॉल</string>
     <string name="heading">इतिहास</string>
     <string name="new_abha">नया ABHA</string>
@@ -730,7 +730,7 @@
     <string name="saas_samelan">सास बहू सम्मेलन</string>
     <string name="no_participent">उपस्थित प्रतिभागियों की संख्या</string>
     <string name="place_new">स्थान</string>
-    <string name="check_sam">सैम जांचें</string>
+    <string name="check_sam">गंभीर कुपोषित जांच</string>
     <string name="ors">ओआरएस</string>
     <string name="ifa">आयरन फोलिक एसिड</string>
     <string name="add_new">नया जोड़ें</string>
@@ -741,7 +741,7 @@
     <string name="s_no">क्रम संख्या</string>
     <string name="last_follow_up_date">अंतिम फॉलो अप तारीख</string>
     <string name="bottle_distribution">बोतल वितरण</string>
-    <string name="child_rch_id">बच्चे की RCH आईडी</string>
+    <string name="child_rch_id">बच्चे की आरसीएच आईडी</string>
     <string name="vaccination_due_date">टीकाकरण नियत तारीख</string>
     <string name="reminder">अनुस्मारक!!</string>
     <string name="dose_name_2">खुराक का नाम : %1$s</string>
@@ -778,7 +778,7 @@
     <string name="str_qm_informed">Q.M/A.N.M को सूचित किया गया</string>
     <string name="str_supervisor_from_block">ब्लॉक/जिला/राज्य स्तर से पर्यवेक्षक अंतिम बार</string>
     <string name="str_ors_in_last_one_month">पिछले एक महीने में ORS पैकेट की कमी</string>
-    <string name="str_ifa_last_month">पिछले एक महीने में IFA सिरप की कमी</string>
+    <string name="str_ifa_last_month">पिछले एक महीने में फोलिक एसिड सिरप की कमी</string>
     <string name="str_are_the_eyes_swollen">क्या आंखें सूजी हैं / क्या आंखों से मवाद आ रहा है?</string>
     <string name="str_weight_on_day">दिन का वजन</string>
     <string name="str_yellowing_of_eye">आंख/हथेली/तलवे/त्वचा का पीलापन (पीलिया)</string>
@@ -920,7 +920,7 @@
     <string name="any_high_risk_identified">क्या कोई खतरे के लक्षण पहचाना गया है?</string>
     <string name="claim">Claim</string>
     <string name="cataract_surgery">मोतियाबिंद की सर्जरी</string>
-    <string name="cataract_surgery_visits">मोतियाबिंद सर्जरी के लिए विज़िट</string>
+    <string name="cataract_surgery_visits">मोतियाबिंद सर्जरी के लिए भ्रमण</string>
     <string name="due_date_label">देय: %1$s</string>
     <string name="delivery_discharge_summary_1">प्रसव छुट्टी सारांश 1</string>
     <string name="delivery_discharge_summary_2">प्रसव छुट्टी सारांश 2</string>
@@ -1321,4 +1321,9 @@
     <string name="sammelan_photo3">सम्मेलन की तस्वीरें / MoM (3)</string>
     <string name="sammelan_photo4">सम्मेलन की तस्वीरें / MoM (4)</string>
     <string name="sammelan_photo5">सम्मेलन की तस्वीरें / MoM (5)</string>
+
+    <string name="str_left">बायां</string>
+    <string name="str_right">दाईं</string>
+    <string name="str_both">दोनों</string>
+    <string name="str_eye_visit">आँख - भ्रमण</string>
 </resources>

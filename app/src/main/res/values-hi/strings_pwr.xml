@@ -12,7 +12,7 @@
     <string name="pwrdst_lmp_date">अंतिम मासिक धर्म की तिथि (LMP)</string>
     <string name="pwrdst_wk_of_prag_reg">पंजीकरण के समय गर्भावस्था के सप्ताह</string>
     <string name="pwrdst_edd">अनुमानित प्रसव तिथि (EDD)</string>
-    <string name="pwrdst_bld_grp">रक्त समूह</string>
+    <string name="pwrdst_bld_grp">रक्त समूह / ब्लड ग्रुप</string>
     <string name="pwrdst_wht_of_tm_reg">पंजीकरण के समय गर्भवती महिला का वजन (किलो में)</string>
     <string name="pwrdst_hht_of_pw">गर्भवती महिला की लंबाई (सेंटीमीटर में)</string>
     <string name="pwrdst_vdrl_rpr_tst_rlts">वीडीआरएल/आरपीआर टेस्ट परिणाम</string>
@@ -27,6 +27,6 @@
     <string name="pwrdst_no_of_prev_prag">पिछली गर्भावस्थाओं की कुल संख्या</string>
     <string name="pwrdst_any_lst_pregnancy">पिछली गर्भावस्था में कोई जटिलताएँ</string>
     <string name="pwrdst_any_other_comp">कोई अन्य जटिलता</string>
-    <string name="pwrdst_is_id_as_hrp_cse">क्या उच्च जोखिम वाली गर्भावस्था (HRP) के रूप में पहचानी गई है?</string>
+    <string name="pwrdst_is_id_as_hrp_cse">क्या खतरे के लक्षण वाली गर्भावस्था (HRP) के रूप में पहचानी गई है?</string>
     <string name="pwrdst_who_id_as_hrp">किसने HRP के रूप में पहचाना?</string>
 </resources>

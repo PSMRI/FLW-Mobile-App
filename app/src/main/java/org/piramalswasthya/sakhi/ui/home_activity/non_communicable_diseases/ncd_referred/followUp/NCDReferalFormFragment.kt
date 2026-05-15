@@ -255,9 +255,9 @@ class NCDReferalFormFragment : Fragment() {
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
+        val options = arrayOf(getString(R.string.take_photo), getString(R.string.choose_from_gallery))
         AlertDialog.Builder(requireContext())
-            .setTitle("Select Image")
+            .setTitle(getString(R.string.select_image))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> launchCamera()

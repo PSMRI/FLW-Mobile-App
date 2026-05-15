@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemEcTrackingListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
@@ -73,6 +74,8 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
                 binding.ivMissState.visibility = View.GONE
                 binding.llEcTrackingDetails3.visibility = View.GONE
             }
+
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
             binding.item = item
             binding.clickListener = clickListener

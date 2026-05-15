@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ecrdset_date_of_reg">पंजीकरण की तारीख</string>
-    <string name="ecrdset_rch_id_wo">महिला का RCH आईडी संख्या</string>
+    <string name="ecrdset_rch_id_wo">महिला का आरसीएच आईडी संख्या</string>
     <string name="ecrdset_name_of_wo">महिला का नाम</string>
     <string name="ecrdset_name_of_hu">पति का नाम</string>
     <string name="ecrdset_cur_ag_of_wo">महिला की वर्तमान उम्र</string>
@@ -15,8 +15,8 @@
     <string name="ecrdset_ifsc_code">IFSC कोड</string>
     <string name="ecrdset_ttl_child_born">अब तक पैदा हुए बच्चों की कुल संख्या</string>
     <string name="ecrdset_no_live_child">जीवित बच्चों की संख्या</string>
-    <string name="ecrdset_male">पुरुष</string>
-    <string name="ecrdset_female">महिला</string>
+    <string name="ecrdset_male">बालक</string>
+    <string name="ecrdset_female">बालिका</string>
     <string name="ecrdset_dls_1_child">पहले बच्चे का विवरण</string>
     <string name="ecrdset_1_child_bth">पहले बच्चे की जन्मतिथि</string>
     <string name="ecrdset_1_child_age_in_yrs">पहले बच्चे की उम्र (वर्ष में)</string>

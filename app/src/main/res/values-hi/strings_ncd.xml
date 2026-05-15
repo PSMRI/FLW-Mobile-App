@@ -64,8 +64,8 @@
     <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
     <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
     <string name="cbac_feeling_down">उदास, मायूस या निराश महसूस करना</string>
-    <string name="hrp_valid">उच्च जोखिम गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
-    <string name="hrp_sug_valid">संदिग्ध उच्च जोखिम गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
+    <string name="hrp_valid">खतरे के लक्षण वाली गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
+    <string name="hrp_sug_valid">संदिग्ध खतरे के लक्षण वाली गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyper">एनसीडी (उच्च रक्तचाप, डायबिटीज) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_diab">एनसीडी (डायबिटीज) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_diabm">एनसीडी (डायबिटीज मेलीटस) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
@@ -83,7 +83,7 @@
     <string name="ncd_tb_can">एनसीडी (टीबी, कैंसर) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyper_only">एनसीडी (उच्च रक्तचाप) से संबंधित, कृपया निकटतम एचडब्ल्यूसी पर जाएँ या 104 पर कॉल करें।</string>
     <string name="ncd_sus_valid">संदिग्ध गैर-संचारी रोग (NCD) का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
-    <string name="hrpncd_sus_valid">संदिग्ध उच्च जोखिम गर्भावस्था और NCD का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
+    <string name="hrpncd_sus_valid">संदिग्ध खतरे के लक्षण गर्भावस्था और NCD का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyperstroke">NCD (उच्च रक्तचाप, स्ट्रोक) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
     <string name="ncd_tbcancer">NCD (टीबी, कैंसर) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
     <string name="ncd_cansthyroid">NCD (कैंसर, थायरॉयड) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
@@ -159,9 +159,9 @@
     <string name="alert">चेतावनी!</string>
     <string name="alert_message_fill_required_fields">कृपया सबमिट करने से पहले सभी अनिवार्य फ़ील्ड भरें।</string>
     <string name="missing_field">जरूरी जानकारी भरी नहीं गई</string>
-    <string name="suspected_hrp_and_ncd_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
+    <string name="suspected_hrp_and_ncd_case">संदिग्ध 	खतरे के लक्षण गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
     <string name="ok">ठीक है</string>
-    <string name="suspected_hrp_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) का मामला</string>
+    <string name="suspected_hrp_case">संदिग्ध 	खतरे के लक्षण गर्भावस्था (एचआरपी) का मामला</string>
     <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">संदेहास्पद गैर-संचारी रोग का मामला — कृपया नज़दीकी स्वास्थ्य एवं कल्याण केंद्र जाएँ या 104 पर कॉल करें।</string>
     <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (उच्च प्राथमिकता वाला मामला)।</string>
     <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (कम प्राथमिकता वाला मामला)।</string>

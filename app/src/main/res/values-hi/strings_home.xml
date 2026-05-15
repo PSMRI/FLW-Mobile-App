@@ -17,7 +17,7 @@
 
     <string name="icon_title_household">सभी घरेलू सूची</string>
     <string name="icon_title_ben">सभी लाभार्थियों की सूची</string>
-    <string name="icon_title_ec">लक्ष दंपति सूची</string>
+    <string name="icon_title_ec">लक्ष्य दम्पति सूची</string>
     <string name="icon_title_mc">माता की देखभाल</string>
     <string name="icon_title_cc">बच्चे की देखभाल</string>
     <string name="icon_title_ncd">गैर संक्रामक रोग</string>
@@ -71,9 +71,9 @@
     <string name="icon_title_pmdo">प्रसव परिणाम</string>
     <string name="icon_title_pmir">नवजात पंजीकरण</string>
     <string name="icon_title_pmcr">बाल पंजीकरण</string>
-    <string name="icon_title_ecr">लक्ष दंपति पंजीकरण</string>
+    <string name="icon_title_ecr">लक्ष्य दम्पति पंजीकरण</string>
     <string name="icon_title_user_guid">उपयोगकर्ता मार्गदर्शिका</string>
-    <string name="icon_title_ect">लक्ष दंपत्ति ट्रैकिंग</string>
+    <string name="icon_title_ect">लक्ष्य दम्पति ट्रैकिंग</string>
     <string name="icon_title_video_tutorial">वीडियो ट्यूटोरियल</string>
     <string name="icon_title_ncd_tb_screening">टीबी जांच</string>
     <string name="icon_title_ncd_tb_suspected">संदिग्ध टीबी केस</string>
