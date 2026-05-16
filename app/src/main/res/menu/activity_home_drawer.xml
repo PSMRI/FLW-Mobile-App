@@ -21,6 +21,10 @@
             android:id="@+id/ashaProfileFragment"
             android:icon="@drawable/ic_person"
             android:title="@string/asha_profile" />
+        <item
+            android:id="@+id/dashboardFragment"
+            android:icon="@drawable/ic_dashboard"
+            android:title="@string/dashboard" />
     </group>
 
     <group>
@@ -31,10 +35,7 @@
             android:title="@string/sync_records" />
     </group>
 
-        <item
-            android:id="@+id/dashboardFragment"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/dashboard" />
+
 <!--    <group>-->
 <!--        <item-->
 <!--            android:id="@+id/abha_id_activity"-->

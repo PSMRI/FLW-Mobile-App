@@ -41,11 +41,8 @@ class DashboardFragment : Fragment() {
             binding.tvWorkerName.text = user.name
         }
         (activity as? HomeActivity)?.let { homeActivity ->
-            val locationRecord = viewModel.currentUser?.let {
-                // village name from pref via ViewModel would be cleaner, but we
-                // can also pull from HomeActivity's action bar title
-                null
-            }
+            val villageName = homeActivity.supportActionBar?.title?.toString()
+            binding.tvVillageName.text = if (!villageName.isNullOrEmpty()) "Village: $villageName" else ""
         }
 
         // Set up static card labels & icons once
@@ -107,8 +104,9 @@ class DashboardFragment : Fragment() {
                         // Pending sync badge
                         if (stats.pendingSync > 0) {
                             binding.llSyncBadge.visibility = View.VISIBLE
-                            binding.tvPendingSync.text =
-                                "${stats.pendingSync} record${if (stats.pendingSync > 1) "s" else ""} pending sync"
+                            binding.tvPendingSync.text = requireContext().resources.getQuantityString(
+                                R.plurals.pending_sync, stats.pendingSync, stats.pendingSync
+                            )
                         } else {
                             binding.llSyncBadge.visibility = View.GONE
                         }

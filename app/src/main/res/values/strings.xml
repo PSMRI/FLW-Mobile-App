@@ -1383,12 +1383,213 @@
     <string name="mobile_no_of_cho">Mobile No. of CHO</string>
     <string name="name_of_aww">Name of AWW</string>
     <string name="mobile_no_aww">Mobile No. AWW</string>
+    </string-array>
+
+    <string-array name="daysPv">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+
+    </string-array>
+
+    <string-array name="dec_albendazole_array">
+        <item>T</item>
+        <item>P</item>
+        <item>Y</item>
+        <item>S</item>
+        <item>H</item>
+        <item>A</item>
+        <item>R</item>
+        <item>L</item>
+        <item>O</item>
+    </string-array>
+
+    <string-array name="body_part_male">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Hydrocele</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>Right Hand</item>
+        <item>Left Hand</item>
+        <item>Right Leg</item>
+        <item>Left Leg</item>
+        <item>Right Side Breast</item>
+        <item>Left Side Breast</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="follow_up_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (Fever)</item>
+        <item>H (Headache)</item>
+        <item>B (Body Pain)</item>
+        <item>V (Vomiting)</item>
+        <item>N (Najala)</item>
+        <item>O (Other)</item>
+        <item>None</item>
+    </string-array>
+
+    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+    <string name="screening">Screening</string>
+    <string name="suspected">Suspected</string>
+    <string name="malaria_confirmed">Confirmed</string>
+    <string name="malaria_not_confirmed">Not Confirmed</string>
+    <string name="malaria_treatment_started">Treatment Started</string>
+    <string name="gallery">Gallery</string>
+    <string name="documents">Documents</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
+    <string name="upload_files">Upload Files</string>
+    <string name="choose_upload_source">Choose Upload Source</string>
+
+    <!-- Sync Dashboard -->
+    <string name="sync_dashboard">Sync Dashboard</string>
+    <string name="sync_dashboard_tab_status">Status</string>
+    <string name="sync_dashboard_tab_logs">Logs</string>
+    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
+    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
+    <string name="sync_dashboard_worker_idle">Idle</string>
+    <string name="sync_dashboard_worker_complete">Complete</string>
+    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
+    <string name="sync_dashboard_no_logs">No sync logs yet. Trigger a sync to see activity.</string>
+    <string name="sync_dashboard_clear_logs">Clear Logs</string>
+    <string name="sync_dashboard_export_logs">Export Logs</string>
+    <string name="sync_dashboard_no_log_files">No log files to export</string>
+    <string name="form_name">Form Name</string>
+    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
+    <string name="try_again">Try Again!</string>
+    <string name="no_of_childrens">No of children</string>
+    <string name="marriage_date">Marriage Date</string>
+    <string name="children_details">Children Details</string>
+    <string name="bank_details">Bank Details</string>
+
+    <string name="camera">Camera</string>
+
+    <string name="sub_center_under_you_4">Sub-Center Under You</string>
+    <string name="incentive_verification">Incentive Verification</string>
+    <string name="no_activities_found">No activities found</string>
+    <string name="supervisor_id">Supervisor ID:</string>
+    <string name="activity">Activity</string>
+    <string name="amount_rs">Amount (Rs.)</string>
+    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
+    <string name="verify">✓ Verify</string>
+    <string name="reject">✕ Reject</string>
+    <string name="reason_for_rejection">Reason for Rejection</string>
+    <string name="confirm_rejection">Confirm Rejection</string>
+    <string name="search_asha">Search ASHA....</string>
+    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
+    <string name="jan_2026">Jan, 2026</string>
+    <string name="verified_0">Verified: 0</string>
+    <string name="pending_0">Pending: 0</string>
+    <string name="rejected_0">Rejected: 0</string>
+    <string name="overdue_0">Overdue: 0</string>
+    <string name="total_ashas">Total ASHAs</string>
+    <string name="select_month">Select Month</string>
+    <string name="pending">Pending</string>
+    <string name="overdue">OverDue</string>
+    <string name="rejected">Rejected</string>
+    <string name="claim">Claim</string>
+    <string name="date_of_delivery">Date of Delivery</string>
+    <string name="any_danger_signs">Any Danger Signs?\n</string>
+    <string name="any_high_risk_identified">Any High-risk identified?</string>
+    <string name="delivery_discharge_summary_1">Delivery Discharge Summary 1</string>
+    <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
+    <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
+    <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
+    <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
+    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
+    <string name="tb_rise_of_fever">Rise of fever in evening</string>
+    <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_age_more_than_60">Age more than 60 years</string>
+    <string name="tb_diabetic">Diabetic</string>
+    <string name="tb_tobacco_user">Tobacco user</string>
+    <string name="tb_bmi_less_than_18_5">BMI &lt; 18.5</string>
+    <string name="tb_contact_with_patient_on_treatment">Contact with TB patient on treatment</string>
+    <string name="tb_history_last_5_years">Last 5 years history of TB</string>
+    <string name="visit_leprosy">Visit</string>
+    <string name="visit_number_label">Visit -%d</string>
+    <string name="add_spouse">Add Spouse</string>
+    <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="str_wife">Wife</string>
+    <string name="str_husband">Husband</string>
+    <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
+    <string name="distribution_date">Distribution Date</string>
+
+    <string name="filter_sort_by">Sort By</string>
+    <string name="filter_newest_first">Newest First</string>
+    <string name="filter_oldest_first">Oldest First</string>
+    <string name="filter_age_wise">Age Wise</string>
+    <string name="filter_syncing_first">Syncing Data First</string>
+    <string name="filter_unsynced_first">Un-Synced First</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
+    <string name="enter_a_valid_number">Enter a valid number</string>
+    <string name="allowed_range">Allowed range: %1$d to %2$d</string>
+    <string name="minimum_allowed_value">Minimum allowed value: %1$d</string>
+    <string name="_ok">OK</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.</string>
+    <string name="pnc_form">PNC Form</string>
+    <string name="bp_invalid_format">Invalid format. Should be like 123/56</string>
+    <string name="bp_systole_less_than">Systole should not be less than %d</string>
+    <string name="bp_systole_greater_than">Systole should not be greater than %d</string>
+    <string name="bp_diastole_less_than">Diastole should not be less than %d</string>
+    <string name="bp_diastole_greater_than">Diastole should not be greater than %d</string>
+    <string name="bp_diastole_greater_than_systole">Diastole cannot be greater than systole</string>
+    <string name="weight_enter_in_grams">Please enter weight in grams</string>
+    <string name="weight_cannot_be_zero">Weight cannot be 0</string>
+    <string name="weight_enter_in_grams_example">Please enter weight in grams (e.g. 2500)</string>
+    <string name="weight_min_500">Weight must be at least 500 grams</string>
+    <string name="weight_max_7000">Weight should not be greater than 7000 grams</string>
+
+    <string name="dynamic_form_select">Select %s</string>
+    <string name="error_invalid_visit_date">Invalid visit date</string>
+    <string name="error_visit_date_after_today">Visit Date cannot be after today\'s date</string>
+    <string name="error_visit_date_after_previous">Visit Date must be after previous visit (%s)</string>
+    <string name="alternate_mobile_no">Alternate Mobile No.</string>
+    <string name="father_or_spouse">Father or Spouse</string>
+    <string name="date_of_joining">Date of Joining</string>
+    <string name="population_covered_under_asha">Population Covered under ASHA</string>
+    <string name="asha_supervisor_name">Asha Supervisor Name</string>
+    <string name="asha_supervisor_contact_no">Asha Supervisor Contact No.</string>
+    <string name="cho_name">CHO Name</string>
+    <string name="mobile_no_of_cho">Mobile No. of CHO</string>
+    <string name="name_of_aww">Name of AWW</string>
+    <string name="mobile_no_aww">Mobile No. AWW</string>
     <string name="name_of_anm1">Name of ANM1</string>
     <string name="mobile_number_of_anm1">Mobile Number of ANM1</string>
     <string name="name_of_anm2">Name of ANM2</string>
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
 
-    <!-- Dashboard -->
-    <string name="dashboard">Dashboard</string>
+    <string name="coverage">Coverage</string>
+    <string name="maternal_health">Maternal Health</string>
+    <plurals name="pending_sync">
+        <item quantity="one">%d record pending sync</item>
+        <item quantity="other">%d records pending sync</item>
+    </plurals>
+
+
 
 </resources>

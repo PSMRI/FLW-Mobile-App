@@ -13,7 +13,6 @@ import javax.inject.Inject
 
 data class DashboardStats(
     val totalBeneficiaries: Int = 0,
-    val totalHouseholds: Int = 0,
     val pregnantWomen: Int = 0,
     val highRiskWomen: Int = 0,
     val deliveredWomen: Int = 0,
