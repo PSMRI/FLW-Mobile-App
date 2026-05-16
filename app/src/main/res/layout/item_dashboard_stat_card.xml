@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/md_theme_light_surface"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/md_theme_light_outlineVariant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/iv_stat_icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_unisex"
+            app:tint="@color/md_theme_light_primary"
+            tools:ignore="ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/tv_stat_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_light_onBackground"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="128" />
+
+        <TextView
+            android:id="@+id/tv_stat_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/md_theme_light_onSurfaceVariant"
+            android:textSize="12sp"
+            tools:text="Beneficiaries" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
