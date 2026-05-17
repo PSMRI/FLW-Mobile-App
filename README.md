@@ -163,7 +163,7 @@ To run this project, Follow these steps:
 ```bash
 export JAVA_HOME="PATH_TO_YOUR_JDK_21"
 export PATH="$JAVA_HOME/bin:$PATH"
-java --version // This will show jdk 21.x
+java --version # This will show jdk 21.x
 ```
 - Then run the setup script
 ```bash
