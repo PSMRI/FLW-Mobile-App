@@ -64,7 +64,7 @@ class ECRegistrationAdapter(
                     binding.benStatus.text = binding.root.resources.getString(R.string.missed_period)
                 } else {
                     binding.ivMissState.visibility = View.GONE
-                    binding.benStatus.text = "Under Review"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.under_review)
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE

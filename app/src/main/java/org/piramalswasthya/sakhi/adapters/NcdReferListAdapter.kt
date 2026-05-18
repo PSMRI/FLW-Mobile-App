@@ -7,6 +7,7 @@
     import androidx.recyclerview.widget.ListAdapter
     import androidx.recyclerview.widget.RecyclerView
     import org.piramalswasthya.sakhi.databinding.RvItemNcdReferBinding
+    import org.piramalswasthya.sakhi.helpers.getLocalizedAge
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
 
@@ -76,6 +77,7 @@
                 binding.btnFollowUp.setOnClickListener {
                     listener.onClickedFollowUp(item.ben)
                 }
+                binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
 
             }

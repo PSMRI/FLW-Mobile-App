@@ -120,6 +120,7 @@ class AncVisitListAdapter(
                 binding.btnPmsma.visibility = View.GONE
                 binding.btnViewVisitsPmsma.visibility = View.GONE
             }
+
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.clickListener = clickListener
             binding.executePendingBindings()

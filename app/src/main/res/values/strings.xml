@@ -672,6 +672,7 @@
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="ifa_syrup">IFA</string>
     <string name="add_new">Add New</string>
     <string name="ifa_distribution">IFA Distribution</string>
     <string name="ifa_quantity">IFA Quantity</string>

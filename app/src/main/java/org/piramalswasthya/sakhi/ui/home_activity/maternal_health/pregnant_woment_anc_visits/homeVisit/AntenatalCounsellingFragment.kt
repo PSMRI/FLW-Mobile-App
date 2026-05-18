@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAntenatalCounsellingBinding
 import org.piramalswasthya.sakhi.helpers.getDateFromLong
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
@@ -163,7 +164,7 @@ class AntenatalCounsellingFragment : Fragment() {
                     benList = selectedBen
                     binding.tvPregnantWomanValue.text = benList.ben.benName
                     binding.tvHusbandValue.text = benList.ben.spouseName
-                    binding.tvAgeValue.text = benList.ben.age
+                    binding.tvAgeValue.text = getLocalizedAge(binding.root.context, benList.ben.dob)// benList.ben.age
                     binding.tvRegDateValue.text = benList.ben.regDate
                     binding.tvPhoneValue.text =benList.ben.mobileNo
                     binding.tvLmpValue.text = benList.lmpString

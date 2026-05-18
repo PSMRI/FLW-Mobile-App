@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemHrpTrackingListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
 import java.util.Calendar
@@ -69,6 +70,7 @@ class HRPTListAdapter(
                     setFormButtonColor(i + 1, item)
                 }
             }
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
             binding.executePendingBindings()
 
