@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemEcTrackingListBinding
 import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
@@ -65,10 +66,10 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
                 binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.lmpDate)
                 if (System.currentTimeMillis() - item.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
-                    binding.benStatus.text = "Missed Period"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.missed_period)
                 } else {
                     binding.ivMissState.visibility = View.GONE
-                    binding.benStatus.text = "Under Review"
+                    binding.benStatus.text =  binding.root.resources.getString(R.string.under_review)
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE

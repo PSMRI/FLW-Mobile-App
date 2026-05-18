@@ -28,5 +28,5 @@
     <string name="pwrdst_any_lst_pregnancy">पिछली गर्भावस्था में कोई जटिलताएँ</string>
     <string name="pwrdst_any_other_comp">कोई अन्य जटिलता</string>
     <string name="pwrdst_is_id_as_hrp_cse">क्या खतरे के लक्षण वाली गर्भावस्था (HRP) के रूप में पहचानी गई है?</string>
-    <string name="pwrdst_who_id_as_hrp">किसने HRP के रूप में पहचाना?</string>
+    <string name="pwrdst_who_id_as_hrp">किसने उच्च जोखिम के रूप में पहचाना?</string>
 </resources>
