@@ -978,4 +978,13 @@ object HelperUtil {
         }
     }
 
+    fun Context.getBabyOrder(index: Int): String {
+        return when (index) {
+            0 -> getString(R.string.first_baby)
+            1 -> getString(R.string.second_baby)
+            2 -> getString(R.string.third_baby)
+            else -> getString(R.string.nth_baby, index + 1)
+        }
+    }
+
 }

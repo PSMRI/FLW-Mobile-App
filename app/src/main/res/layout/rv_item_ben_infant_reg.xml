@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.content.Context"/>
+
+        <variable
+            name="context"
+            type="Context" />
         <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.InfantRegDomain" />
@@ -50,7 +55,7 @@
                     android:drawablePadding="@dimen/padding_small"
                     android:gravity="center_vertical"
                     android:padding="@dimen/padding_small"
-                    android:text="@{item.customName}"
+                    android:text="@{item.getCustomName(context)}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
                     app:drawableLeftCompat="@drawable/ic__infant"

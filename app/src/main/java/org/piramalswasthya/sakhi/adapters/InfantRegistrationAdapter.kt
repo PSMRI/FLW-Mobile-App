@@ -43,6 +43,7 @@ class InfantRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.item = item
+            binding.context = binding.root.context
             binding.btnFormEc1.text = if (item.savedIr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
 
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.savedIr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
