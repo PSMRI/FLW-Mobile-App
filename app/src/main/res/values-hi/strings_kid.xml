@@ -43,6 +43,11 @@
     <string name="nbr_mobile_number_of">किसका मोबाइल नंबर</string>
     <string name="nrb_contact_number">संपर्क नंबर</string>
     <string name="nbr_nb_age_unit">आयु इकाई</string>
+    <string name="baby_of">%1$s बच्चा %2$s का</string>
+    <string name="first_baby">पहला</string>
+    <string name="second_baby">दूसरा</string>
+    <string name="third_baby">तीसरा</string>
+    <string name="nth_baby">%1$sवाँ</string>
 
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">दिन</item>
