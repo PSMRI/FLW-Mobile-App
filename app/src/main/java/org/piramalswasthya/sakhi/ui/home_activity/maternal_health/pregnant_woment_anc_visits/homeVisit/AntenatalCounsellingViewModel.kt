@@ -650,4 +650,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         age = age * 12 + today.get(Calendar.MONTH) - dob.get(Calendar.MONTH)
         return age
     }
+    fun resetState() {
+        _state.postValue(State.IDLE)
+    }
 }
