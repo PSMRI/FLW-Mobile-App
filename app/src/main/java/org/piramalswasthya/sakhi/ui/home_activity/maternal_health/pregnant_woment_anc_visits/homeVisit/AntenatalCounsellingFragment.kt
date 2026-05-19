@@ -281,7 +281,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
 
                 AntenatalCounsellingViewModel.State.SUCCESS -> {
-
+                    viewModel.resetState()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
 
                     Toast.makeText(
@@ -402,7 +402,8 @@ class AntenatalCounsellingFragment : Fragment() {
             .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
                 if(benList.showAddAnc){
-                navigateToAddAncVisitScreen()}
+                    if (isAdded)
+                        navigateToAddAncVisitScreen()}
                 else
                 {   dialog.dismiss()
                     Toast.makeText(
@@ -410,11 +411,13 @@ class AntenatalCounsellingFragment : Fragment() {
                         getString(R.string.next_anc_visit_due),
                         Toast.LENGTH_SHORT
                     ).show()
-                    findNavController().popBackStack()}
+                    if (isAdded)
+                        findNavController().popBackStack()}
             }
             .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
-                findNavController().popBackStack()
+                if (isAdded)
+                    findNavController().popBackStack()
             }
             .setCancelable(false)
             .show()
@@ -560,22 +563,48 @@ class AntenatalCounsellingFragment : Fragment() {
             .show()
     }
 
+//    private fun navigateToAddAncVisitScreen() {
+//        try {
+//            val nextVisitNumber = if (benList?.anc?.isEmpty() == true) 1 else benList?.anc?.maxOf { it.visitNumber }!! + 1
+//
+//            findNavController().navigate(
+//                AntenatalCounsellingFragmentDirections.actionPwAncCounsellingFormFragmentToPwAncFormFragment(
+//                    benId = benId,
+//                    hhId = benList?.ben?.hhId?.toString() ?: "",
+//                    visitNumber = nextVisitNumber
+//                )
+//            )
+//            NavOptions.Builder()
+//                .setPopUpTo(
+//                    R.id.pwAncCounsellingFormFragment, true
+//                )
+//                .build()
+//        } catch (e: Exception) {
+//            Timber.e(e, "Error navigating to Add ANC Visit screen")
+//            findNavController().popBackStack()
+//        }
+//    }
+
     private fun navigateToAddAncVisitScreen() {
         try {
-            val nextVisitNumber = if (benList?.anc?.isEmpty() == true) 1 else benList?.anc?.maxOf { it.visitNumber }!! + 1
+            val nextVisitNumber =
+                if (benList.anc.isEmpty()) 1
+                else benList.anc.maxOf { it.visitNumber } + 1
+
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.pwAncCounsellingFormFragment, true)
+                .build()
 
             findNavController().navigate(
-                AntenatalCounsellingFragmentDirections.actionPwAncCounsellingFormFragmentToPwAncFormFragment(
-                    benId = benId,
-                    hhId = benList?.ben?.hhId?.toString() ?: "",
-                    visitNumber = nextVisitNumber
-                )
+                AntenatalCounsellingFragmentDirections
+                    .actionPwAncCounsellingFormFragmentToPwAncFormFragment(
+                        benId = benId,
+                        hhId = benList.ben.hhId?.toString() ?: "",
+                        visitNumber = nextVisitNumber
+                    ),
+                navOptions
             )
-            NavOptions.Builder()
-                .setPopUpTo(
-                    R.id.pwAncCounsellingFormFragment, true
-                )
-                .build()
+
         } catch (e: Exception) {
             Timber.e(e, "Error navigating to Add ANC Visit screen")
             findNavController().popBackStack()
