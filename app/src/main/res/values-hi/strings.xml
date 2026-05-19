@@ -409,6 +409,9 @@
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
     <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
+    <string name="tb_suspected_leprosy_case">कुष्ठ रोग का संदिग्ध मामला</string>
+    <string name="tb_suspected_ncd_case">एनसीडी का संदिग्ध मामला</string>
+    <string name="tb_suspected_copd_case">सीओपीडी का संदिग्ध मामला</string>
     <string name="tb_suspected_form">संदिग्ध टीबी मामला</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
     <string name="delivery_outcome">प्रसव परिणाम</string>
@@ -646,7 +649,8 @@
     <string name="upload_image_sub">JPEG या PNG फाइल अपलोड करें (अधिकतम: 5MB)</string>
     <string name="visit_date_2">भ्रमण की तिथि</string>
     <string name="visit_tb">भ्रमण</string>
-    <string name="visit_format">विजिट-%d</string>
+    <string name="visit_format">भ्रमण-%d</string>
+    <string name="str_follow_up">फॉलो-अप</string>
     <string name="type_of_tb_case">टीबी केस का प्रकार?</string>
     <string name="reason_for_suspicion">संदेह का कारण</string>
     <string name="has_symptoms">क्या रोगी में लक्षण हैं?</string>
