@@ -176,10 +176,10 @@ class NCDReferalFormFragment : Fragment() {
                         .map { (visitNo, items) ->
                             val diagnosis = items.firstOrNull()?.diagnosisCodes ?: "-"
                             VisitItem(
-                                visitHeader = "Visit $visitNo ($diagnosis)",
+                                visitHeader = "${getString(R.string.visit_tb)} - $visitNo ($diagnosis)",
                                 followUps = items.map { item ->
                                     val date = item.followUpDate ?: item.treatmentStartDate
-                                    "• Follow-up ${item.followUpNo} | $date"
+                                    "• ${getString(R.string.str_follow_up)} ${item.followUpNo} | $date"
                                 }
                             )
                         }
