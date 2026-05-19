@@ -64,7 +64,7 @@ class CbacFragment : Fragment() {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
     private var isReferralDialogShown = false
-    var referralForReason = getString(R.string.tb_suspected_ncd_case)
+    var referralForReason = ""
     var referType = "NCD"
 
     private val raAlertDialog by lazy {
@@ -278,7 +278,7 @@ class CbacFragment : Fragment() {
             val totalScore = viewModel.raTotalScore.value
                 ?.substringAfter(": ")
                 ?.toIntOrNull() ?: 0
-            referralForReason = "Suspected NCD Case"
+            referralForReason = getString(R.string.tb_suspected_ncd_case)
             referType = "NCD"
 
             handleNcdSusBottomInfoDisplay(totalScore)
