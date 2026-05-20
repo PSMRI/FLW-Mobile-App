@@ -64,7 +64,7 @@ class CbacFragment : Fragment() {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
     private var isReferralDialogShown = false
-    var referralForReason = "Suspected NCD Case"
+    var referralForReason = ""
     var referType = "NCD"
 
     private val raAlertDialog by lazy {
@@ -138,7 +138,7 @@ class CbacFragment : Fragment() {
             ) {
                 dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
-                referralForReason = "Suspected Leprosy case"
+                referralForReason = getString(R.string.tb_suspected_leprosy_case)
                 referType = "LEPROSY"
                 asreferAlertDialog = buildAsReferAlertDialog()
                 asreferAlertDialog?.show()
@@ -278,7 +278,7 @@ class CbacFragment : Fragment() {
             val totalScore = viewModel.raTotalScore.value
                 ?.substringAfter(": ")
                 ?.toIntOrNull() ?: 0
-            referralForReason = "Suspected NCD Case"
+            referralForReason = getString(R.string.tb_suspected_ncd_case)
             referType = "NCD"
 
             handleNcdSusBottomInfoDisplay(totalScore)
@@ -567,7 +567,7 @@ class CbacFragment : Fragment() {
                 )
                 ast1AlertDialog.show()*/
                 if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
-                    referralForReason = "Suspected TB case"
+                    referralForReason = getString(R.string.tb_suspected_form)
                     referType = "TB"
                     asreferAlertDialog = buildAsReferAlertDialog()
                     asreferAlertDialog?.show()
@@ -1213,7 +1213,7 @@ class CbacFragment : Fragment() {
         }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
-            referralForReason = "Suspected COPD case"
+            referralForReason = getString(R.string.tb_suspected_copd_case)
             referType = "COPD"
             if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
                 asreferAlertDialog = buildAsReferAlertDialog()

@@ -122,9 +122,9 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
+                            android:id="@+id/age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{benWithPwr.ben.age}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="45 Y" />

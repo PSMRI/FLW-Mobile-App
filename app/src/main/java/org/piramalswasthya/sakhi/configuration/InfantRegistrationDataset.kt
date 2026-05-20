@@ -50,7 +50,7 @@ class InfantRegistrationDataset(
         id = 4,
         inputType = InputType.RADIO,
         title = resources.getString(R.string.ir_gender),
-        entries = resources.getStringArray(R.array.ecr_gender_array),
+        entries = resources.getStringArray(R.array.ecr_baby_gender_array),
         required = true,
         hasDependants = true,
     )

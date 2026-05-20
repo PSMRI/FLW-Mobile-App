@@ -101,13 +101,13 @@ class EyeSurgeryBottomSheetFragment : BottomSheetDialogFragment() {
             val viewOptions = savedVisits.mapIndexed { index, entity ->
                 // eyeSide properly capitalize karke show karo
                 val eyeLabel = when (entity.eyeSide.uppercase()) {
-                    "LEFT" -> "Left"
-                    "RIGHT" -> "Right"
-                    "BOTH" -> "Both"
+                    "LEFT" -> getString(R.string.str_left)
+                    "RIGHT" -> getString(R.string.str_right)
+                    "BOTH" -> getString(R.string.str_both)
                     else -> entity.eyeSide
                 }
                 EyeSurgeryVisitOption(
-                    title = "$eyeLabel Eye - Visit ${index + 1}",
+                    title = "$eyeLabel ${getString(R.string.str_eye_visit)} ${index + 1}",
                     visitDate = entity.visitDate,
                     eyeSide = entity.eyeSide,
                     isAddNew = false,

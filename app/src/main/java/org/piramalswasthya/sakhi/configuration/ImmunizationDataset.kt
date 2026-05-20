@@ -94,14 +94,14 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
     private val doseName = FormElement(
         id = 113,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.dose_name),
+        title = resources.getString(R.string.dose_name),
         required = false
     )
 
     private val vaccinationDueDate = FormElement(
         id = 114,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.vaccination_due_date),
+        title = resources.getString(R.string.vaccination_due_date),
         required = false
     )
 
@@ -109,13 +109,13 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         id = 111,
         inputType = InputType.FILE_UPLOAD,
         required = false,
-        title = context.getString(R.string.mcp_card_1)
+        title = resources.getString(R.string.mcp_card_1)
     )
     val mcpCard2 = FormElement(
         id = 112,
         inputType = InputType.FILE_UPLOAD,
         required = false,
-        title = context.getString(R.string.mcp_card_2)
+        title = resources.getString(R.string.mcp_card_2)
     )
 
 

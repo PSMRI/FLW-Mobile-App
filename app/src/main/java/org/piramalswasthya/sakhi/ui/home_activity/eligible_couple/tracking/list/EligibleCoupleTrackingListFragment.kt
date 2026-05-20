@@ -100,7 +100,7 @@ class EligibleCoupleTrackingListFragment : Fragment() {
                             ) else
                             Toast.makeText(
                                 requireContext(),
-                                "Already filled for this Month!",
+                                getString(R.string.ecrdset_already_filled),
                                 Toast.LENGTH_LONG
                             ).show()
             }, showAllTracks = {

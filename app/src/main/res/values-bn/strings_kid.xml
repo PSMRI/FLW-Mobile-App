@@ -73,7 +73,13 @@
 
     <string name="hbnc_form">HBNC ফর্ম</string>
     <string name="ncd_folloup_form">NCD রেফারেল ফলোআপ ফর্ম</string>
+    <string name="baby_of">%2$s এর %1$s শিশু</string>
 
+    <string name="first_baby">প্রথম</string>
+    <string name="second_baby">দ্বিতীয়</string>
+    <string name="third_baby">তৃতীয়</string>
+
+    <string name="nth_baby">%1$sতম</string>
     <!-- Age Unit -->
     <string-array name="nbr_age_unit_array">
         <item>দিন</item>

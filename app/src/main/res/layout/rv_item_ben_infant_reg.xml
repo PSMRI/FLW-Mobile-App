@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.content.Context"/>
+
+        <variable
+            name="context"
+            type="Context" />
         <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.InfantRegDomain" />
@@ -50,7 +55,7 @@
                     android:drawablePadding="@dimen/padding_small"
                     android:gravity="center_vertical"
                     android:padding="@dimen/padding_small"
-                    android:text="@{item.customName}"
+                    android:text="@{item.getCustomName(context)}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
                     app:drawableLeftCompat="@drawable/ic__infant"
@@ -122,12 +127,13 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
+                            android:id="@+id/age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{item.motherBen.age}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="45 Y" />
+<!--                        android:text="@{item.motherBen.age}"-->
                     </LinearLayout>
 
                     <LinearLayout

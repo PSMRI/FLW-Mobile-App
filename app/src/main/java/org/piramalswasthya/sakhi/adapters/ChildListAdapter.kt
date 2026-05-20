@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareChildBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 
 
@@ -43,6 +44,7 @@ class ChildListAdapter(
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
+            binding.age.text = getLocalizedAge(binding.root.context, item.dob)
             binding.executePendingBindings()
 
         }

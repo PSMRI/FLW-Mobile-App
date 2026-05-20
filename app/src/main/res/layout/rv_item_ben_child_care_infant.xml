@@ -158,10 +158,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.age}"
+                            android:id="@+id/age"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="45 Years" />
+<!--                        android:text="@{ben.age}"-->
                     </LinearLayout>
 
                     <LinearLayout

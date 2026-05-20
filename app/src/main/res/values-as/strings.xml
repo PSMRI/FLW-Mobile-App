@@ -509,14 +509,14 @@
         <item>মৃত্যু</item>
     </string-array>
     <string-array name="place_of_death">
-        <item>घर</item>
-        <item>उपकेंद्र</item>
-        <item>पीएचसी</item>
-        <item>सीएचसी</item>
-        <item>जिला अस्पताल</item>
-        <item>मेडिकल कॉलेज अस्पताल</item>
-        <item>निजी अस्पताल</item>
-        <item>अन्य स्थान</item>
+        <item>ঘৰ</item>
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>পিএইচচি</item>
+        <item>চিএইচচি</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য স্থান</item>
     </string-array>
 
     <string-array name="dc_case_status">
@@ -1084,6 +1084,7 @@
     <string name="check_sam">SAM পৰীক্ষা কৰক</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="ifa_syrup">আইৰন চিৰাপ</string>
     <string name="date_of_provision">প্ৰদানৰ তাৰিখ</string>
     <string name="bottle_number">বটলৰ নম্বৰ</string>
     <string name="s_no">ক্ৰমিক নং</string>
@@ -1276,7 +1277,10 @@
     <string name="str_dose_one">মাত্ৰা-১</string>
     <string name="str_alert">সতৰ্ক!</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">অনুগ্ৰহ কৰি ৰেকৰ্ডটো ছিঙ্ক হোৱালৈ অপেক্ষা কৰক আৰু পুনৰ চেষ্টা কৰক।</string>
-
+    <string name="str_left">বাওঁ</string>
+    <string name="str_right">সোঁ</string>
+    <string name="str_both">দুয়োটা</string>
+    <string name="str_eye_visit">চকু - ভিজিট</string>
 
     <string name="vac_bcg">বিচিজি ভেকচিন</string>
     <string name="vac_hepb_birth">হেপাটাইটিছ বি (জন্ম)</string>
@@ -1404,4 +1408,6 @@
     <string name="add_new">নতুন যোগ কৰক</string>
     <string name="ifa_distribution">IFA বিতৰণ</string>
     <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="check_sympt">ব্যক্তিজনৰ এই লক্ষণসমূহৰ কোনো এটা আছে নে নাই পৰীক্ষা কৰক:</string>
+
 </resources>

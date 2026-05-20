@@ -1,14 +1,17 @@
 package org.piramalswasthya.sakhi.model
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.getBabyOrder
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,6 +26,7 @@ import java.util.Locale
     )],
     indices = [Index(name = "infRegInd", value = ["motherBenId"])]
 )
+
 
 data class InfantRegCache(
     @PrimaryKey(autoGenerate = true)
@@ -155,15 +159,22 @@ data class InfantRegDomain(
     val savedIr: InfantRegCache?,
     val syncState: SyncState? = savedIr?.syncState
 ) {
-    val customName: String
-        get() = if (babyIndex == 0) {
-            "${babyIndex+1}st baby of ${motherBen.benName}"
-        } else if (babyIndex == 1) {
-            "${babyIndex+1}nd baby of ${motherBen.benName}"
-        } else {
-            "${babyIndex+1}rd baby of ${motherBen.benName}"
+    fun getCustomName(context: Context?): String {
+        if (context == null) {
+            return "${babyIndex + 1} Baby"
         }
+
+        val order = context.getBabyOrder(babyIndex)
+
+        return context.getString(
+            R.string.baby_of,
+            order,
+            motherBen.benName
+        )
+
+    }
 }
+
 
 data class InfantRegPost(
     val id: Long = 0,

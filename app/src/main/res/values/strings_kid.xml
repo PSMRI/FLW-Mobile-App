@@ -50,6 +50,11 @@
     <string name="part_ii">Part II</string>
     <string name="hbnc_form">HBNC Form</string>
     <string name="ncd_folloup_form">NCD Referal FollowUp Form</string>
+    <string name="baby_of">%1$s baby of %2$s</string>
+    <string name="first_baby">1st</string>
+    <string name="second_baby">2nd</string>
+    <string name="third_baby">3rd</string>
+    <string name="nth_baby">%1$sth</string>
 
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">Day</item>

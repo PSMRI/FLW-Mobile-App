@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
@@ -63,7 +64,7 @@ class ECRegistrationAdapter(
                     binding.benStatus.text = binding.root.resources.getString(R.string.missed_period)
                 } else {
                     binding.ivMissState.visibility = View.GONE
-                    binding.benStatus.text = "Under Review"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.under_review)
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE
@@ -78,6 +79,7 @@ class ECRegistrationAdapter(
                 } else {
                     binding.root.resources.getString(R.string.register)
                 }
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
 
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
