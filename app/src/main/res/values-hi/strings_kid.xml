@@ -156,7 +156,7 @@
         <item>निजी अस्पताल</item>
         <item>मान्यता प्राप्त निजी अस्पताल</item>
         <item>वीएचएनडी वीएचएसएनसी यू-विन सत्र</item>
-        <item>अन्य</item>
+        <item>आंगनवाड़ी केंद्र (AWC)</item>
     </string-array>
     <string-array name="imm_vaccinated_by_array">
         <item>एएनएम (सहायक नर्स दाई)</item>
