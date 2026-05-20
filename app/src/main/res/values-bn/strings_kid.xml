@@ -129,7 +129,6 @@
     <string name="str_date_of_birth">জন্ম তারিখ</string>
     <string name="str_sex_of_child">শিশুর লিঙ্গ</string>
 
-    <string name="str_mothers_name">মায়ের নাম</string>
     <string name="str_fathers_name">বাবার নাম</string>
 
     <string name="str_whose_mobile_number">মোবাইল নম্বর কার</string>
@@ -231,7 +230,7 @@
         <item>বেসরকারি হাসপাতাল</item>
         <item>স্বীকৃত বেসরকারি হাসপাতাল</item>
         <item>VHND VHSND U-WIN সেশন</item>
-        <item>অন্যান্য</item>
+        <item>আঙ্গনওয়াড়ি কেন্দ্র (AWC)</item>
     </string-array>
 
     <string-array name="imm_vaccinated_by_array">
