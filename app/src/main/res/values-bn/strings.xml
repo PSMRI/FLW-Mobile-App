@@ -655,6 +655,7 @@
         <item>CHC</item>
         <item>জেলা হাসপাতাল</item>
         <item>PHC</item>
+        <item>উপ-কেন্দ্র</item>
     </string-array>
     <string name="check_sam">SAM পরীক্ষা করুন</string>
     <string name="ors">ORS</string>
