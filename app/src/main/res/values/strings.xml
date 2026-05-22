@@ -668,10 +668,11 @@
     <string name="additional_services">Additional Services</string>
     <string name="refer_date">Refer Date</string>
     <string-array name="referal_health_center_array">
-        <item>Apolo</item>
+        <item>Apollo</item>
         <item>CHC</item>
         <item>District Hospital</item>
         <item>PHC</item>
+        <item>Sub-Centre</item>
     </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
