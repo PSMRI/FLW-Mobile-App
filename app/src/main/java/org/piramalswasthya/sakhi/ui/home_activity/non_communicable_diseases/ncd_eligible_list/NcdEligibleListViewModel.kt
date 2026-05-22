@@ -22,9 +22,7 @@ class NcdEligibleListViewModel @Inject constructor(
     recordsRepo: RecordsRepo,
     private val preferenceDao: PreferenceDao,
     @ApplicationContext private val context: Context
-) : ViewModel(
-
-) {
+) : ViewModel() {
 
     private lateinit var asha: User
     var clickedPosition = 0
@@ -103,20 +101,20 @@ class NcdEligibleListViewModel @Inject constructor(
 
     private val yearsData = ArrayList<String>()
 
-    fun yearsList() : ArrayList<String> {
+    fun yearsList(context: Context) : ArrayList<String> {
 
         yearsData.clear()
-        yearsData.add("Select Years")
-        yearsData.add("35 YEARS")
-        yearsData.add("40 YEARS")
-        yearsData.add("45 YEARS")
-        yearsData.add("50 YEARS")
-        yearsData.add("55 YEARS")
-        yearsData.add("60 YEARS")
-        yearsData.add("65 YEARS")
-        yearsData.add("70 YEARS")
-        yearsData.add("75 YEARS")
-        yearsData.add("80 YEARS")
+        yearsData.add(context.getString(R.string.select_years))
+        yearsData.add(context.getString(R.string.years_35))
+        yearsData.add(context.getString(R.string.years_40))
+        yearsData.add(context.getString(R.string.years_45))
+        yearsData.add(context.getString(R.string.years_50))
+        yearsData.add(context.getString(R.string.years_55))
+        yearsData.add(context.getString(R.string.years_60))
+        yearsData.add(context.getString(R.string.years_65))
+        yearsData.add(context.getString(R.string.years_70))
+        yearsData.add(context.getString(R.string.years_75))
+        yearsData.add(context.getString(R.string.years_80))
         return yearsData
 
     }

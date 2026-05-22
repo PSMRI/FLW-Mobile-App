@@ -20,6 +20,7 @@ class GdrListFragment : BaseListFragment<FragmentNmdsrListBinding>() {
     @Inject
     override lateinit var prefDao: PreferenceDao
     override val viewModel: GdrListViewModel by viewModels()
+    override val navFragmentId = R.id.gdrListFragment
     override val iconResId = R.drawable.ic__death
     override val titleResId = R.string.general_deaths
     override val isGeneralForm = true

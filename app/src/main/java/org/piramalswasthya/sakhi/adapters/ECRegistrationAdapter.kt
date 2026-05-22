@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemBenEcWithFormBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
@@ -46,6 +48,7 @@ class ECRegistrationAdapter(
         ) {
             binding.benWithEcr = item
 
+            binding.noOfchild.text= item.childCount.toString()
             if (item.ecr == null) {
                 binding.llLmpDate.visibility = View.INVISIBLE
                 binding.llBenStatus.visibility = View.INVISIBLE
@@ -58,10 +61,10 @@ class ECRegistrationAdapter(
                 binding.benLmpDate.text = HelperUtil.getDateStringFromLongStraight(item.ecr.lmpDate)
                 if (System.currentTimeMillis() - item.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)) {
                     binding.ivMissState.visibility = View.VISIBLE
-                    binding.benStatus.text = "Missed Period"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.missed_period)
                 } else {
                     binding.ivMissState.visibility = View.GONE
-                    binding.benStatus.text = "Under Review"
+                    binding.benStatus.text = binding.root.resources.getString(R.string.under_review)
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE
@@ -76,6 +79,7 @@ class ECRegistrationAdapter(
                 } else {
                     binding.root.resources.getString(R.string.register)
                 }
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
 
             binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))

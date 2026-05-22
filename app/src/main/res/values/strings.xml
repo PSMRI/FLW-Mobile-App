@@ -37,7 +37,6 @@
     <string name="m_test_type">Malaria Test Type</string>
     <string name="place_of_Death">Place of Death</string>
     <string name="reason_of_Death">Reason for Death</string>
-    <string name="beneficiary_status">Beneficiary Status</string>
     <string name="aes_case_status">AES / JE  Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
@@ -108,6 +107,8 @@
     <string name="cd_icon_grid_icon">icon</string>
     <string name="nav_item_1_text">Name : <b>%s</b></string>
     <string name="nav_item_2_text">Username : <b>%s</b></string>
+    <string name="nav_item_facility_text">Facility : <b>%s</b></string>
+    <string name="nav_item_emp_text">Employee ID :  <b>%s</b></string>
     <string name="nav_item_3_text">User ID :  <b>%s</b></string>
     <string name="nav_item_4_text">Version : %s</string>
     <string name="tv_required_text_asterisk">*</string>
@@ -116,6 +117,9 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="irs_off">IRS OFF</string>
+    <string name="adolescent_health_form">Adolescent Health Form</string>
+    <string name="irs_on">IRS ON</string>
     <string name="mosquito_net_on">Mosquito Net ON</string>
     <string name="mosquito_net_off">Mosquito Net OFF</string>
     <string name="btn_apply">Apply</string>
@@ -170,6 +174,7 @@
     <string name="visit_date_2">Visit Date</string>
     <string name="visit_tb">Visit</string>
     <string name="visit_format">Visit-%d</string>
+    <string name="str_follow_up">Follow-up</string>
     <string name="type_of_tb_case">Type of TB case?</string>
     <string name="reason_for_suspicion">Reason for suspicion</string>
     <string name="has_symptoms">Does the patient have symptoms?</string>
@@ -231,7 +236,14 @@
         <item>Community center</item>
     </string-array>
 
-
+    <string-array name="temp_array">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
+        <item>Item 4</item>
+        <item>Item 5</item>
+        <item>Item 6</item>
+    </string-array>
 
     <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
@@ -258,6 +270,11 @@
     <string name="hbnc_baby_temp_96_alert">advice the mother to keep the baby warm by increasing the room temperature, providing skin to skin contact, putting the baby in a warm bag and frequently feeding the baby. once the baby is warmer then clothe the baby and place in a pre warmed bed close to the mother.</string>
     <string name="hbnc_baby_temp_99_alert">then look for signs of sepsis. In case signs of sepsis are not present manage only with 1/4th of a spoon of paracetamol and immediately refer to the SNCU at the nearest health facility.</string>
 
+    <string name="error_only_numeric">Only numeric values allowed</string>
+    <string name="error_birth_cert_length">Birth Certificate Number must be 6 to 20 digits</string>
+    <string name="error_invalid_birth_cert">Invalid Birth Certificate Number</string>
+
+
     <string name="form_input_empty_error">Required field cannot be empty !</string>
     <string name="form_input_upper_case_error">Only Alphabets in upper case allowed!</string>
     <string name="form_input_missing_entry_error">Field must contain %1d digits.</string>
@@ -266,6 +283,9 @@
     <string name="form_input_alphabet_special__digit_only_error">Only Alphabets and special characters, digits allowed!</string>
     <string name="form_input_min_limit_error">%1$s should be greater than or equal to %2$d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
+    <string name="abha_number_digit">ABHA number should be 14-digit long</string>
+    <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
+    <string name="ifsc_code">IFSC</string>
     <string name="field_is_required">%s is required</string>
     <string name="field_is_invalid">%s is invalid</string>
     <string name="field_must_be_number">%s must be a number</string>
@@ -274,12 +294,10 @@
     <string name="field_date_invalid">%s date is invalid</string>
     <string name="field_date_before">%1$s cannot be before %2$s</string>
     <string name="field_date_after">%1$s cannot be after %2$s</string>
-    <string name="abha_number_digit">ABHA number should be 14-digit long</string>
-    <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
-    <string name="ifsc_code">IFSC</string>
     <string name="app_settings">App Settings</string>
     <string name="incentive_dashboard">Incentive Dashboard</string>
     <string name="facilitator">Facilitator</string>
+    <string name="kpi_dashboard">KPI Dashboard</string>
     <string name="form_input__no_alpha_space_error">No Alphabets or spaces allowed!</string>
     <string name="form_input_digit_only_error">Only Digits allowed!</string>
     <string name="form_input_min_limit_error_decimal">%1$s should be greater than or equal to %2$.1f</string>
@@ -315,6 +333,47 @@
     <string name="imm_cat_10_years">10 YEARS</string>
     <string name="imm_cat_16_years">16 YEARS</string>
     <string name="imm_cat_catch_up">Catch Up</string>
+
+
+
+    <string name="vac_bcg">BCG Vaccine</string>
+    <string name="vac_hepb_birth">Hepatitis-B Vaccine (HBV)-Birth</string>
+    <string name="vac_opv_0">Oral Polio Vaccine (OPV)-0</string>
+    <string name="vac_penta_1">Pentavalent-1</string>
+    <string name="vac_opv_1">OPV-1</string>
+    <string name="vac_rvv_1">Rotavirus Vaccine (RVV)-1</string>
+    <string name="vac_fipv_1">fractional Dose of IPV (fIPV)-1</string>
+    <string name="vac_penta_2">Pentavalent-2</string>
+    <string name="vac_opv_2">OPV-2</string>
+    <string name="vac_rvv_2">Rotavirus Vaccine (RVV)-2</string>
+    <string name="vac_penta_3">Pentavalent-3</string>
+    <string name="vac_opv_3">OPV-3</string>
+    <string name="vac_rvv_3">Rotavirus Vaccine (RVV)-3</string>
+    <string name="vac_fipv_2">fractional Dose of IPV (fIPV)-2</string>
+    <string name="vac_mr_1">Measles &amp; Rubella (MR)-1</string>
+    <string name="vac_je_1">JE-1</string>
+    <string name="vac_vit_a_1">Oral Vitamin A (1st Dose)</string>
+    <string name="vac_dpt_booster_1">DPT Booster-1</string>
+    <string name="vac_mr_2">Measles &amp; Rubella (MR)-2</string>
+    <string name="vac_je_2">JE-2</string>
+    <string name="vac_opv_booster">OPV Booster</string>
+    <string name="vac_vit_a_2">Oral Vitamin A (2nd Dose)</string>
+    <string name="vac_dpt_booster_2">DPT Booster-2</string>
+    <string name="vac_td_1">Tetanus &amp; adult Diphtheria (Td)</string>
+    <string name="vac_td_2">Tetanus &amp; adult Diphtheria (Td)</string>
+    <string name="vac_vit_k">Vitamin K</string>
+    <string name="vac_vit_a_3">Oral Vitamin A (3rd Dose)</string>
+    <string name="vac_vit_a_4">Oral Vitamin A (4th Dose)</string>
+    <string name="vac_vit_a_5">Oral Vitamin A (5th Dose)</string>
+    <string name="vac_vit_a_6">Oral Vitamin A (6th Dose)</string>
+    <string name="vac_vit_a_7">Oral Vitamin A (7th Dose)</string>
+    <string name="vac_vit_a_8">Oral Vitamin A (8th Dose)</string>
+    <string name="vac_pcv_1">PCV-1</string>
+    <string name="vac_pcv_2">PCV-2</string>
+    <string name="vac_pcv_booster">PCV-Booster</string>
+    <string name="unknown">unknown</string>
+
+
     <string name="children">Children</string>
     <string name="mother">Mother</string>
     <string name="patient_information">Patient Information</string>
@@ -427,6 +486,7 @@
     <string name="hbyc">HBYC</string>
     <string name="hbyc_month_list">Hbyc Month List</string>
     <string name="immunization">Immunization</string>
+    <string name="immunization_cant_done_as_missed">Immunization cannot be done as it is missed</string>
     <string name="pregnancy_registration_form">Pregnancy Registration Form</string>
     <string name="anc_visit">ANC Visit</string>
     <string name="home_visit">Home Visit</string>
@@ -440,6 +500,9 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_suspected_copd_case">Suspected COPD case</string>
+    <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
+    <string name="tb_suspected_ncd_case">Suspected NCD Case</string>
     <string name="tb_confirmed_list">TB Confirmed List</string>
     <string name="tb_confirmed_form">TB Confirmed Form</string>
 
@@ -459,6 +522,7 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_in">Sign In</string>
     <string name="service_location">Service Location</string>
+    <string name="location_type">Location Type</string>
     <string name="email">Email</string>
 
     //................VHND........................
@@ -510,6 +574,7 @@
     <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
     <string name="father_name">Father Name</string>
     <string name="age_of_woman">Age Of Woman</string>
+    <string name="select_time">Select Time</string>
     <string name="when_did_death_occur">When did death occur</string>
     <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
     <string name="date_of_antra_injection">Date of ANTRA Injection</string>
@@ -550,7 +615,7 @@
     <string name="any_high_risk_conditions">Any High Risk conditions</string>
     <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
     <string name="who_identified_hrp">Who had identified as HRP?</string>
-    <string name="probable_cause_of_death">Probable Cause of Death</string>
+    <string name="probable_cause_of_death">Reason for Death</string>
     <string name="other_death_cause">Other Death Cause</string>
     <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
     <string name="mcp_cards">MCP Cards</string>
@@ -576,7 +641,7 @@
     <string name="all">All</string>
     <string name="with_abha">With ABHA</string>
     <string name="without_abha">Without ABHA</string>
-    <string name="age_above_30_years">Age above 30 years</string>
+    <string name="age_above_30_years">Age above 40 years</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">No Visit Made</string>
     <string name="filter_list">Filter</string>
@@ -591,6 +656,13 @@
     <string name="saas_date">Saas Bahu Sammelan Date</string>
     <string name="saas_samelan">Saas Bahu Sammelan</string>
     <string name="no_participent">No. of Participants Attended</string>
+
+    <string name="sammelan_photo1">Sammelan Photos / MoM (1)</string>
+    <string name="sammelan_photo2">Sammelan Photos / MoM (2)</string>
+    <string name="sammelan_photo3">Sammelan Photos / MoM (3)</string>
+    <string name="sammelan_photo4">Sammelan Photos / MoM (4)</string>
+    <string name="sammelan_photo5">Sammelan Photos / MoM (5)</string>
+
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>
@@ -604,6 +676,7 @@
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="ifa_syrup">IFA</string>
     <string name="add_new">Add New</string>
     <string name="ifa_distribution">IFA Distribution</string>
     <string name="ifa_quantity">IFA Quantity</string>
@@ -662,17 +735,31 @@
 
     <string-array name="sync_records">
         <item>Beneficiary</item>
-        <item>CBAC</item>
-        <item>TB Screening</item>
-        <item>TB Suspected</item>
         <item>EC Registration</item>
         <item>EC Tracking</item>
         <item>PW Registration</item>
         <item>PW ANC</item>
+        <item>PMSMA</item>
+        <item>Delivery Outcome</item>
+        <item>PNC</item>
+        <item>Infant Reg</item>
+        <item>CBAC</item>
+        <item>TB Screening</item>
+        <item>TB Suspected</item>
         <item>HRP Assess</item>
         <item>HRP Track</item>
-        <item>HR NonPreg. Assess</item>
+        <item>HR NonPreg Assess</item>
         <item>HR NonPreg Track</item>
+        <item>Immunization</item>
+        <item>HBYC</item>
+        <item>HBNC</item>
+        <item>Micro Birth Plan</item>
+        <item>VHND</item>
+        <item>VHSNC</item>
+        <item>PHC</item>
+        <item>AHD</item>
+        <item>Deworming</item>
+        <item>NCD Follow Up</item>
     </string-array>
 
     <string-array name="place_array">
@@ -683,6 +770,11 @@
     </string-array>
     <!-- Eligible couple registration -->
     <string-array name="ecr_gender_array">
+        <item name="nbr_gender_1">Male</item>
+        <item name="nbr_gender_2">Female</item>
+    </string-array>
+
+    <string-array name="ecr_baby_gender_array">
         <item name="nbr_gender_1">Male</item>
         <item name="nbr_gender_2">Female</item>
     </string-array>
@@ -763,7 +855,7 @@
     <string name="str_block_name">Block Name</string>
     <string name="str_still_birth">Still Birth</string>
     <string name="str_supervisors_remark">Supervisors Remark </string>
-    <string name="str_supervisor">Supervisor</string>
+    <string name="str_supervisor">Asha Supervisor</string>
     <string name="str_supervisor_name">Supervisor name</string>
     <string name="str_signature_with_date">Signature with Date of Supervisor</string>
     <string name="str_mother_newborn_home_visit_card">Mother-Newborn Home Visit Card</string>
@@ -1264,22 +1356,15 @@
     <string name="malaria_treatment_started">Treatment Started</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
-    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
     <string name="upload_files">Upload Files</string>
     <string name="choose_upload_source">Choose Upload Source</string>
 
     <!-- Sync Dashboard -->
     <string name="sync_dashboard">Sync Dashboard</string>
-    <string name="sync_dashboard_tab_status">Status</string>
     <string name="sync_dashboard_tab_logs">Logs</string>
-    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
-    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
     <string name="sync_dashboard_worker_idle">Idle</string>
     <string name="sync_dashboard_worker_complete">Complete</string>
-    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
     <string name="sync_dashboard_no_logs">No sync logs yet. Trigger a sync to see activity.</string>
-    <string name="sync_dashboard_clear_logs">Clear Logs</string>
-    <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sync_dashboard_no_log_files">No log files to export</string>
     <string name="form_name">Form Name</string>
     <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
@@ -1289,9 +1374,17 @@
     <string name="marriage_date">Marriage Date</string>
     <string name="children_details">Children Details</string>
     <string name="bank_details">Bank Details</string>
+    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
 
     <string name="camera">Camera</string>
 
+    <!-- Sync Dashboard -->
+    <string name="sync_dashboard_tab_status">Status</string>
+    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
+    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
+    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
+    <string name="sync_dashboard_clear_logs">Clear Logs</string>
+    <string name="sync_dashboard_export_logs">Export Logs</string>
     <string name="sub_center_under_you_4">Sub-Center Under You</string>
     <string name="incentive_verification">Incentive Verification</string>
     <string name="no_activities_found">No activities found</string>
@@ -1316,6 +1409,9 @@
     <string name="overdue">OverDue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
+    <string name="cataract_surgery">Cataract Surgery</string>
+    <string name="cataract_surgery_visits">Cataract Surgery Visits</string>
+    <string name="due_date_label">Due: %1$s</string>
     <string name="date_of_delivery">Date of Delivery</string>
     <string name="any_danger_signs">Any Danger Signs?\n</string>
     <string name="any_high_risk_identified">Any High-risk identified?</string>
@@ -1334,8 +1430,10 @@
     <string name="tb_bmi_less_than_18_5">BMI &lt; 18.5</string>
     <string name="tb_contact_with_patient_on_treatment">Contact with TB patient on treatment</string>
     <string name="tb_history_last_5_years">Last 5 years history of TB</string>
-    <string name="visit_leprosy">Visit</string>
     <string name="visit_number_label">Visit -%d</string>
+    <string name="visit_leprosy">Visit</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+   <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
     <string name="add_spouse">Add Spouse</string>
     <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
     <string name="str_wife">Wife</string>
@@ -1377,8 +1475,8 @@
     <string name="father_or_spouse">Father or Spouse</string>
     <string name="date_of_joining">Date of Joining</string>
     <string name="population_covered_under_asha">Population Covered under ASHA</string>
-    <string name="asha_supervisor_name">Asha Supervisor Name</string>
-    <string name="asha_supervisor_contact_no">Asha Supervisor Contact No.</string>
+    <string name="asha_supervisor_name">ASHA Supervisor Name</string>
+    <string name="asha_supervisor_contact_no">ASHA Supervisor Contact No.</string>
     <string name="cho_name">CHO Name</string>
     <string name="mobile_no_of_cho">Mobile No. of CHO</string>
     <string name="name_of_aww">Name of AWW</string>
@@ -1387,6 +1485,25 @@
     <string name="mobile_number_of_anm1">Mobile Number of ANM1</string>
     <string name="name_of_anm2">Name of ANM2</string>
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
+    <string name="str_delete_household">Delete Household</string>
+    <string name="str_delete_beneficiary">Delete Beneficiary</string>
+    <string name="str_dose_one">Dose-1</string>
+    <string name="str_dose">Dose</string>
+    <string name="str_no_more_dose">No More Doses</string>
+
+    <string name="str_delete_household_msg">Are you sure you want to delete</string>
+    <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
+    <string name="str_pls_allow_permissions">Please allow permissions first</string>
+    <string name="str_delivery_outcome_err_msg">Outcome of Delivery should be equal to sum of Live and Still births</string>
+    <string name="str_alert">Alert!</string>
+    <string name="check_sympt">Check if the person has any of these Symptoms:</string>
+    <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
+    <string name="str_left">Left</string>
+    <string name="str_right">Right</string>
+    <string name="str_both">Both</string>
+    <string name="str_eye_visit">Eye - Visit</string>
+
+
 
 </resources>
 

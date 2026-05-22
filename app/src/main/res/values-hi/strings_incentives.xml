@@ -14,11 +14,12 @@
     <string name="contact_no">संपर्क नंबर:</string>
     <string name="village">गाँव: %1$s</string>
     <string name="name_of_the_asha">आशा का नाम: %1$s</string>
-    <string name="sc_name">उप-केंद्र का नाम:</string>
+    <string name="sc_name">उप स्वास्थ्य केंद्र का नाम:</string>
     <string name="certify_that_the_claims_mentioned_above_are_correct">प्रमाणित करता/करती हूँ कि उपरोक्त दावे सही हैं।</string>
     <string name="signature_of_asha_supervisor">आशा पर्यवेक्षक के हस्ताक्षर</string>
     <string name="signature_of_anm">एएनएम के हस्ताक्षर</string>
     <string name="signature_of_cho">सीएचओ के हस्ताक्षर</string>
+    <string name="contact_info">संपर्क जानकारी</string>
     <string name="for_office_use_only">केवल कार्यालय उपयोग के लिए</string>
     <string name="signature_of_abpm">एबीपीएम के हस्ताक्षर</string>
     <string name="signature_of_bam">बीएएम के हस्ताक्षर</string>
@@ -26,6 +27,7 @@
     <string name="signature_of_bpm">बीपीएम के हस्ताक्षर</string>
     <string name="signature_of_sdm_ho">एसडीएम एवं एचओ के हस्ताक्षर</string>
     <string name="an_amount_of_rs_rupees_only_approved_for_payment_of_asha_incentive_for_the_period_from_to_and_the_amount_is_debited_to_the_account_through_dbt">रु.________________(रुपये_________मात्र) की राशि ____________से_____________की अवधि के लिए आशा प्रोत्साहन के भुगतान के लिए अनुमोदित की गई है और राशि डीबीटी के माध्यम से खाते में जमा की गई है।</string>
+    <string name="village_new">गाँव</string>
 
     <string name="incentive_fragment_title">प्रोत्साहन</string>
     <string name="incentive_processed">संसाधित\nकुल : ₹ %1d</string>
@@ -55,7 +57,7 @@
     <string name="incentive_with_reference_to_the_subject_cited_above">उपर्युक्त विषय के संदर्भ में, मुझे नीचे उल्लिखित विवरण के अनुसार ...... से .......... तक की अवधि के लिए आशा प्रोत्साहन दावों को प्रस्तुत करने का सम्मान प्राप्त हुआ है।</string>
     <string name="incentive_an_amount_of_rs">…….. से …….. तक की अवधि के लिए आशा प्रोत्साहन के भुगतान के लिए रु. ……. (केवल ………. रुपये) की राशि स्वीकृत की गई है और यह राशि डीबीटी के माध्यम से खाते में डेबिट की जाती है।</string>
     <string name="activity_name">गतिविधि</string>
-    <string name="incentive_rch_id_details">RCH आईडी: %1s</string>
+    <string name="incentive_rch_id_details">आरसीएच आईडी: %1s</string>
     <string name="incentive_abha_id_details">ABHA नंबर: %1s</string>
 
 </resources>

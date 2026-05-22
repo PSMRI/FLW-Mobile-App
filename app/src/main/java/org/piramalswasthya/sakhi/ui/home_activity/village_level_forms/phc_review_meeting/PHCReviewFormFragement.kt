@@ -30,6 +30,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
 import org.piramalswasthya.sakhi.utils.HelperUtil.showImageDialog
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import timber.log.Timber
 import java.io.File
 
@@ -66,12 +67,12 @@ class PHCReviewFormFragement:Fragment() {
                 },
                 imageClickListener = FormInputAdapter.ImageClickListener{
 
-                    imgValue=it
+                    imgValue = it
                     showImagePickerDialog()
 
                 },
                 selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener{
-                    imgValue=it
+                    imgValue = it
                     showImagePickerDialog()
                 },
                 viewDocumentListner = FormInputAdapter.ViewDocumentOnClick { formId ->
@@ -152,16 +153,16 @@ class PHCReviewFormFragement:Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-                9 -> notifyDataSetChanged()
+//                9 -> notifyDataSetChanged()
             }
         }
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
+        val options =arrayOf(getString(R.string.take_photo), getString(R.string.choose_from_gallery))
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Select Image")
+            .setTitle(getString(R.string.select_image))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> takeImage()
@@ -187,8 +188,10 @@ class PHCReviewFormFragement:Fragment() {
                         viewModel.setImageUriToFormElement(uri)
 
                         binding.form.rvInputForm.apply {
-                            (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+                            (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
+
                         }
+                        showImageLoadedMessage(requireContext())
                     }
                     else{
                         Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()
@@ -229,9 +232,9 @@ class PHCReviewFormFragement:Fragment() {
                     viewModel.setCurrentImageFormId(imgValue)
                     viewModel.setImageUriToFormElement(uri)
                     binding.form.rvInputForm.apply {
-                        (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 3 else 4)
+                        (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
                     }
-
+                    showImageLoadedMessage(requireContext())
                 }
                 else{
                     Toast.makeText(requireContext(), "Image size should be less than 5 MB", Toast.LENGTH_LONG).show()

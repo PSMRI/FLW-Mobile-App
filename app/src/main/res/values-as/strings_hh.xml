@@ -16,6 +16,7 @@
     <string name="frag_nhhr_title">নতুন পাৰিবাৰিক নিবন্ধন</string>
 
     <string name="nhhr_title_page_1">পৰিয়ালৰ বিৱৰণ</string>
+    <string name="nhhr_village">গাঁও</string>
     <string name="nhhr_title_page_2">পাৰিবাৰিক বিৱৰণ</string>
     <string name="nhhr_title_page_3">পাৰিবাৰিক সুবিধা</string>
 
@@ -145,5 +146,5 @@
     <string name="consent_alert_title">সন্মতি প্ৰ-পত্ৰ</string>
     <string name="add_head_of_family">এডিডি পৰিয়ালৰ মুৰব্বী</string>
     <string name="hh_no_members">ঘৰুৱা খালী!</string>
-    <string name="add_head_of_family_message">Would you like to add <b>%1s</b> as a Head-of-Family Beneficiary?</string>
+    <string name="add_head_of_family_message">আপুনি <b>%1s</b>ক পৰিয়ালৰ মূৰীয়া উপভোক্তা হিচাপে যোগ কৰিব বিচাৰে নে?</string>
 </resources>

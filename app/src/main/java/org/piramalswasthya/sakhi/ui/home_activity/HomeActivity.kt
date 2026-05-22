@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
 import android.Manifest
+import timber.log.Timber
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -140,6 +142,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         )
         if (!isMitanin) {
             languageOptions.add(resources.getString(R.string.assamese) to Languages.ASSAMESE)
+//            languageOptions.add(resources.getString(R.string.text_bangali) to Languages.BANGLA)
+
         }
         val currentLanguageIndex = languageOptions.indexOfFirst { it.second == pref.getCurrentLanguage() }.coerceAtLeast(0)
 
@@ -239,7 +243,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         TapjackingProtectionHelper.enableTouchFiltering(this)
 
-        if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+        if (pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ANM, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_CHO, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
             binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
         } else {
@@ -264,6 +268,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }?: run {
+                viewModel.profilePicUri?.let { savedUri ->
+                    Glide.with(this).load(savedUri)
+                        .signature(ObjectKey(System.currentTimeMillis()))
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_person).circleCrop()
+                        .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                }
             }
         }
         binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
@@ -331,7 +344,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
                     if (isInternetAvailable(this)) {
                         lastAutoTriggerPushTime = now
-                        WorkerUtils.triggerAmritPushWorker(this)
+                        //WorkerUtils.triggerAmritPushWorker(this)
                     }
                 }
             }
@@ -628,12 +641,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             headerView.findViewById<TextView>(R.id.tv_nav_name).text =
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_2_text, it.userName)
+                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
-            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+            val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
             val formatted = HtmlCompat.fromHtml(
-                getString(R.string.nav_item_3_text, englishId),
+                getString(R.string.nav_item_emp_text, englishId),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
@@ -741,9 +754,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
 
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true
@@ -753,9 +771,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
             var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true

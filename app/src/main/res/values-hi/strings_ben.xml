@@ -11,16 +11,18 @@
     <string name="reproductive_status">जननांग स्थिति</string>
     <string name="birth_certificate_number">जन्म प्रमाण पत्र संख्या.</string>
     <string name="beneficiary_details">लाभार्थी विवरण</string>
+    <string name="str_beneficiary_status">लाभार्थी की स्थिति</string>
     <string name="wife_s_name">पत्नी का नाम</string>
     <string name="spouse_s_name">पति / पत्नी का नाम</string>
     <string name="age_at_marriage">विवाह की आयु</string>
     <string name="date_of_marriage">विवाह की तिथि</string>
     <string name="father_s_name">पिता का नाम</string>
     <string name="mother_s_name">मां का नाम</string>
+    <string name="select_all">सभी चुनें</string>
     <string name="mobile_number_of">किसका मोबाइल नंबर</string>
     <string name="other_mobile_number_of">अन्य - मोबाइल नंबर किसका</string>
     <string name="form_name">फ़ॉर्म का नाम</string>
-    <string name="rch_id_ben">RCH आईडी</string>
+    <string name="rch_id_ben">आरसीएच आईडी</string>
     <string name="nbr_age">आयु</string>
     <string name="nbr_dob">जन्म की तारीख</string>
     <string name="nbr_gender">लिंग</string>
@@ -33,7 +35,7 @@
     <string name="title_new_ben_reg_non_hof">परिवार सदस्य पंजीकरण</string>
     <string name="icon_title_abortion">गर्भपात सूची</string>
     <string name="icon_title_pmsma">ई-पीएमएसएमए सूची</string>
-    <string name="mother_rch_id">मां की RCH आईडी</string>
+    <string name="mother_rch_id">मां की आरसीएच आईडी</string>
     <string-array name="anc_paiucd_done_by">
         <item>डॉक्टर</item>
         <item>नर्स</item>
@@ -150,8 +152,8 @@
         <item>पोती/नातनी</item>
         <item>दामाद</item>
         <item>बहू</item>
-        <item>भाभी/नन्द/साली</item>
         <item>स्वयं</item>
+        <item>भाभी/नन्द/साली</item>
         <item>अन्य</item>
 
     </string-array>
@@ -206,11 +208,40 @@
         <item>अप्रकटित</item>
     </string-array>
 
+    <string-array name="death_reason_array">
+        <item>मातृ मृत्यु</item>
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु के काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array">
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+    </string-array>
+
+    <string-array name="reason_of_death_array_with_maternal">
+        <item>प्राकृतिक मृत्यु</item>
+        <item>दुर्घटना</item>
+        <item>संक्रामक रोग</item>
+        <item>पशु काटने से मृत्यु</item>
+        <item>आत्महत्या</item>
+        <item>अनिर्धारित</item>
+        <item>मातृ मृत्यु</item>
+    </string-array>
+
     <string-array name="death_place_array">
         <item>घर</item>
-        <item>उप-केंद्र</item>
-        <item>पीएचसी</item>
-        <item>सीएचसी</item>
+        <item>उप स्वास्थ्य केंद्र</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
         <item>जिला अस्पताल</item>
         <item>चिकित्सा महाविद्यालय अस्पताल</item>
         <item>निजी अस्पताल</item>
@@ -267,7 +298,7 @@
 
     </string-array>
     <string-array name="select_all">
-        <item>Select All</item>
+        <item>सभी चुनें</item>
     </string-array>
 
 
@@ -332,12 +363,12 @@
     <string name="age_group">आयु वर्ग</string>
     <string name="deworming_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म</string>
     <string name="deworming_list_title">राष्ट्रीय कृमि मुक्ति दिवस फॉर्म सूची</string>
-    <string name="ndd_list_title">NDD फॉर्म</string>
+    <string name="ndd_list_title">एनडीडी फॉर्म</string>
 
     <string-array name="mitanin_array">
         <item>मितानिन</item>
-        <item>MT</item>
-        <item>ANM/ RHO</item>
+        <item>एमटी</item>
+        <item>एएनएम / आरएचओ</item>
     </string-array>
 
     <string-array name="activity_checklist">
@@ -373,6 +404,11 @@
     <string-array name="ahd_referral_status_array">
         <item>लंबित</item>
         <item>पूर्ण</item>
+    </string-array>
+
+    <string-array name="beneficiary_status">
+        <item>जीवित</item>
+        <item>मृत्यु</item>
     </string-array>
 
     <string-array name="temp_mobile_no_relation_array">

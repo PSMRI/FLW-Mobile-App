@@ -44,11 +44,13 @@ class LeprosySuspectedListFragment : Fragment() {
         val benAdapter = LeprosyMemberListAdapter(
             clickListener = LeprosyMemberListAdapter.ClickListener(
                 clickedForm = { hhId, benId ->
-                    findNavController().navigate(
-                        LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyFormFragment(
-                            benId = benId
+                    if (findNavController().currentDestination?.id == R.id.leprosySuspectedListFragment) {
+                        findNavController().navigate(
+                            LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyFormFragment(
+                                benId = benId
+                            )
                         )
-                    )
+                    }
                 },
                 clickedVisits = { benWithLeprosy ->
                     showVisitsBottomSheet(benWithLeprosy)
@@ -120,12 +122,14 @@ class LeprosySuspectedListFragment : Fragment() {
     }
 
     private fun navigateToLeprosyVisitFragment(benId: Long, visitNumber: Int) {
-        findNavController().navigate(
-            LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyVisitFragment(
-                benId = benId,
-                visitNumber = visitNumber
+        if (findNavController().currentDestination?.id == R.id.leprosySuspectedListFragment) {
+            findNavController().navigate(
+                LeprosySuspectedListFragmentDirections.actionLeprosySuspectedListFragmentToLeprosyVisitFragment(
+                    benId = benId,
+                    visitNumber = visitNumber
+                )
             )
-        )
+        }
     }
 
 }

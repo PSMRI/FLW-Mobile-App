@@ -14,6 +14,7 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.ReferalCache
@@ -26,6 +27,7 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var preferenceDao: PreferenceDao
     @MockK private lateinit var userRepo: UserRepo
     @MockK private lateinit var amritApiService: AmritApiService
+    @MockK private lateinit var database: InAppDb
 
     private lateinit var repo: NcdReferalRepo
 
@@ -36,7 +38,7 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.d(any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
-        repo = NcdReferalRepo(referalDao, preferenceDao, userRepo, amritApiService)
+        repo = NcdReferalRepo(referalDao, preferenceDao, userRepo, amritApiService, database)
     }
 
     // =====================================================

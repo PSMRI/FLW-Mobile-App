@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.ItemChildImmunizationDoseBinding
 import org.piramalswasthya.sakhi.model.VaccineDomain
 
@@ -42,43 +43,6 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             }
         }
 
-        /*fun bind(
-            item: VaccineDomain,
-            clickListener: ImmunizationClickListener?
-        ) {
-            binding.vaccine = item
-            binding.clickListener = clickListener
-
-
-            binding.idSwitch.setOnCheckedChangeListener(null)
-            binding.idSwitch.isChecked = item.isSwitchChecked
-            if (item.state.name =="PENDING"||item.state.name =="OVERDUE"){
-                binding.idSwitch.isEnabled = true
-
-            }else if(item.state.name =="MISSED" ||item.state.name =="UNAVAILABLE"){
-                binding.idSwitch.isEnabled = false
-
-            }else{
-                //If state is DONE
-                binding.idSwitch.isEnabled = false
-                binding.idSwitch.isChecked = true
-            }
-
-
-            binding.idSwitch.setOnCheckedChangeListener { compoundButton, b ->
-                if (b){
-                    clickListener?.onClicked(position,item.apply {
-                        isSwitchChecked = true })
-                }else{
-                    clickListener?.onClicked(position,item.apply { isSwitchChecked = false })
-                }
-
-            }
-            binding.executePendingBindings()
-
-
-        }*/
-
         fun bind(
             item: VaccineDomain,
             clickListener: ImmunizationClickListener?
@@ -107,7 +71,7 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
                     binding.idSwitch.setOnClickListener {
                         Toast.makeText(
                             binding.root.context,
-                            "Immunization cannot be done as it is missed",
+                            binding.root.context.getString(R.string.immunization_cant_done_as_missed),
                             Toast.LENGTH_SHORT
                         ).show()
                         binding.idSwitch.isChecked = false // always force back to off

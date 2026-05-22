@@ -22,6 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
+            android:importantForAccessibility="yes"
             asteriskRequired="@{form.required}"
             hintText="@{form.title}"
             android:labelFor="@id/actv_rv_dropdown"
@@ -36,6 +37,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:paddingStart="@dimen/_20sdp"
+                android:contentDescription="@{form.title}"
+                android:importantForAccessibility="yes"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />

@@ -96,13 +96,16 @@
             android:hint="@string/relation_with_hof"
             android:labelFor="@id/actv_rv_dropdown"
             android:orientation="horizontal"
-            android:padding="@dimen/padding_normal">
+            android:padding="@dimen/padding_normal"
+            android:importantForAccessibility="yes">
 
             <AutoCompleteTextView
                 android:id="@+id/actv_rth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
+                android:importantForAccessibility="yes"
+                android:contentDescription="relation with hof"
                 tools:ignore="SpeakableTextPresentCheck" />
 
 

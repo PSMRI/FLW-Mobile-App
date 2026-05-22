@@ -30,7 +30,7 @@
     <string name="cbac_recurrent_redness_eyes">आंखों में एक सप्ताह से अधिक समय तक लालिमा</string>
     <string name="cbac_recurrent_diff_hearing">सुनने में कठिनाई</string>
     <string name="cbac_breath">सांस फूलना</string>
-    <string name="cbac_hifits">दौरे का इतिहास</string>
+    <string name="cbac_hifits">झटके का इतिहास</string>
     <string name="cbac_difmouth">मुंह खोलने में कठिनाई</string>
     <string name="cbac_heald">मुंह में अल्सर/धब्बा/गांठ जो दो सप्ताह में ठीक न हुई हो</string>
     <string name="cbac_voice">आपकी आवाज़ के स्वर में कोई बदलाव</string>
@@ -64,8 +64,8 @@
     <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
     <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
     <string name="cbac_feeling_down">उदास, मायूस या निराश महसूस करना</string>
-    <string name="hrp_valid">उच्च जोखिम गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
-    <string name="hrp_sug_valid">संदिग्ध उच्च जोखिम गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
+    <string name="hrp_valid">खतरे के लक्षण वाली गर्भावस्था (HRP) मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर (HWC) जाएं या 104 पर कॉल करें</string>
+    <string name="hrp_sug_valid">संदिग्ध खतरे के लक्षण वाली गर्भावस्था — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyper">एनसीडी (उच्च रक्तचाप, डायबिटीज) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_diab">एनसीडी (डायबिटीज) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_diabm">एनसीडी (डायबिटीज मेलीटस) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
@@ -83,7 +83,7 @@
     <string name="ncd_tb_can">एनसीडी (टीबी, कैंसर) से जुड़ा मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyper_only">एनसीडी (उच्च रक्तचाप) से संबंधित, कृपया निकटतम एचडब्ल्यूसी पर जाएँ या 104 पर कॉल करें।</string>
     <string name="ncd_sus_valid">संदिग्ध गैर-संचारी रोग (NCD) का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
-    <string name="hrpncd_sus_valid">संदिग्ध उच्च जोखिम गर्भावस्था और NCD का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
+    <string name="hrpncd_sus_valid">संदिग्ध खतरे के लक्षण गर्भावस्था और NCD का मामला — नजदीकी हेल्थ एंड वेलनेस सेंटर जाएं या 104 पर कॉल करें</string>
     <string name="ncd_hyperstroke">NCD (उच्च रक्तचाप, स्ट्रोक) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
     <string name="ncd_tbcancer">NCD (टीबी, कैंसर) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
     <string name="ncd_cansthyroid">NCD (कैंसर, थायरॉयड) से जुड़ा मामला — डॉक्टर से मिलें या 104 पर कॉल करें</string>
@@ -118,7 +118,7 @@
     <string name="cbac_validation_rie">कृपया चुनें – आंख में 1 हफ्ते से ज्यादा लालपन</string>
     <string name="cbac_validation_dih">कृपया चुनें – सुनने में दिक्कत</string>
     <string name="cbac_validation_sob">कृपया चुनें – सांस लेने में दिक्कत</string>
-    <string name="cbac_validation_hif">कृपया चुनें – दौरे पड़ने का इतिहास</string>
+    <string name="cbac_validation_hif">कृपया चुनें – झटके पड़ने का इतिहास</string>
     <string name="cbac_validation_diom">कृपया चुनें – मुंह खोलने में दिक्कत</string>
     <string name="cbac_validation_upgm">कृपया चुनें – मुंह में छाला/धब्बा/गांठ</string>
     <string name="cbac_validation_tov">कृपया चुनें – आवाज में बदलाव</string>
@@ -156,12 +156,12 @@
     <string name="cbac_risk_assessment_tv">भाग अ: जोखिम मूल्यांकन</string>
     <string name="cbac_tv_bl_menopause">मितानिन प्रशिक्षक को सूचित करें</string>
     <string name="cbac_form">सीबीएसी फॉर्म</string>
-
     <string name="alert">चेतावनी!</string>
+    <string name="alert_message_fill_required_fields">कृपया सबमिट करने से पहले सभी अनिवार्य फ़ील्ड भरें।</string>
     <string name="missing_field">जरूरी जानकारी भरी नहीं गई</string>
-    <string name="suspected_hrp_and_ncd_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
+    <string name="suspected_hrp_and_ncd_case">संदिग्ध 	खतरे के लक्षण गर्भावस्था (एचआरपी) और गैर-संचारी रोग का मामला</string>
     <string name="ok">ठीक है</string>
-    <string name="suspected_hrp_case">संदिग्ध उच्च जोखिम गर्भावस्था (एचआरपी) का मामला</string>
+    <string name="suspected_hrp_case">संदिग्ध 	खतरे के लक्षण गर्भावस्था (एचआरपी) का मामला</string>
     <string name="suspected_ncd_case_please_visit_nearest_hwc_or_call">संदेहास्पद गैर-संचारी रोग का मामला — कृपया नज़दीकी स्वास्थ्य एवं कल्याण केंद्र जाएँ या 104 पर कॉल करें।</string>
     <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (उच्च प्राथमिकता वाला मामला)।</string>
     <string name="refer_to_ncd_screening_day_vhsnd_hwc_for_ncd_screening_less_priority">गैर-संचारी रोग (एनसीडी) की जांच के लिए एनसीडी जांच दिवस / ग्राम स्वास्थ्य, स्वच्छता एवं पोषण दिवस (वीएचएसएनडी) / स्वास्थ्य एवं कल्याण केंद्र (एचडब्ल्यूसी) पर भेजें — (कम प्राथमिकता वाला मामला)।</string>
@@ -185,6 +185,7 @@
     <string name="save">सहेजें (Save)</string>
     <string name="tb_suspected_alert">चिकित्सा अधिकारी को भेजें और बलगम का नमूना लें</string>
     <string name="tb_suspected_alert_positive">चिकित्सा अधिकारी को भेजें</string>
+    <string name="ncd_follow_up_hostory">एनसीडी फॉलो-अप इतिहास</string>
     <string name="tb_suspected_family_alert">चिकित्सा अधिकारी को भेजें या आर एच ओ (RHO) को परिवार के सभी सदस्यों की जांच के लिए सूचित करें</string>
     <string name="is_sputum_sample_collected">क्या बलगम (स्पुटम) नमूना लिया गया है?</string>
     <string name="sputum_sample_submitted_at">बलगम नमूना जमा किया गया</string>
@@ -197,7 +198,7 @@
     <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
     <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
     <string name="cbac_is_leprosy_suspected">क्या कुष्ठ रोग के कोई लक्षण मौजूद हैं?</string>
-    <string name="refer_to_hwc_facility_alert">क्या आप HWC सुविधा में रेफर करना चाहते हैं?</string>
+    <string name="refer_to_hwc_facility_alert">क्या आप स्वास्थ्य केंद्र रेफर करना चाहते हैं</string>
 
     <string-array name="cbac_waist_mes_female">
         <item>80 सेमी या कम</item>
@@ -265,8 +266,8 @@
 
     <string-array name="tb_sputum_sample_submitted_at">
         <item>एचडब्ल्यूसी</item>
-        <item>पीएचसी</item>
-        <item>सीएचसी</item>
+        <item>प्राथमिक स्वास्थ्य केंद्र</item>
+        <item>सामुदायिक स्वास्थ्य केंद्र</item>
         <item>जिला अस्पताल</item>
         <item>सरकारी मेडिकल कॉलेज</item>
     </string-array>
@@ -277,5 +278,17 @@
     <string name="cat_geriatric">वृद्धावस्था</string>
     <string name="cat_hrp">एचआरपी</string>
     <string name="cat_maternal">मातृ</string>
+
+    <string name="select_years">वर्ष चुनें</string>
+    <string name="years_35">35 वर्ष</string>
+    <string name="years_40">40 वर्ष</string>
+    <string name="years_45">45 वर्ष</string>
+    <string name="years_50">50 वर्ष</string>
+    <string name="years_55">55 वर्ष</string>
+    <string name="years_60">60 वर्ष</string>
+    <string name="years_65">65 वर्ष</string>
+    <string name="years_70">70 वर्ष</string>
+    <string name="years_75">75 वर्ष</string>
+    <string name="years_80">80 वर्ष</string>
 </resources>
 

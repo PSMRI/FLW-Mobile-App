@@ -44,9 +44,13 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
+import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -54,6 +58,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 object HelperUtil {
 
@@ -882,6 +888,32 @@ object HelperUtil {
         }.time
     }
 
+    fun formatDate(dateString: String?): String {
+        return try {
+            if (dateString.isNullOrBlank()) return ""
+
+            val inputFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+
+            val outputFormat = SimpleDateFormat(
+                "d MMM yyyy",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getDefault()
+            }
+
+            val date = inputFormat.parse(dateString)
+            if (date != null) outputFormat.format(date) else ""
+
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to parse date: $dateString")
+            ""
+        }
+    }
      fun getFilesName(uri: Uri,context: Context): String? {
         var result: String? = null
 
@@ -913,6 +945,46 @@ object HelperUtil {
     fun String.toRequestBody(): RequestBody =
         this.toRequestBody("text/plain".toMediaType())
 
+    fun showImageLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.image_uploaded), Toast.LENGTH_SHORT).show()
+    }
 
+    fun showFileLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.file_uploaded), Toast.LENGTH_SHORT).show()
+    }
+
+    fun isAncDue(benWithAnc: BenWithAncVisitCache): Boolean {
+
+        val ancRecords = benWithAnc.savedAncRecords
+
+        if (ancRecords.any { it.maternalDeath == true }) return false
+        if (ancRecords.any { it.pregnantWomanDelivered == true }) return false
+
+        val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return false
+
+        return if (ancRecords.isEmpty()) {
+            TimeUnit.MILLISECONDS.toDays(
+                getTodayMillis() - activePwr.lmpDate
+            ) >= Konstants.minAnc1Week * 7
+        } else {
+            val lastAncRecord = ancRecords.maxBy { it.visitNumber }
+
+            (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) >
+                    (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
+                    lastAncRecord.visitNumber < 4 &&
+                    TimeUnit.MILLISECONDS.toDays(
+                        getTodayMillis() - lastAncRecord.ancDate
+                    ) > 28
+        }
+    }
+
+    fun Context.getBabyOrder(index: Int): String {
+        return when (index) {
+            0 -> getString(R.string.first_baby)
+            1 -> getString(R.string.second_baby)
+            2 -> getString(R.string.third_baby)
+            else -> getString(R.string.nth_baby, index + 1)
+        }
+    }
 
 }

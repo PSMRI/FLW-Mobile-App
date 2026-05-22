@@ -203,7 +203,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 57, exportSchema = false
+    version = 59, exportSchema = false
 )
 
 @TypeConverters(
@@ -310,8 +310,177 @@ abstract class InAppDb : RoomDatabase() {
                 )
 
             })
+          /*  val MIGRATION_52_53 = object : Migration(52, 53) {
+                override fun migrate(database: SupportSQLiteDatabase) {
 
-            val MIGRATION_56_57 = object : Migration(56, 57) {
+
+            }*/
+//            val MIGRATION_57_58 = object : Migration(57, 58) {
+//                override fun migrate(database: SupportSQLiteDatabase) {
+//                    // eyeSide column add
+//                    database.execSQL(
+//                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT NOT NULL DEFAULT 'LEFT'"
+//                    )
+//                    // Old unique index drop
+//                    database.execSQL(
+//                        "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
+//                    )
+//                    // New unique index on eyeSide
+//                    database.execSQL(
+//                        "CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide " +
+//                                "ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)"
+//                    )
+//                }
+//            }
+
+
+            val MIGRATION_58_59 = object : Migration(58, 59) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_country_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_state_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_district_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_block_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+
+                    try {
+                        database.execSQL(
+                            "ALTER TABLE HOUSEHOLD ADD COLUMN loc_village_nameBangla TEXT"
+                        )
+                    } catch (_: Exception) {
+                    }
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_district_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_village_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_country_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_block_nameBangla TEXT")
+                    database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN loc_state_nameBangla TEXT")
+
+                }
+            }
+
+
+            val MIGRATION_57_58 = object : Migration(57, 58) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserName TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN reason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN otherReason TEXT NOT NULL DEFAULT ''"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalStatus INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN verifiedByUserId INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN isClaimed INTEGER NOT NULL DEFAULT 0"
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN approvalDate TEXT NOT NULL DEFAULT '' "
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN calimedDate TEXT  NOT NULL DEFAULT '' "
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE INCENTIVE_RECORD ADD COLUMN supervisorRole TEXT NOT NULL DEFAULT '' "
+                    )
+
+                    database.execSQL(
+                        "ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY ADD COLUMN eyeSide TEXT"
+                    )
+
+                    database.execSQL(
+                        "DROP INDEX IF EXISTS index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_visitMonth"
+                    )
+
+                    database.execSQL("""
+            CREATE TABLE ALL_EYE_SURGERY_VISIT_HISTORY_NEW (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                benId INTEGER NOT NULL,
+                hhId INTEGER NOT NULL,
+                visitDate TEXT NOT NULL,
+                visitMonth TEXT NOT NULL,
+                formId TEXT NOT NULL,
+                version INTEGER NOT NULL,
+                formDataJson TEXT NOT NULL,
+                isSynced INTEGER NOT NULL,
+                createdAt INTEGER NOT NULL,
+                syncedAt TEXT,
+                eyeSide TEXT NOT NULL DEFAULT ''
+            )
+        """)
+
+                    // 🔥 Important: remove duplicates before inserting
+                    database.execSQL("""
+            INSERT INTO ALL_EYE_SURGERY_VISIT_HISTORY_NEW (
+                id, benId, hhId, visitDate, visitMonth, formId,
+                version, formDataJson, isSynced, createdAt, syncedAt, eyeSide
+            )
+            SELECT 
+                MIN(id), benId, hhId, visitDate, visitMonth, formId,
+                version, formDataJson, isSynced, createdAt, syncedAt,
+                IFNULL(eyeSide, '')
+            FROM ALL_EYE_SURGERY_VISIT_HISTORY
+            GROUP BY benId, formId, IFNULL(eyeSide, '')
+        """)
+
+                    database.execSQL("DROP TABLE ALL_EYE_SURGERY_VISIT_HISTORY")
+
+                    database.execSQL("""
+            ALTER TABLE ALL_EYE_SURGERY_VISIT_HISTORY_NEW 
+            RENAME TO ALL_EYE_SURGERY_VISIT_HISTORY
+        """)
+
+                    // Recreate indexes
+                    database.execSQL("""
+            CREATE UNIQUE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_formId_eyeSide 
+            ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, formId, eyeSide)
+        """)
+
+                    database.execSQL("""
+            CREATE INDEX index_ALL_EYE_SURGERY_VISIT_HISTORY_benId_visitDate 
+            ON ALL_EYE_SURGERY_VISIT_HISTORY(benId, visitDate)
+        """)
+                }
+            }
+
+               val MIGRATION_56_57 = object : Migration(56, 57) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     val householdLocColumns = listOf(
                         "loc_country_id INTEGER NOT NULL DEFAULT 0",
@@ -337,7 +506,7 @@ abstract class InAppDb : RoomDatabase() {
                     )
                     for (column in householdLocColumns) {
                         val columnName = column.split(" ")[0]
-                        if (!columnExists(database, "HOUSEHOLD", columnName)) {
+                             if (!columnExists(database, "HOUSEHOLD", columnName)) {
                             database.execSQL("ALTER TABLE HOUSEHOLD ADD COLUMN $column")
                         }
                     }
@@ -694,6 +863,7 @@ abstract class InAppDb : RoomDatabase() {
 
             val MIGRATION_55_56 = object : Migration(55, 56) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+
                     if (!columnExists(database, "INCENTIVE_RECORD", "isEligible")) {
                         database.execSQL(
                             """
@@ -704,7 +874,6 @@ abstract class InAppDb : RoomDatabase() {
                     }
                 }
             }
-
 
             val MIGRATION_54_55 = object : Migration(54, 55) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3214,7 +3383,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_53_54,
                         MIGRATION_54_55,
                         MIGRATION_55_56,
-                        MIGRATION_56_57
+                        MIGRATION_56_57,
+                        MIGRATION_57_58,
+                        MIGRATION_58_59
 
 
                     ).build()

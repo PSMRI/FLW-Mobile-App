@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -11,6 +13,7 @@ import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.model.PeerAtFacility
 import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -90,10 +93,110 @@ class UserRepo @Inject constructor(
         }
     }
 
+     suspend fun setFacilityData(userId: Int) {
+        val response = amritApiService.getUserDetailsById(userId = userId)
+        val userData = response.data
+        val facilityData = userData.facilityData
+        facilityData?.location?.let { location ->
+
+            preferenceDao.saveLocationType(location.locationType ?: "")
+            preferenceDao.saveBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveState(location.state ?: "")
+            preferenceDao.saveDistrict(location.district ?: "")
+
+            preferenceDao.saveSupervisorDistrict(location.district ?: "")
+            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveSupervisorState(location.state ?: "")
+        }
+
+        // ---------- FACILITY ----------
+        facilityData?.facility?.let { facility ->
+
+            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+        }
+
+        // ---------- SUPERVISOR ----------
+        facilityData?.supervisor?.let { supervisor ->
+
+            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+        }
+
+         val choList = mutableListOf<PeerAtFacility>()
+         val anmList = mutableListOf<PeerAtFacility>()
+
+         facilityData?.peersAtFacility?.forEach { peer ->
+
+             when (peer.role?.trim()?.uppercase()) {
+
+                 "CHO" -> {
+                     choList.add(peer)
+                 }
+
+                 "ANM" -> {
+                     anmList.add(peer)
+                 }
+             }
+         }
+
+         val moshi = Moshi.Builder().build()
+
+         val choAdapter = moshi.adapter<List<PeerAtFacility>>(
+             Types.newParameterizedType(
+                 List::class.java,
+                 PeerAtFacility::class.java
+             )
+         )
+
+         val anmAdapter = moshi.adapter<List<PeerAtFacility>>(
+             Types.newParameterizedType(
+                 List::class.java,
+                 PeerAtFacility::class.java
+             )
+         )
+
+         preferenceDao.saveChoList(choAdapter.toJson(choList))
+         preferenceDao.saveAnmList(anmAdapter.toJson(anmList))
+    }
+
+
     private suspend fun setUserRole(userId: Int, password: String): User {
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
+        preferenceDao.saveStateId(response.data.stateId)
+        val userData = response.data
+        val facilityData = userData.facilityData
+        facilityData?.location?.let { location ->
+
+            preferenceDao.saveLocationType(location.locationType ?: "")
+            preferenceDao.saveBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveState(location.state ?: "")
+            preferenceDao.saveDistrict(location.district ?: "")
+
+            preferenceDao.saveSupervisorDistrict(location.district ?: "")
+            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveSupervisorState(location.state ?: "")
+        }
+
+        // ---------- FACILITY ----------
+        facilityData?.facility?.let { facility ->
+
+            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+        }
+
+        // ---------- SUPERVISOR ----------
+        facilityData?.supervisor?.let { supervisor ->
+
+            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+        }
         return user
     }
 
@@ -196,6 +299,110 @@ class UserRepo @Inject constructor(
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()
+            val designationId = data.optInt("designationID", -1)
+            preferenceDao.saveDesignationId(designationId)
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+                    val locationType = location.optString("locationType", "")
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
+                    preferenceDao.saveLocationType(locationType)
+                    preferenceDao.saveBlock(block)
+                    preferenceDao.saveState(state)
+                    preferenceDao.saveDistrict(district)
+
+
+                }
+
+                if (facilityData.has("user")) {
+
+                    val userObj = facilityData.getJSONObject("user")
+                    val employeeId = userObj.optString("employeeId", "")
+                    preferenceDao.saveEmployeeId(employeeId)
+                    if (userObj.has("demographics")) {
+
+                        val demographics = userObj.getJSONObject("demographics")
+                        val gender = demographics.optString("gender", "")
+                        val dob = demographics.optString("dob", "")
+                        val mobile = demographics.optString("mobile", "")
+                        val email = demographics.optString("email", "")
+                        preferenceDao.saveUserGender(gender)
+                        preferenceDao.saveUserDob(dob)
+                        preferenceDao.saveUserMobile(mobile)
+                        preferenceDao.saveUserEmail(email)
+
+                    }
+                }
+                val supervisorName = data.optString("fullName", "")
+                val supervisorId = data.optInt("userID", -1)
+                preferenceDao.saveSupervisorName(supervisorName)
+                preferenceDao.saveSupervisorId(supervisorId)
+            }
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
+
+                    preferenceDao.saveSupervisorDistrict(district)
+                    preferenceDao.saveSupervisorBlock(block)
+                    preferenceDao.saveSupervisorState(state)
+                }
+
+                if (facilityData.has("facility")) {
+                    val facilityObj = facilityData.getJSONObject("facility")
+
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+
+                }
+
+                if (facilityData.has("facilities")) {
+                    val facilitiesArray = facilityData.getJSONArray("facilities")
+
+                    if (facilitiesArray.length() > 0) {
+                        val facilityObj = facilitiesArray.getJSONObject(0)
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+                    }
+                }
+
+                if (facilityData.has("supervisor")) {
+                    val facilityObj = facilityData.getJSONObject("supervisor")
+
+
+                    val supervisorName = facilityObj.optString("fullName", "")
+                    val supervisorEmpID = facilityObj.optString("employeeId", "")
+                    val supervisorContact = facilityObj.optString("mobile", "")
+
+                    preferenceDao.saveSupervisorName(supervisorName)
+                    preferenceDao.saveSupervisorEmpID(supervisorEmpID)
+                    preferenceDao.saveSupervisorContact(supervisorContact)
+
+                }
+            }
             return@withContext userId
         }
     }

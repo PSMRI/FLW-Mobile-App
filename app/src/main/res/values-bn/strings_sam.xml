@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_new_visit">নতুন ভিজিট যোগ করুন</string>
+    <string name="visit">ভিজিট %1$d</string>
+    <string name="visit_2">ভিজিট দেখুন বা যোগ করুন</string>
+    <string name="check_sam_">SAM পরীক্ষা করুন</string>
+    <string name="severe_acute_malnutrition">তীব্র তীব্র অপুষ্টি</string>
+    <string name="sam_form">SAM ফর্ম</string>
+    <string name="ors_form">ORS ফর্ম</string>
+    <string name="oral_rehydration_solution">ওরাল রিহাইড্রেশন সলিউশন</string>
+    <string name="ifa_form">IFA ফর্ম</string>
+    <string name="iron_folic_acid">আয়রন ফলিক অ্যাসিড</string>
+    <string name="sam_form_">SAM ফর্ম</string>
+    <string name="take_photo">ছবি তুলুন</string>
+    <string name="select_image">ছবি নির্বাচন করুন</string>
+    <string name="choose_from_gallery">গ্যালারি থেকে নির্বাচন করুন</string>
+    <string name="pick_image">ছবি বাছুন</string>
+    <string name="select_file">ফাইল নির্বাচন করুন</string>
+    <string name="choose_file_pdf_image">ফাইল নির্বাচন করুন (PDF / ছবি)</string>
+    <string name="invalid_visit_date">অবৈধ ভিজিট তারিখ</string>
+    <string name="delivery_date_is_missing">প্রসবের তারিখ অনুপস্থিত</string>
+    <string name="visit_date_cannot_be_after_today_s_date">ভিজিট তারিখ আজকের তারিখের পরে হতে পারে না</string>
+    <string name="visit_date_cannot_be_before_delivery_date">ভিজিট তারিখ প্রসবের তারিখের আগে হতে পারে না</string>
+    <string name="visit_date_must_be_after_previous_visit">ভিজিট তারিখ আগের ভিজিট (%1$s) এর পরে হতে হবে</string>
+    <string name="visit_already_exists_for_this_date">এই তারিখে ইতিমধ্যে একটি ভিজিট রয়েছে: %1$s</string>
+    <string name="visit_date_must_be_greater_then_the_last_visit_dates">ভিজিট তারিখ সর্বশেষ ভিজিটের তারিখের পরে হতে হবে</string>
+    <string name="visit_date_must_be_after_all_existing_visit_dates">ভিজিট তারিখ সব বিদ্যমান ভিজিট তারিখের পরে হতে হবে</string>
+    <string name="is_child_referred_nrc">শিশুকে কি NRC-তে রেফার করা হয়েছে</string>
+    <string name="is_child_admitted_nrc">শিশু কি NRC-তে ভর্তি হয়েছে</string>
+    <string name="is_child_discharged_nrc">শিশু কি NRC থেকে ছাড়পত্র পেয়েছে</string>
+    <string name="sam_status">SAM অবস্থা</string>
+    <string name="follow_up_sam">SAM ফলো-আপ</string>
+    <string name="nrc_admitted">NRC-তে ভর্তি</string>
+    <string name="referred_to_nrc">NRC-তে রেফার করা হয়েছে</string>
+    <string name="visit_date_cannot_be_more_than_2_months_old">ভিজিট তারিখ ২ মাসের বেশি পুরোনো হতে পারে না</string>
+    <string name="only_one_visit_per_month_allowed">প্রতি মাসে শুধুমাত্র একটি ভিজিট অনুমোদিত</string>
+    <string name="bottle_count">বোতলের সংখ্যা</string>
+    <string name="sam_case_detected">SAM কেস সনাক্ত হয়েছে</string>
+    <string name="muac_sam_alert_message">MUAC %1$.1f সেমি। অনুগ্রহ করে শিশুটিকে SAM কেস হিসেবে NRC-তে রেফার করুন।</string>
+    <string name="weight_height_sam_alert_message">ওজন-অনুযায়ী-উচ্চতা অবস্থা SAM। অনুগ্রহ করে শিশুটিকে SAM কেস হিসেবে NRC-তে রেফার করুন।</string>
+</resources>

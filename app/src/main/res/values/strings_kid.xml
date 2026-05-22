@@ -50,6 +50,11 @@
     <string name="part_ii">Part II</string>
     <string name="hbnc_form">HBNC Form</string>
     <string name="ncd_folloup_form">NCD Referal FollowUp Form</string>
+    <string name="baby_of">%1$s baby of %2$s</string>
+    <string name="first_baby">1st</string>
+    <string name="second_baby">2nd</string>
+    <string name="third_baby">3rd</string>
+    <string name="nth_baby">%1$sth</string>
 
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">Day</item>
@@ -170,7 +175,6 @@
     <string name="str_rch_id_of_child">RCH ID No. of Child</string>
     <string name="str_date_of_birth">Date of Birth</string>
     <string name="str_sex_of_child">Sex of Child</string>
-    <string name="str_mothers_name">Mother\'s Name</string>
     <string name="str_fathers_name">Father\'s Name</string>
     <string name="str_whose_mobile_number">Whose Mobile Number</string>
     <string name="str_mobile_no">Mobile No.</string>

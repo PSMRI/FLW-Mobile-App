@@ -107,6 +107,7 @@ class SupervisorViewModel @Inject constructor(
             ENGLISH -> selectedVillage?.name
             Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
+            Languages.BANGLA -> selectedVillage?.nameBangla ?: selectedVillage?.name
 
         }
 
@@ -124,6 +125,8 @@ class SupervisorViewModel @Inject constructor(
     init {
         viewModelScope.launch {
 //            _user = pref.getLoggedInUser()!!
+            userRepo.setFacilityData(currentUser!!.userId)
+
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
                     _unprocessedRecordsCount.value =
@@ -151,6 +154,10 @@ class SupervisorViewModel @Inject constructor(
                     ASSAMESE -> {
                         villageDropdownEntries =
                             user.villages.map { it.nameAssamese ?: it.name }.toTypedArray()
+                    }
+                    Languages.BANGLA -> {
+                        villageDropdownEntries =
+                            user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
                     }
                 }
 

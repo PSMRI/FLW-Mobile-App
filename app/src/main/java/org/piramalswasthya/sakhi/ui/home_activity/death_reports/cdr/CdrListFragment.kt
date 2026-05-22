@@ -59,12 +59,14 @@ class CdrListFragment : Fragment() {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
                 { hhId, benId ->
-                    findNavController().navigate(
-                        CdrListFragmentDirections.actionCdrListFragmentToCdrObjectFragment(
-                            hhId,
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.cdrListFragment) {
+                        findNavController().navigate(
+                            CdrListFragmentDirections.actionCdrListFragmentToCdrObjectFragment(
+                                hhId,
+                                benId
+                            )
                         )
-                    )
+                    }
                 }), resources.getString(R.string.cdr_form),
             pref = prefDao
         )

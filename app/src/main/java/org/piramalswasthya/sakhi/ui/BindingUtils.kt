@@ -534,7 +534,11 @@ fun setFormattedSessionDate(textView: TextView, timestamp: Long?) {
 
 @BindingAdapter(value = ["visibleIfAgeAbove30AndAliveAge", "isDeath"], requireAll = true)
 fun Button.visibleIfAgeAbove30AndAlive(age: Int?, isDeath: String?) {
-    val shouldShow = (age ?: 0) >= 30 && isDeath.equals("false", ignoreCase = true)
+    val isAlive = isDeath.isNullOrBlank()
+            || isDeath.equals("false", ignoreCase = true)
+            || isDeath == "0"
+            || isDeath.equals("undefined", ignoreCase = true)
+    val shouldShow = (age ?: 0) >= 40 && isAlive
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }
 
@@ -544,8 +548,7 @@ fun Button.visibleIfEligibleFemale(age: Int?, isDeath: String?, reproductiveStat
     val shouldShow =
         (gender.equals("female", ignoreCase = true)) &&
                 ((age ?: 0) in 20..49) &&
-                (reproductiveStatusId == 1 || reproductiveStatusId == 2) &&
-                (isDeath == null || isDeath.equals("false", ignoreCase = true))
+                (reproductiveStatusId == 1 || reproductiveStatusId == 2)
 
     visibility = if (shouldShow) View.VISIBLE else View.GONE
 }
@@ -556,5 +559,23 @@ fun setDynamicBackground(view: View, isEligible: Boolean) {
         view.setBackgroundResource(R.color.md_theme_light_error)
     } else {
         view.background = null
+    }
+}
+
+@BindingAdapter("localizedGender")
+fun TextView.setLocalizedGender(gender: String?) {
+
+    text = when (gender?.uppercase()) {
+
+        "MALE" ->
+            context.getString(R.string.male)
+
+        "FEMALE" ->
+            context.getString(R.string.female)
+
+        "TRANSGENDER" ->
+            context.getString(R.string.transgender)
+
+        else -> gender ?: ""
     }
 }

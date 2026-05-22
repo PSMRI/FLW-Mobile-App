@@ -25,6 +25,8 @@
     <string name="cd_icon_grid_icon">চিহ্ন</string>
     <string name="nav_item_1_text">নাম : <b>%s</b></string>
     <string name="nav_item_2_text">ব্যৱহাৰকাৰী : <b>%s</b></string>
+    <string name="nav_item_facility_text">সুবিধা : <b>%s</b></string>
+    <string name="nav_item_emp_text">কৰ্মচাৰী আইডি : <b>%s</b></string>
     <string name="nav_item_3_text">ব্যৱহাৰকাৰী আইডি :  <b>%s</b></string>
     <string name="nav_item_4_text">ভাৰ্সন : %s</string>
     <string name="tv_required_text_asterisk">*</string>
@@ -165,6 +167,7 @@
     <string name="hbyc_month_list">HBYC মাহৰ তালিকা</string>
     <string name="immunization">পৰিস্কৃতি</string>
     <string name="pregnancy_registration_form">গৰ্ভাবস্থাৰ পঞ্জীকৰণ ফৰ্ম</string>
+    <string name="immunization_cant_done_as_missed">টিকাকৰণ বাদ পৰাৰ বাবে কৰিব নোৱাৰি</string>
     <string name="anc_visit">ANC দৰকাৰি</string>
     <string name="home_visit">ঘৰ ভিজিট</string>
     <string name="cac_form">CAC Form</string>
@@ -187,17 +190,31 @@
     <string name="service_location">সেৱা অবস্থান</string>
     <string-array name="sync_records">
         <item>লাভানী</item>
-        <item>সিবিএসি</item>
-        <item>টি বি স্ক্রীনিং</item>
-        <item>টি বি সন্দেহভবিত</item>
-        <item>ইসি নিবন্ধন</item>
-        <item>ইসি ট্র্যাকিং</item>
-        <item>পি ডাব্লু নিবন্ধন</item>
-        <item>পি ডাব্লু এ এন সি</item>
-        <item>এইচআরপি মূল্যায়ন</item>
-        <item>এইচআরপি ট্র্যাক</item>
-        <item>এইচআর গৈরগর্ভ মূল্যায়ন</item>
-        <item>এইচআর গৈরগর্ভ ট্র্যাক</item>
+        <item>ইচি নিবন্ধন</item>
+        <item>ইচি ট্রেকিং</item>
+        <item>পি ডাব্লিউ নিবন্ধন</item>
+        <item>পি ডাব্লিউ এএনচি</item>
+        <item>PMSMA</item>
+        <item>প্ৰসূতি ফলাফল</item>
+        <item>PNC</item>
+        <item>শিশু নিবন্ধন</item>
+        <item>সিবিএচিএচ</item>
+        <item>টি বি স্ক্ৰিনিং</item>
+        <item>টি বি সন্দেহজনক</item>
+        <item>এইচ আৰ পি মূল্যায়ন</item>
+        <item>এইচ আৰ পি ট্রেক</item>
+        <item>অগর্ভাৱস্থা মূল্যায়ন</item>
+        <item>অগর্ভাৱস্থা ট্রেক</item>
+        <item>টিকাকৰণ</item>
+        <item>HBYC</item>
+        <item>HBNC</item>
+        <item>মাইক্রো বার্থ প্লেন</item>
+        <item>VHND</item>
+        <item>VHSNC</item>
+        <item>PHC</item>
+        <item>AHD</item>
+        <item>ডিৱৰ্মিং</item>
+        <item>NCD ফ\'ল আপ</item>
     </string-array>
 
     <string-array name="temp_array">
@@ -213,6 +230,9 @@
     <string name="monthly_claim_summary">মাহেকীয়া দাবীৰ সাৰাংশ</string>
     <string name="support">সহায়</string>
     <string name="to_do_list">কৰণীয়ৰ তালিকা</string>
+    <string name="irs_off">আই আৰ এছ অফ</string>
+    <string name="irs_on">আই আৰ এছ চালু</string>
+    <string name="adolescent_health_form">কিশোৰ স্বাস্থ্য ফৰ্ম</string>
     <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
     <string name="beneficiaries_due_for_immunization">টিকাকৰণৰ বাবে বঁটা পাবলগীয়া লাভান্বিত</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকিপূৰ্ণ কেচ</string>
@@ -228,87 +248,88 @@
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>
     <string name="tv_husband_name_ph">স্বামীৰ নাম</string>
-    <string name="jsy_payment_voucher">JSY payment voucher</string>
-    <string name="mcp_card_1">MCP Card 1</string>
-    <string name="mcp_card_2">MCP Card 2</string>
-    <string name="during_pregnancy">During pregnancy</string>
-    <string name="a_during_pregnancy">a. During pregnancy</string>
-    <string name="b_during_delivery">b. During delivery</string>
-    <string name="c_within_42_days_after_delivery">c. Within 42 days after delivery</string>
-    <string name="d_during_abortion_or_within_6_weeks_after_abortion">d. During abortion or within 6 weeks after abortion</string>
-    <string name="name_of_reporting_person">"Name of reporting Person "</string>
-    <string name="designation">Designation</string>
-    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">Verification by ANM of the respective Sub-center that death of women occurred during pregnancy or within 42 days of delivery/abortion:</string>
-    <string name="name_of_anm">Name of ANM</string>
-    <string name="name_of_the_sub_center">Name of the sub center</string>
-    <string name="mdsr_form_from_anm_1">MDSR form from ANM 1</string>
-    <string name="mdsr_form_from_anm_2">MDSR form from ANM 2</string>
-    <string name="father_name">Father Name</string>
-    <string name="age_of_woman">Age Of Woman</string>
-    <string name="when_did_death_occur">When did death occur</string>
-    <string name="name_of_the_deceased_woman">Name of the deceased woman</string>
-    <string name="date_of_antra_injection">Date of ANTRA Injection</string>
-    <string name="due_date_of_next_injection">Due date of next Injection</string>
-    <string name="mpa_card">MPA Card</string>
-    <string name="invalid_injection_date">Invalid injection date</string>
-    <string name="antra_injection_details">ANTRA Injection Details</string>
-    <string name="dose">Dose</string>
-    <string name="next_due_date">Next Due Date</string>
-    <string name="abortion_discharge_summary_1">Abortion Discharge\n Summary 1</string>
-    <string name="abortion_discharge_summary_2">Abortion Discharge\n Summary 2</string>
-    <string name="remarks">Remarks</string>
-    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
+    <string name="jsy_payment_voucher">JSY পেমেণ্ট ভাউচাৰ</string>
+    <string name="mcp_card_1">এমচিপি কাৰ্ড ১</string>
+    <string name="mcp_card_2">এমচিপি কাৰ্ড ২</string>
+    <string name="during_pregnancy">গৰ্ভাৱস্থাৰ সময়ত</string>
+    <string name="a_during_pregnancy">ক. গৰ্ভাৱস্থাৰ সময়ত</string>
+    <string name="b_during_delivery">খ. প্ৰসৱৰ সময়ত</string>
+    <string name="c_within_42_days_after_delivery">গ. প্ৰসৱৰ পিছত ৪২ দিনৰ ভিতৰত</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">ঘ. গৰ্ভপাতৰ সময়ত বা গৰ্ভপাতৰ ৬ সপ্তাহৰ ভিতৰত</string>
+    <string name="name_of_reporting_person">"ৰিপ'ৰ্ট কৰা ব্যক্তিৰ নাম "</string>
+    <string name="designation">পদবী</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">গৰ্ভাৱস্থাত বা প্ৰসৱ/গৰ্ভপাতৰ ৪২ দিনৰ ভিতৰত মহিলাৰ মৃত্যু হোৱা বুলি নিজ নিজ উপ-কেন্দ্ৰৰ এ এন এমৰ দ্বাৰা পৰীক্ষা কৰা:</string>
+    <string name="name_of_anm">ANM নাম</string>
+    <string name="name_of_the_sub_center">উপ কেন্দ্ৰৰ নাম</string>
+    <string name="mdsr_form_from_anm_1">ANM ১ ৰ পৰা MDSR ফৰ্ম</string>
+    <string name="mdsr_form_from_anm_2">ANM ২ৰ পৰা MDSR ফৰ্ম</string>
+    <string name="father_name">পিতৃৰ নাম</string>
+    <string name="age_of_woman">মহিলাৰ বয়স</string>
+    <string name="select_time">সময় নিৰ্ব্বাচন কৰক</string>
+    <string name="when_did_death_occur">মৃত্যু কেতিয়া হ’ল</string>
+    <string name="name_of_the_deceased_woman">মৃত মহিলাগৰাকীৰ নাম</string>
+    <string name="date_of_antra_injection">ANTRA বেজী দিয়াৰ তাৰিখ</string>
+    <string name="due_date_of_next_injection">পৰৱৰ্তী বেজীৰ নিৰ্ধাৰিত তাৰিখ</string>
+    <string name="mpa_card">MPA কাৰ্ড</string>
+    <string name="invalid_injection_date">বেজীৰ তাৰিখ অবৈধ</string>
+    <string name="antra_injection_details">ANTRA ইনজেকচনৰ বিৱৰণ</string>
+    <string name="dose">ড’জ</string>
+    <string name="next_due_date">পৰৱৰ্তী নিৰ্ধাৰিত তাৰিখ</string>
+    <string name="abortion_discharge_summary_1">গৰ্ভপাতৰ পৰা নিৰ্গমন\n সাৰাংশ ১</string>
+    <string name="abortion_discharge_summary_2">গৰ্ভপাতৰ পৰা নিৰ্গমন\n সাৰাংশ ২</string>
+    <string name="remarks">মন্তব্য</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">গৰ্ভপাতৰ পিছত গৰ্ভনিৰোধক\nগৰ্ভপাতৰ পিছত PAIUCD সোমোৱাই দিয়া হয়নে</string>
     <string name="termination_done_by">Termination done by</string>
     <string name="method_of_termination">Method of Termination</string>
-    <string name="serial_no_as_per_admission_evacuation_register">Serial no as per Admission/ Evacuation register</string>
-    <string name="facility_place_of_abortion">Facility (Place of Abortion)</string>
-    <string name="abortion_type">Abortion Type</string>
+    <string name="serial_no_as_per_admission_evacuation_register">Admission/ Evacuation register অনুসৰি ছিৰিয়েল নং</string>
+    <string name="facility_place_of_abortion">সুবিধা (গৰ্ভপাতৰ স্থান)</string>
+    <string name="abortion_type">গৰ্ভপাতৰ প্ৰকাৰ</string>
     <string name="abortion_date">Abortion Date</string>
-    <string name="any_other_high_risk_conditions">Any other High Risk conditions</string>
-    <string name="details_of_pregnant_women">Details of Pregnant women</string>
-    <string name="anc_period">ANC Period</string>
-    <string name="anc_date">ANC Date</string>
-    <string name="place_of_anc">Place of ANC</string>
-    <string name="abortion_if_any">Abortion If Any</string>
-    <string name="weight_of_pw_kg">Weight of PW (Kg) at time Registration</string>
+    <string name="any_other_high_risk_conditions">আন যিকোনো হাই ৰিস্ক অৱস্থা</string>
+    <string name="details_of_pregnant_women">গৰ্ভৱতী মহিলাৰ বিৱৰণ</string>
+    <string name="anc_period">এএনচি সময়কাল</string>
+    <string name="anc_date">এএনচি তাৰিখ</string>
+    <string name="place_of_anc">এএনচি স্থান</string>
+    <string name="abortion_if_any">যদি গৰ্ভপাত হৈছে</string>
+    <string name="weight_of_pw_kg">নিবন্ধনৰ সময়ত গৰ্ভৱতী মহিলাৰ ওজন (কেজি)</string>
     <string name="bp_of_pw">BP of PW &#x2013; Systolic/ Diastolic (mm Hg)</string>
-    <string name="pulse_rate_bpm">Pulse Rate (BPM)</string>
-    <string name="hb_gm_dl">HB (gm/dl)</string>
-    <string name="fundal_height_uterus">Fundal Height / Size of the Uterus weeks</string>
-    <string name="urine_albumin">Urine Albumin</string>
-    <string name="random_blood_sugar_test">Random Blood Sugar Test</string>
-    <string name="date_td_tt_1st_dose">Date of Td TT (1st Dose)</string>
-    <string name="date_td_tt_2nd_dose">Date of Td TT (2nd Dose)</string>
-    <string name="date_td_tt_booster_dose">Date of Td TT (Booster Dose)</string>
-    <string name="no_of_folic_acid_tabs">No. of Folic Acid Tabs given</string>
-    <string name="no_of_ifa_tabs">No. of IFA Tabs given</string>
-    <string name="any_high_risk_conditions">Any High Risk conditions</string>
-    <string name="is_hrp_confirmed">Is HRP Confirmed?</string>
-    <string name="who_identified_hrp">Who had identified as HRP?</string>
-    <string name="probable_cause_of_death">Probable Cause of Death</string>
-    <string name="other_death_cause">Other Death Cause</string>
-    <string name="has_pw_delivered">Has the pregnant woman delivered?</string>
-    <string name="mcp_cards">MCP Cards</string>
-    <string name="front_side">Front Side</string>
-    <string name="back_side">Back Side</string>
-    <string name="if_yes_select_high_risk_condition">if yes, select high-risk condition</string>
-    <string name="pmsma_visit_date">PMSMA Visit Date</string>
-    <string name="pmsma_visits">PMSMA Visits</string>
-    <string name="pmsma_visit">PMSMA Visit</string>
+    <string name="pulse_rate_bpm">পাল্স ৰেট (BPM)</string>
+    <string name="hb_gm_dl">এইচ বি (গ্ৰাম/ডি এল)</string>
+    <string name="fundal_height_uterus">গৰ্ভাশয়ৰ উচ্চতা / আকাৰ (সপ্তাহ)</string>
+    <string name="urine_albumin">প্ৰস্ৰাৱ এলবুমিন</string>
+    <string name="random_blood_sugar_test">ৰেণ্ডম ব্লাড সুগাৰ টেষ্ট</string>
+    <string name="date_td_tt_1st_dose">Td TT (প্ৰথম ডোজ) তাৰিখ</string>
+    <string name="date_td_tt_2nd_dose">Td TT (দ্বিতীয় ডোজ) তাৰিখ</string>
+    <string name="date_td_tt_booster_dose">Td TT (বুস্টাৰ ডোজ) তাৰিখ</string>
+    <string name="no_of_folic_acid_tabs">ফলিক এছিড টেবলেটৰ সংখ্যা</string>
+    <string name="no_of_ifa_tabs">IFA টেবলেটৰ সংখ্যা</string>
+    <string name="any_high_risk_conditions">কোনো উচ্চ ঝুঁকি অৱস্থা আছেনে?</string>
+    <string name="is_hrp_confirmed">HRP নিশ্চিত নেকি?</string>
+    <string name="who_identified_hrp">কোনে HRP হিচাপে চিনাক্ত কৰিলে?</string>
+    <string name="probable_cause_of_death">মৃত্যুৰ সম্ভাৱ্য কাৰণ</string>
+    <string name="other_death_cause">অন্য মৃত্যু কাৰণ</string>
+    <string name="has_pw_delivered">গৰ্ভৱতী মহিলাই প্ৰসৱ কৰিছে নেকি?</string>
+    <string name="mcp_cards">MCP কাৰ্ডসমূহ</string>
+    <string name="front_side">আগফাল</string>
+    <string name="back_side">পিছফাল</string>
+    <string name="if_yes_select_high_risk_condition">যদি হয়, উচ্চ ঝুঁকি অৱস্থা বাছনি কৰক</string>
+    <string name="pmsma_visit_date">PMSMA ভিজিট তাৰিখ</string>
+    <string name="pmsma_visits">PMSMA ভিজিটসমূহ</string>
+    <string name="pmsma_visit">PMSMA ভিজিট</string>
     <string name="is_baby_discharge_from_sncu">কেঁচুৱাটোক এছ এন চি ইউত ভৰ্তি কৰা হৈছে নেকি?</string>
-    <string name="optional">(Optional)</string>
-    <string name="optional_">Optional</string>
-    <string name="mandatory">Mandatory <font color='#FF0000'>*</font></string>
-    <string name="name_of_the_child">Name of the Child</string>
-    <string name="pincode">Pincode</string>
-    <string name="signature_name_of_asha">Signature/Name of ASHA</string>
-    <string name="cdr_form_from_anm_1">CDR form from ANM 1</string>
-    <string name="cdr_form_from_anm_2">CDR form from ANM 2</string>
-    <string name="leprosy_confirmed">Leprosy Confirmed</string>
-    <string name="leprosy_suspected">Leprosy Suspected</string>
-    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
-    <string name="date_of_sterilisation">Date of Sterilisation</string>
-    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
+    <string name="optional">(ঐচ্ছিক)</string>
+    <string name="optional_">ঐচ্ছিক</string>
+    <string name="mandatory">বাধ্যতামূলক <font color='#FF0000'>*</font></string>
+    <string name="name_of_the_child">শিশুৰ নাম</string>
+    <string name="pincode">পিনকোড</string>
+    <string name="signature_name_of_asha">আশাৰ স্বাক্ষৰ/নাম</string>
+    <string name="cdr_form_from_anm_1">ANM ১ ৰ পৰা CDR ফৰ্ম</string>
+    <string name="cdr_form_from_anm_2">ANM ২ ৰ পৰা CDR ফৰ্ম</string>
+    <string name="leprosy_confirmed">কুষ্ঠ ৰোগ নিশ্চিত</string>
+    <string name="leprosy_suspected">কুষ্ঠ ৰোগ সন্দেহজনক</string>
+    <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">গৰ্ভপাতৰ পিছত মহিলাই স্থায়ী জন্ম নিয়ন্ত্ৰণ (টিউবেক্টমি) বাছনি কৰিছে</string>
+    <string name="date_of_sterilisation">নিষ্ক্ৰিয়কৰণৰ তাৰিখ</string>
+    <string name="what_family_planning_method_has_been_chosen_after_the_abortion">গৰ্ভপাতৰ পিছত কোনটো পৰিয়াল পৰিকল্পনা পদ্ধতি বাছনি কৰা হৈছে?</string>
     <string name="higher_healthcare_center">উচ্চতৰ স্বাস্থ্যসেৱা কেন্দ্ৰ</string>
     <string name="additional_services">অতিৰিক্ত সেৱা</string>
 
@@ -348,6 +369,9 @@
     <string name="hbnc_baby_temp_96_alert">মাকক উপদেশ দিয়ক যে শিশুক গৰম কৰি ৰাখিবলৈ ঘৰৰ তাপমান বৃদ্ধি কৰিব, চামৰীৰ সৈতে চামৰীৰ সংস্পৰ্শ দিব, শিশুক গৰম থলুত ৰাখিব আৰু বাৰে বাৰে খুৱাব। শিশুটি গৰম হোৱা পাছত, তাক কাপোৰ পৰাই আগতেই গৰম কৰা খাটত মাকৰ ওচৰত ৰাখিব।</string>
     <string name="hbnc_baby_temp_99_alert">তেতিয়া sepsis ৰ লক্ষণ আছে নে নাই সেয়া পৰীক্ষা কৰক। যদি sepsis ৰ লক্ষণ দেখা নাযায়, তেন্তে কেৱল ১/৪ চামুচ paracetamol দি ব্যৱস্থাপনা কৰক আৰু তৎক্ষণাৎ নিকটতম স্বাস্থ্য কেন্দ্ৰৰ SNCU লৈ প্ৰেৰণ কৰক।</string>
     <string name="form_input_alphabet_special_only_error">কেৱল বৰ্ণমালা আৰু বিশেষ চিহ্নসমূহ অনুমোদিত!</string>
+    <string name="error_only_numeric">কেৱল সংখ্যাসূচক মানহে গ্ৰহণযোগ্য</string>
+    <string name="error_birth_cert_length">জন্মৰ প্ৰমাণ পত্ৰ নম্বৰ ৬ৰ পৰা ২০ সংখ্যা হ’ব লাগিব</string>
+    <string name="error_invalid_birth_cert">অবৈধ জন্ম প্ৰমাণ পত্ৰ নম্বৰ</string>
     <string name="form_input__no_alpha_space_error">বৰ্ণমালা বা খালী ঠাই অনুমোদিত নহয়!</string>
     <string name="form_input_digit_only_error">কেৱল সংখ্যা অনুমোদিত!</string>
     <string name="enter_pin">PIN দিয়ক</string>
@@ -399,6 +423,13 @@
         <item name="hbnc_assisted">সহায়তাপ্ৰদান</item>
     </string-array>
 
+    <string-array name="hbnc_started_breastfeeding">
+        <item name="hbnc_breastfeeding_time_1">এঘণ্টাৰ ভিতৰত</item>
+        <item name="hbnc_breastfeeding_time_2">১ - ৪ ঘণ্টা</item>
+        <item name="hbnc_breastfeeding_time_3">৪.১ - ২৪ ঘণ্টা</item>
+        <item name="hbnc_breastfeeding_time_4">২৪ ঘণ্টাৰ পিছত</item>
+    </string-array>
+
     <string-array name="hbnc_feeding_of_baby">
         <item name="hbnc_feeding_of_baby_1">মাতৃৰ দুধ</item>
         <item name="hbnc_feeding_of_baby_2">পানী</item>
@@ -427,6 +458,278 @@
         <item name="hbnc_mpw">এম.পি.ডব্লিউ (বহুমুখী কৰ্মী)</item>
     </string-array>
 
+    <string-array name="type_of_tb_case">
+        <item>টিবিৰ নতুন কেচ</item>
+        <item>পূৰ্বতে চিকিৎসা কৰা টিবিৰ কেচ</item>
+        <item>ড্ৰাগ-ৰেজিষ্টেন্ট টিবি (DR-TB) কেচ</item>
+    </string-array>
+
+    <string-array name="place_array">
+        <item>স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>আংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
+    </string-array>
+
+    <string-array name="ecr_gender_array">
+        <item>পুৰুষ</item>
+        <item>মহিলা</item>
+    </string-array>
+
+    <string-array name="ecr_baby_gender_array">
+        <item>পুত্ৰ</item>
+        <item>কন্যা</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>জিলা টিবি কেন্দ্ৰ (DTC)</item>
+        <item>এইচডব্লিউচি</item>
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>এইচডব্লিউচি</item>
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="adherence_options">
+        <item>নিয়মিত</item>
+        <item>অনিয়মিত</item>
+    </string-array>
+
+    <string-array name="tb_treatment_outcomes">
+        <item>সুস্থ হৈছে</item>
+        <item>বিফল হৈছে</item>
+        <item>ফ\'ল\'আপ হেৰুৱাইছে (LFU)</item>
+        <item>মৃত্যু</item>
+    </string-array>
+    <string-array name="place_of_death">
+        <item>ঘৰ</item>
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>পিএইচচি</item>
+        <item>চিএইচচি</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য স্থান</item>
+    </string-array>
+
+    <string-array name="dc_case_status">
+        <item>সন্দেহজনক</item>
+        <item>নিশ্চিত</item>
+        <item>নিশ্চিত নহয়</item>
+        <item>চিকিৎসা আৰম্ভ হৈছে</item>
+    </string-array>
+
+    <string-array name="test_type">
+        <item>RDT পৰীক্ষা</item>
+        <item>স্লাইড পৰীক্ষা</item>
+        <item>দুয়োটা</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_kalaazar">
+        <item>প্ৰযোজ্য নহয়</item>
+        <item>সুস্থ হৈ আছে</item>
+        <item>সম্পূৰ্ণ সুস্থ</item>
+        <item>মৃত্যু</item>
+        <item>পুনৰ লক্ষণ দেখা দিছে</item>
+    </string-array>
+    <string-array name="irs_rounds">
+        <item name="one">প্ৰথম পৰ্যায়</item>
+        <item name="two">দ্বিতীয় পৰ্যায়</item>
+        <item name="three">তৃতীয় পৰ্যায়</item>
+        <item name="four">চতুৰ্থ পৰ্যায়</item>
+    </string-array>
+
+    <string-array name="benificary_case_status_leprosy">
+        <item name="dc_not_app">প্ৰযোজ্য নহয়</item>
+        <item name="dc_recovering">সুস্থ হৈ আছে</item>
+        <item name="dc_cured">সুস্থ হৈছে</item>
+        <item name="dc_death">মৃত্যু</item>
+        <item name="dc_symp">লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item name="dc_reg">নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item name="dc_n_Reg">নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+        <item name="dc_treatment">চিকিৎসা সম্পূৰ্ণ হৈছে</item>
+        <item name="dc_other">অন্যান্য</item>
+    </string-array>
+
+    <string-array name="kala_case_status">
+        <item name="dc_recovering">সুস্থ হৈ আছে</item>
+        <item name="dc_cured">সুস্থ হৈছে</item>
+        <item name="dc_dead">মৃত</item>
+        <item name="dc_r_symptoms">লক্ষণ পুনৰ দেখা দিয়া</item>
+    </string-array>
+
+    <string-array name="type_of_leprocy">
+        <item name="mb">MB (বহু-বেচিলাৰী)</item>
+        <item name="pb">PB (স্বল্প-বেচিলাৰী)</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status">
+        <item>সুস্থ হৈ আছে</item>
+        <item>সুস্থ হৈছে</item>
+        <item>লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+        <item>চিকিৎসা সম্পূৰ্ণ হৈছে</item>
+    </string-array>
+
+    <string-array name="leprosy_treatment_status_before_time">
+        <item>সুস্থ হৈ আছে</item>
+        <item>সুস্থ হৈছে</item>
+        <item>লক্ষণ পুনৰ দেখা দিয়া</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰি আছে</item>
+        <item>নিয়মিতভাৱে ঔষধ গ্ৰহণ কৰা নাই</item>
+    </string-array>
+    <string-array name="death_place">
+        <item>ঘৰ</item>
+        <item>স্বাস্থ্য সুবিধা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="reason_death">
+        <item>জ্বৰ</item>
+        <item>অন্যান্য ৰোগ</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="benificary_case_status">
+        <item>পৰীক্ষা</item>
+        <item>মৃত্যু</item>
+    </string-array>
+
+    <string-array name="dc_refer">
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ আৰু চিকিৎসালয়</item>
+        <item>ৰেফাৰেল চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>চিকিৎসাৰ বিফলতা</item>
+        <item>টিবি পুনৰাবৃত্তি / পুনৰ লক্ষণ দেখা দিয়া</item>
+        <item>ডি আৰ-টিবি ৰোগীৰ সংস্পৰ্শ</item>
+        <item>LFU (ফ’ল’আপ হেৰুৱা) পিছত চিকিৎসা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>চিকিৎসাগতভাৱে টিবি চিনাক্ত</item>
+        <item>টিবি সন্দেহ কৰা হোৱা নাই</item>
+    </string-array>
+
+    <string-array name="dc_refer_malaria">
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ আৰু চিকিৎসালয়</item>
+        <item>ৰেফাৰেল চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য</item>
+        <item>কোনো নহয়</item>
+    </string-array>
+
+    <string-array name="daysPv">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+    </string-array>
+
+    <string-array name="daysPf">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+    </string-array>
+
+    <string-array name="hbyc_month_array">
+        <item>৩ মাহ</item>
+        <item>৪ মাহ</item>
+        <item>৫ মাহ</item>
+        <item>৬ মাহ</item>
+        <item>৭ মাহ</item>
+        <item>৮ মাহ</item>
+        <item>৯ মাহ</item>
+        <item>১০ মাহ</item>
+        <item>১১ মাহ</item>
+        <item>১২ মাহ</item>
+        <item>১৩ মাহ</item>
+        <item>১৪ মাহ</item>
+        <item>১৫ মাহ</item>
+    </string-array>
+
+
+    <string-array name="body_part_male">
+        <item>সোঁ হাত</item>
+        <item>বাওঁ হাত</item>
+        <item>সোঁ ভৰি</item>
+        <item>বাওঁ ভৰি</item>
+        <item>হাইড্ৰোচিল</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="body_part_female">
+        <item>সোঁ হাত</item>
+        <item>বাওঁ হাত</item>
+        <item>সোঁ ভৰি</item>
+        <item>বাওঁ ভৰি</item>
+        <item>সোঁ স্তন</item>
+        <item>বাওঁ স্তন</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="side_effect_of_medicine">
+        <item>F (জ্বৰ)</item>
+        <item>H (মূৰৰ বিষ)</item>
+        <item>B (শৰীৰত বিষ)</item>
+        <item>V (বমি)</item>
+        <item>N (নাকৰ পানী)</item>
+        <item>O (অন্যান্য)</item>
+        <item>কোনো নহয়</item>
+    </string-array>
+
+    <string-array name="yes_no_options">
+        <item>হয়</item>
+        <item>নহয়</item>
+    </string-array>
+
+    <string-array name="mdsr_cause_of_death_type">
+        <item>সন্দেহজনক মাতৃ মৃত্যু</item>
+        <item>অ-মাতৃ মৃত্যু</item>
+    </string-array>
+
+    <string-array name="tb_regimen_types">
+        <item>DS-TB (৬ মাহ)</item>
+        <item>সৰু ৰেজিমেন (৯–১২ মাহ)</item>
+        <item>ডাঙৰ ৰেজিমেন (১৮–২৪ মাহ)</item>
+        <item>BPaL ৰেজিমেন (৬ মাহ)</item>
+        <item>INH Mono (৬ মাহ)</item>
+    </string-array>
+
+    <string-array name="ahd_place_options">
+        <item>বিদ্যালয়</item>
+        <item>আংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সম্প্ৰদায়িক কেন্দ্ৰ</item>
+    </string-array>
+
+    <string-array name="hbnc_visit_days">
+        <item>প্ৰথম দিন</item>
+        <item>তৃতীয় দিন</item>
+        <item>সপ্তম দিন</item>
+        <item>চতুৰ্দশ দিন</item>
+        <item>একবিংশ দিন</item>
+        <item>আঠাশ দিন</item>
+        <item>বিয়াল্লিশ দিন</item>
+    </string-array>
+
     <string-array name="hbnc_place_of_baby_death">
         <item name="hbnc_home">গৃহ</item>
         <item name="hbnc_sub_center">উপ-কেন্দ্ৰ</item>
@@ -435,10 +738,10 @@
         <item name="hbnc_other">অন্য</item>
     </string-array>
     <string-array name="deworming_location_options">
-        <item>School</item>
-        <item>Anganwadi Centre</item>
-        <item>Community center</item>
-        <item>Home Visit</item>
+        <item>বিদ্যালয়</item>
+        <item>অংগনৱাড়ী কেন্দ্ৰ</item>
+        <item>সমাজ কেন্দ্ৰ</item>
+        <item>ঘৰ ভ্ৰমণ</item>
     </string-array>
 
     <string-array name="hbnc_gestational_age">
@@ -466,6 +769,13 @@
         <item name="hbnc_unusual_with_baby_3">অন্য</item>
     </string-array>
 
+    <string-array name="referal_health_center_array">
+        <item>এপ\'ল\' (Apollo)</item>
+        <item>CHC</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>PHC</item>
+    </string-array>
+
     <string-array name="hbnc_place_of_baby_referral">
         <item name="hbnc_place_of_baby_referral_1">উপ-কেন্দ্ৰ</item>
         <item name="hbnc_place_of_baby_referral_2">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
@@ -479,6 +789,17 @@
         <item name="hbnc_place_of_baby_referral_10">অন্য</item>
     </string-array>
 
+    <string name="imm_cat_birth_dose">জন্ম ডোজ</string>
+    <string name="imm_cat_6_weeks">৬ সপ্তাহ</string>
+    <string name="imm_cat_10_weeks">১০ সপ্তাহ</string>
+    <string name="imm_cat_14_weeks">১৪ সপ্তাহ</string>
+    <string name="imm_cat_9_12_months">৯-১২ মাহ</string>
+    <string name="imm_cat_16_24_months">১৬-২৪ মাহ</string>
+    <string name="imm_cat_5_6_years">৫-৬ বছৰ</string>
+    <string name="imm_cat_10_years">১০ বছৰ</string>
+    <string name="imm_cat_16_years">১৬ বছৰ</string>
+    <string name="imm_cat_catch_up">কেচ আপ</string>
+    
     <string name="str_yay_it_is_working">বাহ্‌, এইটো কাম কৰি আছে!!!</string>
     <string name="str_yay_it_is_not_working">বাহ্‌, এইটো কাম নকৰে!</string>
     <string name="str_health_subcenter_name">স্বাস্থ্য উপকেন্দ্ৰৰ নাম</string>
@@ -593,37 +914,37 @@
     <string name="filaria_submitted">ফিলাৰিয়া ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="leprosy_submitted">কঁকালৰ ৰোগৰ ফৰ্ম জমা দিয়া হৈছে</string>
     <string name="irs_submitted">IRS ফৰ্ম জমা দিয়া হৈছে</string>
-    <string name="hwc_referred_list">HWC Referred List</string>
-    <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
-    <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
-    <string name="village_name">Village Name</string>
-    <string name="number_of_anm_mpw_attended">Number of ANM/ MPW attended</string>
-    <string name="number_of_aww_attended">Number of AWW attended</string>
-    <string name="number_of_pregnant_woman">Number of Pregnant Woman</string>
-    <string name="number_of_lactating_mothers">Number of Lactating Mothers</string>
-    <string name="number_of_committee_members_present">Number of Committee members present</string>
-    <string name="follow_up_the_previous_meeting_minutes">Follow-up the previous meeting minutes</string>
-    <string name="number_of_asha_participated_in_vhsnc_meeting">Number of ASHAs participated in VHSNC meeting</string>
-    <string name="number_of_mitanins_participated_in_vhsnc_meeting">Number of Mitanins participated in VHSNC meeting</string>
-    <string name="mitanin_village_meetings">Mitanin/ Village Meetings</string>
-    <string name="asha_village_meetings">ASHA/ Village Meetings</string>
-    <string name="number_of_pregnant_woman_attended">Number of Pregnant Woman Attended</string>
-    <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
-    <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
-    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
-    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
-    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
-    <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
-    <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
-    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
-    <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
-    <string name="place_of_maa_meeting">Place of MAA Meeting</string>
-    <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
-    <string name="place_of_ndd">Place of NDD</string>
-    <string name="date_of_ndd">Date of NDD</string>
-    <string name="was_the_deworming_round_conducted">Was the deworming round conducted?</string>
-    <string name="mda_title">Filariasis MDA campaign</string>
-    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
+    <string name="hwc_referred_list">এইচডব্লিউচি ৰেফাৰ কৰা তালিকা</string>
+    <string name="vhsnc_meeting_date">VHSNC বৈঠকৰ তাৰিখ</string>
+    <string name="place_of_vhsnc_meeting">VHSNC বৈঠকৰ স্থান</string>
+    <string name="village_name">গাঁওৰ নাম</string>
+    <string name="number_of_anm_mpw_attended">উপস্থিত ANM/MPW ৰ সংখ্যা</string>
+    <string name="number_of_aww_attended">উপস্থিত AWW ৰ সংখ্যা</string>
+    <string name="number_of_pregnant_woman">গৰ্ভৱতী মহিলাৰ সংখ্যা</string>
+    <string name="number_of_lactating_mothers">দুগ্ধদান কৰা মাতৃৰ সংখ্যা</string>
+    <string name="number_of_committee_members_present">উপস্থিত কমিটি সদস্যৰ সংখ্যা</string>
+    <string name="follow_up_the_previous_meeting_minutes">পূৰ্বৰ বৈঠকৰ কাৰ্যবিবৰণীৰ অনুসৰণ</string>
+    <string name="number_of_asha_participated_in_vhsnc_meeting">VHSNC বৈঠকত অংশগ্ৰহণ কৰা ASHA ৰ সংখ্যা</string>
+    <string name="number_of_mitanins_participated_in_vhsnc_meeting">VHSNC বৈঠকত অংশগ্ৰহণ কৰা Mitanin ৰ সংখ্যা</string>
+    <string name="mitanin_village_meetings">Mitanin/গাঁও বৈঠকসমূহ</string>
+    <string name="asha_village_meetings">ASHA/গাঁও বৈঠকসমূহ</string>
+    <string name="number_of_pregnant_woman_attended">উপস্থিত গৰ্ভৱতী মহিলাৰ সংখ্যা</string>
+    <string name="number_of_lactating_mothers_attended">উপস্থিত দুগ্ধদান কৰা মাতৃৰ সংখ্যা</string>
+    <string name="during_breastfeeding_counseling_check_list">স্তনপান পৰামৰ্শৰ সময়ত পৰীক্ষা তালিকা</string>
+    <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">শিশুটিক জন্মৰ প্ৰথম ঘণ্টাৰ ভিতৰতেই স্তনপান কৰোৱা উচিত</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">প্ৰথম ৬ মাহলৈকে শিশুটিক কেৱল মাতৃদুগ্ধহে দিয়া উচিত।</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">৬ মাহৰ পিছত মাতৃদুগ্ধৰ লগতে পুষ্টিকৰ পৰিপূৰক খাদ্য দিব লাগে।</string>
+    <string name="breastfeeding_should_be_continued_for_2_years_or_more">স্তনপান ২ বছৰ বা তাৰো অধিক সময়লৈকে অব্যাহত ৰাখিব লাগে।</string>
+    <string name="the_family_should_support_and_encourage_the_mother">পৰিয়ালে মাতৃক সমৰ্থন আৰু উৎসাহ দিব লাগে</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">মাতৃদুগ্ধ শিশুৰ সম্পূৰ্ণ বিকাশৰ বাবে সৰ্বোত্তম।</string>
+    <string name="information_was_given_about_kmc_kangaroo_mother_care">KMC (Kangaroo Mother Care) সম্পৰ্কে তথ্য দিয়া হৈছিল।</string>
+    <string name="place_of_maa_meeting">MAA বৈঠকৰ স্থান</string>
+    <string name="number_of_out_of_school_children_sent_to_anganwad">বিদ্যালয়ৰ বাহিৰত থকা শিশুসকলক অংগনৱাড়ীলৈ পঠোৱা সংখ্যা</string>
+    <string name="place_of_ndd">NDD ৰ স্থান</string>
+    <string name="date_of_ndd">NDD ৰ তাৰিখ</string>
+    <string name="was_the_deworming_round_conducted">কৃমিনাশক ৰাউণ্ডটো কৰা হৈছিল নেকি?</string>
+    <string name="mda_title">ফাইলেৰিয়াছিছ MDA অভিযান</string>
+    <string name="mda_form_campagain_title">লিম্ফেটিক ফাইলাৰিয়াছিছ (LF) গণ ঔষধ প্ৰদান (MDA) অভিযান</string>
     <string name="PREF_NAME">Sakhi-pref-1</string>
     <string name="PREF_D2D_API_KEY">JWT-Token_A</string>
     <string name="PREF_primary_API_KEY">JWT-Token_B</string>
@@ -654,7 +975,6 @@
     <string name="m_test_type">মেলেৰিয়া পৰীক্ষাৰ প্ৰকাৰ</string>
     <string name="place_of_Death">মৃত্যুৰ স্থান</string>
     <string name="reason_of_Death">মৃত্যুৰ কাৰণ</string>
-    <string name="beneficiary_status">হিতাধিকাৰীৰ স্থিতি</string>
     <string name="aes_case_status">AES / JE কেছ স্থিতি</string>
     <string name="refer_to">ৰেফাৰ কৰা হৈছে</string>
     <string name="day_wise_tracking_pf">Pf - দৈনিক ট্ৰেকিং</string>
@@ -745,7 +1065,7 @@
     <string name="all">সকলো</string>
     <string name="with_abha">ABHA সহ</string>
     <string name="without_abha">ABHA বিহীন</string>
-    <string name="age_above_30_years">৩০ বছৰৰ ওপৰত বয়স</string>
+    <string name="age_above_30_years">৪০ বছৰৰ ওপৰত বয়স</string>
     <string name="wara">WARA</string>
     <string name="no_visit_made">কোনো ভিজিট কৰা হোৱা নাই</string>
     <string name="filter_list">ফিল্টাৰ</string>
@@ -764,6 +1084,7 @@
     <string name="check_sam">SAM পৰীক্ষা কৰক</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="ifa_syrup">আইৰন চিৰাপ</string>
     <string name="date_of_provision">প্ৰদানৰ তাৰিখ</string>
     <string name="bottle_number">বটলৰ নম্বৰ</string>
     <string name="s_no">ক্ৰমিক নং</string>
@@ -785,6 +1106,7 @@
     <string name="select_visit">ভিজিট বাছনি কৰক</string>
     <string name="no_previous_visits_available">কোনো পূৰ্বৰ ভিজিট উপলব্ধ নহয়</string>
     <string name="str_subcenter_name">উপ-কেন্দ্ৰৰ নাম</string>
+    <string name="str_subcenter">উপ-কেন্দ্ৰ</string>
     <string name="str_primary_health_center_name">প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰৰ নাম</string>
     <string name="str_village_population">গাঁৱৰ জনসংখ্যা</string>
     <string name="str_total_no_of_childrens">গাঁৱত ৩ ৰ পৰা ১৫ মাহৰ শিশুৰ মুঠ সংখ্যা</string>
@@ -844,6 +1166,7 @@
     <string name="sync_dashboard_clear_logs">লগ মচক</string>
     <string name="sync_dashboard_export_logs">লগ ৰপ্তানি কৰক</string>
     <string name="sync_dashboard_no_log_files">ৰপ্তানি কৰিবলৈ কোনো লগ ফাইল নাই</string>
+    <string name="sub_center_under_you_4">আপোনাৰ অধীনত থকা উপ-কেন্দ্ৰ</string>
 <string name="home_visit_date">ঘৰ ভিজিটৰ তাৰিখ</string>
     <string name="home_visit_date_screening">ঘৰ ভিজিটৰ তাৰিখ (স্ক্ৰীনিং তাৰিখ)</string>
     <string name="type_of_leprocy">নিশ্চিত কুষ্ঠ ৰোগৰ প্ৰকাৰ</string>
@@ -878,65 +1201,213 @@
     <string name="view_home_visits">ঘৰ ভিজিট চাওক</string>
     <string name="screening">স্ক্ৰীনিং</string>
     <string name="suspected">সন্দেহজনক</string>
-    <string name="no_of_childrens">No of children</string>
-    <string name="marriage_date">Marriage Date</string>
-    <string name="children_details">Children Details</string>
-    <string name="bank_details">Bank Details</string>
-    <string name="incentive_verification">Incentive Verification</string>
-    <string name="no_activities_found">No activities found</string>
-    <string name="supervisor_id">Supervisor ID:</string>
-    <string name="activity">Activity</string>
-    <string name="amount_rs">Amount (Rs.)</string>
-    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
-    <string name="verify">✓ Verify</string>
-    <string name="reject">✕ Reject</string>
-    <string name="reason_for_rejection">Reason for Rejection</string>
-    <string name="confirm_rejection">Confirm Rejection</string>
-    <string name="search_asha">Search ASHA....</string>
-    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
-    <string name="jan_2026">Jan, 2026</string>
-    <string name="verified_0">Verified: 0</string>
-    <string name="pending_0">Pending: 0</string>
-    <string name="rejected_0">Rejected: 0</string>
-    <string name="total_ashas">Total ASHAs</string>
-    <string name="select_month">Select Month</string>
-    <string name="pending">Pending</string>
-    <string name="overdue">OverDue</string>
-    <string name="rejected">Rejected</string>
-    <string name="claim">Claim</string>
-    <string name="visit_number_label">Visit -%d</string>
-    <string name="vaccine_fill">FILL</string>
-    <string name="malaria_confirmed">Confirmed</string>
-    <string name="malaria_not_confirmed">Not Confirmed</string>
-    <string name="malaria_treatment_started">Treatment Started</string>
-    <string name="ahd_health_status">Health Status</string>
-    <string name="ahd_ifa_tablet_distribution">IFA Tablet Distribution</string>
-    <string name="ahd_ifa_tablet_quantity">Quantity of IFA Tablets</string>
-    <string name="ahd_menstrual_hygiene_awareness">Menstrual Hygiene Awareness</string>
-    <string name="ahd_sanitary_napkin_distributed">Sanitary Napkin Distributed</string>
-    <string name="ahd_no_of_packets_distributed">No. of Packets Distributed</string>
-    <string name="ahd_referred_to_health_facility">Referred to Health Facility</string>
-    <string name="ahd_counseling_provided">Counseling Provided</string>
-    <string name="ahd_counseling_type">Counseling Type</string>
-    <string name="ahd_follow_up_date">Follow-up Date</string>
-    <string name="ahd_referral_status">Referral Status</string>
-    <string name="ahd_distribution_date">Date</string>
-    <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
-    <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these symptoms</string>
-    <string name="tb_asymptomatic_symptoms">Asymptomatic TB Screening</string>
-    <string name="tb_rise_of_fever">Rise of fever in evening</string>
-    <string name="tb_loss_of_appetite">Loss of appetite</string>
-    <string name="tb_age_more_than_60">Age more than 60 years</string>
-    <string name="tb_diabetic">Diabetic</string>
-    <string name="tb_tobacco_user">Tobacco user</string>
-    <string name="tb_bmi_less_than_18_5">BMI less than 18.5</string>
-    <string name="tb_contact_with_patient_on_treatment">Contact with patient on treatment</string>
-    <string name="tb_history_last_5_years">History of TB in last 5 years</string>
-    <string name="date_of_delivery">Date of Delivery</string>
-    <string name="any_danger_signs">Any Danger Signs</string>
-    <string name="any_high_risk_identified">Any High-risk identified?</string>
-    <string name="delivery_discharge_summary_1">Delivery Discharge Summary 1</string>
-    <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
-    <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
-    <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
+    <string name="no_of_childrens">শিশুৰ সংখ্যা</string>
+    <string name="marriage_date">বিবাহৰ তাৰিখ</string>
+    <string name="children_details">শিশুৰ বিৱৰণ</string>
+    <string name="bank_details">ব্যাংকৰ বিৱৰণ</string>
+    <string name="incentive_verification">প্ৰেৰণাৰ সত্যাপন</string>
+    <string name="no_activities_found">কোনো কাৰ্যকলাপ পোৱা নগ\'ল</string>
+    <string name="supervisor_id">পৰ্যবেক্ষকৰ আইডি:</string>
+    <string name="activity">কাৰ্যকলাপ</string>
+    <string name="amount_rs">ধন (টকা)</string>
+    <string name="i_have_verified_supporting_documents_on_asha_s_device">মই আশাৰ ডিভাইচত সহায়ক নথিপত্ৰসমূহ সত্যাপন কৰিছো</string>
+    <string name="verify">✓ সত্যাপন</string>
+    <string name="reject">✕ বাতিল কৰক</string>
+    <string name="reason_for_rejection">বাতিল কৰাৰ কাৰণ</string>
+    <string name="confirm_rejection">বাতিল নিশ্চিত কৰক</string>
+    <string name="search_asha">আশা সন্ধান কৰক....</string>
+    <string name="asha_monthly_detail">আশাৰ মাহেকীয়া বিৱৰণ</string>
+    <string name="jan_2026">জানুৱাৰী, ২০২৬</string>
+    <string name="verified_0">সত্যাপন কৰা: 0</string>
+    <string name="pending_0">বাকী থকা: 0</string>
+    <string name="rejected_0">বাতিল কৰা: 0</string>
+    <string name="overdue_0">অতিৰিক্ত সময়সীমা: 0</string>
+    <string name="total_ashas">মুঠ আশা</string>
+    <string name="select_month">মাহ বাছনি কৰক</string>
+    <string name="pending">বাকী থকা</string>
+    <string name="overdue">অতি দেৰী হোৱা</string>
+    <string name="rejected">বাতিল কৰা</string>
+    <string name="claim">দাবী</string>
+    <string name="cataract_surgery">কেটাৰেক্ট অস্ত্ৰোপচাৰ</string>
+    <string name="cataract_surgery_visits">কেটাৰেক্ট অস্ত্ৰোপচাৰ ভিজিটসমূহ</string>
+    <string name="due_date_label">দেয়: %1$s</string>
+
+
+    <string name="visit_number_label">ভিজিট -%d</string>
+    <string name="vaccine_fill">পূৰণ কৰক</string>
+    <string name="malaria_confirmed">নিশ্চিত</string>
+    <string name="malaria_not_confirmed">নিশ্চিত নহয়</string>
+    <string name="malaria_treatment_started">চিকিৎসা আৰম্ভ হৈছে</string>
+    <string name="ahd_health_status">স্বাস্থ্যৰ অৱস্থা</string>
+    <string name="ahd_ifa_tablet_distribution">IFA টেবলেট বিতৰণ</string>
+    <string name="ahd_ifa_tablet_quantity">IFA টেবলেটৰ পৰিমাণ</string>
+    <string name="ahd_menstrual_hygiene_awareness">মাসিক স্বাস্থ্য সচেতনতা</string>
+    <string name="ahd_sanitary_napkin_distributed">সেনিটাৰী নেপকিন বিতৰণ</string>
+    <string name="ahd_no_of_packets_distributed">বিতৰণ কৰা পেকেটৰ সংখ্যা</string>
+    <string name="ahd_referred_to_health_facility">স্বাস্থ্য কেন্দ্ৰলৈ ৰেফাৰ কৰা হৈছে</string>
+    <string name="ahd_counseling_provided">পৰামৰ্শ প্ৰদান কৰা হৈছে</string>
+    <string name="ahd_counseling_type">পৰামৰ্শৰ ধৰণ</string>
+    <string name="ahd_follow_up_date">পুনৰ অনুসৰণৰ তাৰিখ</string>
+    <string name="ahd_referral_status">ৰেফাৰেল অৱস্থা</string>
+    <string name="ahd_distribution_date">তাৰিখ</string>
+    <string name="symptomatic_tb_screening">লক্ষণযুক্ত টিবি স্ক্ৰিনিং</string>
+    <string name="check_if_the_person_has_any_of_these_symptoms">এইবোৰ লক্ষণৰ যিকোনো এটা আছে নে পৰীক্ষা কৰক</string>
+    <string name="tb_asymptomatic_symptoms">লক্ষণবিহীন টিবি স্ক্ৰিনিং</string>
+    <string name="tb_rise_of_fever">সন্ধিয়া জ্বৰ বৃদ্ধি</string>
+    <string name="tb_loss_of_appetite">ভোক কমি যোৱা</string>
+    <string name="tb_age_more_than_60">৬০ বছৰৰ ওপৰত বয়স</string>
+    <string name="tb_diabetic">ডায়েবেটিক</string>
+    <string name="tb_tobacco_user">তামাক ব্যৱহাৰকাৰী</string>
+    <string name="tb_bmi_less_than_18_5">BMI ১৮.৫তকৈ কম</string>
+    <string name="tb_contact_with_patient_on_treatment">চিকিৎসাধীন ৰোগীৰ সৈতে সংস্পৰ্শ</string>
+    <string name="tb_history_last_5_years">গত ৫ বছৰত টিবিৰ ইতিহাস</string>
+    <string name="date_of_delivery">প্ৰসৱৰ তাৰিখ</string>
+    <string name="any_danger_signs">কোনো বিপদৰ লক্ষণ আছে নে?</string>
+    <string name="any_high_risk_identified">কোনো উচ্চ-ঝুঁকি চিনাক্ত হৈছে নে?</string>
+    <string name="delivery_discharge_summary_1">প্ৰসৱ ডিছচাৰ্জ ছাৰাংশ ১</string>
+    <string name="delivery_discharge_summary_2">প্ৰসৱ ডিছচাৰ্জ ছাৰাংশ ২</string>
+    <string name="delivery_discharge_summary_3">প্ৰসৱ ডিছচাৰ্জ ছাৰাংশ ৩</string>
+    <string name="delivery_discharge_summary_4">প্ৰসৱ ডিছচাৰ্জ ছাৰাংশ ৪</string>
+    <string name="str_delete_household">ঘৰুৱা মচি পেলাওক</string>
+    <string name="str_delete_beneficiary">হিতাধিকাৰীক মচি পেলাওক</string>
+    <string name="str_delete_household_msg">আপুনি নিশ্চিত নেকি যে আপুনি মচি পেলাব বিচাৰে?</string>
+    <string name="str_hof_cant_delete">আন সদস্য থাকিলে Head of Family ডিলিট কৰিব নোৱাৰিব।</string>
+    <string name="str_pls_allow_permissions">অনুগ্ৰহ কৰি প্ৰথমে অনুমতি দিয়ক</string>
+    <string name="str_delivery_outcome_err_msg">প্ৰসৱৰ ফলাফল জীৱিত আৰু মৃত জন্মৰ যোগফলৰ সমান হ’ব লাগে</string>
+    <string name="str_dose_one">মাত্ৰা-১</string>
+    <string name="str_alert">সতৰ্ক!</string>
+    <string name="str_pls_wait_for_the_record_to_sync_and_try_again">অনুগ্ৰহ কৰি ৰেকৰ্ডটো ছিঙ্ক হোৱালৈ অপেক্ষা কৰক আৰু পুনৰ চেষ্টা কৰক।</string>
+    <string name="str_left">বাওঁ</string>
+    <string name="str_right">সোঁ</string>
+    <string name="str_both">দুয়োটা</string>
+    <string name="str_eye_visit">চকু - ভিজিট</string>
+
+    <string name="vac_bcg">বিচিজি ভেকচিন</string>
+    <string name="vac_hepb_birth">হেপাটাইটিছ বি (জন্ম)</string>
+    <string name="vac_opv_0">অ\'পিভি-0</string>
+    <string name="vac_penta_1">পেন্টাভেলেন্ট-1</string>
+    <string name="vac_opv_1">অ\'পিভি-1</string>
+    <string name="vac_rvv_1">ৰোটাভাইৰাছ-1</string>
+    <string name="vac_fipv_1">আইপিভি-1</string>
+    <string name="vac_penta_2">পেন্টাভেলেন্ট-2</string>
+    <string name="vac_opv_2">অ\'পিভি-2</string>
+    <string name="vac_rvv_2">ৰোটাভাইৰাছ-2</string>
+    <string name="vac_penta_3">পেন্টাভেলেন্ট-3</string>
+    <string name="vac_opv_3">অ\'পিভি-3</string>
+    <string name="vac_rvv_3">ৰোটাভাইৰাছ-3</string>
+    <string name="vac_fipv_2">আইপিভি-2</string>
+    <string name="vac_mr_1">এম আৰ-1</string>
+    <string name="vac_je_1">জে ই-1</string>
+    <string name="vac_vit_a_1">ভিটামিন এ-1</string>
+    <string name="vac_dpt_booster_1">ডিপিটি বুস্টাৰ-1</string>
+    <string name="vac_mr_2">এম আৰ-2</string>
+    <string name="vac_je_2">জে ই-2</string>
+    <string name="vac_opv_booster">অ\'পিভি বুস্টাৰ</string>
+    <string name="vac_vit_a_2">ভিটামিন এ-2</string>
+    <string name="vac_dpt_booster_2">ডিপিটি বুস্টাৰ-2</string>
+    <string name="vac_td_1">টিডি</string>
+    <string name="vac_td_2">টিডি</string>
+    <string name="vac_vit_k">ভিটামিন কে</string>
+    <string name="vac_vit_a_3">ভিটামিন এ-3</string>
+    <string name="vac_vit_a_4">ভিটামিন এ-4</string>
+    <string name="vac_vit_a_5">ভিটামিন এ-5</string>
+    <string name="vac_vit_a_6">ভিটামিন এ-6</string>
+    <string name="vac_vit_a_7">ভিটামিন এ-7</string>
+    <string name="vac_vit_a_8">ভিটামিন এ-8</string>
+    <string name="vac_pcv_1">পিচিভি-1</string>
+    <string name="vac_pcv_2">পিচিভি-2</string>
+    <string name="vac_pcv_booster">পিচিভি বুস্টাৰ</string>
+    <string name="location_type">অৱস্থানৰ ধৰণ</string>
+    <string name="reg_date">নিবন্ধনৰ তাৰিখ</string>
+    <string name="ifsc_code">আইএফএছচি</string>
+    <string name="field_is_required">%s প্ৰয়োজনীয়</string>
+    <string name="field_is_invalid">%s অবৈধ</string>
+    <string name="field_must_be_number">%s এটা সংখ্যা হ\'ব লাগিব</string>
+    <string name="field_min_value">%1$s কমেও %2$s হ\'ব লাগিব</string>
+    <string name="field_max_value">%1$s সৰ্বাধিক %2$s হ\'ব পাৰে</string>
+    <string name="field_date_invalid">%s তাৰিখ অবৈধ</string>
+    <string name="field_date_before">%1$s %2$s ৰ আগতে হ\'ব নোৱাৰে</string>
+    <string name="field_date_after">%1$s %2$s ৰ পিছত হ\'ব নোৱাৰে</string>
+    <string name="incentive_dashboard">প্ৰেৰণা ডেছবোর্ড</string>
+    <string name="facilitator">সহায়ক</string>
+    <string name="kpi_dashboard">KPI Dashboard</string>
+    <string name="app_settings">এপ ছেটিংছ</string>
+    <string name="number_of_families_label">পৰিয়ালৰ সংখ্যা : %s</string>
+    <string name="number_of_children_label">শিশুৰ সংখ্যা : %s</string>
+    <string name="follow_up_date_required_or_invalid">অনুসৰণৰ তাৰিখ আৱশ্যক বা অবৈধ</string>
+    <string name="main_visit_not_found">মুখ্য পৰিদৰ্শন পোৱা নগ’ল</string>
+    <string name="invalid_treatment_date_in_db">ডাটাবেছত চিকিৎসাৰ তাৰিখ অবৈধ</string>
+    <string name="follow_up_must_be_after_treatment">অনুসৰণৰ তাৰিখ চিকিৎসা আৰম্ভৰ তাৰিখ (%s) পিছত হ’ব লাগিব</string>
+    <string name="follow_up_must_be_next_month">অনুসৰণৰ তাৰিখ বৰ্তমান পৰিদৰ্শনৰ শেষ অনুসৰণৰ পিছৰ তৎক্ষণাৎ পৰৱৰ্তী মাহত হ’ব লাগিব</string>
+    <string name="follow_up_cannot_be_future_month">অনুসৰণৰ তাৰিখ ভৱিষ্যতৰ মাহত হ’ব নোৱাৰে</string>
+    <string name="no_records_found_hh">কোনো গৃহস্থালীৰ ৰেকৰ্ড পোৱা নগ’ল। তলত থকা বুটামত ক্লিক কৰি গৃহস্থালী নিবন্ধন আৰম্ভ কৰক।</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">কিবা ভুল হৈছে!\nচাৰ্ভাৰৰ সৈতে সংযোগ স্থাপন কৰিব পৰা নগ’ল!\nঅনুগ্ৰহ কৰি পিছত পুনৰ চেষ্টা কৰক!</string>
+    <string name="try_again">পুনৰ চেষ্টা কৰক!</string>
+
+    <string name="filter_sort_by">ক্ৰম অনুসাৰে</string>
+    <string name="filter_newest_first">সৰ্বাধিক নতুন আগত</string>
+    <string name="filter_oldest_first">সৰ্বাধিক পুৰণি আগত</string>
+    <string name="filter_age_wise">বয়স অনুসাৰে</string>
+    <string name="filter_syncing_first">প্ৰথমে সিঙ্ক হোৱা ডাটা</string>
+    <string name="filter_unsynced_first">প্ৰথমে অসিঙ্ক ডাটা</string>
+    <string name="btn_cancel">বাতিল কৰক</string>
+    <string name="value_cannot_be_empty">মান খালী থাকিব নোৱাৰে</string>
+    <string name="enter_a_valid_number">এক বৈধ সংখ্যা প্ৰৱিষ্ট কৰক</string>
+    <string name="allowed_range">অনুমোদিত পৰিসৰ: %1$d ৰ পৰা %2$d</string>
+    <string name="minimum_allowed_value">নূন্যতম অনুমোদিত মান: %1$d</string>
+    <string name="_ok">ঠিক আছে</string>
+    <string name="do_you_want_to_upload_delivery_discharge_summary">আপুনি আপোনাৰ প্ৰেৰণা দাবী কৰিবলৈ \"Delivery Discharge Summary\" ৰ ফটোকপি আপলোড কৰিব বিচাৰে নেকি?</string>
+    <string name="pnc_form">PNC ফৰ্ম</string>
+    <string name="bp_invalid_format">অবৈধ ফৰ্মেট। 123/56 ৰ দৰে হ’ব লাগে</string>
+    <string name="bp_systole_less_than">Systole %d তকৈ কম হ’ব নালাগে</string>
+    <string name="bp_systole_greater_than">Systole %d তকৈ বেছি হ’ব নালাগে</string>
+    <string name="bp_diastole_less_than">Diastole %d তকৈ কম হ’ব নালাগে</string>
+    <string name="bp_diastole_greater_than">Diastole %d তকৈ বেছি হ’ব নালাগে</string>
+    <string name="bp_diastole_greater_than_systole">Diastole, Systole তকৈ বেছি হ’ব নোৱাৰে</string>
+    <string name="weight_enter_in_grams">অনুগ্ৰহ কৰি ওজন গ্ৰামত প্ৰৱিষ্ট কৰক</string>
+    <string name="weight_cannot_be_zero">ওজন 0 হ’ব নোৱাৰে</string>
+    <string name="weight_enter_in_grams_example">অনুগ্ৰহ কৰি ওজন গ্ৰামত প্ৰৱিষ্ট কৰক (উদাহৰণ: 2500)</string>
+    <string name="weight_min_500">ওজন অন্ততঃ 500 গ্ৰাম হ’ব লাগিব</string>
+    <string name="weight_max_7000">ওজন 7000 গ্ৰামতকৈ বেছি হ’ব নালাগে</string>
+
+    <string name="visit_leprosy">পৰিদৰ্শন</string>
+    <string name="no_internet_connection">ইণ্টাৰনেট সংযোগ নাই</string>
+    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">অনুগ্ৰহ কৰি আপোনাৰ নেটৱৰ্ক ছেটিংছ পৰীক্ষা কৰক। সংযোগ পুনৰ স্থাপন হ’লে এই ডায়লগটো স্বয়ংক্ৰিয়ভাৱে বন্ধ হ’ব।</string>
+    <string name="add_spouse">দাম্পত্য সংযোজন কৰক</string>
+    <string name="would_you_like_to_add_spouse">আপুনি %1$s ৰ %2$s যোগ কৰিব বিচাৰে নেকি?</string>
+    <string name="str_wife">স্ত্ৰী</string>
+    <string name="str_husband">স্বামী</string>
+    <string name="is_medicine_distributed_yes_no">ঔষধ বিতৰণ কৰা হৈছে নেকি? (হয়/নহয়)</string>
+    <string name="distribution_date">বিতৰণৰ তাৰিখ</string>
+    <string name="dynamic_form_select">%s নিৰ্বাচন কৰক</string>
+    <string name="error_invalid_visit_date">অবৈধ পৰিদৰ্শনৰ তাৰিখ</string>
+    <string name="error_visit_date_after_today">পৰিদৰ্শনৰ তাৰিখ আজিৰ তাৰিখৰ পিছত হ’ব নোৱাৰে</string>
+    <string name="error_visit_date_after_previous">পৰিদৰ্শনৰ তাৰিখ পূৰ্বৱৰ্তী পৰিদৰ্শন (%s) ৰ পিছত হ’ব লাগিব</string>
+    <string name="alternate_mobile_no">বিকল্প মোবাইল নম্বৰ</string>
+    <string name="father_or_spouse">পিতৃ বা দাম্পত্য</string>
+    <string name="date_of_joining">যোগদানৰ তাৰিখ</string>
+    <string name="population_covered_under_asha">ASHAৰ অন্তৰ্গত আৱৰি থকা জনসংখ্যা</string>
+    <string name="asha_supervisor_name">আশা সুপাৰভাইজাৰৰ নাম</string>
+    <string name="asha_supervisor_contact_no">আশা সুপাৰভাইজাৰৰ যোগাযোগ নম্বৰ</string>
+    <string name="cho_name">CHO ৰ নাম</string>
+    <string name="mobile_no_of_cho">CHO ৰ মোবাইল নম্বৰ</string>
+    <string name="name_of_aww">AWW ৰ নাম</string>
+    <string name="mobile_no_aww">AWW ৰ মোবাইল নম্বৰ</string>
+    <string name="name_of_anm1">ANM1 ৰ নাম</string>
+    <string name="mobile_number_of_anm1">ANM1 ৰ মোবাইল নম্বৰ</string>
+    <string name="name_of_anm2">ANM2 ৰ নাম</string>
+    <string name="mobile_number_of_anm2">ANM2 ৰ মোবাইল নম্বৰ</string>
+    <string name="str_dose">ডোজ</string>
+    <string name="refer_date">প্ৰেৰণৰ তাৰিখ</string>
+    <string name="str_no_more_dose">আৰু ডোজ নাই</string>
+    <string name="sammelan_photo1">সম্মিলন ফটোসমূহ / MoM (1)</string>
+    <string name="sammelan_photo2">সম্মিলন ফটোসমূহ / MoM (2)</string>
+    <string name="sammelan_photo3">সম্মিলন ফটোসমূহ / MoM (3)</string>
+    <string name="sammelan_photo4">সম্মিলন ফটোসমূহ / MoM (4)</string>
+    <string name="sammelan_photo5">সম্মিলন ফটোসমূহ / MoM (5)</string>
+    <string name="add_new">নতুন যোগ কৰক</string>
+    <string name="ifa_distribution">IFA বিতৰণ</string>
+    <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="check_sympt">ব্যক্তিজনৰ এই লক্ষণসমূহৰ কোনো এটা আছে নে নাই পৰীক্ষা কৰক:</string>
+
 </resources>

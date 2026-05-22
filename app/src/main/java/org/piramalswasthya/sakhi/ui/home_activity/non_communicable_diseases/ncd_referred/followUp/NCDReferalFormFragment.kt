@@ -176,10 +176,10 @@ class NCDReferalFormFragment : Fragment() {
                         .map { (visitNo, items) ->
                             val diagnosis = items.firstOrNull()?.diagnosisCodes ?: "-"
                             VisitItem(
-                                visitHeader = "Visit $visitNo ($diagnosis)",
+                                visitHeader = "${getString(R.string.visit_tb)} - $visitNo ($diagnosis)",
                                 followUps = items.map { item ->
                                     val date = item.followUpDate ?: item.treatmentStartDate
-                                    "• Follow-up ${item.followUpNo} | $date"
+                                    "• ${getString(R.string.str_follow_up)} ${item.followUpNo} | $date"
                                 }
                             )
                         }
@@ -255,9 +255,9 @@ class NCDReferalFormFragment : Fragment() {
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
+        val options = arrayOf(getString(R.string.take_photo), getString(R.string.choose_from_gallery))
         AlertDialog.Builder(requireContext())
-            .setTitle("Select Image")
+            .setTitle(getString(R.string.select_image))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> launchCamera()

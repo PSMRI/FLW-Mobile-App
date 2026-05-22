@@ -11,6 +11,7 @@
     <string name="pmsma_form">PMSMA Form</string>
     <string name="general_op">General OP</string>
     <string name="saving_pmsma_to_database_failed">Saving pmsma to database Failed!</string>
+    <string name="high_risk_pregnancy">High-Risk Pregnancy</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">HRP Case, please visit the nearest HWC or call 104</string>
 
     <string-array name="maternal_health_pregnancy_week">
@@ -194,7 +195,7 @@
         <item>HIGH FEVER</item>
         <item>ABORTION</item>
         <item>Accident</item>
-        <item>OTHER</item>
+        <item>Other Maternal Death</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>Yes</item>
@@ -292,9 +293,9 @@
     <string name="pnc_mother_danger_sign">Mother Danger Sign</string>
     <string name="pnc_other_danger_sign">Other Danger Sign</string>
     <string name="pnc_referral_facility">Referral Facility</string>
-    <string name="pnc_mother_death">Mother Death</string>
+    <string name="pnc_mother_death">Is the Mother alive?</string>
     <string name="pnc_death_date">Date of Death</string>
-    <string name="pnc_death_cause">Probable Cause of Mother Death</string>
+    <string name="pnc_death_cause">Reason for Death</string>
     <string name="pnc_other_death_cause">Other Death Cause</string>
     <string name="pnc_death_place">Place of Death</string>
     <string name="pnc_remarks">Remarks</string>
@@ -361,7 +362,7 @@
         <item>HIGH FEVER</item>
         <item>Sepsis</item>
         <item>Accident</item>
-        <item>Any Other</item>
+        <item>Other Maternal Death</item>
     </string-array>
 
     <string-array name="pnc_death_place_array">
@@ -476,10 +477,17 @@
         <item>Other</item>
     </string-array>
 
+    <string-array name="anc_alive_array">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string name="is_pw_currently_alive">Is the Pregnant Woman alive?</string>
     <string name="str_anc_period">ANC Period</string>
     <string name="str_abortion_if_any">Abortion If Any</string>
     <string name="str_abortion_type">Abortion Type</string>
     <string name="str_facility">Facility</string>
+    <string name="str_facility_id">Facility ID</string>
     <string name="str_abortion_date">Abortion Date</string>
     <string name="str_weight_pw">Weight of PW (Kg) at time Registration</string>
     <string name="str_bp_of_pw">BP of PW – Systolic/ Diastolic (mm Hg) </string>
@@ -514,5 +522,6 @@
     <string name="invalid_visit_date_format">Invalid visit date format</string>
     <string name="fill_required_fields">Please fill all required fields correctly</string>
     <string name="danger_signs_identified">Danger Signs Identified!</string>
+    <string name="str_suspected_high_risk_pregnancy">Suspected high-risk pregnancy</string>
 
 </resources>

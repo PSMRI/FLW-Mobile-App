@@ -383,7 +383,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     suspend fun getLastVisitDates(benId: Long): String
     {val visits = repository.getLastVisitForBenANC(benId)
-        return  visits?.visitDate.toString()
+        return  visits?.visitDate?:"NA"
     }
     private fun evaluateFieldVisibility(field: FormFieldDto, allFields: List<FormFieldDto>): Boolean {
         val cond = field.conditional
@@ -649,5 +649,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
         var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
         age = age * 12 + today.get(Calendar.MONTH) - dob.get(Calendar.MONTH)
         return age
+    }
+    fun resetState() {
+        _state.postValue(State.IDLE)
     }
 }

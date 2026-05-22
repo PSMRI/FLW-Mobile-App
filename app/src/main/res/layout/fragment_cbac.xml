@@ -174,7 +174,8 @@
                                 android:layout_alignEnd="@+id/cbac_tv_age"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:labelFor="@id/actv_age_dropdown"
-                                app:hintEnabled="false">
+                                app:hintEnabled="false"
+                                android:importantForAccessibility="yes">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/actv_age_dropdown"
@@ -222,7 +223,7 @@
                                 android:layout_below="@+id/cbac_tv_smoke"
                                 android:layout_alignStart="@+id/cbac_tv_smoke"
                                 android:layout_alignEnd="@+id/cbac_tv_smoke"
-
+                                android:importantForAccessibility="yes"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:labelFor="@id/actv_smoke_dropdown"
                                 app:hintEnabled="false">
@@ -233,6 +234,8 @@
                                     android:layout_height="wrap_content"
                                     android:hint="@string/cbac_select"
                                     android:inputType="none"
+                                    android:contentDescription="smoke_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_smoke"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -274,6 +277,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_alcohol"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_alcohol_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -282,6 +286,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="alcohol_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_alcohol"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -323,6 +329,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_waist"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_waist_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -331,6 +338,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="waist_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_waist_mes_male"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -372,6 +381,7 @@
                                 android:layout_marginEnd="32dp"
                                 android:layout_toStartOf="@+id/dd_pa_score"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_pa_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -380,6 +390,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="waist_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_pa"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -421,6 +433,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_fh"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_fh_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -429,6 +442,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fh_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_fh"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -940,6 +955,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_fuel"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_alcohol_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -948,6 +964,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fuel_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_type_Cooking_fuel"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -975,6 +993,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_exposure"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_exposure_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -983,6 +1002,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="exposure_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_type_occupational_exposure"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -1072,6 +1093,7 @@
                                 android:layout_alignStart="@+id/cbac_phq2_tv_little_interest"
                                 android:layout_alignEnd="@+id/cbac_phq2_tv_little_interest"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_li_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -1080,6 +1102,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="li_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_li"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -1120,6 +1144,7 @@
                                 android:layout_alignStart="@+id/cbac_tv_fd"
                                 android:layout_alignEnd="@+id/cbac_tv_fd"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_fd_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -1128,6 +1153,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fd_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_fd"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />

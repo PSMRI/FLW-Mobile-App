@@ -154,11 +154,12 @@ class SupervisorFragment : Fragment() {
         viewModel.state.observe(this) {
             it?.let {
                 when (it) {
-                    ServiceTypeViewModel.State.IDLE -> {}//TODO()
-                    ServiceTypeViewModel.State.LOADING -> {}//TODO()
+                    ServiceTypeViewModel.State.IDLE -> {}
+                    ServiceTypeViewModel.State.LOADING -> {}
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
                         binding.tietVillage.apply {
+                            contentDescription = "village_dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())
@@ -270,6 +271,8 @@ class SupervisorFragment : Fragment() {
                         ENGLISH -> it.name
                         Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
+                        Languages.BANGLA -> it.nameBangla ?: it.name
+
 
                     }
                 )

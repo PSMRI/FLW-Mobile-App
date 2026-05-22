@@ -3,12 +3,12 @@
     <string name="add_new_visit">नई भ्रमण जोड़ें</string>
     <string name="visit">भ्रमण %1$d</string>
     <string name="visit_2">भ्रमण देखें या जोड़ें</string>
-    <string name="check_sam_">सैम की जांच</string>
+    <string name="check_sam_">गंभीर कुपोषित की जांच</string>
     <string name="severe_acute_malnutrition">गंभीर तीव्र कुपोषण</string>
     <string name="sam_form">सैम फॉर्म</string>
     <string name="ors_form">ओआरएस फॉर्म</string>
     <string name="oral_rehydration_solution">ओरल रिहाइड्रेशन सॉल्यूशन (ORS)</string>
-    <string name="ifa_form">आईएफए फॉर्म</string>
+    <string name="ifa_form">आयरन फोलिक एसिड फॉर्म</string>
     <string name="iron_folic_acid">आयरन फोलिक एसिड</string>
     <string name="sam_form_">सैम फॉर्म</string>
     <string name="take_photo">फोटो लो</string>
@@ -34,7 +34,7 @@
     <string name="referred_to_nrc">एनआरसी में रेफर किया गया</string>
     <string name="visit_date_cannot_be_more_than_2_months_old">भ्रमण की तिथि 2 महीने से अधिक पुरानी नहीं हो सकती</string>
     <string name="only_one_visit_per_month_allowed">प्रति माह केवल एक भ्रमण की अनुमति है</string>
-    <string name="bottle_count">आईएफए बोतलों की संख्या</string>
+    <string name="bottle_count">आयरन सिरप बोतलों की संख्या</string>
     <string name="sam_case_detected">सैम केस का पता चला</string>
     <string name="muac_sam_alert_message">MUAC %1$.1f सेमी है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>
     <string name="weight_height_sam_alert_message">वज़न-ऊंचाई स्थिति सैम है। कृपया बच्चे को सैम केस के रूप में एनआरसी में भेजें।</string>

@@ -76,8 +76,8 @@ class AllHouseholdFragment : Fragment() {
 
     fun showSoftDeleteDialog(houseHoldBasicDomain: HouseHoldBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Household")
-            .setMessage("Are you sure you want to delete ${houseHoldBasicDomain.headFullName}")
+            .setTitle(getString(R.string.str_delete_household))
+            .setMessage("${getString(R.string.str_delete_household_msg)} ${houseHoldBasicDomain.headFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateHouseHold(houseHoldBasicDomain)
             }
@@ -195,7 +195,7 @@ class AllHouseholdFragment : Fragment() {
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao,true, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                if (!it.isDeactivate){
+                if (!it.isDeactivate && findNavController().currentDestination?.id == R.id.allHouseholdFragment){
                     findNavController().navigate(
                         AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                             it.hhId
@@ -204,7 +204,7 @@ class AllHouseholdFragment : Fragment() {
                 }
             }
         }, {
-            if (!it.isDeactivate){
+            if (!it.isDeactivate && findNavController().currentDestination?.id == R.id.allHouseholdFragment){
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
                         it.hhId,0,"No"
@@ -213,7 +213,7 @@ class AllHouseholdFragment : Fragment() {
             }
 
         }, {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allHouseholdFragment) {
                 if (it.numMembers == 0 && !it.isDeactivate) {
                         findNavController().navigate(
                             AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(

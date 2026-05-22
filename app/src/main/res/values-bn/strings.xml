@@ -1,0 +1,1468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">Sakhi</string>
+
+    <!--    Pref-->
+    <string name="PREF_NAME" translatable="false">Sakhi-pref-1</string>
+    <string name="PREF_D2D_API_KEY" translatable="false">JWT-Token_A</string>
+    <string name="PREF_primary_API_KEY" translatable="false">JWT-Token_B</string>
+    <string name="PREF_primary_JWT_API_KEY" translatable="false">JWT-Token_N</string>
+    <string name="PREF_primary_REFRESH_TOKEN" translatable="false">Refresh-Token_N</string>
+    <string name="PREF_rem_me_uname" translatable="false">user-name-local-saved</string>
+    <string name="PREF_rem_me_pwd" translatable="false">password-local-saved</string>
+    <string name="PREF_rem_me_state" translatable="false">state_user-local-saved</string>
+    <string name="PREF_location_record_entry" translatable="false">location-record</string>
+    <string name="PREF_user_entry" translatable="false">logged-in-user</string>
+    <string name="PREF_full_load_pull_progress" translatable="false">full_load_sync_pull_amrit</string>
+    <string name="PREF_first_pull_amrit_last_synced_page" translatable="false">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+    <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
+    <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
+
+    <string name="radio_title" translatable="false">%s<span> *</span></string>
+    <string name="radio_title_ds">%s<span> **</span></string>
+    <string name="tracking_date">পরিদর্শনের তারিখ</string>
+    <string name="case_date">ম্যালেরিয়া স্ক্রিনিংয়ের তারিখ</string>
+    <string name="start_t_date">চিকিৎসা শুরুর তারিখ</string>
+    <string name="treatment_given">প্রদত্ত চিকিৎসা</string>
+    <string name="aes_submitted">AES/JS ফর্ম জমা দেওয়া হয়েছে</string>
+    <string name="date_of_completion">চিকিৎসা সমাপ্তির তারিখ</string>
+    <string name="date_of_referal">রেফারেলের তারিখ</string>
+    <string name="death_date">মৃত্যুর তারিখ</string>
+    <string name="home_visit_date">বাড়ি পরিদর্শনের তারিখ</string>
+    <string name="home_visit_date_screening">বাড়ি পরিদর্শনের তারিখ (স্ক্রিনিংয়ের তারিখ)</string>
+    <string name="visit_date">পরিদর্শনের তারিখ</string>
+    <string name="home_visit_date_mda_program">বাড়ি পরিদর্শনের তারিখ (MDA প্রোগ্রাম)</string>
+    <string name="case_date_malaria">ম্যালেরিয়া কেস স্ট্যাটাস তারিখ</string>
+    <string name="aes_case_status_date">AES / JE কেস স্ট্যাটাস তারিখ</string>
+    <string name="case_status">কেসের অবস্থা</string>
+    <string name="m_test_type">ম্যালেরিয়া পরীক্ষার ধরন</string>
+    <string name="place_of_Death">মৃত্যুর স্থান</string>
+    <string name="reason_of_Death">মৃত্যুর কারণ</string>
+    <string name="aes_case_status">AES / JE কেসের অবস্থা</string>
+    <string name="mdsr_form">MDSR</string>
+    <string name="mdsr_district">জেলা</string>
+    <string name="mdsr_state">রাজ্য</string>
+    <string name="mdsr_month">মাস</string>
+    <string name="mdsr_year">বছর</string>
+    <string name="mdsr_name_deceased">মৃত ব্যক্তির নাম</string>
+    <string name="mdsr_age">বয়স</string>
+    <string name="mdsr_date_of_deceased">মৃত্যুর তারিখ</string>
+    <string name="mdsr_address">ঠিকানা</string>
+    <string name="mdsr_husband_name">স্বামীর নাম</string>
+    <string name="mdsr_cause">মৃত্যুর কারণ</string>
+    <string name="mdsr_maternal">মাতৃমৃত্যু</string>
+    <string name="mdsr_non_maternal">অ-মাতৃমৃত্যু</string>
+    <string name="mdsr_name_designation">নাম/পদবি</string>
+    <string name="mdsr_field_investigation">মাঠ তদন্তের তারিখ</string>
+    <string name="mdsr_signature">ব্লকের MO I/C এর স্বাক্ষর:</string>
+    <string name="mdsr_ic_date">তারিখ</string>
+    <string name="mdsr_reason_death">কারণ উল্লেখ করুন</string>
+    <string name="mdsr_action">গৃহীত পদক্ষেপ</string>
+    <string name="refer_to">রেফার করা হয়েছে</string>
+    <string name="day_wise_tracking_pf">Pf - দিনভিত্তিক ট্র্যাকিং</string>
+    <string name="day_wise_tracking_pv">PV - দিনভিত্তিক ট্র্যাকিং</string>
+    <string name="type_of_leprocy">নিশ্চিত কুষ্ঠরোগের ধরন</string>
+    <string name="treatment_start_date">চিকিৎসা শুরুর তারিখ</string>
+    <string name="dose_status">DEC এবং অ্যালবেন্ডাজল ডোজ স্ট্যাটাস</string>
+    <string name="is_medicine_distributed">ওষুধ বিতরণ করা হয়েছে কি?</string>
+    <string name="body_part">শরীরের কোন অংশ</string>
+    <string name="medicine_side_effect">ওষুধের পার্শ্বপ্রতিক্রিয়া</string>
+
+    <string name="filaria_submitted">ফাইলেরিয়া ফর্ম জমা দেওয়া হয়েছে</string>
+    <string name="leprosy_submitted">কুষ্ঠরোগ ফর্ম জমা দেওয়া হয়েছে</string>
+    <string name="malariacasecount">ম্যালেরিয়া কেসের সংখ্যা</string>
+    <string name="filariacasecount">ফাইলেরিয়া কেসের সংখ্যা</string>
+    <string name="suffering_from_filaries">ফাইলেরিয়াসিসে আক্রান্ত</string>
+    <string name="str_leprosy_status">কুষ্ঠরোগের অবস্থা</string>
+    <string name="irs_submitted">IRS ফর্ম জমা দেওয়া হয়েছে</string>
+
+    <string name="ben_marked_death">সুবিধাভোগীকে মৃত হিসেবে চিহ্নিত করা হয়েছে।</string>
+    <string name="kala_submitted">কালাজ্বর ফর্ম জমা দেওয়া হয়েছে</string>
+    <string name="isrefer">রেফার করুন</string>
+    <string name="ncd_refer_alert">আপনি কি HWC সুবিধায় রেফার করতে চান?</string>
+    <string name="cbac_screening_submitted">CBAC স্ক্রিনিং জমা দেওয়া হয়েছে</string>
+
+    <!--    HBNC-->
+    <string name="hbnc_baby_dead_alert">শিশু মৃত্যু পর্যালোচনার জন্য ANM/MPW/PHC-কে মৃত্যুর কারণ জানাতে হবে।</string>
+    <string name="hbnc_baby_gestational_age_alert" translatable="false">শিশু যদি ৩৫ সপ্তাহের কম সময়ে জন্মায়, তাহলে সতর্ক থাকুন।</string>
+    <string name="hbnc_mother_dead_alert">মাতৃমৃত্যু পর্যালোচনার জন্য ANM/PHC-কে জানান।</string>
+    <string name="hbnc_mother_problem_alert">হ্যাঁ হলে, অবিলম্বে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_mother_num_eat_alert">মা যদি পেট ভরে না খান বা দিনে ৪ বারের কম খান, তাহলে মাকে তা করার পরামর্শ দিন।</string>
+    <string name="hbnc_mother_num_pad_alert">৫টির বেশি প্যাড হলে, মাকে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_baby_warm_winter_alert">না করা হলে, মাকে তা করার পরামর্শ দিন।</string>
+    <string name="hbnc_baby_fed_properly_alert">না করা হলে, মাকে তা করার পরামর্শ দিন।</string>
+    <string name="hbnc_baby_cry_incessant_alert">প্রতি ২ ঘণ্টা পরপর শিশুকে স্তন্যপান করানোর পরামর্শ দিন।</string>
+    <string name="hbnc_baby_temp_alert">তাপমাত্রা ১০২°F (৩৮.৯°C) পর্যন্ত - প্যারাসিটামল দিয়ে চিকিৎসা করুন, তার বেশি হলে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_mother_foul_discharge_alert">হ্যাঁ হলে, মাকে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_mother_speak_abnormal_fits_alert">হ্যাঁ হলে, মাকে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_mother_less_no_milk_alert">মাকে আরও বার বার শিশুকে খাওয়াতে বলুন এবং স্তন্যপানের সময় সঠিক অবস্থান ও সংযুক্তির বিষয়ে পরামর্শ দিন।</string>
+    <string name="hbnc_mother_breast_problem_alert">ফাটা স্তনবৃন্তের ক্ষেত্রে, মাকে স্তন পরিষ্কার ও আর্দ্র রাখতে পরামর্শ দিন।</string>
+    <string name="hbnc_baby_eye_pus_alert">চোখে পুঁজ থাকলে অ্যান্টিবায়োটিক মলম লাগানো যেতে পারে।</string>
+    <string name="hbnc_baby_weight_1_8_alert">নিকটতম স্বাস্থ্য সুবিধায় অসুস্থ নবজাতক যত্ন ইউনিটে শিশুকে রেফার করুন এবং উচ্চ ঝুঁকির শিশু ফর্ম অনুযায়ী অতিরিক্ত বাড়ি পরিদর্শন করুন। শিশুর (কম জন্ম ওজন বা স্বাভাবিক) ওজন না বাড়লে নিকটতম স্বাস্থ্য সুবিধার SNCU-তে রেফার করুন।</string>
+    <string name="hbnc_baby_weight_2_5_alert">মাকে শিশুকে অতিরিক্ত উষ্ণতা দিতে এবং আরও বার বার খাওয়াতে পরামর্শ দিন। শিশুর (কম জন্ম ওজন বা স্বাভাবিক) ওজন না বাড়লে নিকটতম স্বাস্থ্য সুবিধার SNCU-তে রেফার করুন।</string>
+
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="title_activity_supervisor" translatable="false">SupervisorActivity</string>
+    <string name="nav_header_desc" translatable="false">নেভিগেশন হেডার</string>
+
+    <string name="cd_icon_grid_icon">আইকন</string>
+    <string name="nav_item_1_text">নাম : <b>%s</b></string>
+    <string name="nav_item_2_text">ব্যবহারকারীর নাম : <b>%s</b></string>
+    <string name="nav_item_facility_text">সুবিধা : <b>%s</b></string>
+    <string name="nav_item_emp_text">কর্মচারী আইডি :  <b>%s</b></string>
+    <string name="nav_item_3_text">ব্যবহারকারী আইডি :  <b>%s</b></string>
+    <string name="nav_item_4_text">সংস্করণ : %s</string>
+    <string name="tv_required_text_asterisk">*</string>
+    <string name="rv_item_hh_entry_1">%1$d</string>
+    <string name="notification_sync_channel_name">ডেটা সিঙ্ক</string>
+    <string name="notification_sync_channel_description">সুবিধাভোগীদের সার্ভারে আপলোড করুন</string>
+    <string name="notification_sync_channel_id">sakhi-sync0</string>
+    <string name="btn_submit">জমা দিন</string>
+    <string name="mosquito_net_on">মশারি চালু</string>
+    <string name="mosquito_net_off">মশারি বন্ধ</string>
+    <string name="btn_apply">প্রয়োগ করুন</string>
+    <string name="long_to_string">%d</string>
+    <string name="ben_pending_sync">সিঙ্ক মুলতুবি</string>
+    <string name="tv_reg_date_ph">নিবন্ধনের তারিখ</string>
+    <string name="reg_date">নিবন্ধনের তারিখ</string>
+    <string name="tv_ben_name_ph">সুবিধাভোগীর নাম</string>
+    <string name="tv_type_of_list">তালিকার ধরন</string>
+    <string name="tv_rch_id">RCH আইডি</string>
+    <string name="tv_ben_surname">সুবিধাভোগীর পদবি</string>
+    <string name="tv_gender_ph">লিঙ্গ</string>
+    <string name="tv_father_name_ph">পিতার নাম</string>
+    <string name="tv_husband_name_ph">স্বামীর নাম</string>
+    <string name="tv_spouse_name_ph">স্ত্রী/স্বামীর নাম</string>
+    <string name="tv_family_head_name_ph">পরিবারের প্রধানের নাম</string>
+    <string name="tv_date_of_death">মৃত্যুর তারিখ</string>
+    <string name="tv_spouse">স্ত্রী/স্বামী</string>
+    <string name="tv_ben_id_ph">সুবিধাভোগী আইডি</string>
+    <string name="tv_mob_no_ph">মোবাইল নম্বর</string>
+    <string name="tv_age_ph">বয়স</string>
+    <string name="tv_suspected_hrp_ph">সন্দেহজনক HRP</string>
+    <string name="tv_imu_status_ph">টিকার অবস্থা</string>
+    <string name="tv_ncd_status_ph">NCD অবস্থা</string>
+    <string name="tv_tb_status_ph">TB অবস্থা</string>
+    <string name="iv_sync_state_tv">সিঙ্ক অবস্থা</string>
+    <string name="iv_death_indicator">মৃত্যু</string>
+    <string name="iv_case_status_tv">কেসের অবস্থা</string>
+    <string name="chat_error">আপনার চ্যাটবট লোড করতে কিছু ত্রুটি হয়েছে</string>
+    <string name="help_and_support">সাহায্য ও সহায়তা</string>
+
+    <string name="version">2.0.0</string>
+
+    <string name="evac_patient_info">রোগীর তথ্য</string>
+
+    <string name="immunization_dosage_count">%1$d/%2$d</string>
+    <string name="select_death_type">সুবিধাভোগীর মৃত্যুর ধরন নির্বাচন করুন</string>
+    <string name="death_type_cdr">CDR (শিশু মৃত্যু পর্যালোচনা)</string>
+    <string name="maternal_deaths">মাতৃমৃত্যু (MDSR)</string>
+    <string name="death_type_mdsr">MDSR (মাতৃমৃত্যু নজরদারি ও প্রতিক্রিয়া)</string>
+    <string name="continue_button">চালিয়ে যান</string>
+
+    <string name="please_select_value">একটি মান নির্বাচন করুন</string>
+
+    <string name="mobilized_for_ahd">AHD-এর জন্য সংগঠিত</string>
+    <string name="ahd_place">AHD স্থান</string>
+    <string name="asha_Id">আশা আইডি</string>
+    <string name="meeting_date">সভার তারিখ</string>
+    <string name="ahd_date">AHD তারিখ</string>
+    <string name="upload_image">ছবি আপলোড করুন</string>
+    <string name="upload_image_sub">JPEG বা PNG ফাইল আপলোড করুন (সর্বোচ্চ: ৫MB)</string>
+    <string name="visit_date_2">পরিদর্শনের তারিখ</string>
+    <string name="visit_tb">পরিদর্শন</string>
+    <string name="visit_format">পরিদর্শন-%d</string>
+    <string name="type_of_tb_case">TB কেসের ধরন?</string>
+    <string name="reason_for_suspicion">সন্দেহের কারণ</string>
+    <string name="has_symptoms">রোগীর কি কোনো লক্ষণ আছে?</string>
+    <string name="is_chest_xray_done">TB বুকের এক্স-রে পরীক্ষা করা হয়েছে কি?</string>
+    <string name="chest_xray_result">বুকের এক্স-রে পরীক্ষার ফলাফল</string>
+    <string name="referral_facility">রেফারেল সুবিধা</string>
+    <string name="is_tb_confirmed">TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
+    <string name="is_drtb_confirmed">DR-TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
+
+    <string-array name="type_of_tb_case">
+        <item>TB-এর নতুন কেস</item>
+        <item>পূর্বে চিকিৎসা করা TB কেস</item>
+        <item>DR-TB কেস</item>
+    </string-array>
+
+    <string-array name="reason_for_suspicion">
+        <item>চিকিৎসা ব্যর্থতা</item>
+        <item>TB পুনরাবৃত্তি/বারবার লক্ষণ</item>
+        <item>DR-TB কেসের সংস্পর্শ</item>
+        <item>LFU (অনুসরণ হারানো) পরবর্তী চিকিৎসা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="chest_xray_result">
+        <item>ক্লিনিক্যালি নির্ণীত TB</item>
+        <item>TB সন্দেহজনক নয়</item>
+    </string-array>
+
+    <string-array name="referral_facility">
+        <item>জেলা TB কেন্দ্র (DTC)</item>
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>সরকারি মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="tb_submitted_yet_suspected">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>সরকারি মেডিকেল কলেজ</item>
+    </string-array>
+
+    <string-array name="yes_no_options">
+        <item>হ্যাঁ</item>
+        <item>না</item>
+    </string-array>
+
+    <string-array name="mdsr_cause_of_death_type">
+        <item>সন্দেহজনক মাতৃমৃত্যু</item>
+        <item>অ-মাতৃমৃত্যু</item>
+    </string-array>
+
+    <string-array name="ahd_place_options">
+        <item>বিদ্যালয়</item>
+        <item>অঙ্গনওয়াড়ি কেন্দ্র</item>
+        <item>কমিউনিটি সেন্টার</item>
+    </string-array>
+
+    <string-array name="temp_array">
+        <item>আইটেম ১</item>
+        <item>আইটেম ২</item>
+        <item>আইটেম ৩</item>
+        <item>আইটেম ৪</item>
+        <item>আইটেম ৫</item>
+        <item>আইটেম ৬</item>
+    </string-array>
+
+    <string name="about_us">পিরামল স্বাস্থ্য সরকারি স্বাস্থ্যসেবার ফাঁকগুলো পূরণ করতে কাজ করছে এবং সকলের জন্য সর্বজনীন স্বাস্থ্যসেবা নিশ্চিতে ভারত সরকারের দৃষ্টিভঙ্গি সম্পূরক ও পরিপূরক করছে। পিরামল স্বাস্থ্য ভারতের প্রাথমিক জনস্বাস্থ্য সেবায় অন্যতম বৃহত্তম অলাভজনক সংস্থা, যা মাতৃস্বাস্থ্য, শিশু ও কিশোর স্বাস্থ্য এবং অসংক্রামক রোগে মনোনিবেশ করে। পিরামল স্বাস্থ্যের বিভিন্ন স্বাস্থ্যসেবা উদ্ভাবন পরিচালনায় এক দশকেরও বেশি অভিজ্ঞতা রয়েছে।</string>
+    <string name="about_us_powered">পরিচালিত</string>
+    <string name="text_help"> <b>প্রশ্ন - এই অ্যাপ কি অফলাইনে পাওয়া যায়?</b> \n হ্যাঁ, একবার অ্যাপ ডাউনলোড এবং লগইন সম্পন্ন হলে, আপনি ডেটা সংগ্রহ করতে অফলাইনে অ্যাপটি ব্যবহার করতে পারবেন। ডাউনলোড এবং প্রথম লগইনের জন্য ইন্টারনেট প্রয়োজন। \n\n
+        <b>প্রশ্ন - সব বিবরণ পূরণ করা কি আবশ্যক?</b> \n না, সব বিবরণ পূরণ করা আবশ্যক নয়। তবে কিছু ক্ষেত্র আছে যা তারকাচিহ্ন (*) দ্বারা চিহ্নিত এবং সেগুলো পূরণ করা আবশ্যক, অন্যথায় আপনি বিবরণ জমা দিতে পারবেন না। \n\n
+        <b>প্রশ্ন - সিঙ্ক ব্যাক অপশন কী করে?</b> \n সিঙ্ক ব্যাক অপশনে ক্লিক করলে পর্দায় মুলতুবি গৃহস্থালি রেকর্ড, সুবিধাভোগীর মুলতুবি রেকর্ড এবং সিঙ্ক না হওয়া CBAC রেকর্ড দেখাবে। ঠিক আছে বোতামে ক্লিক করলে সংগ্রহ করা সব ডেটা স্বয়ংক্রিয়ভাবে সার্ভারে পাঠানো হবে। \n\n
+        <b>প্রশ্ন - সিঙ্ক স্ট্যাটাস অপশন কী করে?</b> \n সিঙ্ক স্ট্যাটাস অপশনে ক্লিক করলে ব্যবহারকারী কর্তৃক সিঙ্ক করা রেকর্ড দেখাবে। \n\n
+        <b>প্রশ্ন - পরবর্তী ট্যাবে কীভাবে যাবেন?</b> \n পরবর্তী ট্যাবে যেতে \n
+        ১. অ্যাপের শীর্ষে ট্যাবের নামে ক্লিক করুন \n
+        ২. পর্দা সোয়াইপ করুন এবং পরবর্তী ট্যাব দেখা যাবে \n\n
+        <b>প্রশ্ন - পরবর্তী ট্যাবে যাওয়ার পরে কি পূর্ববর্তী ট্যাবে প্রবেশ করা ডেটা সম্পাদনা করা যাবে?</b> \n
+        হ্যাঁ, পূর্ববর্তী যেকোনো ট্যাবে প্রবেশ করা ডেটা সম্পাদনা করা যাবে। ডেটা জমা দেওয়ার পরে, আপনি এটি সম্পাদনা করতে পারবেন না। \n\n
+        <b>প্রশ্ন - পিরামল স্বাস্থ্য সাইটে কীভাবে যাবেন?</b> \n
+        হ্যামবার্গার মেনুতে ক্লিক করুন, তারপর \'আমাদের সম্পর্কে\' অপশনে ক্লিক করুন। এই অপশন নির্বাচন করলে ব্যবহারকারী অ্যাপের ভেতরে পিরামল স্বাস্থ্যের ওয়েবসাইটে যাবেন। \n\n
+        যেকোনো সন্দেহ ও উদ্বেগের ক্ষেত্রে, IT সহায়তা দলকে ইমেইল করুন \n
+        <b>it.support@piramalfoundation.org</b>
+    </string>
+
+    <string name="hbnc_day_text">দিন %1d</string>
+    <string name="hello_blank_fragment">হ্যালো ব্ল্যাঙ্ক ফ্র্যাগমেন্ট</string>
+    <string name="hbnc_mother_temp_case_1">মাকে প্যারাসিটামল দিন।</string>
+    <string name="hbnc_mother_temp_case_2">মাকে হাসপাতালে রেফার করুন।</string>
+    <string name="hbnc_baby_temp_97_alert">মাকে ঘরের তাপমাত্রা বাড়িয়ে, ত্বকে ত্বক যোগাযোগ করে, শিশুকে উষ্ণ ব্যাগে রেখে এবং ঘন ঘন খাওয়িয়ে শিশুকে উষ্ণ রাখতে পরামর্শ দিন।</string>
+    <string name="hbnc_baby_temp_96_alert">মাকে ঘরের তাপমাত্রা বাড়িয়ে, ত্বকে ত্বক যোগাযোগ করে, শিশুকে উষ্ণ ব্যাগে রেখে এবং ঘন ঘন খাওয়িয়ে শিশুকে উষ্ণ রাখতে পরামর্শ দিন। শিশু উষ্ণ হলে কাপড় পরিয়ে মায়ের পাশে আগে থেকে গরম করা বিছানায় রাখুন।</string>
+    <string name="hbnc_baby_temp_99_alert">তারপর সেপসিসের লক্ষণ খুঁজুন। সেপসিসের লক্ষণ না থাকলে শুধুমাত্র ১/৪ চামচ প্যারাসিটামল দিয়ে পরিচালনা করুন এবং অবিলম্বে নিকটতম স্বাস্থ্য সুবিধার SNCU-তে রেফার করুন।</string>
+
+    <string name="error_only_numeric">শুধুমাত্র সংখ্যামান গ্রহণযোগ্য</string>
+    <string name="error_birth_cert_length">জন্ম সনদ নম্বর ৬ থেকে ২০ সংখ্যার হতে হবে</string>
+    <string name="error_invalid_birth_cert">অবৈধ জন্ম সনদ নম্বর</string>
+
+    <string name="form_input_empty_error">প্রয়োজনীয় ক্ষেত্র খালি রাখা যাবে না!</string>
+    <string name="form_input_upper_case_error">শুধুমাত্র বড় হাতের অক্ষর গ্রহণযোগ্য!</string>
+    <string name="form_input_missing_entry_error">ক্ষেত্রে অবশ্যই %1d সংখ্যা থাকতে হবে।</string>
+    <string name="form_input_alphabet_space_only_error">শুধুমাত্র অক্ষর এবং ফাঁকা স্থান গ্রহণযোগ্য!</string>
+    <string name="form_input_alphabet_special_only_error">শুধুমাত্র অক্ষর এবং বিশেষ অক্ষর গ্রহণযোগ্য!</string>
+    <string name="form_input_alphabet_special__digit_only_error">শুধুমাত্র অক্ষর, বিশেষ অক্ষর এবং সংখ্যা গ্রহণযোগ্য!</string>
+    <string name="form_input_min_limit_error">%1$s অবশ্যই %2$d-এর চেয়ে বড় বা সমান হতে হবে</string>
+    <string name="form_input_alph_numeric_space_only_error">শুধুমাত্র অক্ষর এবং সংখ্যা গ্রহণযোগ্য!</string>
+    <string name="abha_number_digit">ABHA নম্বর ১৪ সংখ্যার হতে হবে</string>
+    <string name="ifsc">৪টি অক্ষর এবং ৭টি সংখ্যা (যেমন, ABCD1234567)!</string>
+    <string name="ifsc_code">IFSC</string>
+    <string name="field_is_required">%s আবশ্যক</string>
+    <string name="field_is_invalid">%s অবৈধ</string>
+    <string name="field_must_be_number">%s অবশ্যই একটি সংখ্যা হতে হবে</string>
+    <string name="field_min_value">%1$s অন্তত %2$s হতে হবে</string>
+    <string name="field_max_value">%1$s সর্বোচ্চ %2$s হতে পারবে</string>
+    <string name="field_date_invalid">%s তারিখ অবৈধ</string>
+    <string name="field_date_before">%1$s, %2$s-এর আগে হতে পারবে না</string>
+    <string name="field_date_after">%1$s, %2$s-এর পরে হতে পারবে না</string>
+    <string name="app_settings">অ্যাপ সেটিংস</string>
+    <string name="incentive_dashboard">ইনসেন্টিভ ড্যাশবোর্ড</string>
+    <string name="facilitator">সহায়তাকারী</string>
+    <string name="form_input__no_alpha_space_error">অক্ষর বা ফাঁকা স্থান গ্রহণযোগ্য নয়!</string>
+    <string name="form_input_digit_only_error">শুধুমাত্র সংখ্যা গ্রহণযোগ্য!</string>
+    <string name="form_input_min_limit_error_decimal">%1$s অবশ্যই %2$.1f-এর চেয়ে বড় বা সমান হতে হবে</string>
+    <string name="form_input_max_limit_error">%1$s অবশ্যই %2$d-এর চেয়ে কম বা সমান হতে হবে</string>
+    <string name="form_input_max_limit_error_decimal">%1$s অবশ্যই %2$.1f-এর চেয়ে কম বা সমান হতে হবে</string>
+    <string name="form_input_error_invalid_mobile">অবৈধ মোবাইল নম্বর!</string>
+    <string name="form_input_error_invalid_rch">অবৈধ RCH আইডি!</string>
+    <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর!</string>
+    <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর!</string>
+    <string name="version_2_0_0">APK সংস্করণ 2.0.0</string>
+    <string name="file_size">ফাইলের আকার ৫ MB-এর কম বা সমান হতে হবে।</string>
+    <string name="enter_pin">PIN লিখুন</string>
+    <string name="sync_in_progress">সিঙ্ক চলছে...</string>
+    <string name="full_name">পুরো নাম</string>
+    <string name="male">পুরুষ</string>
+    <string name="female">মহিলা</string>
+    <string name="transgender">তৃতীয় লিঙ্গ</string>
+    <string name="other">অন্যান্য</string>
+    <string name="other_place">মৃত্যুর অন্য স্থান</string>
+    <string name="other_reason">মৃত্যুর অন্য কারণ</string>
+    <string name="district">জেলা</string>
+
+    <string name="view_household_information">গৃহস্থালির তথ্য দেখুন</string>
+    <string name="hello">হ্যালো</string>
+    <string name="select_immunization_category">টিকার বিভাগ নির্বাচন করুন</string>
+    <string name="imm_cat_birth_dose">জন্মের ডোজ</string>
+    <string name="imm_cat_6_weeks">৬ সপ্তাহ</string>
+    <string name="imm_cat_10_weeks">১০ সপ্তাহ</string>
+    <string name="imm_cat_14_weeks">১৪ সপ্তাহ</string>
+    <string name="imm_cat_9_12_months">৯-১২ মাস</string>
+    <string name="imm_cat_16_24_months">১৬-২৪ মাস</string>
+    <string name="imm_cat_5_6_years">৫-৬ বছর</string>
+    <string name="imm_cat_10_years">১০ বছর</string>
+    <string name="imm_cat_16_years">১৬ বছর</string>
+    <string name="imm_cat_catch_up">ক্যাচ আপ</string>
+
+    <string name="vac_bcg">BCG ভ্যাকসিন</string>
+    <string name="vac_hepb_birth">হেপাটাইটিস-B ভ্যাকসিন (HBV)-জন্ম</string>
+    <string name="vac_opv_0">ওরাল পোলিও ভ্যাকসিন (OPV)-০</string>
+    <string name="vac_penta_1">পেন্টাভ্যালেন্ট-১</string>
+    <string name="vac_opv_1">OPV-১</string>
+    <string name="vac_rvv_1">রোটাভাইরাস ভ্যাকসিন (RVV)-১</string>
+    <string name="vac_fipv_1">IPV-এর ভগ্নাংশ ডোজ (fIPV)-১</string>
+    <string name="vac_penta_2">পেন্টাভ্যালেন্ট-২</string>
+    <string name="vac_opv_2">OPV-২</string>
+    <string name="vac_rvv_2">রোটাভাইরাস ভ্যাকসিন (RVV)-২</string>
+    <string name="vac_penta_3">পেন্টাভ্যালেন্ট-৩</string>
+    <string name="vac_opv_3">OPV-৩</string>
+    <string name="vac_rvv_3">রোটাভাইরাস ভ্যাকসিন (RVV)-৩</string>
+    <string name="vac_fipv_2">IPV-এর ভগ্নাংশ ডোজ (fIPV)-২</string>
+    <string name="vac_mr_1">হাম ও রুবেলা (MR)-১</string>
+    <string name="vac_je_1">JE-১</string>
+    <string name="vac_vit_a_1">ওরাল ভিটামিন A (১ম ডোজ)</string>
+    <string name="vac_dpt_booster_1">DPT বুস্টার-১</string>
+    <string name="vac_mr_2">হাম ও রুবেলা (MR)-২</string>
+    <string name="vac_je_2">JE-২</string>
+    <string name="vac_opv_booster">OPV বুস্টার</string>
+    <string name="vac_vit_a_2">ওরাল ভিটামিন A (২য় ডোজ)</string>
+    <string name="vac_dpt_booster_2">DPT বুস্টার-২</string>
+    <string name="vac_td_1">টিটেনাস ও প্রাপ্তবয়স্ক ডিফথেরিয়া (Td)</string>
+    <string name="vac_td_2">টিটেনাস ও প্রাপ্তবয়স্ক ডিফথেরিয়া (Td)</string>
+    <string name="vac_vit_k">ভিটামিন K</string>
+    <string name="vac_vit_a_3">ওরাল ভিটামিন A (৩য় ডোজ)</string>
+    <string name="vac_vit_a_4">ওরাল ভিটামিন A (৪র্থ ডোজ)</string>
+    <string name="vac_vit_a_5">ওরাল ভিটামিন A (৫ম ডোজ)</string>
+    <string name="vac_vit_a_6">ওরাল ভিটামিন A (৬ষ্ঠ ডোজ)</string>
+    <string name="vac_vit_a_7">ওরাল ভিটামিন A (৭ম ডোজ)</string>
+    <string name="vac_vit_a_8">ওরাল ভিটামিন A (৮ম ডোজ)</string>
+    <string name="vac_pcv_1">PCV-১</string>
+    <string name="vac_pcv_2">PCV-২</string>
+    <string name="vac_pcv_booster">PCV-বুস্টার</string>
+    <string name="unknown">অজানা</string>
+
+    <string name="children">শিশু</string>
+    <string name="mother">মা</string>
+    <string name="patient_information">রোগীর তথ্য</string>
+    <string name="mother_name">মায়ের নাম</string>
+    <string name="previous_vaccine_details">পূর্ববর্তী ভ্যাকসিনের বিবরণ</string>
+    <string name="due_serial">ক্রমিক নম্বর</string>
+    <string name="saving_form">ফর্ম সংরক্ষণ করা হচ্ছে...</string>
+    <string name="previous">পূর্ববর্তী</string>
+    <string name="next">পরবর্তী</string>
+    <string name="edit">সম্পাদনা</string>
+    <string name="to_do_list">করণীয় তালিকা</string>
+    <string name="beneficiaries_due_for_anc">ANC-এর জন্য প্রাপ্য সুবিধাভোগী</string>
+    <string name="beneficiaries_due_for_immunization">টিকার জন্য প্রাপ্য সুবিধাভোগী</string>
+    <string name="_0">০</string>
+    <string name="high_risk_cases">উচ্চ ঝুঁকির কেস</string>
+    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
+    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকির অ-গর্ভবতী মহিলা</string>
+    <string name="high_risk_babies">উচ্চ ঝুঁকির শিশু</string>
+    <string name="low_birth_weight_babies">কম জন্ম ওজনের শিশু</string>
+    <string name="registration_date">নিবন্ধনের তারিখ</string>
+    <string name="beneficiary_id">সুবিধাভোগী আইডি</string>
+    <string name="rch_id">RCH আইডি</string>
+    <string name="sync_to_local">স্থানীয়ভাবে সিঙ্ক করুন</string>
+    <string name="beneficiary_name">সুবিধাভোগীর নাম</string>
+    <string name="husband_s_name">স্বামীর নাম</string>
+    <string name="weeks_of_pregnancy">গর্ভাবস্থার সপ্তাহ</string>
+    <string name="pregnancy_weeks">গর্ভাবস্থার সপ্তাহ</string>
+    <string name="anc_visits">ANC পরিদর্শন</string>
+    <string name="pnc_visits">PNC পরিদর্শন</string>
+    <string name="pnc">PNC</string>
+    <string name="add_anc_visits">ANC পরিদর্শন যোগ করুন</string>
+    <string name="add_pnc_visits">PNC পরিদর্শন যোগ করুন</string>
+    <string name="id">আইডি</string>
+    <string name="no_of_children">মোট শিশুর সংখ্যা</string>
+    <string name="no_of_elderly_children">প্রাপ্তবয়স্ক সন্তানের সংখ্যা (১৫ বছরের বেশি বয়সী)</string>
+    <string name="no_of_younger_children">শিশুর সংখ্যা</string>
+    <string name="view_visit">পরিদর্শন দেখুন</string>
+    <string name="visit_no">পরিদর্শন নম্বর</string>
+    <string name="add_visit">পরিদর্শন যোগ করুন</string>
+    <string name="household_id">গৃহস্থালি আইডি</string>
+    <string name="sup_households">গৃহস্থালি</string>
+    <string name="sup_beneficiaries">সুবিধাভোগী</string>
+    <string name="sup_eligible_couples">যোগ্য দম্পতি</string>
+    <string name="sup_pregnant_women">গর্ভবতী মহিলা</string>
+    <string name="sup_anc_visits">ANC পরিদর্শন</string>
+    <string name="sup_hrp_woman">HRP মহিলা</string>
+    <string name="sup_deliveries">প্রসব</string>
+    <string name="sup_routine_immunization">নিয়মিত টিকাদান</string>
+    <string name="sup_ncd_screened">NCD স্ক্রিন করা হয়েছে</string>
+    <string name="sup_ncd_priority">NCD অগ্রাধিকার</string>
+    <string name="sup_tb_cases">TB কেস</string>
+    <string name="contact_number">যোগাযোগ নম্বর</string>
+    <string name="kcuf">KCUF</string>
+    <string name="vaccine_fill">পূরণ করুন</string>
+    <string name="show_vaccines">ভ্যাকসিন দেখুন</string>
+    <string name="add_cbac">CBAC যোগ করুন</string>
+    <string name="view_cbac">CBAC দেখুন</string>
+    <string name="view">দেখুন</string>
+    <string name="add">যোগ করুন</string>
+    <string name="home">হোম</string>
+    <string name="asha_profile">প্রোফাইল</string>
+    <string name="sync_records">রেকর্ড সিঙ্ক করুন</string>
+    <string name="about">আমাদের সম্পর্কে</string>
+    <string name="help">সাহায্য</string>
+    <string name="logout">লগ আউট</string>
+    <string name="delete_my_account">আমার অ্যাকাউন্ট মুছে ফেলার অনুরোধ</string>
+    <string name="monthly_claim_summary">মাসিক দাবির সারসংক্ষেপ</string>
+    <string name="str_add_member">সদস্য যোগ করুন</string>
+    <string name="str_not_available">পাওয়া যাচ্ছে না</string>
+    <string name="support">সহায়তা</string>
+    <string name="status">অবস্থা</string>
+    <string name="sync_status">সিঙ্ক অবস্থা</string>
+    <string name="go_to_home">হোমে যান</string>
+    <string name="change_language">ভাষা পরিবর্তন করুন</string>
+    <string name="kid_registration">শিশু নিবন্ধন</string>
+    <string name="adult_registration">প্রাপ্তবয়স্ক নিবন্ধন</string>
+    <string name="pregnancy_list">গর্ভাবস্থার তালিকা</string>
+    <string name="delivery_stage_list">প্রসব পর্যায়ের তালিকা</string>
+    <string name="pnc_mother_list">PNC মায়ের তালিকা</string>
+    <string name="reproductive_age_list">প্রজনন বয়সের তালিকা</string>
+    <string name="ncd_eligible_list">NCD যোগ্য তালিকা</string>
+    <string name="ncd_refer_form">NCD রেফার ফর্ম</string>
+    <string name="ncd_refer_list">NCD রেফার তালিকা</string>
+    <string name="hwc_refer_form">HWC রেফার ফর্ম</string>
+    <string name="hwc_refer_list">HWC রেফার তালিকা</string>
+    <string name="child_under_five_years_list">পাঁচ বছরের কম বয়সী শিশুর তালিকা</string>
+    <string name="ncd_list">NCD তালিকা</string>
+    <string name="ncd_non_eligible_list">NCD অ-অগ্রাধিকার তালিকা</string>
+    <string name="ncd_priority_list">NCD অগ্রাধিকার তালিকা</string>
+    <string name="survey_register">জরিপ নিবন্ধন</string>
+    <string name="all_household_list">সমস্ত গৃহস্থালির তালিকা</string>
+    <string name="beneficiaries_data">সুবিধাভোগীর তথ্য</string>
+    <string name="cdr_list">CDR তালিকা</string>
+    <string name="mdsr_list">MDSR তালিকা</string>
+    <string name="nmdsr_list">NMDSR তালিকা</string>
+    <string name="gdr_list">GDR তালিকা</string>
+    <string name="mdsr">MDSR</string>
+    <string name="cdr">CDR</string>
+    <string name="pmsma">PMSMA</string>
+    <string name="pmjay_form">PMJAY ফর্ম</string>
+    <string name="household_members">পরিবারের সদস্যরা</string>
+    <string name="fp_ot_register">FP-OT নিবন্ধন</string>
+    <string name="hbnc_day_list">HBNC দিনের তালিকা</string>
+    <string name="hbnc">HBNC</string>
+    <string name="visit_card">পরিদর্শন কার্ড</string>
+    <string name="hbnc_part_i">HBNC পার্ট I</string>
+    <string name="hbnc_part_ii">HBNC পার্ট II</string>
+    <string name="hbyc">HBYC</string>
+    <string name="hbyc_month_list">HBYC মাসের তালিকা</string>
+    <string name="immunization">টিকাদান</string>
+    <string name="pregnancy_registration_form">গর্ভাবস্থা নিবন্ধন ফর্ম</string>
+    <string name="anc_visit">ANC পরিদর্শন</string>
+    <string name="home_visit">বাড়ি পরিদর্শন</string>
+    <string name="cac_form">CAC ফর্ম</string>
+    <string name="anc">ANC</string>
+    <string name="eligible_couple_list">যোগ্য দম্পতির তালিকা</string>
+    <string name="ec">EC</string>
+    <string name="eligible_couple_registration">যোগ্য দম্পতির নিবন্ধন</string>
+    <string name="eligible_couple_tracking_list">যোগ্য দম্পতি ট্র্যাকিং তালিকা</string>
+    <string name="eligible_couple_tracking_form">যোগ্য দম্পতি ট্র্যাকিং ফর্ম</string>
+    <string name="tb_screening_list">TB স্ক্রিনিং তালিকা</string>
+    <string name="tb_suspected_list">সন্দেহজনক TB কেস</string>
+    <string name="tb_screening_form">TB স্ক্রিনিং ফর্ম</string>
+    <string name="tb_confirmed_list">নিশ্চিত TB তালিকা</string>
+    <string name="tb_confirmed_form">নিশ্চিত TB ফর্ম</string>
+    <string name="maleria_screening_form">ম্যালেরিয়া ফর্ম</string>
+    <string name="kala_screening_form">কালাজ্বর ফর্ম</string>
+    <string name="aes_screening_form">AES ফর্ম</string>
+    <string name="filaria_screening_form">ফাইলেরিয়া ফর্ম</string>
+    <string name="leprosy_screening_form">কুষ্ঠরোগ ফর্ম</string>
+    <string name="follow_up_form">ফলো-আপ ফর্ম</string>
+    <string name="tb_suspected_form">সন্দেহজনক TB কেস</string>
+    <string name="mother_immunization">মায়ের টিকাদান</string>
+    <string name="delivery_outcome">প্রসবের ফলাফল</string>
+    <string name="delivery_outcome_list">প্রসবের ফলাফলের তালিকা</string>
+    <string name="infant_reg_list">নবজাতক নিবন্ধন তালিকা</string>
+    <string name="infant_reg">নবজাতক নিবন্ধন</string>
+    <string name="communicable_diseases">সংক্রামক রোগ</string>
+    <string name="dashboard">ড্যাশবোর্ড</string>
+    <string name="sign_in">সাইন ইন</string>
+    <string name="service_location">সেবার স্থান</string>
+    <string name="location_type">অবস্থানের ধরন</string>
+    <string name="email">ইমেইল</string>
+
+    <string name="save_successful">সফলভাবে সংরক্ষণ হয়েছে</string>
+    <string name="otp_resent">OTP পুনরায় পাঠানো হয়েছে</string>
+    <string name="something_wend_wong_contact_testing">কিছু ভুল হয়েছে! পরীক্ষা দলের সাথে যোগাযোগ করুন!</string>
+    <string name="error_input">ইনপুট ত্রুটি</string>
+    <string name="exit_application">অ্যাপ্লিকেশন বন্ধ করুন</string>
+    <string name="do_you_want_to_exit_application">আপনি কি অ্যাপ্লিকেশন বন্ধ করতে চান?</string>
+    <string name="downloading">ডাউনলোড হচ্ছে…</string>
+    <string name="choose_application_language">অ্যাপ্লিকেশনের ভাষা নির্বাচন করুন</string>
+    <string name="english">English</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="assamese">অসমীয়া</string>
+    <string name="sync">সিঙ্ক</string>
+    <string name="tap_to_change">পরিবর্তন করতে ট্যাপ করুন</string>
+    <string name="validate">যাচাই করুন</string>
+    <string name="hbnc_daylist">HBNC দিনের তালিকা</string>
+    <string name="hbyc_list">HBYC তালিকা</string>
+    <string name="child_immunization">শিশু টিকাদান</string>
+    <string name="non_follow_up_cases">অনুসরণ না করা কেস</string>
+    <string name="pregnancy_registration">গর্ভাবস্থা নিবন্ধন</string>
+    <string name="mother_immunizationlist">মায়ের টিকাদান তালিকা</string>
+    <string name="family_member_registration">পরিবারের সদস্যের নিবন্ধন</string>
+    <string name="relation_with_hof">পরিবারের প্রধানের সাথে সম্পর্ক</string>
+    <string name="add_family_member">পরিবারের সদস্য যোগ করুন</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
+    <string name="non_pregnant_women_eligible_couple_section">অ-গর্ভবতী মহিলা (যোগ্য দম্পতি) বিভাগ</string>
+    <string name="visit_day">পরিদর্শনের দিন</string>
+    <string name="date_of_diagnosis">রোগ নির্ণয়ের তারিখ</string>
+    <string name="time_of_death">মৃত্যুর সময়</string>
+    <string name="reason_for_death">মৃত্যুর কারণ</string>
+    <string name="add_file">ফাইল যোগ করুন</string>
+    <string name="jsy_payment_voucher">JSY পেমেন্ট ভাউচার</string>
+    <string name="mcp_card_1">MCP কার্ড ১</string>
+    <string name="mcp_card_2">MCP কার্ড ২</string>
+    <string name="during_pregnancy">গর্ভাবস্থায়</string>
+    <string name="a_during_pregnancy">ক. গর্ভাবস্থায়</string>
+    <string name="b_during_delivery">খ. প্রসবের সময়</string>
+    <string name="c_within_42_days_after_delivery">গ. প্রসবের ৪২ দিনের মধ্যে</string>
+    <string name="d_during_abortion_or_within_6_weeks_after_abortion">ঘ. গর্ভপাতের সময় বা গর্ভপাতের ৬ সপ্তাহের মধ্যে</string>
+    <string name="name_of_reporting_person">প্রতিবেদনকারীর নাম</string>
+    <string name="designation">পদবি</string>
+    <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">সংশ্লিষ্ট সাব-সেন্টারের ANM কর্তৃক যাচাইকরণ যে মহিলার মৃত্যু গর্ভাবস্থায় বা প্রসব/গর্ভপাতের ৪২ দিনের মধ্যে হয়েছে:</string>
+    <string name="name_of_anm">ANM-এর নাম</string>
+    <string name="name_of_the_sub_center">সাব-সেন্টারের নাম</string>
+    <string name="mdsr_form_from_anm_1">ANM থেকে MDSR ফর্ম ১</string>
+    <string name="mdsr_form_from_anm_2">ANM থেকে MDSR ফর্ম ২</string>
+    <string name="father_name">পিতার নাম</string>
+    <string name="age_of_woman">মহিলার বয়স</string>
+    <string name="when_did_death_occur">মৃত্যু কখন হয়েছিল</string>
+    <string name="name_of_the_deceased_woman">মৃত মহিলার নাম</string>
+    <string name="date_of_antra_injection">ANTRA ইনজেকশনের তারিখ</string>
+    <string name="due_date_of_next_injection">পরবর্তী ইনজেকশনের প্রাপ্যতার তারিখ</string>
+    <string name="mpa_card">MPA কার্ড</string>
+    <string name="invalid_injection_date">অবৈধ ইনজেকশনের তারিখ</string>
+    <string name="antra_injection_details">ANTRA ইনজেকশনের বিবরণ</string>
+    <string name="dose">ডোজ</string>
+    <string name="next_due_date">পরবর্তী প্রাপ্যতার তারিখ</string>
+    <string name="abortion_discharge_summary_1">গর্ভপাত ছাড়পত্র সারসংক্ষেপ ১</string>
+    <string name="abortion_discharge_summary_2">গর্ভপাত ছাড়পত্র সারসংক্ষেপ ২</string>
+    <string name="remarks">মন্তব্য</string>
+    <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">গর্ভপাত পরবর্তী গর্ভনিরোধ - গর্ভপাতের পর PAIUCD ঢোকানো হয়েছে কি?</string>
+    <string name="termination_done_by">কর্তৃক সমাপ্তি</string>
+    <string name="method_of_termination">সমাপ্তির পদ্ধতি</string>
+    <string name="serial_no_as_per_admission_evacuation_register">ভর্তি/সরিয়ে নেওয়া রেজিস্টার অনুযায়ী ক্রমিক নম্বর</string>
+    <string name="facility_place_of_abortion">সুবিধা (গর্ভপাতের স্থান)</string>
+    <string name="abortion_type">গর্ভপাতের ধরন</string>
+    <string name="abortion_date">গর্ভপাতের তারিখ</string>
+    <string name="any_other_high_risk_conditions">অন্য কোনো উচ্চ ঝুঁকির অবস্থা</string>
+    <string name="details_of_pregnant_women">গর্ভবতী মহিলার বিবরণ</string>
+    <string name="anc_period">ANC সময়কাল</string>
+    <string name="anc_date">ANC তারিখ</string>
+    <string name="place_of_anc">ANC-এর স্থান</string>
+    <string name="abortion_if_any">গর্ভপাত হলে</string>
+    <string name="weight_of_pw_kg">নিবন্ধনের সময় গর্ভবতী মহিলার ওজন (কেজি)</string>
+    <string name="bp_of_pw">গর্ভবতী মহিলার BP – সিস্টোলিক/ডায়াস্টোলিক (mm Hg)</string>
+    <string name="pulse_rate_bpm">নাড়ির হার (BPM)</string>
+    <string name="hb_gm_dl">HB (gm/dl)</string>
+    <string name="fundal_height_uterus">ফান্ডাল হাইট / জরায়ুর আকার (সপ্তাহ)</string>
+    <string name="urine_albumin">প্রস্রাবে অ্যালবুমিন</string>
+    <string name="random_blood_sugar_test">র‍্যান্ডম ব্লাড সুগার পরীক্ষা</string>
+    <string name="date_td_tt_1st_dose">Td TT (১ম ডোজ) এর তারিখ</string>
+    <string name="date_td_tt_2nd_dose">Td TT (২য় ডোজ) এর তারিখ</string>
+    <string name="date_td_tt_booster_dose">Td TT (বুস্টার ডোজ) এর তারিখ</string>
+    <string name="no_of_folic_acid_tabs">প্রদত্ত ফোলিক অ্যাসিড ট্যাবলেটের সংখ্যা</string>
+    <string name="no_of_ifa_tabs">প্রদত্ত IFA ট্যাবলেটের সংখ্যা</string>
+    <string name="any_high_risk_conditions">কোনো উচ্চ ঝুঁকির অবস্থা</string>
+    <string name="is_hrp_confirmed">HRP নিশ্চিত হয়েছে কি?</string>
+    <string name="who_identified_hrp">কে HRP হিসেবে চিহ্নিত করেছে?</string>
+    <string name="probable_cause_of_death">মৃত্যুর কারণ</string>
+    <string name="other_death_cause">মৃত্যুর অন্য কারণ</string>
+    <string name="has_pw_delivered">গর্ভবতী মহিলা কি প্রসব করেছেন?</string>
+    <string name="mcp_cards">MCP কার্ড</string>
+    <string name="front_side">সামনের দিক</string>
+    <string name="back_side">পেছনের দিক</string>
+    <string name="ahd_health_status">স্বাস্থ্যের অবস্থা</string>
+    <string name="ahd_ifa_tablet_distribution">IFA ট্যাবলেট বিতরণ</string>
+    <string name="ahd_ifa_tablet_quantity">IFA ট্যাবলেটের পরিমাণ</string>
+    <string name="ahd_menstrual_hygiene_awareness">মাসিক স্বাস্থ্যবিধি সচেতনতা</string>
+    <string name="ahd_sanitary_napkin_distributed">স্যানিটারি ন্যাপকিন বিতরণ করা হয়েছে</string>
+    <string name="ahd_no_of_packets_distributed">বিতরণ করা প্যাকেটের সংখ্যা</string>
+    <string name="ahd_referred_to_health_facility">স্বাস্থ্য সুবিধায় রেফার করা হয়েছে</string>
+    <string name="ahd_counseling_provided">পরামর্শ দেওয়া হয়েছে</string>
+    <string name="ahd_counseling_type">পরামর্শের ধরন</string>
+    <string name="ahd_follow_up_date">ফলো-আপ তারিখ</string>
+    <string name="ahd_referral_status">রেফারেলের অবস্থা</string>
+    <string name="ahd_distribution_date">তারিখ</string>
+    <string name="if_yes_select_high_risk_condition">হ্যাঁ হলে, উচ্চ ঝুঁকির অবস্থা নির্বাচন করুন</string>
+    <string name="pmsma_visit_date">PMSMA পরিদর্শনের তারিখ</string>
+    <string name="pmsma_visits">PMSMA পরিদর্শন</string>
+    <string name="pmsma_visit">PMSMA পরিদর্শন</string>
+    <string name="text_kpis">মূল কার্যক্ষমতা সূচক (KPIs)</string>
+    <string name="all">সব</string>
+    <string name="with_abha">ABHA সহ</string>
+    <string name="without_abha">ABHA ছাড়া</string>
+    <string name="age_above_30_years">৪০ বছরের বেশি বয়সী</string>
+    <string name="wara">WARA</string>
+    <string name="no_visit_made">কোনো পরিদর্শন করা হয়নি</string>
+    <string name="filter_list">ফিল্টার</string>
+    <string name="ben_with_rch_id">RCH আইডি সহ সুবিধাভোগী</string>
+    <string name="call">কল</string>
+    <string name="heading">ইতিহাস</string>
+    <string name="new_abha">নতুন ABHA</string>
+    <string name="existing_abha">বিদ্যমান ABHA</string>
+    <string name="referred_date">রেফারেলের তারিখ</string>
+    <string name="referred_from">কোথা থেকে রেফার করা হয়েছে</string>
+    <string name="referral_reason">রেফারেলের কারণ</string>
+    <string name="saas_date">শাশুড়ি-বৌ সম্মেলনের তারিখ</string>
+    <string name="saas_samelan">শাশুড়ি-বৌ সম্মেলন</string>
+    <string name="no_participent">উপস্থিত অংশগ্রহণকারীদের সংখ্যা</string>
+
+    <string name="sammelan_photo1">সম্মেলনের ছবি / MoM (১)</string>
+    <string name="sammelan_photo2">সম্মেলনের ছবি / MoM (২)</string>
+    <string name="sammelan_photo3">সম্মেলনের ছবি / MoM (৩)</string>
+    <string name="sammelan_photo4">সম্মেলনের ছবি / MoM (৪)</string>
+    <string name="sammelan_photo5">সম্মেলনের ছবি / MoM (৫)</string>
+
+    <string name="place_new">স্থান</string>
+    <string name="higher_healthcare_center">উচ্চতর স্বাস্থ্যসেবা কেন্দ্র</string>
+    <string name="additional_services">অতিরিক্ত সেবা</string>
+    <string name="refer_date">রেফার তারিখ</string>
+    <string-array name="referal_health_center_array">
+        <item>অ্যাপোলো</item>
+        <item>CHC</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>PHC</item>
+    </string-array>
+    <string name="check_sam">SAM পরীক্ষা করুন</string>
+    <string name="ors">ORS</string>
+    <string name="ifa">IFA</string>
+    <string name="add_new">নতুন যোগ করুন</string>
+    <string name="ifa_distribution">IFA বিতরণ</string>
+    <string name="ifa_quantity">IFA পরিমাণ</string>
+    <string name="date_of_provision">সরবরাহের তারিখ</string>
+    <string name="bottle_number">বোতল নম্বর</string>
+    <string name="s_no">ক্রমিক নম্বর</string>
+    <string name="follow_up_date">ফলো-আপ তারিখ</string>
+    <string name="last_follow_up_date">শেষ ফলো-আপ তারিখ</string>
+    <string name="referred_to">রেফার করা হয়েছে</string>
+    <string name="bottle_distribution">বোতল বিতরণ</string>
+    <string name="child_rch_id">শিশু RCH আইডি</string>
+    <string name="vaccination_due_date">টিকার প্রাপ্যতার তারিখ</string>
+    <string name="reminder">স্মরণ করিয়ে দেওয়া!!</string>
+    <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">আপনি কি আপনার ইনসেন্টিভ দাবি করতে MCP কার্ড - টিকাদান পৃষ্ঠা/বিভাগের ফটোকপি আপলোড করতে চান?</string>
+    <string name="yes_dialog">হ্যাঁ</string>
+    <string name="no_dialog">না</string>
+    <string name="dose_name_2">ডোজের নাম : %1$s</string>
+    <string name="u_win_session">U-WIN সেশন</string>
+    <string name="ors_distribution_campaign">ORS বিতরণ অভিযান</string>
+    <string name="number_of_families_label">পরিবারের সংখ্যা : %s</string>
+    <string name="number_of_children_label">শিশুর সংখ্যা : %s</string>
+    <string name="pulse_polio_campaign">পালস পোলিও অভিযান</string>
+    <string name="mda_title">ফাইলেরিয়াসিস MDA অভিযান</string>
+    <string name="uwin">UWin</string>
+    <string name="u_win_sessions_list">U-win সেশন তালিকা</string>
+    <string name="session_date_n_a">সেশনের তারিখ: N/A</string>
+    <string name="session_date_format">সেশনের তারিখ: %s</string>
+    <string name="uwin_session_format">UWIN সেশন %s</string>
+    <string name="is_baby_discharge_from_sncu">শিশু কি SNCU-তে ভর্তি?</string>
+    <string name="optional">(ঐচ্ছিক)</string>
+    <string name="optional_">ঐচ্ছিক</string>
+    <string name="mandatory">আবশ্যক <font color="#FF0000">*</font></string>
+<string name="name_of_the_child">শিশুর নাম</string>
+<string name="pincode">পিনকোড</string>
+<string name="signature_name_of_asha">আশার স্বাক্ষর/নাম</string>
+<string name="cdr_form_from_anm_1">ANM থেকে CDR ফর্ম ১</string>
+<string name="cdr_form_from_anm_2">ANM থেকে CDR ফর্ম ২</string>
+<string name="add_wife">স্ত্রী নিবন্ধন করুন</string>
+<string name="add_husband">স্বামী নিবন্ধন করুন</string>
+<string name="hof">পরিবারের প্রধান</string>
+<string name="leprosy_confirmed">কুষ্ঠরোগ নিশ্চিত</string>
+<string name="leprosy_suspected">কুষ্ঠরোগ সন্দেহজনক</string>
+<string name="leprosy_confirmed_form">নিশ্চিত কুষ্ঠরোগ ফর্ম</string>
+<string name="leprosy_suspected_form">সন্দেহজনক কুষ্ঠরোগ ফর্ম</string>
+<string name="follow_up_history">ফলো-আপের ইতিহাস</string>
+<string name="download_not_available_for_this_variant">এই ভেরিয়েন্টের জন্য ডাউনলোড পাওয়া যাচ্ছে না</string>
+<string name="leprosy_visit">কুষ্ঠরোগ পরিদর্শন</string>
+<string name="leprosy_screening">কুষ্ঠরোগ স্ক্রিনিং</string>
+<string name="any_leprosy_symptoms_present">কোনো কুষ্ঠরোগের লক্ষণ আছে কি?</string>
+<string name="visits">পরিদর্শন</string>
+<string name="select_visit">পরিদর্শন নির্বাচন করুন</string>
+<string name="no_previous_visits_available">কোনো পূর্ববর্তী পরিদর্শন পাওয়া যায়নি</string>
+<string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">গর্ভপাতের পরে, মহিলা স্থায়ী বন্ধ্যাত্বকরণ (টিউবেকটমি) বেছে নিয়েছেন</string>
+<string name="date_of_sterilisation">বন্ধ্যাত্বকরণের তারিখ</string>
+<string name="what_family_planning_method_has_been_chosen_after_the_abortion">গর্ভপাতের পরে কোন পরিবার পরিকল্পনা পদ্ধতি বেছে নেওয়া হয়েছে?</string>
+
+<string-array name="sync_records">
+<item>সুবিধাভোগী</item>
+<item>EC নিবন্ধন</item>
+<item>EC ট্র্যাকিং</item>
+<item>গর্ভবতী মহিলা নিবন্ধন</item>
+<item>গর্ভবতী মহিলা ANC</item>
+<item>PMSMA</item>
+<item>প্রসবের ফলাফল</item>
+<item>PNC</item>
+<item>নবজাতক নিবন্ধন</item>
+<item>CBAC</item>
+<item>TB স্ক্রিনিং</item>
+<item>TB সন্দেহজনক</item>
+<item>HRP মূল্যায়ন</item>
+<item>HRP ট্র্যাক</item>
+<item>HR অ-গর্ভবতী মূল্যায়ন</item>
+<item>HR অ-গর্ভবতী ট্র্যাক</item>
+<item>টিকাদান</item>
+<item>HBYC</item>
+<item>HBNC</item>
+<item>মাইক্রো বার্থ প্ল্যান</item>
+<item>VHND</item>
+<item>VHSNC</item>
+<item>PHC</item>
+<item>AHD</item>
+<item>কৃমিনাশক</item>
+<item>NCD ফলো-আপ</item>
+</string-array>
+
+<string-array name="place_array">
+<item>HWC</item>
+<item>অঙ্গনওয়াড়ি কেন্দ্র</item>
+<item>কমিউনিটি সেন্টার</item>
+</string-array>
+
+<string-array name="ecr_gender_array">
+<item name="nbr_gender_1">পুরুষ</item>
+<item name="nbr_gender_2">মহিলা</item>
+</string-array>
+
+<string-array name="ecr_baby_gender_array">
+<item name="nbr_gender_1">পুরুষ</item>
+<item name="nbr_gender_2">মহিলা</item>
+</string-array>
+
+<string name="str_subcenter_name">সাব-সেন্টারের নাম</string>
+<string name="str_subcenter">সাব-সেন্টার</string>
+<string name="str_primary_health_center_name">প্রাথমিক স্বাস্থ্য কেন্দ্রের নাম</string>
+<string name="str_village_population">গ্রামের জনসংখ্যা</string>
+<string name="str_total_no_of_childrens">গ্রামে ৩ থেকে ১৫ মাস বয়সী শিশুদের মোট সংখ্যা</string>
+<string name="str_hyyc_by_age_tour">বয়স অনুযায়ী H.B.Y.C সফর</string>
+<string name="str_ors_packet_delivered">O.R.S. প্যাকেট বিতরণ</string>
+<string name="str_Iron_folic_acid">আয়রন ফলিক অ্যাসিড সিরাপ দেওয়া হয়েছে (শিশু জন্মের ছয় মাস পরে)</string>
+<string name="str_child_vaccinated_by_age">বয়স অনুযায়ী শিশুকে টিকা দেওয়া হয়েছে</string>
+<string name="str_child_was_ill">শিশু অসুস্থ ছিল</string>
+<string name="str_if_yes_refer_hospital">হ্যাঁ হলে হাসপাতালে রেফার করুন</string>
+<string name="str_suppliments_given_to_child">বয়স অনুযায়ী শিশুকে সম্পূরক দেওয়া হয়েছে</string>
+<string name="str_by_height_length">উচ্চতা/দৈর্ঘ্য অনুযায়ী (MCP কার্ডে চিহ্নিত রঙ)</string>
+<string name="str_no_of_children_weighing_less">MCCP কার্ডে নারঙ্গি রঙ নির্দেশিত –3SD-এর কম ওজনের শিশুদের সংখ্যা যাদের VHSND/PHC/NRC-তে রেফার করা হয়েছে</string>
+<string name="str_weight_acc_to_child">শিশুর বয়স অনুযায়ী ওজন (MCP কার্ডে চিহ্নিত রঙ)</string>
+<string name="str_delay_constraint_found">বয়স অনুযায়ী শিশুর শারীরিক ও মানসিক বিকাশে বিলম্ব/প্রতিবন্ধকতা পাওয়া গেছে</string>
+<string name="str_if_yes_then_health_institute">হ্যাঁ হলে কোন স্বাস্থ্য প্রতিষ্ঠান RBSK টিম/ANM-এ রেফার করা হয়েছে</string>
+<string name="str_vit_a_suppliment">বয়স অনুযায়ী শিশুকে ভিটামিন-A সম্পূরক দেওয়া হয়েছে</string>
+<string name="str_mark_age">মৃত্যুর সময় বয়স (মাসে) চিহ্নিত করুন</string>
+<string name="str_qm_informed">Q.M/A.N.M-কে জানানো হয়েছে</string>
+<string name="str_supervisor_from_block">গত মাসে ব্লক/জেলা/রাজ্য স্তর থেকে সুপারভাইজার</string>
+<string name="str_ors_in_last_one_month">গত এক মাসে ORS প্যাকেটের সংকট</string>
+<string name="str_ifa_last_month">গত এক মাসে IFA সিরাপ হ্রাস</string>
+
+<string name="str_yay_it_is_working">হুররে, এটি কাজ করছে!!!</string>
+<string name="str_yay_it_is_not_working">হুররে, এটি কাজ করছে না!!!</string>
+<string name="str_health_subcenter_name">স্বাস্থ্য সাব-সেন্টারের নাম</string>
+<string name="str_mother_name">মায়ের নাম</string>
+<string name="str_date_of_delivery">প্রসবের তারিখ</string>
+<string name="str_place_of_delivery">প্রসবের স্থান</string>
+<string name="str_baby_gender">শিশুর লিঙ্গ</string>
+<string name="str_type_of_delivery">প্রসবের ধরন</string>
+<string name="str_started_breastfeeding">স্তন্যপান শুরু হয়েছে</string>
+<string name="str_weight_at_birth_gram">জন্মের সময় ওজন (গ্রাম)</string>
+<string name="str_discharge_date_of_mother">মায়ের ছাড়পত্রের তারিখ</string>
+<string name="str_discharge_date_of_baby">শিশুর ছাড়পত্রের তারিখ</string>
+<string name="str_registration_of_birth">জন্ম নিবন্ধন</string>
+<string name="str_child_immunizaation_status">শিশুর টিকাদানের অবস্থা</string>
+<string name="str_child_feed_after_birth">জন্মের পরে শিশুকে কী খাওয়ানো হয়েছিল</string>
+<string name="str_how_did_the_baby_breastfeed">শিশু কীভাবে স্তন্যপান করেছে?</string>
+<string name="str_baby_eye_condition">শিশুর চোখের অবস্থা</string>
+<string name="str_is_there_bleeding">শিশুর নাভি থেকে রক্তপাত হচ্ছে কি?</string>
+<string name="str_weighing_machine_scale_coloer">ওজন মাপার স্কেলের রঙ</string>
+<string name="str_child_physical_condition">শিশুর শারীরিক অবস্থা লিখুন</string>
+<string name="str_all_limbs_limp">সব অঙ্গপ্রত্যঙ্গ শিথিল</string>
+<string name="str_feeding_less_stop">কম খাওয়া/বন্ধ</string>
+<string name="str_the_child_is_wrapped_in_cloth">শিশুকে কাপড়ে মুড়িয়ে মায়ের পাশে রাখা হয়েছে</string>
+<string name="str_started_breastfeeding_only">শুধুমাত্র স্তন্যপান শুরু হয়েছে/শুধুমাত্র মায়ের দুধ দেওয়া হচ্ছে</string>
+<string name="str_newborn_first_training">নবজাতকের প্রথম প্রশিক্ষণ (A) মাকে জিজ্ঞেস করুন</string>
+<string name="str_baby_stomach_feeding">২৪ ঘণ্টায় মা কতবার পেট ভরে খান। পদক্ষেপ – মা যদি পেট ভরে না খান বা দিনে ৪ বারের কম খান, তাহলে মাকে তা করার পরামর্শ দিন</string>
+<string name="str_baby_pad_changed">রক্তপাতের জন্য দিনে কতটি প্যাড পরিবর্তন হয়েছে? পদক্ষেপ – ২টির বেশি প্যাড হলে মাকে হাসপাতালে রেফার করুন।</string>
+<string name="str_baby_in_winter">শীতকালে শিশুকে কি উষ্ণ রাখা হচ্ছে? (মায়ের কাছে, ভালো পোশাক ও মোড়ানো)। - না হলে মাকে করতে বলুন।</string>
+<string name="str_baby_breastfed_properly">শিশুকে কি সঠিকভাবে স্তন্যপান করানো হচ্ছে? (ক্ষুধার সময় বা ২৪ ঘণ্টায় অন্তত ৭-৮ বার)। পদক্ষেপ – না হলে মাকে করতে বলুন।</string>
+<string name="str_baby_urination_per_day">শিশু কি ক্রমাগত কাঁদছে বা দিনে ৬ বারের কম প্রস্রাব করছে? পদক্ষেপ – মাকে স্তন্যপানের পরামর্শ দিন।</string>
+<string name="str_mother_body_temperature">তাপমাত্রা মাপুন ও পরীক্ষা করুন। পদক্ষেপ – তাপমাত্রা ১০২°F (৩৮.৯°C) হলে প্যারাসিটামল ট্যাবলেট দিন এবং এর চেয়ে বেশি হলে হাসপাতালে রেফার করুন।</string>
+<string name="str_water_discharge">দুর্গন্ধযুক্ত স্রাব এবং ১০২ ডিগ্রি ফারেনহাইট (৩৮.৯ ডিগ্রি সেলসিয়াস) জ্বর।</string>
+<string name="str_is_mother_speaking_abnormally">মা কি অস্বাভাবিকভাবে কথা বলছেন বা খিঁচুনি হচ্ছে?</string>
+<string name="str_mother_milk_is_not_produced">প্রসবের পরে মায়ের দুধ উৎপাদন হচ্ছে না বা কম উৎপাদন হচ্ছে বলে মনে হচ্ছে।</string>
+<string name="str_mother_cracked_nipple">মায়ের কি ফাটা স্তনবৃন্ত/ব্যথা এবং/অথবা শক্ত স্তন আছে?</string>
+<string name="str_are_the_eyes_swollen">চোখ ফোলা আছে কি / চোখ থেকে পুঁজ আসছে কি?</string>
+<string name="str_weight_on_day">দিনে ওজন</string>
+<string name="str_yellowing_of_eye">চোখ/তালু/পায়ের তলা/ত্বক হলুদ হওয়া (জন্ডিস)</string>
+<string name="str_respiratory_rate">শ্বাস-প্রশ্বাসের হার প্রতি মিনিটে ৬০-এর বেশি</string>
+<string name="str_d_sepsis">(D) সেপসিস</string>
+<string name="str_symptoms_of_sepsis">সেপসিসের নিম্নলিখিত লক্ষণগুলো পরীক্ষা করুন। লক্ষণ থাকলে হ্যাঁ লিখুন, না থাকলে লিখবেন না। নবজাতকের জন্মের প্রথম দিনে স্বাস্থ্য পরীক্ষায় দেখা লক্ষণগুলো লিখুন।</string>
+<string name="str_distended_abdomen">পেট ফুলে যাওয়া বা মা বলছেন শিশু প্রায়ই বমি করে</string>
+<string name="str_child_feels_cold">মা বলছেন স্পর্শ করলে শিশু ঠান্ডা লাগছে বা শিশুর তাপমাত্রা ৮৯ ডিগ্রি ফারেনহাইট (৩৭.৫ ডিগ্রি সেলসিয়াস)-এর বেশি।</string>
+<string name="str_chest_is_pulled">শ্বাস নেওয়ার সময় বুক ভেতরে ঢুকে যাওয়া।</string>
+<string name="str_pus_in_the_navel">নাভিতে পুঁজ</string>
+<string name="str_asha_name">আশার নাম</string>
+<string name="str_village_name">গ্রামের নাম</string>
+<string name="str_block_name">ব্লকের নাম</string>
+<string name="str_still_birth">মৃত সন্তান প্রসব</string>
+<string name="str_supervisors_remark">সুপারভাইজারের মন্তব্য</string>
+<string name="str_supervisor">আশা সুপারভাইজার</string>
+<string name="str_supervisor_name">সুপারভাইজারের নাম</string>
+<string name="str_signature_with_date">তারিখসহ সুপারভাইজারের স্বাক্ষর</string>
+<string name="str_mother_newborn_home_visit_card">মা-নবজাতক বাড়ি পরিদর্শন কার্ড</string>
+<string name="str_discharge_of_institutinal_delivery">প্রাতিষ্ঠানিক প্রসবের ছাড়পত্র</string>
+<string name="str_date_of_home_visit">বাড়ি পরিদর্শনের তারিখ</string>
+<string name="str_baby_alive">শিশু কি জীবিত?</string>
+<string name="str_time_of_death">শিশুর মৃত্যুর সময়</string>
+<string name="str_date_of_death_of_baby">শিশুর মৃত্যুর তারিখ</string>
+<string name="str_place_of_baby_death">শিশুর মৃত্যুর স্থান</string>
+<string name="str_other_place_of_baby_death">শিশুর মৃত্যুর অন্য স্থান</string>
+<string name="str_is_baby_preterm">শিশু কি সময়ের আগে জন্মেছে?</string>
+<string name="str_how_many_weeks">শিশুর জন্মের পর কত সপ্তাহ হয়েছে (গর্ভকালীন বয়স)</string>
+<string name="str_date_of_first_examination">শিশুর প্রথম পরীক্ষার তারিখ</string>
+<string name="str_time_of_first_examination">শিশুর প্রথম পরীক্ষার সময়</string>
+<string name="str_is_the_mother_alive">মা কি জীবিত?</string>
+<string name="str_date_of_death_of_mother">মায়ের মৃত্যুর তারিখ</string>
+<string name="str_time_of_death_of_mother">মায়ের মৃত্যুর সময়</string>
+<string name="str_place_of_mother_death">মায়ের মৃত্যুর স্থান</string>
+<string name="str_other_place_of_mother_death">মায়ের মৃত্যুর অন্য স্থান</string>
+<string name="str_does_mother_have_any_problem">মায়ের কোনো সমস্যা আছে কি?</string>
+<string name="str_first_feed_to_baby">অন্যান্য - জন্মের পরে শিশুকে প্রথম কী খাওয়ানো হয়েছিল?</string>
+<string name="str_when_first_feed_to_baby">শিশুকে প্রথম কখন খাওয়ানো হয়েছিল</string>
+<string name="str_does_the_mother_have_breatfeeding">মায়ের কি স্তন্যপানে সমস্যা আছে?</string>
+<string name="str_write_the_problem">সমস্যা লিখুন, স্তন্যপানে কোনো সমস্যা থাকলে মাকে তা কাটিয়ে উঠতে সাহায্য করুন</string>
+<string name="str_baby_first_health_checkup">পার্ট ২: শিশুর প্রথম স্বাস্থ্য পরীক্ষা</string>
+<string name="str_temperature_ot_the_baby">শিশুর তাপমাত্রা</string>
+<string name="str_tie_again_with_clean_thread">হ্যাঁ হলে, আশা, ANM/MPW বা TBA পরিষ্কার সুতা দিয়ে আবার বাঁধতে পারেন। পদক্ষেপ নেওয়া হয়েছে?</string>
+<string name="str_weighing_matches">ওজন রঙের সাথে মিলছে কি?</string>
+<string name="str_routine_newborn_care">নিয়মিত নবজাতক যত্ন: কাজটি সম্পন্ন হয়েছে কিনা</string>
+<string name="str_dry_the_baby">শিশুকে শুকিয়ে নিন</string>
+<string name="str_cry_weak_stopped">কান্না দুর্বল/বন্ধ</string>
+<string name="str_keep_the_cord_clean_and_dry">নাভির দড়ি পরিষ্কার ও শুকনো রাখুন</string>
+<string name="str_was_there_anything_unusual">শিশুর সাথে কি কোনো অস্বাভাবিক বিষয় ছিল?</string>
+<string name="str_other_unusual_with_the_baby">অন্যান্য - শিশুর সাথে অস্বাভাবিক</string>
+<string name="str_asha_hygeine">প্রতিটি পরিদর্শনে শিশু স্পর্শ করার আগে আশার উচিত সাবান ও পানি দিয়ে হাত ধোয়া</string>
+<string name="str_baby_referred_for_any_reason">শিশুকে কোনো কারণে রেফার করা হয়েছে?</string>
+<string name="str_date_of_baby_referral">শিশু রেফারেলের তারিখ</string>
+<string name="str_place_of_baby_referral">শিশু রেফারেলের স্থান</string>
+<string name="str_other_place_of_baby_referral">অন্যান্য - শিশু রেফারেলের স্থান</string>
+<string name="str_mother_referred_for_any_reason">মাকে কোনো কারণে রেফার করা হয়েছে?</string>
+<string name="str_date_of_mother_referral">মা রেফারেলের তারিখ</string>
+<string name="str_place_of_mother_referral">মা রেফারেলের স্থান</string>
+<string name="str_other_place_of_mother_referral">অন্যান্য - মা রেফারেলের স্থান</string>
+<string name="preview_title">প্রিভিউ</string>
+<string name="add_children">শিশু নিবন্ধন করুন</string>
+
+<string name="flu_like_illness">ফ্লু-সদৃশ অসুস্থতা</string>
+<string name="shakingchills">কাঁপুনি সহ ঠান্ডা</string>
+<string name="headache">মাথাব্যথা</string>
+<string name="muscleaches">পেশীতে ব্যথা</string>
+<string name="tiredness">ক্লান্তি</string>
+<string name="nausea">বমিভাব</string>
+<string name="vomiting">বমি</string>
+<string name="diarrhea">ডায়রিয়া</string>
+<string name="rapid_diagnostic">দ্রুত রোগ নির্ণয় পরীক্ষা (RDT)</string>
+<string name="rapid_diagnostic_kala">কালাজ্বর দ্রুত রোগ নির্ণয় পরীক্ষা (RDT)</string>
+<string name="slide_test_pf">ম্যালেরিয়া স্লাইড পরীক্ষা Pf</string>
+<string name="slide_test">ম্যালেরিয়া স্লাইড পরীক্ষা</string>
+<string name="slide_test_pv">ম্যালেরিয়া স্লাইড পরীক্ষা Pv</string>
+<string name="sympt">লক্ষণ</string>
+<string name="malaria_submitted">ম্যালেরিয়া ফর্ম জমা দেওয়া হয়েছে</string>
+<string name="view_children">শিশু দেখুন</string>
+<string name="newAbha">নতুন</string>
+<string name="oldAbha">পুরনো</string>
+<string name="home_visit_number">বাড়ি পরিদর্শন %d</string>
+<string name="hwc_referred_list">HWC রেফার তালিকা</string>
+<string name="vhsnc_meeting_date">VHSNC সভার তারিখ</string>
+<string name="place_of_vhsnc_meeting">VHSNC সভার স্থান</string>
+<string name="village_name">গ্রামের নাম</string>
+<string name="number_of_anm_mpw_attended">উপস্থিত ANM/MPW-এর সংখ্যা</string>
+<string name="number_of_aww_attended">উপস্থিত AWW-এর সংখ্যা</string>
+<string name="number_of_pregnant_woman">গর্ভবতী মহিলার সংখ্যা</string>
+<string name="number_of_lactating_mothers">স্তন্যদানকারী মায়ের সংখ্যা</string>
+<string name="number_of_committee_members_present">উপস্থিত কমিটি সদস্যের সংখ্যা</string>
+<string name="follow_up_the_previous_meeting_minutes">পূর্ববর্তী সভার কার্যবিবরণীর ফলো-আপ</string>
+<string name="number_of_asha_participated_in_vhsnc_meeting">VHSNC সভায় অংশগ্রহণকারী আশার সংখ্যা</string>
+<string name="number_of_mitanins_participated_in_vhsnc_meeting">VHSNC সভায় অংশগ্রহণকারী মিতানিনদের সংখ্যা</string>
+<string name="mitanin_village_meetings">মিতানিন/গ্রাম সভা</string>
+<string name="asha_village_meetings">আশা/গ্রাম সভা</string>
+<string name="has_leprosy_been_confirmed">কুষ্ঠরোগ নিশ্চিত হয়েছে কি?</string>
+<string name="mdt_blister_pack_received">MDT/ব্লিস্টার প্যাক প্রাপ্ত</string>
+<string name="actual_treatment_completion_date">প্রকৃত চিকিৎসা সমাপ্তির তারিখ</string>
+<string name="expected_treatment_completion_date">প্রত্যাশিত চিকিৎসা সমাপ্তির তারিখ</string>
+<string name="treatment_status">চিকিৎসার অবস্থা</string>
+<string name="phone_no">ফোন নম্বর</string>
+<string name="name_of_pregnant_woman">গর্ভবতী মহিলার নাম</string>
+<string name="husband_name">স্বামীর নাম</string>
+<string name="last_home_visit_date">শেষ বাড়ি পরিদর্শনের তারিখ</string>
+<string name="add_home_visit">বাড়ি পরিদর্শন যোগ করুন</string>
+<string name="view_home_visits">বাড়ি পরিদর্শন দেখুন</string>
+<string name="number_of_pregnant_woman_attended">উপস্থিত গর্ভবতী মহিলার সংখ্যা</string>
+<string name="number_of_lactating_mothers_attended">উপস্থিত স্তন্যদানকারী মায়ের সংখ্যা</string>
+<string name="during_breastfeeding_counseling_check_list">স্তন্যপান পরামর্শের চেকলিস্ট</string>
+<string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">জন্মের প্রথম ঘণ্টার মধ্যে শিশুকে স্তন্যপান করানো উচিত</string>
+<string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">প্রথম ৬ মাস শুধুমাত্র মায়ের দুধ দেওয়া উচিত।</string>
+<string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">৬ মাস পরে, মায়ের দুধের সাথে পুষ্টিকর পরিপূরক খাবার দেওয়া উচিত।</string>
+<string name="breastfeeding_should_be_continued_for_2_years_or_more">স্তন্যপান ২ বছর বা তার বেশি সময় চালিয়ে যাওয়া উচিত।</string>
+<string name="the_family_should_support_and_encourage_the_mother">পরিবারের উচিত মাকে সহায়তা ও উৎসাহিত করা</string>
+<string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">শিশুর সম্পূর্ণ বিকাশের জন্য মায়ের দুধ সর্বোত্তম।</string>
+<string name="information_was_given_about_kmc_kangaroo_mother_care">KMC (ক্যাঙ্গারু মাদার কেয়ার) সম্পর্কে তথ্য দেওয়া হয়েছে।</string>
+<string name="place_of_maa_meeting">MAA সভার স্থান</string>
+<string name="number_of_out_of_school_children_sent_to_anganwad">অঙ্গনওয়াড়িতে পাঠানো স্কুলবহির্ভূত শিশুর সংখ্যা</string>
+<string name="place_of_ndd">NDD-এর স্থান</string>
+<string name="date_of_ndd">NDD-এর তারিখ</string>
+<string name="was_the_deworming_round_conducted">কৃমিনাশক রাউন্ড পরিচালিত হয়েছিল কি?</string>
+
+<string name="regimen_type">রেজিমেনের ধরন</string>
+<string name="monthly_follow_up_done">মাসিক ফলো-আপ সম্পন্ন হয়েছে</string>
+<string name="adherence_to_medicines">ওষুধ নিয়মিত গ্রহণ</string>
+<string name="any_discomfort">কোনো অস্বস্তি</string>
+<string name="treatment_completed">রোগী কি সম্পূর্ণ চিকিৎসা সম্পন্ন করেছেন?</string>
+<string name="treatment_outcome">TB চিকিৎসার ফলাফল</string>
+<string name="reason_for_not_completing">চিকিৎসা সম্পন্ন না করার কারণ</string>
+<string name="tuberculosis">যক্ষ্মা</string>
+<string name="only_one_follow_up_per_month">প্রতি মাসে শুধুমাত্র একটি ফলো-আপ পরিদর্শন অনুমোদিত</string>
+<string name="follow_up_must_be_after_last">ফলো-আপ তারিখ শেষ ফলো-আপ তারিখের পরে হতে হবে</string>
+<string name="follow_up_date_required_or_invalid">ফলো-আপ তারিখ আবশ্যক বা অবৈধ</string>
+<string name="main_visit_not_found">মূল পরিদর্শন পাওয়া যায়নি</string>
+<string name="invalid_treatment_date_in_db">ডেটাবেসে অবৈধ চিকিৎসার তারিখ</string>
+<string name="follow_up_must_be_after_treatment">ফলো-আপ চিকিৎসা শুরুর তারিখের পরে হতে হবে (%s)</string>
+<string name="follow_up_must_be_next_month">ফলো-আপ বর্তমান পরিদর্শনের শেষ ফলো-আপের পরবর্তী মাসে হতে হবে</string>
+<string name="follow_up_cannot_be_future_month">ফলো-আপ ভবিষ্যৎ মাসে হতে পারবে না</string>
+<string name="month_format">মাস-%d</string>
+
+<string-array name="tb_regimen_types">
+<item>DS-TB (৬ মাস)</item>
+<item>সংক্ষিপ্ত রেজিমেন (৯-১২ মাস)</item>
+<item>দীর্ঘ রেজিমেন (১৮-২৪ মাস)</item>
+<item>BPaL রেজিমেন (৬ মাস)</item>
+<item>INH মনো (৬ মাস)</item>
+</string-array>
+
+<string-array name="adherence_options">
+<item>নিয়মিত</item>
+<item>অনিয়মিত</item>
+</string-array>
+
+<string-array name="tb_treatment_outcomes">
+<item>সুস্থ</item>
+<item>ব্যর্থ</item>
+<item>অনুসরণ হারানো (LFU)</item>
+<item>মৃত্যু</item>
+</string-array>
+
+<string-array name="place_of_death">
+<item>বাড়ি</item>
+<item>সাব-সেন্টার</item>
+<item>PHC</item>
+<item>CHC</item>
+<item>জেলা হাসপাতাল</item>
+<item>মেডিকেল কলেজ হাসপাতাল</item>
+<item>বেসরকারি হাসপাতাল</item>
+<item>অন্য স্থান</item>
+</string-array>
+
+<string-array name="hbyc_month_array">
+<item name="hbyc_month_3">৩ মাস</item>
+<item name="hbyc_month_4">৪ মাস</item>
+<item name="hbyc_month_5">৫ মাস</item>
+<item name="hbyc_month_6">৬ মাস</item>
+<item name="hbyc_month_7">৭ মাস</item>
+<item name="hbyc_month_8">৮ মাস</item>
+<item name="hbyc_month_9">৯ মাস</item>
+<item name="hbyc_month_10">১০ মাস</item>
+<item name="hbyc_month_11">১১ মাস</item>
+<item name="hbyc_month_12">১২ মাস</item>
+<item name="hbyc_month_13">১৩ মাস</item>
+<item name="hbyc_month_14">১৪ মাস</item>
+<item name="hbyc_month_15">১৫ মাস</item>
+</string-array>
+
+<string-array name="hbnc_place_of_delivery_array">
+<item name="hbnc_place_of_delivery_1">বাড়ি</item>
+<item name="hbnc_place_of_delivery_2">স্বাস্থ্য কেন্দ্র</item>
+<item name="hbnc_place_of_delivery_3">CHC</item>
+<item name="hbnc_place_of_delivery_4">PHC</item>
+</string-array>
+
+<string-array name="hbnc_baby_gender">
+<item name="hbnc_male">পুরুষ</item>
+<item name="hbnc_female">মহিলা</item>
+<item name="hbnc_transgender">তৃতীয় লিঙ্গ</item>
+</string-array>
+
+<string-array name="hbnc_type_of_delivery">
+<item name="hbnc_normal_delivery">স্বাভাবিক প্রসব</item>
+<item name="hbnc_c_section">সিজারিয়ান</item>
+<item name="hbnc_assisted">সহায়তাপ্রাপ্ত</item>
+</string-array>
+
+<string-array name="hbnc_started_breastfeeding">
+<item name="hbnc_breastfeeding_time_1">এক ঘণ্টার মধ্যে</item>
+<item name="hbnc_breastfeeding_time_2">১ - ৪ ঘণ্টা</item>
+<item name="hbnc_breastfeeding_time_3">৪.১ - ২৪ ঘণ্টা</item>
+<item name="hbnc_breastfeeding_time_4">২৪ ঘণ্টা পরে</item>
+</string-array>
+
+<string-array name="hbnc_child_immunization_status">
+<item name="hbnc_bcg">BCG</item>
+<item name="hbnc_polio">পোলিও</item>
+<item name="hbnc_dpt_1">DPT ১</item>
+<item name="hbnc_hapatitis_b">হেপাটাইটিস-B</item>
+</string-array>
+
+<string-array name="hbnc_feeding_of_baby">
+<item name="hbnc_feeding_of_baby_1">মায়ের দুধ</item>
+<item name="hbnc_feeding_of_baby_2">পানি</item>
+<item name="hbnc_feeding_of_baby_3">মধু</item>
+<item name="hbnc_feeding_of_baby_4">মিশরি পানি</item>
+<item name="hbnc_feeding_of_baby_5">ছাগলের দুধ</item>
+<item name="hbnc_feeding_of_baby_6">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_how_breastfeed_baby">
+<item name="hbnc_forcefully">জোর করে</item>
+<item name="hbnc_weakly">দুর্বলভাবে</item>
+<item name="hbnc_feed_with_spoon">স্তন্যপান করতে পারেনি কিন্তু চামচে খাওয়াতে হয়েছে</item>
+<item name="hbnc_not_feeding">স্তন্যপান করতে পারেনি এবং চামচে দেওয়া দুধও নিতে পারেনি</item>
+</string-array>
+
+<string-array name="hbnc_baby_eye_condition">
+<item name="hbnc_forcefully">স্বাভাবিক</item>
+<item name="hbnc_weakly">ফোলা</item>
+<item name="hbnc_feed_with_spoon">পুঁজ বের হচ্ছে</item>
+</string-array>
+
+<string-array name="hbnc_scale_color">
+<item name="hbnc_red">লাল</item>
+<item name="hbnc_yellow">হলুদ</item>
+<item name="hbnc_green">সবুজ</item>
+</string-array>
+
+<string-array name="hbnc_supervisor">
+<item name="hbnc_asha_facilitator">আশা ফ্যাসিলিটেটর</item>
+<item name="hbnc_anm">ANM</item>
+<item name="hbnc_mpw">MPW</item>
+</string-array>
+
+<string-array name="hbnc_place_of_baby_death">
+<item name="hbnc_home">বাড়ি</item>
+<item name="hbnc_sub_center">সাব-সেন্টার</item>
+<item name="hbnc_phc">PHC</item>
+<item name="hbnc_chc">CHC</item>
+<item name="hbnc_other">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_gestational_age">
+<item name="hbnc_weak_1">২৪ – ৩৪ সপ্তাহ</item>
+<item name="hbnc_weak_2">৩৪ – ৩৬ সপ্তাহ</item>
+<item name="hbnc_weak_3">৩৬ – ৩৮ সপ্তাহ</item>
+</string-array>
+
+<string-array name="hbnc_place_of_mother_death">
+<item name="hbnc_home">বাড়ি</item>
+<item name="hbnc_subcenter">সাব-সেন্টার</item>
+<item name="hbnc_phc">PHC</item>
+<item name="hbnc_chc">CHC</item>
+<item name="hbnc_other">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_mother_problems">
+<item name="hbnc_mother_problem_1">অতিরিক্ত রক্তপাত</item>
+<item name="hbnc_mother_problem_2">অচেতন/খিঁচুনি</item>
+</string-array>
+
+<string-array name="hbnc_unusual_with_the_baby">
+<item name="hbnc_unusual_with_baby_1">বাঁকা অঙ্গ</item>
+<item name="hbnc_unusual_with_baby_2">কাটা ঠোঁট</item>
+<item name="hbnc_unusual_with_baby_3">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_place_of_baby_referral">
+<item name="hbnc_place_of_baby_referral_1">সাব-সেন্টার</item>
+<item name="hbnc_place_of_baby_referral_2">PHC</item>
+<item name="hbnc_place_of_baby_referral_3">CHC</item>
+<item name="hbnc_place_of_baby_referral_4">সাব-ডিস্ট্রিক্ট হাসপাতাল</item>
+<item name="hbnc_place_of_baby_referral_5">জেলা হাসপাতাল</item>
+<item name="hbnc_place_of_baby_referral_6">মেডিকেল কলেজ হাসপাতাল</item>
+<item name="hbnc_place_of_baby_referral_7">পরিবহনে</item>
+<item name="hbnc_place_of_baby_referral_8">বেসরকারি হাসপাতাল</item>
+<item name="hbnc_place_of_baby_referral_9">স্বীকৃত বেসরকারি হাসপাতাল</item>
+<item name="hbnc_place_of_baby_referral_10">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_place_of_mother_referral">
+<item name="hbnc_place_of_mother_referral_1">সাব-সেন্টার</item>
+<item name="hbnc_place_of_mother_referral_2">PHC</item>
+<item name="hbnc_place_of_mother_referral_3">CHC</item>
+<item name="hbnc_place_of_mother_referral_4">সাব-ডিস্ট্রিক্ট হাসপাতাল</item>
+<item name="hbnc_place_of_mother_referral_5">জেলা হাসপাতাল</item>
+<item name="hbnc_place_of_mother_referral_6">মেডিকেল কলেজ হাসপাতাল</item>
+<item name="hbnc_place_of_mother_referral_7">পরিবহনে</item>
+<item name="hbnc_place_of_mother_referral_8">বেসরকারি হাসপাতাল</item>
+<item name="hbnc_place_of_mother_referral_9">স্বীকৃত বেসরকারি হাসপাতাল</item>
+<item name="hbnc_place_of_mother_referral_10">অন্যান্য</item>
+</string-array>
+
+<string-array name="hbnc_visit_days">
+<item>১ম দিন</item>
+<item>৩য় দিন</item>
+<item>৭ম দিন</item>
+<item>১৪তম দিন</item>
+<item>২১তম দিন</item>
+<item>২৮তম দিন</item>
+<item>৪২তম দিন</item>
+</string-array>
+
+<string-array name="dc_case_status">
+<item name="dc_suspected">সন্দেহজনক</item>
+<item name="dc_confirmed">নিশ্চিত</item>
+<item name="dc_not_confirmed">নিশ্চিত নয়</item>
+<item name="dc_treatment">চিকিৎসা শুরু হয়েছে</item>
+</string-array>
+
+<string-array name="test_type">
+<item name="rdt">RDT</item>
+<item name="slide">স্লাইড পরীক্ষা</item>
+<item name="both">উভয়</item>
+</string-array>
+
+<string-array name="leprosy_status">
+<item>স্ক্রিনিং</item>
+<item>প্রত্যাখ্যাত</item>
+<item>স্ক্রিন করা হয়নি</item>
+<item>সন্দেহজনক</item>
+<item>নিশ্চিত</item>
+<item>নিশ্চিত নয়</item>
+</string-array>
+
+<string-array name="death_place">
+<item name="home">বাড়ি</item>
+<item name="facility">সুবিধা</item>
+<item name="other">অন্যান্য</item>
+</string-array>
+
+<string-array name="reason_death">
+<item name="fever">জ্বর</item>
+<item name="other_disease">অন্য রোগ</item>
+<item name="other">অন্যান্য</item>
+</string-array>
+
+<string-array name="benificary_case_status">
+<item name="dc_not">স্ক্রিনিং</item>
+<item name="dc_death">মৃত্যু</item>
+</string-array>
+
+<string-array name="benificary_case_status_kalaazar">
+<item name="dc_not_app">প্রযোজ্য নয়</item>
+<item name="dc_recovering">সুস্থ হচ্ছেন</item>
+<item name="dc_cured">সুস্থ</item>
+<item name="dc_death">মৃত্যু</item>
+<item name="dc_symp">লক্ষণের পুনরাবৃত্তি</item>
+</string-array>
+
+<string-array name="irs_rounds">
+<item name="one">১ম রাউন্ড</item>
+<item name="two">২য় রাউন্ড</item>
+<item name="three">৩য় রাউন্ড</item>
+<item name="four">৪র্থ রাউন্ড</item>
+</string-array>
+
+<string-array name="benificary_case_status_leprosy">
+<item name="dc_not_app">প্রযোজ্য নয়</item>
+<item name="dc_recovering">সুস্থ হচ্ছেন</item>
+<item name="dc_cured">সুস্থ</item>
+<item name="dc_death">মৃত্যু</item>
+<item name="dc_symp">লক্ষণের পুনরাবৃত্তি</item>
+<item name="dc_reg">নিয়মিত ওষুধ খাচ্ছেন</item>
+<item name="dc_n_Reg">নিয়মিত ওষুধ খাচ্ছেন না</item>
+<item name="dc_treatment">চিকিৎসা সম্পন্ন</item>
+<item name="dc_other">অন্যান্য</item>
+</string-array>
+
+<string-array name="kala_case_status">
+<item name="dc_recovering">সুস্থ হচ্ছেন</item>
+<item name="dc_cured">সুস্থ</item>
+<item name="dc_dead">মৃত</item>
+<item name="dc_r_symptoms">লক্ষণের পুনরাবৃত্তি</item>
+</string-array>
+
+<string-array name="type_of_leprocy">
+<item name="mb">MB (মাল্টিব্যাসিলারি)</item>
+<item name="pb">PB (পসিব্যাসিলারি)</item>
+</string-array>
+
+<string-array name="leprosy_treatment_status">
+<item>সুস্থ হচ্ছেন</item>
+<item>সুস্থ</item>
+<item>লক্ষণের পুনরাবৃত্তি</item>
+<item>নিয়মিত ওষুধ খাচ্ছেন</item>
+<item>নিয়মিত ওষুধ খাচ্ছেন না</item>
+<item>চিকিৎসা সম্পন্ন</item>
+</string-array>
+
+<string-array name="leprosy_treatment_status_before_time">
+<item>সুস্থ হচ্ছেন</item>
+<item>সুস্থ</item>
+<item>লক্ষণের পুনরাবৃত্তি</item>
+<item>নিয়মিত ওষুধ খাচ্ছেন</item>
+<item>নিয়মিত ওষুধ খাচ্ছেন না</item>
+</string-array>
+
+<string-array name="dc_refer">
+<item>প্রাথমিক স্বাস্থ্য কেন্দ্র</item>
+<item>কমিউনিটি স্বাস্থ্য কেন্দ্র</item>
+<item>জেলা হাসপাতাল</item>
+<item>মেডিকেল কলেজ ও হাসপাতাল</item>
+<item>রেফারেল হাসপাতাল</item>
+<item>অন্য বেসরকারি হাসপাতাল</item>
+<item>অন্যান্য</item>
+</string-array>
+
+<string-array name="dc_refer_malaria">
+<item>প্রাথমিক স্বাস্থ্য কেন্দ্র</item>
+<item>কমিউনিটি স্বাস্থ্য কেন্দ্র</item>
+<item>জেলা হাসপাতাল</item>
+<item>মেডিকেল কলেজ ও হাসপাতাল</item>
+<item>রেফারেল হাসপাতাল</item>
+<item>অন্য বেসরকারি হাসপাতাল</item>
+<item>অন্যান্য</item>
+<item>কোনোটি নয়</item>
+</string-array>
+
+<string-array name="daysPv">
+<item>দিন ১</item>
+<item>দিন ২</item>
+<item>দিন ৩</item>
+<item>দিন ৪</item>
+</string-array>
+
+<string-array name="daysPf">
+<item>দিন ১</item>
+<item>দিন ২</item>
+<item>দিন ৩</item>
+</string-array>
+
+<string-array name="dec_albendazole_array">
+<item>T</item>
+<item>P</item>
+<item>Y</item>
+<item>S</item>
+<item>H</item>
+<item>A</item>
+<item>R</item>
+<item>L</item>
+<item>O</item>
+</string-array>
+
+<string-array name="body_part_male">
+<item>ডান হাত</item>
+<item>বাম হাত</item>
+<item>ডান পা</item>
+<item>বাম পা</item>
+<item>হাইড্রোসিল</item>
+<item>অন্যান্য</item>
+</string-array>
+
+<string-array name="body_part_female">
+<item>ডান হাত</item>
+<item>বাম হাত</item>
+<item>ডান পা</item>
+<item>বাম পা</item>
+<item>ডান স্তন</item>
+<item>বাম স্তন</item>
+<item>অন্যান্য</item>
+</string-array>
+
+<string-array name="follow_up_array">
+<item>১</item>
+<item>২</item>
+<item>৩</item>
+<item>৪</item>
+<item>৫</item>
+<item>৬</item>
+</string-array>
+
+<string-array name="side_effect_of_medicine">
+<item>F (জ্বর)</item>
+<item>H (মাথাব্যথা)</item>
+<item>B (শরীরে ব্যথা)</item>
+<item>V (বমি)</item>
+<item>N (বমিভাব)</item>
+<item>O (অন্যান্য)</item>
+<item>কোনোটি নয়</item>
+</string-array>
+
+<string name="mda_form_campagain_title">লিম্ফ্যাটিক ফাইলেরিয়াসিস (LF) গণ ওষুধ প্রশাসন (MDA) অভিযান</string>
+<string name="screening">স্ক্রিনিং</string>
+<string name="suspected">সন্দেহজনক</string>
+<string name="malaria_confirmed">নিশ্চিত</string>
+<string name="malaria_not_confirmed">নিশ্চিত নয়</string>
+<string name="malaria_treatment_started">চিকিৎসা শুরু হয়েছে</string>
+<string name="gallery">গ্যালারি</string>
+<string name="documents">ডকুমেন্ট</string>
+<string name="upload_files">ফাইল আপলোড করুন</string>
+<string name="choose_upload_source">আপলোড উৎস নির্বাচন করুন</string>
+
+<string name="sync_dashboard">সিঙ্ক ড্যাশবোর্ড</string>
+<string name="sync_dashboard_tab_logs">লগ</string>
+<string name="sync_dashboard_worker_idle">নিষ্ক্রিয়</string>
+<string name="sync_dashboard_worker_complete">সম্পন্ন</string>
+<string name="sync_dashboard_no_logs">এখনো কোনো সিঙ্ক লগ নেই। কার্যকলাপ দেখতে সিঙ্ক চালু করুন।</string>
+<string name="sync_dashboard_no_log_files">রপ্তানি করার জন্য কোনো লগ ফাইল নেই</string>
+<string name="form_name">ফর্মের নাম</string>
+<string name="no_records_found_hh">কোনো গৃহস্থালির রেকর্ড পাওয়া যায়নি। নিচের বোতামে ক্লিক করে গৃহস্থালি নিবন্ধন শুরু করুন।</string>
+<string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">কিছু ভুল হয়েছে!\nসার্ভারের সাথে সংযোগ করা যাচ্ছে না!\nপরে আবার চেষ্টা করুন!</string>
+<string name="try_again">আবার চেষ্টা করুন!</string>
+<string name="no_of_childrens">শিশুর সংখ্যা</string>
+<string name="marriage_date">বিবাহের তারিখ</string>
+<string name="children_details">শিশুদের বিবরণ</string>
+<string name="bank_details">ব্যাংকের বিবরণ</string>
+<string name="choose_pdf_or_doc">PDF বা Doc নির্বাচন করুন</string>
+<string name="camera">ক্যামেরা</string>
+
+<string name="sync_dashboard_tab_status">অবস্থা</string>
+<string name="sync_dashboard_records_synced">%1$d / %2$d রেকর্ড সিঙ্ক হয়েছে</string>
+<string name="sync_dashboard_worker_running">সিঙ্ক চলছে (%1$d / %2$d কর্মী)</string>
+<string name="sync_dashboard_worker_failed">ব্যর্থ: %1$d কর্মী - বিবরণ দেখতে ট্যাপ করুন</string>
+<string name="sync_dashboard_clear_logs">লগ মুছুন</string>
+<string name="sync_dashboard_export_logs">লগ রপ্তানি করুন</string>
+<string name="sub_center_under_you_4">আপনার অধীনে সাব-সেন্টার</string>
+<string name="incentive_verification">ইনসেন্টিভ যাচাইকরণ</string>
+<string name="no_activities_found">কোনো কার্যকলাপ পাওয়া যায়নি</string>
+<string name="supervisor_id">সুপারভাইজার আইডি:</string>
+<string name="activity">কার্যকলাপ</string>
+<string name="amount_rs">পরিমাণ (টাকা)</string>
+<string name="i_have_verified_supporting_documents_on_asha_s_device">আমি আশার ডিভাইসে সহায়ক নথি যাচাই করেছি</string>
+<string name="verify">✓ যাচাই করুন</string>
+<string name="reject">✕ প্রত্যাখ্যান করুন</string>
+<string name="reason_for_rejection">প্রত্যাখ্যানের কারণ</string>
+<string name="confirm_rejection">প্রত্যাখ্যান নিশ্চিত করুন</string>
+<string name="search_asha">আশা খুঁজুন....</string>
+<string name="asha_monthly_detail">আশার মাসিক বিবরণ</string>
+<string name="jan_2026">জানুয়ারি, ২০২৬</string>
+<string name="verified_0">যাচাইকৃত: ০</string>
+<string name="pending_0">মুলতুবি: ০</string>
+<string name="rejected_0">প্রত্যাখ্যাত: ০</string>
+<string name="overdue_0">মেয়াদোত্তীর্ণ: ০</string>
+<string name="total_ashas">মোট আশা</string>
+<string name="select_month">মাস নির্বাচন করুন</string>
+<string name="pending">মুলতুবি</string>
+<string name="overdue">মেয়াদোত্তীর্ণ</string>
+<string name="rejected">প্রত্যাখ্যাত</string>
+<string name="claim">দাবি</string>
+<string name="cataract_surgery">ছানি অপারেশন</string>
+<string name="cataract_surgery_visits">ছানি অপারেশনের পরিদর্শন</string>
+<string name="due_date_label">প্রাপ্যতার তারিখ: %1$s</string>
+<string name="date_of_delivery">প্রসবের তারিখ</string>
+<string name="any_danger_signs">কোনো বিপদ চিহ্ন আছে কি?</string>
+<string name="any_high_risk_identified">কোনো উচ্চ ঝুঁকি চিহ্নিত হয়েছে কি?</string>
+<string name="delivery_discharge_summary_1">প্রসব ছাড়পত্র সারসংক্ষেপ ১</string>
+<string name="delivery_discharge_summary_2">প্রসব ছাড়পত্র সারসংক্ষেপ ২</string>
+<string name="delivery_discharge_summary_3">প্রসব ছাড়পত্র সারসংক্ষেপ ৩</string>
+<string name="delivery_discharge_summary_4">প্রসব ছাড়পত্র সারসংক্ষেপ ৪</string>
+<string name="symptomatic_tb_screening">লক্ষণ-ভিত্তিক TB স্ক্রিনিং</string>
+<string name="check_if_the_person_has_any_of_these_symptoms">ব্যক্তির এই লক্ষণগুলোর কোনোটি আছে কিনা পরীক্ষা করুন:</string>
+<string name="tb_asymptomatic_symptoms">উপসর্গহীন লক্ষণ</string>
+<string name="tb_rise_of_fever">সন্ধ্যায় জ্বর বৃদ্ধি</string>
+<string name="tb_loss_of_appetite">ক্ষুধামন্দা</string>
+<string name="tb_age_more_than_60">৬০ বছরের বেশি বয়স</string>
+<string name="tb_diabetic">ডায়াবেটিক</string>
+<string name="tb_tobacco_user">তামাক ব্যবহারকারী</string>
+<string name="tb_bmi_less_than_18_5">BMI &lt; ১৮.৫</string>
+<string name="tb_contact_with_patient_on_treatment">চিকিৎসাধীন TB রোগীর সংস্পর্শ</string>
+<string name="tb_history_last_5_years">গত ৫ বছরে TB-এর ইতিহাস</string>
+<string name="visit_number_label">পরিদর্শন -%d</string>
+<string name="visit_leprosy">পরিদর্শন</string>
+<string name="no_internet_connection">ইন্টারনেট সংযোগ নেই</string>
+<string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">আপনার নেটওয়ার্ক সেটিংস পরীক্ষা করুন। সংযোগ পুনরুদ্ধার হলে এই ডায়ালগ স্বয়ংক্রিয়ভাবে বন্ধ হয়ে যাবে।</string>
+<string name="add_spouse">স্ত্রী/স্বামী যোগ করুন</string>
+<string name="would_you_like_to_add_spouse">আপনি কি %1$s-এর %2$s যোগ করতে চান?</string>
+<string name="str_wife">স্ত্রী</string>
+<string name="str_husband">স্বামী</string>
+<string name="is_medicine_distributed_yes_no">ওষুধ বিতরণ করা হয়েছে? (হ্যাঁ/না)</string>
+<string name="distribution_date">বিতরণের তারিখ</string>
+
+<string name="filter_sort_by">ক্রমানুসারে সাজান</string>
+<string name="filter_newest_first">নতুন প্রথমে</string>
+<string name="filter_oldest_first">পুরনো প্রথমে</string>
+<string name="filter_age_wise">বয়স অনুযায়ী</string>
+<string name="filter_syncing_first">সিঙ্কিং ডেটা প্রথমে</string>
+<string name="filter_unsynced_first">সিঙ্ক না হওয়া প্রথমে</string>
+<string name="btn_cancel">বাতিল</string>
+<string name="value_cannot_be_empty">মান খালি রাখা যাবে না</string>
+<string name="enter_a_valid_number">একটি বৈধ সংখ্যা লিখুন</string>
+<string name="allowed_range">অনুমোদিত পরিসীমা: %1$d থেকে %2$d</string>
+<string name="minimum_allowed_value">সর্বনিম্ন অনুমোদিত মান: %1$d</string>
+<string name="_ok">ঠিক আছে</string>
+<string name="do_you_want_to_upload_delivery_discharge_summary">আপনি কি আপনার ইনসেন্টিভ দাবি করতে "প্রসব ছাড়পত্র সারসংক্ষেপ" ফটোকপি আপলোড করতে চান?</string>
+<string name="pnc_form">PNC ফর্ম</string>
+<string name="bp_invalid_format">অবৈধ ফরম্যাট। ১২৩/৫৬ এর মতো হওয়া উচিত</string>
+<string name="bp_systole_less_than">সিস্টোল %d-এর কম হওয়া উচিত নয়</string>
+<string name="bp_systole_greater_than">সিস্টোল %d-এর বেশি হওয়া উচিত নয়</string>
+<string name="bp_diastole_less_than">ডায়াস্টোল %d-এর কম হওয়া উচিত নয়</string>
+<string name="bp_diastole_greater_than">ডায়াস্টোল %d-এর বেশি হওয়া উচিত নয়</string>
+<string name="bp_diastole_greater_than_systole">ডায়াস্টোল সিস্টোলের চেয়ে বেশি হতে পারবে না</string>
+<string name="weight_enter_in_grams">গ্রামে ওজন লিখুন</string>
+<string name="weight_cannot_be_zero">ওজন ০ হতে পারবে না</string>
+<string name="weight_enter_in_grams_example">গ্রামে ওজন লিখুন (যেমন ২৫০০)</string>
+<string name="weight_min_500">ওজন কমপক্ষে ৫০০ গ্রাম হতে হবে</string>
+<string name="weight_max_7000">ওজন ৭০০০ গ্রামের বেশি হওয়া উচিত নয়</string>
+
+<string name="dynamic_form_select">%s নির্বাচন করুন</string>
+<string name="error_invalid_visit_date">অবৈধ পরিদর্শনের তারিখ</string>
+<string name="error_visit_date_after_today">পরিদর্শনের তারিখ আজকের তারিখের পরে হতে পারবে না</string>
+<string name="error_visit_date_after_previous">পরিদর্শনের তারিখ পূর্ববর্তী পরিদর্শনের পরে হতে হবে (%s)</string>
+<string name="alternate_mobile_no">বিকল্প মোবাইল নম্বর</string>
+<string name="father_or_spouse">পিতা বা স্ত্রী/স্বামী</string>
+<string name="date_of_joining">যোগদানের তারিখ</string>
+<string name="population_covered_under_asha">আশার অধীনে জনসংখ্যা</string>
+<string name="asha_supervisor_name">আশা সুপারভাইজারের নাম</string>
+<string name="asha_supervisor_contact_no">আশা সুপারভাইজারের যোগাযোগ নম্বর</string>
+<string name="cho_name">CHO-এর নাম</string>
+<string name="mobile_no_of_cho">CHO-এর মোবাইল নম্বর</string>
+<string name="name_of_aww">AWW-এর নাম</string>
+<string name="mobile_no_aww">AWW-এর মোবাইল নম্বর</string>
+<string name="name_of_anm1">ANM1-এর নাম</string>
+<string name="mobile_number_of_anm1">ANM1-এর মোবাইল নম্বর</string>
+<string name="name_of_anm2">ANM2-এর নাম</string>
+<string name="mobile_number_of_anm2">ANM2-এর মোবাইল নম্বর</string>
+<string name="str_delete_household">গৃহস্থালি মুছুন</string>
+<string name="str_delete_beneficiary">সুবিধাভোগী মুছুন</string>
+<string name="str_dose_one">ডোজ-১</string>
+<string name="str_dose">ডোজ</string>
+<string name="str_no_more_dose">আর কোনো ডোজ নেই</string>
+<string name="str_delete_household_msg">আপনি কি নিশ্চিতভাবে মুছতে চান?</string>
+<string name="str_hof_cant_delete">অন্য সদস্য থাকলে পরিবারের প্রধানকে মুছা যাবে না।</string>
+<string name="str_pls_allow_permissions">অনুগ্রহ করে প্রথমে অনুমতি দিন</string>
+ <string name="str_delivery_outcome_err_msg">প্রসবের ফলাফল অবশ্যই জীবিত এবং মৃত সন্তানের সমষ্টির সমান হতে হবে</string>
+
+    </resources>

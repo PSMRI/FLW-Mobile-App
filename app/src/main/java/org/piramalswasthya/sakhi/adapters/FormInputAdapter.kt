@@ -76,6 +76,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
@@ -375,6 +376,7 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
+                item.errorText = null
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
@@ -780,7 +782,7 @@ class FormInputAdapter(
                     binding.invalidateAll()
 
                 }, hour, minute, false)
-                mTimePicker.setTitle("Select Time")
+                mTimePicker.setTitle(binding.root.context.getString(R.string.select_time))
                 mTimePicker.show()
             }
             binding.executePendingBindings()
@@ -1045,7 +1047,10 @@ class FormInputAdapter(
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 
-            binding.etNumberInput.setText(minValue.toString())
+            if (item.value.isNullOrEmpty()) {
+                item.value = minValue.toString()
+            }
+            binding.etNumberInput.setText(item.value)
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             var currentValue = item.value?.toIntOrNull() ?: minValue
 
@@ -1255,7 +1260,9 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty() && item.value != "default") View.VISIBLE else View.GONE
+
+            Log.e("ItemValue",item.value.toString())
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE
@@ -1345,20 +1352,22 @@ class FormInputAdapter(
     fun validateInput(resources: Resources): Int {
         var retVal = -1
         if (!isEnabled) return retVal
-        currentList.forEachIndexed { index, it ->
-            Timber.d("Error text for ${it.title} ${it.errorText}")
-            if (it.inputType != TEXT_VIEW && it.errorText != null) {
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            Timber.d("Error text for ${item.title} ${item.errorText}")
+            if (item.inputType != TEXT_VIEW && item.errorText != null) {
                 retVal = index
                 return@forEachIndexed
             }
         }
         Timber.d("Validation : $retVal")
         if (retVal != -1) return retVal
-        currentList.forEachIndexed { index, it ->
-            if (it.inputType != TEXT_VIEW && it.required) {
-                if (it.value.isNullOrBlank()) {
-                    Timber.d("validateInput called for item $it, with index ${index}")
-                    it.errorText = resources.getString(R.string.form_input_empty_error)
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            if (item.inputType != TEXT_VIEW && item.required) {
+                if (item.value.isNullOrBlank()) {
+                    Timber.d("validateInput called for item $item, with index ${index}")
+                    item.errorText = resources.getString(R.string.form_input_empty_error)
                     notifyItemChanged(index)
                     if (retVal == -1) retVal = index
                 }

@@ -24,6 +24,8 @@ import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 
 @AndroidEntryPoint
 class MaaMeetingFormFragment : Fragment() {
@@ -127,19 +129,19 @@ class MaaMeetingFormFragment : Fragment() {
         if (participants?.value.isNullOrEmpty()) { participants?.errorText = getString(R.string.form_input_empty_error); valid = false }
 
         // Image uploads (IDs 10..14)
-        val uploads = list.filter { it.id in 10..14 }
-
-        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
-            if (uploadCount < 2) {
-                uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
-                valid = false
-            } else {
-                uploads.forEach { it.errorText = null }
-            }
-        } else {
-            uploads.forEach { it.errorText = null }
-        }
+//        val uploads = list.filter { it.id in 10..14 }
+//
+//        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+//            val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+//            if (uploadCount < 2) {
+//                uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
+//                valid = false
+//            } else {
+//                uploads.forEach { it.errorText = null }
+//            }
+//        } else {
+//            uploads.forEach { it.errorText = null }
+//        }
 
 
         if (!valid) {
@@ -147,7 +149,7 @@ class MaaMeetingFormFragment : Fragment() {
 
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.alert))
-                .setMessage("Please fill all mandatory fields before submitting.")
+                .setMessage(getString(R.string.alert_message_fill_required_fields))
                 .setPositiveButton(R.string.ok, null)
                 .show()
         }
@@ -189,6 +191,13 @@ class MaaMeetingFormFragment : Fragment() {
                     return
                 }
                 viewModel.setUploadUriFor(lastFileFormId, uri)
+                if (mime.contains("/pdf")) {
+                    showFileLoadedMessage(requireContext())
+
+                } else {
+                    showImageLoadedMessage(requireContext())
+
+                }
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
         }

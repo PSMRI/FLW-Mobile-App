@@ -130,5 +130,7 @@
     <string name="maa_meeting_list">Maa Meeting Forms List</string>
     <string name="saas_bahu_list">Saas Bahu Sammelan</string>
     <string name="saas_bahu_reg">Saas Bahu Sammelan Registration</string>
+    <string name="image_uploaded">Image Uploaded Successfully</string>
+    <string name="file_uploaded">File Uploaded Successfully</string>
 
 </resources>

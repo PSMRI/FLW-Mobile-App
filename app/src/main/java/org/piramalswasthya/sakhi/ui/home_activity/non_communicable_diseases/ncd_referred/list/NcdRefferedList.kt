@@ -66,13 +66,15 @@ class NcdRefferedList : Fragment() {
 
         val benAdapter =
             NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId->
-                findNavController().navigate(
-                    NcdRefferedListDirections
-                        .actionNcdRefferedListToNCDReferalFormFragment(
-                            benId = benId,
-                            hhId = hhId
-                        )
-                )
+                if (findNavController().currentDestination?.id == R.id.ncdRefferedList) {
+                    findNavController().navigate(
+                        NcdRefferedListDirections
+                            .actionNcdRefferedListToNCDReferalFormFragment(
+                                benId = benId,
+                                hhId = hhId
+                            )
+                    )
+                }
             },true)
         binding.rvAny.adapter = benAdapter
 
@@ -139,12 +141,12 @@ class NcdRefferedList : Fragment() {
             if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             } else {
                 (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ncd_priority,
-                    getString(R.string.ncd_refer_list)
+                    getString(R.string.hwc_refer_list)
                 )
             }
         }

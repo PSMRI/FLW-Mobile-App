@@ -135,15 +135,15 @@ class MalariaSuspectedListFragment : Fragment() {
             binding.switchButton.visibility = View.VISIBLE
             binding.switchBtnMosquito.visibility = View.VISIBLE
         } else if(viewModel.isFromDisease == 1) {
-            binding.switchButton.visibility = View.GONE
-            binding.switchBtnMosquito.visibility = View.GONE
+            binding.switchButton.visibility = View.VISIBLE
+            binding.switchBtnMosquito.visibility = View.VISIBLE
         } else {
             binding.switchButton.visibility = View.GONE
             binding.switchBtnMosquito.visibility = View.GONE
         }
 
         binding.apply {
-            switchButton.text = if (switchButton.isChecked) "IRS ON" else "IRS OFF"
+            switchButton.text = if (switchButton.isChecked) getString(R.string.irs_on) else getString(R.string.irs_off)
             switchButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     if (switchBtnMosquito.isChecked) {
@@ -151,7 +151,7 @@ class MalariaSuspectedListFragment : Fragment() {
                     }
                 }
 
-                switchButton.text = if (isChecked) "IRS ON" else "IRS OFF"
+                switchButton.text = if (isChecked) getString(R.string.irs_on) else getString(R.string.irs_off)
                 llContent.visibility = if (isChecked) View.VISIBLE else View.GONE
             }
 
@@ -179,11 +179,13 @@ class MalariaSuspectedListFragment : Fragment() {
 
         val benAdapter = MalariaMemberListAdapter(
             clickListener = MalariaMemberListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    MalariaSuspectedListFragmentDirections.actionMalariaSuspectedListFragmentToMalariaFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.malariaSuspectedListFragment) {
+                    findNavController().navigate(
+                        MalariaSuspectedListFragmentDirections.actionMalariaSuspectedListFragmentToMalariaFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter

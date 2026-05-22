@@ -90,14 +90,16 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
         }
 
-        fun dateFormate(dateStr: String): String? {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-
-            val dateResponse = inputFormat.parse(dateStr)
-            return outputFormat.format(dateResponse!!)
-
-
+        fun dateFormate(dateStr: String?): String? {
+            if (dateStr.isNullOrBlank() || dateStr == "null") return null
+            return try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+                val dateResponse = inputFormat.parse(dateStr) ?: return null
+                outputFormat.format(dateResponse)
+            } catch (e: java.text.ParseException) {
+                null
+            }
         }
 
         fun dateReverseFormat(dateStr: String): String? {
@@ -605,6 +607,44 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateEditTextWithTextNonNumericHindiEnabled(formElement: FormElement): Int {
+        val value = formElement.value.orEmpty().trim()
+
+        // Function to check if a character is Hindi or Assamese
+        fun Char.isHindiOrAssamese(): Boolean {
+            return this in '\u0900'..'\u097F' || this in '\u0980'..'\u09FF'
+        }
+
+        // Function to check if a string contains only uppercase English letters or spaces
+        fun String.isAllUppercaseOrSpace(): Boolean {
+            return this.all { it.isUpperCase() || it.isWhitespace() || it.isHindiOrAssamese() }
+        }
+
+        when {
+            value.isEmpty() -> {
+                if (formElement.required) {
+                    formElement.errorText = resources.getString(R.string.form_input_empty_error)
+                } else {
+                    formElement.errorText = null
+                }
+                return -1
+            }
+            !value.isAllUppercaseOrSpace() -> {
+                formElement.errorText = resources.getString(R.string.form_input_alphabet_space_only_error)
+                return -1
+            }
+        }
+
+        // Convert only English letters to uppercase, keep Hindi/Assamese as is
+        val transformedValue = value.map {
+            if (it.isLowerCase() && !it.isHindiOrAssamese()) it.uppercaseChar() else it
+        }.joinToString("")
+
+        formElement.value = transformedValue
+
+        return -1
+    }
+
     protected fun validateAllCapsOrSpaceOnEditTextWithHindiEnabled(formElement: FormElement): Int {
         val value = formElement.value.orEmpty().trim()
 
@@ -774,6 +814,42 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
         return -1
     }
 
+    protected fun validateBirthCertificateNumber(formElement: FormElement): Int {
+        val value = formElement.value?.trim() ?: ""
+
+        formElement.errorText = null
+
+        if (value.isEmpty()) {
+            return 0
+        }
+
+        if (!value.matches(Regex("^[A-Za-z0-9]+$"))) {
+            formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+            return -1
+        }
+
+        if (value.length !in 6..20) {
+            formElement.errorText = resources.getString(R.string.error_birth_cert_length)
+            return -1
+        }
+
+        if (value.all { it == value[0] }) {
+            formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+            return -1
+        }
+
+        val digitOnly = value.all { it.isDigit() }
+        if (digitOnly) {
+            val freq = value.groupingBy { it }.eachCount()
+            if (freq.any { it.value > value.length / 2 }) {
+                formElement.errorText = resources.getString(R.string.error_invalid_birth_cert)
+                return -1
+            }
+        }
+
+        formElement.errorText = null
+        return 0
+    }
     protected fun validateAllDigitOnEditText(formElement: FormElement): Int {
         formElement.value?.takeIf { it.isNotEmpty() }?.all { it.isDigit() }?.let {
             if (it) formElement.errorText = null

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="place_hwc">এইচডব্লিউসি</string>
+    <string name="place_school">স্কুল</string>
+    <string name="place_anganwadi">আঙ্গনওয়াড়ি কেন্দ্র</string>
+    <string name="place_community">কমিউনিটি সেন্টার</string>
+    <string name="u_win_session_date">ইউ-উইন সেশন তারিখ</string>
+    <string name="place_village">স্থান</string>
+    <string name="place_label">স্থান: %1$s</string>
+    <string name="participant_label">অংশগ্রহণকারী: %1$s</string>
+    <string name="no_of_participants_attended">উপস্থিত অংশগ্রহণকারীর সংখ্যা</string>
+    <string name="total_no_of_participants_attended">মোট অংশগ্রহণকারীর সংখ্যা</string>
+
+    <string name="maa_meeting_date">এমএএ সভার তারিখ</string>
+    <string name="meeting_photos_mom">সভা ছবি / MoM (%1$d)</string>
+
+
+</resources>

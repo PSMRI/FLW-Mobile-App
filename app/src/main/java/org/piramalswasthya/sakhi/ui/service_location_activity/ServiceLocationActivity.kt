@@ -48,10 +48,11 @@ class ServiceLocationActivity : AppCompatActivity() {
             }
         }
     }
+
     private val incompleteLocationAlert by lazy {
         MaterialAlertDialogBuilder(this)
             .setTitle("Missing Detail")
-            .setMessage("At least one of the following is missing value:\n \n\tState\n\tDistrict\n\tBlock\n\tVillage")
+            .setMessage("Please select Village")
             .setPositiveButton("Understood") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -122,7 +123,7 @@ class ServiceLocationActivity : AppCompatActivity() {
                     ServiceTypeViewModel.State.LOADING -> {}//TODO()
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
-                        binding.actvStateDropdown.apply {
+                      /*  binding.actvStateDropdown.apply {
                             isEnabled = false
                             setText(viewModel.stateList.first())
                         }
@@ -133,8 +134,9 @@ class ServiceLocationActivity : AppCompatActivity() {
                         binding.actvBlockDropdown.apply {
                             isEnabled = false
                             setText(viewModel.blockList.first())
-                        }
+                        }*/
                         binding.actvVillageDropdown.apply {
+                            contentDescription = "Village Dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())
@@ -151,9 +153,9 @@ class ServiceLocationActivity : AppCompatActivity() {
     }
 
     private fun dataValid(): Boolean {
-        return !(binding.actvStateDropdown.text.isNullOrBlank() ||
-                binding.actvDistrictDropdown.text.isNullOrBlank() ||
-                binding.actvBlockDropdown.text.isNullOrBlank() ||
+        return !(binding.tvState.text.isNullOrBlank() ||
+                binding.tvDistrict.text.isNullOrBlank() ||
+                binding.tvBlock.text.isNullOrBlank() ||
                 binding.actvVillageDropdown.text.isNullOrBlank())
 
     }

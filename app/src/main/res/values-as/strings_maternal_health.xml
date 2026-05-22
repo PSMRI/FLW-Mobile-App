@@ -8,24 +8,24 @@
         <item>Incomplete</item>
     </string-array>
     <string-array name="place_of_anc_array">
-        <item>Sub-Centre</item>
-        <item>VHND/VHSND</item>
-        <item>PHC</item>
-        <item>PMSMA Visit</item>
-        <item>CHC</item>
-        <item>District Hospital</item>
-        <item>Medical College Hospital</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>VHND/VHSND (গ্ৰাম স্বাস্থ্য আৰু পুষ্টি দিৱস)</item>
+        <item>PHC (প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>PMSMA ভিজিট</item>
+        <item>CHC (সমষ্টিগত স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
     </string-array>
     <string-array name="abortion_place_array">
-        <item>Home</item>
-        <item>Subcenter</item>
-        <item>PHC</item>
-        <item>CHC</item>
-        <item>District Hospital</item>
-        <item>Medical College Hospital</item>
-        <item>Private Hospital</item>
-        <item>In Transit</item>
-        <item>Other Place of Abortion</item>
+        <item>ঘৰ</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>PHC (প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>CHC (সমষ্টিগত স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>যাত্ৰাপথত</item>
+        <item>গৰ্ভপাতৰ অন্য স্থান</item>
     </string-array>
 
     <string-array name="anc_abortion_facility_array">
@@ -69,7 +69,7 @@
         <item>উচ্চ জ্বৰ</item>
         <item>গৰ্ভপাত</item>
         <item>দুৰ্ঘটনা</item>
-        <item>অন্য</item>
+        <item>অন্যান্য মাতৃৰ মৃত্যু</item>
     </string-array>
     <string-array name="anc_confirmation_array">
         <item>হয়</item>
@@ -86,15 +86,25 @@
     </string-array>
 
     <string-array name="select_high_risk_condition">
-        <item>HIGH BP (SYSTOLIC >=140 AND OR DIASTOLIC >=90 mmHg)</item>
-        <item>CONVULSIONS</item>
-        <item>VAGINAL BLEEDING</item>
-        <item>FOUL SMELLING DISCHARGE</item>
-        <item>SEVERE ANAEMIA (HB &lt;7 gm/dl)</item>
-        <item>DIABETES</item>
-        <item>TWINS</item>
-        <item>OTHER</item>
+        <item>উচ্চ ৰক্তচাপ (সিষ্ট’লিক ≥140 আৰু/বা ডায়াষ্ট’লিক ≥90 mmHg)</item>
+        <item>খিঁচুনি</item>
+        <item>যোনিৰ পৰা ৰক্তস্ৰাৱ</item>
+        <item>দুৰ্গন্ধযুক্ত স্ৰাৱ</item>
+        <item>গম্ভীৰ ৰক্তাল্পতা (HB &lt;7 gm/dl)</item>
+        <item>ডায়াবেটিছ</item>
+        <item>যমজ সন্তান</item>
+        <item>অন্যান্য</item>
     </string-array>
+
+    <string name="anc_form_submitted">ফৰ্ম সফলভাৱে জমা দিয়া হৈছে</string>
+    <string name="something_went_wrong_try_again">কিবা ভুল হৈছে। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
+    <string name="continue_anc_visit">ANC পৰিদৰ্শন অব্যাহত ৰাখক</string>
+    <string name="continue_anc_visit_message">আপুনি ANC পৰিদৰ্শন অব্যাহত ৰাখিব বিচাৰে নেকি?</string>
+    <string name="next_anc_visit_due">পৰৱৰ্তী ANC পৰিদৰ্শন বাকী আছে</string>
+    <string name="visit_date_required">পৰিদৰ্শনৰ তাৰিখ আৱশ্যক</string>
+    <string name="invalid_visit_date_format">অবৈধ পৰিদৰ্শনৰ তাৰিখৰ ফৰ্মেট</string>
+    <string name="fill_required_fields">অনুগ্ৰহ কৰি সকলো আৱশ্যক ক্ষেত্ৰ সঠিকভাৱে পূৰণ কৰক</string>
+    <string name="danger_signs_identified">বিপদৰ লক্ষণ চিনাক্ত কৰা হৈছে!</string>
 
     <!--  PMSMA  -->
     <string name="anc_visit_number">ANC %1d ভ্ৰমণ কৰক</string>
@@ -103,6 +113,7 @@
     <string name="tracking_form_filled_successfully">ট্ৰেকিং ফৰ্ম সফলতাৰে পূৰণ কৰা হৈছে</string>
     <string name="pmsma_form">পিএমএছএমএ প্ৰ-পত্ৰ</string>
     <string name="general_op">জেনেৰেল অ’ পি</string>
+    <string name="high_risk_pregnancy">উচ্চ বিপদজনক গৰ্ভাৱস্থা</string>
     <string name="saving_pmsma_to_database_failed">pmsma ক ডাটাবেছত সংৰক্ষণ কৰা ব্যৰ্থ!</string>
     <string name="hrp_case_please_visit_the_nearest_hwc_or_call_104">এইচ আৰ পি কেছ, অনুগ্ৰহ কৰি ওচৰৰ এইচ ডব্লিউ চিলৈ যাওক বা ১০৪ নম্বৰত ফোন কৰক</string>
     <string name="pmsma_mcts_rch_number">MCTS নম্বৰ / RCH নম্বৰ</string>
@@ -233,9 +244,9 @@
     <string name="pnc_mother_danger_sign">মাতাৰ বিপজ্য চিহ্ন</string>
     <string name="pnc_other_danger_sign">অন্য বিপজ্য চিহ্ন</string>
     <string name="pnc_referral_facility">ৰেফাৰেল সুবিধা</string>
-    <string name="pnc_mother_death">মাতাৰ মৰণ</string>
+    <string name="pnc_mother_death">মাতৃ জীৱিত আছে নে?</string>
     <string name="pnc_death_date">মৰণৰ তাৰিখ</string>
-    <string name="pnc_death_cause">মাতাৰ মৰণৰ সম্ভাব্য কাৰণ</string>
+    <string name="pnc_death_cause">মৃত্যুৰ কাৰণ</string>
     <string name="pnc_other_death_cause">অন্য মৰণৰ কাৰণ</string>
     <string name="pnc_death_place">মৰণৰ স্থান</string>
     <string name="pnc_remarks">মন্তব্য</string>
@@ -299,13 +310,16 @@
         <item>উচ্চ জ্বৰ</item>
         <item>চেপ্চিছ</item>
         <item>দুৰ্ঘটনা</item>
-        <item>অন্যান্য</item>
+        <item>অন্যান্য মাতৃৰ মৃত্যু</item>
     </string-array>
     <string-array name="pnc_death_place_array">
         <item>ঘৰ</item>
         <item>ৰোগ চিকিৎসা চেণ্টাৰ</item>
         <item>প্ৰবাহিত ক্ষণ</item>
     </string-array>
+
+    <string name="is_pw_currently_alive">গৰ্ভৱতী মহিলাগৰাকী জীয়াই আছেনে?</string>
+
 
     <!--  Infant Registration  -->
     <string name="ir_baby_name">শিশুৰ নাম</string>
@@ -351,6 +365,10 @@
         <item>নিউৰেল টিউব ডিফেক্ট (স্পাইনেল বিফাইদা)</item>
         <item>অন্য দোষ</item>
     </string-array>
+    <string-array name="anc_alive_array">
+        <item>হয়</item>
+        <item>নহয়</item>
+    </string-array>
 
     <string name="pmsma_edd">প্ৰত্যাশিত প্ৰসৱ</string>
     <string name="string_edd">প্ৰত্যাশিত প্ৰসৱৰ তাৰিখ</string>
@@ -360,6 +378,8 @@
     <string name="str_abortion_if_any">আগতে গৰ্ভপাত হৈছিল নে?</string>
     <string name="str_abortion_type">গৰ্ভপাতৰ প্ৰকাৰ</string>
     <string name="str_facility">কেন্দ্ৰ</string>
+    <string name="str_facility_id">Facility ID</string>
+
     <string name="str_abortion_date">গৰ্ভপাতৰ তাৰিখ</string>
     <string name="str_weight_pw">নিবন্ধনৰ সময়ত গৰ্ভৱতী মহিলাৰ ওজন (কিলোগ্ৰামত)</string>
     <string name="str_bp_of_pw">গৰ্ভৱতী মহিলাৰ ৰক্তচাপ – সিস্ট’লিক/ডায়াষ্ট’লিক (মি.মি. এইচ.জি.)</string>
@@ -387,5 +407,6 @@
     <string name="sr_no">শ্ৰি. নং :</string>
     <string name="date_no">তাৰিখ : </string>
     <string name="round_no">ৰাউণ্ড :</string>
+    <string name="str_suspected_high_risk_pregnancy">সন্দেহযুক্ত উচ্চ বিপদজনক গৰ্ভাৱস্থা</string>
 
 </resources>

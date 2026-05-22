@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.immunization_due
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
+import org.piramalswasthya.sakhi.model.ImmunizationCategory
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.mother_immunization.list.MotherImmunizationListViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -24,8 +26,12 @@ class MotherImmunizationListViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        coEvery { vaccineDao.getVaccinesForCategory(ImmunizationCategory.MOTHER) } returns emptyList()
         every { vaccineDao.getBenWithImmunizationRecords() } returns flowOf(emptyList())
         viewModel = MotherImmunizationListViewModel(vaccineDao)
+        testDispatcher.scheduler.runCurrent()
+        Thread.sleep(100)
+        testDispatcher.scheduler.runCurrent()
     }
 
     // =====================================================

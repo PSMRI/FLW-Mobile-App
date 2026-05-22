@@ -38,7 +38,7 @@ class VHNCDataset(
 
 
     private val vhncDate = FormElement(
-        id = 2,
+        id = 17,
         inputType = DATE_PICKER,
         title = resources.getString(R.string.vhsnc_meeting_date),
         arrayId = -1,
@@ -49,7 +49,7 @@ class VHNCDataset(
     private val place = FormElement(
         id = 3,
         inputType = InputType.DROPDOWN,
-        title = context.getString(R.string.place_of_vhsnc_meeting),
+        title = resources.getString(R.string.place_of_vhsnc_meeting),
         entries = resources.getStringArray(R.array.place_of_vhsnc),
         arrayId = R.array.place_of_vhsnc,
         required = true,

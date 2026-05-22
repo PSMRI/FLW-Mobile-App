@@ -43,7 +43,13 @@
     <string name="nbr_mobile_number_of">োবাইল নম্বৰৰ অন্তৰ্গত</string>
     <string name="nrb_contact_number">যোগাযোগ নম্বৰ</string>
     <string name="nbr_nb_age_unit">বয়স একক</string>
+    <string name="baby_of">%2$s ৰ %1$s সন্তান</string>
 
+    <string name="first_baby">প্ৰথম</string>
+    <string name="second_baby">দ্বিতীয়</string>
+    <string name="third_baby">তৃতীয়</string>
+
+    <string name="nth_baby">%1$sতম</string>
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">দিন</item>
         <item name="nbr_age_unit_2">মাহ</item>
@@ -57,17 +63,17 @@
     </string-array>
 
     <string-array name="place_of_birth">
-        <item>Home</item>
-        <item>Sub-Centre</item>
-        <item>PHC</item>
-        <item>CHC</item>
-        <item>Sub-District Hospital</item>
-        <item>District Hospital</item>
-        <item>Medical College Hospital</item>
-        <item>In Transit</item>
-        <item>Private Hospital</item>
-        <item>Accredited Private Hospital</item>
-        <item>Other</item>
+        <item>ঘৰ</item>
+        <item>উপকেন্দ্ৰ</item>
+        <item>PHC (প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>CHC (সমষ্টিগত স্বাস্থ্য কেন্দ্ৰ)</item>
+        <item>উপ-জিলা চিকিৎসালয়</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>যাত্ৰাপথত</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>প্ৰমাণিত ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্যান্য</item>
     </string-array>
 
     <string-array name="facility_place">
@@ -168,5 +174,6 @@
     <string name="str_other_public_facility">অন্য চৰকাৰী স্বাস্থ্য কেন্দ্ৰ</string>
     <string name="str_accredited_private_hospital">স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</string>
     <string name="str_other_private_hospital">অন্য ব্যক্তিগত চিকিৎসালয়</string>
+    <string name="cr_birth_cert_uploads">জন্ম প্ৰমাণপত্ৰ আপলোডসমূহ</string>
 
 </resources>

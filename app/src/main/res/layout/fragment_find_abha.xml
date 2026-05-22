@@ -114,6 +114,7 @@
                 android:hint="@string/select_abha"
                 android:paddingTop="@dimen/padding_normal"
                 android:paddingBottom="@dimen/padding_normal"
+                android:importantForAccessibility="yes"
                 app:layout_constraintEnd_toEndOf="@+id/til_mobile_number"
                 app:layout_constraintStart_toStartOf="@+id/til_mobile_number"
                 app:layout_constraintTop_toBottomOf="@id/btn_search_abha">
@@ -124,6 +125,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:enabled="false"
+                    android:contentDescription="select abha"
+                    android:importantForAccessibility="yes"
                     android:gravity="center_vertical"
                     android:inputType="none" />
 
