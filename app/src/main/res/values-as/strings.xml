@@ -524,7 +524,9 @@
         <item>নিশ্চিত</item>
         <item>নিশ্চিত নহয়</item>
         <item>চিকিৎসা আৰম্ভ হৈছে</item>
+        <item>সন্দেহজনক নহয়</item>
     </string-array>
+    <string name="malaria_not_suspected">সন্দেহজনক নহয়</string>
 
     <string-array name="test_type">
         <item>RDT পৰীক্ষা</item>

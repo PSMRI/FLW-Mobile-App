@@ -1147,7 +1147,9 @@
 <item name="dc_confirmed">নিশ্চিত</item>
 <item name="dc_not_confirmed">নিশ্চিত নয়</item>
 <item name="dc_treatment">চিকিৎসা শুরু হয়েছে</item>
+    <item name="not_suspected">সন্দেহজনক নয়</item>
 </string-array>
+    <string name="malaria_not_suspected">সন্দেহজনক নয়</string>
 
 <string-array name="test_type">
 <item name="rdt">RDT</item>
