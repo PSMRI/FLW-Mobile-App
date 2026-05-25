@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.widget.Toast
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
@@ -94,72 +95,79 @@ class UserRepo @Inject constructor(
     }
 
      suspend fun setFacilityData(userId: Int) {
-        val response = amritApiService.getUserDetailsById(userId = userId)
-        val userData = response.data
-        val facilityData = userData.facilityData
-        facilityData?.location?.let { location ->
+         try {
+             val response = amritApiService.getUserDetailsById(userId = userId)
+             val userData = response.data
+             val facilityData = userData.facilityData
+             facilityData?.location?.let { location ->
 
-            preferenceDao.saveLocationType(location.locationType ?: "")
-            preferenceDao.saveBlock(location.blockOrUlb ?: "")
-            preferenceDao.saveState(location.state ?: "")
-            preferenceDao.saveDistrict(location.district ?: "")
+                 preferenceDao.saveLocationType(location.locationType ?: "")
+                 preferenceDao.saveBlock(location.blockOrUlb ?: "")
+                 preferenceDao.saveState(location.state ?: "")
+                 preferenceDao.saveDistrict(location.district ?: "")
 
-            preferenceDao.saveSupervisorDistrict(location.district ?: "")
-            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
-            preferenceDao.saveSupervisorState(location.state ?: "")
-        }
+                 preferenceDao.saveSupervisorDistrict(location.district ?: "")
+                 preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+                 preferenceDao.saveSupervisorState(location.state ?: "")
+             }
 
-        // ---------- FACILITY ----------
-        facilityData?.facility?.let { facility ->
+             // ---------- FACILITY ----------
+             facilityData?.facility?.let { facility ->
 
-            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
-            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
-            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
-        }
+                 preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+                 preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+                 preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+             }
 
-        // ---------- SUPERVISOR ----------
-        facilityData?.supervisor?.let { supervisor ->
+             // ---------- SUPERVISOR ----------
+             facilityData?.supervisor?.let { supervisor ->
 
-            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
-            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
-            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
-        }
+                 preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+                 preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+                 preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+             }
 
-         val choList = mutableListOf<PeerAtFacility>()
-         val anmList = mutableListOf<PeerAtFacility>()
+             val choList = mutableListOf<PeerAtFacility>()
+             val anmList = mutableListOf<PeerAtFacility>()
 
-         facilityData?.peersAtFacility?.forEach { peer ->
+             facilityData?.peersAtFacility?.forEach { peer ->
 
-             when (peer.role?.trim()?.uppercase()) {
+                 when (peer.role?.trim()?.uppercase()) {
 
-                 "CHO" -> {
-                     choList.add(peer)
-                 }
+                     "CHO" -> {
+                         choList.add(peer)
+                     }
 
-                 "ANM" -> {
-                     anmList.add(peer)
+                     "ANM" -> {
+                         anmList.add(peer)
+                     }
                  }
              }
+
+             val moshi = Moshi.Builder().build()
+
+             val choAdapter = moshi.adapter<List<PeerAtFacility>>(
+                 Types.newParameterizedType(
+                     List::class.java,
+                     PeerAtFacility::class.java
+                 )
+             )
+
+             val anmAdapter = moshi.adapter<List<PeerAtFacility>>(
+                 Types.newParameterizedType(
+                     List::class.java,
+                     PeerAtFacility::class.java
+                 )
+             )
+
+             preferenceDao.saveChoList(choAdapter.toJson(choList))
+             preferenceDao.saveAnmList(anmAdapter.toJson(anmList))
          }
-
-         val moshi = Moshi.Builder().build()
-
-         val choAdapter = moshi.adapter<List<PeerAtFacility>>(
-             Types.newParameterizedType(
-                 List::class.java,
-                 PeerAtFacility::class.java
-             )
-         )
-
-         val anmAdapter = moshi.adapter<List<PeerAtFacility>>(
-             Types.newParameterizedType(
-                 List::class.java,
-                 PeerAtFacility::class.java
-             )
-         )
-
-         preferenceDao.saveChoList(choAdapter.toJson(choList))
-         preferenceDao.saveAnmList(anmAdapter.toJson(anmList))
+         catch (e: HttpException) {
+             Timber.w("setFacilityData: HTTP ${e.code()}, skipping")
+         } catch (e: Exception) {
+             Timber.w("setFacilityData: failed, skipping")
+         }
     }
 
 
