@@ -78,7 +78,12 @@ class MalariaMemberListAdapter(
                             Glide.with(binding.ivSyncState).load(R.drawable.pill).into(binding.ivMalariaStatus)
                             binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_treatment_started)
 
-                        } else {
+                        } else if (item.tb.caseStatus == "Not Suspected"){
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_not_suspected)
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
+
+                        }
+                        else {
                             Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
                         }
 

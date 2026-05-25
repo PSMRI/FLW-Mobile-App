@@ -71,21 +71,9 @@ class MalariaFormViewModel @Inject constructor(
 
     var isSuspected = false
     var isnotConfirmed = false
+    var isnotSuspectedConfirmed = false
     var isDeath = false
 
-
-    private val _isSubmitVisible = MutableLiveData<Boolean>(true)
-    val isSubmitVisible: LiveData<Boolean> = _isSubmitVisible
-
-    init {
-        dataset.onSubmitVisibilityChanged = { isVisible ->
-            _isSubmitVisible.postValue(isVisible)
-        }
-
-        viewModelScope.launch {
-
-        }
-    }
     val allVisitsList = malariaDao.getAllVisitsForBen(benId)
         .map { list ->
             if (list.isNotEmpty()) {
@@ -121,6 +109,7 @@ class MalariaFormViewModel @Inject constructor(
                 _visitNo.value = malariaScreeningCache.visitId.toString()
                 isSuspected = isSuspectedCase(malariaScreeningCache)
                 isnotConfirmed = isNotConfirmedCase(malariaScreeningCache)
+                isnotSuspectedConfirmed = isNotSuspectedCase(malariaScreeningCache)
                 _recordExists.value = true
                 _isBeneficaryStatusDeath.value = malariaScreeningCache.beneficiaryStatus.equals("Death", ignoreCase = true)
             } ?: run {
@@ -203,5 +192,8 @@ class MalariaFormViewModel @Inject constructor(
     }
     fun isNotConfirmedCase(malariaScreeningCache: MalariaScreeningCache): Boolean {
         return malariaScreeningCache.caseStatus == "Not Confirmed"
+    }
+    fun isNotSuspectedCase(malariaScreeningCache: MalariaScreeningCache): Boolean {
+        return malariaScreeningCache.caseStatus == "Not Suspected"
     }
 }
