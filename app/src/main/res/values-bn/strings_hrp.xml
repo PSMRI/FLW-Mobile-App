@@ -118,5 +118,40 @@
     <string name="track_visited_on">ভিজিট করা হয়েছে</string>
     <string name="track_on"> তারিখে </string>
     <string name="track_follow_up_label">ফলো-আপ</string>
+    <string name="after_2hrs">২ ঘন্টা পরে (mg/dL)</string>
+    <string name="b_age"><b>বয়স :</b></string>
+    <string name="b_blood_donor"><b>চিহ্নিত রক্তদাতা\n১ -</b></string>
+    <string name="beneficiaries">সুবিধাভোগী</string>
+    <string name="blood_glucose_test">রক্তের গ্লুকোজ (সুগার) পরীক্ষা</string>
+    <string name="blood_pressure">রক্তচাপ (BP)</string>
+    <string name="c_no"><b>যোগাযোগ নম্বর :\n১ -</b></string>
+    <string name="diastolic">ডায়াস্টোলিক (mm Hg)</string>
+    <string name="fasting_glucose_test">ফাস্টিং রক্তের সুগার পরীক্ষা (FBS) (mg/dL)</string>
+    <string name="follow_up_for_high_risk_conditions_in_the_non_pregnant_women">অগর্ভবতী মহিলাদের মধ্যে উচ্চ ঝুঁকিপূর্ণ অবস্থার ফলো-আপ</string>
+    <string name="follow_up_for_high_risk_conditions_in_the_pregnant_women">গর্ভবতী মহিলাদের মধ্যে উচ্চ ঝুঁকিপূর্ণ অবস্থার ফলো-আপ</string>
+    <string name="hemoglobin_test">হিমোগ্লোবিন (Hb) পরীক্ষা (g/dl)</string>
+    <string name="high_risk_conditions">উচ্চ ঝুঁকিপূর্ণ অবস্থা</string>
+    <string name="issued_quantity_ifa">IFA সাপ্লিমেন্টের প্রদত্ত পরিমাণ</string>
+    <string name="issued_quantity_ifa_or_folic_acid">IFA বা ফলিক অ্যাসিড সাপ্লিমেন্টের প্রদত্ত পরিমাণ</string>
+    <string name="micro_birth_plan_table">মাইক্রো বার্থ প্ল্যান টেবিল</string>
+    <string name="post_prandial_glucose_test">পোস্ট-প্রান্ডিয়াল রক্তের সুগার পরীক্ষা (PPBS) (mg/dL)</string>
+    <string name="pregnant_women_pw_section">গর্ভবতী মহিলা (PW) বিভাগ</string>
+    <string name="pw_name"><b>গর্ভবতী নারীর নাম :</b></string>
+    <string name="random_blood_glucose">র‍্যান্ডম রক্তের সুগার (RBS) (mg/dL)</string>
+    <string name="share">শেয়ার</string>
+    <string-array name="sugar_test_preg_types">
+        <item>RBS</item>
+        <item>FBS &amp; PPBS</item>
+        <item>OGTT</item>
+    </string-array>
+    <string-array name="sugar_test_types">
+        <item>RBS</item>
+        <item>FBS &amp; PPBS</item>
+    </string-array>
+    <string name="systolic">সিস্টোলিক (mm Hg)</string>
+    <string name="under_review">পর্যালোচনাধীন</string>
+    <string name="using_75gm_ogtt">৭৫ গ্রাম OGTT ব্যবহার করে</string>
+    <string name="whether_ifa_supplement_or_folic_acid_provided">IFA বা ফলিক অ্যাসিড সাপ্লিমেন্ট প্রদান করা হয়েছে কিনা?</string>
+    <string name="whether_ifa_supplement_provided">IFA সাপ্লিমেন্ট প্রদান করা হয়েছে কিনা?</string>
 
 </resources>

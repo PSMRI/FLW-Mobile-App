@@ -58,7 +58,7 @@
     <string name="disagree">অসম্মত</string>
     <string name="other_place_of_death">মৃত্যুর অন্যান্য স্থান</string>
     <string name="agree">সম্মত</string>
-
+    <string name="select_all">সব নির্বাচন করুন</string>
     <string name="deworming_done">কৃমিনাশক রাউন্ড সম্পন্ন হয়েছে?</string>
     <string name="deworming_date">কৃমিনাশকের তারিখ</string>
     <string name="deworming_location">কৃমিনাশকের স্থান</string>

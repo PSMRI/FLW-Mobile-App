@@ -776,6 +776,7 @@
         <item>CHC</item>
         <item>জিলা চিকিৎসালয়</item>
         <item>PHC</item>
+        <item>উপ-কেন্দ্ৰ</item>
     </string-array>
 
     <string-array name="hbnc_place_of_baby_referral">

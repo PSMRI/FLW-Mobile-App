@@ -2,35 +2,27 @@
 <resources>
     <string name="ectdset_fin_yrs">আর্থিক বছর</string>
     <string name="ectdset_month">মাস</string>
-
     <string name="ectdset_is_preg_tst_done">গর্ভধারণ পরীক্ষা করা হয়েছে কি?</string>
     <array name="ectdset_yes_no_dont">
         <item>হ্যাঁ</item>
         <item>না</item>
     </array>
-
     <array name="ectdset_yes_no">
         <item>হ্যাঁ</item>
         <item>না</item>
     </array>
-
     <string name="ectdset_preg_tst_rlt">গর্ভধারণ পরীক্ষার ফলাফল</string>
     <array name="ectdset_po_neg">
         <item>পজিটিভ</item>
         <item>নেগেটিভ</item>
     </array>
-
     <string name="ectdset_name_wo_preg">মহিলা কি গর্ভবতী?</string>
-
     <string name="ectdset_fly_plan_mthd">আপনি কি পরিবার পরিকল্পনা পদ্ধতি ব্যবহার করছেন? অথবা কোনো পদ্ধতি ব্যবহার করতে চান?</string>
     <string name="ectdset_fly_plan_mthd_mitanin">আপনি কি কোনো পরিবার পরিকল্পনা পদ্ধতি ব্যবহার করছেন?</string>
     <string name="ectdset_want_to_use_fly_plan_mthd_mitanin">আপনি কি কোনো পরিকল্পনা পদ্ধতি ব্যবহার করতে চান?</string>
-
     <string name="ectdset_discharge_summary_1">স্টেরিলাইজেশন পদ্ধতি ১ এর জন্য ডিসচার্জ সারাংশ প্রযোজ্য</string>
     <string name="ectdset_discharge_summary_2">স্টেরিলাইজেশন পদ্ধতি ২ এর জন্য ডিসচার্জ সারাংশ প্রযোজ্য</string>
-
     <string name="ectdset_mthd_conpt">পরিবার পরিকল্পনা পদ্ধতি</string>
     <string name="ectdset_other_mthd">অন্যান্য পদ্ধতি</string>
-
     <string name="antra_injection">অ্যান্ট্রা ইনজেকশন</string>
 </resources>
