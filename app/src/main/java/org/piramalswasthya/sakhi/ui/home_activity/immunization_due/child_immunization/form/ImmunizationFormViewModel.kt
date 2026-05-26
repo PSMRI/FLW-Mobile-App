@@ -111,7 +111,11 @@ class ImmunizationFormViewModel @Inject constructor(
                         syncState = SyncState.UNSYNCED
                     )
                 }.also { _recordExists.postValue(false) }
-                val ben = benDao.getBen(benId)!!
+                val ben = benDao.getBen(benId) ?: run {
+                    Timber.e("Ben not found for benId: $benId")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
                 clickedBenId.emit(benId)
                 _benRegCache.postValue(ben)
                 _benName.postValue("${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}")

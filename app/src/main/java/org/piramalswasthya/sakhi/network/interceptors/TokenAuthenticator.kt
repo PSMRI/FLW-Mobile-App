@@ -32,7 +32,7 @@ class TokenAuthenticator @Inject constructor(
 
         val newJwt = synchronized(refreshLock) {
             val currentJwt = pref.getJWTAmritToken()
-            if (!currentJwt.isNullOrBlank() && currentJwt != oldJwt) {
+            if (!oldJwt.isNullOrBlank() && !currentJwt.isNullOrBlank() && currentJwt != oldJwt) {
                 return@synchronized currentJwt
             }
             runBlocking {

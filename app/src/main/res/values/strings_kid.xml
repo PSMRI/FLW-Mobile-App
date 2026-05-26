@@ -116,7 +116,7 @@
         <item>Hydrocephalus</item>
         <item>Imperforate Anus</item>
         <item>Down\'s Syndrome</item>
-        <item>None"</item>
+        <item>None</item>
     </string-array>
 
     <string-array name="gest_age">
@@ -163,7 +163,7 @@
         <item>Private Hospital</item>
         <item>Accredited Private Hospital</item>
         <item>VHND VHSND U-WIN Session</item>
-        <item>Other</item>
+        <item>Anganwadi Centre (AWC)</item>
     </string-array>
     <string-array name="imm_vaccinated_by_array">
         <item>ANM</item>

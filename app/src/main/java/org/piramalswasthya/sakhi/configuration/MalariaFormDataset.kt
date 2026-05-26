@@ -15,9 +15,8 @@ class MalariaFormDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
-    var onSubmitVisibilityChanged: ((Boolean) -> Unit)? = null
 
-
+    private  var notSuspectedValue: String = "Not Suspected"
     private val dateOfCase = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
@@ -566,6 +565,12 @@ class MalariaFormDataset(
 
                 val yesValue = resources.getStringArray(R.array.yes_no)[0]
                 val suspectedValue = resources.getStringArray(R.array.dc_case_status)[0]
+                try {
+                     notSuspectedValue = resources.getStringArray(R.array.dc_case_status)[4]
+
+                } catch (e: Exception) {
+
+                }
 
 
                 val primarySymptoms = listOf(
@@ -593,15 +598,9 @@ class MalariaFormDataset(
                 caseStatus.value = when {
                     !anyAnswered -> null
                     isSuspected -> suspectedValue
-                    else -> "Not Suspected"
+                    else -> notSuspectedValue
                 }
 
-               /* val allNo = anyAnswered && allSymptoms.none { it == yesValue }
-                val noneSelected = !anyAnswered
-                setSubmitButtonVisibility(!(allNo || noneSelected))*/
-                val anyYes = allSymptoms.any { it == yesValue }
-                val shouldShow = anyAnswered && anyYes
-                onSubmitVisibilityChanged?.invoke(shouldShow)
 
                 if(caseStatus.value == suspectedValue){
                     triggerDependants(

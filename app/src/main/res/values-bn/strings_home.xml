@@ -134,5 +134,34 @@
 
     <string name="image_uploaded">ছবি সফলভাবে আপলোড হয়েছে</string>
     <string name="file_uploaded">ফাইল সফলভাবে আপলোড হয়েছে</string>
+    <string name="ahd">AHD</string>
+    <string name="anmrho">ANM/ RHO</string>
+    <string name="icon_title_aes">AES/JE</string>
+    <string name="icon_title_ahd_list">AHD ফর্ম তালিকা</string>
+    <string name="icon_title_hrp_non_pregnant">উচ্চ ঝুঁকিপূর্ণ\n অগর্ভবতী মহিলা</string>
+    <string name="icon_title_hrp_non_pregnant_assess">অগর্ভবতী মহিলাদের উচ্চ ঝুঁকি মূল্যায়ন</string>
+    <string name="icon_title_hrp_non_pregnant_track">উচ্চ ঝুঁকিপূর্ণ কেসগুলির ফলো-আপ</string>
+    <string name="icon_title_hrp_pregnant">উচ্চ ঝুঁকিপূর্ণ\n গর্ভবতী মহিলা</string>
+    <string name="icon_title_hrp_pregnant_assess">গর্ভবতী মহিলাদের উচ্চ ঝুঁকি মূল্যায়ন</string>
+    <string name="icon_title_hrp_pregnant_track">HRP মহিলাদের ফলো-আপ</string>
+    <string name="icon_title_ka">কালা আজার</string>
+    <string name="icon_title_ncd_eligible_list">NCD যোগ্য তালিকা</string>
+    <string name="icon_title_ncd_list">NCD তালিকা</string>
+    <string name="icon_title_ncd_non_eligible_list">NCD অগ্রাধিকার বিহীন তালিকা</string>
+    <string name="icon_title_ncd_priority_list">NCD অগ্রাধিকার তালিকা</string>
+    <string name="icon_title_ncd_tb_confirmed">নিশ্চিত টিবি কেস</string>
+    <string name="icon_title_ncd_tb_screening">টিবি স্ক্রিনিং</string>
+    <string name="icon_title_ncd_tb_suspected">সন্দেহভাজন টিবি কেস</string>
+    <string name="icon_title_sr">সার্ভে রেজিস্টার</string>
+    <string name="leprosy_title">ব্যক্তির এই লক্ষণগুলির কোনটি আছে কিনা পরীক্ষা করুন</string>
+    <string name="menu_home_home">হোম</string>
+    <string name="mitanin">মিতানিন</string>
+    <string name="mt">মিতানিন কার্যক্রম চেকলিস্ট</string>
+    <string name="no_b_attended">উপস্থিত সুবিধাভোগীর সংখ্যা</string>
+    <string name="place_of_vhnd">VHND সেশনের স্থান</string>
+    <string name="total_no_b_attended">উপস্থিত মোট সুবিধাভোগীর সংখ্যা</string>
+    <string name="total_no_children_attended">টিকাকরণের জন্য উপস্থিত শিশুদের সংখ্যা</string>
+    <string name="total_no_lacting_mother_attended">PNC চেক আপের জন্য উপস্থিত স্তন্যদানকারী মায়েদের সংখ্যা</string>
+    <string name="total_no_pw_attended">ANC চেক আপের জন্য উপস্থিত গর্ভবতী মহিলার সংখ্যা</string>
 
 </resources>

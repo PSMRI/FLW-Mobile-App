@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import timber.log.Timber
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 // Base class for all push workers. Provides foreground service protection
@@ -53,6 +54,9 @@ abstract class BasePushWorker(
             doSyncWork()
         } catch (e: SocketTimeoutException) {
             Timber.e("[$workerName] Socket timeout, will retry")
+            Result.retry()
+        }catch (e: IOException) {
+            Timber.e("[$workerName] Network error, will retry")
             Result.retry()
         } catch (e: Exception) {
             Timber.e(e, "[$workerName] Sync failed")

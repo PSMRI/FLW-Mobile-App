@@ -668,10 +668,11 @@
     <string name="additional_services">Additional Services</string>
     <string name="refer_date">Refer Date</string>
     <string-array name="referal_health_center_array">
-        <item>Apolo</item>
+        <item>Apollo</item>
         <item>CHC</item>
         <item>District Hospital</item>
         <item>PHC</item>
+        <item>Sub-Centre</item>
     </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
@@ -1171,6 +1172,7 @@
         <item name="dc_confirmed">Confirmed</item>
         <item name="dc_not_confirmed">Not Confirmed</item>
         <item name="dc_treatment">Treatment Started</item>
+        <item name="not_suspected">Not Suspected</item>
     </string-array>
 
     <string-array name="test_type">
@@ -1354,6 +1356,7 @@
     <string name="malaria_confirmed">Confirmed</string>
     <string name="malaria_not_confirmed">Not Confirmed</string>
     <string name="malaria_treatment_started">Treatment Started</string>
+    <string name="malaria_not_suspected">Not Suspected</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
     <string name="upload_files">Upload Files</string>
