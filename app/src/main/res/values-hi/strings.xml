@@ -1031,7 +1031,10 @@
         <item name="dc_confirmed">पुष्टि हुई</item>
         <item name="dc_not_confirmed">पुष्टि नहीं हुई</item>
         <item name="dc_treatment">उपचार शुरू हुआ</item>
+        <item name="not_suspected">संदिग्ध नहीं</item>
+
     </string-array>
+    <string name="malaria_not_suspected">संदिग्ध नहीं</string>
 
     <string-array name="test_type">
         <item name="rdt">आरडीटी टेस्ट</item>
