@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,10 +73,18 @@ class ServiceTypeViewModel @Inject constructor(
     private var currentLocation: LocationRecord? = null
     private lateinit var user: User
 
+    private val _isNoUserFound = MutableLiveData(false)
+    val isNoUserFound: LiveData<Boolean> get() = _isNoUserFound
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                user = pref.getLoggedInUser()!!
+                val loggedInUser = pref.getLoggedInUser() ?: run {
+                    Timber.w("User not found")
+                    _isNoUserFound.postValue(true)
+                    return@withContext
+                }
+                user = loggedInUser
 
                 _userName = user.name
                 _facilityName = pref.getSupervisorSubcenter().toString()
