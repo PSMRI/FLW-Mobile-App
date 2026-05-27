@@ -812,6 +812,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             rchId,
         ))
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
+        this.benIfDataExist = ben
         if (!isMitaninVariant) {
             tempraryContactNoBelongsto.value =
                 tempraryContactNoBelongsto.getStringFromPosition(1)
@@ -1927,12 +1928,23 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                         maritalStatus.value = null
 
-                        husbandName.value = null
-                        wifeName.value = null
-                        spouseName.value = null
-
-                        ageAtMarriage.value = null
-                        dateOfMarriage.value = null
+                        val savedMarriageDate = benIfDataExist?.genDetails?.marriageDate
+                            ?: timeStampDateOfMarriageFromSpouse
+                        if (savedMarriageDate != null && savedMarriageDate > 0L && dob > 0L) {
+                            val recomputedAgeAtMarriage =
+                                calculateAgeAtMarriage(dob, savedMarriageDate)
+                            if (recomputedAgeAtMarriage != null) {
+                                ageAtMarriage.value = recomputedAgeAtMarriage.toString()
+                                ageAtMarriage.max = getAgeFromDob(dob).toLong()
+                                dateOfMarriage.value = getDateFromLong(savedMarriageDate)
+                            } else {
+                                ageAtMarriage.value = null
+                                dateOfMarriage.value = null
+                            }
+                        } else {
+                            ageAtMarriage.value = null
+                            dateOfMarriage.value = null
+                        }
 
                         haveChildren.value = null
                         _isAddingChildren.value = false
@@ -2180,36 +2192,14 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         husbandName.inputType = EDIT_TEXT
                         wifeName.inputType = EDIT_TEXT
                         updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
-                        return triggerDependants(
-                            source = motherName, addItems = when (gender.value) {
-                                gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
-                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage, haveChildren)
-                                else -> listOf(spouseName, ageAtMarriage)
-                            }, removeItems = listOf(
-                                wifeName,
-                                husbandName,
-                                spouseName,
-                                ageAtMarriage,
-                                haveChildren
-                            )
-                        ).also {
-                            if (relationToHead.value == relationToHead.entries!![0]) {
-                                husbandName.value = hof?.fatherName
-                            }
-                            if (relationToHead.value == relationToHead.entries!![1]) {
-                                wifeName.value = hof?.motherName
-                            }
-                        }
-                    }
 
-                    else -> {
-                        husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
-                        wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
-                        wifeName.allCaps = true
-                        fatherName.required = false
-                        motherName.required = false
-                        updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
-                        return triggerDependants(
+                        val savedHusbandName = husbandName.value
+                        val savedWifeName = wifeName.value
+                        val savedSpouseName = spouseName.value
+                        val savedAgeAtMarriage = ageAtMarriage.value
+                        val savedHaveChildren = haveChildren.value
+
+                        val result = triggerDependants(
                             source = motherName, addItems = when (gender.value) {
                                 gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
                                 gender.entries!![1] -> listOf(husbandName, ageAtMarriage, haveChildren)
@@ -2222,6 +2212,57 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                                 haveChildren
                             )
                         )
+
+                        if (!savedHusbandName.isNullOrBlank()) husbandName.value = savedHusbandName
+                        if (!savedWifeName.isNullOrBlank()) wifeName.value = savedWifeName
+                        if (!savedSpouseName.isNullOrBlank()) spouseName.value = savedSpouseName
+                        if (!savedAgeAtMarriage.isNullOrBlank()) ageAtMarriage.value = savedAgeAtMarriage
+                        if (!savedHaveChildren.isNullOrBlank()) haveChildren.value = savedHaveChildren
+
+                        if (relationToHead.value == relationToHead.entries!![0]) {
+                            husbandName.value = hof?.fatherName
+                        }
+                        if (relationToHead.value == relationToHead.entries!![1]) {
+                            wifeName.value = hof?.motherName
+                        }
+                        return result
+                    }
+
+                    else -> {
+                        husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        wifeName.allCaps = true
+                        fatherName.required = false
+                        motherName.required = false
+                        updateReproductiveOptionsBasedOnAgeGender(formId = maritalStatus.id)
+
+                        val savedHusbandName = husbandName.value
+                        val savedWifeName = wifeName.value
+                        val savedSpouseName = spouseName.value
+                        val savedAgeAtMarriage = ageAtMarriage.value
+                        val savedHaveChildren = haveChildren.value
+
+                        val result = triggerDependants(
+                            source = motherName, addItems = when (gender.value) {
+                                gender.entries!![0] -> listOf(wifeName, ageAtMarriage)
+                                gender.entries!![1] -> listOf(husbandName, ageAtMarriage, haveChildren)
+                                else -> listOf(spouseName, ageAtMarriage)
+                            }, removeItems = listOf(
+                                wifeName,
+                                husbandName,
+                                spouseName,
+                                ageAtMarriage,
+                                haveChildren
+                            )
+                        )
+
+                        if (!savedHusbandName.isNullOrBlank()) husbandName.value = savedHusbandName
+                        if (!savedWifeName.isNullOrBlank()) wifeName.value = savedWifeName
+                        if (!savedSpouseName.isNullOrBlank()) spouseName.value = savedSpouseName
+                        if (!savedAgeAtMarriage.isNullOrBlank()) ageAtMarriage.value = savedAgeAtMarriage
+                        if (!savedHaveChildren.isNullOrBlank()) haveChildren.value = savedHaveChildren
+
+                        return result
                     }
                 }
             }
