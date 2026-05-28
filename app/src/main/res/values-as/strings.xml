@@ -1404,4 +1404,7 @@
     <string name="add_new">নতুন যোগ কৰক</string>
     <string name="ifa_distribution">IFA বিতৰণ</string>
     <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="delivery_status">ডেলিভাৰী স্থিতি</string>
+    <string name="delivered">ডেলিভাৰ কৰা হৈছে</string>
+    <string name="not_delivered">ডেলিভাৰ কৰা হোৱা নাই</string>
 </resources>

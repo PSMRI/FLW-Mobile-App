@@ -1472,5 +1472,7 @@
     <string name="select_time">সময় নির্বাচন করুন</string>
     <string name="str_alert">সতর্কতা!</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">অনুগ্রহ করে রেকর্ড সিঙ্ক হওয়া পর্যন্ত অপেক্ষা করুন এবং আবার চেষ্টা করুন।</string>
-
+    <string name="delivery_status">ডেলিভারি স্ট্যাটাস</string>
+    <string name="delivered">ডেলিভার করা হয়েছে</string>
+    <string name="not_delivered">ডেলিভার করা হয়নি</string>
 </resources>

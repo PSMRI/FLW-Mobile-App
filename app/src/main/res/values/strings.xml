@@ -1492,7 +1492,9 @@
     <string name="str_delivery_outcome_err_msg">Outcome of Delivery should be equal to sum of Live and Still births</string>
     <string name="str_alert">Alert!</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
-
+    <string name="delivery_status">Delivery Status</string>
+    <string name="delivered">Delivered</string>
+    <string name="not_delivered">Not Delivered</string>
 
 
 </resources>
