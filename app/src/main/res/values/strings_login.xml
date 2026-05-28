@@ -9,6 +9,7 @@
     <string name="tv_text_block">Block : %s</string>
     <string name="tv_text_sign_in">Login</string>
     <string name="tv_text_select_language">Please Select Your language</string>
+    <string name="tv_text_select_a_language">Select a language</string>
     <string name="text_english" translatable="false">English</string>
     <string name="text_hindi" translatable="false">हिंदी</string>
     <string name="text_assamese" translatable="false">অসমীয়া</string>

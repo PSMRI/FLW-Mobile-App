@@ -9,6 +9,7 @@
     <string name="tv_text_block">ব্লক : %s</string>
     <string name="tv_text_sign_in">লগইন</string>
     <string name="tv_text_select_language">অনুগ্রহ করে আপনার ভাষা নির্বাচন করুন</string>
+    <string name="tv_text_select_a_language">আপনার ভাষা নির্বাচন করুন</string>
     <!-- Keep language names as-is -->
     <string name="text_english" translatable="false">English</string>
     <string name="text_hindi" translatable="false">हिंदी</string>

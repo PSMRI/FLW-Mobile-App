@@ -9,6 +9,7 @@
     <string name="tv_text_block">उप जिला : %s</string>
     <string name="tv_text_sign_in">जारी रखने के लिए लॉग इन करें</string>
     <string name="tv_text_select_language">कृपया अपनी भाषा का चयन कीजिए</string>
+    <string name="tv_text_select_a_language">अपनी भाषा चुनें</string>
     <string name="text_english" translatable="false">English</string>
     <string name="text_hindi" translatable="false">हिंदी</string>
     <string name="text_assamese" translatable="false">অসমীয়া</string>
