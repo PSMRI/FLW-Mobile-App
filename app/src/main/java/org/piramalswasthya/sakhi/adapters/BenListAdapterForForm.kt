@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithFormBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.utils.RoleConstants
 
@@ -65,10 +66,6 @@ class BenListAdapterForForm(
                 binding.btnForm3.visibility = View.VISIBLE
             }
 
-
-
-
-
             binding.ben = item
             binding.clickListener = clickListener
             if (btnText.isNotEmpty()) {
@@ -108,6 +105,8 @@ class BenListAdapterForForm(
                 binding.btnForm2.visibility = View.GONE
                 binding.btnForm3.visibility = View.GONE
             }
+
+            binding.rlAge.field = getLocalizedAge(binding.root.context, item.dob)
             binding.executePendingBindings()
 
         }

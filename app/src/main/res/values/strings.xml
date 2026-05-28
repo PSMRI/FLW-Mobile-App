@@ -174,6 +174,7 @@
     <string name="visit_date_2">Visit Date</string>
     <string name="visit_tb">Visit</string>
     <string name="visit_format">Visit-%d</string>
+    <string name="str_follow_up">Follow-up</string>
     <string name="type_of_tb_case">Type of TB case?</string>
     <string name="reason_for_suspicion">Reason for suspicion</string>
     <string name="has_symptoms">Does the patient have symptoms?</string>
@@ -499,6 +500,9 @@
     <string name="tb_screening_list">TB Screening List</string>
     <string name="tb_suspected_list">Suspected TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
+    <string name="tb_suspected_copd_case">Suspected COPD case</string>
+    <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
+    <string name="tb_suspected_ncd_case">Suspected NCD Case</string>
     <string name="tb_confirmed_list">TB Confirmed List</string>
     <string name="tb_confirmed_form">TB Confirmed Form</string>
 
@@ -664,14 +668,16 @@
     <string name="additional_services">Additional Services</string>
     <string name="refer_date">Refer Date</string>
     <string-array name="referal_health_center_array">
-        <item>Apolo</item>
+        <item>Apollo</item>
         <item>CHC</item>
         <item>District Hospital</item>
         <item>PHC</item>
+        <item>Sub-Centre</item>
     </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
     <string name="ifa">IFA</string>
+    <string name="ifa_syrup">IFA</string>
     <string name="add_new">Add New</string>
     <string name="ifa_distribution">IFA Distribution</string>
     <string name="ifa_quantity">IFA Quantity</string>
@@ -1166,6 +1172,7 @@
         <item name="dc_confirmed">Confirmed</item>
         <item name="dc_not_confirmed">Not Confirmed</item>
         <item name="dc_treatment">Treatment Started</item>
+        <item name="not_suspected">Not Suspected</item>
     </string-array>
 
     <string-array name="test_type">
@@ -1349,6 +1356,7 @@
     <string name="malaria_confirmed">Confirmed</string>
     <string name="malaria_not_confirmed">Not Confirmed</string>
     <string name="malaria_treatment_started">Treatment Started</string>
+    <string name="malaria_not_suspected">Not Suspected</string>
     <string name="gallery">Gallery</string>
     <string name="documents">Documents</string>
     <string name="upload_files">Upload Files</string>
@@ -1491,10 +1499,16 @@
     <string name="str_pls_allow_permissions">Please allow permissions first</string>
     <string name="str_delivery_outcome_err_msg">Outcome of Delivery should be equal to sum of Live and Still births</string>
     <string name="str_alert">Alert!</string>
+    <string name="check_sympt">Check if the person has any of these Symptoms:</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
     <string name="delivery_status">Delivery Status</string>
     <string name="delivered">Delivered</string>
     <string name="not_delivered">Not Delivered</string>
+    <string name="str_left">Left</string>
+    <string name="str_right">Right</string>
+    <string name="str_both">Both</string>
+    <string name="str_eye_visit">Eye - Visit</string>
+
 
 
 </resources>

@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemPregnancyVisitBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -162,6 +163,8 @@ class AncVisitListAdapter(
                 binding.btnPmsma.visibility = View.GONE
                 binding.btnViewVisitsPmsma.visibility = View.GONE
             }
+
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

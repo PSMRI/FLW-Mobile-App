@@ -50,6 +50,10 @@ class MalariaFormFragment : Fragment() {
                 viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
                     binding.fabEdit.visibility = if(notIt && !it && viewModel.isnotConfirmed) View.VISIBLE else View.GONE
                 }
+            } else if(viewModel.isnotSuspectedConfirmed) {
+                viewModel.isBeneficaryStatusDeath.observe(viewLifecycleOwner){ it
+                    binding.fabEdit.visibility = if(notIt && !it && viewModel.isnotSuspectedConfirmed) View.VISIBLE else View.GONE
+                }
             } else {
 
                 binding.fabEdit.visibility = View.GONE
@@ -77,10 +81,6 @@ class MalariaFormFragment : Fragment() {
             }
         }
 
-
-        viewModel.isSubmitVisible.observe(viewLifecycleOwner) { isVisible ->
-            binding.btnSubmit.isEnabled = isVisible
-        }
 
         val visitAdapter = VisitsListAdapter()
         binding.visitsRV.adapter = visitAdapter

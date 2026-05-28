@@ -15,9 +15,8 @@ class MalariaFormDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
-    var onSubmitVisibilityChanged: ((Boolean) -> Unit)? = null
 
-
+    private  var notSuspectedValue: String = "Not Suspected"
     private val dateOfCase = FormElement(
         id = 1,
         inputType = InputType.DATE_PICKER,
@@ -91,7 +90,7 @@ class MalariaFormDataset(
     private var headline = FormElement(
         id = 27,
         inputType = InputType.HEADLINE,
-        title = resources.getString(R.string.sympt),
+        title = resources.getString(R.string.check_sympt),
         required = false,
         headingLine = false,
         hasDependants = false
@@ -102,7 +101,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.cbac_feverwks),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -111,7 +110,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.flu_like_illness),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -120,7 +119,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.shakingchills),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -129,7 +128,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.headache),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -138,7 +137,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.muscleaches),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -147,7 +146,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.tiredness),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
     private var isNausea = FormElement(
@@ -155,7 +154,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.nausea),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
     private var isVomiting = FormElement(
@@ -163,7 +162,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.vomiting),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -172,7 +171,7 @@ class MalariaFormDataset(
         inputType = InputType.RADIO,
         title = resources.getString(R.string.diarrhea),
         entries = resources.getStringArray(R.array.yes_no),
-        required = false,
+        required = true,
         hasDependants = true
     )
 
@@ -566,6 +565,12 @@ class MalariaFormDataset(
 
                 val yesValue = resources.getStringArray(R.array.yes_no)[0]
                 val suspectedValue = resources.getStringArray(R.array.dc_case_status)[0]
+                try {
+                     notSuspectedValue = resources.getStringArray(R.array.dc_case_status)[4]
+
+                } catch (e: Exception) {
+
+                }
 
 
                 val primarySymptoms = listOf(
@@ -593,15 +598,9 @@ class MalariaFormDataset(
                 caseStatus.value = when {
                     !anyAnswered -> null
                     isSuspected -> suspectedValue
-                    else -> "Not Suspected"
+                    else -> notSuspectedValue
                 }
 
-               /* val allNo = anyAnswered && allSymptoms.none { it == yesValue }
-                val noneSelected = !anyAnswered
-                setSubmitButtonVisibility(!(allNo || noneSelected))*/
-                val anyYes = allSymptoms.any { it == yesValue }
-                val shouldShow = anyAnswered && anyYes
-                onSubmitVisibilityChanged?.invoke(shouldShow)
 
                 if(caseStatus.value == suspectedValue){
                     triggerDependants(

@@ -73,7 +73,13 @@
 
     <string name="hbnc_form">HBNC ফর্ম</string>
     <string name="ncd_folloup_form">NCD রেফারেল ফলোআপ ফর্ম</string>
+    <string name="baby_of">%2$s এর %1$s শিশু</string>
 
+    <string name="first_baby">প্রথম</string>
+    <string name="second_baby">দ্বিতীয়</string>
+    <string name="third_baby">তৃতীয়</string>
+
+    <string name="nth_baby">%1$sতম</string>
     <!-- Age Unit -->
     <string-array name="nbr_age_unit_array">
         <item>দিন</item>
@@ -123,7 +129,6 @@
     <string name="str_date_of_birth">জন্ম তারিখ</string>
     <string name="str_sex_of_child">শিশুর লিঙ্গ</string>
 
-    <string name="str_mothers_name">মায়ের নাম</string>
     <string name="str_fathers_name">বাবার নাম</string>
 
     <string name="str_whose_mobile_number">মোবাইল নম্বর কার</string>
@@ -225,7 +230,7 @@
         <item>বেসরকারি হাসপাতাল</item>
         <item>স্বীকৃত বেসরকারি হাসপাতাল</item>
         <item>VHND VHSND U-WIN সেশন</item>
-        <item>অন্যান্য</item>
+        <item>আঙ্গনওয়াড়ি কেন্দ্র (AWC)</item>
     </string-array>
 
     <string-array name="imm_vaccinated_by_array">

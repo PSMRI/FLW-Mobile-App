@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvGeneralOpdBenBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 
@@ -90,6 +91,7 @@ class GeneralOPDAdapter(
                 binding.husband = false
                 binding.spouse = false
             }
+            binding.age.text = getLocalizedAge(binding.root.context, item?.dob?.toLong()!!)
             binding.executePendingBindings()
 
         }

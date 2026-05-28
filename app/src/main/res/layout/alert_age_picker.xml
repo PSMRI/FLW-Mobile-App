@@ -46,8 +46,7 @@
                 android:layout_alignTop="@id/dialog_number_picker_years"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_centerHorizontal="true"
-                
-                android:text="Years" />
+                android:text="@string/years" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -71,9 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/dialog_number_picker_months"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-
                 android:layout_centerHorizontal="true"
-                android:text="Months" />
+                android:text="@string/months" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -98,7 +96,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
 
                 android:layout_centerHorizontal="true"
-                android:text="Days" />
+                android:text="@string/days" />
         </RelativeLayout>
 
     </LinearLayout>

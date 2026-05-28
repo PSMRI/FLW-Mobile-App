@@ -43,7 +43,13 @@
     <string name="nbr_mobile_number_of">োবাইল নম্বৰৰ অন্তৰ্গত</string>
     <string name="nrb_contact_number">যোগাযোগ নম্বৰ</string>
     <string name="nbr_nb_age_unit">বয়স একক</string>
+    <string name="baby_of">%2$s ৰ %1$s সন্তান</string>
 
+    <string name="first_baby">প্ৰথম</string>
+    <string name="second_baby">দ্বিতীয়</string>
+    <string name="third_baby">তৃতীয়</string>
+
+    <string name="nth_baby">%1$sতম</string>
     <string-array name="nbr_age_unit_array">
         <item name="nbr_age_unit_1">দিন</item>
         <item name="nbr_age_unit_2">মাহ</item>
@@ -169,5 +175,45 @@
     <string name="str_accredited_private_hospital">স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</string>
     <string name="str_other_private_hospital">অন্য ব্যক্তিগত চিকিৎসালয়</string>
     <string name="cr_birth_cert_uploads">জন্ম প্ৰমাণপত্ৰ আপলোডসমূহ</string>
+
+    <!--  Child Immunization  -->
+    <string-array name="imm_vaccinated_place_array">
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>পি এইচ চি</item>
+        <item>চি এইচ চি</item>
+        <item>উপ-জিলা চিকিৎসালয়</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>ব্যক্তিগত চিকিৎসালয়</item>
+        <item>স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</item>
+        <item>VHND VHSND U-WIN অধিৱেশন</item>
+        <item>আংগনৱাড়ী কেন্দ্ৰ (AWC)</item>
+    </string-array>
+
+    <string-array name="imm_vaccinated_by_array">
+        <item>ANM</item>
+        <item>CHO</item>
+        <item>MO</item>
+    </string-array>
+
+    <string-array name="cr_mobile_no_of_array">
+        <item>মা</item>
+        <item>পিতা</item>
+        <item>অন্যান্য</item>
+    </string-array>
+
+    <string-array name="cr_place_of_birth_array">
+        <item>জিলা চিকিৎসালয়</item>
+        <item>সামূহিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>প্ৰাথমিক স্বাস্থ্য কেন্দ্ৰ</item>
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>অন্য ৰাজহুৱা স্বাস্থ্য সুবিধা</item>
+        <item>স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</item>
+        <item>অন্য ব্যক্তিগত চিকিৎসালয়</item>
+        <item>ঘৰ</item>
+        <item>উপ-জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>যাত্ৰাপথত</item>
+    </string-array>
 
 </resources>

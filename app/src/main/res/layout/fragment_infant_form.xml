@@ -30,7 +30,7 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RCH ID"
+        android:text="@string/rch_id_ben"
         android:paddingBottom="16dp" />
 
     <!-- Visit Card List -->

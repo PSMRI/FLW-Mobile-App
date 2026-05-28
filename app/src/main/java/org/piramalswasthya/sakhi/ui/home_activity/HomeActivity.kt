@@ -142,7 +142,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         )
         if (!isMitanin) {
             languageOptions.add(resources.getString(R.string.assamese) to Languages.ASSAMESE)
-            languageOptions.add(resources.getString(R.string.text_bangali) to Languages.BANGLA)
+//            languageOptions.add(resources.getString(R.string.text_bangali) to Languages.BANGLA)
 
         }
         val currentLanguageIndex = languageOptions.indexOfFirst { it.second == pref.getCurrentLanguage() }.coerceAtLeast(0)

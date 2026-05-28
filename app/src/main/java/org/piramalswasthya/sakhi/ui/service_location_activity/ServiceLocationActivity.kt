@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.databinding.ActivityServiceTypeBinding
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -148,6 +149,13 @@ class ServiceLocationActivity : AppCompatActivity() {
                         }
                     }
                 }
+            }
+        }
+
+        viewModel.isNoUserFound.observe(this) { noUser ->
+            if (noUser) {
+                startActivity(Intent(this@ServiceLocationActivity, LoginActivity::class.java))
+                finish()
             }
         }
     }

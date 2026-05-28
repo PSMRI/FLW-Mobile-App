@@ -182,33 +182,9 @@
     <string name="is_tb_confirmed">TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
     <string name="is_drtb_confirmed">DR-TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
 
-    <string-array name="type_of_tb_case">
-        <item>TB-এর নতুন কেস</item>
-        <item>পূর্বে চিকিৎসা করা TB কেস</item>
-        <item>DR-TB কেস</item>
-    </string-array>
 
-    <string-array name="reason_for_suspicion">
-        <item>চিকিৎসা ব্যর্থতা</item>
-        <item>TB পুনরাবৃত্তি/বারবার লক্ষণ</item>
-        <item>DR-TB কেসের সংস্পর্শ</item>
-        <item>LFU (অনুসরণ হারানো) পরবর্তী চিকিৎসা</item>
-        <item>অন্যান্য</item>
-    </string-array>
 
-    <string-array name="chest_xray_result">
-        <item>ক্লিনিক্যালি নির্ণীত TB</item>
-        <item>TB সন্দেহজনক নয়</item>
-    </string-array>
 
-    <string-array name="referral_facility">
-        <item>জেলা TB কেন্দ্র (DTC)</item>
-        <item>HWC</item>
-        <item>PHC</item>
-        <item>CHC</item>
-        <item>জেলা হাসপাতাল</item>
-        <item>সরকারি মেডিকেল কলেজ</item>
-    </string-array>
 
     <string-array name="tb_submitted_yet_suspected">
         <item>HWC</item>
@@ -655,6 +631,7 @@
         <item>CHC</item>
         <item>জেলা হাসপাতাল</item>
         <item>PHC</item>
+        <item>উপ-কেন্দ্র</item>
     </string-array>
     <string name="check_sam">SAM পরীক্ষা করুন</string>
     <string name="ors">ORS</string>
@@ -715,34 +692,6 @@
     <string name="date_of_sterilisation">বন্ধ্যাত্বকরণের তারিখ</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">গর্ভপাতের পরে কোন পরিবার পরিকল্পনা পদ্ধতি বেছে নেওয়া হয়েছে?</string>
 
-    <string-array name="sync_records">
-        <item>সুবিধাভোগী</item>
-        <item>EC নিবন্ধন</item>
-        <item>EC ট্র্যাকিং</item>
-        <item>গর্ভবতী মহিলা নিবন্ধন</item>
-        <item>গর্ভবতী মহিলা ANC</item>
-        <item>PMSMA</item>
-        <item>প্রসবের ফলাফল</item>
-        <item>PNC</item>
-        <item>নবজাতক নিবন্ধন</item>
-        <item>CBAC</item>
-        <item>TB স্ক্রিনিং</item>
-        <item>TB সন্দেহজনক</item>
-        <item>HRP মূল্যায়ন</item>
-        <item>HRP ট্র্যাক</item>
-        <item>HR অ-গর্ভবতী মূল্যায়ন</item>
-        <item>HR অ-গর্ভবতী ট্র্যাক</item>
-        <item>টিকাদান</item>
-        <item>HBYC</item>
-        <item>HBNC</item>
-        <item>মাইক্রো বার্থ প্ল্যান</item>
-        <item>VHND</item>
-        <item>VHSNC</item>
-        <item>PHC</item>
-        <item>AHD</item>
-        <item>কৃমিনাশক</item>
-        <item>NCD ফলো-আপ</item>
-    </string-array>
 
     <string-array name="place_array">
         <item>HWC</item>
@@ -1147,7 +1096,9 @@
         <item name="dc_confirmed">নিশ্চিত</item>
         <item name="dc_not_confirmed">নিশ্চিত নয়</item>
         <item name="dc_treatment">চিকিৎসা শুরু হয়েছে</item>
+        <item name="not_suspected">সন্দেহজনক নয়</item>
     </string-array>
+    <string name="malaria_not_suspected">সন্দেহজনক নয়</string>
 
     <string-array name="test_type">
         <item name="rdt">RDT</item>
@@ -1215,10 +1166,6 @@
         <item name="dc_r_symptoms">লক্ষণের পুনরাবৃত্তি</item>
     </string-array>
 
-    <string-array name="type_of_leprocy">
-        <item name="mb">MB (মাল্টিব্যাসিলারি)</item>
-        <item name="pb">PB (পসিব্যাসিলারি)</item>
-    </string-array>
 
     <string-array name="leprosy_treatment_status">
         <item>সুস্থ হচ্ছেন</item>
@@ -1464,6 +1411,7 @@
     <string name="str_hof_cant_delete">অন্য সদস্য থাকলে পরিবারের প্রধানকে মুছা যাবে না।</string>
     <string name="str_pls_allow_permissions">অনুগ্রহ করে প্রথমে অনুমতি দিন</string>
     <string name="str_delivery_outcome_err_msg">প্রসবের ফলাফল অবশ্যই জীবিত এবং মৃত সন্তানের সমষ্টির সমান হতে হবে</string>
+
     <string name="adolescent_health_form">কিশোর স্বাস্থ্য ফর্ম</string>
     <string name="immunization_cant_done_as_missed">টিকা মিস হওয়ায় দেওয়া যাচ্ছে না</string>
     <string name="irs_off">আইআরএস বন্ধ</string>

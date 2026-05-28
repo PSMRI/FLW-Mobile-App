@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemTbConfirmedListBinding
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
 
 class TbConfirmedListAdapter( private val clickListener: ClickListener? = null,
@@ -88,7 +89,7 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

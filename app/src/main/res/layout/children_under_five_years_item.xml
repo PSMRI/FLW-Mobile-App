@@ -163,7 +163,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{ben.age}"
+                            android:id="@+id/age"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="45 Years" />
@@ -359,7 +359,7 @@
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/ifa"
+                        android:text="@string/ifa_syrup"
                         android:layout_weight="1"
                         android:onClick="@{() -> clickListener.onClickedIFA(ben)}"
                         app:ageForIFAVisibility="@{ben.age}" />
