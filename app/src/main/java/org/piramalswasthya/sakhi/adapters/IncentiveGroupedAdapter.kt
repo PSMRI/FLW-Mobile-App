@@ -36,7 +36,7 @@ class IncentiveGroupedAdapter(
             binding.isMitanin = isMitanin
 
             if (isMitanin) {
-                binding.guideline75.setGuidelinePercent(0.9f)
+//                binding.guideline75.setGuidelinePercent(0.9f)
             }
             binding.executePendingBindings()
 
