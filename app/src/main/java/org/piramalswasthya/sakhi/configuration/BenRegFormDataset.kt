@@ -929,7 +929,7 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (!isMitaninVariant) {
                 tempraryContactNoBelongsto.value =
                     tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
-                tempraryContactNoBelongsto.isEnabled = false
+                tempraryContactNoBelongsto.inputType = TEXT_VIEW
                 tempraryContactNo.value = saved.contactNumber.toString()
             }
             otherMobileNoOfRelation.value = saved.mobileOthers
@@ -968,6 +968,9 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
+        }
+        ben?.takeIf { !it.isDraft && it.isDeath }?.let {
+            applyDeathLockState(list, isDeath = true)
         }
         setUpPage(list)
     }
@@ -1152,7 +1155,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (!isMitaninVariant) {
                 tempraryContactNoBelongsto.value =
                     tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
-                tempraryContactNoBelongsto.isEnabled = false
+               // tempraryContactNoBelongsto.isEnabled = false
+                tempraryContactNoBelongsto.inputType = TEXT_VIEW
                 tempraryContactNo.value = saved.contactNumber.toString()
             }
             otherMobileNoOfRelation.value = saved.mobileOthers
@@ -1333,6 +1337,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             list.remove(rchId)
         }
         if (hasThirdPage()) list.add(reproductiveStatus)
+        // If a saved family-member ben is dead, lock every field below the
+
+        ben?.takeIf { !it.isDraft && it.isDeath }?.let {
+            applyDeathLockState(list, isDeath = true)
+        }
         setUpPage(list)
     }
 
@@ -1748,6 +1757,53 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         )
     }
 
+    private val originalInputTypeForLockedFields =
+        mutableMapOf<Int, org.piramalswasthya.sakhi.model.InputType>()
+
+    private fun applyDeathLockState(isDeath: Boolean) {
+        if (isDeath) {
+            val anchor = listOf(otherPlaceOfDeath, placeOfDeath)
+                .firstOrNull { getIndexOfElement(it) >= 0 } ?: return
+            val anchorIdx = getIndexOfElement(anchor)
+            for (i in (anchorIdx + 1) until formElements.size) {
+                val el = formElements[i]
+                if (el.inputType != TEXT_VIEW) {
+                    originalInputTypeForLockedFields.getOrPut(el.id) { el.inputType }
+                    el.inputType = TEXT_VIEW
+                }
+            }
+        } else {
+            formElements.forEach { el ->
+                originalInputTypeForLockedFields[el.id]?.let { originalType ->
+                    el.inputType = originalType
+                }
+            }
+            originalInputTypeForLockedFields.clear()
+        }
+    }
+
+    private fun applyDeathLockState(list: MutableList<FormElement>, isDeath: Boolean) {
+        if (isDeath) {
+            val anchor = listOf(otherPlaceOfDeath, placeOfDeath)
+                .firstOrNull { list.contains(it) } ?: return
+            val anchorIdx = list.indexOf(anchor)
+            for (i in (anchorIdx + 1) until list.size) {
+                val el = list[i]
+                if (el.inputType != TEXT_VIEW) {
+                    originalInputTypeForLockedFields.getOrPut(el.id) { el.inputType }
+                    el.inputType = TEXT_VIEW
+                }
+            }
+        } else {
+            list.forEach { el ->
+                originalInputTypeForLockedFields[el.id]?.let { originalType ->
+                    el.inputType = originalType
+                }
+            }
+            originalInputTypeForLockedFields.clear()
+        }
+    }
+
     private val secondPage by lazy {
         listOf(
             placeOfBirth,
@@ -1834,15 +1890,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         return when (formId) {
-
-
             firstName.id -> {
                 validateEmptyOnEditText(firstName)
                 validateAllCapsOrSpaceOnEditTextWithHindiEnabled(firstName)
             }
 
             beneficiaryStatus.id -> {
-               // val isDeath = beneficiaryStatus.value == BenStatus.Death.name
                 val isDeath = beneficiaryStatus.getPosition() == 2
 
                 if (isDeath) {
@@ -1855,9 +1908,12 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     } else {
                         resources.getStringArray(R.array.reason_of_death_array)
                     }
+                } else {
+             /*. Apply Deadlock*/
+                    applyDeathLockState(isDeath = false)
                 }
 
-                return triggerDependants(
+                val triggerResult = triggerDependants(
                     source = beneficiaryStatus,
                     passedIndex = if (isDeath) 1 else 0,
                     triggerIndex = 1,
@@ -1873,6 +1929,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                         )
                     }
                 )
+
+                if (isDeath) {
+                    // Death block was just inserted → lock everything below.
+                    applyDeathLockState(isDeath = true)
+                }
+
+                return triggerResult
             }
 
 
@@ -1880,12 +1943,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 }
                     ?: return -1
                 val triggerIndex = 8
-                return triggerDependants(
+                val result = triggerDependants(
                     source = placeOfDeath,
                     passedIndex = index,
                     triggerIndex = triggerIndex,
                     target = otherPlaceOfDeath
                 )
+            /*Apply Dead Lock*/
+                applyDeathLockState(isDeath = beneficiaryStatus.getPosition() == 2)
+                return result
             }
 
             lastName.id -> {
@@ -2494,54 +2560,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
                 }
 
-//                val updatedReproductiveOptions = when {
-//                    !genderIsFemale -> emptyList()
-//                    age in 15..19 -> when (maritalStatus.value) {
-//                        maritalStatus.entries!![0] -> {
-//                            listOf(
-//                                "Adolescent Girl"
-//                            )
-//                        }
-//                        maritalStatus.entries!![1] -> {
-//                            listOf(
-//                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                                "Postnatal Mother", "Permanently Sterilised"
-//                            )
-//                        }
-//                        else -> {
-//                            listOf(
-//                                "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                                "Postnatal Mother", "Permanently Sterilised"
-//                            )
-//                        }
-//                    }
-//
-//                    age in 20..49 -> when (maritalStatus.value) {
-//                        maritalStatus.entries!![0] -> {
-//                            listOf(
-//                                "Not Applicable"
-//                            )
-//                        }
-//                        maritalStatus.entries!![1] -> {
-//                            listOf(
-//                                "Eligible Couple", "Pregnant Woman",
-//                                "Postnatal Mother", "Permanently Sterilised"
-//                            )
-//                        }
-//                        else -> {
-//                            listOf(
-//                                "Eligible Couple", "Pregnant Woman",
-//                                "Postnatal Mother", "Permanently Sterilised"
-//                            )
-//                        }
-//                    }
-//
-//                    age >= 50 -> listOf("Elderly Woman")
-//                    else -> emptyList()
-//                }
-//
-//                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
-
                 reproductiveStatus.value = null
                 if (reproductiveStatus.entries?.size == 1) {
                     reproductiveStatus.value = reproductiveStatus.entries?.get(0)
@@ -2563,28 +2581,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     } else null
                 }
                 reproductiveStatus.inputType = DROPDOWN
-
-//                when (reproductiveStatus.value) {
-//                    "Adolescent Girl" -> {
-//                        agePopup.max = yearsAgo(15)
-//                        agePopup.min = yearsAgo(19)
-//                    }
-//
-//                    "Eligible Couple" -> {
-//                        agePopup.max = yearsAgo(15)
-//                        agePopup.min = yearsAgo(49)
-//                    }
-//
-//                    "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-//                        agePopup.max = yearsAgo(20)
-//                        agePopup.min = yearsAgo(49)
-//                    }
-//
-//                    "Elderly Woman" -> {
-//                        agePopup.max = yearsAgo(50)
-//                        agePopup.min = yearsAgo(100)
-//                    }
-//                }
 
                 when {
 
@@ -2630,8 +2626,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     else -> reproductiveStatus.entries = emptyList<String>().toTypedArray()
 
                 }
-
-//                reproductiveStatus.entries = updatedReproductiveOptions.toTypedArray()
 
             }
         }
@@ -2683,7 +2677,11 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                     )
 
                 } else {
-                    maritalStatus.value = null
+                    val isStale = maritalStatus.value == null ||
+                        maritalStatus.entries?.contains(maritalStatus.value) != true
+                    if (isStale) {
+                        maritalStatus.value = null
+                    }
                     triggerDependants(
                         source = gender,
                         removeItems = listOf(birthCertificateNumber, placeOfBirth),
@@ -2751,15 +2749,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             reproductiveStatus.inputType = DROPDOWN
 
         }
-//        reproductiveStatus.isEnabled = (genderIsFemale &&
-//                age in 15..19 &&
-//                maritalStatus.value == maritalStatus.entries!![1] &&
-//                reproductiveStatus.value == "Adolescent Girl") ||
-//                (genderIsFemale &&
-//                        age in 20..49 &&
-//                        maritalStatus.value == maritalStatus.entries!![1] &&
-//                        reproductiveStatus.value == "Not Applicable")
-
         return 1
     }
 
@@ -2842,8 +2831,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.tempMobileNoOfRelationId = if (isMitaninVariant) 0 else if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
             ben.mobileNoOfRelation =
                 mobileNoOfRelation.getEnglishStringFromPosition(ben.mobileNoOfRelationId)
-            /* ben.mobileNoOfRelation =
-                 tempraryContactNoBelongsto.getEnglishStringFromPosition(ben.mobileNoOfRelationId)*/
             ben.mobileOthers = otherMobileNoOfRelation.value
             ben.contactNumber =
                 if (ben.mobileNoOfRelationId == 5) familyHeadPhoneNo!!.toLong() else contactNumber.value!!.toLong()
@@ -2870,21 +2857,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.genDetails?.ageAtMarriage =
                 ageAtMarriage.value?.toInt() ?: 0
             ben.genDetails?.marriageDate = calculateMarriageDate(ben.genDetails?.ageAtMarriage!!, ben.dob)
-//            ben.genDetails?.marriageDate =
-//                timeStampDateOfMarriageFromSpouse.takeIf { it != null }?.also {
-//                    ben.genDetails?.ageAtMarriage =
-//                        (TimeUnit.MILLISECONDS.toDays(it - ben.dob) / 365).toInt()
-//                } ?: run {
-//                    dateOfMarriage.value?.let { getLongFromDate(it) }
-//                        ?: run {
-//                            ben.genDetails?.ageAtMarriage?.takeIf { it > 0 }?.let {
-//                                getDoMFromDoR(
-//                                    if (ben.genDetails?.ageAtMarriage == null) 0 else (ben.age - ben.genDetails!!.ageAtMarriage),
-//                                    ben.regDate
-//                                )
-//                            }
-//                        }
-//                }
 
             ben.genDetails?.let { gen ->
                 val selectedValue = getReproductiveStatusEnglishValue()
@@ -2996,8 +2968,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             ben.isChildrenAdded = false
             ben.isMarried = (maritalStatus.getPosition() == 2)
             ben.doYouHavechildren = (haveChildren.getPosition() == 1)
-
-
         }
     }
 
@@ -3017,13 +2987,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             fileUploadBack.errorText = null
 
         } else {
-
             pic.value = dpUri.toString()
             pic.errorText = null
 
-
         }
-
 
     }
 
@@ -3044,7 +3011,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             if (genderIsFemale) {
                 reproductiveStatus.inputType = DROPDOWN
             }
-//            reproductiveStatus.isEnabled = genderIsFemale
 
             when {
 
@@ -3100,55 +3066,8 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             if (maritalStatus.value != null) {
                 reproductiveStatus.inputType = DROPDOWN
-//                reproductiveStatus.isEnabled = true
             }
         } else {
-
-//            val updatedReproductiveOptions = when {
-//                !genderIsFemale -> emptyList()
-//                age in 15..19 -> when (maritalStatus.value) {
-//                    maritalStatus.entries!![0] -> {
-//                        listOf(
-//                            "Adolescent Girl"
-//                        )
-//                    }
-//                    maritalStatus.entries!![1] -> {
-//                        listOf(
-//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                    else -> {
-//                        listOf(
-//                            "Adolescent Girl", "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                }
-//
-//                age in 20..49 -> when (maritalStatus.value) {
-//                    maritalStatus.entries!![0] -> {
-//                        listOf(
-//                            "Not Applicable"
-//                        )
-//                    }
-//                    maritalStatus.entries!![1] -> {
-//                        listOf(
-//                            "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                    else -> {
-//                        listOf(
-//                            "Eligible Couple", "Pregnant Woman",
-//                            "Postnatal Mother", "Permanently Sterilised"
-//                        )
-//                    }
-//                }
-//
-//                age >= 50 -> listOf("Elderly Woman")
-//                else -> emptyList()
-//            }
 
             when {
 
@@ -3205,23 +3124,6 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             validateReproductiveStatusField(genderIsFemale, age)
 
-            // Set DOB constraints based on existing reproductive status
-//            when (reproductiveStatus.value) {
-//                "Adolescent Girl" -> {
-//                    agePopup.max = yearsAgo(15)
-//                    agePopup.min = yearsAgo(19)
-//                }
-//
-//                "Eligible Couple", "Pregnant Woman", "Postnatal Mother", "Permanently Sterilised" -> {
-//                    agePopup.max = yearsAgo(20)
-//                    agePopup.min = yearsAgo(49)
-//                }
-//
-//                "Elderly Woman" -> {
-//                    agePopup.max = yearsAgo(50)
-//                    agePopup.min = yearsAgo(100)
-//                }
-//            }
         }
 
         if (formId == agePopup.id) {
@@ -3398,6 +3300,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
+/* */
+        if (saved?.isDeath == true) {
+            applyDeathLockState(list, isDeath = true)
+        }
     }
 
     fun mapValueToBen(ben: BenRegCache?): Boolean {
