@@ -34,8 +34,12 @@ class LanguageBottomSheet(
         binding.rvLanguages.apply {
             layoutManager = GridLayoutManager(requireContext(), 3)
             adapter = LanguageAdapter(getLanguageList()) { selected ->
-                onLanguageSelected(selected)
-                dismiss()
+                if (selected.isSelected) {
+                    dismiss()
+                } else {
+                    onLanguageSelected(selected)
+                    dismiss()
+                }
             }
         }
     }

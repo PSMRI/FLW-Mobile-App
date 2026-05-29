@@ -20,7 +20,7 @@
         android:paddingHorizontal="@dimen/_16sdp"
         android:paddingTop="@dimen/_16sdp"
         android:paddingBottom="@dimen/_12sdp"
-        android:text="@string/tv_text_select_a_language"
+        android:text="@string/tv_text_select_language"
         android:textStyle="bold"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />

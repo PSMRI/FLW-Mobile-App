@@ -99,7 +99,7 @@
                     <ImageView
                         android:layout_width="@dimen/_13sdp"
                         android:layout_height="@dimen/_13sdp"
-                        android:src="@drawable/ic_language"
+                        android:src="@drawable/ic_icon_language"
                         app:tint="@color/md_theme_light_shadow"/>
                     <TextView
                         android:id="@+id/tv_selected_lang"
