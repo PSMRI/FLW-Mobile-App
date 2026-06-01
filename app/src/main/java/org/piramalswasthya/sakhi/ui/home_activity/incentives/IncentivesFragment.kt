@@ -17,6 +17,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -27,6 +28,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -1071,7 +1073,7 @@ class IncentivesFragment : Fragment() {
         document.finishPage(page1)
 
         // You can continue with more pages if needed
-        val fileName = "Incentives_" + selectedMonth + "_" + selectedYear + ".pdf"
+        val fileName = "Incentives_${selectedMonth}_${selectedYear}_${System.currentTimeMillis()}.pdf"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
@@ -1357,43 +1359,51 @@ class IncentivesFragment : Fragment() {
 
     }
 
-    private fun askPermissions() {
-
-        if (isMitaninVariant || isChhattisgarhVariant) {
-            return
-        }
-
-        val sdkversion = Build.VERSION.SDK_INT
-
-        if (sdkversion >= 33) {
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.all { it.value }) {
             downloadPdf()
-
         } else {
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            for (permission in permissions) {
-                if (ContextCompat.checkSelfPermission(
-                        Objects.requireNonNull<Any>(
-                            requireContext()
-                        ) as Context, permission
-                    ) == PackageManager.PERMISSION_DENIED
-                ) {
-                    requestPermissions(
-                        permissions,
-                        PERMISSION_REQUEST_CODE
-                    )
-                    return
-                } else {
-                    downloadPdf()
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.permission_required_title))
+                .setMessage(getString(R.string.permission_required_message))
+                .setPositiveButton(getString(R.string.permission_open_settings)) { _, _ ->
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", requireContext().packageName, null)
+                    }
+                    startActivity(intent)
                 }
-            }
-
+                .setNegativeButton(getString(R.string.permission_cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
 
+    private fun askPermissions() {
+        if (isMitaninVariant || isChhattisgarhVariant) return
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            downloadPdf()
+            return
+        }
+
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        val anyDenied = permissions.any {
+            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_DENIED
+        }
+
+        if (anyDenied) {
+            requestPermissionLauncher.launch(permissions)
+        } else {
+            downloadPdf()
+        }
+    }
 }
 
 

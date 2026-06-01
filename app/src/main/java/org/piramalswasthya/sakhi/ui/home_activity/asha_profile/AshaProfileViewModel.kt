@@ -131,6 +131,10 @@ class AshaProfileViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
+                    if (!::profileActivityCache.isInitialized) {
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _state.postValue(State.SAVING)
                     dataset.mapProfileValues(profileActivityCache,context)
                     ashaProfileRepo.saveRecord(profileActivityCache)
