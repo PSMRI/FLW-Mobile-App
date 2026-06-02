@@ -1330,6 +1330,9 @@
     <string name="sammelan_photo3">सम्मेलन की तस्वीरें / MoM (3)</string>
     <string name="sammelan_photo4">सम्मेलन की तस्वीरें / MoM (4)</string>
     <string name="sammelan_photo5">सम्मेलन की तस्वीरें / MoM (5)</string>
+    <string name="delivery_status">डिलीवरी स्थिति</string>
+    <string name="delivered">डिलीवर किया गया</string>
+    <string name="not_delivered">डिलीवर नहीं किया गया</string>
 
     <string name="str_left">बायां</string>
     <string name="str_right">दाईं</string>

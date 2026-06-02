@@ -804,23 +804,23 @@ class PregnantWomanAncVisitDataset(
                     triggerDependants(
                         source = maternalDeath,
                         addItems = abortionFields,
-                        removeItems = commonAddItems + deliveryDone,
+                        removeItems = commonAddItems + deliveryDone + placeOfAnc,
                         position = getIndexById(isAborted.id).coerceAtLeast(0) + 1 // safe
                     )
                 } else if (isMaternalDeathYes) {
                     triggerDependants(
                         source = ancVisit,
                         addItems = emptyList(),
-                        removeItems = abortionFields + commonAddItems + deliveryDone,
+                        removeItems = abortionFields + commonAddItems + deliveryDone + placeOfAnc,
                         position = -1
                     )
                 } else {
                     val week = weekOfPregnancy.value?.toIntOrNull()
 
                     val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
-                        listOf(deliveryDone) + commonAddItems
+                        listOf(deliveryDone) + commonAddItems + placeOfAnc
                     } else {
-                        commonAddItems
+                        commonAddItems + placeOfAnc
                     }
 
                     val removeItems = abortionFields +
@@ -1080,6 +1080,7 @@ class PregnantWomanAncVisitDataset(
     }
 
     fun getWeeksOfPregnancy(): Int = getIndexById(weekOfPregnancy.id)
+
 
     fun updateBenRecordToDelivered(it: BenRegCache) {
         it.genDetails?.apply {

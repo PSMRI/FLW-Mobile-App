@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.content.res.Resources
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,18 +10,23 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.configuration.Dataset
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
 import org.piramalswasthya.sakhi.network.getLongFromDate
+import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import org.piramalswasthya.sakhi.utils.HelperUtil.isAncDue
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -37,8 +43,16 @@ class MaternalHealthRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val benDao: BenDao,
     private val preferenceDao: PreferenceDao,
+    private val benRepo: BenRepo,
     ) {
 
+    suspend fun updateExpiredPregnancyWomen() {
+
+        benDao.moveExpiredPregnantWomenToECT(
+            currentTime = System.currentTimeMillis(),
+            expiryMillis = TimeUnit.DAYS.toMillis(340)
+        )
+    }
     suspend fun getSavedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
         return withContext(Dispatchers.IO) {
             maternalHealthDao.getSavedRecord(benId)
@@ -620,6 +634,69 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
+    protected var englishResources: Resources
+
+    init {
+        englishResources = getLocalizedResources(context, Languages.ENGLISH)
+    }
+
+    suspend fun saveDeliveryStatusFromList(
+        benId: Long,
+        visitNumber: Int,
+        isDelivered: Boolean,
+        userName: String
+    ) {
+
+        val todayDate = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            .format(Date())
+
+        val ben = getBenFromId(benId) ?: return
+
+        val ancCache =
+            getSavedAncRecord(benId, visitNumber)
+                ?: PregnantWomanAncCache(
+                    benId = benId,
+                    visitNumber = visitNumber,
+                    syncState = SyncState.UNSYNCED,
+                    createdBy = userName,
+                    updatedBy = userName,
+                    frontFilePath = "",
+                    backFilePath = "",
+                    isActive = true,
+                    ancDate = Dataset.Companion.getLongFromDate(todayDate),
+                    visitDate = Dataset.Companion.getLongFromDate(todayDate),
+
+                )
+
+        ancCache.pregnantWomanDelivered = isDelivered
+
+        if (ancCache.processed != "N") {
+            ancCache.processed = "U"
+        }
+
+        ancCache.syncState = SyncState.UNSYNCED
+
+        persistAncRecord(ancCache)
+
+        if (isDelivered) {
+
+            ben.genDetails?.apply {
+                reproductiveStatus =
+                    englishResources.getStringArray(R.array.nbr_reproductive_status_array2)[2]
+                reproductiveStatusId = 3
+            }
+            if (ben.processed != "N") {
+                ben.processed = "U"
+            }
+
+            ben.syncState = SyncState.UNSYNCED
+
+            benRepo.updateRecord(ben)
+        }
+        WorkerUtils.triggerAmritPushWorker(context)
+
+    }
+
     companion object {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
@@ -629,4 +706,7 @@ class MaternalHealthRepo @Inject constructor(
             return "${dateString}T${timeString}.000Z"
         }
     }
+
+
+
 }

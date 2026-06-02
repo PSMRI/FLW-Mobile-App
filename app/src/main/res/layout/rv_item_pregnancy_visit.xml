@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="visit"
             type="org.piramalswasthya.sakhi.model.BenWithAncListDomain" />
@@ -397,13 +397,43 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/llswitch"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:visibility="@{visit.isDeliveryButtonVisible ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@+id/linear_pwr_tracking_Layout">
+
+                <TextView
+                    android:id="@+id/tvDeliveryStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/delivery_status"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchDeliveryStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:showText="true"
+                    android:checked="false" />
+
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/llAnc"
                 android:layout_marginVertical="@dimen/margin_normal"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/linear_pwr_tracking_Layout">
+                app:layout_constraintTop_toBottomOf="@+id/llswitch">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add_anc"

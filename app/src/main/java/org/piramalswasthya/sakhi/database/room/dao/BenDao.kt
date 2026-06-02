@@ -630,6 +630,22 @@ interface BenDao {
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.isDeactivate=0 and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
+    @Query("""
+    UPDATE BENEFICIARY
+    SET gen_reproductiveStatusId = 1
+    WHERE gen_reproductiveStatusId = 2
+    AND beneficiaryId IN (
+        SELECT benId
+        FROM PREGNANCY_REGISTER
+        WHERE active = 1
+        AND (:currentTime >
+            (lmpDate + :expiryMillis))
+    )
+""")
+    suspend fun moveExpiredPregnantWomenToECT(
+        currentTime: Long,
+        expiryMillis: Long
+    )
     @Transaction
     @Query("""
     SELECT ben.*  

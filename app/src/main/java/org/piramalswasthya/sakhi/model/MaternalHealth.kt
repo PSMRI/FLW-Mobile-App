@@ -784,10 +784,16 @@ data class BenWithAncListDomain(
     val eddString: String? get() = finalEddDate?.let { getDateString(it) }
     val weeksOfPregnancy: String
         get() = finalWeeksOfPregnancy?.toString() ?: "N/A"
+
+
+
     val abortionDateString: String? get() = abortionDate?.let { getDateString(it) }
 
     val isAbortionFormFilled: Boolean
         get() = savedAncRecords.any { it.terminationDoneBy != null }
+
+    val isDeliveryButtonVisible: Boolean
+        get() = (finalWeeksOfPregnancy ?: 0) > 22
 }
 
 
