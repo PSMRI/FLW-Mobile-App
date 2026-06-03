@@ -33,6 +33,7 @@
     <string name="nrc_admitted">NRC Admitted</string>
     <string name="referred_to_nrc">Referred to NRC</string>
     <string name="visit_date_cannot_be_more_than_2_months_old">Visit date cannot be more than 2 months old</string>
+    <string name="visit_date_cannot_be_more_than_10_months_old">Visit date cannot be more than 10 months old</string>
     <string name="only_one_visit_per_month_allowed">Only one visit per month is allowed</string>
     <string name="bottle_count">Bottle Count</string>
     <string name="sam_case_detected">SAM Case Detected</string>
