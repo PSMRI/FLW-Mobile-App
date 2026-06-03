@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.model.BenWithAdolescentDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenWithEcrDomain
 import org.piramalswasthya.sakhi.model.BenWithEctListDomain
 import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
@@ -25,6 +26,7 @@ import org.piramalswasthya.sakhi.model.BenWithHRPTListDomain
 import org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain
 import org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain
+import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
@@ -128,7 +130,7 @@ fun filterForBen(
         ben.benId.toString().lowercase().contains(filterText.replace(" ","")) ||
         ben.abhaId.toString().replace("-","").lowercase().contains(filterText.replace(" ","")) ||
         ben.regDate.lowercase().contains((filterText)) ||
-        ben.age.lowercase() == filterText.lowercase() ||
+        ben.age.lowercase().contains(filterText.lowercase()) ||
         ben.benFullName.lowercase().contains(filterText) ||
         ben.familyHeadName.lowercase().contains(filterText) ||
         ben.benSurname?.lowercase()?.contains(filterText) ?: false ||
@@ -914,6 +916,7 @@ fun getDateString(dateLong: Long?): String? {
 }
 
 
+
 @Suppress("deprecation")
 fun isInternetAvailable(activity: Context): Boolean {
     val conMgr = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -930,6 +933,43 @@ fun isInternetAvailable(activity: Context): Boolean {
     }
 }
 
+
+
+fun Context.getLocalizedAgeUnit(ageUnit: AgeUnit?): String {
+    return when (ageUnit?.name) {
+        "YEAR", "YEARS" -> resources.getString(R.string.years)
+        "MONTH", "MONTHS" -> resources.getString(R.string.months)
+        "DAY", "DAYS" -> resources.getString(R.string.days)
+        else -> ageUnit?.name ?: ""
+    }
+}
+
+fun Context.getLocalizedVisit(visitNumber: Int): String {
+    return resources.getString(
+        R.string.visit,
+        visitNumber
+    )
+}
+
+
+
+
+fun Context.getLocalizedMonthText(value: String?): String {
+    if (value.isNullOrBlank()) return ""
+
+    return value
+        .replace("Months", getString(R.string.months), ignoreCase = true)
+        .replace("Month", getString(R.string.month), ignoreCase = true)
+}
+
+fun Context.getLocalizedGender(gender: Gender?): String {
+    return when (gender) {
+        Gender.MALE -> resources.getString(R.string.male)
+        Gender.FEMALE -> resources.getString(R.string.female)
+        Gender.TRANSGENDER -> resources.getString(R.string.transgender)
+        null -> ""
+    }
+}
 
 fun getLocalizedAge(context: Context, dob: Long): String {
 

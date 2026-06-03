@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.ItemChildImmunizationDoseBinding
+import org.piramalswasthya.sakhi.helpers.DynamicLocalizationHelper.toLocalizedString
 import org.piramalswasthya.sakhi.model.VaccineDomain
-
+import org.piramalswasthya.sakhi.model.toVaccineType
 
 
 class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationClickListener? = null) :
@@ -57,6 +58,8 @@ class ChildImmunizationVaccineAdapter (private val clickListener: ImmunizationCl
             // Set switch state
             binding.idSwitch.isChecked = item.isSwitchChecked
 
+            binding.tvVaccineName.text = item.vaccineName.toVaccineType()
+                .toLocalizedString(binding.root.context)
             when (item.state.name) {
                 "PENDING", "OVERDUE" -> {
                     binding.idSwitch.isEnabled = true

@@ -1339,5 +1339,11 @@
     <string name="str_both">दोनों</string>
     <string name="str_eye_visit">आँख - भ्रमण</string>
     <string name="check_sympt">जांच करें कि व्यक्ति में इनमें से कोई भी लक्षण है या नहीं:</string>
+    <string name="forwarded_to_ncho_anm">सीएचओ/एएनएम को\nअग्रेषित</string>
+    <string name="tap_to_view_ashas_grouped">समूहबद्ध आशाओं को देखने के लिए टैप करें।</string>
+    <string name="awaiting_your_nverification">आपके\nसत्यापन की प्रतीक्षा में</string>
+    <string name="past_verify_by_12th">12 तारीख तक सत्यापन लंबित</string>
+    <string name="back_with_asha_nfor_correction">सुधार हेतु\nआशा के पास वापस</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">वे आशाएं जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
 
 </resources>

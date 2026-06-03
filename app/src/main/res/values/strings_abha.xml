@@ -114,4 +114,5 @@
     <string name="str_abha_otp_number">"OTP sent to ABHA registered mobile number ending with @mobileNumber"</string>
     <string name="str_otp_number_message">"An OTP has been sent to the mobile number ending with @mobileNumber."</string>
 
+
 </resources>

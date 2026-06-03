@@ -169,6 +169,7 @@ class IncentiveDashboardFragment : Fragment() {
                     binding.tvPendingCount.text  = summary.pending.toString()
                     binding.tvOverdueCount.text  = summary.overDue.toString()
                     binding.tvRejectedCount.text = summary.rejected.toString()
+                    binding.tvAshaUnclaimedCount.text = summary.unclaimed.toString()
                     binding.tvSubCentreTitle.text =
                         "${resources.getString(R.string.sub_center_under_you_4)} (${data.facilities.size})"
                     adapter.submitList(data.facilities)

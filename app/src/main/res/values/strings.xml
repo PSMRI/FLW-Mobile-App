@@ -1508,7 +1508,12 @@
     <string name="str_right">Right</string>
     <string name="str_both">Both</string>
     <string name="str_eye_visit">Eye - Visit</string>
-
+    <string name="forwarded_to_ncho_anm">Forwarded to\nCHO/ANM</string>
+    <string name="tap_to_view_ashas_grouped">Tap to view ASHAs grouped.</string>
+    <string name="awaiting_your_nverification">Awaiting your\nverification</string>
+    <string name="past_verify_by_12th">Past verify-by 12th</string>
+    <string name="back_with_asha_nfor_correction">Back with ASHA\nfor correction</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">ASHAs yet to submit\ntheir monthly claim</string>
 
 
 </resources>
