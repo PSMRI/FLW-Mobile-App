@@ -27,6 +27,8 @@ import org.piramalswasthya.sakhi.adapters.ChildImmunizationVaccineAdapter
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentImmunizationFormBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.getLocalizedAgeUnit
+import org.piramalswasthya.sakhi.helpers.getLocalizedGender
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -93,13 +95,18 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
 
         binding.checkBox.setOnCheckedChangeListener(this)
         binding.tvDoseName.text = getString(R.string.dose_name_2, viewModel.vaccineCategory)
-        viewModel.benName.observe(viewLifecycleOwner) {
+      /*  viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }
         viewModel.benAgeGender.observe(viewLifecycleOwner) {
             binding.tvAgeGender.text = it
         }
-
+*/
+        viewModel.benRegCache.observe(viewLifecycleOwner) { ben ->
+            binding.tvBenName.text = "${ben.firstName} ${ben.lastName ?: ""}"
+            binding.tvAgeGender.text =
+                "${ben.age} ${requireContext().getLocalizedAgeUnit(ben.ageUnit)} | ${requireContext().getLocalizedGender(ben.gender)}"
+        }
 
         binding.llPatientInformation2.visibility = View.VISIBLE
         //     binding.llBenPwrTrackingDetails2.visibility = View.GONE

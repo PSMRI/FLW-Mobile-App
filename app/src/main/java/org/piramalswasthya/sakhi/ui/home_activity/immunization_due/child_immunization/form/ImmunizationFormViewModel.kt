@@ -20,6 +20,8 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.getLocalizedAgeUnit
+import org.piramalswasthya.sakhi.helpers.getLocalizedGender
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -97,6 +99,8 @@ class ImmunizationFormViewModel @Inject constructor(
 
     }
 
+
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -119,7 +123,7 @@ class ImmunizationFormViewModel @Inject constructor(
                 clickedBenId.emit(benId)
                 _benRegCache.postValue(ben)
                 _benName.postValue("${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}")
-                _benAgeGender.postValue("${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}")
+                _benAgeGender.postValue("${ben.age} ${context.getLocalizedAgeUnit(ben.ageUnit)} | ${context.getLocalizedGender(ben.gender)}")
                 val vaccine = vaccineDao.getVaccineById(vaccineId)
                     ?: throw IllegalStateException("Unknown Vaccine Injected, contact HAZMAT team!")
                 dataset.setFirstPage(ben, vaccine, savedRecord)

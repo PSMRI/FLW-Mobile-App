@@ -990,7 +990,7 @@ class FormInputAdapterWithBgIcon (
             item.value?.let {
                 calDob.timeInMillis = getLongFromDate(it)
                 updateAgeDTO(ageUnitDTO, calDob)
-                binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
 
             }
 
@@ -1018,7 +1018,7 @@ class FormInputAdapterWithBgIcon (
                     )
                 }
                 agePicker.setOnDismissListener {
-                    binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                    binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                     calDob.timeInMillis =
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
@@ -1070,7 +1070,7 @@ class FormInputAdapterWithBgIcon (
                             item.value = getDateString(millis)
 
                         updateAgeDTO(ageUnitDTO, millisCal)
-                        binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                        binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay

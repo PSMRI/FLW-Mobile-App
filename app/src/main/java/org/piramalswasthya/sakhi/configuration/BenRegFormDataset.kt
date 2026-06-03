@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class BenRegFormDataset(context: Context, language: Languages) : Dataset(context, language) {
+class BenRegFormDataset(var context: Context, language: Languages) : Dataset(context, language) {
 
 
     companion object {
@@ -87,13 +87,13 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             return cal.timeInMillis
         }
 
-        private fun getAgeStringFromDob(dob: Long): String {
-            val cal = Calendar.getInstance()
-            cal.timeInMillis = dob
-            val ageUnitDTO = org.piramalswasthya.sakhi.model.AgeUnitDTO(0, 0, 0)
-            org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO(ageUnitDTO, cal)
-            return org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit(ageUnitDTO)
-        }
+//        private fun getAgeStringFromDob(dob: Long): String {
+//            val cal = Calendar.getInstance()
+//            cal.timeInMillis = dob
+//            val ageUnitDTO = org.piramalswasthya.sakhi.model.AgeUnitDTO(0, 0, 0)
+//            org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO(ageUnitDTO, cal)
+//            return org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit(context,ageUnitDTO)
+//        }
     }
 
     private var familyHeadPhoneNo: String? = null

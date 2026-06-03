@@ -1,9 +1,11 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.internal.common.CommonUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +30,8 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManager
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
@@ -38,8 +42,10 @@ class AntenatalCounsellingViewModel @Inject constructor(
     private val benRepo: BenRepo,
     private val infantRegRepo: InfantRegRepo,
     private var referalRepo: NcdReferalRepo,
-    private val referralStatusManager: ReferralStatusManager
-) : ViewModel() {
+    private val referralStatusManager: ReferralStatusManager,
+    @ApplicationContext private val context: Context,
+
+    ) : ViewModel() {
 
     enum class ReferralType {
         MATERNAL,
@@ -204,22 +210,31 @@ class AntenatalCounsellingViewModel @Inject constructor(
     }
 
 
+    private var visitNumberString: String = ""
+
+
     fun loadFormSchema(
         benId: Long,
         formId: String,
         visitDay: String,
         viewMode: Boolean,
         lang: String,
-        visitNumber: Int
+        visitNumber: Int,
+        visitNumberString: String
+
     ) {
         this.visitDay = visitDay
         this.isViewMode = viewMode
         this.benId = benId
+        this.visitNumberString = visitNumberString
 
         viewModelScope.launch {
             initializeVisitData(benId, formId, lang, visitDay, viewMode, visitNumber)
         }
     }
+
+
+
 
     private suspend fun initializeVisitData(
         benId: Long,
@@ -303,11 +318,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
     }
 
     private fun getVisitNumberValue(field: FormFieldDto, viewMode: Boolean, visitNumber: Int): String {
-        return if (!viewMode) {
-            "Visit-${_visitCount.value + 1}"
-        } else {
-            "Visit-$visitNumber"
-        }
+        return visitNumberString
     }
 
     private fun getAgeRiskValue(): String {
@@ -653,4 +664,6 @@ class AntenatalCounsellingViewModel @Inject constructor(
     fun resetState() {
         _state.postValue(State.IDLE)
     }
+
+
 }
