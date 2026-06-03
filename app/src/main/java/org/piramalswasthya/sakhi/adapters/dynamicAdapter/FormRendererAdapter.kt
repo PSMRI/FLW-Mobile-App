@@ -723,7 +723,7 @@
 
                                     if (minDate == null) {
                                         calendar.time = today
-                                        calendar.add(Calendar.MONTH, -2)
+                                        calendar.add(Calendar.MONTH, -10)
                                         minDate = calendar.time
                                     }
                                     if (maxDate == null) {

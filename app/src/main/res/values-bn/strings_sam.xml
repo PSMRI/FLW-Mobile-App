@@ -33,6 +33,7 @@
     <string name="nrc_admitted">NRC-তে ভর্তি</string>
     <string name="referred_to_nrc">NRC-তে রেফার করা হয়েছে</string>
     <string name="visit_date_cannot_be_more_than_2_months_old">ভিজিট তারিখ ২ মাসের বেশি পুরোনো হতে পারে না</string>
+    <string name="visit_date_cannot_be_more_than_10_months_old">ভিজিট তারিখ ১০ মাসের বেশি পুরোনো হতে পারে না</string>
     <string name="only_one_visit_per_month_allowed">প্রতি মাসে শুধুমাত্র একটি ভিজিট অনুমোদিত</string>
     <string name="bottle_count">বোতলের সংখ্যা</string>
     <string name="sam_case_detected">SAM কেস সনাক্ত হয়েছে</string>
