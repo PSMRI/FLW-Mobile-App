@@ -287,6 +287,21 @@
         <item>नहीं</item>
     </string-array>
 
+    <string-array name="visit_months">
+        <item>जनवरी</item>
+        <item>फ़रवरी</item>
+        <item>मार्च</item>
+        <item>अप्रैल</item>
+        <item>मई</item>
+        <item>जून</item>
+        <item>जुलाई</item>
+        <item>अगस्त</item>
+        <item>सितंबर</item>
+        <item>अक्टूबर</item>
+        <item>नवंबर</item>
+        <item>दिसंबर</item>
+    </string-array>
+
     <!--  Post Natal Care Strings -->
     <string name="pnc_period">प्रसवोत्तर देखभाल अवधि</string>
     <string name="pnc_visit_date">प्रसवोत्तर देखभाल दौरे की तारीख</string>

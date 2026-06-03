@@ -95,13 +95,6 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
 
         binding.checkBox.setOnCheckedChangeListener(this)
         binding.tvDoseName.text = getString(R.string.dose_name_2, viewModel.vaccineCategory)
-      /*  viewModel.benName.observe(viewLifecycleOwner) {
-            binding.tvBenName.text = it
-        }
-        viewModel.benAgeGender.observe(viewLifecycleOwner) {
-            binding.tvAgeGender.text = it
-        }
-*/
         viewModel.benRegCache.observe(viewLifecycleOwner) { ben ->
             binding.tvBenName.text = "${ben.firstName} ${ben.lastName ?: ""}"
             binding.tvAgeGender.text =
