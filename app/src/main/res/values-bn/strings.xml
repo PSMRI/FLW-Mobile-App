@@ -1426,4 +1426,7 @@
     <string name="past_verify_by_12th">১২ তারিখের মধ্যে যাচাই বাকি</string>
     <string name="back_with_asha_nfor_correction">সংশোধনের জন্য\nASHA-এর কাছে ফেরত</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">যেসব ASHA এখনও\nতাদের মাসিক দাবি জমা দেয়নি</string>
+    <string name="delivery_status">ডেলিভারি স্ট্যাটাস</string>
+    <string name="delivered">ডেলিভার করা হয়েছে</string>
+    <string name="not_delivered">ডেলিভার করা হয়নি</string>
 </resources>

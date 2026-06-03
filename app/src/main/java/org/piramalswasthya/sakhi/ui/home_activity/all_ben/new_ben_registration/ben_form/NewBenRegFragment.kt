@@ -475,6 +475,13 @@ class NewBenRegFragment : Fragment() {
                             adapter.submitList(it)
                     }
                 }
+                viewModel.listUpdateState.observe(viewLifecycleOwner) { state ->
+                    if (state is NewBenRegViewModel.ListUpdateState.Updated &&
+                        (state.formElementId == 50 || state.formElementId == 54)
+                    ) {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         viewModel.setUpPage()

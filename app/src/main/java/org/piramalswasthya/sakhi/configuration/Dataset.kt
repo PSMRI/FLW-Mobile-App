@@ -164,6 +164,8 @@ abstract class Dataset(context: Context, val currentLanguage: Languages) {
 
     abstract fun mapValues(cacheModel: FormDataModel, pageNumber: Int = 0)
     protected fun getIndexOfElement(element: FormElement) = list.indexOf(element)
+
+    protected val formElements: List<FormElement> get() = list
     suspend fun updateList(formId: Int, index: Int) {
         listMutex.withLock {
             list.find { it.id == formId }?.let {

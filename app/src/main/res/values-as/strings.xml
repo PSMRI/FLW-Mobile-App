@@ -1411,6 +1411,9 @@
     <string name="add_new">নতুন যোগ কৰক</string>
     <string name="ifa_distribution">IFA বিতৰণ</string>
     <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="delivery_status">ডেলিভাৰী স্থিতি</string>
+    <string name="delivered">ডেলিভাৰ কৰা হৈছে</string>
+    <string name="not_delivered">ডেলিভাৰ কৰা হোৱা নাই</string>
     <string name="check_sympt">ব্যক্তিজনৰ এই লক্ষণসমূহৰ কোনো এটা আছে নে নাই পৰীক্ষা কৰক:</string>
     <string name="forwarded_to_ncho_anm">চিএইচঅ\'/এএনএমলৈ\nপ্ৰেৰণ কৰা হৈছে</string>
     <string name="tap_to_view_ashas_grouped">গোটবদ্ধ ASHA সকল চাবলৈ টেপ কৰক।</string>

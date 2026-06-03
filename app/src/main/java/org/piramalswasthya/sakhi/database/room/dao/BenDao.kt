@@ -558,7 +558,7 @@ interface BenDao {
 //    @Query("SELECT b.benId as ecBenId,b.*, r.noOfLiveChildren as numChildren , t.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId left outer join eligible_couple_tracking t on t.benId=b.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
     @Transaction
 //    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by b.benId")
-    @Query("SELECT b.* FROM ben_basic_cache b JOIN eligible_couple_reg r ON b.benId = r.benId LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min AND :max AND b.reproductiveStatusId = 1 AND  b.isDeactivate = 0 AND b.villageId = :selectedVillage AND (b.isDeath = 0 OR b.isDeath IS NULL OR b.isDeath = 'undefined') GROUP BY b.benId")
+    @Query("SELECT b.* FROM ben_basic_cache b JOIN eligible_couple_reg r ON b.benId = r.benId LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min AND :max AND b.reproductiveStatusId = 1 AND  b.isDeactivate = 0 AND b.villageId = :selectedVillage AND (b.isDeath = 0 OR b.isDeath IS NULL OR b.isDeath = 'undefined') AND IFNULL(r.lmpDate, 0) != 0 GROUP BY b.benId")
     fun getAllEligibleTrackingList(
         selectedVillage: Int,
         min: Int = Konstants.minAgeForEligibleCouple, max: Int = Konstants.maxAgeForEligibleCouple
@@ -630,6 +630,22 @@ interface BenDao {
     @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.isDeactivate=0 and ben.villageId=:selectedVillage group by ben.benId")
     fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
 
+    @Query("""
+    UPDATE BENEFICIARY
+    SET gen_reproductiveStatusId = 1
+    WHERE gen_reproductiveStatusId = 2
+    AND beneficiaryId IN (
+        SELECT benId
+        FROM PREGNANCY_REGISTER
+        WHERE active = 1
+        AND (:currentTime >
+            (lmpDate + :expiryMillis))
+    )
+""")
+    suspend fun moveExpiredPregnantWomenToECT(
+        currentTime: Long,
+        expiryMillis: Long
+    )
     @Transaction
     @Query("""
     SELECT ben.*  
