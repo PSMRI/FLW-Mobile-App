@@ -98,6 +98,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
     private var familyHeadPhoneNo: String? = null
     private var timeStampDateOfMarriageFromSpouse: Long? = null
+    private var savedMarriageDateOnEdit: Long? = null
     private var isHoF: Boolean = false
     private var isAddSppouse: Int = 0
 
@@ -620,6 +621,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             dateOfMarriage.value = getDateFromLong(saved.genDetails?.marriageDate ?: 0)
+            savedMarriageDateOnEdit = saved.genDetails?.marriageDate?.takeIf { it > 0L }
 
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
@@ -1992,10 +1994,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                             else -> R.array.nbr_relationship_to_head
                         }
 
-                        maritalStatus.value = null
-
                         val savedMarriageDate = benIfDataExist?.genDetails?.marriageDate
                             ?: timeStampDateOfMarriageFromSpouse
+                            ?: savedMarriageDateOnEdit
                         if (savedMarriageDate != null && savedMarriageDate > 0L && dob > 0L) {
                             val recomputedAgeAtMarriage =
                                 calculateAgeAtMarriage(dob, savedMarriageDate)
@@ -2011,9 +2012,6 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                             ageAtMarriage.value = null
                             dateOfMarriage.value = null
                         }
-
-                        haveChildren.value = null
-                        _isAddingChildren.value = false
 
                         // Reset reproductive only for female
                         if (genderIndex == 1) {
@@ -2072,7 +2070,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 }
 
                 try {
-                    return updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
+                    val result = updateReproductiveOptionsBasedOnAgeGender(formId = agePopup.id)
+                    return result
                 } catch (e: Exception) {
                     e.printStackTrace()
                     return 1
