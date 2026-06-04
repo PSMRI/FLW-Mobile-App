@@ -58,7 +58,7 @@ class CdFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ncd,
-                getString(R.string.communicable_diseases)
+                getString(R.string.tb)
             )
         }
     }

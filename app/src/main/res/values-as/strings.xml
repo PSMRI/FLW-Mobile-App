@@ -68,6 +68,7 @@
     <string name="form_input_error_invalid_rch">অবৈধ RCH আইডি !</string>
     <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
+    <string name="tb">যক্ষ্মা (টিবি)</string>
 <string-array name="anc_paiucd_done_by">
         <item>ডাক্টৰ</item>
         <item>নাৰ্চ</item>
@@ -1042,7 +1043,7 @@
     <string name="asha_profile">প্ৰ\'ফাইল</string>
     <string name="status">স্থিতি</string>
     <string name="ncd_refer_form">NCD ৰেফাৰ ফৰ্ম</string>
-    <string name="ncd_refer_list">NCD ৰেফাৰ তালিকা</string>
+    <string name="ncd_refer_list">HWC ৰেফাৰ</string>
     <string name="hwc_refer_form">HWC ৰেফাৰ ফৰ্ম</string>
     <string name="hwc_refer_list">HWC ৰেফাৰ তালিকা</string>
     <string name="child_under_five_years_list">পাঁচ বছৰৰ তলৰ শিশুৰ তালিকা</string>
@@ -1235,6 +1236,7 @@
     <string name="cataract_surgery_visits">কেটাৰেক্ট অস্ত্ৰোপচাৰ ভিজিটসমূহ</string>
     <string name="due_date_label">দেয়: %1$s</string>
 
+    <string name="referal_facility">ৰেফাৰেল সুবিধা</string>
 
     <string name="visit_number_label">ভিজিট -%d</string>
     <string name="vaccine_fill">পূৰণ কৰক</string>

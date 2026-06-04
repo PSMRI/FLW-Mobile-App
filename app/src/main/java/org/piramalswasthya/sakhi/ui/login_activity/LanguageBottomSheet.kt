@@ -80,6 +80,17 @@ class LanguageBottomSheet(
                         isSelected = currentLanguage == Languages.ASSAMESE
                     )
                 )
+                add(
+                    Language(
+                        id = 4,
+                        lanFirstWord = "অ",
+                        lanName = getString(R.string.text_bangali),
+                        lanSelectedView = selected,
+                        lanUnselectedView = unselected,
+                        language = Languages.BANGLA,
+                        isSelected = currentLanguage == Languages.BANGLA
+                    )
+                )
             }
             /*add(Language(
                 id = 4,
