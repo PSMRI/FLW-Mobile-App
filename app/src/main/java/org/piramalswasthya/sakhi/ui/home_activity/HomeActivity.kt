@@ -644,7 +644,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
-            val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
+           // val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
+
+            //If employee id is blank at that time showing userid
+            val empId = pref.getEmployeeId()
+            val englishId = String.format(
+                Locale.ENGLISH, "%s",
+                if (empId.isNullOrBlank()) it.userId.toString() else empId
+            )
             val formatted = HtmlCompat.fromHtml(
                 getString(R.string.nav_item_emp_text, englishId),
                 HtmlCompat.FROM_HTML_MODE_LEGACY

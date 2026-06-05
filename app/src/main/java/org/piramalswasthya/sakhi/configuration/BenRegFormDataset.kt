@@ -917,6 +917,15 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             }
             maritalStatus.value =
                 maritalStatus.getStringFromPosition(saved.genDetails?.maritalStatusId ?: 0)
+            reproductiveStatus.value = saved.genDetails?.reproductiveStatus?.let { eng ->
+                listOf(
+                    R.array.nbr_reproductive_status_array1,
+                    R.array.nbr_reproductive_status_array2,
+                    R.array.nbr_reproductive_status_array3,
+                    R.array.nbr_reproductive_status_array4,
+                    R.array.nbr_reproductive_status_array5
+                ).firstNotNullOfOrNull { getLocalValueInArray(it, eng) } ?: eng
+            }
             ageAtMarriage.value = calculateAgeAtMarriage(saved.dob, saved.genDetails?.marriageDate)?.toString()
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             dateOfMarriage.value = getDateFromLong(
@@ -924,7 +933,18 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
             )
             val maritalIndex = list.indexOf(maritalStatus)
             if (maritalStatus.value == maritalStatus.entries!![1]) {
-                list.add(maritalIndex + 1, ageAtMarriage)
+                val genderField = when (gender.value) {
+                    gender.entries!![0] -> wifeName
+                    gender.entries!![1] -> husbandName
+                    gender.entries!![2] -> spouseName
+                    else -> null
+                }
+                if (genderField != null) {
+                    list.add(maritalIndex + 1, genderField)
+                    list.add(maritalIndex + 2, ageAtMarriage)
+                } else {
+                    list.add(maritalIndex + 1, ageAtMarriage)
+                }
             }
             mobileNoOfRelation.value =
                 mobileNoOfRelation.getStringFromPosition(saved.mobileNoOfRelationId)
@@ -970,6 +990,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
 
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
+        }
+        if (hasThirdPage()) {
+            updateReproductiveOptionsBasedOnAgeGender(formId = reproductiveStatus.id)
+            if (!list.contains(reproductiveStatus)) list.add(reproductiveStatus)
         }
         ben?.takeIf { !it.isDraft && it.isDeath }?.let {
             applyDeathLockState(list, isDeath = true)
@@ -3067,6 +3091,10 @@ class BenRegFormDataset(context: Context, language: Languages) : Dataset(context
                 reproductiveStatus.inputType = DROPDOWN
             }
         } else {
+
+            if (genderIsFemale) {
+                reproductiveStatus.inputType = DROPDOWN
+            }
 
             when {
 
