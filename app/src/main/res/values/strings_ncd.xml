@@ -201,7 +201,10 @@
     <string name="sputum_test_result">Sputum Test Result</string>
     <string name="referred_to_facility">Referred to Facility</string>
     <string name="facility_referral_follow_ups">Facility Referral follow-ups</string>
-
+    <string name="suspected_c_case">Suspected Cancer case</string>
+    <string name="c_cancer">Cancer</string>
+    <string name="further_depression">further assessment for depression</string>
+    <string name="geriatic">GERIATRIC</string>
     <string-array name="tb_submitted_yet">
         <item>DMC</item>
         <item>SC</item>

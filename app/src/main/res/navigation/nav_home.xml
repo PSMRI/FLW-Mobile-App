@@ -55,9 +55,7 @@
         <action
             android:id="@+id/action_homeFragment_to_pwAncVisitsFragment"
             app:destination="@id/pwAncVisitsFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_cdFragment"
-            app:destination="@id/cdFragment" />
+
         <action
             android:id="@+id/action_homeFragment_to_benListCHOFragment"
             app:destination="@id/benListCHOFragment" />
@@ -88,6 +86,9 @@
         <action
             android:id="@+id/action_homeFragment_to_missedPeriodFragment"
             app:destination="@id/missedPeriodFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_ncdReferredListFragment"
+            app:destination="@id/ncdRefferedList" />
 
     </fragment>
     <fragment
@@ -295,9 +296,7 @@
         <action
             android:id="@+id/action_ncdFragment_to_ncdPriorityListFragment"
             app:destination="@id/ncdPriorityListFragment" />
-        <action
-            android:id="@+id/action_ncdFragment_to_ncdReferredListFragment"
-            app:destination="@id/ncdRefferedList" />
+
     </fragment>
     <fragment
         android:id="@+id/villageLevelFormsFragment"
@@ -1792,6 +1791,9 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_leprosyFragment"
             app:destination="@id/leprosyFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_communicableDisease"
+            app:destination="@id/cdFragment" />
 
     </fragment>
     <fragment

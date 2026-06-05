@@ -425,7 +425,7 @@
     <string name="reproductive_age_list">প্রজনন বয়সের তালিকা</string>
     <string name="ncd_eligible_list">NCD যোগ্য তালিকা</string>
     <string name="ncd_refer_form">NCD রেফার ফর্ম</string>
-    <string name="ncd_refer_list">NCD রেফার তালিকা</string>
+    <string name="ncd_refer_list">HWC রেফার</string>
     <string name="hwc_refer_form">HWC রেফার ফর্ম</string>
     <string name="hwc_refer_list">HWC রেফার তালিকা</string>
     <string name="child_under_five_years_list">পাঁচ বছরের কম বয়সী শিশুর তালিকা</string>
@@ -1429,4 +1429,9 @@
     <string name="delivery_status">ডেলিভারি স্ট্যাটাস</string>
     <string name="delivered">ডেলিভার করা হয়েছে</string>
     <string name="not_delivered">ডেলিভার করা হয়নি</string>
+    <string name="tb">যক্ষ্মা (টিবি)</string>
+    <string name="referal_facility">রেফারেল সুবিধা</string>
+
+
+
 </resources>

@@ -153,6 +153,8 @@
     </string-array>
     <string name="home_visit_number">गृह भ्रमण %d</string>
     <string name="home_visit_date">गृह भ्रमण तिथि </string>
+    <string name="tb">ट्यूबरक्लोसिस (टीबी)</string>
+    <string name="referal_facility">रेफरल सुविधा</string>
 
     <string-array name="deworming_location_options">
         <item>स्कूल</item>
@@ -690,7 +692,7 @@
     <string name="status">स्थिति</string>
     <string name="sync_status">सिंक स्थिति</string>
     <string name="ncd_refer_form">एनसीडी रेफर फॉर्म</string>
-    <string name="ncd_refer_list">एनसीडी रेफर सूची</string>
+    <string name="ncd_refer_list">एचडब्ल्यूसी रेफर</string>
     <string name="hwc_refer_form">एचडब्ल्यूसी रेफर फॉर्म</string>
     <string name="hwc_refer_list">एचडब्ल्यूसी रेफर सूची</string>
     <string name="child_under_five_years_list">पांच वर्ष से कम आयु के बच्चों की सूची</string>
