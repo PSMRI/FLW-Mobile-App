@@ -153,6 +153,8 @@
     </string-array>
     <string name="home_visit_number">गृह भ्रमण %d</string>
     <string name="home_visit_date">गृह भ्रमण तिथि </string>
+    <string name="tb">ट्यूबरक्लोसिस (टीबी)</string>
+    <string name="referal_facility">रेफरल सुविधा</string>
 
     <string-array name="deworming_location_options">
         <item>स्कूल</item>
@@ -690,7 +692,7 @@
     <string name="status">स्थिति</string>
     <string name="sync_status">सिंक स्थिति</string>
     <string name="ncd_refer_form">एनसीडी रेफर फॉर्म</string>
-    <string name="ncd_refer_list">एनसीडी रेफर सूची</string>
+    <string name="ncd_refer_list">एचडब्ल्यूसी रेफर</string>
     <string name="hwc_refer_form">एचडब्ल्यूसी रेफर फॉर्म</string>
     <string name="hwc_refer_list">एचडब्ल्यूसी रेफर सूची</string>
     <string name="child_under_five_years_list">पांच वर्ष से कम आयु के बच्चों की सूची</string>
@@ -1330,11 +1332,20 @@
     <string name="sammelan_photo3">सम्मेलन की तस्वीरें / MoM (3)</string>
     <string name="sammelan_photo4">सम्मेलन की तस्वीरें / MoM (4)</string>
     <string name="sammelan_photo5">सम्मेलन की तस्वीरें / MoM (5)</string>
+    <string name="delivery_status">डिलीवरी स्थिति</string>
+    <string name="delivered">डिलीवर किया गया</string>
+    <string name="not_delivered">डिलीवर नहीं किया गया</string>
 
     <string name="str_left">बायां</string>
     <string name="str_right">दाईं</string>
     <string name="str_both">दोनों</string>
     <string name="str_eye_visit">आँख - भ्रमण</string>
     <string name="check_sympt">जांच करें कि व्यक्ति में इनमें से कोई भी लक्षण है या नहीं:</string>
+    <string name="forwarded_to_ncho_anm">सीएचओ/एएनएम को\nअग्रेषित</string>
+    <string name="tap_to_view_ashas_grouped">समूहबद्ध आशाओं को देखने के लिए टैप करें।</string>
+    <string name="awaiting_your_nverification">आपके\nसत्यापन की प्रतीक्षा में</string>
+    <string name="past_verify_by_12th">12 तारीख तक सत्यापन लंबित</string>
+    <string name="back_with_asha_nfor_correction">सुधार हेतु\nआशा के पास वापस</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">वे आशाएं जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
 
 </resources>

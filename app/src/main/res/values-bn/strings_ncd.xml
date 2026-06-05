@@ -201,7 +201,10 @@
     <string name="sputum_test_result">থুতু পরীক্ষার ফলাফল</string>
     <string name="referred_to_facility">সুবিধায় রেফার করা হয়েছে</string>
     <string name="facility_referral_follow_ups">সুবিধা রেফারেল ফলো-আপ</string>
-
+    <string name="suspected_c_case">সন্দেহভাজন ক্যান্সারের ঘটনা</string>
+    <string name="c_cancer">ক্যান্সার</string>
+    <string name="further_depression">বিষণ্নতার জন্য আরও মূল্যায়ন</string>
+    <string name="geriatic">জেরিয়াট্রিক</string>
     <string-array name="tb_submitted_yet">
         <item>ডিএমসি</item>
         <item>এসসি</item>

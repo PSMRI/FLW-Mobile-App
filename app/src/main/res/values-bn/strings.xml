@@ -425,7 +425,7 @@
     <string name="reproductive_age_list">প্রজনন বয়সের তালিকা</string>
     <string name="ncd_eligible_list">NCD যোগ্য তালিকা</string>
     <string name="ncd_refer_form">NCD রেফার ফর্ম</string>
-    <string name="ncd_refer_list">NCD রেফার তালিকা</string>
+    <string name="ncd_refer_list">HWC রেফার</string>
     <string name="hwc_refer_form">HWC রেফার ফর্ম</string>
     <string name="hwc_refer_list">HWC রেফার তালিকা</string>
     <string name="child_under_five_years_list">পাঁচ বছরের কম বয়সী শিশুর তালিকা</string>
@@ -1420,5 +1420,18 @@
     <string name="select_time">সময় নির্বাচন করুন</string>
     <string name="str_alert">সতর্কতা!</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">অনুগ্রহ করে রেকর্ড সিঙ্ক হওয়া পর্যন্ত অপেক্ষা করুন এবং আবার চেষ্টা করুন।</string>
+    <string name="forwarded_to_ncho_anm">সিএইচও/এএনএম-এর কাছে\nপ্রেরিত</string>
+    <string name="tap_to_view_ashas_grouped">গ্রুপভুক্ত ASHA-দের দেখতে ট্যাপ করুন।</string>
+    <string name="awaiting_your_nverification">আপনার\nযাচাইয়ের অপেক্ষায়</string>
+    <string name="past_verify_by_12th">১২ তারিখের মধ্যে যাচাই বাকি</string>
+    <string name="back_with_asha_nfor_correction">সংশোধনের জন্য\nASHA-এর কাছে ফেরত</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">যেসব ASHA এখনও\nতাদের মাসিক দাবি জমা দেয়নি</string>
+    <string name="delivery_status">ডেলিভারি স্ট্যাটাস</string>
+    <string name="delivered">ডেলিভার করা হয়েছে</string>
+    <string name="not_delivered">ডেলিভার করা হয়নি</string>
+    <string name="tb">যক্ষ্মা (টিবি)</string>
+    <string name="referal_facility">রেফারেল সুবিধা</string>
+
+
 
 </resources>

@@ -61,4 +61,8 @@
     <string name="incentive_abha_id_details">ABHA নম্বৰ: %1s</string>
     <string name="contact_info">যোগাযোগৰ তথ্য</string>
 
+    <string name="permission_required_title">অনুমতি প্ৰয়োজন</string>
+    <string name="permission_required_message">PDF ডাউনলোড কৰিবলৈ ষ্টোৰেজ অনুমতি প্ৰয়োজন। অনুগ্ৰহ কৰি ছেটিংছৰ পৰা সক্ষম কৰক।</string>
+    <string name="permission_open_settings">ছেটিংছ খোলক</string>
+    <string name="permission_cancel">বাতিল কৰক</string>
 </resources>

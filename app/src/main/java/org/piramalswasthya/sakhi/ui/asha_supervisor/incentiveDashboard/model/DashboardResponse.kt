@@ -21,7 +21,8 @@ data class IncentiveSummary(
     @SerializedName("overDue") val overDue: Int,
     @SerializedName("rejected") val rejected: Int,
     @SerializedName("pending") val pending: Int,
-    @SerializedName("verified") val verified: Int
+    @SerializedName("verified") val verified: Int,
+    @SerializedName("unclaimed") val unclaimed: Int
 )
 
 data class Location(

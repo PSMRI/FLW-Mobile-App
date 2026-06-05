@@ -46,7 +46,11 @@ class IconDataset @Inject constructor(
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
-        val vlfTitle = resources.getString(R.string.icon_title_vlf)
+        val vlfTitle = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            resources.getString(R.string.mitanin_village_meetings)
+        } else {
+            resources.getString(R.string.asha_village_meetings)
+        }
 
         Timber.d("currently : $showAll")
         lateinit var showModules: Modules
@@ -94,10 +98,10 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
                 Icon(
-                    R.drawable.ic__ncd,
-                    resources.getString(R.string.icon_title_cd),
-                    null,
-                    HomeFragmentDirections.actionHomeFragmentToCdFragment()
+                    R.drawable.ic_ncd_noneligible,
+                    resources.getString(R.string.ncd_refer_list),
+                    recordsRepo.getNcdrefferedListCount,
+                    HomeFragmentDirections.actionHomeFragmentToNcdReferredListFragment()
                 ),
                 Icon(
                     R.drawable.ic_vaccines,
@@ -572,6 +576,12 @@ class IconDataset @Inject constructor(
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
         ),
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.tb),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDisease()
+        ),
         /*Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.icon_title_dearming),
@@ -699,12 +709,13 @@ class IconDataset @Inject constructor(
             recordsRepo.getNcdNonEligibleListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdNonEligibleListFragment()
         ),
-        Icon(
+       /* Icon(
             R.drawable.ic_ncd_noneligible,
             resources.getString(R.string.hwc_refer_list),
             recordsRepo.getNcdrefferedListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdReferredListFragment()
-        ),
+        ),*/
+
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0

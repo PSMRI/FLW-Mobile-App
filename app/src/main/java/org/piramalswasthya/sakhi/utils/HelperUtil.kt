@@ -29,12 +29,14 @@ import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.ArrayRes
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -165,26 +167,75 @@ object HelperUtil {
     /**
      * gets age string like -- 2 years, 3 months or 3 months, 4 days
      */
-    fun getAgeStrFromAgeUnit(ageUnitDTO: AgeUnitDTO): String {
-        val str = StringBuilder("")
+//    fun getAgeStrFromAgeUnit(ageUnitDTO: AgeUnitDTO): String {
+//        val str = StringBuilder("")
+//
+//        if (ageUnitDTO.years >= 1) {
+//            str.append(ageUnitDTO.years)
+//            str.append(if (ageUnitDTO.years == 1) " Year" else " Years")
+//        }
+//
+//        if (ageUnitDTO.months >= 1) {
+//            if (ageUnitDTO.years >= 1) str.append(", ")
+//            str.append(ageUnitDTO.months)
+//            str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
+//        }
+//
+//        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
+//            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
+//            str.append(ageUnitDTO.days)
+//            str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
+//        }
+//        return str.toString()
+//    }
 
-        if (ageUnitDTO.years >= 1) {
-            str.append(ageUnitDTO.years)
-            str.append(if (ageUnitDTO.years == 1) " Year" else " Years")
-        }
+    fun getAgeStrFromAgeUnit(
+        context: Context,
+        ageUnitDTO: AgeUnitDTO
+    ): String {
 
-        if (ageUnitDTO.months >= 1) {
-            if (ageUnitDTO.years >= 1) str.append(", ")
-            str.append(ageUnitDTO.months)
-            str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
-        }
+        return buildString {
 
-        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
-            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
-            str.append(ageUnitDTO.days)
-            str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
+            if (ageUnitDTO.years >= 1) {
+                append("${ageUnitDTO.years} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.years == 1)
+                            R.string.year
+                        else
+                            R.string.years
+                    )
+                )
+            }
+
+            if (ageUnitDTO.months >= 1) {
+                if (isNotEmpty()) append(", ")
+
+                append("${ageUnitDTO.months} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.months == 1)
+                            R.string.month
+                        else
+                            R.string.months
+                    )
+                )
+            }
+
+            if (ageUnitDTO.days >= 1) {
+                if (isNotEmpty()) append(", ")
+
+                append("${ageUnitDTO.days} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.days == 1)
+                            R.string.day
+                        else
+                            R.string.days
+                    )
+                )
+            }
         }
-        return str.toString()
     }
 
     fun getDiffYears(a: Calendar, b: Calendar): Int {
@@ -643,9 +694,116 @@ object HelperUtil {
 
 
 
+    fun Context.getLocalizedDewormingLocation(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+            "Home Visit"
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.deworming_location_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+
+    fun Context.getahd(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.ahd_place_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+    fun Context.getVHND(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "Anganwadi Centre",
+            "HWC",
+            "School",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_of_vhsnc)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
 
 
 
+    fun Context.getSaasBahuSamalonLocalization(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "HWC",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_array)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+    fun Context.getUWINLocalization(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "HWC",
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_of_delivery_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
 
 
     fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
@@ -986,5 +1144,6 @@ object HelperUtil {
             else -> getString(R.string.nth_baby, index + 1)
         }
     }
+
 
 }

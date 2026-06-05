@@ -409,4 +409,18 @@
     <string name="round_no">ৰাউণ্ড :</string>
     <string name="str_suspected_high_risk_pregnancy">সন্দেহযুক্ত উচ্চ বিপদজনক গৰ্ভাৱস্থা</string>
 
+    <string-array name="visit_months">
+        <item>জানুৱাৰী</item>
+        <item>ফেব্ৰুৱাৰী</item>
+        <item>মার্চ</item>
+        <item>এপ্ৰিল</item>
+        <item>মে</item>
+        <item>জুন</item>
+        <item>জুলাই</item>
+        <item>আগষ্ট</item>
+        <item>ছেপ্টেম্বৰ</item>
+        <item>অক্টোবৰ</item>
+        <item>নৱেম্বৰ</item>
+        <item>ডিচেম্বৰ</item>
+    </string-array>
 </resources>

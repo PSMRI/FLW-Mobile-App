@@ -188,6 +188,7 @@ class AntenatalCounsellingFragment : Fragment() {
             }
         }
 
+
        // setupSelectAllCheckbox()
 
         if (isViewMode) {
@@ -196,7 +197,7 @@ class AntenatalCounsellingFragment : Fragment() {
             binding.btnSave.isVisible = false
             binding.tvLastVisitValue.text = visitDate?:"NA"
             binding.cbSelectAll.isVisible = false
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber, visitNumberString = getVisitNumberString(isViewMode, visitNumber))
             lifecycleScope.launch {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
@@ -228,7 +229,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
             }
         } else {
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,visitNumber)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,visitNumber,  visitNumberString = getVisitNumberString(!isViewMode, visitNumber))
 
             lifecycleScope.launch {
                 binding.tvLastVisitValue.text = viewModel.getLastVisitDates(benId)
@@ -708,5 +709,13 @@ class AntenatalCounsellingFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun getVisitNumberString(viewMode: Boolean, visitNumber: Int): String {
+        return if (!viewMode) {
+            getString(R.string.visit, (viewModel.visitCount.value ?: 0) + 1)
+        } else {
+            getString(R.string.visit, visitNumber)
+        }
     }
 }
