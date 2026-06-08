@@ -294,7 +294,15 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
-        val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        // The IFA form has no "visit_date" field; its date is "ifa_provision_date".
+        // Without this, every IFA visit gets visitDate = "N/A", which collides on the
+        // unique index (benId, hhId, visitDate, formId) and makes @Upsert overwrite the
+        // previous monthly visit instead of inserting a new one. Derive a distinct date
+        // per visit so consecutive monthly visits are stored (and synced) correctly.
+        val rawVisitDate = fieldMap["visit_date"]?.toString()
+            ?: if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
+                fieldMap["ifa_provision_date"]?.toString() ?: "N/A"
+            else "N/A"
         val visitDate = try {
 
             val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
