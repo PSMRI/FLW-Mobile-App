@@ -266,6 +266,8 @@ class NCDReferalFormViewModel @Inject constructor(
                     FieldValidation(
                         min = it.min,
                         max = it.max,
+                        minDate = it.minDate,
+                        maxDate = it.maxDate,
                         maxLength = it.maxLength,
                         regex = it.regex,
                         errorMessage = it.errorMessage,
