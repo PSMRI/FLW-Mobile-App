@@ -2,8 +2,8 @@
 <resources>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
-    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
-    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
+    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#ffbb33"> *</font>]]></string>
+    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#ffbb33"> **</font>]]></string>
     <string name="cbac_ask_pat">Ask if Patient has any of these Symptoms</string>
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>
@@ -205,6 +205,7 @@
     <string name="c_cancer">Cancer</string>
     <string name="further_depression">further assessment for depression</string>
     <string name="geriatic">GERIATRIC</string>
+    <string name="geriatic_case">GERIATRIC CASE</string>
     <string-array name="tb_submitted_yet">
         <item>DMC</item>
         <item>SC</item>

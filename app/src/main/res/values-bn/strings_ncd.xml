@@ -205,6 +205,8 @@
     <string name="c_cancer">ক্যান্সার</string>
     <string name="further_depression">বিষণ্নতার জন্য আরও মূল্যায়ন</string>
     <string name="geriatic">জেরিয়াট্রিক</string>
+    <string name="geriatic_case">>জেরিয়াট্রিক কেস</string>
+
     <string-array name="tb_submitted_yet">
         <item>ডিএমসি</item>
         <item>এসসি</item>
