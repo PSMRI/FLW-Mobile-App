@@ -175,7 +175,6 @@
     <string name="str_accredited_private_hospital">স্বীকৃতিপ্ৰাপ্ত ব্যক্তিগত চিকিৎসালয়</string>
     <string name="str_other_private_hospital">অন্য ব্যক্তিগত চিকিৎসালয়</string>
     <string name="cr_birth_cert_uploads">জন্ম প্ৰমাণপত্ৰ আপলোডসমূহ</string>
-    <string name="max_10_visits_allowed">IFA পুষ্টিপূৰকৰ বাবে সৰ্বাধিক ১০টা পৰিদৰ্শনৰ অনুমতি আছে</string>
 
     <!--  Child Immunization  -->
     <string-array name="imm_vaccinated_place_array">

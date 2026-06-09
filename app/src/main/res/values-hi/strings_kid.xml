@@ -194,7 +194,6 @@
     <string name="str_accredited_private_hospital">मान्यता प्राप्त निजी अस्पताल</string>
     <string name="str_other_private_hospital">अन्य निजी अस्पताल</string>
     <string name="cr_birth_cert_uploads">जन्म प्रमाण पत्र अपलोड</string>
-    <string name="max_10_visits_allowed">IFA अनुपूरण के लिए अधिकतम 10 दौरे की अनुमति है</string>
 
     <string-array name="cr_mobile_no_of_array">
         <item>माँ</item>
