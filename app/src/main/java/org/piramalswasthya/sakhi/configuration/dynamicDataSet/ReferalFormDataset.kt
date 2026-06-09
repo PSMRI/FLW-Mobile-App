@@ -17,8 +17,8 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         id = 1,
         inputType = DROPDOWN,
         title = resources.getString(R.string.referal_facility),
-        arrayId = R.array.referral_facility,
-        entries = resources.getStringArray(R.array.referral_facility),
+        arrayId = R.array.new_referral_facility,
+        entries = resources.getStringArray(R.array.new_referral_facility),
         required = true,
         hasDependants = true
     )

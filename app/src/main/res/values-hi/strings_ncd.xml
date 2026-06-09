@@ -203,6 +203,8 @@
     <string name="c_cancer">कैंसर</string>
     <string name="further_depression">अवसाद के लिए आगे का मूल्यांकन</string>
     <string name="geriatic">जराचिकित्सा</string>
+    <string name="geriatic_case">जराचिकित्सा मामला</string>
+
     <string-array name="cbac_waist_mes_female">
         <item>80 सेमी या कम</item>
         <item>81-90 सेमी</item>
