@@ -569,10 +569,6 @@ class CUFYFormFragment : Fragment() {
                     val existingVisits = viewModel.getFormsDataByFormID(formId, benId)
 
                     if (recordId == 0) {
-                        if (existingVisits.size >= 10) {
-                            Toast.makeText(requireContext(), R.string.max_10_visits_allowed, Toast.LENGTH_LONG).show()
-                            return@launch
-                        }
                         val provisionDateObj = sdf.parse(provisionDate)
                         val calendar = Calendar.getInstance()
                         calendar.time = provisionDateObj
