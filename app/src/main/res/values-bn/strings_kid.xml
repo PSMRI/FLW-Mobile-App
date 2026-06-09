@@ -153,6 +153,7 @@
     <string name="str_primary_health_center">প্রাথমিক স্বাস্থ্য কেন্দ্র</string>
     <string name="str_sub_center">সাব সেন্টার</string>
     <string name="str_sub_district_hospital">সাব ডিস্ট্রিক্ট হাসপাতাল</string>
+    <string name="max_10_visits_allowed">IFA সম্পূরকের জন্য সর্বাধিক ১০টি পরিদর্শনের অনুমতি আছে</string>
 
     <string-array name="place_of_birth">
         <item>বাড়ি</item>
