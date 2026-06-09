@@ -193,7 +193,6 @@
     <string name="str_sub_district_hospital">Sub District Hospital</string>
     <string name="str_medical_college_hospital">Medical College Hospital</string>
     <string name="cr_birth_cert_uploads">Birth Certificate Uploads</string>
-    <string name="max_10_visits_allowed">Maximum 10 visits are allowed for IFA supplementation</string>
 
     <string-array name="cr_mobile_no_of_array">
         <item>Mother</item>
