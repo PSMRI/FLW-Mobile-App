@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 import org.piramalswasthya.sakhi.model.IncentiveGrouped
+import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -24,6 +25,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var pref: PreferenceDao
     @MockK private lateinit var incentiveRepo: IncentiveRepo
+    @MockK private lateinit var amritApiService: AmritApiService
 
     private lateinit var viewModel: IncentivesViewModel
 
@@ -37,7 +39,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         every { incentiveRepo.list } returns flowOf(emptyList())
         coEvery { incentiveRepo.pullAndSaveAllIncentiveActivities(any()) } returns true
         coEvery { incentiveRepo.pullAndSaveAllIncentiveRecords(any()) } returns true
-        viewModel = IncentivesViewModel(pref, incentiveRepo)
+        viewModel = IncentivesViewModel(pref, incentiveRepo,amritApiService)
     }
 
     // =====================================================
@@ -335,8 +337,8 @@ class IncentivesViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `multiple instances are independent`() {
-        val vm1 = IncentivesViewModel(pref, incentiveRepo)
-        val vm2 = IncentivesViewModel(pref, incentiveRepo)
+        val vm1 = IncentivesViewModel(pref, incentiveRepo,amritApiService)
+        val vm2 = IncentivesViewModel(pref, incentiveRepo,amritApiService)
         assertNotNull(vm1)
         assertNotNull(vm2)
     }
