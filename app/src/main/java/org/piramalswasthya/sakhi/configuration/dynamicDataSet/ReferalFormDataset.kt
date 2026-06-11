@@ -73,6 +73,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
             reasonForReferal.id -> {
                 validateEmptyOnEditText(reasonForReferal)
             }
+
             healthCenter.id -> {
                 validateEmptyOnEditText(healthCenter)
             }

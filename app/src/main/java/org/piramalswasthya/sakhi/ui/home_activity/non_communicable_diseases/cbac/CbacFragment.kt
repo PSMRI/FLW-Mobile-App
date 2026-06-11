@@ -1485,6 +1485,7 @@ class CbacFragment : Fragment() {
         dialog.show()
     }*/
 
+
     fun showReferralDialog(
         fragment: Fragment,
         type: String,
@@ -1544,7 +1545,17 @@ class CbacFragment : Fragment() {
         }
 
         binding.btnSubmit.setOnClickListener {
-            referViewModel.saveForm()
+            val result = binding.form.rvInputForm.adapter?.let {
+                (it as FormInputAdapter).validateInput(resources)
+            }
+             if (result == -1) referViewModel.saveForm()
+
+             else {
+                if (result != null) {
+                    binding.form.rvInputForm.scrollToPosition(result)
+                }
+
+            }
         }
 
         referViewModel.state.observe(fragment.viewLifecycleOwner) {
