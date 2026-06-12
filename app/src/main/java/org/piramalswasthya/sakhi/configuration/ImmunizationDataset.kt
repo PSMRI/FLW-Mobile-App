@@ -149,7 +149,7 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         vaccinationDueDate.value = getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
         expectedDate.value =
             getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
-        dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
+        //dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
         dateOfVaccination.min = ben.dob + vaccine.minAllowedAgeInMillis
         if (System.currentTimeMillis() > ben.dob + vaccine.maxAllowedAgeInMillis) {
             dateOfVaccination.max = ben.dob + vaccine.maxAllowedAgeInMillis
