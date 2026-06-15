@@ -580,6 +580,23 @@ class PncFormDataset(
                 return -1
             }
 
+            otherDangerSign.id -> {
+                validateEmptyOnEditText(otherDangerSign)
+                validateAllAlphabetsSpaceOnEditText(otherDangerSign)
+                return 0
+            }
+
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherPlaceOfDeath)
+                return 0
+            }
+            otherPpcMethod.id -> {
+                validateEmptyOnEditText(otherPpcMethod)
+                validateAllAlphabetsSpaceOnEditText(otherPpcMethod)
+                return 0
+            }
+
             placeOfDeath.id -> {
                 val index = placeOfDeath.entries?.indexOf(placeOfDeath.value).takeIf { it!! >= 0 } ?: return -1
                 val triggerIndex = 8
@@ -725,6 +742,11 @@ class PncFormDataset(
                             anyContraceptionMethod,
                             anySignOfDanger,
                             referralFacility,
+                            motherDangerSign,
+                            contraceptionMethod,
+                            dateOfSterilisation,
+                            otherDangerSign,
+                            otherPpcMethod,
                             remarks
                         ),
                         addItems = listOf(

@@ -775,12 +775,12 @@
 
                                 app:numAsteriskAlt="@{0}" />
 
-                            <include
+                       <!--     <include
                                 android:id="@+id/cbac_suspected_leprosy"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_is_leprosy_suspected}"
 
-                                app:numAsteriskAlt="@{0}" />
+                                app:numAsteriskAlt="@{0}" />-->
 
                             <LinearLayout
                                 android:id="@+id/cbac_ll_ed_women"
