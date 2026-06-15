@@ -372,6 +372,23 @@ open class DeliveryOutcomeDataset(
                 dateOfDischarge.max =getLongFromDate(getOneMonthLater(dateOfDelivery.value))
                 -1
             }
+            otherComplication.id -> {
+                validateEmptyOnEditText(otherComplication)
+                validateAllAlphabetsSpaceOnEditText(otherComplication)
+                return 0
+            }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherPlaceOfDeath)
+                return 0
+            }
+
+            otherCauseOfDeath.id -> {
+                validateEmptyOnEditText(otherCauseOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherCauseOfDeath)
+                return 0
+            }
+
 
             hadComplications.id -> {
                 triggerDependants(

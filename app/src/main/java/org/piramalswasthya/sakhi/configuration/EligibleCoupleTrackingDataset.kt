@@ -161,7 +161,8 @@ class EligibleCoupleTrackingDataset(
         title = resources.getString(R.string.ectdset_other_mthd),
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT,
-        etMaxLength = 50
+        etMaxLength = 50,
+        hasDependants = true
     )
 
     private var dateOfAntraInjection = FormElement(
@@ -704,6 +705,7 @@ class EligibleCoupleTrackingDataset(
 
 
             anyOtherMethod.id -> {
+                validateEmptyOnEditText(anyOtherMethod)
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
             usingFamilyPlanningMitanin.id -> {

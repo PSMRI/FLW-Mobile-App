@@ -278,7 +278,7 @@ class RecordsRepo @Inject constructor(
         set(Calendar.MINUTE, 0)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
-        add(Calendar.YEAR, -6)
+        add(Calendar.YEAR, -16)
     }.timeInMillis
 
     val childrenImmunizationDueListCount = vaccineDao.getChildrenImmunizationDueListCount(
