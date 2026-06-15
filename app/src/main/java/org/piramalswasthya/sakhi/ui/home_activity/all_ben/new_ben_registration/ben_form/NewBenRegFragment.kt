@@ -45,6 +45,8 @@ import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
+import org.piramalswasthya.sakhi.network.NetworkMonitor
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -343,12 +345,79 @@ class NewBenRegFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cvPatientInformation.visibility = View.GONE
+
+        // ABHA / Ayushman card field: show only for the Mitanin flavor and only while online.
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+        if (isMitanin) {
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    NetworkMonitor.observeConnectivity(requireContext()).collect { isConnected ->
+                        val visibility = if (isConnected) View.VISIBLE else View.GONE
+                        binding.tilEditText.visibility = visibility
+                        binding.btnSubmitAbha.visibility = visibility
+                    }
+                }
+            }
+        } else {
+            binding.tilEditText.visibility = View.GONE
+            binding.btnSubmitAbha.visibility = View.GONE
+        }
+
+        binding.btnSubmitAbha.setOnClickListener {
+            val abhaId = binding.etAbhaId.text?.toString()?.trim().orEmpty()
+            if (abhaId.isEmpty()) {
+                binding.tilEditText.error =
+                    getString(R.string.enter_abha_id_ayushman_card_number)
+            } else {
+                binding.tilEditText.error = null
+                viewModel.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+            }
+        }
+
+        viewModel.abhaUserDetails.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    // Auto-fill only for Mitanin, and only with a record that actually
+                    // carries usable values. Empty/invalid fields are left untouched.
+                    val member = result.data.firstOrNull { it.hasUsableData() }
+                    if (isMitanin && member != null) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.prefillFromAyushmanCard(member)
+                            (_binding?.form?.rvInputForm?.adapter as? FormInputAdapter)
+                                ?.notifyDataSetChanged()
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.abha_no_valid_details),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                is NetworkResult.Error -> {
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                NetworkResult.NetworkError -> {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.network_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                null -> Unit
+            }
+        }
         binding.btnSubmit.setOnClickListener {
            // submitBenForm()
             if (validateCurrentPage()) {
                 showPreview()
             }
-
         }
 
         viewModel.isDeath.observe(viewLifecycleOwner) { isDeath ->

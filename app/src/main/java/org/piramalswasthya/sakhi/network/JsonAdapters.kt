@@ -1426,6 +1426,7 @@ data class MalariaConfirmedDTO(
             houseHoldDetailsId = houseHoldDetailsId,
             diseaseId = diseaseId,
             day = day,
+            syncState = SyncState.SYNCED,
             )
     }
 }

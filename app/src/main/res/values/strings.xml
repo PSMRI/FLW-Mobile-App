@@ -117,6 +117,9 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="enter_abha_id_ayushman_card_number">Enter Abha Id / Ayushman Card Number</string>
+    <string name="network_error">Network error. Please check your connection and try again.</string>
+    <string name="abha_no_valid_details">No valid details found for this card number.</string>
     <string name="irs_off">IRS OFF</string>
     <string name="adolescent_health_form">Adolescent Health Form</string>
     <string name="irs_on">IRS ON</string>

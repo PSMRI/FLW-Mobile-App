@@ -47,6 +47,7 @@ class BenRepo @Inject constructor(
     private val userRepo: UserRepo,
     private val generalOpdDao: GeneralOpdDao,
     private val tmcNetworkApiService: AmritApiService,
+    private val govtHealthApiService: GovtHealthApiService,
     private val formResponseJsonDao: FormResponseJsonDao,
     private val provideCUFYFormResponseJsonDao: CUFYFormResponseJsonDao
 ) {
@@ -1856,6 +1857,70 @@ class BenRepo @Inject constructor(
         } catch (_: java.lang.Exception) {
         }
         return null
+    }
+
+
+    suspend fun getUserDetailsByAyushmanAbhaCardNo(cardNo: String): NetworkResult<List<FamilyMember>> {
+        return try {
+            val response = govtHealthApiService.getUserDetailsByAyushmanCardNo(
+                AyushmanCardRequest(userId = "ayushman_", password = "!host1@2026",cardNo)
+            )
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                if (responseBody.isNullOrBlank()) {
+                    NetworkResult.Error(response.code(), "Empty response from server")
+                } else {
+                    Timber.d("getUserDetailsByAyushmanCardNo raw response: $responseBody")
+                    val members = parseFamilyMembers(responseBody)
+                    if (members.isEmpty()) {
+                        NetworkResult.Error(0, "No records found for this card number")
+                    } else {
+                        NetworkResult.Success(members)
+                    }
+                }
+            } else {
+                NetworkResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "getUserDetailsByAyushmanAbhaCardNo failed")
+            NetworkResult.NetworkError
+        }
+    }
+
+
+    private fun parseFamilyMembers(body: String): List<FamilyMember> {
+        val gson = Gson()
+        val trimmed = body.trim()
+        return when {
+            trimmed.startsWith("[") ->
+                gson.fromJson(trimmed, Array<FamilyMember>::class.java).toList()
+
+            trimmed.startsWith("{") -> {
+                val json = JSONObject(trimmed)
+                val dataKey = listOf("object_data", "data", "result", "userDetails", "userDetail")
+                    .firstOrNull { json.has(it) }
+                when (val node = dataKey?.let { runCatching { json.get(it) }.getOrNull() }) {
+                    is JSONArray ->
+                        gson.fromJson(node.toString(), Array<FamilyMember>::class.java).toList()
+
+                    is JSONObject ->
+                        listOf(gson.fromJson(node.toString(), FamilyMember::class.java))
+
+                    else ->
+                        if (json.has("cardNo") || json.has("cardno") ||
+                            json.has("personName") || json.has("name") ||
+                            json.has("abhaId") || json.has("abhId") ||
+                            json.has("familyid") || json.has("familyId")
+                        ) {
+                            listOf(gson.fromJson(trimmed, FamilyMember::class.java))
+                        } else {
+                            emptyList()
+                        }
+                }
+            }
+
+            else -> emptyList()
+        }
     }
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {

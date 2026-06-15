@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -2514,6 +2515,85 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
             else -> -1
         }
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        // Name -> first / last name (last whitespace-separated token becomes last name).
+        member.name?.trim()?.replace(Regex("\\s+"), " ")?.takeIf { it.isNotEmpty() }?.let { fullName ->
+            val parts = fullName.split(" ")
+            if (parts.size >= 2) {
+                setValueById(firstName.id, parts.dropLast(1).joinToString(" "))
+                setValueById(lastName.id, parts.last())
+                updateList(lastName.id, getIndexById(lastName.id))
+            } else {
+                setValueById(firstName.id, fullName)
+            }
+            updateList(firstName.id, getIndexById(firstName.id))
+            firstName.errorText = null
+            lastName.errorText = null
+        }
+
+        parseAyushmanDobToFormDate(member.dob)?.let { dobStr ->
+            setValueById(agePopup.id, dobStr)
+            updateList(agePopup.id, getIndexById(agePopup.id))
+        }
+
+        mapAyushmanGenderToIndex(member.gender)?.let { genderIndex ->
+            gender.entries?.getOrNull(genderIndex)?.let { entry ->
+                setValueById(gender.id, entry)
+                updateList(gender.id, genderIndex)
+            }
+        }
+
+        sanitizeAyushmanMobile(member.mobileNo)?.let { mobile ->
+            val selfIndex = 0
+            mobileNoOfRelation.entries?.getOrNull(selfIndex)?.let { selfEntry ->
+                setValueById(mobileNoOfRelation.id, selfEntry)
+                updateList(mobileNoOfRelation.id, selfIndex)
+            }
+            setValueById(contactNumber.id, mobile)
+            updateList(contactNumber.id, getIndexById(contactNumber.id))
+        }
+    }
+
+    private fun mapAyushmanGenderToIndex(raw: String?): Int? {
+        return when (raw?.trim()?.lowercase(Locale.ENGLISH)) {
+            "1", "m", "male" -> 0
+            "2", "f", "female" -> 1
+            "3", "t", "tg", "other", "others", "transgender" -> 2
+            else -> null
+        }
+    }
+
+    private fun sanitizeAyushmanMobile(raw: String?): String? {
+        val digits = raw?.filter { it.isDigit() }.orEmpty()
+        val tenDigit = when {
+            digits.length == 10 -> digits
+            digits.length > 10 -> digits.takeLast(10)
+            else -> return null
+        }
+        return tenDigit.takeIf { it.first() in '6'..'9' }
+    }
+
+    private fun parseAyushmanDobToFormDate(raw: String?): String? {
+        val value = raw?.trim()?.takeIf { it.isNotEmpty() && !it.equals("null", true) } ?: return null
+        val patterns = listOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm",
+            "yyyy-MM-dd", "dd-MM-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd"
+        )
+        for (pattern in patterns) {
+            try {
+                val millis = SimpleDateFormat(pattern, Locale.ENGLISH)
+                    .apply { isLenient = false }
+                    .parse(value)?.time ?: continue
+                if (millis > System.currentTimeMillis()) return null
+                if (getAgeFromDob(millis) !in 0..120) return null
+                return getDateFromLong(millis)
+            } catch (_: Exception) {
+                // try next pattern
+            }
+        }
+        return null
     }
 
     private fun handleForAgeDob(formId: Int): Int {
