@@ -131,6 +131,37 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         min = getMinDateOfReg(),
         max = System.currentTimeMillis()
     )
+
+    private val abhaIdCheck = FormElement(
+        id = 9100,
+        inputType = RADIO,
+        title = resources.getString(R.string.abha_id_check_question),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = true,
+    )
+
+    private val abhaIdInput = FormElement(
+        id = 9101,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_abha_id_ayushman_card_number),
+        arrayId = -1,
+        required = false,
+        etMaxLength = 30,
+    )
+
+    private val abhaSubmitBtn = FormElement(
+        id = 9102,
+        inputType = org.piramalswasthya.sakhi.model.InputType.BUTTON,
+        title = resources.getString(R.string.btn_submit),
+        required = false,
+        isEnabled = true,
+    )
+
+    fun getAbhaSubmitBtnId(): Int = abhaSubmitBtn.id
+
+    fun getAbhaCardInput(): String? = abhaIdInput.value?.trim()
     private val firstName = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
@@ -800,6 +831,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             firstName,
             lastName,
         )
+        if (isMitaninVariant && ben == null) {
+            list.add(list.indexOf(dateOfReg), abhaIdCheck)
+        }
         if (!isMitaninVariant) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
@@ -1018,6 +1052,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             firstName,
             lastName,
         )
+        if (isMitaninVariant && ben == null) {
+            list.add(list.indexOf(dateOfReg), abhaIdCheck)
+        }
         if (!isMitaninVariant) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
@@ -2364,6 +2401,15 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                     setIsAddingChildren(current == yesIndex)
                 }
                 0
+            }
+
+            abhaIdCheck.id -> {
+                triggerDependants(
+                    source = abhaIdCheck,
+                    passedIndex = index,
+                    triggerIndex = 0,
+                    target = listOf(abhaIdInput, abhaSubmitBtn)
+                )
             }
             otherRelationToHead.id -> {
                 validateEmptyOnEditText(otherRelationToHead)

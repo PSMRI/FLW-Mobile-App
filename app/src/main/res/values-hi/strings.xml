@@ -1347,5 +1347,6 @@
     <string name="past_verify_by_12th">12 तारीख तक सत्यापन लंबित</string>
     <string name="back_with_asha_nfor_correction">सुधार हेतु\nआशा के पास वापस</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">वे आशाएं जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
+    <string name="abha_id_check_question">क्या आपके पास ABHA ID / आयुष्मान आईडी है?</string>
 
 </resources>

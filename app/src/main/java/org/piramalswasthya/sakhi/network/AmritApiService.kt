@@ -528,4 +528,9 @@ interface AmritApiService {
     ): Response<UploadResponse>
 
 
+    @POST("flw-api/UserRegistration/GetUserDetailsByAyushmanCardNo")
+    suspend fun getUserDetailsByAyushmanCardNo(
+        @Body request: UserDetailsByAyushmanCardNoRequest
+    ): Response<ResponseBody>
+
 }

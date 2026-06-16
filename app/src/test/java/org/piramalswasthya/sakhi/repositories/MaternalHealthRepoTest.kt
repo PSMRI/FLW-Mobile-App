@@ -1,11 +1,13 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
+import android.content.res.Resources
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -25,6 +27,7 @@ import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import retrofit2.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,15 +40,19 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var userRepo: UserRepo
     @MockK private lateinit var benDao: BenDao
     @MockK private lateinit var preferenceDao: PreferenceDao
+    @MockK private lateinit var benRepo: BenRepo
+    @MockK private lateinit var mockResources: Resources
 
     private lateinit var repo: MaternalHealthRepo
 
     @Before
     override fun setUp() {
         super.setUp()
+        mockkObject(HelperUtil)
+        every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         repo = MaternalHealthRepo(
             context, amritApiService, maternalHealthDao,
-            database, userRepo, benDao, preferenceDao
+            database, userRepo, benDao, preferenceDao, benRepo
         )
     }
 

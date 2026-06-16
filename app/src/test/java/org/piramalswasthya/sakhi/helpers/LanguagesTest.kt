@@ -26,8 +26,8 @@ class LanguagesTest {
     }
 
     @Test
-    fun `total language count is 3`() {
-        assertEquals(3, Languages.values().size)
+    fun `total language count is 4`() {
+        assertEquals(4, Languages.values().size)
     }
 
     @Test

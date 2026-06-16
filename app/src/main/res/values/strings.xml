@@ -120,6 +120,7 @@
     <string name="enter_abha_id_ayushman_card_number">Enter Abha Id / Ayushman Card Number</string>
     <string name="network_error">Network error. Please check your connection and try again.</string>
     <string name="abha_no_valid_details">No valid details found for this card number.</string>
+    <string name="abha_id_check_question">Do you have ABHA ID / Ayushman ID?</string>
     <string name="irs_off">IRS OFF</string>
     <string name="adolescent_health_form">Adolescent Health Form</string>
     <string name="irs_on">IRS ON</string>

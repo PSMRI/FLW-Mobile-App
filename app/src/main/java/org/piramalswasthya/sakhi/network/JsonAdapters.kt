@@ -243,6 +243,12 @@ data class AbhaGenerateAadhaarOtpResponseV2(
     val message:String
 )
 
+data class UserDetailsByAyushmanCardNoRequest(
+//    val userId: String,
+//    val password: String,
+    val cardNo: String
+
+)
 @JsonClass(generateAdapter = true)
 data class SendOtpResponse(
     val data: Data,

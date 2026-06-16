@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit
 
+import android.content.Context
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
@@ -23,13 +24,14 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var infantRegRepo: InfantRegRepo
     @MockK private lateinit var referalRepo: NcdReferalRepo
     @MockK private lateinit var referralStatusManager: ReferralStatusManager
+    @MockK private lateinit var context: Context
 
     private lateinit var viewModel: AntenatalCounsellingViewModel
 
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = AntenatalCounsellingViewModel(repository, benRepo, infantRegRepo, referalRepo, referralStatusManager)
+        viewModel = AntenatalCounsellingViewModel(repository, benRepo, infantRegRepo, referalRepo, referralStatusManager, context)
     }
 
     // =====================================================

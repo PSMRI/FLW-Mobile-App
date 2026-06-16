@@ -59,7 +59,6 @@ import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
-import org.piramalswasthya.sakhi.network.GovtHealthApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
@@ -83,7 +82,6 @@ object AppModule {
     const val AUTH_API = "authApi"
     const val UAT_CLIENT = "uatClient"
     const val ABHA_CLIENT = "abhaClient"
-    const val GOVT_HEALTH_CLIENT = "govtHealthClient"
 
     // AUTH client (NO interceptors, for refresh calls only)
     @Singleton
@@ -201,30 +199,6 @@ object AppModule {
             .client(httpClient)
             .build()
             .create(AbhaApiService::class.java)
-    }
-
-    // Chhattisgarh govt health backend (separate host, no TMC auth token).
-    @Singleton
-    @Provides
-    @Named(GOVT_HEALTH_CLIENT)
-    fun provideGovtHealthHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return baseClient
-            .newBuilder()
-            .addInterceptor(loggingInterceptor)
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideGovtHealthApiService(
-        @Named(GOVT_HEALTH_CLIENT) httpClient: OkHttpClient
-    ): GovtHealthApiService {
-        return Retrofit.Builder()
-            .baseUrl(GovtHealthApiService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(httpClient)
-            .build()
-            .create(GovtHealthApiService::class.java)
     }
 
     private val baseClient =

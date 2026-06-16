@@ -45,7 +45,6 @@ import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
-import org.piramalswasthya.sakhi.network.NetworkMonitor
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.checkFileSize
@@ -346,33 +345,7 @@ class NewBenRegFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.cvPatientInformation.visibility = View.GONE
 
-        // ABHA / Ayushman card field: show only for the Mitanin flavor and only while online.
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
-        if (isMitanin) {
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    NetworkMonitor.observeConnectivity(requireContext()).collect { isConnected ->
-                        val visibility = if (isConnected) View.VISIBLE else View.GONE
-                        binding.tilEditText.visibility = visibility
-                        binding.btnSubmitAbha.visibility = visibility
-                    }
-                }
-            }
-        } else {
-            binding.tilEditText.visibility = View.GONE
-            binding.btnSubmitAbha.visibility = View.GONE
-        }
-
-        binding.btnSubmitAbha.setOnClickListener {
-            val abhaId = binding.etAbhaId.text?.toString()?.trim().orEmpty()
-            if (abhaId.isEmpty()) {
-                binding.tilEditText.error =
-                    getString(R.string.enter_abha_id_ayushman_card_number)
-            } else {
-                binding.tilEditText.error = null
-                viewModel.getUserDetailsByAyushmanAbhaCardNo(abhaId)
-            }
-        }
 
         viewModel.abhaUserDetails.observe(viewLifecycleOwner) { result ->
             when (result) {
@@ -397,7 +370,11 @@ class NewBenRegFragment : Fragment() {
                 }
 
                 is NetworkResult.Error -> {
-                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    val errorMessage = result.message.takeIf { it.isNotBlank() }
+                        ?: getString(R.string.abha_no_valid_details)
+
+                    //currently showing toast can be change later as dialog
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                     viewModel.clearAbhaUserDetails()
                 }
 
@@ -445,7 +422,20 @@ class NewBenRegFragment : Fragment() {
                         }
 
                     },
-                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{_, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{ clickedFormId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        if (clickedFormId == viewModel.dataset.getAbhaSubmitBtnId()) {
+                            val abhaId = viewModel.dataset.getAbhaCardInput().orEmpty()
+                            if (abhaId.isEmpty()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.enter_abha_id_ayushman_card_number),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                viewModel.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+                            }
+                            return@SendOtpClickListener
+                        }
                        var tempContactNo = ""
                         lifecycleScope.launch {
                             viewModel.formList.collect {
