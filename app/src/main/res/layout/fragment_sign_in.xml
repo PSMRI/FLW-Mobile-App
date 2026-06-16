@@ -27,7 +27,7 @@
             android:id="@+id/iv_nhm_logo"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="50dp"
             android:contentDescription="@string/cd_assam_nhm_logo"
             android:src="@drawable/logo_circle"
             />
@@ -44,7 +44,8 @@
         android:id="@+id/cv_login_item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_huge"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:layout_marginHorizontal="@dimen/margin_huge"
         android:elevation="@dimen/padding_normal"
         app:cardBackgroundColor="?attr/colorOnPrimary"
         app:cardCornerRadius="@dimen/padding_wide"
@@ -81,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="@dimen/padding_normal"
+                    android:padding="@dimen/pv_pin_view_item_radius"
                     android:text="@string/tv_text_select_language"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     app:layout_constraintTop_toBottomOf="@id/tv_sign_in" />
@@ -90,17 +91,17 @@
                     android:id="@+id/ll_select_lang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/_5sdp"
+                    android:padding="@dimen/margin_small"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_lang">
                     <ImageView
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
                         android:src="@drawable/ic_icon_language"
-                        app:tint="@color/md_theme_light_shadow"/>
+                        app:tint="@color/md_theme_light_primary"/>
                     <TextView
                         android:id="@+id/tv_selected_lang"
                         android:layout_width="wrap_content"
@@ -157,11 +158,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/til_username_hint_text"
-                    android:paddingTop="@dimen/padding_normal"
-
-                    android:paddingBottom="@dimen/padding_normal"
+                    android:paddingTop="@dimen/margin_normal6"
+                    android:paddingBottom="@dimen/margin_normal6"
                     app:endIconTint="?attr/colorOnPrimary"
-
                     app:layout_constraintTop_toBottomOf="@id/ll_select_lang"
                     tools:layout_editor_absoluteX="16dp">
 
@@ -184,8 +183,8 @@
                     android:layout_height="wrap_content"
                     android:longClickable="false"
                     android:hint="@string/til_password_hint_text"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
+                    android:paddingTop="@dimen/margin_normal6"
+                    android:paddingBottom="@dimen/margin_normal6"
                     app:layout_constraintTop_toBottomOf="@id/til_username"
                     app:passwordToggleEnabled="true">
 
@@ -256,6 +255,7 @@
                     android:layout_margin="@dimen/padding_normal"
                     android:padding="@dimen/padding_normal"
                     android:text="@string/btn_login_text"
+                    android:textStyle="bold"
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
 
