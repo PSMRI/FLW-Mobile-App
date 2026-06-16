@@ -41,6 +41,7 @@ class EligibleCoupleTrackingDataset(
         arrayId = -1,
         required = true,
         min = Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
             set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
