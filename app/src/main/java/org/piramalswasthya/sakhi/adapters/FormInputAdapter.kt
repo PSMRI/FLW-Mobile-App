@@ -368,6 +368,11 @@ class FormInputAdapter(
                 binding.et.isClickable = false
                 binding.executePendingBindings()
                 return
+            } else{
+                binding.tilRvDropdown.visibility = View.VISIBLE
+                binding.tilEditText.visibility = View.GONE
+                binding.et.isFocusable = true
+                binding.et.isClickable = true
             }
 
             hideKeyboardImmediately()
@@ -1282,6 +1287,7 @@ class FormInputAdapter(
 //        val isEnabled = if (isEnabled) item.isEnabled else false
         try {
             val isEnabled = if (isEnabled) item.isEnabled else false
+            Timber.d("DD_BIND -> isEnabled=$isEnabled | item.isEnabled=${item.isEnabled}")
             when (item.inputType) {
                 EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
                     item, isEnabled, formValueListener
