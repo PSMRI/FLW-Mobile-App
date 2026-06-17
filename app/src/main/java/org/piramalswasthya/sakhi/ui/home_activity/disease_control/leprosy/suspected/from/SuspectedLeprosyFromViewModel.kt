@@ -36,7 +36,7 @@ class SuspectedLeprosyFromViewModel @Inject constructor(
     private val benRepo: BenRepo,
     var maternalHealthRepo: MaternalHealthRepo
 ) : ViewModel() {
-    var isDeath = true
+    var isDeath = false
     val benId =
         LeprosyFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
 
