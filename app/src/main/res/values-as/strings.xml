@@ -1423,5 +1423,18 @@
     <string name="past_verify_by_12th">১২ তাৰিখৰ ভিতৰত যাচাই বাকী আছে</string>
     <string name="back_with_asha_nfor_correction">সংশোধনৰ বাবে\nASHA-লৈ উভতাই দিয়া হৈছে</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">যিসকল ASHA-এ এতিয়াও\nতেওঁলোকৰ মাহিলী দাবী দাখিল কৰা নাই</string>
+    <string name="enter_abha_id_ayushman_card_number">আভা আইডি / আয়ুষ্মান কাৰ্ড নম্বৰ দিয়ক</string>
+    <string name="network_error">নেটৱৰ্ক ত্ৰুটি। অনুগ্ৰহ কৰি আপোনাৰ সংযোগ পৰীক্ষা কৰক আৰু পুনৰ চেষ্টা কৰক।</string>
+    <string name="abha_no_valid_details">এই কাৰ্ড নম্বৰৰ বাবে কোনো বৈধ তথ্য পোৱা নগ\'ল।</string>
+    <string name="abha_id_check_question">আপোনাৰ ABHA ID / আয়ুষ্মান আইডি আছেনে?</string>
+    <string name="str_follow_up">ফলো-আপ</string>
+    <string name="abha_not_created_title">আভা আইডি</string>
+    <string name="abha_not_created_message">আভা আইডি সৃষ্টি কৰা হোৱা নাই। আপুনি নতুন আভা আইডি সৃষ্টি কৰিব বিচাৰেনে?</string>
+    <string name="unknown">অজ্ঞাত</string>
+    <string name="email">ইমেইল</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
+    <string name="tb_suspected_copd_case">সন্দেহজনক COPD ৰোগী</string>
+    <string name="tb_suspected_leprosy_case">সন্দেহজনক কুষ্ঠ ৰোগী</string>
+    <string name="tb_suspected_ncd_case">সন্দেহজনক NCD ৰোগী</string>
 
 </resources>

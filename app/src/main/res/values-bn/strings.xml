@@ -1430,8 +1430,21 @@
     <string name="delivered">ডেলিভার করা হয়েছে</string>
     <string name="not_delivered">ডেলিভার করা হয়নি</string>
     <string name="tb">যক্ষ্মা (টিবি)</string>
-    <string name="referal_facility">রেফারেল সুবিধা</string>
-
-
+    <string name="referal_facility">রেফারেল সুবিধা</string>    <string name="enter_abha_id_ayushman_card_number">আভা আইডি / আয়ুষ্মান কার্ড নম্বর লিখুন</string>
+    <string name="network_error">নেটওয়ার্ক ত্রুটি। অনুগ্রহ করে আপনার সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।</string>
+    <string name="abha_no_valid_details">এই কার্ড নম্বরের জন্য কোনো বৈধ বিবরণ পাওয়া যায়নি।</string>
+    <string name="abha_id_check_question">আপনার কি ABHA ID / আয়ুষ্মান আইডি আছে?</string>
+    <string name="str_follow_up">ফলো-আপ</string>
+    <string name="abha_not_created_title">আভা আইডি</string>
+    <string name="abha_not_created_message">আভা আইডি তৈরি করা হয়নি। আপনি কি নতুন আভা আইডি তৈরি করতে চান?</string>
+    <string name="tb_suspected_copd_case">সন্দেহভাজন COPD কেস</string>
+    <string name="tb_suspected_leprosy_case">সন্দেহভাজন কুষ্ঠ কেস</string>
+    <string name="tb_suspected_ncd_case">সন্দেহভাজন NCD কেস</string>
+    <string name="ifa_syrup">IFA</string>
+    <string name="check_sympt">ব্যক্তির এই লক্ষণগুলির কোনোটি আছে কিনা পরীক্ষা করুন:</string>
+    <string name="str_left">বাম</string>
+    <string name="str_right">ডান</string>
+    <string name="str_both">উভয়</string>
+    <string name="str_eye_visit">চোখ - পরিদর্শন</string>
 
 </resources>
