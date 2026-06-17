@@ -1287,7 +1287,6 @@ class FormInputAdapter(
 //        val isEnabled = if (isEnabled) item.isEnabled else false
         try {
             val isEnabled = if (isEnabled) item.isEnabled else false
-            Timber.d("DD_BIND -> isEnabled=$isEnabled | item.isEnabled=${item.isEnabled}")
             when (item.inputType) {
                 EDIT_TEXT -> (holder as EditTextInputViewHolder).bind(
                     item, isEnabled, formValueListener
