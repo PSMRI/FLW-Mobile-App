@@ -1096,7 +1096,8 @@ data class BenRegKidNetwork(
 data class BenHealthIdDetails(
     var healthId: String = "",
     var healthIdNumber: String = "",
-    var isNewAbha: Boolean = false
+    var isNewAbha: Boolean = false,
+    var familyId: String = ""
 )
 
 data class BenRegGen(
@@ -1546,7 +1547,12 @@ data class BenRegCache(
             isChildrenAdded = isChildrenAdded,
             doYouHavechildren = doYouHavechildren,
             isSpouseAdded = isSpouseAdded,
-            isDeactivate = isDeactivate
+            isDeactivate = isDeactivate,
+
+            // ABHA / family id are now sent on the syncDataToAmrit request (BenPost)
+            // instead of the registrarBeneficaryRegistrationNew request.
+            abhaId = healthIdDetails?.healthIdNumber?.takeIf { it.isNotBlank() && it != "undefined" },
+            familyId = healthIdDetails?.familyId?.takeIf { it.isNotBlank() }
 
 
         )

@@ -47,6 +47,7 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
@@ -54,6 +55,9 @@ import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.b
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
+
+
+private const val ABHA_ALREADY_EXISTS_CODE = 5001
 
 @AndroidEntryPoint
 class NewBenRegFragment : Fragment() {
@@ -297,6 +301,23 @@ class NewBenRegFragment : Fragment() {
         alertDialog.show()
     }
 
+    private fun showCreateNewAbhaDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(false)
+            .setTitle(getString(R.string.abha_not_created_title))
+            .setMessage(getString(R.string.abha_not_created_message))
+            .setPositiveButton(getString(R.string.yes_dialog)) { dialog, _ ->
+
+                findNavController().popBackStack(R.id.homeFragment, false)
+                startActivity(Intent(requireActivity(), AbhaIdActivity::class.java))
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.no_dialog)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
         alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
@@ -370,11 +391,14 @@ class NewBenRegFragment : Fragment() {
                 }
 
                 is NetworkResult.Error -> {
-                    val errorMessage = result.message.takeIf { it.isNotBlank() }
-                        ?: getString(R.string.abha_no_valid_details)
+                    if (result.code == ABHA_ALREADY_EXISTS_CODE) {
+                        showCreateNewAbhaDialog()
+                    } else {
+                        val errorMessage = result.message.takeIf { it.isNotBlank() }
+                            ?: getString(R.string.abha_no_valid_details)
 
-                    //currently showing toast can be change later as dialog
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                    }
                     viewModel.clearAbhaUserDetails()
                 }
 

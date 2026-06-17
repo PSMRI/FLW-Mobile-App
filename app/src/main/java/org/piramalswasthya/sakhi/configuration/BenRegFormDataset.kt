@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
+import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
 import org.piramalswasthya.sakhi.model.FamilyMember
@@ -107,6 +108,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
     private var hof: BenRegCache? = null
     private var benIfDataExist: BenRegCache? = null
+
+    private var prefilledAbhaId: String? = null
+    private var prefilledFamilyId: String? = null
 
     private var minAgeYear: Int = 0
     private var maxAgeYear: Int = Konstants.maxAgeForGenBen
@@ -2600,6 +2604,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             setValueById(contactNumber.id, mobile)
             updateList(contactNumber.id, getIndexById(contactNumber.id))
         }
+
+        prefilledAbhaId = member.abhId?.trim()?.takeIf { it.isNotEmpty() }
+        prefilledFamilyId = member.familyId?.trim()?.takeIf { it.isNotEmpty() }
     }
 
     private fun mapAyushmanGenderToIndex(raw: String?): Int? {
@@ -3117,6 +3124,13 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             ben.isChildrenAdded = false
             ben.isMarried = (maritalStatus.getPosition() == 2)
             ben.doYouHavechildren = (haveChildren.getPosition() == 1)
+
+            if (prefilledAbhaId != null || prefilledFamilyId != null) {
+                val hid = ben.healthIdDetails
+                    ?: BenHealthIdDetails().also { ben.healthIdDetails = it }
+                prefilledAbhaId?.let { hid.healthIdNumber = it }
+                prefilledFamilyId?.let { hid.familyId = it }
+            }
         }
     }
 

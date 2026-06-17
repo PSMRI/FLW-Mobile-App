@@ -698,6 +698,8 @@
     <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
     <string name="yes_dialog">Yes</string>
     <string name="no_dialog">No</string>
+    <string name="abha_not_created_title">ABHA ID</string>
+    <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
