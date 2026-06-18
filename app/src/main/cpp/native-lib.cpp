@@ -7,9 +7,9 @@
 
 // ================== Development Constants ================== //
 #ifdef IS_DEVELOPMENT
-const char* M_ENCRYPTED_PASS_KEY = "Piramal12Piramal";
-const char* M_ABHA_CLIENT_SECRET = "a1fbc194-e7b9-45b1-b991-3bd4beead78d";
-const char* M_ABHA_CLIENT_ID = "PSMRI_001";
+const char* M_ENCRYPTED_PASS_KEY = "dummy_pass_key";
+const char* M_ABHA_CLIENT_SECRET = "dummy_abha_client_secret";
+const char* M_ABHA_CLIENT_ID = "dummy_abha_client_id";
 const char* M_BASE_TMC_URL = "https://uatamrit.piramalswasthya.org/";
         //"https://amritdemo.piramalswasthya.org/";
         //"https://amritflw.piramalswasthya.org/";
