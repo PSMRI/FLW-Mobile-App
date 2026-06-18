@@ -674,7 +674,7 @@ class MalariaFormDataset(
                         addItems = listOf(headline,isFever,isFluLikeIllness,isShakingchills,isHeadache,
                             isMuscleaches,isTiredness,isNausea,isVomiting,isDiarrhea,
                             caseStatus),
-                        removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath)
+                        removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath,otherPlaceOfDeath,otherReasonOfDeath)
                     )
                 }
                 0

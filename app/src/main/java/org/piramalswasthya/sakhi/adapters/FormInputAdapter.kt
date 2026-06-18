@@ -368,6 +368,11 @@ class FormInputAdapter(
                 binding.et.isClickable = false
                 binding.executePendingBindings()
                 return
+            } else{
+                binding.tilRvDropdown.visibility = View.VISIBLE
+                binding.tilEditText.visibility = View.GONE
+                binding.et.isFocusable = true
+                binding.et.isClickable = true
             }
 
             hideKeyboardImmediately()

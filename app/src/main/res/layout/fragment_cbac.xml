@@ -529,7 +529,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat_note"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -537,7 +537,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast1"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -545,7 +545,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast2"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -559,6 +559,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     style="@style/cbac_ed_hint"
+                                    android:textStyle="bold"
                                     android:text="@string/none_of"  />
 
                                 <CheckBox
@@ -774,12 +775,12 @@
 
                                 app:numAsteriskAlt="@{0}" />
 
-                            <include
+                       <!--     <include
                                 android:id="@+id/cbac_suspected_leprosy"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_is_leprosy_suspected}"
 
-                                app:numAsteriskAlt="@{0}" />
+                                app:numAsteriskAlt="@{0}" />-->
 
                             <LinearLayout
                                 android:id="@+id/cbac_ll_ed_women"
@@ -1459,14 +1460,6 @@
 
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:text="@string/save"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    android:textColor="?attr/colorOnPrimary" />
 
 
             </LinearLayout>
@@ -1480,6 +1473,18 @@
             android:layout_gravity="center"
             android:indeterminateTint="?attr/colorPrimary"
             android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:text="@string/submit"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="?attr/colorOnPrimary" />
+
     </FrameLayout>
 
 </layout>

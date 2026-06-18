@@ -76,13 +76,13 @@ class AncVisitListAdapter(
 
             binding.switchDeliveryStatus.setOnCheckedChangeListener { _, isChecked ->
 
-                onDeliveryStatusChanged?.let { it(item, isChecked) }
                 if (isChecked) {
                     AlertDialog.Builder(binding.root.context)
                         .setTitle(R.string.delivery_status)
                         .setMessage(R.string.has_pw_delivered)
                         .setCancelable(false)
                         .setPositiveButton(R.string.yes) { dialog, _ ->
+                            onDeliveryStatusChanged?.let { it(item, isChecked) }
 
                             binding.switchDeliveryStatus.text =
                                 binding.root.context.getString(R.string.delivered)

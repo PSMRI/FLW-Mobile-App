@@ -625,7 +625,7 @@
     <string name="place_new">স্থান</string>
     <string name="higher_healthcare_center">উচ্চতর স্বাস্থ্যসেবা কেন্দ্র</string>
     <string name="additional_services">অতিরিক্ত সেবা</string>
-    <string name="refer_date">রেফার তারিখ</string>
+    <string name="refer_date">রেফারেলের তারিখ</string>
     <string-array name="referal_health_center_array">
         <item>অ্যাপোলো</item>
         <item>CHC</item>
@@ -1446,5 +1446,15 @@
     <string name="str_right">ডান</string>
     <string name="str_both">উভয়</string>
     <string name="str_eye_visit">চোখ - পরিদর্শন</string>
+    <string name="referal_facility">রেফারেল সুবিধা</string>
+    <string-array name="new_referral_facility">
+        <item>সাব-সেন্টার</item>
+        <item>পিএইচসি</item>
+        <item>সিএইচসি</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>মেডিকেল কলেজ হাসপাতাল</item>
+        <item>যক্ষ্মা ইউনিট</item>
+    </string-array>
+
 
 </resources>

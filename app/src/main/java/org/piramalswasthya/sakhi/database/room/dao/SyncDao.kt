@@ -12,7 +12,7 @@ interface SyncDao {
         "SELECT id, name, syncState, COUNT(*) as count " +
                 "FROM ( " +
                 "    SELECT 1 as id, 'Beneficiary' as name, b1.syncState as syncState " +
-                "    FROM beneficiary b1 " +
+                "    FROM beneficiary b1 where isDeactivate = 0 " +
 //                "    WHERE b1.loc_village_id = :villageId " +
                 "    UNION ALL " +
                 "    SELECT 2 as id, 'EC Registration' as name, ecr.syncState as syncState " +

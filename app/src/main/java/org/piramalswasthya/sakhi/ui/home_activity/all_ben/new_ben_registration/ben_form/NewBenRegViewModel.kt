@@ -38,6 +38,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
@@ -343,8 +344,9 @@ class NewBenRegViewModel @Inject constructor(
                     if (ben.gender == Gender.MALE) {
                         benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                     } else {
+                        Log.e("CHECK DATA","SSSSSSS")
                         benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
-                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+//                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                     }
                     if (isHoF) {
                         if (ben.genDetails?.maritalStatusId == 2) {

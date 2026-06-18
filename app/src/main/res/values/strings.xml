@@ -207,6 +207,15 @@
         <item>TB Not suspected</item>
     </string-array>
 
+    <string-array name="new_referral_facility">
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Tuberculosis Unit</item>
+    </string-array>
+
     <string-array name="referral_facility">
         <item>District TB Centre (DTC)</item>
         <item>HWC</item>
@@ -670,7 +679,7 @@
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>
-    <string name="refer_date">Refer Date</string>
+    <string name="refer_date">Referral Date</string>
     <string-array name="referal_health_center_array">
         <item>Apollo</item>
         <item>CHC</item>

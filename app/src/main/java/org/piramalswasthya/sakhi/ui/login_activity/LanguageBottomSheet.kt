@@ -32,7 +32,7 @@ class LanguageBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvLanguages.apply {
-            layoutManager = GridLayoutManager(requireContext(), 3)
+            layoutManager = GridLayoutManager(requireContext(), 4)
             adapter = LanguageAdapter(getLanguageList()) { selected ->
                 if (selected.isSelected) {
                     dismiss()

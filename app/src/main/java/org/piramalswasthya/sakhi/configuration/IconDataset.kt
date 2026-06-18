@@ -98,7 +98,7 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
                 Icon(
-                    R.drawable.ic_ncd_noneligible,
+                    R.drawable.referral,
                     resources.getString(R.string.ncd_refer_list),
                     recordsRepo.getNcdrefferedListCount,
                     HomeFragmentDirections.actionHomeFragmentToNcdReferredListFragment()

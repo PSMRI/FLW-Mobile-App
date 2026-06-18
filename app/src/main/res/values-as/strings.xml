@@ -481,6 +481,15 @@
         <item>কন্যা</item>
     </string-array>
 
+    <string-array name="new_referral_facility">
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>পিএইচচি</item>
+        <item>চিএইচচি</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>যক্ষ্মা ইউনিট</item>
+    </string-array>
+
     <string-array name="referral_facility">
         <item>জিলা টিবি কেন্দ্ৰ (DTC)</item>
         <item>এইচডব্লিউচি</item>
@@ -1403,7 +1412,7 @@
     <string name="name_of_anm2">ANM2 ৰ নাম</string>
     <string name="mobile_number_of_anm2">ANM2 ৰ মোবাইল নম্বৰ</string>
     <string name="str_dose">ডোজ</string>
-    <string name="refer_date">প্ৰেৰণৰ তাৰিখ</string>
+    <string name="refer_date">ৰেফাৰেলৰ তাৰিখ</string>
     <string name="str_no_more_dose">আৰু ডোজ নাই</string>
     <string name="sammelan_photo1">সম্মিলন ফটোসমূহ / MoM (1)</string>
     <string name="sammelan_photo2">সম্মিলন ফটোসমূহ / MoM (2)</string>
