@@ -80,7 +80,7 @@ class MalariaFormDataset(
 
     )
     private var otherReasonOfDeath = FormElement(
-        id = 28,
+        id = 30,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other_reason),
         required = true,
@@ -88,7 +88,7 @@ class MalariaFormDataset(
     )
 
     private var headline = FormElement(
-        id = 27,
+        id = 29,
         inputType = InputType.HEADLINE,
         title = resources.getString(R.string.check_sympt),
         required = false,
