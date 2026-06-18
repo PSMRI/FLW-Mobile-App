@@ -6,7 +6,7 @@
 
 
 // ================== Development Constants ================== //
-#ifdef IS_DEVELOPMENT
+#if IS_DEVELOPMENT
 const char* M_ENCRYPTED_PASS_KEY = "dummy_pass_key";
 const char* M_ABHA_CLIENT_SECRET = "dummy_abha_client_secret";
 const char* M_ABHA_CLIENT_ID = "dummy_abha_client_id";
