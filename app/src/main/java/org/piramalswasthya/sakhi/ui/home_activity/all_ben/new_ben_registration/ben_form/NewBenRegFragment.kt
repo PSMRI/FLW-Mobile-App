@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -68,6 +69,11 @@ class NewBenRegFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: NewBenRegViewModel by viewModels()
+
+    private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    private val gateSubmitOnAbhaFetch: Boolean
+        get() = isMitaninFlavor && viewModel.benIdFromArgs == 0L
 
     private var micClickedElementId: Int = -1
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -368,17 +374,18 @@ class NewBenRegFragment : Fragment() {
 
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
+        if (gateSubmitOnAbhaFetch) setSubmitEnabled(false)
+
         viewModel.abhaUserDetails.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Success -> {
-                    // Auto-fill only for Mitanin, and only with a record that actually
-                    // carries usable values. Empty/invalid fields are left untouched.
                     val member = result.data.firstOrNull { it.hasUsableData() }
                     if (isMitanin && member != null) {
                         viewLifecycleOwner.lifecycleScope.launch {
                             viewModel.prefillFromAyushmanCard(member)
                             (_binding?.form?.rvInputForm?.adapter as? FormInputAdapter)
                                 ?.notifyDataSetChanged()
+                            if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
                         }
                     } else {
                         Toast.makeText(
@@ -798,6 +805,19 @@ class NewBenRegFragment : Fragment() {
 
 
 
+
+    private fun setSubmitEnabled(enabled: Boolean) {
+        val b = _binding ?: return
+        b.btnSubmit.isEnabled = enabled
+        val tint = if (enabled) {
+            com.google.android.material.color.MaterialColors.getColor(
+                b.btnSubmit, com.google.android.material.R.attr.colorPrimary
+            )
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.md_theme_light_ongray)
+        }
+        b.btnSubmit.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
+    }
 
     private fun validateCurrentPage(): Boolean {
         val currentBinding = _binding ?: return false
