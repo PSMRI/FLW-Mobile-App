@@ -57,7 +57,7 @@ class MalariaFormDataset(
         arrayId = R.array.death_place,
         entries = resources.getStringArray(R.array.death_place),
         required = true,
-        hasDependants = true
+        hasDependants = false
 
     )
 
@@ -76,7 +76,7 @@ class MalariaFormDataset(
         arrayId = R.array.reason_death,
         entries = resources.getStringArray(R.array.reason_death),
         required = true,
-        hasDependants = true
+        hasDependants = false
 
     )
     private var otherReasonOfDeath = FormElement(
