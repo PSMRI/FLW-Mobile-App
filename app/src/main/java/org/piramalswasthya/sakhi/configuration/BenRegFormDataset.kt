@@ -2568,16 +2568,17 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
     }
 
     suspend fun prefillFromAyushmanCard(member: FamilyMember) {
-        // Name -> first / last name (last whitespace-separated token becomes last name).
         member.name?.trim()?.replace(Regex("\\s+"), " ")?.takeIf { it.isNotEmpty() }?.let { fullName ->
             val parts = fullName.split(" ")
             if (parts.size >= 2) {
                 setValueById(firstName.id, parts.dropLast(1).joinToString(" "))
                 setValueById(lastName.id, parts.last())
+                lastName.isEnabled = false
                 updateList(lastName.id, getIndexById(lastName.id))
             } else {
                 setValueById(firstName.id, fullName)
             }
+            firstName.isEnabled = false
             updateList(firstName.id, getIndexById(firstName.id))
             firstName.errorText = null
             lastName.errorText = null
