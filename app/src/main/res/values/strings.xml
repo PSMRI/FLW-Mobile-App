@@ -117,6 +117,10 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="enter_abha_id_ayushman_card_number">Enter Abha Id / Ayushman Card Number</string>
+    <string name="network_error">Network error. Please check your connection and try again.</string>
+    <string name="abha_no_valid_details">No valid details found for this card number.</string>
+    <string name="abha_id_check_question">Do you have ABHA ID / Ayushman ID?</string>
     <string name="irs_off">IRS OFF</string>
     <string name="adolescent_health_form">Adolescent Health Form</string>
     <string name="irs_on">IRS ON</string>
@@ -703,6 +707,8 @@
     <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
     <string name="yes_dialog">Yes</string>
     <string name="no_dialog">No</string>
+    <string name="abha_not_created_title">ABHA ID</string>
+    <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>

@@ -29,7 +29,9 @@ class HouseholdMembersViewModelTest : BaseViewModelTest() {
     private lateinit var viewModel: HouseholdMembersViewModel
 
     private val savedStateHandle = SavedStateHandle(mapOf(
-        "hhId" to 1L
+        "hhId" to 1L,
+        "fromDisease" to 0,
+        "diseaseType" to "No"
     ))
 
     @Before

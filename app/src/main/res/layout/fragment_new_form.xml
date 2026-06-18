@@ -468,15 +468,7 @@
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
     </LinearLayout>
-
-
 
     <ProgressBar
         android:id="@+id/pb_form"
@@ -485,7 +477,5 @@
         android:layout_gravity="center"
         android:indeterminateTint="?attr/colorPrimary"
         android:visibility="gone" />
-
-
 
 </FrameLayout>

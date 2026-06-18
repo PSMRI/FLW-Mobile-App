@@ -638,7 +638,7 @@ class FormInputAdapter(
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
-            isOtpVerified(isEnabled, isInternetAvailable(binding.root.context))
+            isOtpVerified(item.title, isEnabled, isInternetAvailable(binding.root.context))
 
             binding.generateOtp.setOnClickListener {
                 formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
@@ -648,13 +648,15 @@ class FormInputAdapter(
 
         }
 
-        private fun isOtpVerified(isEnabled: Boolean, internetAvailable: Boolean) {
+        private fun isOtpVerified(buttonTitle: String, isEnabled: Boolean, internetAvailable: Boolean) {
             if(isOtpVerified) {
                 binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
                 binding.generateOtp.isEnabled = isEnabled
 
             } else {
-                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.send_otp)
+                // Label comes from the FormElement so non-OTP buttons (e.g. ABHA submit) show their
+                // own title; the OTP element's title is R.string.send_otp, so OTP is unchanged.
+                binding.generateOtp.text = buttonTitle
                 if (internetAvailable){
                     binding.generateOtp.isEnabled = isEnabled
 

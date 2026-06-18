@@ -1355,5 +1355,15 @@
     <string name="past_verify_by_12th">12 तारीख तक सत्यापन लंबित</string>
     <string name="back_with_asha_nfor_correction">सुधार हेतु\nआशा के पास वापस</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">वे आशाएं जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
+    <string name="abha_id_check_question">क्या आपके पास ABHA ID / आयुष्मान आईडी है?</string>
+    <string name="enter_abha_id_ayushman_card_number">आभा आईडी / आयुष्मान कार्ड नंबर दर्ज करें</string>
+    <string name="network_error">नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें।</string>
+    <string name="abha_no_valid_details">इस कार्ड नंबर के लिए कोई मान्य विवरण नहीं मिला।</string>
+    <string name="kpi_dashboard">केपीआई डैशबोर्ड</string>
+    <string name="abha_not_created_title">आभा आईडी</string>
+    <string name="abha_not_created_message">आभा आईडी नहीं बनी है। क्या आप नई आभा आईडी बनाना चाहते हैं?</string>
+    <string name="unknown">अज्ञात</string>
+    <string name="email">ईमेल</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
 
 </resources>

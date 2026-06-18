@@ -12,12 +12,13 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemHouseholdBinding
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.ui.getTitle
 import org.piramalswasthya.sakhi.ui.getTitleRes
 
 
-class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao,private val isSoftDeleteEnabled:Boolean = false, private val clickListener: HouseholdClickListener) :
+class HouseHoldListAdapter(private val diseaseType: String, private var isDisease: Boolean, val pref: PreferenceDao,private val isSoftDeleteEnabled:Boolean = false, private val clickListener: HouseholdClickListener, private val gateNewBenOnInternet: Boolean = false) :
     ListAdapter<HouseHoldBasicDomain, HouseHoldListAdapter.HouseHoldViewHolder>(
         HouseHoldDiffUtilCallBack
     ) {
@@ -51,7 +52,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             isDisease: Boolean,
             pref: PreferenceDao,
             diseaseType: String,
-            isSoftDeleteEnabled: Boolean
+            isSoftDeleteEnabled: Boolean,
+            gateNewBenOnInternet: Boolean
         ) {
             binding.household = item
             binding.clickListener = clickListener
@@ -103,6 +105,18 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             }
 
 
+            if (gateNewBenOnInternet) {
+                val ctx = binding.root.context
+                val hasInternet = isInternetAvailable(ctx)
+                binding.button4.isEnabled = hasInternet
+                val tint = if (hasInternet) {
+                    ContextCompat.getColor(ctx, android.R.color.holo_green_dark)
+                } else {
+                    ContextCompat.getColor(ctx, R.color.md_theme_light_ongray)
+                }
+                binding.button4.backgroundTintList = ColorStateList.valueOf(tint)
+            }
+
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }
@@ -114,7 +128,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
     }
 
     override fun onBindViewHolder(holder: HouseHoldViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType,isSoftDeleteEnabled)
+        holder.bind(getItem(position), clickListener,isDisease, pref, diseaseType,isSoftDeleteEnabled, gateNewBenOnInternet)
     }
 
 

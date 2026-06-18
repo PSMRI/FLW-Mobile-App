@@ -25,7 +25,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var pref: PreferenceDao
     @MockK private lateinit var incentiveRepo: IncentiveRepo
-    @MockK private lateinit var amritApiService: AmritApiService
+    @MockK private lateinit var apiService: AmritApiService
 
     private lateinit var viewModel: IncentivesViewModel
 
@@ -39,7 +39,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         every { incentiveRepo.list } returns flowOf(emptyList())
         coEvery { incentiveRepo.pullAndSaveAllIncentiveActivities(any()) } returns true
         coEvery { incentiveRepo.pullAndSaveAllIncentiveRecords(any()) } returns true
-        viewModel = IncentivesViewModel(pref, incentiveRepo,amritApiService)
+        viewModel = IncentivesViewModel(pref, incentiveRepo, apiService)
     }
 
     // =====================================================
@@ -337,8 +337,8 @@ class IncentivesViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `multiple instances are independent`() {
-        val vm1 = IncentivesViewModel(pref, incentiveRepo,amritApiService)
-        val vm2 = IncentivesViewModel(pref, incentiveRepo,amritApiService)
+        val vm1 = IncentivesViewModel(pref, incentiveRepo, apiService)
+        val vm2 = IncentivesViewModel(pref, incentiveRepo, apiService)
         assertNotNull(vm1)
         assertNotNull(vm2)
     }

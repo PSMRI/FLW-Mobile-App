@@ -738,8 +738,6 @@ class BenRepo @Inject constructor(
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
 
                                 benDao.upsert(*benCacheList.toTypedArray())
-//                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)
-//                                cbacDao.upsert(*cbacCacheList.toTypedArray())
 
                                 Timber.d("GeTBenDataList: $pageSize")
                                 return@withContext pageSize
@@ -827,17 +825,6 @@ class BenRepo @Inject constructor(
                                         BenBasicDomain(
                                             benId = jsonObject.getLong("benficieryid"),
                                             hhId = jsonObject.getLong("houseoldId"),
-
-//                                            isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean("isDeath") else false,
-//                                            isDeathValue = jsonObject.optString("isDeath", null),
-//                                            dateOfDeath = jsonObject.optString("dateOfDeath", null),
-//                                            timeOfDeath = jsonObject.optString("timeOfDeath", null),
-//                                            reasonOfDeath = jsonObject.optString("reasonOfDeath", null),
-//                                            reasonOfDeathId = if (jsonObject.has("reasonOfDeathId")) jsonObject.optInt("reasonOfDeathId") else -1,
-//                                            placeOfDeath = jsonObject.optString("placeOfDeath", null),
-//                                            placeOfDeathId = if (jsonObject.has("placeOfDeathId")) jsonObject.optInt("placeOfDeathId") else -1,
-//                                            otherPlaceOfDeath = jsonObject.optString("otherPlaceOfDeath", null),
-
                                             isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean(
                                                 "isDeath"
                                             ) else false,
@@ -887,7 +874,6 @@ class BenRepo @Inject constructor(
                                             familyHeadName = houseDataObj.getString("familyHeadName"),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
-//                                            typeOfList = benDataObj.getString("registrationType"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
                                             relToHeadId = 0,
@@ -1046,8 +1032,6 @@ class BenRepo @Inject constructor(
                     val benDataObj = jsonObject.getJSONObject("beneficiaryDetails")
                     val abhaHealthDetailsObj = jsonObject.getJSONObject("abhaHealthDetails")
 
-//                    val houseDataObj = jsonObject.getJSONObject("householdDetails")
-//                    val cbacDataObj = jsonObject.getJSONObject("cbacDetails")
                     val childDataObj = jsonObject.getJSONObject("bornbirthDeatils")
                     val benId =
                         if (jsonObject.has("benficieryid")) jsonObject.getLong("benficieryid") else -1L
@@ -1126,7 +1110,6 @@ class BenRepo @Inject constructor(
                                 isAdult = (benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
                                     "age"
                                 ) > 14),
-//                                userImageBlob = getCompressedByteArray(benId, benDataObj),
                                 regDate = if (benDataObj.has("registrationDate")) getLongFromDate(
                                     benDataObj.getString("registrationDate")
                                 ) else 0,
@@ -1153,7 +1136,6 @@ class BenRepo @Inject constructor(
                                     "familyHeadRelation"
                                 ) else null,
                                 familyHeadRelationPosition = benDataObj.getInt("familyHeadRelationPosition"),
-//                            familyHeadRelationOther = benDataObj.getString("familyHeadRelationOther"),
                                 mobileNoOfRelation = if (benDataObj.has("mobilenoofRelation")) benDataObj.getString(
                                     "mobilenoofRelation"
                                 ) else null,
@@ -1169,7 +1151,6 @@ class BenRepo @Inject constructor(
                                 contactNumber = if (benDataObj.has("contact_number")) benDataObj.getString(
                                     "contact_number"
                                 ).toLong() else 0,
-//                            literacy = literacy,
                                 literacyId = if (benDataObj.has("literacyId")) benDataObj.getInt("literacyId") else 0,
                                 communityId = if (benDataObj.has("communityId")) benDataObj.getInt("communityId") else 0,
                                 community = if (benDataObj.has("community")) benDataObj.getString("community") else null,
@@ -1182,96 +1163,31 @@ class BenRepo @Inject constructor(
                                     "religionOthers"
                                 ) else null,
                                 rchId = if (benDataObj.has("rchid")) benDataObj.getString("rchid") else null,
-//                            registrationType = if (benDataObj.has("registrationType")) {
-//                                when (benDataObj.getString("registrationType")) {
-//                                    "NewBorn" -> {
-//                                        if (benDataObj.getString("age_unit") != "Years" || benDataObj.getInt(
-//                                                "age"
-//                                            ) < 2
-//                                        ) TypeOfList.INFANT
-//                                        else if (benDataObj.getInt("age") < 6) TypeOfList.CHILD
-//                                        else TypeOfList.ADOLESCENT
-//                                    }
-//                                    "General Beneficiary", "सामान्य लाभार्थी" -> if (benDataObj.has(
-//                                            "reproductiveStatus"
-//                                        )
-//                                    ) {
-//                                        with(benDataObj.getString("reproductiveStatus")) {
-//                                            when {
-//                                                contains("Eligible Couple") || contains("पात्र युगल") -> TypeOfList.ELIGIBLE_COUPLE
-//                                                contains("Antenatal Mother") -> TypeOfList.ANTENATAL_MOTHER
-//                                                contains("Delivery Stage") -> TypeOfList.DELIVERY_STAGE
-//                                                contains("Postnatal Mother") -> TypeOfList.POSTNATAL_MOTHER
-//                                                contains("Menopause Stage") -> TypeOfList.MENOPAUSE
-//                                                contains("Teenager") || contains("किशोरी") -> TypeOfList.TEENAGER
-//                                                else -> TypeOfList.GENERAL
-//                                            }
-//                                        }
-//                                    } else TypeOfList.GENERAL
-//                                    else -> TypeOfList.GENERAL
-//                                }
-//                            } else TypeOfList.OTHER,
                                 latitude = benDataObj.getDouble("latitude"),
                                 longitude = benDataObj.getDouble("longitude"),
                                 aadharNum = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") else null,
                                 aadharNumId = benDataObj.getInt("aadha_noId"),
                                 hasAadhar = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") != "" else false,
                                 hasAadharId = if (benDataObj.getInt("aadha_noId") == 1) 1 else 0,
-//                            bankAccountId = benDataObj.getString("bank_accountId"),
                                 bankAccount = if (benDataObj.has("bankAccount")) benDataObj.getString(
                                     "bankAccount"
                                 ) else null,
                                 nameOfBank = if (benDataObj.has("nameOfBank")) benDataObj.getString(
                                     "nameOfBank"
                                 ) else null,
-//                            nameOfBranch = benDataObj.getString("nameOfBranch"),
                                 ifscCode = if (benDataObj.has("ifscCode")) benDataObj.getString("ifscCode") else null,
-//                            needOpCare = benDataObj.getString("need_opcare"),
                                 needOpCareId = if (benDataObj.has("need_opcareId")) benDataObj.getInt(
                                     "need_opcareId"
                                 ) else 0,
                                 ncdPriority = if (benDataObj.has("ncd_priority")) benDataObj.getInt(
                                     "ncd_priority"
                                 ) else 0,
-//                            cbacAvailable = cbacDataObj.length() != 0,
                                 guidelineId = if (benDataObj.has("guidelineId")) benDataObj.getString(
                                     "guidelineId"
                                 ) else null,
                                 isHrpStatus = if (benDataObj.has("hrpStatus")) benDataObj.getBoolean(
                                     "hrpStatus"
                                 ) else false,
-//                            hrpIdentificationDate = hrp_identification_date,
-//                            hrpLastVisitDate = hrp_last_vist_date,
-//                            nishchayPregnancyStatus = nishchayPregnancyStatus,
-//                            nishchayPregnancyStatusPosition = nishchayPregnancyStatusPosition,
-//                            nishchayDeliveryStatus = nishchayDeliveryStatus,
-//                            nishchayDeliveryStatusPosition = nishchayDeliveryStatusPosition,
-//                            nayiPahalDeliveryStatus = nayiPahalDeliveryStatus,
-//                            nayiPahalDeliveryStatusPosition = nayiPahalDeliveryStatusPosition,
-//                            suspectedNcd = if (cbacDataObj.has("suspected_ncd")) cbacDataObj.getString(
-//                                "suspected_ncd"
-//                            ) else null,
-//                            suspectedNcdDiseases = if (cbacDataObj.has("suspected_ncd_diseases")) cbacDataObj.getString(
-//                                "suspected_ncd_diseases"
-//                            ) else null,
-//                            suspectedTb = if (cbacDataObj.has("suspected_tb")) cbacDataObj.getString(
-//                                "suspected_tb"
-//                            ) else null,
-//                            confirmed_Ncd = if (cbacDataObj.has("confirmed_ncd")) cbacDataObj.getString(
-//                                "confirmed_ncd"
-//                            ) else null,
-//                            confirmedHrp = if (cbacDataObj.has("confirmed_hrp")) cbacDataObj.getString(
-//                                "confirmed_hrp"
-//                            ) else null,
-//                            confirmedTb = if (cbacDataObj.has("confirmed_tb")) cbacDataObj.getString(
-//                                "confirmed_tb"
-//                            ) else null,
-//                            confirmedNcdDiseases = if (cbacDataObj.has("confirmed_ncd_diseases")) cbacDataObj.getString(
-//                                "confirmed_ncd_diseases"
-//                            ) else null,
-//                            diagnosisStatus = if (cbacDataObj.has("diagnosis_status")) cbacDataObj.getString(
-//                                "diagnosis_status"
-//                            ) else null,
                                 locationRecord = LocationRecord(
                                     country = preferenceDao.getLocationRecord()!!.country,
                                     state = LocationEntity(
@@ -1363,11 +1279,9 @@ class BenRepo @Inject constructor(
                                     ) else null,
                                     term = if (childDataObj.has("term")) childDataObj.getString("term") else null,
                                     termId = if (childDataObj.has("termid")) childDataObj.getInt("termid") else 0,
-//                                    gestationalAge  = if(childDataObj.has("gestationalAge")) childDataObj.getString("gestationalAge") else null,
                                     gestationalAgeId = if (childDataObj.has("gestationalAgeid")) childDataObj.getInt(
                                         "gestationalAgeid"
                                     ) else 0,
-//                                    corticosteroidGivenMother  = if(childDataObj.has("corticosteroidGivenMother")) childDataObj.getString("corticosteroidGivenMother") else null,
                                     corticosteroidGivenMotherId = if (childDataObj.has("corticosteroidGivenMotherid")) childDataObj.getInt(
                                         "corticosteroidGivenMotherid"
                                     ) else 0,
@@ -1407,30 +1321,19 @@ class BenRepo @Inject constructor(
                                     opvBatchNo = if (childDataObj.has("opvBatchNo")) childDataObj.getString(
                                         "opvBatchNo"
                                     ) else null,
-//                                opvGivenDueDate  = childDataObj.getString("opvGivenDueDate"),
-//                                opvDate  = childDataObj.getString("opvDate"),
                                     bcdBatchNo = if (childDataObj.has("bcdBatchNo")) childDataObj.getString(
                                         "bcdBatchNo"
                                     ) else null,
-//                                bcgGivenDueDate  = childDataObj.getString("bcgGivenDueDate"),
-//                                bcgDate  = childDataObj.getString("bcgDate"),
                                     hptBatchNo = if (childDataObj.has("hptdBatchNo")) childDataObj.getString(
                                         "hptdBatchNo"
                                     ) else null,
-//                                hptGivenDueDate  = childDataObj.getString("hptGivenDueDate"),
-//                                hptDate  = childDataObj.getString("hptDate"),
                                     vitaminKBatchNo = if (childDataObj.has("vitaminkBatchNo")) childDataObj.getString(
                                         "vitaminkBatchNo"
                                     ) else null,
-//                                vitaminKGivenDueDate  =  childDataObj.getString("vitaminKGivenDueDate"),
-//                                vitaminKDate =  childDataObj.getString("vitaminKDate"),
                                     deliveryTypeOther = if (childDataObj.has("deliveryTypeOther")) childDataObj.getString(
                                         "deliveryTypeOther"
                                     ) else null,
 
-//                                motherBenId =  childDataObj.getString("conductedDeliveryOther"),
-//                                childMotherName =  childDataObj.getString("conductedDeliveryOther"),
-//                                motherPosition =  childDataObj.getString("conductedDeliveryOther"),
                                     birthBCG = if (childDataObj.has("birthBCG")) childDataObj.getBoolean(
                                         "birthBCG"
                                     ) else false,
@@ -1460,31 +1363,9 @@ class BenRepo @Inject constructor(
                                     ageAtMarriage = if (benDataObj.has("ageAtMarriage")) benDataObj.getInt(
                                         "ageAtMarriage"
                                     ) else 0,
-//                                dateOfMarriage = getLongFromDate(dateMarriage),
                                     marriageDate = if (benDataObj.has("marriageDate")) getLongFromDate(
                                         benDataObj.getString("marriageDate")
                                     ) else null,
-//                                menstrualStatus = menstrualStatus,
-//                                menstrualStatusId = if (benDataObj.has("menstrualStatusId")) benDataObj.getInt(
-//                                    "menstrualStatusId"
-//                                ) else null,
-//                                regularityOfMenstrualCycle = regularityofMenstrualCycle,
-//                                regularityOfMenstrualCycleId = if (benDataObj.has("regularityofMenstrualCycleId")) benDataObj.getInt(
-//                                    "regularityofMenstrualCycleId"
-//                                ) else 0,
-//                                lengthOfMenstrualCycle = lengthofMenstrualCycle,
-//                                lengthOfMenstrualCycleId = if (benDataObj.has("lengthofMenstrualCycleId")) benDataObj.getInt(
-//                                    "lengthofMenstrualCycleId"
-//                                ) else 0,
-//                                menstrualBFD = menstrualBFD,
-//                                menstrualBFDId = if (benDataObj.has("menstrualBFDId")) benDataObj.getInt(
-//                                    "menstrualBFDId"
-//                                ) else 0,
-//                                menstrualProblem = menstrualProblem,
-//                                menstrualProblemId = if (benDataObj.has("menstrualProblemId")) benDataObj.getInt(
-//                                    "menstrualProblemId"
-//                                ) else 0,
-//                                lastMenstrualPeriod = lastMenstrualPeriod,
                                     /**
                                      * part of reproductive status id mapping on @since Aug 7
                                      */
@@ -1505,20 +1386,6 @@ class BenRepo @Inject constructor(
                                             else -> 5
                                         }
                                     } else 0,
-//                                lastDeliveryConducted = lastDeliveryConducted,
-//                                lastDeliveryConductedId = if (benDataObj.has("lastDeliveryConductedID")) benDataObj.getInt(
-//                                    "lastDeliveryConductedID"
-//                                ) else 0,
-//                                facilityName = facilitySelection,
-//                                whoConductedDelivery = whoConductedDelivery,
-//                                whoConductedDeliveryId = if (benDataObj.has("whoConductedDeliveryID")) benDataObj.getInt(
-//                                    "whoConductedDeliveryID"
-//                                ) else 0,
-//                                deliveryDate = deliveryDate,
-//                                expectedDateOfDelivery = if (benDataObj.has("expectedDateOfDelivery")) getLongFromDate(
-//                                    benDataObj.getString("expectedDateOfDelivery")
-//                                ) else null,
-//                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
                                 healthIdDetails = if (abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0) {
                                     BenHealthIdDetails(
@@ -1541,42 +1408,6 @@ class BenRepo @Inject constructor(
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
                             )
                         )
-
-
-                        /*val registrationType = if (benDataObj.has("registrationType")) {
-                            when (benDataObj.getString("registrationType")) {
-                                "NewBorn" -> {
-                                    if (benDataObj.getString("age_unit") != "Years" || benDataObj.getInt(
-                                            "age"
-                                        ) < 2
-                                    ) TypeOfList.INFANT
-                                    else if (benDataObj.getInt("age") < 6) TypeOfList.CHILD
-                                    else TypeOfList.ADOLESCENT
-                                }
-                                "General Beneficiary", "सामान्य लाभार्थी" -> if (benDataObj.has(
-                                        "reproductiveStatus"
-                                    )
-                                ) {
-                                    when (benDataObj.getString("reproductiveStatus")) {
-                                        "Eligible Couple" -> TypeOfList.ELIGIBLE_COUPLE
-                                        "Antenatal Mother" -> TypeOfList.ANTENATAL_MOTHER
-                                        "Delivery Stage" -> TypeOfList.DELIVERY_STAGE
-                                        "Postnatal Mother" -> TypeOfList.POSTNATAL_MOTHER
-                                        "Menopause" -> TypeOfList.MENOPAUSE
-                                        "Teenager" -> TypeOfList.TEENAGER
-                                        else -> TypeOfList.OTHER
-                                    }
-                                } else TypeOfList.GENERAL
-                                else -> TypeOfList.GENERAL
-                            }
-                        } else TypeOfList.OTHER
-                        Timber.d(
-                            "Custom Validation: $registrationType, ${benDataObj.getString("age_unit")}, " + "${
-                                benDataObj.getInt(
-                                    "age"
-                                )
-                            }, ${benDataObj.getString("reproductiveStatus")}"
-                        )*/
 
 //                        if (benDataObj.has("benficieryid")){
 //                            count++
@@ -1664,12 +1495,7 @@ class BenRepo @Inject constructor(
                                     otherHouseType = houseDataObj.getString("other_houseType"),
                                     isHouseOwned = houseDataObj.getString("houseOwnerShip"),
                                     isHouseOwnedId = houseDataObj.getInt("houseOwnerShipId"),
-//                                isLandOwned = houseDataObj.getString("landOwned") == "Yes",
-//                                isLandIrrigated = houseDataObj.has("landIrregated") && houseDataObj.getString("landIrregated") == "Yes",
-//                                isLivestockOwned = houseDataObj.getString("liveStockOwnerShip") == "Yes",
-//                                street = houseDataObj.getString("street"),
-//                                colony = houseDataObj.getString("colony"),
-//                                pincode = houseDataObj.getInt("pincode"),
+
                                 ),
                                 amenities = HouseholdAmenities(
                                     separateKitchen = houseDataObj.getString("seperateKitchen"),
@@ -1687,8 +1513,6 @@ class BenRepo @Inject constructor(
                                     availabilityOfToiletId = houseDataObj.getInt("availabilityofToiletId"),
                                     otherAvailabilityOfToilet = houseDataObj.getString("other_availabilityofToilet"),
                                 ),
-//                                motorizedVehicle = houseDataObj.getString("motarizedVehicle"),
-//                                otherMotorizedVehicle = houseDataObj.getString("other_motarizedVehicle"),
                                 registrationType = if (houseDataObj.has("registrationType")) houseDataObj.getString(
                                     "registrationType"
                                 ) else null,
@@ -1856,6 +1680,99 @@ class BenRepo @Inject constructor(
         } catch (_: java.lang.Exception) {
         }
         return null
+    }
+
+
+    suspend fun getUserDetailsByAyushmanAbhaCardNo(cardNo: String): NetworkResult<List<FamilyMember>> {
+        return try {
+            val response = tmcNetworkApiService.getUserDetailsByAyushmanCardNo(
+                UserDetailsByAyushmanCardNoRequest(/*userId = "ayushman_", password = "!host1@2026",*/cardNo)
+            )
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                if (responseBody.isNullOrBlank()) {
+                    NetworkResult.Error(response.code(), "Empty response from server")
+                } else {
+                    Timber.d("getUserDetailsByAyushmanCardNo raw response: $responseBody")
+                    parseAyushmanResponse(responseBody)
+                }
+            } else {
+                NetworkResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "getUserDetailsByAyushmanAbhaCardNo failed")
+            NetworkResult.NetworkError
+        }
+    }
+
+    private fun parseAyushmanResponse(body: String): NetworkResult<List<FamilyMember>> {
+        val gson = Gson()
+        return try {
+            val root = JSONObject(body.trim())
+            val inner = root.optJSONObject("data")
+            if (inner != null &&
+                (inner.has("message") || inner.has("data") ||
+                        inner.has("statusCode") || inner.has("status_code"))
+            ) {
+                val message = inner.optString("message").takeIf { it.isNotBlank() }
+                val memberArray = inner.optJSONArray("data")
+                if (memberArray != null && memberArray.length() > 0) {
+                    NetworkResult.Success(
+                        gson.fromJson(memberArray.toString(), Array<FamilyMember>::class.java).toList()
+                    )
+                } else {
+                    val code = inner.optInt(
+                        "statusCode",
+                        inner.optString("status_code").toIntOrNull() ?: 0
+                    )
+                    NetworkResult.Error(code, message ?: "No records found for this card number")
+                }
+            } else {
+                val members = parseFamilyMembers(body)
+                if (members.isEmpty()) NetworkResult.Error(0, "No records found for this card number")
+                else NetworkResult.Success(members)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "parseAyushmanResponse failed")
+            val members = runCatching { parseFamilyMembers(body) }.getOrDefault(emptyList())
+            if (members.isEmpty()) NetworkResult.Error(0, "Unable to parse response")
+            else NetworkResult.Success(members)
+        }
+    }
+
+    private fun parseFamilyMembers(body: String): List<FamilyMember> {
+        val gson = Gson()
+        val trimmed = body.trim()
+        return when {
+            trimmed.startsWith("[") ->
+                gson.fromJson(trimmed, Array<FamilyMember>::class.java).toList()
+
+            trimmed.startsWith("{") -> {
+                val json = JSONObject(trimmed)
+                val dataKey = listOf("object_data", "data", "result", "userDetails", "userDetail")
+                    .firstOrNull { json.has(it) }
+                when (val node = dataKey?.let { runCatching { json.get(it) }.getOrNull() }) {
+                    is JSONArray ->
+                        gson.fromJson(node.toString(), Array<FamilyMember>::class.java).toList()
+
+                    is JSONObject ->
+                        listOf(gson.fromJson(node.toString(), FamilyMember::class.java))
+
+                    else ->
+                        if (json.has("cardNo") || json.has("cardno") ||
+                            json.has("personName") || json.has("name") ||
+                            json.has("abhaId") || json.has("abhId") ||
+                            json.has("familyid") || json.has("familyId")
+                        ) {
+                            listOf(gson.fromJson(trimmed, FamilyMember::class.java))
+                        } else {
+                            emptyList()
+                        }
+                }
+            }
+
+            else -> emptyList()
+        }
     }
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {

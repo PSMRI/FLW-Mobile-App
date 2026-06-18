@@ -18,8 +18,10 @@ import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getYearsFromDate
+import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenStatus
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.Gender.FEMALE
@@ -107,6 +109,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
     private var hof: BenRegCache? = null
     private var benIfDataExist: BenRegCache? = null
 
+    private var prefilledAbhaId: String? = null
+    private var prefilledFamilyId: String? = null
+
     private var minAgeYear: Int = 0
     private var maxAgeYear: Int = Konstants.maxAgeForGenBen
 
@@ -130,6 +135,37 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         min = getMinDateOfReg(),
         max = System.currentTimeMillis()
     )
+
+    private val abhaIdCheck = FormElement(
+        id = 9100,
+        inputType = RADIO,
+        title = resources.getString(R.string.abha_id_check_question),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = true,
+    )
+
+    private val abhaIdInput = FormElement(
+        id = 9101,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_abha_id_ayushman_card_number),
+        arrayId = -1,
+        required = false,
+        etMaxLength = 30,
+    )
+
+    private val abhaSubmitBtn = FormElement(
+        id = 9102,
+        inputType = org.piramalswasthya.sakhi.model.InputType.BUTTON,
+        title = resources.getString(R.string.btn_submit),
+        required = false,
+        isEnabled = true,
+    )
+
+    fun getAbhaSubmitBtnId(): Int = abhaSubmitBtn.id
+
+    fun getAbhaCardInput(): String? = abhaIdInput.value?.trim()
     private val firstName = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
@@ -799,6 +835,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             firstName,
             lastName,
         )
+        if (isMitaninVariant && ben == null) {
+            list.add(list.indexOf(dateOfReg), abhaIdCheck)
+        }
         if (!isMitaninVariant) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
@@ -1017,6 +1056,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             firstName,
             lastName,
         )
+        if (isMitaninVariant && ben == null) {
+            list.add(list.indexOf(dateOfReg), abhaIdCheck)
+        }
         if (!isMitaninVariant) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
@@ -2364,6 +2406,15 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 }
                 0
             }
+
+            abhaIdCheck.id -> {
+                triggerDependants(
+                    source = abhaIdCheck,
+                    passedIndex = index,
+                    triggerIndex = 0,
+                    target = listOf(abhaIdInput, abhaSubmitBtn)
+                )
+            }
             otherRelationToHead.id -> {
                 validateEmptyOnEditText(otherRelationToHead)
             }
@@ -2514,6 +2565,89 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
             else -> -1
         }
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        member.name?.trim()?.replace(Regex("\\s+"), " ")?.takeIf { it.isNotEmpty() }?.let { fullName ->
+            val parts = fullName.split(" ")
+            if (parts.size >= 2) {
+                setValueById(firstName.id, parts.dropLast(1).joinToString(" "))
+                setValueById(lastName.id, parts.last())
+                lastName.isEnabled = false
+                updateList(lastName.id, getIndexById(lastName.id))
+            } else {
+                setValueById(firstName.id, fullName)
+            }
+            firstName.isEnabled = false
+            updateList(firstName.id, getIndexById(firstName.id))
+            firstName.errorText = null
+            lastName.errorText = null
+        }
+
+        parseAyushmanDobToFormDate(member.dob)?.let { dobStr ->
+            setValueById(agePopup.id, dobStr)
+            updateList(agePopup.id, getIndexById(agePopup.id))
+        }
+
+        mapAyushmanGenderToIndex(member.gender)?.let { genderIndex ->
+            gender.entries?.getOrNull(genderIndex)?.let { entry ->
+                setValueById(gender.id, entry)
+                updateList(gender.id, genderIndex)
+            }
+        }
+
+        sanitizeAyushmanMobile(member.mobileNo)?.let { mobile ->
+            val selfIndex = 0
+            mobileNoOfRelation.entries?.getOrNull(selfIndex)?.let { selfEntry ->
+                setValueById(mobileNoOfRelation.id, selfEntry)
+                updateList(mobileNoOfRelation.id, selfIndex)
+            }
+            setValueById(contactNumber.id, mobile)
+            updateList(contactNumber.id, getIndexById(contactNumber.id))
+        }
+
+        prefilledAbhaId = member.abhId?.trim()?.takeIf { it.isNotEmpty() }
+        prefilledFamilyId = member.familyId?.trim()?.takeIf { it.isNotEmpty() }
+    }
+
+    private fun mapAyushmanGenderToIndex(raw: String?): Int? {
+        return when (raw?.trim()?.lowercase(Locale.ENGLISH)) {
+            "1", "m", "male" -> 0
+            "2", "f", "female" -> 1
+            "3", "t", "tg", "other", "others", "transgender" -> 2
+            else -> null
+        }
+    }
+
+    private fun sanitizeAyushmanMobile(raw: String?): String? {
+        val digits = raw?.filter { it.isDigit() }.orEmpty()
+        val tenDigit = when {
+            digits.length == 10 -> digits
+            digits.length > 10 -> digits.takeLast(10)
+            else -> return null
+        }
+        return tenDigit.takeIf { it.first() in '6'..'9' }
+    }
+
+    private fun parseAyushmanDobToFormDate(raw: String?): String? {
+        val value = raw?.trim()?.takeIf { it.isNotEmpty() && !it.equals("null", true) } ?: return null
+        val patterns = listOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm",
+            "yyyy-MM-dd", "dd-MM-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd"
+        )
+        for (pattern in patterns) {
+            try {
+                val millis = SimpleDateFormat(pattern, Locale.ENGLISH)
+                    .apply { isLenient = false }
+                    .parse(value)?.time ?: continue
+                if (millis > System.currentTimeMillis()) return null
+                if (getAgeFromDob(millis) !in 0..120) return null
+                return getDateFromLong(millis)
+            } catch (_: Exception) {
+                // try next pattern
+            }
+        }
+        return null
     }
 
     private fun handleForAgeDob(formId: Int): Int {
@@ -2991,6 +3125,13 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             ben.isChildrenAdded = false
             ben.isMarried = (maritalStatus.getPosition() == 2)
             ben.doYouHavechildren = (haveChildren.getPosition() == 1)
+
+            if (prefilledAbhaId != null || prefilledFamilyId != null) {
+                val hid = ben.healthIdDetails
+                    ?: BenHealthIdDetails().also { ben.healthIdDetails = it }
+                prefilledAbhaId?.let { hid.healthIdNumber = it }
+                prefilledFamilyId?.let { hid.familyId = it }
+            }
         }
     }
 

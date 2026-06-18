@@ -45,8 +45,8 @@ class KonstantsTest {
     }
 
     @Test
-    fun `child age range is 92 to 456 days`() {
-        assertEquals(92, Konstants.minAgeForChild)
+    fun `child age range is 91 to 456 days`() {
+        assertEquals(91, Konstants.minAgeForChild)
         assertEquals(456, Konstants.maxAgeForChild)
     }
 

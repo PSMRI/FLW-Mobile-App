@@ -154,6 +154,22 @@ android {
     }
     ndkVersion '28.2.13676358'
 
+    packaging {
+        resources {
+            excludes += [
+                'META-INF/LICENSE.md',
+                'META-INF/LICENSE-notice.md',
+                'META-INF/LICENSE',
+                'META-INF/LICENSE.txt',
+                'META-INF/NOTICE.md',
+                'META-INF/NOTICE',
+                'META-INF/NOTICE.txt',
+                'META-INF/AL2.0',
+                'META-INF/LGPL2.1'
+            ]
+        }
+    }
+
 }
 
 dependencies {

@@ -27,11 +27,13 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
@@ -107,6 +109,27 @@ class NewBenRegViewModel @Inject constructor(
     private val _recordExists = MutableLiveData(benIdFromArgs != 0L)
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _abhaUserDetails = MutableLiveData<NetworkResult<List<FamilyMember>>?>(null)
+    val abhaUserDetails: LiveData<NetworkResult<List<FamilyMember>>?>
+        get() = _abhaUserDetails
+
+    fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+            }
+            _abhaUserDetails.postValue(result)
+        }
+    }
+
+    fun clearAbhaUserDetails() {
+        _abhaUserDetails.value = null
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        dataset.prefillFromAyushmanCard(member)
+    }
 
 
     private var isConsentAgreed = false

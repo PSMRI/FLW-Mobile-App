@@ -10,7 +10,7 @@
 const char* M_ENCRYPTED_PASS_KEY = "dummy_pass_key";
 const char* M_ABHA_CLIENT_SECRET = "dummy_abha_client_secret";
 const char* M_ABHA_CLIENT_ID = "dummy_abha_client_id";
-const char* M_BASE_TMC_URL = "dummy_base_tmc_url"
+const char* M_BASE_TMC_URL = "dummy_base_tmc_url";
 const char* M_BASE_ABHA_URL = "dummy_base_abha_url";
 const char* M_ABHA_TOKEN_URL = "dummy_abha_token_url";
 const char* M_ABHA_AUTH_URL = "dummy_abha_auth_url";
