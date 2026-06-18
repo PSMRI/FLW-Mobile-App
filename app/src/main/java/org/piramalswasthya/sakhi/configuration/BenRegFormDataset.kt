@@ -835,9 +835,12 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             firstName,
             lastName,
         )
-        if (isMitaninVariant && ben == null) {
-            list.add(list.indexOf(dateOfReg), abhaIdCheck)
-        }
+        // ABHA/Ayushman lookup is captured during household registration for the Head of Family,
+        // so the abhaIdCheck/abhaIdInput/abhaSubmitBtn are intentionally hidden here for the HoF.
+        // Kept commented in case it needs to be re-enabled later.
+//        if (isMitaninVariant && ben == null) {
+//            list.add(list.indexOf(dateOfReg), abhaIdCheck)
+//        }
         if (!isMitaninVariant) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
