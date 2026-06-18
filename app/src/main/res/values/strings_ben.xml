@@ -56,6 +56,7 @@
     <string name="frag_new_ben_type_select_text">Select Beneficiary Type</string>
     <string name="frag_new_ben_reg_type_title">Beneficiary Type for Registration</string>
     <string name="consent_text">Consent:\nI have been explained by the ASHA, the purpose for which the information and measurement findings is being collected from me, in a language I understand and I give my consent to collect the information and measurement findings on my personal health profile.</string>
+    <string name="mitanin_consent_text">Consent:\nI have been informed by the ASHA, in a language I understand, about the purpose for which my information and measurement findings are being collected. I consent to the use of my Ayushman Card Number or ABHA ID to retrieve my Name, Year of Birth, Gender, Mobile Number, Address and Family ID, and to collect and use this information and measurement findings in my personal health profile.</string>
     <string name="disagree">DISAGREE</string>
     <string name="other_place_of_death">Other Place of Death</string>
     <string name="agree">AGREE</string>

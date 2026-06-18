@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
@@ -51,6 +52,7 @@ class NewBenRegViewModel @Inject constructor(
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
     private val ecrRepo: EcrRepo,
+    private val hofAbhaPrefillCache: HofAbhaPrefillCache,
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
@@ -243,10 +245,16 @@ class NewBenRegViewModel @Inject constructor(
                     }
                 } else {
 
-                    if (isHoF) dataset.setPageForHof(
-                        if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
-                        household
-                    ) else {
+                    if (isHoF) {
+                        // Option 1 hand-off: prefill the new HoF from ABHA details fetched during
+                        // household registration (keyed by this household id, consumed once). Passed
+                        // into setPageForHof so values are applied while the page is built.
+                        dataset.setPageForHof(
+                            if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
+                            household,
+                            hofAbhaPrefillCache.consume(hhId)
+                        )
+                    } else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
