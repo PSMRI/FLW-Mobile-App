@@ -828,7 +828,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
     private val isMitaninVariant = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
-    suspend fun setPageForHof(ben: BenRegCache?, household: HouseholdCache) {
+    suspend fun setPageForHof(
+        ben: BenRegCache?,
+        household: HouseholdCache,
+        abhaMember: FamilyMember? = null
+    ) {
         val list = mutableListOf(
             pic,
             dateOfReg,
@@ -1014,6 +1018,43 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             rchId.value = saved.rchId
 
         }
+
+        // HoF auto-fill from ABHA/Ayushman details captured during household registration.
+        // Values are set directly here — before setUpPage(list) emits — so the first render already
+        // shows them (avoids the list-diff staleness a post-build prefill would hit), and the
+        // age/gender-dependent page structure below is computed from the prefilled values.
+        abhaMember?.let { member ->
+            member.name?.trim()?.replace(Regex("\\s+"), " ")?.takeIf { it.isNotEmpty() }?.let { fullName ->
+                val parts = fullName.split(" ")
+                if (parts.size >= 2) {
+                    firstName.value = parts.dropLast(1).joinToString(" ")
+                    lastName.value = parts.last()
+                    lastName.isEnabled = false
+                } else {
+                    firstName.value = fullName
+                }
+                firstName.isEnabled = false
+                firstName.errorText = null
+                lastName.errorText = null
+            }
+            (parseAyushmanDobToFormDate(member.dob) ?: approxFormDateFromAge(member.age))?.let { dobStr ->
+                agePopup.value = dobStr
+            }
+            mapAyushmanGenderToIndex(member.gender)?.let { idx ->
+                gender.entries?.getOrNull(idx)?.let { gender.value = it }
+                if (idx == 1) {
+                    maritalStatus.entries = maritalStatusFemale
+                    maritalStatus.arrayId = R.array.nbr_marital_status_female_array
+                } else {
+                    maritalStatus.entries = maritalStatusMale
+                    maritalStatus.arrayId = R.array.nbr_marital_status_male_array
+                }
+            }
+            sanitizeAyushmanMobile(member.mobileNo)?.let { contactNumber.value = it }
+            prefilledAbhaId = member.abhId?.trim()?.takeIf { it.isNotEmpty() }
+            prefilledFamilyId = member.familyId?.trim()?.takeIf { it.isNotEmpty() }
+        }
+
         if (mobileNoOfRelation.value == mobileNoOfRelation.entries!!.last()) {
             list.add(list.indexOf(mobileNoOfRelation) + 1, otherMobileNoOfRelation)
         }
@@ -2587,7 +2628,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             lastName.errorText = null
         }
 
-        parseAyushmanDobToFormDate(member.dob)?.let { dobStr ->
+        // Prefer the real DOB; fall back to an age-derived approximate DOB when the card response
+        // carries only `age` (the SECC `dob` is often blank/year-only). agePopup is an AGE_PICKER,
+        // so an age-based DOB is the intended representation and the worker can still fine-tune it.
+        (parseAyushmanDobToFormDate(member.dob) ?: approxFormDateFromAge(member.age))?.let { dobStr ->
             setValueById(agePopup.id, dobStr)
             updateList(agePopup.id, getIndexById(agePopup.id))
         }
@@ -2630,6 +2674,14 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             else -> return null
         }
         return tenDigit.takeIf { it.first() in '6'..'9' }
+    }
+
+    /** Approximate DOB (today minus [rawAge] years) as a "dd-MM-yyyy" string for the age picker. */
+    private fun approxFormDateFromAge(rawAge: String?): String? {
+        val age = rawAge?.trim()?.toIntOrNull()?.takeIf { it in 0..120 } ?: return null
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.YEAR, -age)
+        return getDateFromLong(cal.timeInMillis)
     }
 
     private fun parseAyushmanDobToFormDate(raw: String?): String? {

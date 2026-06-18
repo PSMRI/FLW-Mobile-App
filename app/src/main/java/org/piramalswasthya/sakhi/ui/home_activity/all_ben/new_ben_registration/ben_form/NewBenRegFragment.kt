@@ -72,8 +72,10 @@ class NewBenRegFragment : Fragment() {
 
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
+    // The HoF has no in-form ABHA button (captured at household stage), so don't gate its Submit —
+    // its details arrive prefilled via the hand-off, and manual entry must stay possible.
     private val gateSubmitOnAbhaFetch: Boolean
-        get() = isMitaninFlavor && viewModel.benIdFromArgs == 0L
+        get() = isMitaninFlavor && viewModel.benIdFromArgs == 0L && !viewModel.isHoF
 
     private var micClickedElementId: Int = -1
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->

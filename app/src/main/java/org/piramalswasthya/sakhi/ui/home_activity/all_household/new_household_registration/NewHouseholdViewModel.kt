@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HouseholdFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
 import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.User
@@ -31,6 +32,7 @@ class NewHouseholdViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
+    private val hofAbhaPrefillCache: HofAbhaPrefillCache,
     userRepo: UserRepo
 ) : ViewModel() {
 
@@ -114,6 +116,9 @@ class NewHouseholdViewModel @Inject constructor(
                         updatedBy = user.userName
                     }
                     householdRepo.persistRecord(household)
+                    // Hand off the fetched HoF ABHA details, keyed by this household's frozen id,
+                    // so the HoF beneficiary registration can prefill gender/dob and persist abhId.
+                    pendingAbhaMember?.let { hofAbhaPrefillCache.put(household.householdId, it) }
                     benRepo.updateBenToSync(household.householdId, SyncState.UNSYNCED)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
@@ -132,6 +137,9 @@ class NewHouseholdViewModel @Inject constructor(
     val abhaUserDetails: LiveData<NetworkResult<List<FamilyMember>>?>
         get() = _abhaUserDetails
 
+    // The HoF member used to prefill this household; published to the cache once the household saves.
+    private var pendingAbhaMember: FamilyMember? = null
+
     fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
@@ -146,6 +154,7 @@ class NewHouseholdViewModel @Inject constructor(
     }
 
     suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        pendingAbhaMember = member
         dataset.prefillFromAyushmanCard(member)
     }
 
