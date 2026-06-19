@@ -120,7 +120,7 @@ class IncentivesSubFragment : Fragment() {
         setupFileDeleteListener()
 
         if (isMitanin) {
-            binding.tvAmountActivity.visibility = View.GONE
+            binding.tvAmountActivity.visibility = View.VISIBLE
         } else {
             binding.tvAmountActivity.visibility = View.VISIBLE
         }

@@ -100,7 +100,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ll_details"
             app:layout_constraintWidth_percent="0.28"
-            android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}"
+            android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}"
             tools:text="odfnk" />
 
         <LinearLayout

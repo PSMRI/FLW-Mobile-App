@@ -1,5 +1,8 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +19,7 @@ import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import java.util.concurrent.TimeUnit
+import androidx.core.graphics.toColorInt
 
 private fun View.setVisibleIf(condition: Boolean) {
     this.isEnabled = condition
@@ -30,7 +34,9 @@ class AncVisitListAdapter(
     private val showCall: Boolean = false,
     private val pref: PreferenceDao? = null,
     private val isHighRiskMode: Boolean = false,
-    private val hidePmsma: Boolean
+    private val hidePmsma: Boolean,
+    private val onDeliveryStatusChanged:
+    ((BenWithAncListDomain, Boolean) -> Unit)? = null
 ) : ListAdapter<BenWithAncListDomain, AncVisitListAdapter.PregnancyVisitViewHolder>(
     MyDiffUtilCallBack
 ) {
@@ -56,14 +62,51 @@ class AncVisitListAdapter(
             }
         }
 
+        @SuppressLint("SetTextI18n")
         fun bind(
             item: BenWithAncListDomain,
             clickListener: PregnancyVisitClickListener?,
             showCall: Boolean,
             pref: PreferenceDao?,
             isHighRiskMode: Boolean,
-            hidePmsma: Boolean
+            hidePmsma: Boolean,
+            onDeliveryStatusChanged:
+            ((BenWithAncListDomain, Boolean) -> Unit)?
         ) {
+
+            binding.switchDeliveryStatus.setOnCheckedChangeListener { _, isChecked ->
+
+                if (isChecked) {
+                    AlertDialog.Builder(binding.root.context)
+                        .setTitle(R.string.delivery_status)
+                        .setMessage(R.string.has_pw_delivered)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes) { dialog, _ ->
+                            onDeliveryStatusChanged?.let { it(item, isChecked) }
+
+                            binding.switchDeliveryStatus.text =
+                                binding.root.context.getString(R.string.delivered)
+
+                            binding.switchDeliveryStatus.setTextColor(
+                                "#4CAF50".toColorInt()
+                            )
+
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton(R.string.no) { dialog, _ ->
+
+                            binding.switchDeliveryStatus.isChecked = false
+
+                            dialog.dismiss()
+                        }
+                        .show()
+                    binding.switchDeliveryStatus.text = "Delivered"
+                    binding.switchDeliveryStatus.setTextColor("#4CAF50".toColorInt())
+                } else {
+                    binding.switchDeliveryStatus.text = "Not Delivered"
+                    binding.switchDeliveryStatus.setTextColor("#F44336".toColorInt())
+                }
+            }
 
             if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
                 binding.btnPmsma.visibility = View.INVISIBLE
@@ -131,7 +174,7 @@ class AncVisitListAdapter(
         PregnancyVisitViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: PregnancyVisitViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, showCall, pref, isHighRiskMode, hidePmsma)
+        holder.bind(getItem(position), clickListener, showCall, pref, isHighRiskMode, hidePmsma,onDeliveryStatusChanged)
     }
 
     class PregnancyVisitClickListener(

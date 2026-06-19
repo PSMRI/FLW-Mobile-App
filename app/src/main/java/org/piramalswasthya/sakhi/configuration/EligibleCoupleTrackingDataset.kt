@@ -41,6 +41,7 @@ class EligibleCoupleTrackingDataset(
         arrayId = -1,
         required = true,
         min = Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
             set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -161,7 +162,8 @@ class EligibleCoupleTrackingDataset(
         title = resources.getString(R.string.ectdset_other_mthd),
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT,
-        etMaxLength = 50
+        etMaxLength = 50,
+        hasDependants = true
     )
 
     private var dateOfAntraInjection = FormElement(
@@ -704,6 +706,7 @@ class EligibleCoupleTrackingDataset(
 
 
             anyOtherMethod.id -> {
+                validateEmptyOnEditText(anyOtherMethod)
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
             usingFamilyPlanningMitanin.id -> {

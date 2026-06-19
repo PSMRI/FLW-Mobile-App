@@ -117,6 +117,10 @@
     <string name="notification_sync_channel_description">Upload beneficiaries to Server</string>
     <string name="notification_sync_channel_id">sakhi-sync0</string>
     <string name="btn_submit">Submit</string>
+    <string name="enter_abha_id_ayushman_card_number">Enter Abha Id / Ayushman Card Number</string>
+    <string name="network_error">Network error. Please check your connection and try again.</string>
+    <string name="abha_no_valid_details">No valid details found for this card number.</string>
+    <string name="abha_id_check_question">Do you have ABHA ID / Ayushman ID?</string>
     <string name="irs_off">IRS OFF</string>
     <string name="adolescent_health_form">Adolescent Health Form</string>
     <string name="irs_on">IRS ON</string>
@@ -201,6 +205,15 @@
     <string-array name="chest_xray_result">
         <item>Clinically Diagnosed TB</item>
         <item>TB Not suspected</item>
+    </string-array>
+
+    <string-array name="new_referral_facility">
+        <item>Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>Medical College Hospital</item>
+        <item>Tuberculosis Unit</item>
     </string-array>
 
     <string-array name="referral_facility">
@@ -457,7 +470,7 @@
     <string name="reproductive_age_list">Reproductive Age List</string>
     <string name="ncd_eligible_list">NCD Eligible List</string>
     <string name="ncd_refer_form">NCD Refer Form</string>
-    <string name="ncd_refer_list">NCD Referred List</string>
+    <string name="ncd_refer_list">HWC Referrals</string>
     <string name="hwc_refer_form">HWC Refer Form</string>
     <string name="hwc_refer_list">HWC Referred List</string>
 
@@ -650,9 +663,9 @@
     <string name="heading">History</string>
     <string name="new_abha">NEW ABHA</string>
     <string name="existing_abha">EXISTING ABHA</string>
-    <string name="referred_date">Referred Date</string>
+    <string name="referred_date">Referral Date</string>
     <string name="referred_from">Referred From</string>
-    <string name="referral_reason">Referral reason</string>
+    <string name="referral_reason">Reason for Referral</string>
     <string name="saas_date">Saas Bahu Sammelan Date</string>
     <string name="saas_samelan">Saas Bahu Sammelan</string>
     <string name="no_participent">No. of Participants Attended</string>
@@ -666,12 +679,13 @@
     <string name="place_new">Place</string>
     <string name="higher_healthcare_center">Higher Healthcare Center</string>
     <string name="additional_services">Additional Services</string>
-    <string name="refer_date">Refer Date</string>
+    <string name="refer_date">Referral Date</string>
     <string-array name="referal_health_center_array">
-        <item>Apolo</item>
+        <item>Apollo</item>
         <item>CHC</item>
         <item>District Hospital</item>
         <item>PHC</item>
+        <item>Sub-Centre</item>
     </string-array>
     <string name="check_sam">Check SAM</string>
     <string name="ors">ORS</string>
@@ -693,6 +707,8 @@
     <string name="do_you_want_to_upload_mcp_card_immunization_page_section_photo_copy_to_claim_your_incentive">Do you want to upload MCP Card - Immunization page/ section photo copy to claim your Incentive</string>
     <string name="yes_dialog">Yes</string>
     <string name="no_dialog">No</string>
+    <string name="abha_not_created_title">ABHA ID</string>
+    <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
@@ -731,6 +747,7 @@
     <string name="no_previous_visits_available">No previous visits available</string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">After the Abortion, the Woman opted for permanent sterilization (Tubectomy)</string>
     <string name="date_of_sterilisation">Date of Sterilisation</string>
+    <string name="referal_facility">Referral Facility</string>
     <string name="what_family_planning_method_has_been_chosen_after_the_abortion">What family planning method has been chosen after the abortion?</string>
 
     <string-array name="sync_records">
@@ -979,6 +996,7 @@
     <string name="follow_up_must_be_next_month">Follow-up must be in the immediate next month after last follow-up of current visit</string>
     <string name="follow_up_cannot_be_future_month">Follow-up cannot be in a future month</string>
     <string name="month_format">Month-%d</string>
+    <string name="tb">Tuberculosis (TB)</string>
 
     <!-- Arrays for TB Confirmed Treatment -->
     <string-array name="tb_regimen_types">
@@ -1500,11 +1518,19 @@
     <string name="str_alert">Alert!</string>
     <string name="check_sympt">Check if the person has any of these Symptoms:</string>
     <string name="str_pls_wait_for_the_record_to_sync_and_try_again">Please wait for the record to sync and try again.</string>
+    <string name="delivery_status">Delivery Status</string>
+    <string name="delivered">Delivered</string>
+    <string name="not_delivered">Not Delivered</string>
     <string name="str_left">Left</string>
     <string name="str_right">Right</string>
     <string name="str_both">Both</string>
     <string name="str_eye_visit">Eye - Visit</string>
-
+    <string name="forwarded_to_ncho_anm">Forwarded to\nCHO/ANM</string>
+    <string name="tap_to_view_ashas_grouped">Tap to view ASHAs grouped.</string>
+    <string name="awaiting_your_nverification">Awaiting your\nverification</string>
+    <string name="past_verify_by_12th">Past verify-by 12th</string>
+    <string name="back_with_asha_nfor_correction">Back with ASHA\nfor correction</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">ASHAs yet to submit\ntheir monthly claim</string>
 
 
 </resources>

@@ -283,8 +283,8 @@ class CUFYFormFragment : Fragment() {
                 val calendar = Calendar.getInstance()
                 val today = calendar.time
 
-                calendar.add(Calendar.MONTH, -2)
-                val twoMonthsAgo = calendar.time
+                calendar.add(Calendar.MONTH, -10)
+                val tenMonthsAgo = calendar.time
 
                 val previousVisitDate = viewModel.getPreviousIFAVisitDate(benId)
 
@@ -293,13 +293,13 @@ class CUFYFormFragment : Fragment() {
                     calendarPrev.time = previousVisitDate
                     calendarPrev.add(Calendar.DATE, 1)
 
-                    if (calendarPrev.time.after(twoMonthsAgo)) {
+                    if (calendarPrev.time.after(tenMonthsAgo)) {
                         calendarPrev.time
                     } else {
-                        twoMonthsAgo
+                        tenMonthsAgo
                     }
                 } else {
-                    twoMonthsAgo
+                    tenMonthsAgo
                 }
 
                 ifaMaxDate = today
@@ -485,11 +485,11 @@ class CUFYFormFragment : Fragment() {
                             else -> {
                                 val calendar = Calendar.getInstance()
                                 calendar.time = today
-                                calendar.add(Calendar.MONTH, -2)
-                                val twoMonthsAgo = calendar.time
+                                calendar.add(Calendar.MONTH, -10)
+                                val tenMonthsAgo = calendar.time
 
-                                if (provisionDate.before(twoMonthsAgo)) {
-                                    getString(R.string.visit_date_cannot_be_more_than_2_months_old)
+                                if (provisionDate.before(tenMonthsAgo)) {
+                                    getString(R.string.visit_date_cannot_be_more_than_10_months_old)
                                 } else {
                                     null
                                 }

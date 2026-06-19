@@ -111,16 +111,16 @@ class LeprosyMemberListAdapter(
             val (text, colorRes) = when {
 
                 item.leprosy == null -> {
-                    R.string.screening to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 1 -> {
-                    R.string.screening to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
-                    R.string.follow_up to android.R.color.holo_red_dark
+                    R.string.follow_up to android.R.color.holo_green_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 -> {
-                  R.string.suspected to android.R.color.holo_red_dark
+                  R.string.suspected to android.R.color.holo_orange_dark
                 }
                 else -> {
                     R.string.view to android.R.color.holo_green_dark

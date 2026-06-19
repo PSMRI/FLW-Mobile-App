@@ -16,9 +16,9 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     private val healthCenter = FormElement(
         id = 1,
         inputType = DROPDOWN,
-        title = resources.getString(R.string.higher_healthcare_center),
-        arrayId = R.array.referal_health_center_array,
-        entries = resources.getStringArray(R.array.referal_health_center_array),
+        title = resources.getString(R.string.referal_facility),
+        arrayId = R.array.new_referral_facility,
+        entries = resources.getStringArray(R.array.new_referral_facility),
         required = true,
         hasDependants = true
     )
@@ -73,6 +73,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
             reasonForReferal.id -> {
                 validateEmptyOnEditText(reasonForReferal)
             }
+
             healthCenter.id -> {
                 validateEmptyOnEditText(healthCenter)
             }

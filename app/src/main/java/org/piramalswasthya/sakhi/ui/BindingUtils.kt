@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -41,6 +42,11 @@ import org.piramalswasthya.sakhi.model.FormInputOld
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.VaccineState
 import org.piramalswasthya.sakhi.model.VaccineState.*
+import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedDewormingLocation
+import org.piramalswasthya.sakhi.utils.HelperUtil.getSaasBahuSamalonLocalization
+import org.piramalswasthya.sakhi.utils.HelperUtil.getUWINLocalization
+import org.piramalswasthya.sakhi.utils.HelperUtil.getVHND
+import org.piramalswasthya.sakhi.utils.HelperUtil.getahd
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -561,6 +567,50 @@ fun setDynamicBackground(view: View, isEligible: Boolean) {
         view.background = null
     }
 }
+
+
+@BindingAdapter("localizedDewormingLocation")
+fun TextView.setLocalizedDewormingLocation(value: String?) {
+    text = context.getLocalizedDewormingLocation(
+        value
+    )
+}
+
+@BindingAdapter("setAHDLocalization")
+fun TextView.setAHDLocalization(value: String?) {
+    text = context.getahd(
+        value
+    )
+}
+
+@BindingAdapter("setVHNDLocalization")
+fun TextView.setVHNDLocalization(value: String?) {
+    text = context.getVHND(
+        value
+    )
+}
+
+
+@BindingAdapter("setSaasBahuSamalonLocalization")
+fun TextView.setSaasBahuSamalonLocalization(value: String?) {
+    text = context.getSaasBahuSamalonLocalization(
+        value
+    )
+}
+
+@BindingAdapter("setUWINLocalization")
+fun TextView.setUWINLocalization(value: String?) {
+    val localizedValue = context.getUWINLocalization(value)
+    text = context.getString(
+        R.string.place_label,
+        localizedValue
+    )
+
+}
+
+
+
+
 
 @BindingAdapter("localizedGender")
 fun TextView.setLocalizedGender(gender: String?) {

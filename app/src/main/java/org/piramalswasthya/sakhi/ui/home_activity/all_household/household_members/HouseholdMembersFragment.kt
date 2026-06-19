@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_household.household_membe
 
 import androidx.appcompat.app.AlertDialog
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,6 +36,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
 
 @AndroidEntryPoint
@@ -47,6 +52,10 @@ class HouseholdMembersFragment : Fragment() {
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
+
+    private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    private var connectivityManager: ConnectivityManager? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     var showAbha = false
     private val abhaDisclaimer by lazy {
@@ -239,6 +248,10 @@ class HouseholdMembersFragment : Fragment() {
             addBenAlert?.show()
         }
 
+        if (isMitaninFlavor && binding.fabAddMember.visibility == View.VISIBLE) {
+            setupFabAddMemberInternetGate()
+        }
+
         val benAdapter = BenListAdapter(
             clickListener = BenListAdapter.BenClickListener(
                 { item, hhId, benId, relToHeadId ->
@@ -425,6 +438,37 @@ class HouseholdMembersFragment : Fragment() {
         }
     }
 
+    private fun setupFabAddMemberInternetGate() {
+        updateFabAddMemberState()
+        val cm = ContextCompat.getSystemService(requireContext(), ConnectivityManager::class.java)
+        connectivityManager = cm
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                _binding?.root?.post { updateFabAddMemberState() }
+            }
+
+            override fun onLost(network: Network) {
+                _binding?.root?.post { updateFabAddMemberState() }
+            }
+        }
+        networkCallback = callback
+        cm?.registerDefaultNetworkCallback(callback)
+    }
+
+    private fun updateFabAddMemberState() {
+        val b = _binding ?: return
+        val hasInternet = isInternetAvailable(requireContext())
+        b.fabAddMember.isEnabled = hasInternet
+        val tint = if (hasInternet) {
+            com.google.android.material.color.MaterialColors.getColor(
+                b.fabAddMember, com.google.android.material.R.attr.colorPrimary
+            )
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.md_theme_light_ongray)
+        }
+        b.fabAddMember.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
+    }
+
     private fun checkAndGenerateABHA(benId: Long) {
         viewModel.fetchAbha(benId)
     }
@@ -452,6 +496,9 @@ class HouseholdMembersFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        networkCallback?.let { connectivityManager?.unregisterNetworkCallback(it) }
+        networkCallback = null
+        connectivityManager = null
         addBenAlert?.dismiss()
         addBenAlert = null
         _binding = null

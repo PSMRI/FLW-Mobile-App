@@ -184,10 +184,25 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val infantListCount = infantList.map { it.size }
 
-    val childList = benDao.getAllChildList(selectedVillage)
-        .map { list -> list.map { it.asBasicDomainModel() } }
-    val childListCount = childList.map { it.size }
+    val minAgeInDaysForThreeMonths = TimeUnit.MILLISECONDS.toDays(
+        System.currentTimeMillis() - Calendar.getInstance().apply {
+            add(Calendar.MONTH, -3)
+        }.timeInMillis
+    ).toInt()
 
+    val maxAgeInDaysForFifteenMonths = TimeUnit.MILLISECONDS.toDays(
+        System.currentTimeMillis() - Calendar.getInstance().apply {
+            add(Calendar.MONTH, -15)
+        }.timeInMillis
+    ).toInt()
+
+    val childList = benDao.getAllChildList(
+        selectedVillage = selectedVillage,
+        min = minAgeInDaysForThreeMonths,
+        max = maxAgeInDaysForFifteenMonths
+    ).map { list -> list.map { it.asBasicDomainModel() } }
+
+    val childListCount = childList.map { it.size }
 
     val childCard = benDao.getAllInfantList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
@@ -545,4 +560,6 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         val diff = to - from
         return TimeUnit.MILLISECONDS.toDays(diff)
     }
+
+
 }

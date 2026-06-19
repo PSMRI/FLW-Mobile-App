@@ -41,6 +41,17 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
         every { mockResources.getString(R.string.all) } returns "ALL"
         every { mockResources.getString(R.string.screened) } returns "Screened"
         every { mockResources.getString(R.string.not_screened) } returns "Not Screened"
+        every { context.getString(R.string.select_years) } returns "Select Years"
+        every { context.getString(R.string.years_35) } returns "35 YEARS"
+        every { context.getString(R.string.years_40) } returns "40 YEARS"
+        every { context.getString(R.string.years_45) } returns "45 YEARS"
+        every { context.getString(R.string.years_50) } returns "50 YEARS"
+        every { context.getString(R.string.years_55) } returns "55 YEARS"
+        every { context.getString(R.string.years_60) } returns "60 YEARS"
+        every { context.getString(R.string.years_65) } returns "65 YEARS"
+        every { context.getString(R.string.years_70) } returns "70 YEARS"
+        every { context.getString(R.string.years_75) } returns "75 YEARS"
+        every { context.getString(R.string.years_80) } returns "80 YEARS"
         val user = mockk<User>(relaxed = true)
         every { user.userId } returns 123
         every { preferenceDao.getLoggedInUser() } returns user
@@ -152,7 +163,7 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
     @Test
     fun `yearsList returns 11 entries starting with Select Years`() {
         val years = viewModel.yearsList(
-            context = TODO()
+            context = context
         )
         assertEquals(11, years.size)
         assertEquals("Select Years", years[0])
@@ -162,8 +173,8 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `yearsList clears and rebuilds on each call`() {
-        viewModel.yearsList(    context = TODO())
-        val years = viewModel.yearsList(    context = TODO())
+        viewModel.yearsList(    context = context)
+        val years = viewModel.yearsList(    context = context)
         assertEquals(11, years.size)
     }
 }

@@ -11,6 +11,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 
@@ -19,6 +20,7 @@ class PwAncVisitsListViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var recordsRepo: RecordsRepo
     @MockK private lateinit var maternalHealthRepo: MaternalHealthRepo
+    @MockK private lateinit var preferenceDao: PreferenceDao
 
     private lateinit var viewModel: PwAncVisitsListViewModel
 
@@ -33,7 +35,7 @@ class PwAncVisitsListViewModelTest : BaseViewModelTest() {
         every { recordsRepo.getRegisteredPregnantWomanNonFollowUpList() } returns flowOf(emptyList())
         every { recordsRepo.getDuePregnantWomanList() } returns flowOf(emptyList())
         every { recordsRepo.getHighRiskPregnantWomanList() } returns flowOf(emptyList())
-        viewModel = PwAncVisitsListViewModel(savedStateHandle, recordsRepo, maternalHealthRepo)
+        viewModel = PwAncVisitsListViewModel(savedStateHandle, recordsRepo, maternalHealthRepo, preferenceDao)
     }
 
     // =====================================================

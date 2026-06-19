@@ -368,6 +368,11 @@ class FormInputAdapter(
                 binding.et.isClickable = false
                 binding.executePendingBindings()
                 return
+            } else{
+                binding.tilRvDropdown.visibility = View.VISIBLE
+                binding.tilEditText.visibility = View.GONE
+                binding.et.isFocusable = true
+                binding.et.isClickable = true
             }
 
             hideKeyboardImmediately()
@@ -633,7 +638,7 @@ class FormInputAdapter(
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
-            isOtpVerified(isEnabled, isInternetAvailable(binding.root.context))
+            isOtpVerified(item.title, isEnabled, isInternetAvailable(binding.root.context))
 
             binding.generateOtp.setOnClickListener {
                 formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
@@ -643,13 +648,15 @@ class FormInputAdapter(
 
         }
 
-        private fun isOtpVerified(isEnabled: Boolean, internetAvailable: Boolean) {
+        private fun isOtpVerified(buttonTitle: String, isEnabled: Boolean, internetAvailable: Boolean) {
             if(isOtpVerified) {
                 binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
                 binding.generateOtp.isEnabled = isEnabled
 
             } else {
-                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.send_otp)
+                // Label comes from the FormElement so non-OTP buttons (e.g. ABHA submit) show their
+                // own title; the OTP element's title is R.string.send_otp, so OTP is unchanged.
+                binding.generateOtp.text = buttonTitle
                 if (internetAvailable){
                     binding.generateOtp.isEnabled = isEnabled
 
@@ -854,7 +861,7 @@ class FormInputAdapter(
             item.value?.let {
                 calDob.timeInMillis = getLongFromDate(it)
                 updateAgeDTO(ageUnitDTO, calDob)
-                binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
 
             }
 
@@ -882,7 +889,7 @@ class FormInputAdapter(
                     )
                 }
                 agePicker.setOnDismissListener {
-                    binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                    binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                     calDob.timeInMillis =
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
@@ -936,7 +943,7 @@ class FormInputAdapter(
                             item.value = getDateString(millis)
 
                         updateAgeDTO(ageUnitDTO, millisCal)
-                        binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                        binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay

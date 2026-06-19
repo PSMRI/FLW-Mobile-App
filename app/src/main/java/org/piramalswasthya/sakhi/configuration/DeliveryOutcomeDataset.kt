@@ -3,11 +3,9 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import java.util.Locale
-import android.util.Log
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.BenStatus
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
@@ -353,7 +351,8 @@ open class DeliveryOutcomeDataset(
                 isJSYBenificiary.value = isJSYBenificiary.entries!![1]
             }
         }
-        dateOfDeath.min=pwr.lmpDate
+        //dateOfDeath.min=pwr.lmpDate
+        dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
         dateOfDelivery.min = maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate)
         dateOfDelivery.max =
             minOf(
@@ -370,8 +369,26 @@ open class DeliveryOutcomeDataset(
             dateOfDelivery.id -> {
                 dateOfDischarge.min = getLongFromDate(dateOfDelivery.value)
                 dateOfDischarge.max =getLongFromDate(getOneMonthLater(dateOfDelivery.value))
+                dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
                 -1
             }
+            otherComplication.id -> {
+                validateEmptyOnEditText(otherComplication)
+                validateAllAlphabetsSpaceOnEditText(otherComplication)
+                return 0
+            }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherPlaceOfDeath)
+                return 0
+            }
+
+            otherCauseOfDeath.id -> {
+                validateEmptyOnEditText(otherCauseOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherCauseOfDeath)
+                return 0
+            }
+
 
             hadComplications.id -> {
                 triggerDependants(
@@ -395,8 +412,8 @@ open class DeliveryOutcomeDataset(
 
             complication.id -> {
                 if (index == 6) {
-                    liveBirth.value = "0"
-                    liveBirth.isEnabled =false
+                    //liveBirth.value = "0"
+                    //liveBirth.isEnabled =false
 
                     handleListOnValueChanged(liveBirth.id, 0)
 
