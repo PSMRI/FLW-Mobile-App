@@ -529,6 +529,7 @@ interface BenDao {
     @Query("SELECT COUNT(*) FROM BENEFICIARY WHERE isDraft = 0 AND (processed = 'N' OR processed = 'U') AND syncState =0")
     fun getUnProcessedRecordCount(): Flow<Int>
 
+
     @Query("SELECT COUNT(*) FROM BENEFICIARY WHERE isDraft = 0 AND (processed = 'N' OR processed = 'U') AND syncState =0")
     fun getAllUnProcessedRecordCount(): Flow<Int>
 
