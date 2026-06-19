@@ -445,8 +445,9 @@ class BenRepo @Inject constructor(
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
-            val benList = benDao.getAllUnprocessedBen()
-            Timber.d("YTR 419 $benList")
+            val benList = benDao.getAllUnsyncedBen()
+            Timber.d("YTR 420 $benList")
+            Timber.d("YTR 420 ${benList.size}")
 
             val benNetworkPostList = mutableSetOf<BenPost>()
             val householdNetworkPostList = mutableSetOf<HouseholdNetwork>()
@@ -454,8 +455,11 @@ class BenRepo @Inject constructor(
 //            val cbacPostList = mutableSetOf<CbacPost>()
 
             benList.forEach {
+                Timber.d("START: ${it.beneficiaryId}")
+
                 createBenIdAtServerByBeneficiarySending(it, user, it.locationRecord)
                 Timber.d("YTR 429 $it")
+//                Timber.d("END: ${it.beneficiaryId} result=$result")
             }
 
             val updateBenList = benDao.getAllBenForSyncWithServer()

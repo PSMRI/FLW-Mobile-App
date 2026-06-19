@@ -437,6 +437,7 @@ class LeprosyRepo @Inject constructor(
                         val status = jsonObj.optString("status", "")
 
                         Timber.d("Pull all leprosy followup data - Status: $statusCodeFromResponse, Status: $status")
+                        Timber.d("Pull from amrit LEPROSY screening data : ${jsonObj.getString("data")}")
 
                         when (statusCodeFromResponse) {
                             200 -> {
