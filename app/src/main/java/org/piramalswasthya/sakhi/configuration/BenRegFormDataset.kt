@@ -685,7 +685,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
-           // reproductiveStatus.value = saved.genDetails?.reproductiveStatus
+            // reproductiveStatus.value = saved.genDetails?.reproductiveStatus
             reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
                 reproductiveStatus.getStringFromPosition(it)
             }
@@ -716,11 +716,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             }
         } else {
             listOf(
-                    husbandName,
-                    wifeName,
-                    spouseName,
-                    ageAtMarriage
-                ).forEach { list.remove(it) }
+                husbandName,
+                wifeName,
+                spouseName,
+                ageAtMarriage
+            ).forEach { list.remove(it) }
         }
 
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![1] && gender.value == gender.entries!![1]) {
@@ -778,14 +778,14 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
         if (isKid()) {
             listOf(
-                    maritalStatus,
-                    husbandName,
-                    wifeName,
-                    spouseName,
-                    ageAtMarriage,
-                    dateOfMarriage,
-                    reproductiveStatus
-                ).forEach { list.remove(it) }
+                maritalStatus,
+                husbandName,
+                wifeName,
+                spouseName,
+                ageAtMarriage,
+                dateOfMarriage,
+                reproductiveStatus
+            ).forEach { list.remove(it) }
             list.addAll(
                 listOf(
                     birthCertificateNumber,
@@ -927,6 +927,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
             lastName.value = saved.lastName
+            // For Mitanin, name of an already-registered beneficiary must not be editable.
+            if (isMitaninVariant) {
+                firstName.inputType = TEXT_VIEW
+                lastName.inputType = TEXT_VIEW
+            }
             agePopup.value = getDateFromLong(saved.dob)
             gender.value = gender.getStringFromPosition(saved.genderId)
             if (ben.isSpouseAdded || ben.isChildrenAdded || ben.doYouHavechildren || !ben.genDetails?.spouseName.isNullOrEmpty()) {
@@ -1227,6 +1232,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
             lastName.value = saved.lastName
+            // For Mitanin, name of an already-registered beneficiary must not be editable.
+            if (isMitaninVariant) {
+                firstName.inputType = TEXT_VIEW
+                lastName.inputType = TEXT_VIEW
+            }
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
             gender.value = gender.getStringFromPosition(saved.genderId)
@@ -1267,7 +1277,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             if (!isMitaninVariant) {
                 tempraryContactNoBelongsto.value =
                     tempraryContactNoBelongsto.getStringFromPosition(saved.tempMobileNoOfRelationId)
-               // tempraryContactNoBelongsto.isEnabled = false
+                // tempraryContactNoBelongsto.isEnabled = false
                 tempraryContactNoBelongsto.inputType = TEXT_VIEW
                 tempraryContactNo.value = saved.contactNumber.toString()
             }
@@ -1427,14 +1437,14 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         }
         if (isKid()) {
             listOf(
-                    maritalStatus,
-                    husbandName,
-                    wifeName,
-                    spouseName,
-                    ageAtMarriage,
-                    dateOfMarriage,
-                    reproductiveStatus
-                ).forEach { list.remove(it) }
+                maritalStatus,
+                husbandName,
+                wifeName,
+                spouseName,
+                ageAtMarriage,
+                dateOfMarriage,
+                reproductiveStatus
+            ).forEach { list.remove(it) }
             list.addAll(
                 listOf(
                     birthCertificateNumber,
@@ -2021,7 +2031,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                         resources.getStringArray(R.array.reason_of_death_array)
                     }
                 } else {
-             /*. Apply Deadlock*/
+                    /*. Apply Deadlock*/
                     applyDeathLockState(isDeath = false)
                 }
 
@@ -2061,7 +2071,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                     triggerIndex = triggerIndex,
                     target = otherPlaceOfDeath
                 )
-            /*Apply Dead Lock*/
+                /*Apply Dead Lock*/
                 applyDeathLockState(isDeath = beneficiaryStatus.getPosition() == 2)
                 return result
             }
@@ -2890,7 +2900,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
                 } else {
                     val isStale = maritalStatus.value == null ||
-                        maritalStatus.entries?.contains(maritalStatus.value) != true
+                            maritalStatus.entries?.contains(maritalStatus.value) != true
                     if (isStale) {
                         maritalStatus.value = null
                     }
@@ -3523,7 +3533,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         reasonOfDeath.value = saved?.reasonOfDeath
         placeOfDeath.value = saved?.placeOfDeath
         otherPlaceOfDeath.value = saved?.otherPlaceOfDeath
-/* */
+        /* */
         if (saved?.isDeath == true) {
             applyDeathLockState(list, isDeath = true)
         }
