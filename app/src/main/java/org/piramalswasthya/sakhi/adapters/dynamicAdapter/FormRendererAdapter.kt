@@ -42,7 +42,7 @@
 
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
-        private val isViewOnly: Boolean = false,
+        private var isViewOnly: Boolean = false,
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
@@ -80,6 +80,10 @@
             }
         }
 
+        fun setViewMode(viewOnly: Boolean) {
+            isViewOnly = viewOnly
+            notifyDataSetChanged()
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FormViewHolder {
             val view = LayoutInflater.from(parent.context)
