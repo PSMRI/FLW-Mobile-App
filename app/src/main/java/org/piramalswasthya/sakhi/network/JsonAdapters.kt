@@ -246,7 +246,8 @@ data class AbhaGenerateAadhaarOtpResponseV2(
 data class UserDetailsByAyushmanCardNoRequest(
 //    val userId: String,
 //    val password: String,
-    val cardNo: String
+    val cardNo: String,
+    val houseHoldId: String
 
 )
 @JsonClass(generateAdapter = true)

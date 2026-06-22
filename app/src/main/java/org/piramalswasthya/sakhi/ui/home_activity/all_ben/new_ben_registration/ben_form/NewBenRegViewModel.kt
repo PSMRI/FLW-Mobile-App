@@ -119,7 +119,7 @@ class NewBenRegViewModel @Inject constructor(
     fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId, hhId.toString())
             }
             _abhaUserDetails.postValue(result)
         }

@@ -143,7 +143,7 @@ class NewHouseholdViewModel @Inject constructor(
     fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId, "")
             }
             _abhaUserDetails.postValue(result)
         }
