@@ -168,12 +168,10 @@ class CUFYFormFragment : Fragment() {
         }else if (visitType.equals(SAM_FORM_NAME)){
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
-        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
-        binding.fabEdit.visibility = View.GONE
-        }
-        else{
-            binding.fabEdit.isVisible = isViewMode
-        }
+
+
+        binding.fabEdit.isVisible =
+            isViewMode && formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID
 
         setupFollowUpRecyclerView()
 
@@ -320,6 +318,8 @@ class CUFYFormFragment : Fragment() {
         // to call offsetDescendantRectToMyCoords() on a focused view that RecyclerView has
         // already detached, throwing IllegalArgumentException: "parameter must be a descendant".
         if (::adapter.isInitialized) {
+            adapter.setViewMode(isViewMode)
+
             adapter.updateFields(visibleFields)
             return
         }
@@ -363,12 +363,12 @@ class CUFYFormFragment : Fragment() {
 
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
-        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
+       /* if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
         binding.fabEdit.isVisible = false}
         else
         {
             binding.fabEdit.isVisible = isViewMode
-        }
+        }*/
     }
 
     private fun createAdapterWithIFADates(

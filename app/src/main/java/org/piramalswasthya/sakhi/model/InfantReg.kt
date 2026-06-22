@@ -129,7 +129,7 @@ data class BenWithDoAndIrCache(
     val savedIrRecords: List<InfantRegCache>
 ) {
 
-    fun asBasicDomainModel(): List<InfantRegDomain> {
+    fun asBasicDomainModel( onlySavedInfants: Boolean): List<InfantRegDomain> {
 
         val activeDo = deliveryOutcomeCache.first { it.isActive }
         val activeIr = savedIrRecords.filter { it.isActive }
@@ -137,12 +137,19 @@ data class BenWithDoAndIrCache(
         val numLiveBirth = activeDo.liveBirth ?: 1
         if (numLiveBirth == 0) return emptyList()
         for (i in 0 until numLiveBirth) {
+
+            val ir = activeIr.firstOrNull { it.babyIndex == i }
+
+            if (onlySavedInfants && ir == null) {
+                continue
+            }
+
             list.add(
                 InfantRegDomain(
                     motherBen = ben.asBasicDomainModel(),
                     babyIndex = i,
                     deliveryOutcome = activeDo,
-                    savedIr = activeIr.firstOrNull { it.babyIndex == i },
+                    savedIr = ir
                 )
             )
         }
