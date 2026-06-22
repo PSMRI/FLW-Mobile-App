@@ -1687,10 +1687,10 @@ class BenRepo @Inject constructor(
     }
 
 
-    suspend fun getUserDetailsByAyushmanAbhaCardNo(cardNo: String): NetworkResult<List<FamilyMember>> {
+    suspend fun getUserDetailsByAyushmanAbhaCardNo(cardNo: String,houseHoldId:String): NetworkResult<List<FamilyMember>> {
         return try {
             val response = tmcNetworkApiService.getUserDetailsByAyushmanCardNo(
-                UserDetailsByAyushmanCardNoRequest(/*userId = "ayushman_", password = "!host1@2026",*/cardNo)
+                UserDetailsByAyushmanCardNoRequest(cardNo,houseHoldId)
             )
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()

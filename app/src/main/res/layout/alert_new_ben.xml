@@ -12,9 +12,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/padding_normal"
-        android:text="@string/add_family_member"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-
+        android:text="@string/str_add_member"
         app:layout_constraintTop_toTopOf="parent" />
 
 
