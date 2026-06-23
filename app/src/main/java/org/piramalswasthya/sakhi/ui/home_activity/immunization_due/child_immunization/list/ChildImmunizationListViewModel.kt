@@ -164,7 +164,7 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filter.emit(text.trim().lowercase())
         }
 
     }
