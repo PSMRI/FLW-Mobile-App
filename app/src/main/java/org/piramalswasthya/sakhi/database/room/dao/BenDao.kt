@@ -256,13 +256,13 @@ interface BenDao {
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
         )
         AND (:query = '' OR
-            benName LIKE '%' || :query || '%'
-            OR benSurname LIKE '%' || :query || '%'
+            LOWER(REPLACE(benName, ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
+            OR LOWER(REPLACE(benSurname, ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
             OR CAST(mobileNo AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
             OR REPLACE(IFNULL(abhaId, ''), '-', '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
-            OR IFNULL(familyHeadName, '') LIKE '%' || :query || '%'
-            OR IFNULL(spouseName, '') LIKE '%' || :query || '%'
-            OR IFNULL(fatherName, '') LIKE '%' || :query || '%'
+            OR LOWER(REPLACE(IFNULL(familyHeadName, ''), ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
+            OR LOWER(REPLACE(IFNULL(spouseName, ''), ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
+            OR LOWER(REPLACE(IFNULL(fatherName, ''), ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
             OR CAST(benId AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
             OR CAST(hhId AS TEXT) LIKE '%' || :query || '%'
             OR IFNULL(rchId, '') LIKE '%' || REPLACE(:query, ' ', '') || '%'

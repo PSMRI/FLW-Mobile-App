@@ -75,7 +75,7 @@ class AllBenViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filterOrg.emit(text)
+            filterOrg.emit(text.trim())
         }
 
     }
