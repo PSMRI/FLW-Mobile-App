@@ -37,5 +37,8 @@ interface IncentiveDao {
     @Query("select * from INCENTIVE_ACTIVITY where id = :id")
     fun getActivityById(id: Long): IncentiveActivityCache?
 
+    @Query("select count(*) from INCENTIVE_RECORD")
+    suspend fun getRecordCount(): Int
+
 
 }

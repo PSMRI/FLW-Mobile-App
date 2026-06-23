@@ -90,8 +90,28 @@ object WorkerUtils {
     //   - Duplicate FormSyncWorker CONSOLIDATED into single instance in Group 4
     //   - PushChildHBYCToAmritWorker remains disabled (was already commented out)
     // ═══════════════════════════════════════════════════════════════════
-    fun triggerAmritPushWorker(context: Context) {
+    fun triggerAmritPushWorker(context: Context ,skipRegistration: Boolean = false) {
         val workManager = WorkManager.getInstance(context)
+
+        val afterRegistration: WorkContinuation = if (!skipRegistration) {
+
+            val registration = syncRequestBuilder<PushToAmritWorker>()
+                .addTag("push_group1_registration")
+                .build()
+
+            workManager.beginUniqueWork(
+                pushWorkerUniqueName,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                registration
+            )
+
+        } else {
+
+            val starter = OneTimeWorkRequestBuilder<GenerateBenIdsWorker>()
+                .build()
+
+            workManager.beginWith(starter)
+        }
 
         // ─────────────────────────────────────────────────────────────
         // GROUP 1: Registration (Foundation)
@@ -99,9 +119,9 @@ object WorkerUtils {
         // entities reference. This MUST complete before any other group
         // can start pushing data.
         // ─────────────────────────────────────────────────────────────
-        val registration = syncRequestBuilder<PushToAmritWorker>()
+     /*   val registration = syncRequestBuilder<PushToAmritWorker>()
             .addTag("push_group1_registration")
-            .build()
+            .build()*/
 
         // Start unique work chain with registration as the anchor.
         // All subsequent chains fan out from this single entry point.
@@ -110,12 +130,12 @@ object WorkerUtils {
         // it is replaced with a fresh chain. This ensures newly saved
         // records are always picked up. processNewBen() uses a Mutex to
         // prevent concurrent execution when two chains overlap.
-        val afterRegistration = workManager
+       /* val afterRegistration = workManager
             .beginUniqueWork(
                 pushWorkerUniqueName,
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 registration
-            )
+            )*/
 
         // ─────────────────────────────────────────────────────────────
         // GROUP 2: Screening & NCD

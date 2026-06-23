@@ -1029,6 +1029,7 @@
     <string name="is_drtb_confirmed">DR-TB ৰোগ নিশ্চিত হৈছে নেকি?</string>
     <string name="form_input_alphabet_special__digit_only_error">কেৱল আখৰ, বিশেষ আখৰ আৰু সংখ্যা অনুমোদিত!</string>
     <string name="abha_number_digit">ABHA নম্বৰ ১৪ সংখ্যাৰ হ\'ব লাগিব</string>
+    <string name="abha_ayushman_invalid_format">অমান্য ফৰমেট। ১৪ সংখ্যাৰ ABHA নম্বৰ বা ১২–১৬ আখৰৰ আয়ুষ্মান কাৰ্ড নম্বৰ দিয়ক</string>
     <string name="ifsc">৪টা আখৰ আৰু তাৰ পিছত ৭টা সংখ্যা (যেনে, ABCD1234567)!</string>
     <string name="file_size">ফাইলৰ আকাৰ 5 MB তকৈ কম বা সমান হ\'ব লাগিব।</string>
     <string name="other_place">মৃত্যুৰ অন্য স্থান</string>

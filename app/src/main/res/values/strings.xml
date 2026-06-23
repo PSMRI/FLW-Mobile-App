@@ -297,6 +297,7 @@
     <string name="form_input_min_limit_error">%1$s should be greater than or equal to %2$d</string>
     <string name="form_input_alph_numeric_space_only_error">Only Alphabets and Numerics allowed!</string>
     <string name="abha_number_digit">ABHA number should be 14-digit long</string>
+    <string name="abha_ayushman_invalid_format">Invalid format. Enter a 14-digit ABHA number or a 12–16 character Ayushman card number</string>
     <string name="ifsc">4 letters followed by 7 digits (e.g., ABCD1234567)!</string>
     <string name="ifsc_code">IFSC</string>
     <string name="field_is_required">%s is required</string>
