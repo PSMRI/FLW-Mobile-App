@@ -166,6 +166,19 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
     fun getAbhaSubmitBtnId(): Int = abhaSubmitBtn.id
 
     fun getAbhaCardInput(): String? = abhaIdInput.value?.trim()
+
+    private fun validateAbhaOrAyushmanIdOnEditText(formElement: FormElement): Int {
+        val input = formElement.value?.trim().orEmpty()
+        val abhaPattern = Regex("^[0-9]{14}$")
+        val ayushmanPattern = Regex("^[A-Za-z0-9]{12,16}$")
+        formElement.errorText = when {
+            input.isEmpty() -> resources.getString(R.string.form_input_empty_error)
+            input.matches(abhaPattern) || input.matches(ayushmanPattern) -> null
+            else -> resources.getString(R.string.abha_ayushman_invalid_format)
+        }
+        return -1
+    }
+
     private val firstName = FormElement(
         id = 3,
         inputType = EDIT_TEXT,
@@ -2468,6 +2481,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                     triggerIndex = 0,
                     target = listOf(abhaIdInput, abhaSubmitBtn)
                 )
+            }
+
+            abhaIdInput.id -> {
+                validateAbhaOrAyushmanIdOnEditText(abhaIdInput)
             }
             otherRelationToHead.id -> {
                 validateEmptyOnEditText(otherRelationToHead)
