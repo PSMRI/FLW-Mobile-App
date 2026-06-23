@@ -345,7 +345,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
                     if (isInternetAvailable(this)) {
                         lastAutoTriggerPushTime = now
-                        //WorkerUtils.triggerAmritPushWorker(this)
+                        WorkerUtils.triggerAmritPushWorker(this,true)
                     }
                 }
             }
