@@ -36,7 +36,7 @@ class PwRegistrationListViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filter.emit(text.trim().lowercase())
         }
 
     }

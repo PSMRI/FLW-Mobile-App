@@ -123,7 +123,7 @@ class PwAncVisitsListViewModel @Inject constructor(
     }
 
     fun filterText(text: String) {
-        viewModelScope.launch { filter.emit(text) }
+        viewModelScope.launch { filter.emit(text.trim().lowercase()) }
     }
 
     fun setSortFilter(type: EcFilterType) {
