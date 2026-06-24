@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.repositories.VLFRepo
@@ -20,7 +21,9 @@ class ORSCampaignListViewModel @Inject constructor(
     private val vlfRepo: VLFRepo
 ) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
-    val allORSCampaignList = vlfRepo.orsCampaignList.map { list ->
+    val allORSCampaignList = vlfRepo.orsCampaignList
+        .distinctUntilChanged()
+        .map { list ->
         try {
             val today = java.time.LocalDate.now()
             val threeMonthsAgo = today.minusMonths(3)
@@ -36,6 +39,9 @@ class ORSCampaignListViewModel @Inject constructor(
                 } catch (e: Exception) {
                     false
                 }
+            }.sortedByDescending { item ->
+                CampaignDateUtil.parseDateToLocalDate(item.campaignDate ?: "")
+                    ?.toEpochDay() ?: Long.MIN_VALUE
             }
         } catch (e: Exception) {
             emptyList()
