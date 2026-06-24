@@ -256,7 +256,9 @@ interface BenDao {
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
         )
         AND (:query = '' OR
-            LOWER(REPLACE(benName, ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
+            LOWER(REPLACE(benName || ' ' || IFNULL(benSurname, ''), ' ', '')) 
+            LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%' 
+            OR LOWER(REPLACE(benName, ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
             OR LOWER(REPLACE(benSurname, ' ', '')) LIKE '%' || LOWER(REPLACE(:query, ' ', '')) || '%'
             OR CAST(mobileNo AS TEXT) LIKE '%' || REPLACE(:query, ' ', '') || '%'
             OR REPLACE(IFNULL(abhaId, ''), '-', '') LIKE '%' || REPLACE(:query, ' ', '') || '%'
