@@ -837,15 +837,15 @@ class EligibleCoupleTrackingDataset(
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
 
         when (lastImageFormId) {
-            21 -> {
+            23 -> {
                 mpaFileUpload1.value = dpUri.toString()
                 mpaFileUpload1.errorText = null
             }
-            58 -> {
+            60 -> {
                 deliveryDischargeSummary1.value = dpUri.toString()
                 deliveryDischargeSummary1.errorText = null
             }
-            59 -> {
+            61 -> {
                 deliveryDischargeSummary2.value = dpUri.toString()
                 deliveryDischargeSummary2.errorText = null
             }
