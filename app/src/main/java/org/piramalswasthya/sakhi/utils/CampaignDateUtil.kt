@@ -70,4 +70,16 @@ object CampaignDateUtil {
             false
         }
     }
+
+    fun formatDateForDisplay(dateStr: String?): String {
+        if (dateStr.isNullOrBlank()) return ""
+        return try {
+            val inputFormat = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val outputFormat = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")
+            val date = java.time.LocalDate.parse(dateStr, inputFormat)
+            date.format(outputFormat)
+        } catch (e: Exception) {
+            dateStr ?: ""
+        }
+    }
 }
