@@ -695,8 +695,8 @@ class PregnantWomanRegistrationDataset(
 //        }
 
 
-        noOfDeliveries.isEnabled=false
-        timeLessThan18m.isEnabled=false
+      /*  noOfDeliveries.isEnabled=false
+        timeLessThan18m.isEnabled=false*/
         setUpPage(list)
 
     }
