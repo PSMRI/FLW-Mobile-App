@@ -101,7 +101,7 @@ object WorkerUtils {
 
             workManager.beginUniqueWork(
                 pushWorkerUniqueName,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                ExistingWorkPolicy.KEEP,
                 registration
             )
 
