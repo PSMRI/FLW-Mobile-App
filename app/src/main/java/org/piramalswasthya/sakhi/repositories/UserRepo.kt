@@ -244,26 +244,30 @@ class UserRepo @Inject constructor(
                     json = TmcRefreshTokenRequest(refreshToken)
                 )
 
+                if (!response.isSuccessful) {
+                    Timber.e("refreshTokenTmc: refresh failed HTTP ${response.code()}")
+                    response.errorBody()?.close()
+                    return@withContext false
+                }
+
                 val responseBody = JSONObject(
                     response.body()?.string()
                         ?: throw IllegalStateException("Response success but data missing @ $response")
                 )
-                val responseStatusCode = responseBody.getInt("statusCode")
-                if (responseStatusCode == 200) {
-                    val data = responseBody.getJSONObject("data")
-                    TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
-                    preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
-                    preferenceDao.registerRefreshToken(data.getString("refreshToken"))
+                val jwtToken = responseBody.optString("jwtToken", "")
+                val newRefreshToken = responseBody.optString("refreshToken", "")
 
-                    val token = data.getString("key")
-                    TokenInsertTmcInterceptor.setToken(token)
-                    preferenceDao.registerAmritToken(token)
-                    return@withContext true
-                } else {
-                    val errorMessage = responseBody.getString("errorMessage")
-                    Timber.e("Error Message $errorMessage")
+                if (jwtToken.isBlank()) {
+                    Timber.e("refreshTokenTmc: refresh returned blank JWT")
                     return@withContext false
                 }
+
+                TokenInsertTmcInterceptor.setJwt(jwtToken)
+                preferenceDao.registerJWTAmritToken(jwtToken)
+                if (newRefreshToken.isNotBlank()) {
+                    preferenceDao.registerRefreshToken(newRefreshToken)
+                }
+                return@withContext true
 
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
@@ -271,7 +275,8 @@ class UserRepo @Inject constructor(
                 Timber.e("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
-                return@withContext true
+                Timber.e(e, "refreshTokenTmc: unexpected error during token refresh")
+                return@withContext false
             }
         }
     }
