@@ -96,14 +96,14 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
     vaccineIdList.map { cache ->
         val ageMillis = System.currentTimeMillis() - cache.ben.dob
         val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
-
+        val oneMonthBufferMillis = 30L * 24 * 60 * 60 * 1000
         ImmunizationDetailsDomain(
             ben = cache.ben.asBasicDomainModel(),
             vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
                 val state = when {
                     cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
                     ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
-                    ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
+                    ageMillis <= vaccine.maxAllowedAgeInMillis + oneMonthBufferMillis -> VaccineState.OVERDUE
                     else -> VaccineState.MISSED
                 }
                 // NEW - due date calculate karo
