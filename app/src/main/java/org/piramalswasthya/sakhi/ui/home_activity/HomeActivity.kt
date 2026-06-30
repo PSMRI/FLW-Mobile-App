@@ -74,6 +74,7 @@ import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
+import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
 import org.piramalswasthya.sakhi.utils.KeyUtils
@@ -344,7 +345,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
                     if (isInternetAvailable(this)) {
                         lastAutoTriggerPushTime = now
-                        //WorkerUtils.triggerAmritPushWorker(this)
+                        WorkerUtils.triggerAmritPushWorker(this,true)
                     }
                 }
             }
@@ -582,7 +583,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     }
 
                     R.id.toolbar_menu_language -> {
-                        langChooseAlert.show()
+                        //langChooseAlert.show()
+                        LanguageBottomSheet(pref.getCurrentLanguage()) { selectedLang ->
+                            pref.saveSetLanguage(selectedLang.language)
+                            val restart = Intent(this@HomeActivity, HomeActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            startActivity(restart)
+                            finish()
+                        }.show(supportFragmentManager, "LanguageBottomSheet")
                         return true
                     }
 
@@ -644,7 +653,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
-            val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
+           // val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
+
+            //If employee id is blank at that time showing userid
+            val empId = pref.getEmployeeId()
+            val englishId = String.format(
+                Locale.ENGLISH, "%s",
+                if (empId.isNullOrBlank()) it.userId.toString() else empId
+            )
             val formatted = HtmlCompat.fromHtml(
                 getString(R.string.nav_item_emp_text, englishId),
                 HtmlCompat.FROM_HTML_MODE_LEGACY

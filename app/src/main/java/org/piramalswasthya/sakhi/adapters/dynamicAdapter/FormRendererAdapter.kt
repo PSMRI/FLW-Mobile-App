@@ -14,6 +14,7 @@
     import android.view.*
     import android.view.inputmethod.InputMethodManager
     import android.util.Base64
+    import android.util.Log
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
@@ -41,7 +42,7 @@
 
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
-        private val isViewOnly: Boolean = false,
+        private var isViewOnly: Boolean = false,
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
@@ -79,6 +80,10 @@
             }
         }
 
+        fun setViewMode(viewOnly: Boolean) {
+            isViewOnly = viewOnly
+            notifyDataSetChanged()
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FormViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -723,7 +728,7 @@
 
                                     if (minDate == null) {
                                         calendar.time = today
-                                        calendar.add(Calendar.MONTH, -2)
+                                        calendar.add(Calendar.MONTH, -10)
                                         minDate = calendar.time
                                     }
                                     if (maxDate == null) {
@@ -731,9 +736,19 @@
                                     }
                                 }
                                 else {
-
-
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                    if (field.fieldId == "treatment_start_date") {
+                                        val pastMonths = field.validation?.minDate?.toInt() ?: 6
+                                        val minCal = Calendar.getInstance().apply {
+                                            add(Calendar.MONTH, -pastMonths)
+                                            set(Calendar.DAY_OF_MONTH, 1)
+                                        }
+                                        minDate = minCal.time
+                                        maxDate = when (field.validation?.maxDate?.lowercase()) {
+                                            "today" -> today
+                                            null -> today
+                                            else -> today
+                                        }
+                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 

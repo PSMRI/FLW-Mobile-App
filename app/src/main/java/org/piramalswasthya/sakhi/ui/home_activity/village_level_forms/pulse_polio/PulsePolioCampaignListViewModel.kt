@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.repositories.VLFRepo
@@ -19,7 +20,9 @@ class PulsePolioCampaignListViewModel @Inject constructor(
     private val vlfRepo: VLFRepo
 ) : ViewModel() {
 
-    val allPulsePolioCampaignList = vlfRepo.pulsePolioCampaignList.map { list ->
+    val allPulsePolioCampaignList = vlfRepo.pulsePolioCampaignList
+        .distinctUntilChanged()
+        .map { list ->
         try {
             val currentYear = HelperUtil.getCurrentYear().toInt()
             list.filter {
@@ -29,6 +32,9 @@ class PulsePolioCampaignListViewModel @Inject constructor(
                 } catch (e: Exception) {
                     false
                 }
+            }.sortedByDescending { item ->
+                CampaignDateUtil.parseDateToLocalDate(item.campaignDate ?: "")
+                    ?.toEpochDay() ?: Long.MIN_VALUE
             }
         } catch (e: Exception) {
             emptyList()

@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -16,6 +15,7 @@ import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
+import org.piramalswasthya.sakhi.utils.Log
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
@@ -804,23 +804,23 @@ class PregnantWomanAncVisitDataset(
                     triggerDependants(
                         source = maternalDeath,
                         addItems = abortionFields,
-                        removeItems = commonAddItems + deliveryDone,
+                        removeItems = commonAddItems + deliveryDone + placeOfAnc,
                         position = getIndexById(isAborted.id).coerceAtLeast(0) + 1 // safe
                     )
                 } else if (isMaternalDeathYes) {
                     triggerDependants(
                         source = ancVisit,
                         addItems = emptyList(),
-                        removeItems = abortionFields + commonAddItems + deliveryDone,
+                        removeItems = abortionFields + commonAddItems + deliveryDone + placeOfAnc,
                         position = -1
                     )
                 } else {
                     val week = weekOfPregnancy.value?.toIntOrNull()
 
                     val addItems = if (week != null && week >= Konstants.minWeekToShowDelivered) {
-                        listOf(deliveryDone) + commonAddItems
+                        listOf(deliveryDone) + commonAddItems + placeOfAnc
                     } else {
-                        commonAddItems
+                        commonAddItems + placeOfAnc
                     }
 
                     val removeItems = abortionFields +
@@ -882,10 +882,14 @@ class PregnantWomanAncVisitDataset(
                         highRiskCondition.value = highRiskCondition.entries!![5]
                 }
                 bp.value?.takeIf { it.isNotEmpty() && hb.errorText == null }?.let {
-                    val sys = it.substringBefore("/").toInt()
-                    val dia = it.substringAfter("/").toInt()
-                    if (sys > 140 || dia > 90) {
-                        highRiskCondition.value = highRiskCondition.entries!![1]
+                    try {
+                        val sys = it.substringBefore("/").toInt()
+                        val dia = it.substringAfter("/").toInt()
+                        if (sys > 140 || dia > 90) {
+                            highRiskCondition.value = highRiskCondition.entries!![1]
+                        }
+                    }catch (e: NumberFormatException){
+                        Log.w("ANC_VISIT_FORM", "Invalid Number $e")
                     }
                 }
                 if (highRiskCondition.value == null)
@@ -1080,6 +1084,7 @@ class PregnantWomanAncVisitDataset(
     }
 
     fun getWeeksOfPregnancy(): Int = getIndexById(weekOfPregnancy.id)
+
 
     fun updateBenRecordToDelivered(it: BenRegCache) {
         it.genDetails?.apply {

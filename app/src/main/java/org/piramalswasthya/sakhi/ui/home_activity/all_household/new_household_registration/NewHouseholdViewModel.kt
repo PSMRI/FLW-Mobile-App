@@ -14,8 +14,11 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.HouseholdFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
@@ -29,6 +32,7 @@ class NewHouseholdViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
+    private val hofAbhaPrefillCache: HofAbhaPrefillCache,
     userRepo: UserRepo
 ) : ViewModel() {
 
@@ -54,6 +58,9 @@ class NewHouseholdViewModel @Inject constructor(
     private val _readRecord = MutableLiveData(hhIdFromArgs > 0)
     val readRecord: LiveData<Boolean>
         get() = _readRecord
+
+    val isNewRegistration: Boolean
+        get() = hhIdFromArgs == 0L
 
     private lateinit var user: User
     private val dataset = HouseholdFormDataset(context, preferenceDao.getCurrentLanguage(),preferenceDao)
@@ -109,6 +116,9 @@ class NewHouseholdViewModel @Inject constructor(
                         updatedBy = user.userName
                     }
                     householdRepo.persistRecord(household)
+                    // Hand off the fetched HoF ABHA details, keyed by this household's frozen id,
+                    // so the HoF beneficiary registration can prefill gender/dob and persist abhId.
+                    pendingAbhaMember?.let { hofAbhaPrefillCache.put(household.householdId, it) }
                     benRepo.updateBenToSync(household.householdId, SyncState.UNSYNCED)
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
@@ -119,12 +129,38 @@ class NewHouseholdViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Household Id to be passed to Ben registration upon persisting household data to Room
-     */
     fun getHHId() = household.householdId
     fun getHoFName() = "${household.family?.familyHeadName} ${household.family?.familyName ?: ""}"
 
+
+    private val _abhaUserDetails = MutableLiveData<NetworkResult<List<FamilyMember>>?>(null)
+    val abhaUserDetails: LiveData<NetworkResult<List<FamilyMember>>?>
+        get() = _abhaUserDetails
+
+    // The HoF member used to prefill this household; published to the cache once the household saves.
+    private var pendingAbhaMember: FamilyMember? = null
+
+    fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId, "")
+            }
+            _abhaUserDetails.postValue(result)
+        }
+    }
+
+    fun clearAbhaUserDetails() {
+        _abhaUserDetails.value = null
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        pendingAbhaMember = member
+        dataset.prefillFromAyushmanCard(member)
+    }
+
+    fun getAbhaSubmitBtnId(): Int = dataset.getAbhaSubmitBtnId()
+
+    fun getAbhaCardInput(): String? = dataset.getAbhaCardInput()
 
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {

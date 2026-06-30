@@ -10,48 +10,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp">
 
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardTotalAshas"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="20dp"
                 app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvSupervisorId">
+                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/imgAsha"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
                         android:src="@drawable/logo_circle"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tvAshaSubtitle"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
                     <TextView
                         android:id="@+id/tvTotalAshasLabel"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:text="@string/total_ashas"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="@color/md_theme_light_shadow"
+                        app:layout_constraintEnd_toStartOf="@id/ivArrow"
                         app:layout_constraintStart_toEndOf="@id/imgAsha"
                         app:layout_constraintTop_toTopOf="@id/imgAsha"/>
 
@@ -60,14 +61,38 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="28sp"
+                        android:textSize="32sp"
                         android:textStyle="bold"
+                        android:textColor="@color/md_theme_light_shadow"
                         app:layout_constraintStart_toStartOf="@id/tvTotalAshasLabel"
                         app:layout_constraintTop_toBottomOf="@id/tvTotalAshasLabel"/>
+
+                    <ImageView
+                        android:id="@+id/ivArrow"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tvAshaSubtitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/tap_to_view_ashas_grouped"
+                        android:textSize="12sp"
+                        android:textColor="@color/md_theme_light_ongray"
+                        app:layout_constraintEnd_toStartOf="@id/ivArrow"
+                        app:layout_constraintStart_toEndOf="@id/imgAsha"
+                        app:layout_constraintTop_toBottomOf="@id/tvTotalAshasCount"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Incentive Verification Title -->
             <TextView
                 android:id="@+id/tvIncentiveTitle"
                 android:layout_width="wrap_content"
@@ -77,19 +102,22 @@
                 android:text="@string/incentive_verification"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/md_theme_light_shadow"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardTotalAshas"/>
 
+            <!-- Month Dropdown -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilMonthYear"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="18dp"
                 android:hint="@string/select_month"
-                app:layout_constraintStart_toEndOf="@id/tvIncentiveTitle"
+
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvIncentiveTitle"
                 app:layout_constraintTop_toTopOf="@id/tvIncentiveTitle"
                 app:layout_constraintBottom_toBottomOf="@id/tvIncentiveTitle">
 
@@ -104,14 +132,18 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Sub-Centre Dropdown -->
+
+
+            <!-- Row 1: Verified Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardVerified"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="110dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
                 app:layout_constraintEnd_toStartOf="@id/cardPending"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tilMonthYear">
@@ -120,7 +152,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@color/verified_green"
+                    android:padding="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -128,38 +161,50 @@
 
                         <ImageView
                             android:id="@+id/verifiedIcon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_check_circle"/>
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="@android:color/white"/>
 
                         <TextView
                             android:id="@+id/tvVerifiedLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="4dp"
                             android:layout_toEndOf="@id/verifiedIcon"
                             android:text="@string/verified"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tvVerifiedCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="26sp"
-                        android:textStyle="bold"/>
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvVerifiedSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/forwarded_to_ncho_anm"
+                        android:textSize="11sp"
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardPending"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="110dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="20dp"
                 app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toStartOf="@id/cardOverdue"
                 app:layout_constraintStart_toEndOf="@id/cardVerified"
                 app:layout_constraintTop_toTopOf="@id/cardVerified">
 
@@ -167,7 +212,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@color/pending_orange"
+                    android:padding="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -175,48 +221,61 @@
 
                         <ImageView
                             android:id="@+id/pendingIcon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_check_circle"
-                            app:tint="@color/default_incentive_background"/>
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_pending"
+                            app:tint="@android:color/white"/>
 
                         <TextView
                             android:id="@+id/tvPendingLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="4dp"
                             android:layout_toEndOf="@id/pendingIcon"
                             android:text="@string/pending"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tvPendingCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="26sp"
-                        android:textStyle="bold"/>
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvPendingSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/awaiting_your_nverification"
+                        android:textSize="11sp"
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Row 1: Overdue Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardOverdue"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="110dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
                 app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toStartOf="@id/cardRejected"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardVerified">
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardPending"
+                app:layout_constraintTop_toTopOf="@id/cardVerified">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@color/overdue_dark_orange"
+                    android:padding="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -224,47 +283,62 @@
 
                         <ImageView
                             android:id="@+id/overDueIcon"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
                             android:src="@drawable/ic_overdue"
-                            app:tint="@color/holo_red_light" />
+                            app:tint="@android:color/white"/>
 
                         <TextView
                             android:id="@+id/tvOverdueLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="4dp"
                             android:layout_toEndOf="@id/overDueIcon"
                             android:text="@string/overdue"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tvOverdueCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="26sp"
-                        android:textStyle="bold"/>
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvOverdueSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/past_verify_by_12th"
+                        android:textSize="11sp"
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Row 2: Rejected Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardRejected"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="20dp"
+                android:layout_height="110dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
                 app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cardOverdue"
-                app:layout_constraintTop_toTopOf="@id/cardOverdue">
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toStartOf="@id/cardAshaUnclaimed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardVerified">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@color/rejected_red"
+                    android:padding="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -272,43 +346,118 @@
 
                         <ImageView
                             android:id="@+id/rejectedIcon"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/crossnew"/>
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/cross_newone"
+                            />
 
                         <TextView
                             android:id="@+id/tvRejectedLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="3dp"
                             android:layout_toEndOf="@id/rejectedIcon"
                             android:text="@string/rejected"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tvRejectedCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="26sp"
-                        android:textStyle="bold"/>
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvRejectedSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/back_with_asha_nfor_correction"
+                        android:textSize="11sp"
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Row 2: ASHA Unclaimed Card (NEW) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardAshaUnclaimed"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cardRejected"
+                app:layout_constraintTop_toTopOf="@id/cardRejected">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@color/unclaimed_grey"
+                    android:padding="8dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/unclaimedIcon"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_unclaimed"
+                            app:tint="@android:color/white"/>
+
+                        <TextView
+                            android:id="@+id/tvAshaUnclaimedLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_toEndOf="@id/unclaimedIcon"
+                            android:text="ASHA Unclaimed"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tvAshaUnclaimedCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvAshaUnclaimedSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ashas_yet_to_submit_ntheir_monthly_claim"
+                        android:textSize="11sp"
+                        android:textColor="@android:color/white"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Sub-Centre Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardSubcentres"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardOverdue">
+                app:layout_constraintTop_toBottomOf="@id/cardRejected">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -321,7 +470,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/sub_center_under_you_4"
-                        android:textSize="18sp"/>
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_light_shadow"/>
 
                     <View
                         android:id="@+id/underLine"

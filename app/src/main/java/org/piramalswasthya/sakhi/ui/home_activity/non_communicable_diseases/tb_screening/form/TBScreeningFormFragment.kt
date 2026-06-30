@@ -32,6 +32,8 @@ class TBScreeningFormFragment : Fragment() {
 
     var referralForReason = "Suspected TB case"
     var referType = "TB"
+    private var isAlertHandled = false
+
 
     private val tbSuspectedAlert by lazy {
         AlertDialog.Builder(requireContext())
@@ -46,9 +48,12 @@ class TBScreeningFormFragment : Fragment() {
             .setTitle(resources.getString(R.string.tb_screening))
             .setMessage("it")
             .setPositiveButton(resources.getString(R.string.yes)) {dialog, _ ->
+                isAlertHandled = true
              findNavController().navigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = binding.root.resources.getString(R.string.tb_screening_form), referralType = referType))
             }
-            .setNegativeButton(resources.getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
+                isAlertHandled = true
+                dialog.dismiss() }
             .create()
     }
 
@@ -144,7 +149,12 @@ class TBScreeningFormFragment : Fragment() {
             if (viewModel.referToHwcFacility.isNullOrBlank()){
                 viewModel.saveForm()
             }else{
-                showAlerts()
+
+                if (!isAlertHandled) {
+                    showAlerts()
+                } else {
+                    viewModel.saveForm()
+                }
             }
         }
     }

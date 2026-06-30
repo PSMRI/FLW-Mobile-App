@@ -23,6 +23,7 @@
     <application
         android:name=".SakhiApplication"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:configChanges="locale|orientation"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

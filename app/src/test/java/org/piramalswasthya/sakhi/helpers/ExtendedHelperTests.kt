@@ -67,7 +67,7 @@ class ExtendedHelperTests {
     @Test fun `Languages can iterate all values`() {
         var count = 0
         Languages.values().forEach { count++ }
-        assertEquals(3, count)
+        assertEquals(4, count)
     }
 
     @Test fun `Languages symbols are all distinct`() {

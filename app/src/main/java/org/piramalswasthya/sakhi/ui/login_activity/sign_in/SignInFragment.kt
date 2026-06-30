@@ -28,15 +28,12 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentSignInBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
-import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
-import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -44,6 +41,7 @@ import javax.inject.Inject
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 
 
 @AndroidEntryPoint
@@ -141,7 +139,7 @@ class SignInFragment : Fragment() {
             viewModel.loginInClicked()
         }
 
-        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+       /* if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
             binding.rbAssamese.visibility = android.view.View.GONE
 //            binding.rbBangala!!.visibility = android.view.View.GONE
         }
@@ -167,6 +165,20 @@ class SignInFragment : Fragment() {
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 
 
+        }*/
+
+        updateSelectedLangText(prefDao.getCurrentLanguage())
+        binding.llSelectLang?.setOnClickListener {
+            LanguageBottomSheet(prefDao.getCurrentLanguage()) { selectedLang ->
+                prefDao.saveSetLanguage(selectedLang.language)
+                val refresh = Intent(requireContext(), LoginActivity::class.java)
+                requireActivity().finish()
+                startActivity(refresh)
+                activity?.overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            }.show(childFragmentManager, "LanguageBottomSheet")
         }
 
         binding.tvDeleteAccount?.setOnClickListener {
@@ -297,6 +309,15 @@ class SignInFragment : Fragment() {
             it?.let {
                 if (it) validateInput()
             }
+        }
+    }
+
+    private fun updateSelectedLangText(language: Languages) {
+        binding.tvSelectedLang?.text = when (language) {
+            Languages.ENGLISH  -> getString(R.string.text_english)
+            Languages.HINDI    -> getString(R.string.text_hindi)
+            Languages.ASSAMESE -> getString(R.string.text_assamese)
+            Languages.BANGLA   -> getString(R.string.text_bangali)
         }
     }
 

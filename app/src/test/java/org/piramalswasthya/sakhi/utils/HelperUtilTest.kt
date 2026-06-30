@@ -1,13 +1,31 @@
 package org.piramalswasthya.sakhi.utils
 
+import android.content.Context
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import java.util.Calendar
 
 class HelperUtilTest {
+
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = mockk(relaxed = true)
+        every { context.getString(R.string.year) } returns "Year"
+        every { context.getString(R.string.years) } returns "Years"
+        every { context.getString(R.string.month) } returns "Month"
+        every { context.getString(R.string.months) } returns "Months"
+        every { context.getString(R.string.day) } returns "Day "
+        every { context.getString(R.string.days) } returns "Days "
+    }
 
     // =====================================================
     // getDobFromAge() Tests
@@ -71,49 +89,49 @@ class HelperUtilTest {
     @Test
     fun `getAgeStrFromAgeUnit with years and months`() {
         val age = AgeUnitDTO(years = 2, months = 3, days = 0)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("2 Years, 3 Months", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with 1 year singular`() {
         val age = AgeUnitDTO(years = 1, months = 0, days = 0)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("1 Year", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with 1 month singular`() {
         val age = AgeUnitDTO(years = 0, months = 1, days = 0)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("1 Month", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with days only`() {
         val age = AgeUnitDTO(years = 0, months = 0, days = 15)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("15 Days ", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with 1 day singular`() {
         val age = AgeUnitDTO(years = 0, months = 0, days = 1)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("1 Day ", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with years months and days`() {
         val age = AgeUnitDTO(years = 2, months = 3, days = 10)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("2 Years, 3 Months, 10 Days ", result)
     }
 
     @Test
     fun `getAgeStrFromAgeUnit with zero age`() {
         val age = AgeUnitDTO(years = 0, months = 0, days = 0)
-        val result = HelperUtil.getAgeStrFromAgeUnit(age)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
         assertEquals("", result)
     }
 

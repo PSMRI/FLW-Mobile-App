@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.repositories.UserRepo
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.time.Instant
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -76,7 +77,11 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
 //            _user = pref.getLoggedInUser()!!
-            userRepo.setFacilityData(currentUser!!.userId)
+            if (currentUser == null) {
+                _navigateToLoginPage.postValue(true)
+                return@launch
+            }
+            userRepo.setFacilityData(currentUser.userId)
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
                     _unprocessedRecordsCount.value =
@@ -85,11 +90,11 @@ class HomeViewModel @Inject constructor(
             }
             launch {
                 if (pref.getProfilePicUri() == null) {
-                    currentUser?.let { user ->
+                    currentUser.let { user ->
                         withContext(Dispatchers.IO) {
                             database.profileDao.getProfileActivityById(user.userId.toLong())
                         }?.profileImage?.takeIf { it.isNotEmpty() }?.let { imageUri ->
-                            val uri = Uri.parse(imageUri)
+                            val uri = imageUri.toUri()
                             pref.saveProfilePicUri(uri)
                             _restoredProfilePicUri.value = uri
                         }

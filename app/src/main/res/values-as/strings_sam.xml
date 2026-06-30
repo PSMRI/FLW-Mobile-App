@@ -30,7 +30,9 @@
     <string name="nrc_admitted">NRC ত ভৰ্তি</string>
     <string name="referred_to_nrc">NRC লৈ ৰেফাৰ কৰা হৈছে</string>
     <string name="visit_date_cannot_be_more_than_2_months_old">ভিজিটৰ তাৰিখ ২ মাহতকৈ পুৰণি হ\'ব নোৱাৰে</string>
+    <string name="visit_date_cannot_be_more_than_10_months_old">ভিজিটৰ তাৰিখ ১০ মাহতকৈ পুৰণি হ\'ব নোৱাৰে</string>
     <string name="only_one_visit_per_month_allowed">প্ৰতি মাহত কেৱল এটা ভিজিটৰ অনুমতি আছে</string>
+    <string name="max_ifa_visits_allowed">প্ৰতি শিশুৰ বাবে সৰ্বাধিক ১০টা IFA ভিজিটৰ অনুমতি আছে</string>
     <string name="bottle_count">বটলৰ সংখ্যা</string>
 
     <string name="pick_image">ছবি বাছনি কৰক</string>

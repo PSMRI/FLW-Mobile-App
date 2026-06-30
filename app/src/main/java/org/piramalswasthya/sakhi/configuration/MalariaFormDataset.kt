@@ -57,7 +57,7 @@ class MalariaFormDataset(
         arrayId = R.array.death_place,
         entries = resources.getStringArray(R.array.death_place),
         required = true,
-        hasDependants = true
+        hasDependants = false
 
     )
 
@@ -76,11 +76,11 @@ class MalariaFormDataset(
         arrayId = R.array.reason_death,
         entries = resources.getStringArray(R.array.reason_death),
         required = true,
-        hasDependants = true
+        hasDependants = false
 
     )
     private var otherReasonOfDeath = FormElement(
-        id = 28,
+        id = 30,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.other_reason),
         required = true,
@@ -88,7 +88,7 @@ class MalariaFormDataset(
     )
 
     private var headline = FormElement(
-        id = 27,
+        id = 29,
         inputType = InputType.HEADLINE,
         title = resources.getString(R.string.check_sympt),
         required = false,
@@ -674,7 +674,7 @@ class MalariaFormDataset(
                         addItems = listOf(headline,isFever,isFluLikeIllness,isShakingchills,isHeadache,
                             isMuscleaches,isTiredness,isNausea,isVomiting,isDiarrhea,
                             caseStatus),
-                        removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath)
+                        removeItems = listOf(dateOfDeath,placeOfDeath,reasonOfDeath,otherPlaceOfDeath,otherReasonOfDeath)
                     )
                 }
                 0

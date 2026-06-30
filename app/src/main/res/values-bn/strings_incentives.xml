@@ -72,4 +72,8 @@
     <string name="incentive_an_amount_of_rs">মোট টাকা অনুমোদিত হয়েছে আশা প্রণোদনার জন্য নির্দিষ্ট সময়ে এবং DBT এর মাধ্যমে জমা হয়েছে।</string>
     <string name="activity_name">কার্যক্রম: %1s</string>
 
+    <string name="permission_required_title">অনুমতি প্রয়োজন</string>
+    <string name="permission_required_message">PDF ডাউনলোড করতে স্টোরেজ অনুমতি প্রয়োজন। অনুগ্রহ করে সেটিংস থেকে এটি সক্ষম করুন।</string>
+    <string name="permission_open_settings">সেটিংস খুলুন</string>
+    <string name="permission_cancel">বাতিল করুন</string>
 </resources>

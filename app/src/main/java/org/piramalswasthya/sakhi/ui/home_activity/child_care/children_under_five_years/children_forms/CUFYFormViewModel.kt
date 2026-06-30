@@ -294,7 +294,10 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
-        val rawVisitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
+        val rawVisitDate = fieldMap["visit_date"]?.toString()
+            ?: if (formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
+                fieldMap["ifa_provision_date"]?.toString() ?: "N/A"
+            else "N/A"
         val visitDate = try {
 
             val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)

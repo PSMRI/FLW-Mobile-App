@@ -71,6 +71,10 @@
         <item>দিন-এইটি প্ৰতিদিন</item>
     </string-array>
 
+    <string name="suspected_c_case">সন্দেহজনক কেঞ্চাৰৰ ঘটনা</string>
+    <string name="c_cancer">কেঞ্চাৰ</string>
+    <string name="further_depression">অৱসাদৰ বাবে অধিক মূল্যায়ন</string>
+    <string name="geriatic">বয়োজ্যেষ্ঠ স্বাস্থ্যসেবা</string>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
     <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
@@ -274,6 +278,7 @@
     <string name="none_of">এইবোৰৰ কোনোটোৱেই নহয়</string>
     <string name="cbac_is_leprosy_suspected">কুষ্ঠ ৰোগৰ কোনো লক্ষণ আছে নেকি?</string>
     <string name="refer_to_hwc_facility_alert">আপুনি HWC সুবিধালৈ ৰেফাৰ কৰিব বিচাৰে নেকি?</string>
+    <string name="geriatic_case">জেৰিয়াট্ৰিক কেছ</string>
 
     <string name="view_screen">স্ক্ৰিন চাওক</string>
     <string name="screened">স্ক্ৰিন কৰা হৈছে</string>

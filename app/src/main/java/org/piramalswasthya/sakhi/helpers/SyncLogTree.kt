@@ -18,7 +18,8 @@ class SyncLogTree(
 
     companion object {
         private val SYNC_TAG_KEYWORDS = listOf(
-            "Worker", "Sync", "Push", "Pull", "Amrit", "Repo"
+            "Worker", "Sync", "Push", "Pull", "Amrit", "Repo", "Token", "Auth",
+            "OkHttp", "Api"
         )
         private val SYNC_MESSAGE_KEYWORDS = listOf(
             "sync", "push", "pull", "worker", "batch",

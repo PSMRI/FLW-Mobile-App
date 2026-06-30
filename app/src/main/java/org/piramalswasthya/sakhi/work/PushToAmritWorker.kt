@@ -16,6 +16,7 @@ class PushToAmritWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val benRepo: BenRepo,
     override val preferenceDao: PreferenceDao,
+
 ) : BasePushWorker(appContext, params) {
     companion object {
         const val name = "PushToAmritWorker"

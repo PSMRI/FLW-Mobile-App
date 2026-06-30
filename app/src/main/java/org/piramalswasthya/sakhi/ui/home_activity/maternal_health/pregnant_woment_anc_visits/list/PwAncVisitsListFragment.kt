@@ -32,6 +32,7 @@ import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import java.util.Collections.list
 
@@ -51,7 +52,6 @@ class PwAncVisitsListFragment : Fragment() {
 
     private val viewModel: PwAncVisitsListViewModel by viewModels()
     private val viewModelListPmsma: PmsmaVisitsListViewModel by viewModels()
-
     private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }
     private var bottomSheetPmsma: PmsmaBottomSheetFragment? = null
 
@@ -178,8 +178,23 @@ class PwAncVisitsListFragment : Fragment() {
                         bottomSheetAncHomeVisit!!.show(childFragmentManager, "HomeVisit")
 
                     }}
-                ),true, prefDao,false,true
+                ),true, prefDao,false,true,
+            onDeliveryStatusChanged = { item, isDelivered ->
 
+                if (isDelivered) {
+
+                    viewModel.updateDeliveryStatus(
+                        benId = item.ben.benId,
+                        visitNumber = if (item.anc.isEmpty()) {
+                            1
+                        } else {
+                            item.anc.maxOf { it.visitNumber } + 1
+                        },
+                        isDelivered = true
+                    )
+
+                }
+            }
 
         )
         binding.rvAny.adapter = benAdapter

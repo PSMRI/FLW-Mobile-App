@@ -47,7 +47,7 @@ class LeprosyFormFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
-                        (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
+                        hardcocdedListUpdate(formId)
 
                     }, isEnabled = !recordExists
                 )
@@ -137,4 +137,13 @@ class LeprosyFormFragment : Fragment() {
         _binding = null
     }
 
+    private fun hardcocdedListUpdate(formId: Int) {
+        binding.form.rvInputForm.adapter?.apply {
+            when (formId) {
+
+                14,16,17,18,19,20,21,22,23,24,25,26 -> notifyDataSetChanged()
+            }
+
+        }
+    }
 }

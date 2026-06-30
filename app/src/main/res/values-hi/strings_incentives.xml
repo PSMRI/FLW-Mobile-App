@@ -60,4 +60,8 @@
     <string name="incentive_rch_id_details">आरसीएच आईडी: %1s</string>
     <string name="incentive_abha_id_details">ABHA नंबर: %1s</string>
 
+    <string name="permission_required_title">अनुमति आवश्यक है</string>
+    <string name="permission_required_message">PDF डाउनलोड करने के लिए स्टोरेज की अनुमति आवश्यक है। कृपया सेटिंग्स से इसे सक्षम करें।</string>
+    <string name="permission_open_settings">सेटिंग्स खोलें</string>
+    <string name="permission_cancel">रद्द करें</string>
 </resources>

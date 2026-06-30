@@ -23,19 +23,23 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
@@ -48,6 +52,7 @@ class NewBenRegViewModel @Inject constructor(
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
     private val ecrRepo: EcrRepo,
+    private val hofAbhaPrefillCache: HofAbhaPrefillCache,
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
@@ -106,6 +111,27 @@ class NewBenRegViewModel @Inject constructor(
     private val _recordExists = MutableLiveData(benIdFromArgs != 0L)
     val recordExists: LiveData<Boolean>
         get() = _recordExists
+
+    private val _abhaUserDetails = MutableLiveData<NetworkResult<List<FamilyMember>>?>(null)
+    val abhaUserDetails: LiveData<NetworkResult<List<FamilyMember>>?>
+        get() = _abhaUserDetails
+
+    fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId, hhId.toString())
+            }
+            _abhaUserDetails.postValue(result)
+        }
+    }
+
+    fun clearAbhaUserDetails() {
+        _abhaUserDetails.value = null
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        dataset.prefillFromAyushmanCard(member)
+    }
 
 
     private var isConsentAgreed = false
@@ -219,10 +245,16 @@ class NewBenRegViewModel @Inject constructor(
                     }
                 } else {
 
-                    if (isHoF) dataset.setPageForHof(
-                        if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
-                        household
-                    ) else {
+                    if (isHoF) {
+                        // Option 1 hand-off: prefill the new HoF from ABHA details fetched during
+                        // household registration (keyed by this household id, consumed once). Passed
+                        // into setPageForHof so values are applied while the page is built.
+                        dataset.setPageForHof(
+                            if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
+                            household,
+                            hofAbhaPrefillCache.consume(hhId)
+                        )
+                    } else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
@@ -320,8 +352,9 @@ class NewBenRegViewModel @Inject constructor(
                     if (ben.gender == Gender.MALE) {
                         benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                     } else {
+                        Log.e("CHECK DATA","SSSSSSS")
                         benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
-                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+//                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                     }
                     if (isHoF) {
                         if (ben.genDetails?.maritalStatusId == 2) {

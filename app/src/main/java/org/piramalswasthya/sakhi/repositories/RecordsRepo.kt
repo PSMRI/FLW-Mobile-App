@@ -496,10 +496,10 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
     fun getAllWomenForPmsmaCount() = benDao.getAllWomenListForPmsmaCount(selectedVillage)
     fun getListForInfantReg() = benDao.getListForInfantRegister(selectedVillage)
-        .map { list -> list.flatMap { it.asBasicDomainModel() } }
+        .map { list -> list.flatMap { it.asBasicDomainModel(false) } }
 
     fun getListForLowWeightInfantReg() = benDao.getListForLowWeightInfantRegister(selectedVillage)
-        .map { list -> list.flatMap { it.asBasicDomainModel() } }
+        .map { list -> list.flatMap { it.asBasicDomainModel(true) } }
 
     fun getInfantRegisterCount() = benDao.getInfantRegisterCount(selectedVillage)
 
@@ -560,4 +560,6 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         val diff = to - from
         return TimeUnit.MILLISECONDS.toDays(diff)
     }
+
+
 }

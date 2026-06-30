@@ -68,6 +68,7 @@
     <string name="form_input_error_invalid_rch">অবৈধ RCH আইডি !</string>
     <string name="form_input_error_invalid_mcp">অবৈধ MCP নম্বর !</string>
     <string name="form_input_error_invalid_aadhar">অবৈধ আধার নম্বর</string>
+    <string name="tb">যক্ষ্মা (টিবি)</string>
 <string-array name="anc_paiucd_done_by">
         <item>ডাক্টৰ</item>
         <item>নাৰ্চ</item>
@@ -478,6 +479,15 @@
     <string-array name="ecr_baby_gender_array">
         <item>পুত্ৰ</item>
         <item>কন্যা</item>
+    </string-array>
+
+    <string-array name="new_referral_facility">
+        <item>উপ-কেন্দ্ৰ</item>
+        <item>পিএইচচি</item>
+        <item>চিএইচচি</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>মেডিকেল কলেজ চিকিৎসালয়</item>
+        <item>যক্ষ্মা ইউনিট</item>
     </string-array>
 
     <string-array name="referral_facility">
@@ -1019,6 +1029,7 @@
     <string name="is_drtb_confirmed">DR-TB ৰোগ নিশ্চিত হৈছে নেকি?</string>
     <string name="form_input_alphabet_special__digit_only_error">কেৱল আখৰ, বিশেষ আখৰ আৰু সংখ্যা অনুমোদিত!</string>
     <string name="abha_number_digit">ABHA নম্বৰ ১৪ সংখ্যাৰ হ\'ব লাগিব</string>
+    <string name="abha_ayushman_invalid_format">অমান্য ফৰমেট। ১৪ সংখ্যাৰ ABHA নম্বৰ বা ১২–১৬ আখৰৰ আয়ুষ্মান কাৰ্ড নম্বৰ দিয়ক</string>
     <string name="ifsc">৪টা আখৰ আৰু তাৰ পিছত ৭টা সংখ্যা (যেনে, ABCD1234567)!</string>
     <string name="file_size">ফাইলৰ আকাৰ 5 MB তকৈ কম বা সমান হ\'ব লাগিব।</string>
     <string name="other_place">মৃত্যুৰ অন্য স্থান</string>
@@ -1042,7 +1053,7 @@
     <string name="asha_profile">প্ৰ\'ফাইল</string>
     <string name="status">স্থিতি</string>
     <string name="ncd_refer_form">NCD ৰেফাৰ ফৰ্ম</string>
-    <string name="ncd_refer_list">NCD ৰেফাৰ তালিকা</string>
+    <string name="ncd_refer_list">HWC ৰেফাৰ</string>
     <string name="hwc_refer_form">HWC ৰেফাৰ ফৰ্ম</string>
     <string name="hwc_refer_list">HWC ৰেফাৰ তালিকা</string>
     <string name="child_under_five_years_list">পাঁচ বছৰৰ তলৰ শিশুৰ তালিকা</string>
@@ -1235,6 +1246,7 @@
     <string name="cataract_surgery_visits">কেটাৰেক্ট অস্ত্ৰোপচাৰ ভিজিটসমূহ</string>
     <string name="due_date_label">দেয়: %1$s</string>
 
+    <string name="referal_facility">ৰেফাৰেল সুবিধা</string>
 
     <string name="visit_number_label">ভিজিট -%d</string>
     <string name="vaccine_fill">পূৰণ কৰক</string>
@@ -1401,7 +1413,7 @@
     <string name="name_of_anm2">ANM2 ৰ নাম</string>
     <string name="mobile_number_of_anm2">ANM2 ৰ মোবাইল নম্বৰ</string>
     <string name="str_dose">ডোজ</string>
-    <string name="refer_date">প্ৰেৰণৰ তাৰিখ</string>
+    <string name="refer_date">ৰেফাৰেলৰ তাৰিখ</string>
     <string name="str_no_more_dose">আৰু ডোজ নাই</string>
     <string name="sammelan_photo1">সম্মিলন ফটোসমূহ / MoM (1)</string>
     <string name="sammelan_photo2">সম্মিলন ফটোসমূহ / MoM (2)</string>
@@ -1411,6 +1423,28 @@
     <string name="add_new">নতুন যোগ কৰক</string>
     <string name="ifa_distribution">IFA বিতৰণ</string>
     <string name="ifa_quantity">IFA পৰিমাণ</string>
+    <string name="delivery_status">ডেলিভাৰী স্থিতি</string>
+    <string name="delivered">ডেলিভাৰ কৰা হৈছে</string>
+    <string name="not_delivered">ডেলিভাৰ কৰা হোৱা নাই</string>
     <string name="check_sympt">ব্যক্তিজনৰ এই লক্ষণসমূহৰ কোনো এটা আছে নে নাই পৰীক্ষা কৰক:</string>
+    <string name="forwarded_to_ncho_anm">চিএইচঅ\'/এএনএমলৈ\nপ্ৰেৰণ কৰা হৈছে</string>
+    <string name="tap_to_view_ashas_grouped">গোটবদ্ধ ASHA সকল চাবলৈ টেপ কৰক।</string>
+    <string name="awaiting_your_nverification">আপোনাৰ\nযাচাইৰ অপেক্ষাত</string>
+    <string name="past_verify_by_12th">১২ তাৰিখৰ ভিতৰত যাচাই বাকী আছে</string>
+    <string name="back_with_asha_nfor_correction">সংশোধনৰ বাবে\nASHA-লৈ উভতাই দিয়া হৈছে</string>
+    <string name="ashas_yet_to_submit_ntheir_monthly_claim">যিসকল ASHA-এ এতিয়াও\nতেওঁলোকৰ মাহিলী দাবী দাখিল কৰা নাই</string>
+    <string name="enter_abha_id_ayushman_card_number">আভা আইডি / আয়ুষ্মান কাৰ্ড নম্বৰ দিয়ক</string>
+    <string name="network_error">নেটৱৰ্ক ত্ৰুটি। অনুগ্ৰহ কৰি আপোনাৰ সংযোগ পৰীক্ষা কৰক আৰু পুনৰ চেষ্টা কৰক।</string>
+    <string name="abha_no_valid_details">এই কাৰ্ড নম্বৰৰ বাবে কোনো বৈধ তথ্য পোৱা নগ\'ল।</string>
+    <string name="abha_id_check_question">আপোনাৰ ABHA ID / আয়ুষ্মান আইডি আছেনে?</string>
+    <string name="str_follow_up">ফলো-আপ</string>
+    <string name="abha_not_created_title">আভা আইডি</string>
+    <string name="abha_not_created_message">আভা আইডি সৃষ্টি কৰা হোৱা নাই। আপুনি নতুন আভা আইডি সৃষ্টি কৰিব বিচাৰেনে?</string>
+    <string name="unknown">অজ্ঞাত</string>
+    <string name="email">ইমেইল</string>
+    <string name="app_native_name">উৎপ্ৰেৰণা</string>
+    <string name="tb_suspected_copd_case">সন্দেহজনক COPD ৰোগী</string>
+    <string name="tb_suspected_leprosy_case">সন্দেহজনক কুষ্ঠ ৰোগী</string>
+    <string name="tb_suspected_ncd_case">সন্দেহজনক NCD ৰোগী</string>
 
 </resources>

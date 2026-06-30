@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.helpers.filterPwAncList
 import org.piramalswasthya.sakhi.helpers.sortAncList
@@ -25,8 +26,16 @@ import javax.inject.Inject
 class PwAncVisitsListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     recordsRepo: RecordsRepo,
-    private val maternalHealthRepo: MaternalHealthRepo
+    private val maternalHealthRepo: MaternalHealthRepo,
+    var preferenceDao: PreferenceDao
+
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            maternalHealthRepo.updateExpiredPregnancyWomen()
+        }
+    }
 
     private var sourceFromArgs = PwAncVisitsListFragmentArgs.fromSavedStateHandle(savedStateHandle).source
     private val _repo = recordsRepo
@@ -59,6 +68,8 @@ class PwAncVisitsListViewModel @Inject constructor(
         val listToShow = if (isHighRisk) highRiskList else normalList
         filterPwAncList(listToShow, filterText)
     }
+
+
 
     val benList: Flow<List<BenWithAncListDomain>> =
         filteredBenList.combine(sortFilter) { list, sort -> sortAncList(list, sort) }
@@ -93,6 +104,8 @@ class PwAncVisitsListViewModel @Inject constructor(
 
 
 
+
+
     fun loadHomeVisitState(benIds: List<Long>) {
         viewModelScope.launch {
             val map = mutableMapOf<Long, HomeVisitUiState>()
@@ -110,7 +123,7 @@ class PwAncVisitsListViewModel @Inject constructor(
     }
 
     fun filterText(text: String) {
-        viewModelScope.launch { filter.emit(text) }
+        viewModelScope.launch { filter.emit(text.trim().lowercase()) }
     }
 
     fun setSortFilter(type: EcFilterType) {
@@ -127,6 +140,26 @@ class PwAncVisitsListViewModel @Inject constructor(
             } else {
                 pmsmaBenIdSelected.emit(benId)
             }
+        }
+    }
+
+    fun updateDeliveryStatus(
+        benId: Long,
+        visitNumber: Int,
+        isDelivered: Boolean
+    ) {
+
+        viewModelScope.launch {
+
+            val user =
+                preferenceDao.getLoggedInUser()
+
+            maternalHealthRepo.saveDeliveryStatusFromList(
+                benId = benId,
+                visitNumber = visitNumber,
+                isDelivered = isDelivered,
+                userName = user?.userName ?: ""
+            )
         }
     }
 }

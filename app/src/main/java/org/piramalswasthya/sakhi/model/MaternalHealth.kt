@@ -777,17 +777,23 @@ data class BenWithAncListDomain(
 
     val finalWeeksOfPregnancy: Int?
         get() = finalLmpDate?.let {
-            val weeks = (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - it) / 7).toInt()
-            if (weeks > 40) null else weeks
-        } ?: weekOfPregnancy?.takeIf { it <= 40 }
+            (TimeUnit.MILLISECONDS.toDays(getTodayMillis() - it) / 7).toInt()
+        } ?: weekOfPregnancy
+
     val lmpString: String? get() = finalLmpDate?.let { getDateString(it) }
     val eddString: String? get() = finalEddDate?.let { getDateString(it) }
     val weeksOfPregnancy: String
         get() = finalWeeksOfPregnancy?.toString() ?: "N/A"
+
+
+
     val abortionDateString: String? get() = abortionDate?.let { getDateString(it) }
 
     val isAbortionFormFilled: Boolean
         get() = savedAncRecords.any { it.terminationDoneBy != null }
+
+    val isDeliveryButtonVisible: Boolean
+        get() = (finalWeeksOfPregnancy ?: 0) > 22
 }
 
 

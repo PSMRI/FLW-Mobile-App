@@ -56,18 +56,18 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
             if (success) {
                 val formId = viewModel.getDocumentFormId()
                 val uri = when (formId) {
-                    21 -> mpaUri
-                    58 -> deliveryDischargeSummary1Uri
-                    59 -> deliveryDischargeSummary2Uri
+                    23 -> mpaUri
+                    60 -> deliveryDischargeSummary1Uri
+                    61 -> deliveryDischargeSummary2Uri
                     else -> latestTmpUri
                 }
 
                 uri?.let {
                     viewModel.setImageUriToFormElement(it)
                     when (formId) {
-                        21 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexOfMPA())
-                        58 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary1())
-                        59 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary2())
+                        23 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexOfMPA())
+                        60 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary1())
+                        61 -> binding.form.rvInputForm.adapter?.notifyItemChanged(viewModel.getIndexDeliveryDischargeSummary2())
                         else -> latestTmpUri
                     }
                 }
@@ -211,9 +211,9 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
                     Toast.makeText(context, resources.getString(R.string.file_size), Toast.LENGTH_LONG).show()
                 } else {
                     when (formId) {
-                        21 -> mpaUri = uri
-                        58 -> deliveryDischargeSummary1Uri = uri
-                        59 -> deliveryDischargeSummary2Uri = uri
+                        23 -> mpaUri = uri
+                        60 -> deliveryDischargeSummary1Uri = uri
+                        61 -> deliveryDischargeSummary2Uri = uri
                         else -> latestTmpUri = uri
                     }
                     viewModel.setImageUriToFormElement(uri)
@@ -256,9 +256,9 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
             getTmpFileUri().let { uri ->
                 val formId = viewModel.getDocumentFormId()
                 when (formId) {
-                    21 -> mpaUri = uri
-                    58 -> deliveryDischargeSummary1Uri = uri
-                    59 -> deliveryDischargeSummary2Uri = uri
+                    23 -> mpaUri = uri
+                    60 -> deliveryDischargeSummary1Uri = uri
+                    61 -> deliveryDischargeSummary2Uri = uri
                     else -> latestTmpUri = uri
                 }
                 takePicture.launch(uri)
@@ -305,9 +305,9 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.formList.collect { list ->
                 val value = when (formId) {
-                    21 -> list.getOrNull(viewModel.getIndexOfMPA())?.value
-                    58 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary1())?.value
-                    59 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary2())?.value
+                    23 -> list.getOrNull(viewModel.getIndexOfMPA())?.value
+                    60 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary1())?.value
+                    61 -> list.getOrNull(viewModel.getIndexDeliveryDischargeSummary2())?.value
                     else -> null
                 }
 
@@ -332,7 +332,7 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     }
 
 
-    private fun isMPAForm(formId: Int) = formId == 21
+    private fun isMPAForm(formId: Int) = formId == 23
 
     override fun onDestroy() {
         super.onDestroy()

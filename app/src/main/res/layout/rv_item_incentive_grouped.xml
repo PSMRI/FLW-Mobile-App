@@ -73,7 +73,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="@{isMitanin ? View.GONE : (item.defaultIncentive ? View.INVISIBLE : View.VISIBLE)}"
+            android:visibility="@{isMitanin ? View.VISIBLE : (item.defaultIncentive ? View.INVISIBLE : View.VISIBLE)}"
             tools:tint="@color/holo_green_dark" />
 
         <TextView
@@ -150,7 +150,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="₹240"
-            android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
