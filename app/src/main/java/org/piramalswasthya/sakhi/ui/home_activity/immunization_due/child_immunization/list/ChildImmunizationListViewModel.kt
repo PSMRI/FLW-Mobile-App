@@ -20,6 +20,8 @@ import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.model.VaccineState
+import org.piramalswasthya.sakhi.model.VaccineType
+import org.piramalswasthya.sakhi.model.toVaccineType
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import java.util.Calendar
 import javax.inject.Inject
@@ -96,14 +98,27 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
     vaccineIdList.map { cache ->
         val ageMillis = System.currentTimeMillis() - cache.ben.dob
         val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
-
         ImmunizationDetailsDomain(
             ben = cache.ben.asBasicDomainModel(),
             vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+                val vaccineType = vaccine.vaccineName.toVaccineType()
+                val buffersApplicableVaccines = setOf(
+                    VaccineType.HEPB_BIRTH,
+                    VaccineType.OPV_0,
+                    VaccineType.VIT_K
+                )
+                val oneMonthBufferMillis = 30L * 24 * 60 * 60 * 1000
+                val effectiveMaxAllowedAgeInMillis =
+                    if (vaccineType in buffersApplicableVaccines) {
+                        vaccine.maxAllowedAgeInMillis + oneMonthBufferMillis
+                    } else {
+                        vaccine.maxAllowedAgeInMillis
+                    }
+
                 val state = when {
                     cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
                     ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
-                    ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
+                    ageMillis <= effectiveMaxAllowedAgeInMillis -> VaccineState.OVERDUE
                     else -> VaccineState.MISSED
                 }
                 // NEW - due date calculate karo
