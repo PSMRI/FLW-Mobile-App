@@ -32,6 +32,8 @@ import java.io.File
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.forEach
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class SaasBahuSammelanRepo @Inject constructor(
     private val userRepo: UserRepo,
@@ -43,6 +45,8 @@ class SaasBahuSammelanRepo @Inject constructor(
 
 
 )  {
+    
+    private val syncMutex = Mutex()
 
     suspend fun saveSammelanForm(saasBahuSammelanCache: SaasBahuSammelanCache) {
         withContext(Dispatchers.IO) {
@@ -52,13 +56,14 @@ class SaasBahuSammelanRepo @Inject constructor(
 
      suspend fun pushUnSyncedRecordsSaasBahuSammelan(): Boolean {
 
-        return withContext(Dispatchers.IO) {
+        return syncMutex.withLock { withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val saasBahuList: List<SaasBahuSammelanCache> =
                 saasBahuDao.getBySyncState(SyncState.UNSYNCED)
+            if (saasBahuList.isEmpty()) return@withContext true
             try {
                 saasBahuList.forEach { row ->
                     val imagesParts = (row.sammelanImages ?: emptyList()).mapNotNull { uriStr ->
@@ -134,7 +139,7 @@ class SaasBahuSammelanRepo @Inject constructor(
                 return@withContext false
             }
             true
-        }
+        }}
     }
 
 
