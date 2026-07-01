@@ -381,7 +381,7 @@ class NewBenRegFragment : Fragment() {
 
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
-        if (gateSubmitOnAbhaFetch) setSubmitEnabled(false)
+       // if (gateSubmitOnAbhaFetch) setSubmitEnabled(false)
 
         viewModel.abhaUserDetails.observe(viewLifecycleOwner) { result ->
             when (result) {
@@ -392,7 +392,7 @@ class NewBenRegFragment : Fragment() {
                             viewModel.prefillFromAyushmanCard(member)
                             (_binding?.form?.rvInputForm?.adapter as? FormInputAdapter)
                                 ?.notifyDataSetChanged()
-                            if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
+                          //  if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
                         }
                     } else {
                         Toast.makeText(

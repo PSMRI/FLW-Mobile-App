@@ -310,6 +310,12 @@ class SignInFragment : Fragment() {
                 if (it) validateInput()
             }
         }
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+          binding.tvDemo?.visibility =View.VISIBLE
+        } else {
+            binding.tvDemo?.visibility =View.GONE
+        }
     }
 
     private fun updateSelectedLangText(language: Languages) {
