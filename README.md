@@ -83,6 +83,10 @@ Assam State.
 - **Offline Access**: Ability to use the app without an internet connection.
 - **Multilingual Support**: Ability to use app in different languages like English, Hindi, Assamese.
 
+## Documentation
+
+- [Gamification Trigger Event Contract](docs/GamificationTriggerEventContract.md)
+
 ## Technologies & Tools Used
 
 - **IDE**: Android Studio.
