@@ -172,7 +172,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         val normalizedInput = input.replace("-", "")
 
         val abhaPattern = Regex("^[0-9]{14}$")
-        val ayushmanPattern = Regex("^[A-Za-z0-9]{9}$")
+        val ayushmanPattern = Regex("^[A-Za-z0-9]{9,14}$")
 
         formElement.errorText = when {
             input.isEmpty() -> resources.getString(R.string.form_input_empty_error)
