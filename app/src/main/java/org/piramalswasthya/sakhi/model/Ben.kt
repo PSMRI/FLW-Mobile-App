@@ -1097,7 +1097,7 @@ data class BenHealthIdDetails(
     var healthId: String = "",
     var healthIdNumber: String = "",
     var isNewAbha: Boolean = false,
-    var familyId: String = ""
+    var familyId: String? = null
 )
 
 data class BenRegGen(
