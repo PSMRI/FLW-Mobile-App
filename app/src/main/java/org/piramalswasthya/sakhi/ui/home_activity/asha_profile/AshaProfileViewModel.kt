@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.AshaProfileDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
@@ -106,7 +105,12 @@ class AshaProfileViewModel @Inject constructor(
                 }
 
             } ?: run {
-                profileActivityCache = ProfileActivityCache(id = asha.userId.toLong(), employeeId = asha.userId)
+                val savedImageUri = preferenceDao.getProfilePicUri()?.toString() ?: ""
+                profileActivityCache = ProfileActivityCache(
+                    id = asha.userId.toLong(),
+                    employeeId = asha.userId,
+                    profileImage = savedImageUri
+                )
                 _recordExists.value = false
                 currentUser?.let {
                     dataset.setUpPage(

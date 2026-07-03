@@ -2,31 +2,22 @@ package org.piramalswasthya.sakhi.ui.home_activity.home
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
-import org.piramalswasthya.sakhi.helpers.Konstants
-import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
-import org.piramalswasthya.sakhi.work.WorkerUtils
-import java.time.Instant
 import javax.inject.Inject
 import androidx.core.net.toUri
 
@@ -91,12 +82,26 @@ class HomeViewModel @Inject constructor(
             launch {
                 if (pref.getProfilePicUri() == null) {
                     currentUser.let { user ->
-                        withContext(Dispatchers.IO) {
+                        /*withContext(Dispatchers.IO) {
                             database.profileDao.getProfileActivityById(user.userId.toLong())
                         }?.profileImage?.takeIf { it.isNotEmpty() }?.let { imageUri ->
                             val uri = imageUri.toUri()
                             pref.saveProfilePicUri(uri)
                             _restoredProfilePicUri.value = uri
+                        }*/
+                        var imageUri = withContext(Dispatchers.IO) {
+                            database.profileDao.getProfileActivityById(user.userId.toLong())
+                        }?.profileImage?.takeIf { it.isNotEmpty() }
+                        if (imageUri == null) {
+                            ashaProfileRepo.pullAndSaveAshaProfile(user)
+                            imageUri = withContext(Dispatchers.IO) {
+                                database.profileDao.getProfileActivityById(user.userId.toLong())
+                            }?.profileImage?.takeIf { it.isNotEmpty() }
+                        }
+                        imageUri?.let {
+                            val uri = it.toUri()
+                            pref.saveProfilePicUri(uri)
+                            _restoredProfilePicUri.postValue(uri)
                         }
                     }
                 }
@@ -143,6 +148,15 @@ class HomeViewModel @Inject constructor(
                         profile?.let {
                             it.profileImage = persistedUri
                             database.profileDao.insert(it)
+
+                            val base64Image = ImageUtils.getEncodedStringForBenImage(
+                                context,
+                                user.userId.toLong()
+                            )
+                            val networkModel = it.copy(
+                                profileImage = base64Image ?: ""
+                            )
+                            ashaProfileRepo.postDataToAmritServer(networkModel)
                         }
                     }
                 }
