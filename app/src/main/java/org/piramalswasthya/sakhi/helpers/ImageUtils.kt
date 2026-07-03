@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.helpers
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Base64
 import androidx.core.text.isDigitsOnly
 import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -40,8 +43,13 @@ object ImageUtils {
                     return@withContext null
                 }
                 Timber.d("Uncompressed image: ${targetFile.absolutePath}, size=${targetFile.length()}")
-                val compressedFile = Compressor.compress(context, targetFile) {
+                /*val compressedFile = Compressor.compress(context, targetFile) {
                     quality(80)
+                }*/
+                val compressedFile = Compressor.compress(context, targetFile) {
+                    resolution(500, 500)  // dimensions limit
+                    quality(60)           // aur quality bhi thoda kam
+                    format(Bitmap.CompressFormat.JPEG)
                 }
 
                 if (compressedFile.exists() && compressedFile.length() > 0) {

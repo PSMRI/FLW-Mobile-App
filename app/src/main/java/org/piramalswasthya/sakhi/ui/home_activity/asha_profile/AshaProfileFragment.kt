@@ -29,7 +29,6 @@ import org.piramalswasthya.sakhi.databinding.FragmentAshaProfileBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
-
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -61,7 +60,6 @@ class AshaProfileFragment : Fragment() {
             if (success) {
                 latestTmpUri?.let { uri ->
                     viewModel.setImageUriToFormElement(uri)
-
                     formAdapter.notifyItemChanged(0)
                     Timber.d("Image saved at @ $uri")
                 }
