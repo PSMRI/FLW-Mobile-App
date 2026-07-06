@@ -127,7 +127,6 @@ class NCDFollowUpFormRepository @Inject constructor(
             val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitNo, entity.followUpNo)
             if (existing == null || existing.updatedAt < entity.updatedAt) {
                 jsonResponseDao.insertFormResponse(entity)
-                Timber.d("📥 Saved form id=${entity.id} benId=${entity.benId}")
             }
         }
     }
