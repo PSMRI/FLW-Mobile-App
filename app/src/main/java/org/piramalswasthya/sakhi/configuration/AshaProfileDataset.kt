@@ -559,7 +559,6 @@ class AshaProfileDataset(
         val networkModel = cacheModel.copy(
             profileImage = base64Image ?: ""
         )
-        //ashaProfileRepo.postDataToAmritServer(cacheModel)
         ashaProfileRepo.postDataToAmritServer(networkModel)
     }
 

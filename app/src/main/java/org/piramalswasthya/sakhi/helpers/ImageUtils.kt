@@ -43,12 +43,9 @@ object ImageUtils {
                     return@withContext null
                 }
                 Timber.d("Uncompressed image: ${targetFile.absolutePath}, size=${targetFile.length()}")
-                /*val compressedFile = Compressor.compress(context, targetFile) {
-                    quality(80)
-                }*/
                 val compressedFile = Compressor.compress(context, targetFile) {
-                    resolution(500, 500)  // dimensions limit
-                    quality(60)           // aur quality bhi thoda kam
+                    resolution(500, 500)
+                    quality(60)
                     format(Bitmap.CompressFormat.JPEG)
                 }
 
