@@ -519,7 +519,6 @@ class AshaProfileDataset(
                 )
                 dataModel.profileImage = persistedUri ?: imageUri
                 pic.value = dataModel.profileImage
-
             } else {
                 dataModel.profileImage = imageUri
             }
@@ -559,7 +558,6 @@ class AshaProfileDataset(
         val networkModel = cacheModel.copy(
             profileImage = base64Image ?: ""
         )
-        //ashaProfileRepo.postDataToAmritServer(cacheModel)
         ashaProfileRepo.postDataToAmritServer(networkModel)
     }
 

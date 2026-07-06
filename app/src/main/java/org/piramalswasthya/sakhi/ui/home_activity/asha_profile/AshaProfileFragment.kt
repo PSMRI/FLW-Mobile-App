@@ -77,17 +77,7 @@ class AshaProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         buildAddBenDialog()
         binding.pbForm.visibility = View.VISIBLE
-        formAdapter = FormInputAdapter(
-            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
-                viewModel.updateListOnValueChanged(formId, index)
-                hardCodedListUpdate(formId)
-            },
-            imageClickListener = FormInputAdapter.ImageClickListener {
-                viewModel.setCurrentImageFormId(it)
-                takeImage()
-            },
-            isEnabled = true
-        )
+        formAdapter = buildFormAdapter(isEnabled = false)
 
         binding.form.rvInputForm.adapter = formAdapter
         viewModel.recordExists.observe(viewLifecycleOwner) { notIt ->
@@ -95,15 +85,23 @@ class AshaProfileFragment : Fragment() {
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
                 binding.rvAny.visibility = if (recordExists) View.VISIBLE else View.GONE
+
+                formAdapter = buildFormAdapter(isEnabled = !recordExists)
+                binding.form.rvInputForm.adapter = formAdapter
+                viewModel.formList.value.takeIf { it.isNotEmpty() }?.let {
+                    formAdapter.submitList(it)
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.formList.collect { list ->
-                    if (list.isNotEmpty()) formAdapter.submitList(list)
-                    binding.llContent.visibility = View.VISIBLE
-                    binding.pbForm.visibility = View.GONE
-                    binding.textError.visibility = View.GONE
+                    if (list.isNotEmpty()) {
+                        formAdapter.submitList(list)
+                        binding.llContent.visibility = View.VISIBLE
+                        binding.pbForm.visibility = View.GONE
+                        binding.textError.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -201,6 +199,18 @@ class AshaProfileFragment : Fragment() {
 
 
 
+
+    private fun buildFormAdapter(isEnabled: Boolean) = FormInputAdapter(
+        formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+            viewModel.updateListOnValueChanged(formId, index)
+            hardCodedListUpdate(formId)
+        },
+        imageClickListener = FormInputAdapter.ImageClickListener {
+            viewModel.setCurrentImageFormId(it)
+            takeImage()
+        },
+        isEnabled = isEnabled
+    )
 
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {

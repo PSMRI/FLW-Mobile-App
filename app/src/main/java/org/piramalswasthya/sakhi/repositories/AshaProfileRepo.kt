@@ -164,7 +164,6 @@ class AshaProfileRepo @Inject constructor(
                     activitiesCache.profileImage = localUri ?: existingRecord?.profileImage ?: ""
                     localUri?.let { preferenceDao.saveProfilePicUri(Uri.parse(it)) }
                 }
-                // Local existing preserve karo
                 existingRecord != null && existingRecord.profileImage.isNotEmpty() -> {
                     activitiesCache.profileImage = existingRecord.profileImage
                 }
