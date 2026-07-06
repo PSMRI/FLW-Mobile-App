@@ -33,14 +33,17 @@ class NcdEligibleListViewModel @Inject constructor(
 
     private val allBenList = recordsRepo.getNcdEligibleList
     private val filter = MutableStateFlow("")
+    private val selectedYear = MutableStateFlow<Int?>(null)
     private val selectedBenId = MutableStateFlow(0L)
 
-    val benList = combine(allBenList, filter, selectedCategory) { cacheList, filterText, selectedCat ->
+    val benList = combine(allBenList, filter, selectedCategory, selectedYear) { cacheList, filterText, selectedCat, year ->
         val list = cacheList.map { it.asDomainModel() }
         val benBasicDomainList = list.map { it.ben }
         val filteredBenBasicDomainList = filterBenList(benBasicDomainList, filterText)
 
-        val filteredIds = filteredBenBasicDomainList.map { it.benId }.toSet()
+        val filteredIds = filteredBenBasicDomainList
+            .filter { matchesYearBand(it.ageInt, year) }
+            .map { it.benId }.toSet()
 
         when (selectedCat) {
             resources.getString(R.string.screened) -> list.filter { it.savedCbacRecords.isNotEmpty() && (it.ben.benId in filteredIds) }
@@ -53,6 +56,19 @@ class NcdEligibleListViewModel @Inject constructor(
         viewModelScope.launch {
             selectedCategory.emit(cat)
         }
+    }
+
+    fun yearForPosition(position: Int): Int? =
+        if (position <= 0) null else FIRST_YEAR_OPTION + (position - 1) * YEAR_STEP
+
+    fun setSelectedYear(year: Int?) {
+        viewModelScope.launch {
+            selectedYear.emit(year)
+        }
+    }
+    private fun matchesYearBand(ageInt: Int, year: Int?): Boolean {
+        if (year == null) return true
+        return ageInt >= year && (year >= LAST_YEAR_OPTION || ageInt < year + YEAR_STEP)
     }
 
 
@@ -117,6 +133,13 @@ class NcdEligibleListViewModel @Inject constructor(
         yearsData.add(context.getString(R.string.years_80))
         return yearsData
 
+    }
+
+    companion object {
+        // Age bands offered by the year spinner: 35, 40, … 80 in 5-year steps. Keep in sync with yearsList().
+        private const val FIRST_YEAR_OPTION = 35
+        private const val LAST_YEAR_OPTION = 80
+        private const val YEAR_STEP = 5
     }
 
 }

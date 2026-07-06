@@ -519,6 +519,7 @@ class AshaProfileDataset(
                 )
                 dataModel.profileImage = persistedUri ?: imageUri
                 pic.value = dataModel.profileImage
+
             } else {
                 dataModel.profileImage = imageUri
             }
