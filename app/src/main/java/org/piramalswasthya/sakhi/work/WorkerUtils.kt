@@ -12,6 +12,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
+import androidx.work.OutOfQuotaPolicy
 
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkContinuation
@@ -133,8 +134,20 @@ object WorkerUtils {
 
         val afterRegistration: WorkContinuation = if (!skipRegistration) {
 
+            // Expedited so the OS runs the beneficiary push promptly when its
+            // network constraint is satisfied (e.g. right after connectivity
+            // returns), instead of parking it in a Doze/battery-saver
+            // maintenance window — the cause of the "offline records sync
+            // slowly on some devices" delay. RUN_AS_NON_EXPEDITED_WORK_REQUEST
+            // means it gracefully falls back to normal work if the expedited
+            // quota is exhausted. On Android < 12 expedited runs as a
+            // foreground service (brief "Syncing data…" notification via
+            // BasePushWorker.getForegroundInfo); on 12+ there is no
+            // notification. Only the registration anchor is expedited — the
+            // downstream groups remain normal deferrable work.
             val registration = syncRequestBuilder<PushToAmritWorker>()
                 .addTag("push_group1_registration")
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
             // ExistingWorkPolicy.KEEP: at most ONE push cycle runs at a time, so
