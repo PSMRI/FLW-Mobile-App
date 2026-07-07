@@ -1,16 +1,16 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
-import androidx.concurrent.futures.await
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.await
 import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -64,7 +64,7 @@ class SyncGateWorker @AssistedInject constructor(
         const val name = "SyncGateWorker"
 
         /** Debounce window — rapid saves within this window coalesce into one cycle. */
-        const val DEBOUNCE_SECONDS = 5L
+        const val DEBOUNCE_SECONDS = 2L
 
         /** How often the gate re-checks while a push cycle is still running. */
         const val BUSY_RECHECK_SECONDS = 20L
@@ -79,8 +79,9 @@ class SyncGateWorker @AssistedInject constructor(
         return try {
             val workManager = WorkManager.getInstance(applicationContext)
 
-            val chainInfos =
-                workManager.getWorkInfosForUniqueWork(WorkerUtils.pushWorkerUniqueName).await()
+            val chainInfos = withContext(Dispatchers.IO) {
+                workManager.getWorkInfosForUniqueWork(WorkerUtils.pushWorkerUniqueName).get()
+            }
             val chainActive = chainInfos.any { !it.state.isFinished }
 
             if (chainActive) {
