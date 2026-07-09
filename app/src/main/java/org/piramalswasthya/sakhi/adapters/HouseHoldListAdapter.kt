@@ -117,6 +117,18 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
 //                binding.button4.backgroundTintList = ColorStateList.valueOf(tint)
 //            }
 
+            if (gateNewBenOnInternet) {
+                val ctx = binding.root.context
+                val hasInternet = isInternetAvailable(ctx)
+                binding.button4.isEnabled = hasInternet
+                val tint = if (hasInternet) {
+                    ContextCompat.getColor(ctx, android.R.color.holo_green_dark)
+                } else {
+                    ContextCompat.getColor(ctx, R.color.md_theme_light_ongray)
+                }
+                binding.button4.backgroundTintList = ColorStateList.valueOf(tint)
+            }
+
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

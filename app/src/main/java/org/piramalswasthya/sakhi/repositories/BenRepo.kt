@@ -1547,7 +1547,6 @@ class BenRepo @Inject constructor(
                                     otherHouseType = houseDataObj.getString("other_houseType"),
                                     isHouseOwned = houseDataObj.getString("houseOwnerShip"),
                                     isHouseOwnedId = houseDataObj.getInt("houseOwnerShipId"),
-
                                     ),
                                 amenities = HouseholdAmenities(
                                     separateKitchen = houseDataObj.getString("seperateKitchen"),

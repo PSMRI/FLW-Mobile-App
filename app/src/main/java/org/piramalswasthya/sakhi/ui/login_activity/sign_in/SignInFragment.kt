@@ -327,6 +327,15 @@ class SignInFragment : Fragment() {
         }
     }
 
+    private fun updateSelectedLangText(language: Languages) {
+        binding.tvSelectedLang?.text = when (language) {
+            Languages.ENGLISH  -> getString(R.string.text_english)
+            Languages.HINDI    -> getString(R.string.text_hindi)
+            Languages.ASSAMESE -> getString(R.string.text_assamese)
+            Languages.BANGLA   -> getString(R.string.text_bangali)
+        }
+    }
+
     /**
      * get username and password
      * validate with existing logged in user if exists else call login api
