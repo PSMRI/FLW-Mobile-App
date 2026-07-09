@@ -195,7 +195,7 @@ data class BenAbhaResponse(
 data class AbhaTokenRequest(
     val clientId: String = KeyUtils.abhaClientID(),
     val clientSecret: String = KeyUtils.abhaClientSecret(),
-    val grantType: String = "Piramal12Piramal"
+    val grantType: String = "client_credentials"
 )
 
 @JsonClass(generateAdapter = true)

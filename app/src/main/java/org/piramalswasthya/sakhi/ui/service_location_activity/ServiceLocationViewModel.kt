@@ -78,11 +78,11 @@ class ServiceTypeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            val userFound = withContext(Dispatchers.IO) {
                 val loggedInUser = pref.getLoggedInUser() ?: run {
                     Timber.w("User not found")
                     _isNoUserFound.postValue(true)
-                    return@withContext
+                    return@withContext false
                 }
                 user = loggedInUser
 
@@ -157,9 +157,11 @@ class ServiceTypeViewModel @Inject constructor(
                             user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
                     }
                 }
-
+                true
             }
-            _state.value = State.SUCCESS
+            if (userFound) {
+                _state.value = State.SUCCESS
+            }
         }
     }
 

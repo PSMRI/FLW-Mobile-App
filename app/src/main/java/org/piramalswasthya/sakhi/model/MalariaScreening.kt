@@ -28,7 +28,7 @@ data class MalariaScreeningCache(
     var visitId: Long,
     var caseDate: Long = System.currentTimeMillis(),
     val houseHoldDetailsId: Long,
-    val screeningDate: Long = System.currentTimeMillis(),
+    var screeningDate: Long = System.currentTimeMillis(),
     var beneficiaryStatus: String ? = null,
     var beneficiaryStatusId: Int = 0,
     var dateOfDeath: Long = System.currentTimeMillis(),

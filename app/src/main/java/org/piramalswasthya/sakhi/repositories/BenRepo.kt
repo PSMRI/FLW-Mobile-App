@@ -52,8 +52,11 @@ class BenRepo @Inject constructor(
 ) {
 
     private val processNewBenMutex = Mutex()
+    private enum class UploadResult { SUCCESS, FAILED, PAYLOAD_TOO_LARGE }
 
     companion object {
+        // Max beneficiaries pushed to Amrit in a single request. Large batches
+        private const val BEN_SYNC_BATCH_SIZE = 50
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         fun getCurrentDate(millis: Long = System.currentTimeMillis()): String {
@@ -449,11 +452,6 @@ class BenRepo @Inject constructor(
             Timber.d("YTR 420 $benList")
             Timber.d("YTR 420 ${benList.size}")
 
-            val benNetworkPostList = mutableSetOf<BenPost>()
-            val householdNetworkPostList = mutableSetOf<HouseholdNetwork>()
-            val kidNetworkPostList = mutableSetOf<BenRegKidNetwork>()
-//            val cbacPostList = mutableSetOf<CbacPost>()
-
             benList.forEach {
                 Timber.d("START: ${it.beneficiaryId}")
 
@@ -463,40 +461,86 @@ class BenRepo @Inject constructor(
             }
 
             val updateBenList = benDao.getAllBenForSyncWithServer()
-            updateBenList.forEach {
-                benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
-                benNetworkPostList.add(it.asNetworkPostModel(context, user))
-                householdNetworkPostList.add(
-                    householdDao.getHousehold(it.householdId)!!.asNetworkModel(user)
+
+            // CHUNKED PUSH: uploading every unsynced beneficiary in one request
+            // overflows the server body-size limit once records
+            // accumulate, permanently stalling sync. Split into fixed-size
+            // batches so each batch uploads independently and one oversized/
+            // failed batch can't block the rest.
+            var totalSucceeded = 0
+            var totalFailed = 0
+            updateBenList.chunked(BEN_SYNC_BATCH_SIZE).forEach { chunk ->
+                val (succeeded, failed) = uploadBenBatch(chunk, user)
+                totalSucceeded += succeeded
+                totalFailed += failed
+            }
+            // The worker still returns true (failed records are marked via
+            // benSyncWithServerFailed and retry on the next cycle).
+            Timber.d("Beneficiary sync complete: $totalSucceeded succeeded, $totalFailed failed out of ${updateBenList.size}")
+            return@withContext true
+        }
+    }
+
+    /**
+     * Uploads a single batch of beneficiaries (with their correlated household
+     * and kid records). On HTTP 413 the batch is split in half and retried
+     * recursively; a single record that is still too large is marked failed and
+     * logged. Returns (succeeded, failed) beneficiary counts.
+     */
+    private suspend fun uploadBenBatch(
+        benCacheList: List<BenRegCache>,
+        user: User,
+    ): Pair<Int, Int> {
+        if (benCacheList.isEmpty()) return 0 to 0
+
+        val benNetworkPostList = mutableSetOf<BenPost>()
+        val householdNetworkPostList = mutableSetOf<HouseholdNetwork>()
+        val kidNetworkPostList = mutableSetOf<BenRegKidNetwork>()
+
+        benCacheList.forEach {
+            benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
+            benNetworkPostList.add(it.asNetworkPostModel(context, user))
+            householdDao.getHousehold(it.householdId)?.let { household ->
+                householdNetworkPostList.add(household.asNetworkModel(user))
+            }
+            try {
+                if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(
+                    it.asKidNetworkModel(user)
                 )
-                try {
-                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(
-                        it.asKidNetworkModel(
-                            user
-                        )
-                    )
-                } catch (e: java.lang.Exception) {
-                    Timber.e("caught error in adding kidDetails : $e")
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("caught error in adding kidDetails : $e")
+            }
+        }
+
+        val benIds = benNetworkPostList.map { it.benId }.toLongArray()
+
+        return when (postDataToAmritServer(
+            benNetworkPostList, householdNetworkPostList, kidNetworkPostList
+        )) {
+            UploadResult.SUCCESS -> {
+                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+                benNetworkPostList.size to 0
             }
 
-            // RECORD-LEVEL ISOLATION: BenRepo previously returned true
-            // regardless of upload success (Pattern C — silent success).
-            // Now failures are explicitly logged so they're visible in Timber
-            // logs. The worker still returns true (failed records are already
-            // marked via benSyncWithServerFailed and retry on next cycle).
-            val uploadDone = postDataToAmritServer(
-                benNetworkPostList, householdNetworkPostList, kidNetworkPostList,
-            )
-            if (!uploadDone) {
-                benNetworkPostList.takeIf { it.isNotEmpty() }?.map { it.benId }?.let {
-                    benDao.benSyncWithServerFailed(*it.toLongArray())
-                }
+            UploadResult.FAILED -> {
+                if (benIds.isNotEmpty()) benDao.benSyncWithServerFailed(*benIds)
                 Timber.e("Beneficiary batch push FAILED: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
-            } else {
-                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+                0 to benNetworkPostList.size
             }
-            return@withContext true
+
+            UploadResult.PAYLOAD_TOO_LARGE -> {
+                if (benCacheList.size <= 1) {
+                    // Cannot split further — a single record exceeds the limit.
+                    if (benIds.isNotEmpty()) benDao.benSyncWithServerFailed(*benIds)
+                    Timber.e("Beneficiary push FAILED: single record exceeds server payload limit (HTTP 413), benIds=${benIds.toList()}")
+                    return 0 to benCacheList.size
+                }
+                val mid = benCacheList.size / 2
+                Timber.w("Beneficiary batch too large (HTTP 413), splitting ${benCacheList.size} -> ${mid} + ${benCacheList.size - mid}")
+                val (s1, f1) = uploadBenBatch(benCacheList.subList(0, mid), user)
+                val (s2, f2) = uploadBenBatch(benCacheList.subList(mid, benCacheList.size), user)
+                (s1 + s2) to (f1 + f2)
+            }
         }
     }
 
@@ -505,8 +549,8 @@ class BenRepo @Inject constructor(
         householdNetworkPostSet: MutableSet<HouseholdNetwork>,
         kidNetworkPostSet: MutableSet<BenRegKidNetwork>,
         retryCount: Int = 3,
-    ): Boolean {
-        if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
+    ): UploadResult {
+        if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return UploadResult.SUCCESS
         val benIds = benNetworkPostSet.map { it.benId }
         val hhIds = householdNetworkPostSet.map { it.householdId }
         Timber.d("Amrit push syncDataToAmrit: sending ${benNetworkPostSet.size} ben(s) $benIds, ${householdNetworkPostSet.size} hh(s) $hhIds, ${kidNetworkPostSet.size} kid(s)")
@@ -541,7 +585,7 @@ class BenRepo @Inject constructor(
                             Timber.d("Amrit push syncDataToAmrit DB updated: benIds=${it.toList()}")
                         }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
-                        return true
+                        return UploadResult.SUCCESS
                     } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
                         val user = preferenceDao.getLoggedInUser()
                             ?: throw IllegalStateException("User not logged in according to db")
@@ -555,22 +599,26 @@ class BenRepo @Inject constructor(
                 } else {
                     Timber.e("Amrit push syncDataToAmrit failed: response body is null, httpStatus=$statusCode")
                 }
+            } else if (statusCode == 413) {
+                // Payload Too Large — signal the caller to split this batch.
+                Timber.w("Amrit push syncDataToAmrit payload too large: httpStatus=413, ${benNetworkPostSet.size} ben(s)")
+                return UploadResult.PAYLOAD_TOO_LARGE
             }
             Timber.w("Amrit push syncDataToAmrit bad response: httpStatus=$statusCode, benIds=$benIds")
-            return false
+            return UploadResult.FAILED
         } catch (e: SocketTimeoutException) {
             Timber.e("Amrit push syncDataToAmrit timeout: benIds=$benIds, error=$e")
             if (retryCount > 0) return postDataToAmritServer(
                 benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
             Timber.e("Amrit push syncDataToAmrit: max retries exhausted")
-            return false
+            return UploadResult.FAILED
         } catch (e: JSONException) {
             Timber.e("Amrit push syncDataToAmrit JSON error: benIds=$benIds, error=$e")
-            return false
+            return UploadResult.FAILED
         } catch (e: java.lang.Exception) {
             Timber.e("Amrit push syncDataToAmrit error: benIds=$benIds, error=$e")
-            return false
+            return UploadResult.FAILED
         }
     }
 
@@ -647,7 +695,7 @@ class BenRepo @Inject constructor(
 
 
         val rmnchData = SendingRMNCHData(
-         //   listOf(householdNetworkPostSet),
+            //   listOf(householdNetworkPostSet),
             benficieryRegistrationData= benNetworkPostList
         )
         try {
@@ -681,7 +729,7 @@ class BenRepo @Inject constructor(
         } catch (e: SocketTimeoutException) {
             Timber.e("Caught exception $e here")
             if (retryCount > 0) return deactivateBeneficiary(
-               benNetworkPostSet, retryCount - 1
+                benNetworkPostSet, retryCount - 1
             )
             Timber.e("deactivateBeneficiary: max retries exhausted")
             return false
@@ -756,7 +804,7 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                 // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+                                // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
 
                                 if (errorMessage == "No record found") return@withContext 0
                             }
@@ -939,7 +987,7 @@ class BenRepo @Inject constructor(
                         getCurrentDate(lastTimeStamp),
                         getCurrentDate(),
 
-                    )
+                        )
                 )
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -1500,7 +1548,7 @@ class BenRepo @Inject constructor(
                                     isHouseOwned = houseDataObj.getString("houseOwnerShip"),
                                     isHouseOwnedId = houseDataObj.getInt("houseOwnerShipId"),
 
-                                ),
+                                    ),
                                 amenities = HouseholdAmenities(
                                     separateKitchen = houseDataObj.getString("seperateKitchen"),
                                     separateKitchenId = houseDataObj.getInt("seperateKitchenId"),

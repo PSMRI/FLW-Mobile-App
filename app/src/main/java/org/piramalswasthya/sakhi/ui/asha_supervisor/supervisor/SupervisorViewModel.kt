@@ -124,8 +124,12 @@ class SupervisorViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-//            _user = pref.getLoggedInUser()!!
-            userRepo.setFacilityData(currentUser!!.userId)
+            val loggedInUser = currentUser
+            if (loggedInUser == null) {
+                _navigateToLoginPage.value = true
+                return@launch
+            }
+            userRepo.setFacilityData(loggedInUser.userId)
 
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
@@ -135,8 +139,9 @@ class SupervisorViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                user = pref.getLoggedInUser()!!
+            val userFound = withContext(Dispatchers.IO) {
+                val loggedInUser = pref.getLoggedInUser() ?: return@withContext false
+                user = loggedInUser
                 _userName = user.name
                 currentLocation = pref.getLocationRecord()
                 _selectedVillage = currentLocation?.village
@@ -160,9 +165,13 @@ class SupervisorViewModel @Inject constructor(
                             user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
                     }
                 }
-
+                true
             }
-            _state.value = State.SUCCESS
+            if (userFound) {
+                _state.value = State.SUCCESS
+            } else {
+                _navigateToLoginPage.value = true
+            }
         }
     }
 

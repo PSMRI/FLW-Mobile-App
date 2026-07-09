@@ -223,7 +223,7 @@ class NewHouseholdFragment : Fragment() {
                             viewModel.prefillFromAyushmanCard(member)
                             (_binding?.form?.rvInputForm?.adapter as? FormInputAdapter)
                                 ?.notifyDataSetChanged()
-                            if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
+                           // if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
                         }
                     } else {
                         Toast.makeText(
@@ -263,7 +263,7 @@ class NewHouseholdFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (!recordExists) View.VISIBLE else View.GONE
-                if (gateSubmitOnAbhaFetch && !recordExists) setSubmitEnabled(false)
+               // if (gateSubmitOnAbhaFetch && !recordExists) setSubmitEnabled(false)
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         when (index) {

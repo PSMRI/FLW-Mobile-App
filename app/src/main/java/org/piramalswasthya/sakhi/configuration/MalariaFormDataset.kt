@@ -909,6 +909,7 @@ class MalariaFormDataset(
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         (cacheModel as MalariaScreeningCache).let { form ->
             form.caseDate = getLongFromDate(dateOfCase.value)
+            form.screeningDate = getLongFromDate(dateOfCase.value)
             form.feverMoreThanTwoWeeks =
                 isFever.value == resources.getStringArray(R.array.yes_no)[0]
             form.fluLikeIllness = isFluLikeIllness.value == resources.getStringArray(R.array.yes_no)[0]
