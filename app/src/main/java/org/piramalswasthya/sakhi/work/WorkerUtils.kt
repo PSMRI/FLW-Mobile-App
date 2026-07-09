@@ -12,6 +12,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
+import androidx.work.OutOfQuotaPolicy
 
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkContinuation
@@ -42,6 +43,7 @@ object WorkerUtils {
 
     const val pushWorkerUniqueName = "PUSH-TO-AMRIT"
     const val pullWorkerUniqueName = "PULL-FROM-AMRIT"
+    const val syncGateUniqueName = "SYNC-GATE"
 
     private val networkOnlyConstraint = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -90,15 +92,72 @@ object WorkerUtils {
     //   - Duplicate FormSyncWorker CONSOLIDATED into single instance in Group 4
     //   - PushChildHBYCToAmritWorker remains disabled (was already commented out)
     // ═══════════════════════════════════════════════════════════════════
-    fun triggerAmritPushWorker(context: Context ,skipRegistration: Boolean = false) {
+    // Public entry point for every form-save / data-save flow.
+    //
+    // Rapid back-to-back saves are DEBOUNCED through SyncGateWorker: each call
+    // (re)schedules a single short-delayed gate (REPLACE), so a burst of saves
+    // collapses into ONE push cycle. The gate also SERIALIZES cycles — it never
+    // starts a new push while one is already running; it re-arms and starts the
+    // next cycle only after the current one finishes. This delivers the
+    // "never drop a save" guarantee (that APPEND_OR_REPLACE also gives) WITHOUT
+    // stacking duplicate 42-worker chains that would fire redundant/duplicate
+    // requests at the server (the downside of APPEND_OR_REPLACE).
+    //
+    // REPLACE is SAFE here because SyncGateWorker performs NO sync-state
+    // mutation — it only checks state and enqueues. (REPLACE on the heavy chain
+    // itself would be unsafe: it could cancel a worker mid-upload and strand a
+    // record in SYNCING.)
+    //
+    // The skipRegistration full-sync path (login / home refresh) is a
+    // deliberate one-shot and bypasses the debounce.
+    fun triggerAmritPushWorker(context: Context, skipRegistration: Boolean = false) {
+        if (skipRegistration) {
+            enqueuePushChain(context, skipRegistration = true)
+            return
+        }
+        val gate = OneTimeWorkRequestBuilder<SyncGateWorker>()
+            .setInitialDelay(SyncGateWorker.DEBOUNCE_SECONDS, TimeUnit.SECONDS)
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            syncGateUniqueName,
+            ExistingWorkPolicy.REPLACE,
+            gate
+        )
+    }
+
+    // Builds and enqueues the full push fan-out (registration → grouped
+    // parallel chains). Invoked by SyncGateWorker for the normal debounced
+    // path, and directly by triggerAmritPushWorker for the full-sync path.
+    // Enqueued as unique work with KEEP so a cycle can never overlap itself.
+    fun enqueuePushChain(context: Context, skipRegistration: Boolean = false) {
         val workManager = WorkManager.getInstance(context)
 
         val afterRegistration: WorkContinuation = if (!skipRegistration) {
 
+            // Expedited so the OS runs the beneficiary push promptly when its
+            // network constraint is satisfied (e.g. right after connectivity
+            // returns), instead of parking it in a Doze/battery-saver
+            // maintenance window — the cause of the "offline records sync
+            // slowly on some devices" delay. RUN_AS_NON_EXPEDITED_WORK_REQUEST
+            // means it gracefully falls back to normal work if the expedited
+            // quota is exhausted. On Android < 12 expedited runs as a
+            // foreground service (brief "Syncing data…" notification via
+            // BasePushWorker.getForegroundInfo); on 12+ there is no
+            // notification. Only the registration anchor is expedited — the
+            // downstream groups remain normal deferrable work.
             val registration = syncRequestBuilder<PushToAmritWorker>()
                 .addTag("push_group1_registration")
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
 
+            // ExistingWorkPolicy.KEEP: at most ONE push cycle runs at a time, so
+            // full chains never stack (which APPEND_OR_REPLACE would do →
+            // duplicate requests to the server for every entity type).
+            //
+            // KEEP's usual trade-off — dropping a trigger fired mid-cycle — is
+            // handled UPSTREAM by SyncGateWorker: only the gate reaches this
+            // method, and it does so only when no cycle is active, re-arming to
+            // start a follow-up cycle for anything saved during the current one.
             workManager.beginUniqueWork(
                 pushWorkerUniqueName,
                 ExistingWorkPolicy.KEEP,

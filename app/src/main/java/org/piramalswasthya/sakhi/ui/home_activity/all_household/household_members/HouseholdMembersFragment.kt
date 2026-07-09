@@ -249,7 +249,7 @@ class HouseholdMembersFragment : Fragment() {
         }
 
         if (isMitaninFlavor && binding.fabAddMember.visibility == View.VISIBLE) {
-            setupFabAddMemberInternetGate()
+           // setupFabAddMemberInternetGate()
         }
 
         val benAdapter = BenListAdapter(

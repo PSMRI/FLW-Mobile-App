@@ -275,7 +275,7 @@ class AllHouseholdFragment : Fragment() {
             if (hasDraft) draftLoadAlert.show()
             else viewModel.navigateToNewHouseholdRegistration(false)
         }
-        if (isMitaninFlavor) setupNextPageInternetGate()
+       // if (isMitaninFlavor) setupNextPageInternetGate()
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 

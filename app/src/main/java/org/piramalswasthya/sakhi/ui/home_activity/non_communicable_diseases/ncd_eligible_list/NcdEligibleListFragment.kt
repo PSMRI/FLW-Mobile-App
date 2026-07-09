@@ -134,15 +134,11 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         }
         binding.tilRvDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem != getString(R.string.select_years)) {
-                    viewModel.filterText(selectedItem)
-                }
-
+                viewModel.setSelectedYear(viewModel.yearForPosition(position))
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                Timber.d("Called here!")
+                viewModel.setSelectedYear(null)
             }
         }
         binding.searchView.setOnFocusChangeListener { searchView, b ->
