@@ -1,12 +1,16 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.Context
+import android.net.Uri
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -18,7 +22,8 @@ class AshaProfileRepo @Inject constructor(
     private val amritApiService: AmritApiService,
     private val profileDao: ProfileDao,
     private val preferenceDao: PreferenceDao,
-    private val userRepo: UserRepo
+    private val userRepo: UserRepo,
+    @ApplicationContext private val context: Context
 ) {
 
 
@@ -37,7 +42,7 @@ class AshaProfileRepo @Inject constructor(
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
                     if (responseStatusCode == 200) {
-                        Timber.d("response : $jsonObj")
+                        Timber.d("responseAsha : $jsonObj")
                         try {
                             val dataObj = jsonObj.getString("data")
                             saveProfileData(dataObj)
@@ -144,17 +149,26 @@ class AshaProfileRepo @Inject constructor(
         }
     }
     private suspend fun saveProfileData(dataObj: String) {
-
         val activitiesCache =
             Gson().fromJson(dataObj, ProfileActivityCache::class.java) as ProfileActivityCache
         if (activitiesCache != null) {
-            // Preserve local profileImage — server stores the URI string which is
-            // only meaningful on this device, so always prefer the local file.
             if (activitiesCache.abhaNumber == null) activitiesCache.abhaNumber = ""
 
             val existingRecord = profileDao.getProfileActivityById(activitiesCache.employeeId.toLong())
-            if (existingRecord != null && existingRecord.profileImage.isNotEmpty()) {
-                activitiesCache.profileImage = existingRecord.profileImage
+            val serverImage = activitiesCache.profileImage
+            when {
+                serverImage.isNotEmpty() && !serverImage.startsWith("file://") -> {
+                    val localUri = ImageUtils.saveBenImageFromServerToStorage(
+                        context, serverImage, activitiesCache.employeeId.toLong()
+                    )
+                    activitiesCache.profileImage = localUri ?: existingRecord?.profileImage ?: ""
+                    localUri?.let { preferenceDao.saveProfilePicUri(Uri.parse(it)) }
+                }
+
+                existingRecord != null && existingRecord.profileImage.isNotEmpty() -> {
+                    activitiesCache.profileImage = existingRecord.profileImage
+                }
+                else -> activitiesCache.profileImage = ""
             }
             profileDao.insert(activitiesCache)
         }
