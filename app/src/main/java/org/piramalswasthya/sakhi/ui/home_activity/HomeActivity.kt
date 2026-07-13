@@ -77,6 +77,10 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
+import org.piramalswasthya.sakhi.utils.BellBadgeHelper
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -134,6 +138,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
 
     private val viewModel: HomeViewModel by viewModels()
+
+    private val notificationViewModel: NotificationPanelViewModel by viewModels()
 
     private val langChooseAlert by lazy {
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -237,6 +243,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
         FirebaseMessaging.getInstance().subscribeToTopic("All")
+        // Register this device's FCM token with the server for the logged-in user.
+        FcmTokenUploader.uploadToken(this)
 //        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
         super.onCreate(savedInstanceState)
@@ -573,6 +581,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 homeMenu.isVisible = showMenuHome
                 langMenu.isVisible = !showMenuHome
 
+                val notifMenu = menu.findItem(R.id.toolbar_menu_notifications)
+                BellBadgeHelper.bind(
+                    notifMenu,
+                    this@HomeActivity,
+                    notificationViewModel.unreadCount
+                ) {
+                    NotificationPanelFragment.open(supportFragmentManager)
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

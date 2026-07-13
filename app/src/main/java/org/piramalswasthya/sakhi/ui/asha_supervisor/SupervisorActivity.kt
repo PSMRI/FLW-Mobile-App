@@ -47,6 +47,10 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
+import org.piramalswasthya.sakhi.utils.BellBadgeHelper
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.util.Locale
 import javax.inject.Inject
@@ -81,6 +85,8 @@ class SupervisorActivity : AppCompatActivity() {
 
 
     private val viewModel: SupervisorViewModel by viewModels()
+
+    private val notificationViewModel: NotificationPanelViewModel by viewModels()
 
     private val langChooseAlert by lazy {
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -180,6 +186,9 @@ class SupervisorActivity : AppCompatActivity() {
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
+
+        // Register this device's FCM token with the server for the logged-in supervisor/CHO/ANM.
+        FcmTokenUploader.uploadToken(this)
 
         val permissions = arrayOf<String>(
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -354,6 +363,14 @@ class SupervisorActivity : AppCompatActivity() {
                 val syncMenu = menu.findItem(R.id.sync_status)
                 syncMenu.isVisible = false
 
+                val notifMenu = menu.findItem(R.id.toolbar_menu_notifications)
+                BellBadgeHelper.bind(
+                    notifMenu,
+                    this@SupervisorActivity,
+                    notificationViewModel.unreadCount
+                ) {
+                    NotificationPanelFragment.open(supportFragmentManager)
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
