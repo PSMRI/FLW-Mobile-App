@@ -286,6 +286,7 @@ dependencies {
     kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testImplementation "androidx.work:work-testing:$work_version"
+    testImplementation 'org.xerial:sqlite-jdbc:3.45.3.0'
 
     // Instrumented Testing
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

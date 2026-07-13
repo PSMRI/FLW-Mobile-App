@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.Context
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
@@ -24,13 +25,14 @@ class AshaProfileRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var profileDao: ProfileDao
     @MockK private lateinit var preferenceDao: PreferenceDao
     @MockK private lateinit var userRepo: UserRepo
+    private val context: Context = mockk(relaxed = true)
 
     private lateinit var repo: AshaProfileRepo
 
     @Before
     override fun setUp() {
         super.setUp()
-        repo = AshaProfileRepo(amritApiService, profileDao, preferenceDao, userRepo)
+        repo = AshaProfileRepo(amritApiService, profileDao, preferenceDao, userRepo, context)
     }
 
     // =====================================================
