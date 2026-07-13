@@ -203,7 +203,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class
     ],
     views = [BenBasicCache::class],
-    version = 60, exportSchema = false
+    version = 61, exportSchema = false
 )
 
 @TypeConverters(
@@ -273,6 +273,10 @@ abstract class InAppDb : RoomDatabase() {
         @Volatile
         private var INSTANCE: InAppDb? = null
 
+        const val MIGRATION_60_61_NORMALIZE_ISDEATH_SQL =
+            "UPDATE BENEFICIARY SET isDeath = 0 " +
+                    "WHERE isDeath IS NULL OR (isDeath <> 0 AND isDeath <> 1)"
+
         fun tableExists(db: SupportSQLiteDatabase, tableName: String): Boolean {
             val cursor = db.query(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
@@ -333,6 +337,17 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+
+            val MIGRATION_60_61 = object : Migration(60, 61) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        if (tableExists(database, "BENEFICIARY")) {
+                            database.execSQL(MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
+                        }
+                    } catch (_: Exception) {
+                    }
+                }
+            }
 
             val MIGRATION_59_60 = object : Migration(59, 60) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3204,7 +3219,7 @@ abstract class InAppDb : RoomDatabase() {
 
                     if (tableExists(database, "BENEFICIARY")) {
                         val beneficiaryColumns = listOf(
-                            "isDeath INTEGER NOT NULL DEFAULT 'undefined'",
+                            "isDeath INTEGER NOT NULL DEFAULT 0",
                             "isDeathValue TEXT",
                             "dateOfDeath TEXT",
                             "timeOfDeath TEXT",
@@ -3397,7 +3412,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_56_57,
                         MIGRATION_57_58,
                         MIGRATION_58_59,
-                        MIGRATION_59_60
+                        MIGRATION_59_60,
+                        MIGRATION_60_61
 
 
                     ).build()
