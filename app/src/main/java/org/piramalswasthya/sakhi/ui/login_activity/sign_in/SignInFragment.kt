@@ -311,11 +311,10 @@ class SignInFragment : Fragment() {
             }
         }
 
-        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-          binding.tvDemo?.visibility =View.VISIBLE
-        } else {
-            binding.tvDemo?.visibility =View.GONE
-        }
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+        val isNonProdMitanin = isMitanin &&
+                (!BuildConfig.FLAVOR.equals("mitanin", ignoreCase = true) || BuildConfig.DEBUG)
+        binding.tvDemo?.visibility = if (isNonProdMitanin) View.VISIBLE else View.GONE
     }
 
     private fun updateSelectedLangText(language: Languages) {
