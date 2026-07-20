@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.model
 
 import androidx.annotation.DrawableRes
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
@@ -69,6 +71,37 @@ object NotificationKeys {
     const val REFERENCE_ID = "reference_id"
     const val PRIORITY = "priority"
 }
+
+// ============================================================
+// Room entity (persistent store — single source of truth)
+// ============================================================
+
+/**
+ * Persisted notification row. `notificationId` is the server id (PK). `userId` scopes rows to the
+ * locally logged-in user; `read`/`cleared`/`viewed` are local interaction flags (soft-clear so a
+ * poll can't resurrect a cleared row). Deeplink context is flat scalars (`navId` + the ids), so no
+ * TypeConverter is needed. `createdTs` is receive/fetch time — the payload carries no timestamp.
+ */
+@Entity(tableName = "NOTIFICATION")
+data class NotificationEntity(
+    @PrimaryKey val notificationId: Long,
+    val userId: Long,
+    val role: String? = null,
+    val eventType: String,
+    val navId: String? = null,
+    val title: String,
+    val body: String,
+    val priority: String? = null,
+    val createdTs: Long,
+    val read: Boolean = false,
+    val cleared: Boolean = false,
+    val viewed: Boolean = false,
+    val senderUserId: Long? = null,
+    val receiverUserId: Long? = null,
+    val beneficiaryId: Long? = null,
+    val activityId: Long? = null,
+    val referenceId: Long? = null
+)
 
 // ============================================================
 // UI / domain model (what the adapter + ViewModel bind to)
@@ -184,6 +217,76 @@ fun notificationFromFcm(
         read = false,
         navId = data[NotificationKeys.NAV_ID],
         priority = data[NotificationKeys.PRIORITY],
+        senderUserId = data[NotificationKeys.SENDER_USER_ID]?.toLongOrNull(),
+        receiverUserId = data[NotificationKeys.RECEIVER_USER_ID]?.toLongOrNull(),
+        beneficiaryId = data[NotificationKeys.BENEFICIARY_ID]?.toLongOrNull(),
+        activityId = data[NotificationKeys.ACTIVITY_ID]?.toLongOrNull(),
+        referenceId = data[NotificationKeys.REFERENCE_ID]?.toLongOrNull()
+    )
+}
+
+/** Room row → UI model. */
+fun NotificationEntity.toDomain(): NotificationDomain = NotificationDomain(
+    notificationId = notificationId,
+    eventType = eventType,
+    title = title,
+    body = body,
+    createdTs = createdTs,
+    read = read,
+    navId = navId,
+    priority = priority,
+    senderUserId = senderUserId,
+    receiverUserId = receiverUserId,
+    beneficiaryId = beneficiaryId,
+    activityId = activityId,
+    referenceId = referenceId
+)
+
+/**
+ * Poll / list API path → Room row, scoped to [userId]. Returns null if the payload has no `data`.
+ * @param createdTs receive/fetch time (payload carries no timestamp).
+ */
+fun NotificationDto.toEntity(userId: Long, createdTs: Long, read: Boolean = false): NotificationEntity? {
+    val d = data ?: return null
+    return NotificationEntity(
+        notificationId = d.notificationId,
+        userId = userId,
+        eventType = d.notificationType.orEmpty(),
+        navId = d.navId,
+        title = title.orEmpty(),
+        body = body.orEmpty(),
+        priority = d.priority,
+        createdTs = createdTs,
+        read = read,
+        senderUserId = d.senderUserId,
+        receiverUserId = d.receiverUserId,
+        beneficiaryId = d.beneficiaryId,
+        activityId = d.activityId,
+        referenceId = d.referenceId
+    )
+}
+
+/**
+ * FCM push path (`RemoteMessage.data` string map) → Room row, scoped to [userId].
+ * Returns null if the required `notification_id` is missing/unparseable.
+ */
+fun notificationEntityFromFcm(
+    data: Map<String, String>,
+    title: String?,
+    body: String?,
+    userId: Long,
+    receivedTs: Long
+): NotificationEntity? {
+    val id = data[NotificationKeys.NOTIFICATION_ID]?.toLongOrNull() ?: return null
+    return NotificationEntity(
+        notificationId = id,
+        userId = userId,
+        eventType = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty(),
+        navId = data[NotificationKeys.NAV_ID],
+        title = title.orEmpty(),
+        body = body.orEmpty(),
+        priority = data[NotificationKeys.PRIORITY],
+        createdTs = receivedTs,
         senderUserId = data[NotificationKeys.SENDER_USER_ID]?.toLongOrNull(),
         receiverUserId = data[NotificationKeys.RECEIVER_USER_ID]?.toLongOrNull(),
         beneficiaryId = data[NotificationKeys.BENEFICIARY_ID]?.toLongOrNull(),
