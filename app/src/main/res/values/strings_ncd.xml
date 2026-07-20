@@ -302,4 +302,9 @@
     <string name="years_70">70 YEARS</string>
     <string name="years_75">75 YEARS</string>
     <string name="years_80">80 YEARS</string>
+
+    <string name="suspected_leprosy_case">SUSPECTED LEPROSY CASE</string>
+    <string name="ncd_referral_type">NCD</string>
+    <string name="suspected_tb_case">Suspected TB Case</string>
+    <string name="suspected_copd_case">Suspected COPD Case</string>
 </resources>

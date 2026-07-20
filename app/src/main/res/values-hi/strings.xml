@@ -71,6 +71,8 @@
     <string name="post_abortion_contraception_is_paiucd_inserted_after_an_abortion">Post Abortion Contraception\nIs PAIUCD inserted after an abortion</string>
     <string name="termination_done_by">गर्भसमापन किसके द्वारा किया गया</string>
     <string name="method_of_termination">गर्भसमापन की विधि</string>
+    <string name="sanitary_napkin_used">क्या सैनिटरी पैड का उपयोग किया जाता है?</string>
+
     <string name="serial_no_as_per_admission_evacuation_register">प्रवेश/निकासी रजिस्टर के अनुसार क्रम संख्या</string>
     <string name="facility_place_of_abortion">सुविधा (गर्भपात का स्थान)</string>
     <string name="abortion_type">गर्भपात का प्रकार</string>
@@ -107,7 +109,7 @@
     <string name="who_identified_hrp">एचआरपी के रूप में किसने पहचाना?</string>
     <string name="probable_cause_of_death">मृत्यु का कारण</string>
     <string name="other_death_cause">मृत्यु का अन्य कारण</string>
-    <string name="has_pw_delivered">क्या गर्भवती महिला ने प्रसव कर लिया है?</string>
+    <string name="has_pw_delivered">क्या गर्भवती महिला का प्रसव हो चुका है?</string>
     <string name="mcp_cards">MCP कार्ड</string>
     <string name="front_side">अगला पृष्ठ</string>
     <string name="back_side">पिछला पृष्ठ</string>
@@ -181,7 +183,7 @@
     </string-array>
 
     <string name="tracking_date">भेंट की तिथि</string>
-    <string name="mdsr_form">मातृ मृत्यु निगरानी एवं प्रतिक्रिया (MDSR)</string>
+    <string name="mdsr_form">मातृ मृत्यु निगरानी एवं प्रतिक्रिया (एमडीएसआर)</string>
     <string name="mdsr_district">जिला</string>
     <string name="mdsr_state">राज्य</string>
     <string name="mdsr_month">महीना</string>
@@ -219,9 +221,9 @@
     <string name="hbnc_baby_weight_2_5_alert">माँ को शिशु को अतिरिक्त गर्मी देने और उसे बार-बार दूध पिलाने की सलाह दें। अगर शिशु (कम जन्म वज़न या सामान्य) का वज़न नहीं बढ़ रहा है, तो नज़दीकी स्वास्थ्य केंद्र के एसएनसीयू में रेफर करें।</string>
     <string name="str_weight_at_birth_gram">जन्म के समय वजन (ग्राम)</string>
     <string name="btn_submit">सबमिट करें</string>
-    <string name="irs_off">आईआरएस बंद</string>
+    <string name="irs_off">मलेरिया रोकथाम छिड़काव बंद</string>
     <string name="adolescent_health_form">किशोर स्वास्थ्य प्रपत्र</string>
-    <string name="irs_on">आईआरएस चालू</string>
+    <string name="irs_on">मलेरिया रोकथाम छिड़काव चालू</string>
     <string name="ben_pending_sync">सिंक लंबित</string>
     <string name="tv_husband_name_ph">पति का नाम</string>
     <string name="tv_spouse_name_ph">पति/पत्नी का नाम</string>
@@ -355,7 +357,7 @@
     <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
     <string name="anc_visits">एएनसी भ्रमण</string>
     <string name="pnc_visits">प्रसवोत्तर देखभाल भ्रमण</string>
-    <string name="add_anc_visits">एएनसी भ्रमण जोड़ें</string>
+    <string name="add_anc_visits">एएनसी जाँच जोड़ें</string>
     <string name="add_pnc_visits">प्रसवोत्तर देखभाल भ्रमण जोड़ें</string>
     <string name="id">आईडी</string>
     <string name="no_of_children">बच्चों की संख्या</string>
@@ -364,8 +366,8 @@
     <string name="household_id">परिवार आईडी</string>
     <string name="contact_number">संपर्क संख्या</string>
     <string name="show_vaccines">टीके दिखाएँ</string>
-    <string name="add_cbac">सीबीएसी जोड़ें</string>
-    <string name="view_cbac">सीबीएसी देखें</string>
+    <string name="add_cbac">सीबैक जोड़ें</string>
+    <string name="view_cbac">सीबैक देखें</string>
     <string name="view">देखें</string>
     <string name="vaccine_fill">भरें</string>
     <string name="home">घर</string>
@@ -393,10 +395,10 @@
     <string name="survey_register">सर्वेक्षण रजिस्टर</string>
     <string name="all_household_list">सभी परिवारों की सूची</string>
     <string name="beneficiaries_data">लाभार्थियों का डेटा</string>
-    <string name="cdr_list">सीडीआर सूची</string>
-    <string name="mdsr_list">एमडीएसआर सूची</string>
-    <string name="mdsr">एमडीएसआर</string>
-    <string name="cdr">सीडीआर</string>
+    <string name="cdr_list">सीडीआर (बाल मृत्यु) सूची</string>
+    <string name="mdsr_list">एमडीएसआर (मातृ मृत्यु) सूची</string>
+    <string name="mdsr">एमडीएसआर (मातृ मृत्यु)</string>
+    <string name="cdr">सीडीआर (बाल मृत्यु)</string>
     <string name="pmsma">पीएमएसएमए</string>
     <string name="pmjay_form">पीएमजेएवाई फॉर्म</string>
     <string name="household_members">परिवार के सदस्य</string>
@@ -411,12 +413,12 @@
     <string name="immunization">टीकाकरण</string>
     <string name="pregnancy_registration_form">गर्भावस्था पंजीकरण फॉर्म</string>
     <string name="immunization_cant_done_as_missed">टीकाकरण नहीं किया जा सकता, क्योंकि यह छूट गया है।</string>
-    <string name="anc_visit">एएनसी विजिट</string>
+    <string name="anc_visit">एएनसी भ्रमण</string>
     <string name="home_visit">गृह भ्रमण</string>
     <string name="eligible_couple_list">लक्ष्य दम्पति सूची</string>
     <string name="eligible_couple_registration">लक्ष्य दम्पति पंजीकरण</string>
     <string name="eligible_couple_tracking_list">लक्ष्य दम्पति ट्रैकिंग सूची</string>
-    <string name="eligible_couple_tracking_form">लक्ष्य दम्पति ट्रैकिंग फॉर्म</string>
+    <string name="eligible_couple_tracking_form">लक्ष्य दम्पति ट्रैकिंग / फॉलो-अप फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
     <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
@@ -481,7 +483,7 @@
     <string name="filaria_submitted">फाइलेरिया फॉर्म जमा किया गया</string>
     <string name="leprosy_submitted">कुष्ठ रोग फॉर्म जमा किया गया</string>
     <string name="irs_submitted">आईआरएस फॉर्म जमा किया गया</string>
-    <string name="hwc_referred_list">एचडब्ल्यूसी रेफर्ड सूची</string>
+    <string name="hwc_referred_list">रेफरल सूची</string>
     <string name="vhsnc_meeting_date">वीएचएसएनसी बैठक की तिथि</string>
     <string name="place_of_vhsnc_meeting">वीएचएसएनसी बैठक का स्थान</string>
     <string name="village_name">गाँव का नाम</string>
@@ -649,7 +651,7 @@
     <string name="tv_date_of_death">मृत्यु की तिथि</string>
     <string name="iv_death_indicator">मृत्यु</string>
     <string name="iv_case_status_tv">केस स्थिति</string>
-    <string name="maternal_deaths">मातृ मृत्यु (MDSR)</string>
+    <string name="maternal_deaths">मातृ मृत्यु (एमडीएसआर)</string>
     <string name="please_select_value">कृपया एक मान चुनें</string>
     <string name="mobilized_for_ahd">एएचडी के लिए जुटाए गए</string>
     <string name="ahd_place">एएचडी स्थान</string>
@@ -689,7 +691,7 @@
     <string name="sup_beneficiaries">लाभार्थी</string>
     <string name="sup_eligible_couples">लक्ष्य दम्पति</string>
     <string name="sup_pregnant_women">गर्भवती महिलाएं</string>
-    <string name="sup_anc_visits">एएनसी विजिट</string>
+    <string name="sup_anc_visits">एएनसी भ्रमण</string>
     <string name="sup_hrp_woman">एचआरपी महिला</string>
     <string name="sup_deliveries">प्रसव</string>
     <string name="sup_routine_immunization">नियमित टीकाकरण</string>
@@ -707,7 +709,7 @@
     <string name="child_under_five_years_list">पांच वर्ष से कम आयु के बच्चों की सूची</string>
     <string name="nmdsr_list">NMDSR सूची</string>
     <string name="gdr_list">GDR सूची</string>
-    <string name="cac_form">सीएसी फॉर्म</string>
+    <string name="cac_form">गर्भपात (सीएसी) फॉर्म</string>
     <string name="anc">ANC</string>
     <string name="ec">EC</string>
     <string name="tb_confirmed_list">पुष्टि टीबी सूची</string>
@@ -749,7 +751,7 @@
     <string name="check_sam">गंभीर कुपोषित जांच</string>
     <string name="ors">ओआरएस</string>
     <string name="ifa">आयरन फोलिक एसिड</string>
-    <string name="ifa_syrup">आयरन सिरप</string>
+    <string name="ifa_syrup">आयरन गोली</string>
     <string name="add_new">नया जोड़ें</string>
     <string name="ifa_distribution">आयरन फोलिक एसिड वितरण</string>
     <string name="ifa_quantity">आयरन फोलिक एसिड मात्रा</string>

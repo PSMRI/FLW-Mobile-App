@@ -73,7 +73,7 @@ class CbacFragment : Fragment() {
     }
     private var isReferralDialogShown = false
     var referralForReason = ""
-    var referType = "NCD"
+    var referType  = "NCD"
     var enumType = "NCD"
 
     private val raAlertDialog by lazy {
@@ -171,7 +171,7 @@ class CbacFragment : Fragment() {
     private var dialogAlreadyShown = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        referType = getString(R.string.ncd_referral_type)
         binding.layoutReferralForm.clPatientInformation.visibility = View.GONE
         binding.layoutReferralForm.btnSubmit.visibility = View.GONE
         referViewModel.initFromArgs(
@@ -232,7 +232,7 @@ class CbacFragment : Fragment() {
                 dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
                 referralForReason = getString(R.string.tb_suspected_leprosy_case)
-                referType = "SUSPECTED LEPROSY CASE"
+                referType = getString(R.string.suspected_leprosy_case)
                 enumType = "LEPROSY"
                 asreferAlertDialog = buildAsReferAlertDialog()
                 asreferAlertDialog?.show()
@@ -373,7 +373,7 @@ class CbacFragment : Fragment() {
                 ?.substringAfter(": ")
                 ?.toIntOrNull() ?: 0
             referralForReason = getString(R.string.tb_suspected_ncd_case)
-            referType = "NCD"
+            referType = getString(R.string.ncd_referral_type)
             enumType = "NCD"
             handleNcdSusBottomInfoDisplay(totalScore)
 
@@ -662,7 +662,8 @@ class CbacFragment : Fragment() {
                 ast1AlertDialog.show()*/
                 if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
                     referralForReason = getString(R.string.tb_suspected_form)
-                    referType = "Suspected TB Case"
+                    referType = getString(R.string.suspected_tb_case)
+
                     enumType = "TB"
                     asreferAlertDialog = buildAsReferAlertDialog()
                     asreferAlertDialog?.show()
@@ -1309,7 +1310,7 @@ class CbacFragment : Fragment() {
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
             referralForReason = getString(R.string.tb_suspected_copd_case)
-            referType = "Suspected COPD Case"
+            referType = getString(R.string.suspected_copd_case)
             enumType = "COPD"
             if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
                 asreferAlertDialog = buildAsReferAlertDialog()

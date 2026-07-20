@@ -302,4 +302,8 @@
     <string name="years_70">৭০ বছর</string>
     <string name="years_75">৭৫ বছর</string>
     <string name="years_80">৮০ বছর</string>
+    <string name="suspected_leprosy_case">কুষ্ঠ রোগ সন্দেহজনক ঘটনা</string>
+    <string name="ncd_referral_type">এনসিডি</string>
+    <string name="suspected_tb_case">টিবি সন্দেহজনক ঘটনা</string>
+    <string name="suspected_copd_case">সিওপিডি সন্দেহজনক ঘটনা</string>
 </resources>
