@@ -650,22 +650,25 @@ class PregnantWomanAncVisitDataset(
     }
 
     private fun setUpTdX() {
-        if (regis.ttBooster != null) {
-            dateOfTTOrTdBooster.value = getDateFromLong(regis.ttBooster!!)
+        val tt1 = regis.tt1?.takeIf { it != 0L }
+        val tt2 = regis.tt2?.takeIf { it != 0L }
+        val ttBooster = regis.ttBooster?.takeIf { it != 0L }
+        if (ttBooster != null) {
+            dateOfTTOrTdBooster.value = getDateFromLong(ttBooster)
             dateOfTTOrTd1.inputType = InputType.TEXT_VIEW
             dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
             dateOfTTOrTdBooster.inputType = InputType.TEXT_VIEW
-        } else if (regis.tt1 == null) {
+        } else if (tt1 == null) {
             dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
         } else {
-            dateOfTTOrTd1.value = getDateFromLong(regis.tt1!!)
+            dateOfTTOrTd1.value = getDateFromLong(tt1)
             dateOfTTOrTdBooster.inputType = InputType.TEXT_VIEW
             dateOfTTOrTd1.inputType = InputType.TEXT_VIEW
-            if (regis.tt2 == null) {
-                dateOfTTOrTd2.min = regis.tt1!! + TimeUnit.DAYS.toMillis(28)
+            if (tt2 == null) {
+                dateOfTTOrTd2.min = tt1 + TimeUnit.DAYS.toMillis(28)
                 dateOfTTOrTd2.max = min(System.currentTimeMillis(), getEddFromLmp(regis.lmpDate))
             } else {
-                dateOfTTOrTd2.value = getDateFromLong(regis.tt2!!)
+                dateOfTTOrTd2.value = getDateFromLong(tt2)
                 dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
             }
         }
@@ -945,7 +948,7 @@ class PregnantWomanAncVisitDataset(
                     highRiskReferralFacility,
                     hrpConfirm,
 
-                )
+                    )
 
                 val maternalDeathFields = listOf(
                     maternalDeathProbableCause,
@@ -1059,7 +1062,7 @@ class PregnantWomanAncVisitDataset(
     }
 
     private fun updateRegistrationForTdX() {
-        if (dateOfTTOrTd1.value.isNullOrBlank() || dateOfTTOrTd2.value.isNullOrBlank() || dateOfTTOrTdBooster.value.isNullOrBlank())
+        if (dateOfTTOrTd1.value.isNullOrBlank() && dateOfTTOrTd2.value.isNullOrBlank() && dateOfTTOrTdBooster.value.isNullOrBlank())
             return
         else {
             val td1 = if (dateOfTTOrTd1.inputType == InputType.DATE_PICKER) getLongFromDate(
