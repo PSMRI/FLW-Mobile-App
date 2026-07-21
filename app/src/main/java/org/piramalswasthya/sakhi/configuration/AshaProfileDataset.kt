@@ -344,27 +344,30 @@ class AshaProfileDataset(
 
         )
 
-        ashaName.value = ashaProfile?.name
+        ashaName.value = ashaProfile?.name?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
         pic.value = ashaProfile?.profileImage
         village.value = currentUser.villages.joinToString(", ") { it.name }
         loginuserName.value = currentUser.userName
-        userId.value = preferenceDao.getEmployeeId().orEmpty()
-        mobileNumber.value = ashaProfile?.mobileNumber.toString()
-        alternameMobileNumber.value = ashaProfile?.alternateMobileNumber.toString()
-        dateOfJoining.value = ashaProfile?.dateOfJoining.toString()
-        bankAccount.value = ashaProfile?.bankAccount.toString()
-        Ifsc.value = ashaProfile?.ifsc.toString()
-        dob.value =dateFormate(ashaProfile?.dob.toString())
-        ages.value = ashaProfile?.dob?.let { BenBasicCache.getAgeFromDob(getLongFromDate(dateFormate(ashaProfile?.dob.toString()))).toString() }
-        populationCovered.value = ashaProfile?.populationCovered.toString()
-        spouseOrFatherNameEdt.value = ashaProfile?.fatherOrSpouseName.toString()
+        userId.value = ashaProfile?.employeeId?.takeIf { it != 0 }?.toString()
+            ?: preferenceDao.getEmployeeId().orEmpty()
+        mobileNumber.value = ashaProfile?.mobileNumber?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        alternameMobileNumber.value = ashaProfile?.alternateMobileNumber?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        dateOfJoining.value = ashaProfile?.dateOfJoining?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        bankAccount.value = ashaProfile?.bankAccount?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        Ifsc.value = ashaProfile?.ifsc?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        dob.value = ashaProfile?.dob?.takeIf { it.isNotBlank() && it != "null" }?.let { dateFormate(it) }.orEmpty()
+        ages.value = ashaProfile?.dob?.takeIf { it.isNotBlank() && it != "null" }?.let { BenBasicCache.getAgeFromDob(getLongFromDate(dateFormate(it))).toString() }.orEmpty()
+        populationCovered.value = ashaProfile?.populationCovered?.takeIf { it != 0 }?.toString().orEmpty()
+        spouseOrFatherNameEdt.value = ashaProfile?.fatherOrSpouseName?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
         fatherOrspouse.value = fatherOrspouse.getStringSpauseFromPosition(if(ashaProfile?.isFatherOrSpouse==true) 1 else 0)
-        ashaSupervisorName.value = preferenceDao.getSupervisorName().toString()
-        ashaSupervisorContactNumber.value = preferenceDao.getSupervisorContact().toString()
+        ashaSupervisorName.value = ashaProfile?.supervisorName?.takeIf { it.isNotBlank() && it != "null" }
+            ?: preferenceDao.getSupervisorName().orEmpty()
+        ashaSupervisorContactNumber.value = ashaProfile?.supervisorMobile?.takeIf { it.isNotBlank() && it != "null" }
+            ?: preferenceDao.getSupervisorContact().orEmpty()
         locationType.value = preferenceDao.getLocationType()
-        nameOfAWW.value = ashaProfile?.awwName.toString()
-        mobieNoOfAWW.value = ashaProfile?.awwMobile.toString()
-        abhaNumber.value = ashaProfile?.abhaNumber.toString()
+        nameOfAWW.value = ashaProfile?.awwName?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        mobieNoOfAWW.value = ashaProfile?.awwMobile?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+        abhaNumber.value = ashaProfile?.abhaNumber?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
         facilityName.value = preferenceDao.getSupervisorSubcenter()
         facilityId.value = preferenceDao.getFacilityId().toString()
 
@@ -392,25 +395,31 @@ class AshaProfileDataset(
                 emptyList()
             }
 
-            ChoName.value = choList.firstOrNull()?.fullName.orEmpty()
-            ChoMobileNo.value = choList.firstOrNull()?.mobile.orEmpty()
+            ChoName.value = ashaProfile?.choName?.takeIf { it.isNotBlank() && it != "null" }
+                ?: choList.firstOrNull()?.fullName.orEmpty()
+            ChoMobileNo.value = ashaProfile?.choMobile?.takeIf { it.isNotBlank() && it != "null" }
+                ?: choList.firstOrNull()?.mobile.orEmpty()
 
-            nameOfANM1.value = anmList.getOrNull(0)?.fullName.orEmpty()
-            mobileNoOfANM1.value = anmList.getOrNull(0)?.mobile.orEmpty()
+            nameOfANM1.value = ashaProfile?.anm1Name?.takeIf { it.isNotBlank() && it != "null" }
+                ?: anmList.getOrNull(0)?.fullName.orEmpty()
+            mobileNoOfANM1.value = ashaProfile?.anm1Mobile?.takeIf { it.isNotBlank() && it != "null" }
+                ?: anmList.getOrNull(0)?.mobile.orEmpty()
 
-            nameOfANM2.value = anmList.getOrNull(1)?.fullName.orEmpty()
-            mobileNoOfANM2.value = anmList.getOrNull(1)?.mobile.orEmpty()
+            nameOfANM2.value = ashaProfile?.anm2Name?.takeIf { it.isNotBlank() && it != "null" }
+                ?: anmList.getOrNull(1)?.fullName.orEmpty()
+            mobileNoOfANM2.value = ashaProfile?.anm2Mobile?.takeIf { it.isNotBlank() && it != "null" }
+                ?: anmList.getOrNull(1)?.mobile.orEmpty()
 
         } catch (e: Exception) {
 
-            ChoName.value = ""
-            ChoMobileNo.value = ""
+            ChoName.value = ashaProfile?.choName?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+            ChoMobileNo.value = ashaProfile?.choMobile?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
 
-            nameOfANM1.value = ""
-            mobileNoOfANM1.value = ""
+            nameOfANM1.value = ashaProfile?.anm1Name?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+            mobileNoOfANM1.value = ashaProfile?.anm1Mobile?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
 
-            nameOfANM2.value = ""
-            mobileNoOfANM2.value = ""
+            nameOfANM2.value = ashaProfile?.anm2Name?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
+            mobileNoOfANM2.value = ashaProfile?.anm2Mobile?.takeIf { it.isNotBlank() && it != "null" }.orEmpty()
         }
 //        ashaHouseholdRegistrationNo.value = ashaProfile?.ashaHouseholdRegistration.toString()
 //        ashaFamilymember.value = ashaProfile?.ashaFamilyMember.toString()
@@ -524,8 +533,9 @@ class AshaProfileDataset(
                 dataModel.profileImage = imageUri
             }
             dataModel.village = village.value.toString()
-            dataModel.dob = dateReverseFormat(dob.value.toString()).toString()
-            dataModel.age = ages.value!!.toInt()
+            dataModel.dob = dob.value?.takeIf { it.isNotBlank() && it != "null" }
+                ?.let { dateReverseFormat(it).toString() } ?: ""
+            dataModel.age = ages.value?.takeIf { it.isNotBlank() }?.toIntOrNull() ?: 0
             dataModel.mobileNumber = mobileNumber.value.toString()
             dataModel.alternateMobileNumber = StringMappingUtil.convertDigits(alternameMobileNumber.value.toString())
             dataModel.fatherOrSpouseName = spouseOrFatherNameEdt.value.toString()
