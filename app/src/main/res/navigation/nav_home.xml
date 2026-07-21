@@ -89,8 +89,16 @@
         <action
             android:id="@+id/action_homeFragment_to_ncdReferredListFragment"
             app:destination="@id/ncdRefferedList" />
+        <action
+            android:id="@+id/action_nav_home_to_monthlyRecapLanguageFragment"
+            app:destination="@id/monthlyRecapLanguageFragment" />
 
     </fragment>
+    <fragment
+        android:id="@+id/monthlyRecapLanguageFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.monthly_recap.MonthlyRecapLanguageFragment"
+        android:label="@string/monthly_recap_title"
+        tools:layout="@layout/fragment_monthly_recap_language" />
     <fragment
         android:id="@+id/allHouseholdFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragment"

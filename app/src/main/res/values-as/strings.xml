@@ -1447,4 +1447,18 @@
     <string name="tb_suspected_leprosy_case">সন্দেহজনক কুষ্ঠ ৰোগী</string>
     <string name="tb_suspected_ncd_case">সন্দেহজনক NCD ৰোগী</string>
 
+    <!-- Monthly Recap dashboard strip (Phase 1) -->
+    <string name="monthly_recap_title">মাহেকীয়া ৰিকেপ</string>
+    <string name="monthly_recap_ready_message">আপোনাৰ ৰিকেপ সাজু — আপুনি সৃষ্টি কৰা প্ৰভাৱ চাওক।</string>
+    <string name="monthly_recap_resume_message">য\'ত এৰিছিল, তাৰ পৰাই আগবাঢ়ক।</string>
+    <string name="monthly_recap_replay_message">আপোনাৰ মাহটো যিকোনো সময়তে পুনৰ চাওক।</string>
+    <string name="monthly_recap_view_recap">ৰিকেপ চাওক</string>
+    <string name="monthly_recap_continue_recap">আগবাঢ়ক</string>
+    <string name="monthly_recap_watch_again">পুনৰ চাওক</string>
+    <string name="monthly_recap_badge_new">নতুন</string>
+    <string name="monthly_recap_badge_done">সম্পূৰ্ণ</string>
+    <string name="monthly_recap_cd_ready">নতুন মাহেকীয়া ৰিকেপ উপলব্ধ। আপোনাৰ ৰিকেপ চাবলৈ সাজু।</string>
+    <string name="monthly_recap_cd_resume">মাহেকীয়া ৰিকেপ চলি আছে। য\'ত এৰিছিল তাৰ পৰাই আগবাঢ়ক।</string>
+    <string name="monthly_recap_cd_replay">মাহেকীয়া ৰিকেপ সম্পূৰ্ণ হ\'ল। পুনৰ চাওক।</string>
+    <string name="monthly_recap_lang_screen_cd">আপোনাৰ মাহেকীয়া ৰিকেপৰ বাবে ভাষা বাছনি কৰক</string>
 </resources>

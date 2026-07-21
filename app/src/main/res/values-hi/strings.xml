@@ -1368,4 +1368,18 @@
     <string name="app_native_name">मितानिन</string>
     <string name="str_demo">डेमो</string>
 
+    <!-- Monthly Recap dashboard strip (Phase 1) -->
+    <string name="monthly_recap_title">मासिक रिकैप</string>
+    <string name="monthly_recap_ready_message">आपका रिकैप तैयार है — अपना प्रभाव देखें।</string>
+    <string name="monthly_recap_resume_message">जहाँ छोड़ा था वहीं से जारी रखें।</string>
+    <string name="monthly_recap_replay_message">अपने महीने को कभी भी दोबारा देखें।</string>
+    <string name="monthly_recap_view_recap">रिकैप देखें</string>
+    <string name="monthly_recap_continue_recap">जारी रखें</string>
+    <string name="monthly_recap_watch_again">फिर से देखें</string>
+    <string name="monthly_recap_badge_new">नया</string>
+    <string name="monthly_recap_badge_done">पूर्ण</string>
+    <string name="monthly_recap_cd_ready">नया मासिक रिकैप उपलब्ध है। आपका रिकैप देखने के लिए तैयार है।</string>
+    <string name="monthly_recap_cd_resume">मासिक रिकैप जारी है। जहाँ छोड़ा था वहीं से जारी रखें।</string>
+    <string name="monthly_recap_cd_replay">मासिक रिकैप पूरा हुआ। इसे फिर से देखें।</string>
+    <string name="monthly_recap_lang_screen_cd">अपने मासिक रिकैप के लिए भाषा चुनें</string>
 </resources>

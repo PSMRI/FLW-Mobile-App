@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Monthly Recap dashboard strip (Phase 1) - ONE reusable layout for every visible
+    state (READY / RESUME / REPLAY). State differences are applied at runtime through
+    content + visibility (see HomeIconsFragment#renderMonthlyRecapStrip), never through
+    separate layouts.
+
+    Deep primary-blue gradient surface with white text and a white pill CTA. Text uses
+    ?attr/colorOnPrimary (white in this theme) because it sits on the primary-family
+    gradient; secondary lines use view alpha for hierarchy without new colours.
+
+    Accessibility: the whole card is a single click target. Its contentDescription is
+    set per state in code and the content container is marked noHideDescendants, so the
+    character, sparkles, badges, progress and CTA are never separately focused and the
+    CTA never creates a duplicate action.
+
+    Privacy: no beneficiary names, health information, medical conditions or counts.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_big"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="?attr/colorPrimary"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="6dp"
+    app:rippleColor="?attr/colorOnPrimary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_monthly_recap_strip"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_wide"
+        android:paddingEnd="@dimen/padding_wide"
+        android:paddingBottom="@dimen/padding_wide">
+
+        <!-- Character illustration (decorative; sits on the card's warm glow) -->
+        <ImageView
+            android:id="@+id/recap_character"
+            android:layout_width="wrap_content"
+            android:layout_height="108dp"
+            android:layout_marginEnd="@dimen/padding_wide"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:src="@drawable/img_recap_character" />
+
+        <!-- Text column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- eyebrow row: state chip + month, inline -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/recap_badge_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_recap_badge_new"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:text="@string/monthly_recap_badge_new"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/recap_badge_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_recap_badge"
+                    android:paddingStart="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/monthly_recap_badge_done"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/recap_month_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_weight="1"
+                    android:alpha="0.9"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?attr/colorOnPrimary"
+                    tools:text="June" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/recap_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_normal"
+                android:text="@string/monthly_recap_title"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textColor="?attr/colorOnPrimary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/recap_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:alpha="0.92"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?attr/colorOnPrimary"
+                tools:text="Your recap is ready — see the impact you made." />
+
+            <ProgressBar
+                android:id="@+id/recap_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_normal"
+                android:importantForAccessibility="no"
+                android:max="100"
+                android:progressTint="?attr/colorOnPrimary"
+                android:visibility="gone"
+                tools:progress="40"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/recap_cta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_wide"
+                android:background="@drawable/bg_recap_cta_pill"
+                android:clickable="false"
+                android:drawableEnd="@drawable/ic_chevron_right"
+                android:drawablePadding="4dp"
+                android:drawableTint="?attr/colorPrimary"
+                android:elevation="3dp"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:minHeight="44dp"
+                android:paddingStart="20dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="8dp"
+                android:text="@string/monthly_recap_view_recap"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                tools:text="View Recap" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
