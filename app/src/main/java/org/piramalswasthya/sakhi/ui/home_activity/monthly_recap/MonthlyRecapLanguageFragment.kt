@@ -53,7 +53,8 @@ class MonthlyRecapLanguageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recapLangCardHindi.setOnClickListener { onLanguageChosen(MonthlyRecapLanguage.HINDI) }
         binding.recapLangCardAssamese.setOnClickListener { onLanguageChosen(MonthlyRecapLanguage.ASSAMESE) }
-        view.announceForAccessibility(getString(R.string.monthly_recap_lang_screen_cd))
+        // Defer until the view is attached, otherwise TalkBack can miss the announcement.
+        view.post { view.announceForAccessibility(getString(R.string.monthly_recap_lang_screen_cd)) }
 
         // The ASHA always makes an explicit, fresh choice: the screen never
         // pre-selects (no auto-select from a previously stored choice or from the
