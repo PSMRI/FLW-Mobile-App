@@ -1,12 +1,15 @@
 package org.piramalswasthya.sakhi.repositories
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import org.piramalswasthya.sakhi.database.room.dao.NotificationDao
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.NotificationDomain
+import org.piramalswasthya.sakhi.model.NotificationEntity
+import org.piramalswasthya.sakhi.model.toDomain
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,71 +17,55 @@ import javax.inject.Singleton
  * Single source of truth for in-app notifications, shared by the toolbar bell badge and the
  * notification panel so their state stays in sync.
  *
- * NOTE: currently backed by an in-memory seeded list so the UI is fully functional before the
- * data layer exists. In T7 the internals are replaced with Room (`NotificationDao`) + the poll
- * worker / FCM upserts; the public API below stays the same.
+ * Backed by Room ([NotificationDao]); rows are scoped to the locally logged-in user
+ * ([PreferenceDao.getLoggedInUser]). The poll worker (T10) and FCM receiver (T11) upsert rows via
+ * [upsert]; the panel reads them through [notifications] / [unreadCount] and mutates local
+ * interaction flags through the action methods below. Server sync of those interactions is wired
+ * once the list/mark APIs land (T8).
  */
 @Singleton
-class NotificationRepository @Inject constructor() {
+class NotificationRepository @Inject constructor(
+    private val notificationDao: NotificationDao,
+    private val preferenceDao: PreferenceDao
+) {
 
-    private val _notifications = MutableStateFlow(seedData())
+    /** Logged-in user id scoping every read/write, or null when no user is logged in. */
+    private val userId: Long?
+        get() = preferenceDao.getLoggedInUser()?.userId?.toLong()
 
-    val notifications: StateFlow<List<NotificationDomain>> = _notifications.asStateFlow()
-
-    val unreadCount: Flow<Int> = _notifications.map { list -> list.count { !it.read } }
-
-    fun markRead(notificationId: Long) {
-        _notifications.update { list ->
-            list.map { if (it.notificationId == notificationId) it.copy(read = true) else it }
+    /** Visible notifications for the logged-in user, newest first; empty when logged out. */
+    val notifications: Flow<List<NotificationDomain>> = flow {
+        val id = userId
+        if (id == null) {
+            emitAll(flowOf(emptyList()))
+        } else {
+            emitAll(notificationDao.getForUser(id).map { rows -> rows.map { it.toDomain() } })
         }
     }
 
-    fun dismiss(notificationId: Long) {
-        _notifications.update { list -> list.filterNot { it.notificationId == notificationId } }
+    /** Unread badge count for the logged-in user; 0 when logged out. */
+    val unreadCount: Flow<Int> = flow {
+        val id = userId
+        if (id == null) emitAll(flowOf(0)) else emitAll(notificationDao.unreadCount(id))
     }
 
-    fun clearAll() {
-        _notifications.value = emptyList()
+    /** Insert / update rows (idempotent PK = server notificationId). Used by poll (T10) & FCM (T11). */
+    suspend fun upsert(notifications: List<NotificationEntity>) = notificationDao.upsert(notifications)
+
+    suspend fun upsert(notification: NotificationEntity) = notificationDao.upsert(notification)
+
+    suspend fun markRead(notificationId: Long) = notificationDao.markRead(listOf(notificationId))
+
+    suspend fun markAllRead() {
+        userId?.let { notificationDao.markAllRead(it) }
     }
 
-    // --- temporary seed data; removed when Room + sync are wired in T7 ---
-    private fun seedData(): List<NotificationDomain> {
-        val now = System.currentTimeMillis()
-        val hour = 60 * 60 * 1000L
-        return listOf(
-            NotificationDomain(
-                notificationId = 1001,
-                eventType = "INCENTIVE_CLAIMED",
-                title = "Incentive Claim Received",
-                body = "ASHA Saurav Mishra has claimed for june month",
-                createdTs = now - 1 * hour,
-                read = false,
-                navId = "INCENTIVE_APPROVAL",
-                priority = "HIGH",
-                senderUserId = 4259,
-                receiverUserId = 140,
-                beneficiaryId = 98765,
-                activityId = 140,
-                referenceId = 78954
-            ),
-            NotificationDomain(
-                notificationId = 1, eventType = "ASHA_CLAIM_REJECTED",
-                title = "Your monthly claim was rejected",
-                body = "October 2026 · Reason: Incomplete documentation. Please correct and resubmit.",
-                createdTs = now - 2 * hour, read = false
-            ),
-            NotificationDomain(
-                notificationId = 2, eventType = "SUPERVISOR_VERIFICATION_REMINDER",
-                title = "Pending verifications for October 2026",
-                body = "3 ASHAs (12 activities) are pending your verification.",
-                createdTs = now - 26 * hour, read = false
-            ),
-            NotificationDomain(
-                notificationId = 3, eventType = "ASHA_STAGE_CHANGE",
-                title = "Your claim is now Verified by Supervisor",
-                body = "Your October 2026 claim has moved to the CHO stage.",
-                createdTs = now - 3 * 24 * hour, read = true
-            )
-        )
+    /** Panel swipe-to-dismiss: soft-clear so a later poll can't resurrect the row. */
+    suspend fun dismiss(notificationId: Long) = notificationDao.softClear(listOf(notificationId))
+
+    suspend fun clearAll() {
+        userId?.let { notificationDao.softClearAll(it) }
     }
+
+    suspend fun markViewed(notificationIds: List<Long>) = notificationDao.markViewed(notificationIds)
 }

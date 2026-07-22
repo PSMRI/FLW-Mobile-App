@@ -64,6 +64,24 @@ interface AmritApiService {
     @POST("common-api/firebaseNotification/userToken")
     suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
 
+    // --- In-app notifications (T8) ---
+    // NOTE: dummy/placeholder endpoints — the backend contract is not yet confirmed.
+    // Paths + request/response shapes will be reconciled when the AMRIT team finalizes it.
+    @POST("flw-api/notification/list")
+    suspend fun getNotifications(@Body request: NotificationListRequest): Response<NotificationListResponse>
+
+    @POST("flw-api/notification/markRead")
+    suspend fun markNotificationsRead(@Body request: NotificationIdsRequest): Response<ResponseBody>
+
+    @POST("flw-api/notification/markAllRead")
+    suspend fun markAllNotificationsRead(@Body request: NotificationUserRequest): Response<ResponseBody>
+
+    @POST("flw-api/notification/clear")
+    suspend fun clearNotifications(@Body request: NotificationIdsRequest): Response<ResponseBody>
+
+    @POST("flw-api/notification/clearAll")
+    suspend fun clearAllNotifications(@Body request: NotificationUserRequest): Response<ResponseBody>
+
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>
 

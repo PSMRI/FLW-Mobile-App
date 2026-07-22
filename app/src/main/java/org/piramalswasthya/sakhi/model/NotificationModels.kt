@@ -59,6 +59,45 @@ data class NotificationDataDto(
     @Json(name = "priority") val priority: String? = null
 )
 
+// ------------------------------------------------------------
+// List / interaction API DTOs (T8)
+//
+// NOTE: the backend list/mark/clear contract is NOT yet confirmed — the endpoints in
+// AmritApiService are placeholders ("dummy") and these request/response shapes mirror the
+// standard AMRIT envelope ({ data, statusCode, status }) and reuse the confirmed push item
+// shape [NotificationDto]. Reconcile field names when the backend contract lands.
+// ------------------------------------------------------------
+
+/** `POST notification/list` body. `sinceId`/`sinceTs` are the incremental-sync markers. */
+@JsonClass(generateAdapter = true)
+data class NotificationListRequest(
+    @Json(name = "userId") val userId: Long,
+    @Json(name = "role") val role: String? = null,
+    @Json(name = "sinceId") val sinceId: Long? = null,
+    @Json(name = "sinceTs") val sinceTs: Long? = null
+)
+
+/** `notification/list` response envelope; `data` is the list of notifications. */
+@JsonClass(generateAdapter = true)
+data class NotificationListResponse(
+    @Json(name = "data") val data: List<NotificationDto>? = null,
+    @Json(name = "statusCode") val statusCode: Int? = null,
+    @Json(name = "status") val status: String? = null
+)
+
+/** `POST notification/markRead` and `notification/clear` body (id-scoped). */
+@JsonClass(generateAdapter = true)
+data class NotificationIdsRequest(
+    @Json(name = "userId") val userId: Long,
+    @Json(name = "notificationIds") val notificationIds: List<Long>
+)
+
+/** `POST notification/markAllRead` and `notification/clearAll` body (user-scoped). */
+@JsonClass(generateAdapter = true)
+data class NotificationUserRequest(
+    @Json(name = "userId") val userId: Long
+)
+
 /** Data-object keys, shared by the Moshi DTO and the FCM string-map parser. */
 object NotificationKeys {
     const val NOTIFICATION_ID = "notification_id"
@@ -265,6 +304,15 @@ fun NotificationDto.toEntity(userId: Long, createdTs: Long, read: Boolean = fals
         referenceId = d.referenceId
     )
 }
+
+/**
+ * List API response → Room rows, scoped to [userId]. Items with no `data` block are dropped.
+ * @param createdTs receive/fetch time applied to every row (payload carries no timestamp). NOTE:
+ * the poll consumer (T10) must preserve any existing local `read`/`cleared`/`createdTs` rather than
+ * blindly replacing rows, so a soft-cleared notification isn't resurrected.
+ */
+fun NotificationListResponse.toEntities(userId: Long, createdTs: Long): List<NotificationEntity> =
+    data.orEmpty().mapNotNull { it.toEntity(userId = userId, createdTs = createdTs) }
 
 /**
  * FCM push path (`RemoteMessage.data` string map) → Room row, scoped to [userId].
