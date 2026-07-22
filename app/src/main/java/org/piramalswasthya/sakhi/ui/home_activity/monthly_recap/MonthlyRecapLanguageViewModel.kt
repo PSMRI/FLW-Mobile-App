@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
 import org.piramalswasthya.sakhi.repositories.MonthlyRecapRepo
 import timber.log.Timber
@@ -19,19 +21,23 @@ class MonthlyRecapLanguageViewModel @Inject constructor(
 ) : ViewModel() {
 
     /**
-     * Persists the chosen recap language. Safe to call again for a different
-     * language (e.g. after a rotation the user picks the other option): the repo
-     * does get-or-create + update, so the stored value always equals the last
-     * accepted tap and can never diverge from what the screen shows.
+     * Serializes persistence so writes run one at a time in tap order — the last
+     * accepted tap is always the final stored value. Without this, two taps around
+     * a rotation launch independent coroutines and a slower earlier write could
+     * finish after a newer one and overwrite it. The fair mutex plus launch order
+     * (each tap runs on the main thread and acquires the lock before the next tap
+     * is dispatched) guarantees "latest selection wins".
      *
-     * Rapid duplicate taps are already prevented at the UI layer (debounce +
-     * one-selection-per-screen), so no cross-rotation guard is needed here — that
-     * guard previously survived rotation and silently dropped a second, different
-     * selection, leaving the UI and the database out of sync.
+     * Safe to call again for a different language: the repo does get-or-create +
+     * update, so the stored value can never diverge from what the screen shows.
      */
+    private val languageWriteMutex = Mutex()
+
     fun onLanguageSelected(language: MonthlyRecapLanguage) {
         viewModelScope.launch {
-            val ok = recapRepo.setRecapLanguage(language)
+            val ok = languageWriteMutex.withLock {
+                recapRepo.setRecapLanguage(language)
+            }
             if (!ok) Timber.w("Monthly Recap: language not persisted (no logged-in user)")
         }
     }
