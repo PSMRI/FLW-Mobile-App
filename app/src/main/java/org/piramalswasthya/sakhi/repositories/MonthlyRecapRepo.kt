@@ -5,13 +5,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.MonthlyRecapMetricsCodec
 import org.piramalswasthya.sakhi.helpers.RecapClock
 import org.piramalswasthya.sakhi.helpers.previousMonthWindow
 import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
+import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
+import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsPayload
 import org.piramalswasthya.sakhi.model.RecapStatus
 import org.piramalswasthya.sakhi.model.recapStatus
 import timber.log.Timber
@@ -35,10 +40,18 @@ class MonthlyRecapRepo @Inject constructor(
     private val recapDao: MonthlyRecapDao,
     private val preferenceDao: PreferenceDao,
     private val clock: RecapClock,
+    private val metricsCalculator: MonthlyRecapMetricsCalculator,
 ) {
+
+    /** Serializes metric generation so one payload is frozen per user+month. */
+    private val metricsMutex = Mutex()
 
     private suspend fun loggedInUserId(): Int? = withContext(Dispatchers.IO) {
         preferenceDao.getLoggedInUser()?.userId
+    }
+
+    private suspend fun loggedInUserName(): String? = withContext(Dispatchers.IO) {
+        preferenceDao.getLoggedInUser()?.userName
     }
 
     /**
@@ -114,5 +127,76 @@ class MonthlyRecapRepo @Inject constructor(
         val userId = loggedInUserId() ?: return
         val window = previousMonthWindow(clock.now())
         recapDao.markCompleted(userId, window.yearMonth, clock.now().timeInMillis)
+    }
+
+    /**
+     * Ensures the current recap snapshot carries a frozen, privacy-safe metrics
+     * payload, calculating it once from verified local activity data (Phase 4.3:
+     * CBAC screening events) and reusing it thereafter.
+     *
+     * Freeze/stability guarantees:
+     * - the first valid, current-version payload wins and is never recalculated;
+     * - later local edits/sync do NOT change an already-frozen recap;
+     * - it uses the window frozen on the snapshot, so it is stable across the days
+     *   1–7 the recap is available;
+     * - concurrent callers are serialized by [metricsMutex] and a re-read inside
+     *   the lock, so exactly one payload is stored and every caller returns it;
+     * - a corrupt or unsupported stored payload is treated as absent and
+     *   regenerated deterministically (never crashes, never silently reinterpreted).
+     *
+     * Does NOT change status/progress (metric generation is not playback), the
+     * language, the variant seed or the snapshot identity. Intended to be called
+     * at recap generation/entry time (e.g. by Phase 6 playback) on a background
+     * dispatcher — the DAO suspend calls run off the main thread. Returns null
+     * only when no user is logged in.
+     */
+    suspend fun ensureCurrentRecapMetrics(): MonthlyRecapMetricsPayload? {
+        val userName = loggedInUserName() ?: return null
+        val recap = getOrCreateCurrentRecap() ?: return null
+        // Fast path: a valid, current-version payload is already frozen.
+        decodeIfCurrent(recap.metricsJson, recap.recapYearMonth)?.let { return it }
+
+        return metricsMutex.withLock {
+            // In-process optimisation: re-read inside the lock so a concurrent
+            // caller on this instance doesn't recompute.
+            val fresh = recapDao.get(recap.userId, recap.recapYearMonth)
+            decodeIfCurrent(fresh?.metricsJson, recap.recapYearMonth)?.let { return@withLock it }
+
+            val now = clock.now().timeInMillis
+            val payload = metricsCalculator.calculate(
+                userId = recap.userId,
+                userName = userName,
+                recapYearMonth = recap.recapYearMonth,
+                windowStartMillis = recap.windowStartMillis,
+                windowEndMillisExclusive = recap.windowEndMillis,
+                generatedAt = now,
+            )
+            // Durable freeze boundary: only writes when metricsJson IS NULL.
+            val updated = recapDao.setMetricsIfAbsent(
+                recap.userId,
+                recap.recapYearMonth,
+                MonthlyRecapMetricsCodec.encode(payload),
+                now,
+            )
+            if (updated > 0) {
+                payload
+            } else {
+                // Another writer (e.g. a different process/instance) froze it first;
+                // return the stored winner rather than our unpersisted copy.
+                decodeIfCurrent(
+                    recapDao.get(recap.userId, recap.recapYearMonth)?.metricsJson,
+                    recap.recapYearMonth,
+                ) ?: payload
+            }
+        }
+    }
+
+    /** Decodes stored metrics, accepting them only when current-version and same-month. */
+    private fun decodeIfCurrent(json: String?, yearMonth: Int): MonthlyRecapMetricsPayload? {
+        val payload = MonthlyRecapMetricsCodec.decodeOrNull(json) ?: return null
+        return payload.takeIf {
+            it.calculationVersion == MonthlyRecapMetricsContract.CALCULATION_VERSION &&
+                    it.recapYearMonth == yearMonth
+        }
     }
 }

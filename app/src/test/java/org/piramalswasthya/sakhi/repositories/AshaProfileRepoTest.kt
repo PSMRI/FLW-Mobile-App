@@ -30,7 +30,10 @@ class AshaProfileRepoTest : BaseRepositoryTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        repo = AshaProfileRepo(amritApiService, profileDao, preferenceDao, userRepo)
+        // Pre-existing test drift fix: AshaProfileRepo gained a `context` param;
+        // supply a relaxed mock so the unit-test module compiles. Test-only change,
+        // does not touch AshaProfileRepo or any shipped code.
+        repo = AshaProfileRepo(amritApiService, profileDao, preferenceDao, userRepo, mockk(relaxed = true))
     }
 
     // =====================================================

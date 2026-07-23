@@ -1,8 +1,12 @@
 package org.piramalswasthya.sakhi.repositories
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -14,9 +18,11 @@ import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.MonthlyRecapMetricsCodec
 import org.piramalswasthya.sakhi.helpers.RecapClock
 import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
+import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
 import org.piramalswasthya.sakhi.model.RecapStatus
 import org.piramalswasthya.sakhi.model.User
 import java.util.Calendar
@@ -80,6 +86,24 @@ private class FakeMonthlyRecapDao : MonthlyRecapDao {
             )
         }
     }
+
+    override suspend fun setMetricsIfAbsent(
+        userId: Int,
+        yearMonth: Int,
+        metricsJson: String,
+        now: Long,
+    ): Int {
+        // Mirrors the SQL "... AND metricsJson IS NULL": write (and report 1) only
+        // when nothing is stored yet; otherwise report 0 (someone already froze it).
+        val i = rows.indexOfFirst {
+            it.userId == userId && it.recapYearMonth == yearMonth && it.metricsJson == null
+        }
+        return if (i >= 0) {
+            rows[i] = rows[i].copy(metricsJson = metricsJson, updatedAt = now); 1
+        } else {
+            0
+        }
+    }
 }
 
 private class FixedClock(private val fixed: Calendar) : RecapClock {
@@ -91,6 +115,7 @@ class MonthlyRecapRepoTest {
 
     private lateinit var dao: FakeMonthlyRecapDao
     private lateinit var pref: PreferenceDao
+    private lateinit var cbacDataSource: CbacRecapDataSource
     private lateinit var repo: MonthlyRecapRepo
 
     // Fixed "today": 20 July 2026 -> recap month June 2026 (202606).
@@ -104,9 +129,15 @@ class MonthlyRecapRepoTest {
     fun setUp() {
         dao = FakeMonthlyRecapDao()
         pref = mockk()
-        val user = mockk<User> { every { userId } returns 7 }
+        val user = mockk<User> {
+            every { userId } returns 7
+            every { userName } returns "meena"
+        }
         every { pref.getLoggedInUser() } returns user
-        repo = MonthlyRecapRepo(dao, pref, clock)
+        cbacDataSource = mockk()
+        // Default: 5 CBAC screening events in the window (overridable per test).
+        coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 5
+        repo = MonthlyRecapRepo(dao, pref, clock, MonthlyRecapMetricsCalculator(cbacDataSource))
     }
 
     @Test
@@ -182,5 +213,76 @@ class MonthlyRecapRepoTest {
         assertEquals(RecapStatus.COMPLETED.name, dao.rows.single().status)
         repo.markStarted() // completed rows are protected
         assertEquals(RecapStatus.COMPLETED.name, dao.rows.single().status)
+    }
+
+    // ---- metrics generation / freeze (Phase 4.3) ----
+
+    @Test
+    fun `ensureMetrics calculates, persists and returns the CBAC activity metric`() = runTest {
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertEquals(202606, payload.recapYearMonth)
+        val activity = payload.activities.single()
+        assertEquals(MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS, activity.activityId)
+        assertEquals("EVENT", activity.unit)
+        assertEquals(5, activity.count)
+        // No "NCD" total is claimed in a CBAC-only (Path B) metric.
+        assertTrue(payload.activities.none { it.activityId == "NCD" })
+        // Persisted into the snapshot's metricsJson.
+        assertNotNull(dao.rows.single().metricsJson)
+    }
+
+    @Test
+    fun `existing valid metrics are reused without recalculating`() = runTest {
+        repo.ensureCurrentRecapMetrics()
+        repo.ensureCurrentRecapMetrics()
+        coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `frozen metric is unchanged after later clinical data changes`() = runTest {
+        val first = repo.ensureCurrentRecapMetrics()!!
+        assertEquals(5, first.activities.single().count)
+        // Simulate new/edited CBAC rows after generation.
+        coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 99
+        val second = repo.ensureCurrentRecapMetrics()!!
+        assertEquals(5, second.activities.single().count) // frozen value, not 99
+        coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `concurrent generation freezes one payload and both callers get it`() = runTest {
+        val results = awaitAll(
+            async { repo.ensureCurrentRecapMetrics() },
+            async { repo.ensureCurrentRecapMetrics() },
+        )
+        assertEquals(5, results[0]!!.activities.single().count)
+        assertEquals(5, results[1]!!.activities.single().count)
+        assertEquals(1, dao.rows.size)
+        coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `language change does not alter a frozen metric`() = runTest {
+        repo.ensureCurrentRecapMetrics()
+        repo.setRecapLanguage(MonthlyRecapLanguage.HINDI)
+        repo.setRecapLanguage(MonthlyRecapLanguage.ASSAMESE)
+        val row = dao.rows.single()
+        assertEquals("AS", row.language)
+        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.activities.single().count)
+    }
+
+    @Test
+    fun `metric generation does not change status or progress`() = runTest {
+        repo.ensureCurrentRecapMetrics()
+        val row = dao.rows.single()
+        assertEquals(RecapStatus.NOT_STARTED.name, row.status)
+        assertEquals(0, row.progressScene)
+    }
+
+    @Test
+    fun `ensureMetrics returns null and writes nothing when no user is logged in`() = runTest {
+        every { pref.getLoggedInUser() } returns null
+        assertNull(repo.ensureCurrentRecapMetrics())
+        assertTrue(dao.rows.isEmpty())
     }
 }

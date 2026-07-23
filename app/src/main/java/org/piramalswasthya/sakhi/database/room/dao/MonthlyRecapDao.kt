@@ -52,4 +52,18 @@ interface MonthlyRecapDao {
                 "updatedAt = :now WHERE userId = :userId AND recapYearMonth = :yearMonth"
     )
     suspend fun markCompleted(userId: Int, yearMonth: Int, now: Long)
+
+    /**
+     * Freezes the aggregate metrics payload — but ONLY when none is stored yet
+     * (metricsJson IS NULL), making the database the final freeze boundary: the
+     * first writer wins and later writers cannot clobber it. Returns the number of
+     * rows updated (1 = this caller froze it, 0 = someone already did).
+     * Touches only metricsJson + updatedAt, so language, status, progress,
+     * variantSeed, createdAt and snapshot identity are all preserved.
+     */
+    @Query(
+        "UPDATE MONTHLY_RECAP SET metricsJson = :metricsJson, updatedAt = :now " +
+                "WHERE userId = :userId AND recapYearMonth = :yearMonth AND metricsJson IS NULL"
+    )
+    suspend fun setMetricsIfAbsent(userId: Int, yearMonth: Int, metricsJson: String, now: Long): Int
 }
