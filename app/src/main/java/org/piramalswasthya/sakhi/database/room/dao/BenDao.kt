@@ -17,6 +17,27 @@ interface BenDao {
     @Update
     suspend fun updateBen(ben: BenRegCache)
 
+    /**
+     * Monthly Recap (READ-ONLY): counts beneficiaries (family members) the current
+     * ASHA registered in the window [startInclusive, endExclusive). Ownership is
+     * `ashaId = :userId` (local saves set the logged-in userId; downloaded rows
+     * preserve the original owner's ashaId). Drafts excluded; deactivated-later
+     * beneficiaries are intentionally still counted (the achievement is "registered
+     * this month"). `beneficiaryId` is the PRIMARY KEY and the temp id is migrated
+     * in place on sync, so each registration is exactly one row. Returns an
+     * aggregate only.
+     */
+    @Query(
+        "SELECT COUNT(*) FROM BENEFICIARY " +
+                "WHERE ashaId = :userId AND isDraft = 0 " +
+                "AND regDate >= :startInclusive AND regDate < :endExclusive"
+    )
+    suspend fun countCurrentAshaRegistrations(
+        userId: Int,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
+
     @Query("UPDATE  BENEFICIARY SET syncState = :unsynced ,processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId")
     suspend fun updateBenToSync(
         householdId: Long,

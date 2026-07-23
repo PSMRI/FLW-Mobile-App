@@ -116,6 +116,8 @@ class MonthlyRecapRepoTest {
     private lateinit var dao: FakeMonthlyRecapDao
     private lateinit var pref: PreferenceDao
     private lateinit var cbacDataSource: CbacRecapDataSource
+    private lateinit var householdDataSource: HouseholdRecapDataSource
+    private lateinit var beneficiaryDataSource: BeneficiaryRecapDataSource
     private lateinit var repo: MonthlyRecapRepo
 
     // Fixed "today": 20 July 2026 -> recap month June 2026 (202606).
@@ -135,9 +137,16 @@ class MonthlyRecapRepoTest {
         }
         every { pref.getLoggedInUser() } returns user
         cbacDataSource = mockk()
+        householdDataSource = mockk()
+        beneficiaryDataSource = mockk()
         // Default: 5 CBAC screening events in the window (overridable per test).
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 5
-        repo = MonthlyRecapRepo(dao, pref, clock, MonthlyRecapMetricsCalculator(cbacDataSource))
+        coEvery { householdDataSource.countRegistrations(any(), any(), any()) } returns 0
+        coEvery { beneficiaryDataSource.countRegistrations(any(), any(), any()) } returns 0
+        repo = MonthlyRecapRepo(
+            dao, pref, clock,
+            MonthlyRecapMetricsCalculator(cbacDataSource, householdDataSource, beneficiaryDataSource),
+        )
     }
 
     @Test
@@ -221,7 +230,7 @@ class MonthlyRecapRepoTest {
     fun `ensureMetrics calculates, persists and returns the CBAC activity metric`() = runTest {
         val payload = repo.ensureCurrentRecapMetrics()!!
         assertEquals(202606, payload.recapYearMonth)
-        val category = payload.categories.single()
+        val category = payload.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }
         assertEquals(MonthlyRecapMetricsContract.CATEGORY_NCD, category.categoryId)
         assertEquals(5, category.categoryTotal)
         val activity = category.activities.single()
@@ -242,11 +251,11 @@ class MonthlyRecapRepoTest {
     @Test
     fun `frozen metric is unchanged after later clinical data changes`() = runTest {
         val first = repo.ensureCurrentRecapMetrics()!!
-        assertEquals(5, first.categories.single().categoryTotal)
+        assertEquals(5, first.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal)
         // Simulate new/edited CBAC rows after generation.
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 99
         val second = repo.ensureCurrentRecapMetrics()!!
-        assertEquals(5, second.categories.single().categoryTotal) // frozen value, not 99
+        assertEquals(5, second.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal) // frozen value, not 99
         coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
     }
 
@@ -256,8 +265,8 @@ class MonthlyRecapRepoTest {
             async { repo.ensureCurrentRecapMetrics() },
             async { repo.ensureCurrentRecapMetrics() },
         )
-        assertEquals(5, results[0]!!.categories.single().categoryTotal)
-        assertEquals(5, results[1]!!.categories.single().categoryTotal)
+        assertEquals(5, results[0]!!.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal)
+        assertEquals(5, results[1]!!.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal)
         assertEquals(1, dao.rows.size)
         coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
     }
@@ -269,7 +278,7 @@ class MonthlyRecapRepoTest {
         repo.setRecapLanguage(MonthlyRecapLanguage.ASSAMESE)
         val row = dao.rows.single()
         assertEquals("AS", row.language)
-        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.categories.single().categoryTotal)
+        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal)
     }
 
     @Test

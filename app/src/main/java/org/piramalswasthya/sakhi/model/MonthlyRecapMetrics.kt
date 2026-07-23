@@ -93,8 +93,12 @@ object MonthlyRecapMetricsContract {
 
     // ---- Category ids (only categories with >=1 verified activity are emitted) ----
     const val CATEGORY_NCD = "NCD"
+    const val CATEGORY_HOUSEHOLD = "HOUSEHOLD"
+    const val CATEGORY_BENEFICIARY = "BENEFICIARY"
 
     // ---- Activity ids ----
     /** Verified first activity: completed CBAC (NCD screening) events. */
     const val ACTIVITY_CBAC_SCREENINGS = "CBAC_SCREENINGS"
+    const val ACTIVITY_HOUSEHOLD_REGISTRATIONS = "HOUSEHOLD_REGISTRATIONS"
+    const val ACTIVITY_BENEFICIARY_REGISTRATIONS = "BENEFICIARY_REGISTRATIONS"
 }

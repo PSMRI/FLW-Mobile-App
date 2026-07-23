@@ -19,12 +19,16 @@ import javax.inject.Inject
  * deferred categories (TB, HRP, HBNC, Child-reg, CUFY, Adolescent, NCD referral,
  * General OP) are intentionally absent — never fabricated as 0.
  *
- * Currently implemented: NCD → CBAC screening events. Additional confirmed
- * activities/categories are added by counting them and appending their
- * [RecapCategoryMetric] to [categories].
+ * Verified so far: NCD → CBAC screenings; Household → new households registered;
+ * Beneficiary → new family members registered (drafts excluded). Ownership for
+ * all three is `ashaId = :userId` (registrations) / CBAC's record-level predicate;
+ * see the DAO docs. More confirmed categories are added by counting them and
+ * appending their [RecapCategoryMetric].
  */
 class MonthlyRecapMetricsCalculator @Inject constructor(
     private val cbacRecapDataSource: CbacRecapDataSource,
+    private val householdRecapDataSource: HouseholdRecapDataSource,
+    private val beneficiaryRecapDataSource: BeneficiaryRecapDataSource,
 ) {
     suspend fun calculate(
         userId: Int,
@@ -50,6 +54,42 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
                     activityId = MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS,
                     unit = RecapCountingUnit.EVENT.name,
                     count = cbacScreenings,
+                    status = RecapMetricStatus.AVAILABLE.name,
+                ),
+            ),
+        )
+
+        // ---- Household: new households registered ----
+        val householdRegistrations = householdRecapDataSource.countRegistrations(
+            userId = userId,
+            startMillis = windowStartMillis,
+            endMillisExclusive = windowEndMillisExclusive,
+        )
+        categories += RecapCategoryMetric.from(
+            categoryId = MonthlyRecapMetricsContract.CATEGORY_HOUSEHOLD,
+            activities = listOf(
+                RecapActivityMetric(
+                    activityId = MonthlyRecapMetricsContract.ACTIVITY_HOUSEHOLD_REGISTRATIONS,
+                    unit = RecapCountingUnit.REGISTRATION.name,
+                    count = householdRegistrations,
+                    status = RecapMetricStatus.AVAILABLE.name,
+                ),
+            ),
+        )
+
+        // ---- Beneficiary: new family members registered (drafts excluded) ----
+        val beneficiaryRegistrations = beneficiaryRecapDataSource.countRegistrations(
+            userId = userId,
+            startMillis = windowStartMillis,
+            endMillisExclusive = windowEndMillisExclusive,
+        )
+        categories += RecapCategoryMetric.from(
+            categoryId = MonthlyRecapMetricsContract.CATEGORY_BENEFICIARY,
+            activities = listOf(
+                RecapActivityMetric(
+                    activityId = MonthlyRecapMetricsContract.ACTIVITY_BENEFICIARY_REGISTRATIONS,
+                    unit = RecapCountingUnit.REGISTRATION.name,
+                    count = beneficiaryRegistrations,
                     status = RecapMetricStatus.AVAILABLE.name,
                 ),
             ),
