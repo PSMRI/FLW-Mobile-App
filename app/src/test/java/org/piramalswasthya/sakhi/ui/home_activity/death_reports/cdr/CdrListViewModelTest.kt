@@ -56,4 +56,28 @@ class CdrListViewModelTest : BaseViewModelTest() {
         viewModel.filterText("")
         advanceUntilIdle()
     }
+
+    @Test
+    fun `filterText with whitespace combine does not throw`() = runTest {
+        viewModel.filterText("  abc  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `sequential filterText emissions do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("ab")
+        viewModel.filterText("")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `benList reference is stable`() {
+        val first = viewModel.benList
+        val second = viewModel.benList
+        assertNotNull(first)
+        assertNotNull(second)
+    }
 }

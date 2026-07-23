@@ -73,4 +73,28 @@ class PmsmaVisitsListViewModelTest : BaseViewModelTest() {
         viewModel.updateBottomSheetData(42L)
         advanceUntilIdle()
     }
+
+    @Test
+    fun `updateBottomSheetData then filterText combine does not throw`() = runTest {
+        viewModel.updateBottomSheetData(45L)
+        viewModel.filterText("name")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+        assertNotNull(viewModel.bottomSheetList)
+    }
+
+    @Test
+    fun `updateBottomSheetData with different ids does not throw`() = runTest {
+        viewModel.updateBottomSheetData(1L)
+        viewModel.updateBottomSheetData(2L)
+        advanceUntilIdle()
+        assertNotNull(viewModel.bottomSheetList)
+    }
+
+    @Test
+    fun `filterText empty does not throw`() = runTest {
+        viewModel.filterText("")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
 }

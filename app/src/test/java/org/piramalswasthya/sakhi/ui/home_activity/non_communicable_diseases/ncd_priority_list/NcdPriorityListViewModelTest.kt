@@ -55,4 +55,20 @@ class NcdPriorityListViewModelTest : BaseViewModelTest() {
         viewModel.filterText("")
         advanceUntilIdle()
     }
+
+    @Test
+    fun `filterText with whitespace does not throw`() = runTest {
+        viewModel.filterText("  priority  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `repeated filterText emissions do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("")
+        viewModel.filterText("b")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
 }

@@ -66,4 +66,102 @@ class EligibleCoupleTrackingTest {
         val b = EligibleCoupleTrackingCache(benId = 1L, createdBy = "b", updatedBy = "test", syncState = SyncState.UNSYNCED)
         assertNotEquals(a, b)
     }
+
+    // =====================================================
+    // asNetworkModel Mapping Tests (merged from EligibleCoupleTrackingMappingTest)
+    // =====================================================
+
+    private fun cache() = EligibleCoupleTrackingCache(
+        benId = 42L,
+        createdBy = "creator",
+        updatedBy = "modifier",
+        syncState = SyncState.UNSYNCED
+    )
+
+    @Test fun `asNetworkModel maps benId`() {
+        assertEquals(42L, cache().asNetworkModel().benId)
+    }
+
+    @Test fun `asNetworkModel maps createdBy and updatedBy`() {
+        val net = cache().asNetworkModel()
+        assertEquals("creator", net.createdBy)
+        assertEquals("modifier", net.updatedBy)
+    }
+
+    @Test fun `asNetworkModel default isActive is true`() {
+        assertEquals(true, cache().asNetworkModel().isActive)
+    }
+
+    @Test fun `asNetworkModel lmp_date equals benId by design`() {
+        // asNetworkModel sets lmp_date = benId
+        assertEquals(42L, cache().asNetworkModel().lmp_date)
+    }
+
+    @Test fun `asNetworkModel formats zero lmpDate to date string`() {
+        val net = cache().asNetworkModel()
+        assertNotNull(net.lmpDate)
+    }
+
+    @Test fun `asNetworkModel formats visitDate as datetime`() {
+        val net = cache().asNetworkModel()
+        assertTrue(net.visitDate.contains("T"))
+    }
+
+    @Test fun `asNetworkModel null dateOfAntraInjection stays null`() {
+        val net = cache().copy(dateOfAntraInjection = null).asNetworkModel()
+        assertNull(net.dateOfAntraInjection)
+    }
+
+    @Test fun `asNetworkModel parses dateOfAntraInjection when present`() {
+        val net = cache().copy(dateOfAntraInjection = "01-01-2023").asNetworkModel()
+        assertNotNull(net.dateOfAntraInjection)
+        assertTrue(net.dateOfAntraInjection!!.contains("T"))
+    }
+
+    @Test fun `asNetworkModel passes through pregnancy fields`() {
+        val net = cache().copy(
+            isPregnant = "Yes",
+            pregnancyTestResult = "Positive",
+            methodOfContraception = "Antra"
+        ).asNetworkModel()
+        assertEquals("Yes", net.isPregnant)
+        assertEquals("Positive", net.pregnancyTestResult)
+        assertEquals("Antra", net.methodOfContraception)
+    }
+
+    private fun cache2() = EligibleCoupleTrackingCache(
+        benId = 55L,
+        createdBy = "creator",
+        updatedBy = "modifier",
+        syncState = SyncState.UNSYNCED
+    )
+
+    @Test fun `not-pregnant negative result`() {
+        val net = cache2().copy(
+            isPregnant = "No",
+            pregnancyTestResult = "Negative",
+            methodOfContraception = null
+        ).asNetworkModel()
+        assertEquals("No", net.isPregnant)
+        assertEquals("Negative", net.pregnancyTestResult)
+        assertNull(net.methodOfContraception)
+    }
+
+    @Test fun `inactive flag maps through`() {
+        val net = cache2().copy(isActive = false).asNetworkModel()
+        assertEquals(false, net.isActive)
+    }
+
+    @Test fun `alternate antra date format parses`() {
+        val net = cache2().copy(dateOfAntraInjection = "15-08-2022").asNetworkModel()
+        assertEquals(true, net.dateOfAntraInjection?.contains("T"))
+    }
+
+    @Test fun `condom contraception passes through`() {
+        val net = cache2().copy(
+            isPregnant = "No",
+            methodOfContraception = "Condom"
+        ).asNetworkModel()
+        assertEquals("Condom", net.methodOfContraception)
+    }
 }

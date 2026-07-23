@@ -6,10 +6,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.list.AbortionListViewModel
 
@@ -80,5 +82,41 @@ class AbortionListViewModelTest : BaseViewModelTest() {
     fun `updateSelectedBenId does not throw`() = runTest {
         viewModel.updateSelectedBenId(42L)
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.OLDEST_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.OLDEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `search and sort combine does not throw`() = runTest {
+        viewModel.setSearchQuery("name")
+        viewModel.setSortFilter(EcFilterType.AGE_WISE)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.AGE_WISE, viewModel.getCurrentSort())
+        assertNotNull(viewModel.abortionList)
+    }
+
+    @Test
+    fun `setYearMonth various values do not throw`() = runTest {
+        viewModel.setYearMonth(2025, 1)
+        viewModel.setYearMonth(2026, 12)
+        advanceUntilIdle()
+        assertNotNull(viewModel.abortionList)
+    }
+
+    @Test
+    fun `updateSelectedBenId does not throw_2`() = runTest {
+        viewModel.updateSelectedBenId(55L)
+        advanceUntilIdle()
+        assertNotNull(viewModel.allAbortionList)
     }
 }

@@ -7,8 +7,10 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
@@ -16,8 +18,14 @@ import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
+import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 
+/**
+ * Unit tests for [AdolescentHealthRepo]. Consolidated from
+ * AdolescentHealthRepoTest + ExtraTest: getters/save delegations plus the push
+ * coordinator (success + no-user) and the server-pull no-user guard.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class AdolescentHealthRepoTest : BaseRepositoryTest() {
 
@@ -71,5 +79,39 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
         repo.saveAdolescentHealth(record)
 
         coVerify(exactly = 1) { adolescentHealthDao.saveAdolescentHealth(record) }
+    }
+
+    // =====================================================
+    // pushUnSyncedRecords() / server-pull guards
+    // =====================================================
+
+    @Test
+    fun `pushUnSyncedRecords returns true when nothing to sync`() = runTest {
+        coEvery { preferenceDao.getLoggedInUser() } returns mockk<User>(relaxed = true)
+        assertTrue(repo.pushUnSyncedRecords())
+    }
+
+    @Test
+    fun `pushUnSyncedRecords throws when no user logged in`() = runTest {
+        coEvery { preferenceDao.getLoggedInUser() } returns null
+
+        try {
+            repo.pushUnSyncedRecords()
+            assertFalse("Should have thrown IllegalStateException", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message?.contains("No user logged in") == true)
+        }
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer throws when no user logged in`() = runTest {
+        coEvery { preferenceDao.getLoggedInUser() } returns null
+
+        try {
+            repo.getadolescentHealthCacheFromServer()
+            assertFalse("Should have thrown IllegalStateException", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message?.contains("No user logged in") == true)
+        }
     }
 }

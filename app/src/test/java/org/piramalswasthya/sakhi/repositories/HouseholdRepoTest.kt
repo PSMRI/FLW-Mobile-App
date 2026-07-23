@@ -2,11 +2,13 @@ package org.piramalswasthya.sakhi.repositories
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -17,6 +19,10 @@ import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.HouseholdCache
 
+/**
+ * Unit tests for [HouseholdRepo]. Consolidated from the previously separate
+ * HouseholdRepoTest + Extra* files into a single class.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HouseholdRepoTest : BaseRepositoryTest() {
 
@@ -30,10 +36,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         super.setUp()
         repo = HouseholdRepo(householdDao, benDao)
     }
-
-    // =====================================================
-    // getDraftRecord() Tests
-    // =====================================================
 
     @Test
     fun `getDraftRecord returns draft when exists`() = runTest {
@@ -55,10 +57,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         assertNull(result)
     }
 
-    // =====================================================
-    // getRecord() Tests
-    // =====================================================
-
     @Test
     fun `getRecord returns household by id`() = runTest {
         val household = mockk<HouseholdCache>()
@@ -78,10 +76,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
 
         assertNull(result)
     }
-
-    // =====================================================
-    // persistRecord() Tests
-    // =====================================================
 
     @Test
     fun `persistRecord inserts when household does not exist`() = runTest {
@@ -118,10 +112,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 0) { householdDao.update(any<HouseholdCache>()) }
     }
 
-    // =====================================================
-    // getAllBenOfHousehold() Tests
-    // =====================================================
-
     @Test
     fun `getAllBenOfHousehold returns beneficiaries`() = runTest {
         val benList = listOf(mockk<BenRegCache>(), mockk<BenRegCache>(), mockk<BenRegCache>())
@@ -141,10 +131,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         assertEquals(0, result.size)
     }
 
-    // =====================================================
-    // deleteHouseholdDraft() Tests
-    // =====================================================
-
     @Test
     fun `deleteHouseholdDraft calls dao delete`() = runTest {
         coEvery { householdDao.deleteDraftHousehold() } returns Unit
@@ -153,10 +139,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
 
         coVerify(exactly = 1) { householdDao.deleteDraftHousehold() }
     }
-
-    // =====================================================
-    // updateHousehold() Tests
-    // =====================================================
 
     @Test
     fun `updateHousehold calls dao update`() = runTest {
@@ -168,10 +150,6 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 1) { householdDao.update(household) }
     }
 
-    // =====================================================
-    // updateHouseholdToSync() Tests
-    // =====================================================
-
     @Test
     fun `updateHouseholdToSync passes correct params`() = runTest {
         coEvery { householdDao.updateHouseholdToSync(100L, "U", 2) } returns Unit
@@ -179,5 +157,27 @@ class HouseholdRepoTest : BaseRepositoryTest() {
         repo.updateHouseholdToSync(100L)
 
         coVerify { householdDao.updateHouseholdToSync(100L, "U", 2) }
+    }
+
+    @Test
+    fun `substituteHouseholdIdForDraft delegates to dao and clears draft flag`() = runTest {
+        val household = mockk<HouseholdCache>(relaxed = true)
+        every { household.householdId } returns 321L
+
+        repo.substituteHouseholdIdForDraft(household)
+
+        coVerify { householdDao.substituteHouseholdId(0, 321L) }
+    }
+
+    @Test
+    fun `persistRecord isFinal flag does not change insert path`() = runTest {
+        val household = mockk<HouseholdCache>(relaxed = true)
+        every { household.householdId } returns 100L
+        coEvery { householdDao.getHousehold(100L) } returns null
+
+        repo.persistRecord(household, isFinal = true)
+
+        coVerify { householdDao.upsert(household) }
+        coVerify(exactly = 0) { householdDao.update(household) }
     }
 }
