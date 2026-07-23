@@ -95,10 +95,14 @@ object MonthlyRecapMetricsContract {
     const val CATEGORY_NCD = "NCD"
     const val CATEGORY_HOUSEHOLD = "HOUSEHOLD"
     const val CATEGORY_BENEFICIARY = "BENEFICIARY"
+    const val CATEGORY_ELIGIBLE_COUPLE = "ELIGIBLE_COUPLE"
 
     // ---- Activity ids ----
     /** Verified first activity: completed CBAC (NCD screening) events. */
     const val ACTIVITY_CBAC_SCREENINGS = "CBAC_SCREENINGS"
     const val ACTIVITY_HOUSEHOLD_REGISTRATIONS = "HOUSEHOLD_REGISTRATIONS"
     const val ACTIVITY_BENEFICIARY_REGISTRATIONS = "BENEFICIARY_REGISTRATIONS"
+
+    /** Distinct couples registered OR tracked for family planning (single number). */
+    const val ACTIVITY_ELIGIBLE_COUPLE_FP = "ELIGIBLE_COUPLE_FP"
 }

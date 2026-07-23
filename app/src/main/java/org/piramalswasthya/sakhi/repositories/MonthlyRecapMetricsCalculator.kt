@@ -29,6 +29,7 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
     private val cbacRecapDataSource: CbacRecapDataSource,
     private val householdRecapDataSource: HouseholdRecapDataSource,
     private val beneficiaryRecapDataSource: BeneficiaryRecapDataSource,
+    private val eligibleCoupleRecapDataSource: EligibleCoupleRecapDataSource,
 ) {
     suspend fun calculate(
         userId: Int,
@@ -90,6 +91,24 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
                     activityId = MonthlyRecapMetricsContract.ACTIVITY_BENEFICIARY_REGISTRATIONS,
                     unit = RecapCountingUnit.REGISTRATION.name,
                     count = beneficiaryRegistrations,
+                    status = RecapMetricStatus.AVAILABLE.name,
+                ),
+            ),
+        )
+
+        // ---- Eligible Couple: distinct couples registered OR tracked for FP ----
+        val eligibleCouples = eligibleCoupleRecapDataSource.countCouples(
+            userName = userName,
+            startMillis = windowStartMillis,
+            endMillisExclusive = windowEndMillisExclusive,
+        )
+        categories += RecapCategoryMetric.from(
+            categoryId = MonthlyRecapMetricsContract.CATEGORY_ELIGIBLE_COUPLE,
+            activities = listOf(
+                RecapActivityMetric(
+                    activityId = MonthlyRecapMetricsContract.ACTIVITY_ELIGIBLE_COUPLE_FP,
+                    unit = RecapCountingUnit.UNIQUE_BENEFICIARY.name,
+                    count = eligibleCouples,
                     status = RecapMetricStatus.AVAILABLE.name,
                 ),
             ),

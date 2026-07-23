@@ -118,6 +118,7 @@ class MonthlyRecapRepoTest {
     private lateinit var cbacDataSource: CbacRecapDataSource
     private lateinit var householdDataSource: HouseholdRecapDataSource
     private lateinit var beneficiaryDataSource: BeneficiaryRecapDataSource
+    private lateinit var eligibleCoupleDataSource: EligibleCoupleRecapDataSource
     private lateinit var repo: MonthlyRecapRepo
 
     // Fixed "today": 20 July 2026 -> recap month June 2026 (202606).
@@ -139,13 +140,20 @@ class MonthlyRecapRepoTest {
         cbacDataSource = mockk()
         householdDataSource = mockk()
         beneficiaryDataSource = mockk()
+        eligibleCoupleDataSource = mockk()
         // Default: 5 CBAC screening events in the window (overridable per test).
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 5
         coEvery { householdDataSource.countRegistrations(any(), any(), any()) } returns 0
         coEvery { beneficiaryDataSource.countRegistrations(any(), any(), any()) } returns 0
+        coEvery { eligibleCoupleDataSource.countCouples(any(), any(), any()) } returns 0
         repo = MonthlyRecapRepo(
             dao, pref, clock,
-            MonthlyRecapMetricsCalculator(cbacDataSource, householdDataSource, beneficiaryDataSource),
+            MonthlyRecapMetricsCalculator(
+                cbacDataSource,
+                householdDataSource,
+                beneficiaryDataSource,
+                eligibleCoupleDataSource,
+            ),
         )
     }
 
