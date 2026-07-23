@@ -221,12 +221,13 @@ class MonthlyRecapRepoTest {
     fun `ensureMetrics calculates, persists and returns the CBAC activity metric`() = runTest {
         val payload = repo.ensureCurrentRecapMetrics()!!
         assertEquals(202606, payload.recapYearMonth)
-        val activity = payload.activities.single()
+        val category = payload.categories.single()
+        assertEquals(MonthlyRecapMetricsContract.CATEGORY_NCD, category.categoryId)
+        assertEquals(5, category.categoryTotal)
+        val activity = category.activities.single()
         assertEquals(MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS, activity.activityId)
         assertEquals("EVENT", activity.unit)
         assertEquals(5, activity.count)
-        // No "NCD" total is claimed in a CBAC-only (Path B) metric.
-        assertTrue(payload.activities.none { it.activityId == "NCD" })
         // Persisted into the snapshot's metricsJson.
         assertNotNull(dao.rows.single().metricsJson)
     }
@@ -241,11 +242,11 @@ class MonthlyRecapRepoTest {
     @Test
     fun `frozen metric is unchanged after later clinical data changes`() = runTest {
         val first = repo.ensureCurrentRecapMetrics()!!
-        assertEquals(5, first.activities.single().count)
+        assertEquals(5, first.categories.single().categoryTotal)
         // Simulate new/edited CBAC rows after generation.
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 99
         val second = repo.ensureCurrentRecapMetrics()!!
-        assertEquals(5, second.activities.single().count) // frozen value, not 99
+        assertEquals(5, second.categories.single().categoryTotal) // frozen value, not 99
         coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
     }
 
@@ -255,8 +256,8 @@ class MonthlyRecapRepoTest {
             async { repo.ensureCurrentRecapMetrics() },
             async { repo.ensureCurrentRecapMetrics() },
         )
-        assertEquals(5, results[0]!!.activities.single().count)
-        assertEquals(5, results[1]!!.activities.single().count)
+        assertEquals(5, results[0]!!.categories.single().categoryTotal)
+        assertEquals(5, results[1]!!.categories.single().categoryTotal)
         assertEquals(1, dao.rows.size)
         coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
     }
@@ -268,7 +269,7 @@ class MonthlyRecapRepoTest {
         repo.setRecapLanguage(MonthlyRecapLanguage.ASSAMESE)
         val row = dao.rows.single()
         assertEquals("AS", row.language)
-        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.activities.single().count)
+        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.categories.single().categoryTotal)
     }
 
     @Test

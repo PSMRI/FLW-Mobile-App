@@ -6,6 +6,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsPayload
 import org.piramalswasthya.sakhi.model.RecapActivityMetric
+import org.piramalswasthya.sakhi.model.RecapCategoryMetric
 import org.piramalswasthya.sakhi.model.RecapCountingUnit
 
 class MonthlyRecapMetricsCodecTest {
@@ -17,11 +18,16 @@ class MonthlyRecapMetricsCodecTest {
         generatedAt = 1_780_000_000_000L,
         windowStartMillis = 1_000L,
         windowEndMillisExclusive = 2_000L,
-        activities = listOf(
-            RecapActivityMetric(
-                MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS,
-                RecapCountingUnit.EVENT.name,
-                count,
+        categories = listOf(
+            RecapCategoryMetric.from(
+                MonthlyRecapMetricsContract.CATEGORY_NCD,
+                listOf(
+                    RecapActivityMetric(
+                        MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS,
+                        RecapCountingUnit.EVENT.name,
+                        count,
+                    )
+                ),
             )
         ),
     )
@@ -49,8 +55,8 @@ class MonthlyRecapMetricsCodecTest {
     @Test
     fun `unsupported schema version decodes to null (never reinterpreted)`() {
         val unsupported = """
-            {"payloadSchemaVersion":999,"calculationVersion":1,"recapYearMonth":202606,
-             "generatedAt":0,"windowStartMillis":0,"windowEndMillisExclusive":0,"activities":[]}
+            {"payloadSchemaVersion":999,"calculationVersion":2,"recapYearMonth":202606,
+             "generatedAt":0,"windowStartMillis":0,"windowEndMillisExclusive":0,"categories":[]}
         """.trimIndent()
         assertNull(MonthlyRecapMetricsCodec.decodeOrNull(unsupported))
     }

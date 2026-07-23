@@ -1,30 +1,74 @@
 package org.piramalswasthya.sakhi.model
 
 /**
- * Aggregate Monthly Recap metrics — Phase 4.3.
+ * Aggregate Monthly Recap metrics — the ONLY thing written into
+ * MonthlyRecapCache.metricsJson. Strictly privacy-safe aggregates: counts,
+ * stable identifiers, window bounds and availability status only. MUST NOT carry
+ * beneficiary ids/names, household ids, health scores, clinical answers, referral
+ * reasons or any record-level detail.
  *
- * These types are the ONLY thing written into MonthlyRecapCache.metricsJson.
- * They are strictly privacy-safe aggregates: counts, identifiers and window
- * bounds only. They MUST NOT carry beneficiary ids/names, household ids, health
- * scores, clinical answers, referral reasons or any record-level detail.
- *
- * Phase 4.3 ships ONE verified activity under the future NCD category:
- * CBAC screening events. NCD referral is deferred (its local model has no ASHA
- * ownership field and no genuine referral-activity date), so this is a CBAC
- * activity metric — NOT the complete NCD category total.
+ * Shape (Phase 6): the payload is a list of CATEGORIES; each category rolls up one
+ * or more ACTIVITIES into a category total. Only categories with at least one
+ * verified, ASHA-owned activity are emitted; deferred/unverifiable categories are
+ * simply absent (or marked UNAVAILABLE) — never fabricated as 0.
  */
 
 /** Semantic counting unit for a recap activity metric. */
-enum class RecapCountingUnit { EVENT, UNIQUE_BENEFICIARY, FORM_SUBMISSION }
+enum class RecapCountingUnit {
+    EVENT,
+    UNIQUE_BENEFICIARY,
+    FORM_SUBMISSION,
+    REGISTRATION,
+    VISIT,
+    DOSE,
+}
 
-/** One privacy-safe aggregate activity metric (counts + identity only). */
+/**
+ * Whether a metric/category could be safely computed.
+ *
+ * INTERNAL ONLY — this status exists so a deferred category is never mis-rendered
+ * as a real `0`. It MUST NOT be surfaced in any ASHA-facing text: the UI silently
+ * shows AVAILABLE results and omits UNAVAILABLE ones (no "we couldn't include X").
+ */
+enum class RecapMetricStatus { AVAILABLE, UNAVAILABLE }
+
+/** One privacy-safe aggregate activity metric. [count] is meaningful only when [status] is AVAILABLE. */
 data class RecapActivityMetric(
     /** Stable activity id, e.g. [MonthlyRecapMetricsContract.ACTIVITY_CBAC_SCREENINGS]. */
     val activityId: String,
     /** [RecapCountingUnit] name, e.g. "EVENT". */
     val unit: String,
     val count: Int,
+    /** [RecapMetricStatus] name; defaults to AVAILABLE. */
+    val status: String = RecapMetricStatus.AVAILABLE.name,
 )
+
+/**
+ * One recap category (e.g. Maternal Health) rolling up its activities.
+ *
+ * [categoryTotal] = sum of the counts of AVAILABLE activities. Because each
+ * activity is a distinct Room table, no single record can be counted under two
+ * activities, so the sum never double-counts. [status] is AVAILABLE when at least
+ * one activity is available, otherwise UNAVAILABLE.
+ */
+data class RecapCategoryMetric(
+    val categoryId: String,
+    val activities: List<RecapActivityMetric>,
+    val categoryTotal: Int,
+    val status: String,
+) {
+    companion object {
+        /** Builds a category from its activities, computing the total + status per the aggregation rule. */
+        fun from(categoryId: String, activities: List<RecapActivityMetric>): RecapCategoryMetric {
+            val available = activities.filter { it.status == RecapMetricStatus.AVAILABLE.name }
+            val total = available.sumOf { it.count }
+            val status =
+                if (available.isNotEmpty()) RecapMetricStatus.AVAILABLE.name
+                else RecapMetricStatus.UNAVAILABLE.name
+            return RecapCategoryMetric(categoryId, activities, total, status)
+        }
+    }
+}
 
 /**
  * Versioned aggregate payload persisted in MonthlyRecapCache.metricsJson and
@@ -37,16 +81,20 @@ data class MonthlyRecapMetricsPayload(
     val generatedAt: Long,
     val windowStartMillis: Long,
     val windowEndMillisExclusive: Long,
-    val activities: List<RecapActivityMetric>,
+    val categories: List<RecapCategoryMetric>,
 )
 
 object MonthlyRecapMetricsContract {
-    /** JSON envelope version; bump only when the payload shape changes. */
-    const val PAYLOAD_SCHEMA_VERSION = 1
+    /** JSON envelope version; bump only when the payload SHAPE changes. */
+    const val PAYLOAD_SCHEMA_VERSION = 2
 
     /** Semantic calculation version; bump when counting rules change. */
-    const val CALCULATION_VERSION = 1
+    const val CALCULATION_VERSION = 2
 
+    // ---- Category ids (only categories with >=1 verified activity are emitted) ----
+    const val CATEGORY_NCD = "NCD"
+
+    // ---- Activity ids ----
     /** Verified first activity: completed CBAC (NCD screening) events. */
     const val ACTIVITY_CBAC_SCREENINGS = "CBAC_SCREENINGS"
 }
