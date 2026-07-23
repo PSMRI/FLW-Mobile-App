@@ -97,6 +97,7 @@ object MonthlyRecapMetricsContract {
     const val CATEGORY_BENEFICIARY = "BENEFICIARY"
     const val CATEGORY_ELIGIBLE_COUPLE = "ELIGIBLE_COUPLE"
     const val CATEGORY_MATERNAL_HEALTH = "MATERNAL_HEALTH"
+    const val CATEGORY_IMMUNIZATION = "IMMUNIZATION"
 
     // ---- Activity ids ----
     /** Verified first activity: completed CBAC (NCD screening) events. */
@@ -112,4 +113,7 @@ object MonthlyRecapMetricsContract {
      * (pregnancy registration, ANC, PMSMA, delivery outcome, PNC) — a single number.
      */
     const val ACTIVITY_MATERNAL_HEALTH_MOTHERS = "MATERNAL_HEALTH_MOTHERS_SUPPORTED"
+
+    /** Vaccine doses the ASHA administered (child + mother), counted per dose. */
+    const val ACTIVITY_IMMUNIZATION_DOSES = "IMMUNIZATION_DOSES_ADMINISTERED"
 }

@@ -22,8 +22,9 @@ import javax.inject.Inject
  * Verified so far: NCD → CBAC screenings; Household → new households registered;
  * Beneficiary → new family members registered (drafts excluded); Eligible Couple →
  * distinct couples registered OR tracked for FP; Maternal Health → distinct mothers
- * supported via any maternal activity. Ownership is `ashaId = :userId` (registrations)
- * / CBAC's record-level predicate / `createdBy = :userName` (EC, Maternal Health);
+ * supported via any maternal activity; Immunization → vaccine doses administered
+ * (child + mother). Ownership is `ashaId = :userId` (registrations) / CBAC's
+ * record-level predicate / `createdBy = :userName` (EC, Maternal Health, Immunization);
  * see the DAO docs. More confirmed categories are added by counting them and
  * appending their [RecapCategoryMetric].
  */
@@ -33,6 +34,7 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
     private val beneficiaryRecapDataSource: BeneficiaryRecapDataSource,
     private val eligibleCoupleRecapDataSource: EligibleCoupleRecapDataSource,
     private val maternalHealthRecapDataSource: MaternalHealthRecapDataSource,
+    private val immunizationRecapDataSource: ImmunizationRecapDataSource,
 ) {
     suspend fun calculate(
         userId: Int,
@@ -130,6 +132,24 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
                     activityId = MonthlyRecapMetricsContract.ACTIVITY_MATERNAL_HEALTH_MOTHERS,
                     unit = RecapCountingUnit.UNIQUE_BENEFICIARY.name,
                     count = mothersSupported,
+                    status = RecapMetricStatus.AVAILABLE.name,
+                ),
+            ),
+        )
+
+        // ---- Immunization: vaccine doses administered (child + mother) ----
+        val dosesAdministered = immunizationRecapDataSource.countDosesAdministered(
+            userName = userName,
+            startMillis = windowStartMillis,
+            endMillisExclusive = windowEndMillisExclusive,
+        )
+        categories += RecapCategoryMetric.from(
+            categoryId = MonthlyRecapMetricsContract.CATEGORY_IMMUNIZATION,
+            activities = listOf(
+                RecapActivityMetric(
+                    activityId = MonthlyRecapMetricsContract.ACTIVITY_IMMUNIZATION_DOSES,
+                    unit = RecapCountingUnit.DOSE.name,
+                    count = dosesAdministered,
                     status = RecapMetricStatus.AVAILABLE.name,
                 ),
             ),

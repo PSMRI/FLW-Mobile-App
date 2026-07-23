@@ -120,6 +120,7 @@ class MonthlyRecapRepoTest {
     private lateinit var beneficiaryDataSource: BeneficiaryRecapDataSource
     private lateinit var eligibleCoupleDataSource: EligibleCoupleRecapDataSource
     private lateinit var maternalHealthDataSource: MaternalHealthRecapDataSource
+    private lateinit var immunizationDataSource: ImmunizationRecapDataSource
     private lateinit var repo: MonthlyRecapRepo
 
     // Fixed "today": 20 July 2026 -> recap month June 2026 (202606).
@@ -143,12 +144,14 @@ class MonthlyRecapRepoTest {
         beneficiaryDataSource = mockk()
         eligibleCoupleDataSource = mockk()
         maternalHealthDataSource = mockk()
+        immunizationDataSource = mockk()
         // Default: 5 CBAC screening events in the window (overridable per test).
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 5
         coEvery { householdDataSource.countRegistrations(any(), any(), any()) } returns 0
         coEvery { beneficiaryDataSource.countRegistrations(any(), any(), any()) } returns 0
         coEvery { eligibleCoupleDataSource.countCouples(any(), any(), any()) } returns 0
         coEvery { maternalHealthDataSource.countMothersSupported(any(), any(), any()) } returns 0
+        coEvery { immunizationDataSource.countDosesAdministered(any(), any(), any()) } returns 0
         repo = MonthlyRecapRepo(
             dao, pref, clock,
             MonthlyRecapMetricsCalculator(
@@ -157,6 +160,7 @@ class MonthlyRecapRepoTest {
                 beneficiaryDataSource,
                 eligibleCoupleDataSource,
                 maternalHealthDataSource,
+                immunizationDataSource,
             ),
         )
     }
@@ -264,6 +268,19 @@ class MonthlyRecapRepoTest {
         assertEquals(MonthlyRecapMetricsContract.ACTIVITY_MATERNAL_HEALTH_MOTHERS, activity.activityId)
         assertEquals("UNIQUE_BENEFICIARY", activity.unit)
         assertEquals(4, activity.count)
+    }
+
+    @Test
+    fun `ensureMetrics emits the Immunization doses-administered category`() = runTest {
+        coEvery { immunizationDataSource.countDosesAdministered(any(), any(), any()) } returns 12
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        val category =
+            payload.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_IMMUNIZATION }
+        assertEquals(12, category.categoryTotal)
+        val activity = category.activities.single()
+        assertEquals(MonthlyRecapMetricsContract.ACTIVITY_IMMUNIZATION_DOSES, activity.activityId)
+        assertEquals("DOSE", activity.unit)
+        assertEquals(12, activity.count)
     }
 
     @Test
