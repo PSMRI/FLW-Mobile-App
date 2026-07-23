@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -84,6 +85,8 @@ class SignInFragment : Fragment() {
                     if (it > 0) {
                         WorkerUtils.triggerAmritPushWorker(requireContext())
                     } else {
+                        // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                        FcmTokenUploader.clearToken(requireContext())
                         lifecycleScope.launch {
                             viewModel.logout()
                         }

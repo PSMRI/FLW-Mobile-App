@@ -443,4 +443,25 @@ class UserRepo @Inject constructor(
         }
     }
 
+    /**
+     * Unbinds this device's FCM token from [userId] on the server (called on logout) so a
+     * subsequent user on the same device does not receive token-targeted pushes for [userId].
+     */
+    suspend fun clearFirebaseToken(userId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf<String, Any>("userId" to userId)
+                val response = amritApiService.clearFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token cleared successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to clear Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while clearing Firebase token")
+            }
+        }
+    }
+
 }

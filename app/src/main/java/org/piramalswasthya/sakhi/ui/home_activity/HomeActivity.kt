@@ -81,6 +81,7 @@ import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
 import org.piramalswasthya.sakhi.utils.BellBadgeHelper
 import org.piramalswasthya.sakhi.utils.FcmTokenUploader
+import org.piramalswasthya.sakhi.utils.FcmTopicManager
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -188,6 +189,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.logout))
             .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
+                // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                FcmTokenUploader.clearToken(this)
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(this)
                 WorkerUtils.cancelAllWork(this)
@@ -242,7 +245,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
-        FirebaseMessaging.getInstance().subscribeToTopic("All")
+        FcmTopicManager.subscribe("user_${pref.getLoggedInUser()?.userId}")
         // Register this device's FCM token with the server for the logged-in user.
         FcmTokenUploader.uploadToken(this)
 //        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
@@ -413,6 +416,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                         .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             dialog.dismiss()
+                            // Tear down the FCM binding BEFORE prefs (and the user) are cleared.
+                            FcmTokenUploader.clearToken(this@HomeActivity)
                             pref.deleteForLogout()
                             WorkerUtils.cancelAllWork(this@HomeActivity)
                             startActivity(Intent(this@HomeActivity, LoginActivity::class.java))

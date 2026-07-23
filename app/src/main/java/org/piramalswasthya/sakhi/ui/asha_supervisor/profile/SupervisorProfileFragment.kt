@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentSupervisorProfileBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import kotlin.getValue
@@ -33,6 +34,8 @@ class SupervisorProfileFragment : Fragment()  {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(resources.getString(R.string.logout))
             .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
+                // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                FcmTokenUploader.clearToken(requireActivity())
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(requireActivity())
                 WorkerUtils.cancelAllWork(requireActivity())

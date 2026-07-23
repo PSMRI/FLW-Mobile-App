@@ -6,30 +6,15 @@
 
 
 // ================== Development Constants ================== //
-#ifdef IS_DEVELOPMENT
-const char* M_ENCRYPTED_PASS_KEY = "Piramal12Piramal";
-
-const char* M_ABHA_CLIENT_SECRET = "87b7eb89-b236-43b6-82b0-6eef154a9b90";
-const char* M_ABHA_CLIENT_ID = "SBX_001542";
-const char* M_BASE_TMC_URL = "https://uatamrit.piramalswasthya.org/";
-//"https://amritdemo.piramalswasthya.org/";
-//"https://amritflw.piramalswasthya.org/";
-//"http://devbox.bizbrolly.com:4040/";
-//https://uatamrit.piramalswasthya.org/;
-const char* M_BASE_ABHA_URL = "https://abhasbx.abdm.gov.in/abha/api/";
-const char* M_ABHA_TOKEN_URL = "https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions";
-const char* M_ABHA_AUTH_URL = "https://abhasbx.abdm.gov.in/abha/api/v3/profile/public/certificate";
-const char* M_CHAT_URL = "https://piramalvoicebot.yugasa.org/";
-
-//#if IS_DEVELOPMENT
-//const char* M_ENCRYPTED_PASS_KEY = "dummy_pass_key";
-//const char* M_ABHA_CLIENT_SECRET = "dummy_abha_client_secret";
-//const char* M_ABHA_CLIENT_ID = "dummy_abha_client_id";
-//const char* M_BASE_TMC_URL = "dummy_base_tmc_url";
-//const char* M_BASE_ABHA_URL = "dummy_base_abha_url";
-//const char* M_ABHA_TOKEN_URL = "dummy_abha_token_url";
-//const char* M_ABHA_AUTH_URL = "dummy_abha_auth_url";
-//const char* M_CHAT_URL = "dummy_chat_url";
+#if IS_DEVELOPMENT
+const char* M_ENCRYPTED_PASS_KEY = "dummy_pass_key";
+const char* M_ABHA_CLIENT_SECRET = "dummy_abha_client_secret";
+const char* M_ABHA_CLIENT_ID = "dummy_abha_client_id";
+const char* M_BASE_TMC_URL = "dummy_base_tmc_url";
+const char* M_BASE_ABHA_URL = "dummy_base_abha_url";
+const char* M_ABHA_TOKEN_URL = "dummy_abha_token_url";
+const char* M_ABHA_AUTH_URL = "dummy_abha_auth_url";
+const char* M_CHAT_URL = "dummy_chat_url";
 // ================== Production Constants (from Environment) ================== //
 #else
 const char* M_ENCRYPTED_PASS_KEY = ENCRYPTED_PASS_KEY;

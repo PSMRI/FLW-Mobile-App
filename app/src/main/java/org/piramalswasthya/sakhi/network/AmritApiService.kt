@@ -64,6 +64,11 @@ interface AmritApiService {
     @POST("common-api/firebaseNotification/userToken")
     suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
 
+    // NOTE: placeholder — the backend contract for unbinding a device token from a user on
+    // logout is not yet confirmed. Path + request body will be reconciled with the AMRIT team.
+    @POST("common-api/firebaseNotification/clearUserToken")
+    suspend fun clearFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
+
     // --- In-app notifications (T8) ---
     // NOTE: dummy/placeholder endpoints — the backend contract is not yet confirmed.
     // Paths + request/response shapes will be reconciled when the AMRIT team finalizes it.

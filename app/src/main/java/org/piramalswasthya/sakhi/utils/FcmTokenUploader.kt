@@ -65,4 +65,36 @@ object FcmTokenUploader {
             entryPoint.userRepo().saveFirebaseToken(userId, token, updatedAt)
         }
     }
+
+    /**
+     * Tears down the FCM binding for the currently logged-in user on logout so a subsequent user
+     * on this (potentially shared/reassigned) device does not inherit the previous user's pushes.
+     *
+     * MUST be called **before** the logged-in user is cleared from preferences — the user id is
+     * read synchronously here to build the topic name and the server unbind request.
+     *
+     * Steps: (1) unsubscribe from the user-scoped topic, (2) ask the server to unbind this device
+     * token from the user, (3) best-effort drop the local registration token so the next login
+     * re-registers a fresh one. No-op when no user is logged in.
+     */
+    fun clearToken(context: Context) {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext, FcmEntryPoint::class.java
+        )
+        val userId = entryPoint.preferenceDao().getLoggedInUser()?.userId ?: return // not logged in
+
+        // 1. Topic membership is device-scoped and sticky — drop it explicitly.
+        FcmTopicManager.unsubscribe(userId)
+
+        // 2. Unbind this device token from the user on the server.
+        CoroutineScope(Dispatchers.IO).launch {
+            entryPoint.userRepo().clearFirebaseToken(userId)
+        }
+
+        // 3. Best-effort: invalidate the local token so token-targeted pushes for the old user
+        //    can no longer reach this device even if the server unbind failed (e.g. offline).
+        FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener { task ->
+            Timber.d("FCM deleteToken on logout success=${task.isSuccessful}")
+        }
+    }
 }
