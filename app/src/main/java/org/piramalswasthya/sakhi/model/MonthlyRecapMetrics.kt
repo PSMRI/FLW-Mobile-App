@@ -96,6 +96,7 @@ object MonthlyRecapMetricsContract {
     const val CATEGORY_HOUSEHOLD = "HOUSEHOLD"
     const val CATEGORY_BENEFICIARY = "BENEFICIARY"
     const val CATEGORY_ELIGIBLE_COUPLE = "ELIGIBLE_COUPLE"
+    const val CATEGORY_MATERNAL_HEALTH = "MATERNAL_HEALTH"
 
     // ---- Activity ids ----
     /** Verified first activity: completed CBAC (NCD screening) events. */
@@ -105,4 +106,10 @@ object MonthlyRecapMetricsContract {
 
     /** Distinct couples registered OR tracked for family planning (single number). */
     const val ACTIVITY_ELIGIBLE_COUPLE_FP = "ELIGIBLE_COUPLE_FP"
+
+    /**
+     * Distinct pregnant women / mothers the ASHA supported via ANY maternal activity
+     * (pregnancy registration, ANC, PMSMA, delivery outcome, PNC) — a single number.
+     */
+    const val ACTIVITY_MATERNAL_HEALTH_MOTHERS = "MATERNAL_HEALTH_MOTHERS_SUPPORTED"
 }

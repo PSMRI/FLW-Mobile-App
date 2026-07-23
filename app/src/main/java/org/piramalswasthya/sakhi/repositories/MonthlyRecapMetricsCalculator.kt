@@ -20,8 +20,10 @@ import javax.inject.Inject
  * General OP) are intentionally absent — never fabricated as 0.
  *
  * Verified so far: NCD → CBAC screenings; Household → new households registered;
- * Beneficiary → new family members registered (drafts excluded). Ownership for
- * all three is `ashaId = :userId` (registrations) / CBAC's record-level predicate;
+ * Beneficiary → new family members registered (drafts excluded); Eligible Couple →
+ * distinct couples registered OR tracked for FP; Maternal Health → distinct mothers
+ * supported via any maternal activity. Ownership is `ashaId = :userId` (registrations)
+ * / CBAC's record-level predicate / `createdBy = :userName` (EC, Maternal Health);
  * see the DAO docs. More confirmed categories are added by counting them and
  * appending their [RecapCategoryMetric].
  */
@@ -30,6 +32,7 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
     private val householdRecapDataSource: HouseholdRecapDataSource,
     private val beneficiaryRecapDataSource: BeneficiaryRecapDataSource,
     private val eligibleCoupleRecapDataSource: EligibleCoupleRecapDataSource,
+    private val maternalHealthRecapDataSource: MaternalHealthRecapDataSource,
 ) {
     suspend fun calculate(
         userId: Int,
@@ -109,6 +112,24 @@ class MonthlyRecapMetricsCalculator @Inject constructor(
                     activityId = MonthlyRecapMetricsContract.ACTIVITY_ELIGIBLE_COUPLE_FP,
                     unit = RecapCountingUnit.UNIQUE_BENEFICIARY.name,
                     count = eligibleCouples,
+                    status = RecapMetricStatus.AVAILABLE.name,
+                ),
+            ),
+        )
+
+        // ---- Maternal Health: distinct mothers supported via any maternal activity ----
+        val mothersSupported = maternalHealthRecapDataSource.countMothersSupported(
+            userName = userName,
+            startMillis = windowStartMillis,
+            endMillisExclusive = windowEndMillisExclusive,
+        )
+        categories += RecapCategoryMetric.from(
+            categoryId = MonthlyRecapMetricsContract.CATEGORY_MATERNAL_HEALTH,
+            activities = listOf(
+                RecapActivityMetric(
+                    activityId = MonthlyRecapMetricsContract.ACTIVITY_MATERNAL_HEALTH_MOTHERS,
+                    unit = RecapCountingUnit.UNIQUE_BENEFICIARY.name,
+                    count = mothersSupported,
                     status = RecapMetricStatus.AVAILABLE.name,
                 ),
             ),

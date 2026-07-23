@@ -119,6 +119,7 @@ class MonthlyRecapRepoTest {
     private lateinit var householdDataSource: HouseholdRecapDataSource
     private lateinit var beneficiaryDataSource: BeneficiaryRecapDataSource
     private lateinit var eligibleCoupleDataSource: EligibleCoupleRecapDataSource
+    private lateinit var maternalHealthDataSource: MaternalHealthRecapDataSource
     private lateinit var repo: MonthlyRecapRepo
 
     // Fixed "today": 20 July 2026 -> recap month June 2026 (202606).
@@ -141,11 +142,13 @@ class MonthlyRecapRepoTest {
         householdDataSource = mockk()
         beneficiaryDataSource = mockk()
         eligibleCoupleDataSource = mockk()
+        maternalHealthDataSource = mockk()
         // Default: 5 CBAC screening events in the window (overridable per test).
         coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 5
         coEvery { householdDataSource.countRegistrations(any(), any(), any()) } returns 0
         coEvery { beneficiaryDataSource.countRegistrations(any(), any(), any()) } returns 0
         coEvery { eligibleCoupleDataSource.countCouples(any(), any(), any()) } returns 0
+        coEvery { maternalHealthDataSource.countMothersSupported(any(), any(), any()) } returns 0
         repo = MonthlyRecapRepo(
             dao, pref, clock,
             MonthlyRecapMetricsCalculator(
@@ -153,6 +156,7 @@ class MonthlyRecapRepoTest {
                 householdDataSource,
                 beneficiaryDataSource,
                 eligibleCoupleDataSource,
+                maternalHealthDataSource,
             ),
         )
     }
@@ -247,6 +251,19 @@ class MonthlyRecapRepoTest {
         assertEquals(5, activity.count)
         // Persisted into the snapshot's metricsJson.
         assertNotNull(dao.rows.single().metricsJson)
+    }
+
+    @Test
+    fun `ensureMetrics emits the Maternal Health distinct-mothers category`() = runTest {
+        coEvery { maternalHealthDataSource.countMothersSupported(any(), any(), any()) } returns 4
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        val category =
+            payload.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_MATERNAL_HEALTH }
+        assertEquals(4, category.categoryTotal)
+        val activity = category.activities.single()
+        assertEquals(MonthlyRecapMetricsContract.ACTIVITY_MATERNAL_HEALTH_MOTHERS, activity.activityId)
+        assertEquals("UNIQUE_BENEFICIARY", activity.unit)
+        assertEquals(4, activity.count)
     }
 
     @Test
