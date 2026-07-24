@@ -76,6 +76,11 @@ private class FakeMonthlyRecapDao : MonthlyRecapDao {
         }
     }
 
+    override suspend fun setTotalScenes(userId: Int, yearMonth: Int, totalScenes: Int, now: Long) {
+        val i = rows.indexOfFirst { it.userId == userId && it.recapYearMonth == yearMonth }
+        if (i >= 0) rows[i] = rows[i].copy(totalScenes = totalScenes, updatedAt = now)
+    }
+
     override suspend fun markCompleted(userId: Int, yearMonth: Int, now: Long) {
         val i = rows.indexOfFirst { it.userId == userId && it.recapYearMonth == yearMonth }
         if (i >= 0) {

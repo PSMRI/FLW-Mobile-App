@@ -1564,5 +1564,12 @@
     <string name="monthly_recap_lang_selected_as" translatable="false">আপুনি অসমীয়া বাছনি কৰিছে</string>
     <!-- Localized screen announcement for TalkBack (translated normally). -->
     <string name="monthly_recap_lang_screen_cd">Choose the language for your Monthly Recap</string>
+    <string name="monthly_recap_playback_close_cd">Close your Monthly Recap</string>
+    <string name="monthly_recap_playback_replay">Watch again</string>
+    <string name="monthly_recap_playback_girl_cd">Your ASHA didi celebrating your work</string>
+    <string name="monthly_recap_playback_prev_cd">Previous message</string>
+    <string name="monthly_recap_playback_next_cd">Next message</string>
+    <string name="monthly_recap_playback_pause_cd">Pause</string>
+    <string name="monthly_recap_playback_play_cd">Play</string>
 </resources>
 

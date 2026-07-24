@@ -1461,4 +1461,11 @@
     <string name="monthly_recap_cd_resume">মাহেকীয়া ৰিকেপ চলি আছে। য\'ত এৰিছিল তাৰ পৰাই আগবাঢ়ক।</string>
     <string name="monthly_recap_cd_replay">মাহেকীয়া ৰিকেপ সম্পূৰ্ণ হ\'ল। পুনৰ চাওক।</string>
     <string name="monthly_recap_lang_screen_cd">আপোনাৰ মাহেকীয়া ৰিকেপৰ বাবে ভাষা বাছনি কৰক</string>
+    <string name="monthly_recap_playback_close_cd">আপোনাৰ মাহেকীয়া ৰিকেপ বন্ধ কৰক</string>
+    <string name="monthly_recap_playback_replay">আকৌ চাওক</string>
+    <string name="monthly_recap_playback_girl_cd">আপোনাৰ আশা দিদীয়ে আপোনাৰ কামৰ উদযাপন কৰি আছে</string>
+    <string name="monthly_recap_playback_prev_cd">পূৰ্বৰ বাৰ্তা</string>
+    <string name="monthly_recap_playback_next_cd">পৰৱৰ্তী বাৰ্তা</string>
+    <string name="monthly_recap_playback_pause_cd">বন্ধ কৰক</string>
+    <string name="monthly_recap_playback_play_cd">চলাওক</string>
 </resources>

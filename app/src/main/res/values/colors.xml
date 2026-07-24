@@ -88,4 +88,15 @@
     <color name="overdue_dark_orange">#E65100</color>
     <color name="rejected_red">#D32F2F</color>
     <color name="unclaimed_grey">#607D8B</color>
+
+    <!-- Monthly Recap playback (Phase 7) — premium light palette -->
+    <color name="recap_playback_bg_top">#FFFAF2</color>
+    <color name="recap_playback_bg_mid">#FBF2F7</color>
+    <color name="recap_playback_bg_bottom">#EEEAFB</color>
+    <color name="recap_playback_progress_active">#7B6CD9</color>
+    <color name="recap_playback_progress_track">#E5DFF6</color>
+    <color name="recap_playback_text">#2E2A3B</color>
+    <color name="recap_playback_count_accent">#6A4FC3</color>
+    <color name="recap_playback_bubble">#FFFFFF</color>
+    <color name="recap_playback_close_tint">#8A84A0</color>
 </resources>

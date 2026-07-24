@@ -95,6 +95,16 @@ class HomeIconsFragment : Fragment() {
         }
     }
 
+    /**
+     * Re-evaluates recap visibility each time the dashboard becomes visible: a
+     * background sync may have landed the previous month's records after the
+     * first (hidden) check, and the strip must not stay stale until restart.
+     */
+    override fun onResume() {
+        super.onResume()
+        recapStripViewModel.refresh()
+    }
+
     private fun renderMonthlyRecapStrip(state: MonthlyRecapStripState) {
         val strip = binding.monthlyRecapStrip
         val card = strip.root
@@ -153,12 +163,15 @@ class HomeIconsFragment : Fragment() {
         if (now - lastRecapClickMs < RECAP_CLICK_DEBOUNCE_MS) return
         lastRecapClickMs = now
         when (state) {
+            // First viewing only: pick a language, which then opens playback.
             MonthlyRecapStripState.READY -> navigateToRecapLanguageSelection()
-            // Playback does not exist yet; RESUME/REPLAY taps stay silent.
-            // TODO(Phase 3): RESUME -> resume playback, REPLAY -> replay from start.
+            // RESUME/REPLAY replay an ALREADY FROZEN story in its already-chosen
+            // language. Routing them back through language selection would let a
+            // second choice re-render a supposedly frozen recap, so both open
+            // playback directly (the ViewModel resumes at the stored scene;
+            // replay restarts at scene 0).
             MonthlyRecapStripState.RESUME,
-            MonthlyRecapStripState.REPLAY ->
-                Timber.d("Monthly Recap strip clicked (state=$state) — playback arrives in a later Phase")
+            MonthlyRecapStripState.REPLAY -> navigateToRecapPlayback()
 
             MonthlyRecapStripState.HIDDEN -> Unit
         }
@@ -166,14 +179,19 @@ class HomeIconsFragment : Fragment() {
 
     /** Opens the recap language-selection screen exactly once per accepted tap. */
     private fun navigateToRecapLanguageSelection() {
+        navigateFromHome { it.navigate(HomeFragmentDirections.actionNavHomeToMonthlyRecapLanguageFragment()) }
+    }
+
+    /** Opens playback directly, bypassing language selection (resume/replay). */
+    private fun navigateToRecapPlayback() {
+        navigateFromHome { it.navigate(HomeFragmentDirections.actionNavHomeToMonthlyRecapPlaybackFragment()) }
+    }
+
+    private inline fun navigateFromHome(navigate: (androidx.navigation.NavController) -> Unit) {
         val navController = findNavController()
         try {
             // Only navigate from home; prevents duplicate destinations on stale taps.
-            if (navController.currentDestination?.id == R.id.homeFragment) {
-                navController.navigate(
-                    HomeFragmentDirections.actionNavHomeToMonthlyRecapLanguageFragment()
-                )
-            }
+            if (navController.currentDestination?.id == R.id.homeFragment) navigate(navController)
         } catch (e: Exception) {
             Timber.e(e, "Monthly Recap navigation failed")
         }

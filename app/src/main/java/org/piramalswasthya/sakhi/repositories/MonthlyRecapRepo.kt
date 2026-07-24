@@ -12,11 +12,15 @@ import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MonthlyRecapMetricsCodec
 import org.piramalswasthya.sakhi.helpers.RecapClock
+import org.piramalswasthya.sakhi.helpers.RecapScene
+import org.piramalswasthya.sakhi.helpers.RecapSceneComposer
 import org.piramalswasthya.sakhi.helpers.previousMonthWindow
+import org.piramalswasthya.sakhi.model.RecapContentLibrary
 import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsPayload
+import org.piramalswasthya.sakhi.model.RecapMetricStatus
 import org.piramalswasthya.sakhi.model.RecapStatus
 import org.piramalswasthya.sakhi.model.recapStatus
 import timber.log.Timber
@@ -111,7 +115,24 @@ class MonthlyRecapRepo @Inject constructor(
         recapDao.markStarted(recap.userId, recap.recapYearMonth, clock.now().timeInMillis)
     }
 
-    /** Playback foundation: stores a coerced, generic safe-progress marker. */
+    /**
+     * Phase 7: called when playback opens with a composed story — marks the
+     * snapshot started AND records the story length so resume clamping works
+     * against the real scene count.
+     */
+    suspend fun onPlaybackOpened(totalScenes: Int) {
+        val recap = getOrCreateCurrentRecap() ?: return
+        val now = clock.now().timeInMillis
+        recapDao.markStarted(recap.userId, recap.recapYearMonth, now)
+        if (totalScenes > 0 && recap.totalScenes != totalScenes) {
+            recapDao.setTotalScenes(recap.userId, recap.recapYearMonth, totalScenes, now)
+        }
+    }
+
+    /**
+     * Stores the CURRENT scene index (clamped) — the scene being shown, i.e. the
+     * exact resume target. Reopening an IN_PROGRESS recap starts AT this scene.
+     */
     suspend fun updateSafeProgress(sceneIndex: Int) {
         val userId = loggedInUserId() ?: return
         val window = previousMonthWindow(clock.now())
@@ -171,6 +192,18 @@ class MonthlyRecapRepo @Inject constructor(
                 windowEndMillisExclusive = recap.windowEndMillis,
                 generatedAt = now,
             )
+            // ZERO-MONTH GUARD: an all-zero payload is returned but NOT frozen.
+            // A first dashboard visit can run before the server pull lands the
+            // previous month's records; freezing zeros then would hide the recap
+            // for the whole month. Zero payloads show nothing anyway (empty-month
+            // rule), so deferring the freeze until real work is visible is safe —
+            // and the story is still always frozen BEFORE the ASHA ever sees it.
+            if (payload.categories.none {
+                    it.status == RecapMetricStatus.AVAILABLE.name && it.categoryTotal > 0
+                }
+            ) {
+                return@withLock payload
+            }
             // Durable freeze boundary: only writes when metricsJson IS NULL.
             val updated = recapDao.setMetricsIfAbsent(
                 recap.userId,
@@ -198,5 +231,25 @@ class MonthlyRecapRepo @Inject constructor(
             it.calculationVersion == MonthlyRecapMetricsContract.CALCULATION_VERSION &&
                     it.recapYearMonth == yearMonth
         }
+    }
+
+    /**
+     * Phase 7 — builds the personalised playback story for the current snapshot:
+     * ensures the frozen metrics exist, then composes scenes deterministically
+     * from (frozen payload, snapshot language, frozen variantSeed) via
+     * [RecapSceneComposer]. Same snapshot → same story, replay-stable, offline.
+     *
+     * Returns an EMPTY list when the month has no countable work (user decision:
+     * the recap does not open at all) and null when no user is logged in or the
+     * content library is unusable. Read-only: does not touch status/progress.
+     */
+    suspend fun buildPersonalizedScenes(library: RecapContentLibrary): List<RecapScene>? {
+        val payload = ensureCurrentRecapMetrics() ?: return null
+        val recap = getOrCreateCurrentRecap() ?: return null
+        return RecapSceneComposer(library).compose(
+            payload = payload,
+            languageToken = recap.language,
+            variantSeed = recap.variantSeed,
+        )
     }
 }

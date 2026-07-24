@@ -1382,4 +1382,11 @@
     <string name="monthly_recap_cd_resume">मासिक रिकैप जारी है। जहाँ छोड़ा था वहीं से जारी रखें।</string>
     <string name="monthly_recap_cd_replay">मासिक रिकैप पूरा हुआ। इसे फिर से देखें।</string>
     <string name="monthly_recap_lang_screen_cd">अपने मासिक रिकैप के लिए भाषा चुनें</string>
+    <string name="monthly_recap_playback_close_cd">अपना मासिक रिकैप बंद करें</string>
+    <string name="monthly_recap_playback_replay">फिर से देखें</string>
+    <string name="monthly_recap_playback_girl_cd">आपकी आशा दीदी आपके काम का जश्न मना रही हैं</string>
+    <string name="monthly_recap_playback_prev_cd">पिछला संदेश</string>
+    <string name="monthly_recap_playback_next_cd">अगला संदेश</string>
+    <string name="monthly_recap_playback_pause_cd">रोकें</string>
+    <string name="monthly_recap_playback_play_cd">चलाएँ</string>
 </resources>

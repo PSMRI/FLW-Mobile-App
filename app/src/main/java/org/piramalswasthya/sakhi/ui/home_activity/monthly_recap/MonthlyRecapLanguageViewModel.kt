@@ -3,6 +3,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.monthly_recap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -33,12 +35,29 @@ class MonthlyRecapLanguageViewModel @Inject constructor(
      */
     private val languageWriteMutex = Mutex()
 
+    /**
+     * Phase 7: becomes true once the chosen language is durably persisted — the
+     * fragment then opens playback (after its short confirmation beat). Stays
+     * false when persistence fails (no user), so playback never opens headless.
+     */
+    private val _openPlayback = MutableStateFlow(false)
+    val openPlayback: StateFlow<Boolean> = _openPlayback
+
     fun onLanguageSelected(language: MonthlyRecapLanguage) {
         viewModelScope.launch {
             val ok = languageWriteMutex.withLock {
                 recapRepo.setRecapLanguage(language)
             }
-            if (!ok) Timber.w("Monthly Recap: language not persisted (no logged-in user)")
+            if (!ok) {
+                Timber.w("Monthly Recap: language not persisted (no logged-in user)")
+            } else {
+                _openPlayback.value = true
+            }
         }
+    }
+
+    /** One-shot consumption so rotation doesn't re-trigger navigation. */
+    fun onPlaybackOpened() {
+        _openPlayback.value = false
     }
 }

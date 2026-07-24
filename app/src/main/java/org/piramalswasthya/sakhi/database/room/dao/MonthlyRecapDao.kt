@@ -41,11 +41,22 @@ interface MonthlyRecapDao {
     )
     suspend fun markStarted(userId: Int, yearMonth: Int, now: Long)
 
+    /**
+     * Persists the CURRENT scene index (the scene being shown — the resume
+     * target), not a "completed" marker: reopening starts AT this scene.
+     */
     @Query(
         "UPDATE MONTHLY_RECAP SET progressScene = :scene, updatedAt = :now " +
                 "WHERE userId = :userId AND recapYearMonth = :yearMonth AND status = 'IN_PROGRESS'"
     )
     suspend fun updateProgress(userId: Int, yearMonth: Int, scene: Int, now: Long)
+
+    /** Records how many scenes the frozen story has (bounds progress clamping/resume). */
+    @Query(
+        "UPDATE MONTHLY_RECAP SET totalScenes = :totalScenes, updatedAt = :now " +
+                "WHERE userId = :userId AND recapYearMonth = :yearMonth"
+    )
+    suspend fun setTotalScenes(userId: Int, yearMonth: Int, totalScenes: Int, now: Long)
 
     @Query(
         "UPDATE MONTHLY_RECAP SET status = 'COMPLETED', completedAt = COALESCE(completedAt, :now), " +

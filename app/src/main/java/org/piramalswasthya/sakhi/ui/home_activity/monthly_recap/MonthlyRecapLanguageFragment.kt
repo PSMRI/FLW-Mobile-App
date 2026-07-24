@@ -9,15 +9,24 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentMonthlyRecapLanguageBinding
 import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
 import org.piramalswasthya.sakhi.ui.home_activity.home.recapAnimationsEnabled
+import timber.log.Timber
 
 /** Debounce window so rapid taps produce a single selection callback. */
 private const val LANG_CLICK_DEBOUNCE_MS = 600L
+
+/** Beat between the selection confirmation and opening playback. */
+private const val PLAYBACK_OPEN_DELAY_MS = 550L
 
 /**
  * Monthly Recap language selection.
@@ -60,6 +69,45 @@ class MonthlyRecapLanguageFragment : Fragment() {
         // pre-selects (no auto-select from a previously stored choice or from the
         // app language). The tap still persists the recap-only language downstream.
         setUpWelcomeDidi()
+
+        // Phase 7: once the language is durably persisted, open playback.
+        //
+        // Rotation-safe by construction: the flag is a STICKY state (not a
+        // fire-and-forget event) and is consumed ONLY after navigate() actually
+        // succeeds. If the fragment is recreated mid-delay, the new collector
+        // still sees openPlayback == true and navigates. The delay is scheduled
+        // on the view (destroyed with it), and the selection visuals are
+        // restored on recreate, so the cards can never stay stuck disabled with
+        // playback never opening.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.openPlayback.collect { open ->
+                    if (open) scheduleOpenPlayback()
+                }
+            }
+        }
+    }
+
+    /** Waits one short beat (so the confirmation reads), then navigates once. */
+    private fun scheduleOpenPlayback() {
+        val root = _binding?.root ?: return
+        root.removeCallbacks(openPlaybackRunnable)
+        root.postDelayed(openPlaybackRunnable, PLAYBACK_OPEN_DELAY_MS)
+    }
+
+    private val openPlaybackRunnable = Runnable {
+        if (!isAdded) return@Runnable
+        val navController = findNavController()
+        if (navController.currentDestination?.id != R.id.monthlyRecapLanguageFragment) return@Runnable
+        try {
+            navController.navigate(
+                R.id.action_monthlyRecapLanguageFragment_to_monthlyRecapPlaybackFragment
+            )
+            // Consume ONLY after navigation actually succeeded.
+            viewModel.onPlaybackOpened()
+        } catch (e: Exception) {
+            Timber.e(e, "Monthly Recap: playback navigation failed")
+        }
     }
 
     /**
@@ -170,6 +218,7 @@ class MonthlyRecapLanguageFragment : Fragment() {
     // ---------------------------------------------------------------- lifecycle
 
     override fun onDestroyView() {
+        _binding?.root?.removeCallbacks(openPlaybackRunnable)
         _binding?.let { b ->
             b.recapLangDidi.animate().cancel()
             b.recapLangDidi.pauseAnimation()
