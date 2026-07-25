@@ -204,6 +204,7 @@
                 android:layout_marginStart="8dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
+                android:layout_marginEnd="20dp"
                 app:layout_constraintEnd_toStartOf="@id/cardOverdue"
                 app:layout_constraintStart_toEndOf="@id/cardVerified"
                 app:layout_constraintTop_toTopOf="@id/cardVerified">
@@ -266,6 +267,7 @@
                 android:layout_marginEnd="20dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cardPending"
                 app:layout_constraintTop_toTopOf="@id/cardVerified">
@@ -418,7 +420,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
                             android:layout_toEndOf="@id/unclaimedIcon"
-                            android:text="ASHA Unclaimed"
+                            android:text="@string/asha_unclaimed"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white"/>

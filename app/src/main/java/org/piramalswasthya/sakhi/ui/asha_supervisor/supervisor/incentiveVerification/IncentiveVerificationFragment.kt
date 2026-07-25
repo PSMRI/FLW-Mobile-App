@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentIncentiveVerificationBinding
@@ -57,6 +58,16 @@ class IncentiveVerificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+            binding.tvMonthlyDetailTitle.text = getString(R.string.mitanin_monthly_detail)
+            binding.searchView.queryHint = getString(R.string.search_mitanin)
+
+        } else {
+            binding.tvMonthlyDetailTitle.text = getString(R.string.asha_monthly_detail)
+            binding.searchView.queryHint = getString(R.string.search_asha)
+
+        }
 
         setupRecyclerView()
         setupSearchView()

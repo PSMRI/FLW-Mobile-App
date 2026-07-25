@@ -456,6 +456,13 @@ class SupervisorActivity : AppCompatActivity() {
 
         }
 
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.mitanin_trainer))
+
+        } else {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.menu_supervisor))
+
+        }
         binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
             logoutAlert.show()
             true
