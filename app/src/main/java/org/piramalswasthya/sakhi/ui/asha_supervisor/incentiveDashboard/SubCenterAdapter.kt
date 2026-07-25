@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutListItemBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.Facility
 
@@ -15,7 +17,13 @@ class SubCenterAdapter(private val onSubCenterClick: (Facility) -> Unit) : ListA
 
         fun bind(facility: Facility) {
             binding.subCenterName.text = facility.facilityName
-            binding.tvAshaCount.text = "ASHAs: ${facility.ashaCount}"
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                binding.tvAshaCount.text = binding.root.context.getString(R.string.mitanins, facility.ashaCount)
+
+            } else {
+                binding.tvAshaCount.text = binding.root.context.getString(R.string.ashas, facility.ashaCount)
+
+            }
             binding.subCenterName.setOnClickListener {
                 onSubCenterClick(facility)
             }
