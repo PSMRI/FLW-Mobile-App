@@ -1571,5 +1571,7 @@
     <string name="monthly_recap_playback_next_cd">Next message</string>
     <string name="monthly_recap_playback_pause_cd">Pause</string>
     <string name="monthly_recap_playback_play_cd">Play</string>
+    <string name="monthly_recap_music_on_cd">Turn background music off</string>
+    <string name="monthly_recap_music_off_cd">Turn background music on</string>
 </resources>
 

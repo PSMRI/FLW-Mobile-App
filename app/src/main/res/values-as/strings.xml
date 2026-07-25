@@ -1468,4 +1468,6 @@
     <string name="monthly_recap_playback_next_cd">পৰৱৰ্তী বাৰ্তা</string>
     <string name="monthly_recap_playback_pause_cd">বন্ধ কৰক</string>
     <string name="monthly_recap_playback_play_cd">চলাওক</string>
+    <string name="monthly_recap_music_on_cd">নেপথ্য সংগীত বন্ধ কৰক</string>
+    <string name="monthly_recap_music_off_cd">নেপথ্য সংগীত চলাওক</string>
 </resources>

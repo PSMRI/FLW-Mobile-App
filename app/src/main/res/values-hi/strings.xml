@@ -1389,4 +1389,6 @@
     <string name="monthly_recap_playback_next_cd">अगला संदेश</string>
     <string name="monthly_recap_playback_pause_cd">रोकें</string>
     <string name="monthly_recap_playback_play_cd">चलाएँ</string>
+    <string name="monthly_recap_music_on_cd">पृष्ठभूमि संगीत बंद करें</string>
+    <string name="monthly_recap_music_off_cd">पृष्ठभूमि संगीत चालू करें</string>
 </resources>

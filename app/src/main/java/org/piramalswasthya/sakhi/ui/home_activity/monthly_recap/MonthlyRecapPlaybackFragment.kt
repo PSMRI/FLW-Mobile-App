@@ -73,6 +73,9 @@ class MonthlyRecapPlaybackFragment : Fragment() {
     /** True while the ASHA has explicitly paused via the Pause button. */
     private var userPaused = false
 
+    /** Soft looping background music (pilot); null-safe if it fails to load. */
+    private var music: RecapMusicController? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -89,6 +92,9 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         binding.recapPrevButton.setOnClickListener { onControlNavigate(-1) }
         binding.recapNextButton.setOnClickListener { onControlNavigate(+1) }
         binding.recapPauseButton.setOnClickListener { togglePause() }
+        music = RecapMusicController(requireContext())
+        binding.recapMusicToggle.setOnClickListener { toggleMusic() }
+        updateMusicButton()
         setUpGestures()
         showLoading(true)
 
@@ -109,6 +115,11 @@ class MonthlyRecapPlaybackFragment : Fragment() {
                                 // Resume target: rotation → same scene; process death
                                 // or "Continue Recap" → the scene stored in Room.
                                 showScene(state.startSceneIndex, animate = motionEnabled)
+                                // Prepare the loop once (plays continuously across all
+                                // scenes, never restarts per message), then fade it in
+                                // if it should currently be audible.
+                                music?.prepare()
+                                refreshMusic(fade = true)
                             }
                         }
                     }
@@ -124,7 +135,7 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         val storyVisibility = if (loading) View.INVISIBLE else View.VISIBLE
         b.recapProgressRow.visibility = storyVisibility
         b.recapPlaybackClose.visibility = storyVisibility
-        b.recapControlsRow.visibility = storyVisibility
+        b.recapControlsRow.visibility = storyVisibility // includes the music toggle
         // Keep the empty girl/bubble hidden until the first scene renders.
         b.recapPlaybackGirl.visibility = storyVisibility
         b.recapBubbleTail.visibility = storyVisibility
@@ -319,6 +330,8 @@ class MonthlyRecapPlaybackFragment : Fragment() {
             if (motionEnabled) _binding?.recapPlaybackGirl?.resumeAnimation()
             resumeTimer()
         }
+        // Pause pauses the whole experience — music follows the story here.
+        refreshMusic(fade = true)
         updatePauseButton()
     }
 
@@ -330,6 +343,32 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         b.recapPauseButton.contentDescription = getString(
             if (userPaused) R.string.monthly_recap_playback_play_cd
             else R.string.monthly_recap_playback_pause_cd
+        )
+    }
+
+    /** Music on/off — silences ONLY the music; the story keeps auto-playing. */
+    private fun toggleMusic() {
+        viewModel.musicMuted = !viewModel.musicMuted
+        refreshMusic(fade = true)
+        updateMusicButton()
+    }
+
+    /** Music is audible only while the story is playing AND not muted. */
+    private fun shouldMusicPlay(): Boolean = !userPaused && !viewModel.musicMuted
+
+    private fun refreshMusic(fade: Boolean) {
+        music?.setAudible(shouldMusicPlay(), fade)
+    }
+
+    private fun updateMusicButton() {
+        val b = _binding ?: return
+        val muted = viewModel.musicMuted
+        b.recapMusicToggle.setImageResource(
+            if (muted) R.drawable.ic_recap_music_off else R.drawable.ic_recap_music_on
+        )
+        b.recapMusicToggle.contentDescription = getString(
+            if (muted) R.string.monthly_recap_music_off_cd
+            else R.string.monthly_recap_music_on_cd
         )
     }
 
@@ -381,18 +420,25 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         super.onPause()
         pauseTimer()
         _binding?.recapPlaybackGirl?.pauseAnimation()
+        music?.setAudible(false, fade = false) // immediate silence on background
     }
 
     override fun onResume() {
         super.onResume()
-        if (scenes.isNotEmpty() && !userPaused) {
+        if (scenes.isEmpty()) return
+        if (!userPaused) {
             if (motionEnabled) _binding?.recapPlaybackGirl?.resumeAnimation()
             resumeTimer()
         }
+        // Restore music to whatever the current state dictates (silent if the
+        // story is paused or the user muted it).
+        refreshMusic(fade = true)
     }
 
     override fun onDestroyView() {
         cancelTimer()
+        music?.release()
+        music = null
         _binding?.let { b ->
             b.recapPlaybackGirl.animate().cancel()
             b.recapBubbleCard.animate().cancel()

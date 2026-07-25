@@ -190,6 +190,16 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/monthly_recap_playback_next_cd"
             android:src="@drawable/ic_recap_next" />
+
+        <!-- Music on/off — silences ONLY the music; the story keeps playing. -->
+        <ImageButton
+            android:id="@+id/recapMusicToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/monthly_recap_music_on_cd"
+            android:src="@drawable/ic_recap_music_on" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

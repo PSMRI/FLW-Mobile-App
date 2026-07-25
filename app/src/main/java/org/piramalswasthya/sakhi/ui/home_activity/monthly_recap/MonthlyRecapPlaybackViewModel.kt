@@ -58,6 +58,13 @@ class MonthlyRecapPlaybackViewModel @Inject constructor(
     /** Fair FIFO lock: progress writes commit in the exact order scenes were shown. */
     private val progressWriteMutex = Mutex()
 
+    /**
+     * Whether the ASHA muted the background music. Held here so it survives
+     * rotation/recreation; the music itself lives in the fragment (view-tied).
+     * Muting affects ONLY the music — the story keeps playing.
+     */
+    var musicMuted: Boolean = false
+
     init {
         viewModelScope.launch {
             val scenes = storyGate.composeStory()
