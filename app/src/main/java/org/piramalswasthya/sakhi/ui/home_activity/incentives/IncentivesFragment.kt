@@ -367,12 +367,15 @@ class IncentivesFragment : Fragment() {
             val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
                     (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
-            val isPreviousMonth = when {
-                isExactlyLastMonth -> currentDay <= 12
-                isSelectedPreviousMonth -> true
-                else -> false
+            val isPreviousMonth = if (isMitaninVariant) {
+                isExactlyLastMonth && currentDay in 1..3
+            } else {
+                when {
+                    isExactlyLastMonth -> currentDay <= 12
+                    isSelectedPreviousMonth -> true
+                    else -> false
+                }
             }
-
             binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
 
             binding.claimbtn.setOnClickListener {
