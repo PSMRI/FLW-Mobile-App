@@ -17,7 +17,7 @@ interface NotificationDao {
     suspend fun upsert(notifications: List<NotificationEntity>)
 
     /** Visible list for a user: not soft-cleared, newest first. */
-    @Query("SELECT * FROM NOTIFICATION WHERE userId = :userId AND cleared = 0 ORDER BY createdTs DESC")
+    @Query("SELECT * FROM NOTIFICATION WHERE userId = :userId AND cleared = 0 ORDER BY notificationId DESC")
     fun getForUser(userId: Long): Flow<List<NotificationEntity>>
 
     /** Badge count: unread and not soft-cleared. */

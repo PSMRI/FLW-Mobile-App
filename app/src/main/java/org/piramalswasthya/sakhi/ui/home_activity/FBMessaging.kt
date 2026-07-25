@@ -87,9 +87,9 @@ class FBMessaging : FirebaseMessagingService() {
             Timber.w("FCM message not persisted: missing/invalid ${NotificationKeys.NOTIFICATION_ID}")
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        /*CoroutineScope(Dispatchers.IO).launch {
             entryPoint.notificationRepository().upsert(entity)
-        }
+        }*/
     }
 
     companion object {

@@ -50,7 +50,7 @@ object FcmTokenUploader {
         }
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                task.result?.let { push(entryPoint, userId, it) }
+                task.result?.let { push(entryPoint, userId, it)  }
             } else {
                 Timber.e(task.exception, "Failed to fetch FCM token")
             }

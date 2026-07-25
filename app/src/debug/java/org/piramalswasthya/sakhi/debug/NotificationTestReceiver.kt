@@ -131,9 +131,9 @@ class NotificationTestReceiver : BroadcastReceiver() {
                 createdTs = now - 3 * 24 * hour, read = true
             )
         )
-        CoroutineScope(Dispatchers.IO).launch {
+        /*CoroutineScope(Dispatchers.IO).launch {
             entryPoint.notificationRepository().upsert(samples)
             Timber.d("[TEST] Seeded ${samples.size} notification rows into Room for user $userId")
-        }
+        }*/
     }
 }

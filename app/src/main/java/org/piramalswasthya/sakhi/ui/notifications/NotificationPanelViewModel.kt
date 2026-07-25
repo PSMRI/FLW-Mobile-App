@@ -23,6 +23,12 @@ class NotificationPanelViewModel @Inject constructor(
     val notifications: LiveData<List<NotificationDomain>> = repository.notifications.asLiveData()
     val unreadCount: LiveData<Int> = repository.unreadCount.asLiveData()
 
+    init {
+        refresh()
+    }
+
+    fun refresh() = viewModelScope.launch { repository.pullAndSaveNotifications() }
+
     fun markRead(notificationId: Long) = viewModelScope.launch { repository.markRead(notificationId) }
 
     fun dismiss(notificationId: Long) = viewModelScope.launch { repository.dismiss(notificationId) }

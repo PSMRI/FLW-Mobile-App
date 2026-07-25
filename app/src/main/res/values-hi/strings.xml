@@ -1368,4 +1368,13 @@
     <string name="app_native_name">मितानिन</string>
     <string name="str_demo">डेमो</string>
 
+    <!-- Notifications -->
+    <string name="notifications_title">सूचनाएं</string>
+    <string name="no_notifications_yet">अभी तक कोई सूचना नहीं</string>
+    <string name="clear_notifications">सूचनाएं साफ़ करें</string>
+    <string name="clear_notifications_confirm_title">सभी सूचनाएं हटाएं?</string>
+    <string name="clear_notifications_confirm_message">इससे इस सूची की सभी सूचनाएं हट जाएंगी और इसे पूर्ववत नहीं किया जा सकता।</string>
+    <string name="notification_action_clear">साफ़ करें</string>
+    <string name="notification_action_cancel">रद्द करें</string>
+    <string name="notification_close">बंद करें</string>
 </resources>

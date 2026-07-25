@@ -25,6 +25,7 @@
             android:layout_height="24dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_notifications"
+            app:tint="?attr/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvTitle"
             app:layout_constraintBottom_toBottomOf="@id/tvTitle" />

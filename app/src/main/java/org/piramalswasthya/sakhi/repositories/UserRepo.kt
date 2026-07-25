@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.widget.Toast
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
@@ -426,8 +425,7 @@ class UserRepo @Inject constructor(
             try {
                 val requestBody = mapOf(
                     "userId" to userId,
-                    "token" to token,
-                    "updatedAt" to updatedAt
+                    "token" to token
                 )
 
                 val response = amritApiService.saveFirebaseToken(requestBody)

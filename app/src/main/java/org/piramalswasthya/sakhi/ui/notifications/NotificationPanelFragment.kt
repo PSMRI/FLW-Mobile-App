@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -39,13 +42,14 @@ class NotificationPanelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+        applyStatusBarInset(view)
+
         val rv = view.findViewById<RecyclerView>(R.id.rvNotifications)
         val empty = view.findViewById<View>(R.id.layoutEmpty)
         val btnClearAll = view.findViewById<MaterialButton>(R.id.btnClearAll)
 
         // Toolbar back arrow and system back both just close the panel (never the app-exit prompt).
-        toolbar.setNavigationOnClickListener { close() }
+        view.findViewById<android.widget.ImageView>(R.id.iv_back).setOnClickListener { close() }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { close() }
 
         adapter = NotificationAdapter { item -> viewModel.markRead(item.notificationId) }
@@ -62,6 +66,20 @@ class NotificationPanelFragment : Fragment() {
         }
 
         btnClearAll.setOnClickListener { confirmClearAll() }
+    }
+
+    private fun applyStatusBarInset(root: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            v.updatePadding(top = top)
+            insets
+        }
+        root.post {
+            val top = ViewCompat.getRootWindowInsets(root)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            if (root.paddingTop < top) root.updatePadding(top = top)
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun close() {

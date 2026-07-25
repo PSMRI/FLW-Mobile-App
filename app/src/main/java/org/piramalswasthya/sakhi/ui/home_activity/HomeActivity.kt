@@ -245,12 +245,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
-        FcmTopicManager.subscribe("user_${pref.getLoggedInUser()?.userId}")
+        super.onCreate(savedInstanceState)
+        // NOTE: pref is a Hilt @Inject field — it is only initialized by super.onCreate(),
+        // so any pref access must happen AFTER the call above (otherwise crash on login).
+        FcmTopicManager.subscribe(pref.getLoggedInUser()?.userId)
         // Register this device's FCM token with the server for the logged-in user.
         FcmTokenUploader.uploadToken(this)
 //        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
-        super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
 
         TapjackingProtectionHelper.enableTouchFiltering(this)

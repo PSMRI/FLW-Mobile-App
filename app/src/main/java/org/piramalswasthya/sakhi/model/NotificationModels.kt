@@ -40,23 +40,29 @@ import org.piramalswasthya.sakhi.R
 // ============================================================
 
 @JsonClass(generateAdapter = true)
-data class NotificationDto(
-    @Json(name = "title") val title: String? = null,
-    @Json(name = "body") val body: String? = null,
-    @Json(name = "data") val data: NotificationDataDto? = null
+data class NotificationListData(
+    @Json(name = "notifications") val notifications: List<NotificationListItemDto>? = null,
+    @Json(name = "unreadCount") val unreadCount: Int? = null,
+    @Json(name = "totalCount") val totalCount: Int? = null,
+    @Json(name = "page") val page: Int? = null,
+    @Json(name = "size") val size: Int? = null
 )
 
 @JsonClass(generateAdapter = true)
-data class NotificationDataDto(
-    @Json(name = "notification_id") val notificationId: Long,
-    @Json(name = "notification_type") val notificationType: String? = null,
-    @Json(name = "nav_id") val navId: String? = null,
-    @Json(name = "sender_user_id") val senderUserId: Long? = null,
-    @Json(name = "receiver_user_id") val receiverUserId: Long? = null,
-    @Json(name = "beneficiary_id") val beneficiaryId: Long? = null,
-    @Json(name = "activity_id") val activityId: Long? = null,
-    @Json(name = "reference_id") val referenceId: Long? = null,
-    @Json(name = "priority") val priority: String? = null
+data class NotificationListItemDto(
+    @Json(name = "id") val id: Long,
+    @Json(name = "appType") val appType: String? = null,
+    @Json(name = "senderUserId") val senderUserId: Long? = null,
+    @Json(name = "receiverUserId") val receiverUserId: Long? = null,
+    @Json(name = "title") val title: String? = null,
+    @Json(name = "body") val body: String? = null,
+    @Json(name = "notificationType") val notificationType: String? = null,
+    @Json(name = "navId") val navId: String? = null,
+    @Json(name = "redirect") val redirect: String? = null,
+    @Json(name = "priority") val priority: String? = null,
+    @Json(name = "createdDate") val createdDate: String? = null,
+    @Json(name = "readDate") val readDate: String? = null,
+    @Json(name = "read") val read: Boolean = false
 )
 
 // ------------------------------------------------------------
@@ -80,7 +86,7 @@ data class NotificationListRequest(
 /** `notification/list` response envelope; `data` is the list of notifications. */
 @JsonClass(generateAdapter = true)
 data class NotificationListResponse(
-    @Json(name = "data") val data: List<NotificationDto>? = null,
+    @Json(name = "data") val data: NotificationListData? = null,
     @Json(name = "statusCode") val statusCode: Int? = null,
     @Json(name = "status") val status: String? = null
 )
@@ -139,7 +145,10 @@ data class NotificationEntity(
     val receiverUserId: Long? = null,
     val beneficiaryId: Long? = null,
     val activityId: Long? = null,
-    val referenceId: Long? = null
+    val referenceId: Long? = null,
+    val appType: String? = null,
+    val redirect: String? = null,
+    val readDate: String? = null
 )
 
 // ============================================================
@@ -214,25 +223,6 @@ enum class NotificationNavTarget(val navId: String) {
  * Poll / list API path: typed DTO → domain. Returns null if the payload has no `data` block.
  * @param createdTs receive/fetch time (the payload carries no timestamp).
  */
-fun NotificationDto.toDomain(createdTs: Long, read: Boolean = false): NotificationDomain? {
-    val d = data ?: return null
-    return NotificationDomain(
-        notificationId = d.notificationId,
-        eventType = d.notificationType.orEmpty(),
-        title = title.orEmpty(),
-        body = body.orEmpty(),
-        createdTs = createdTs,
-        read = read,
-        navId = d.navId,
-        priority = d.priority,
-        senderUserId = d.senderUserId,
-        receiverUserId = d.receiverUserId,
-        beneficiaryId = d.beneficiaryId,
-        activityId = d.activityId,
-        referenceId = d.referenceId
-    )
-}
-
 /**
  * FCM push path: a flat `Map<String,String>` (from `RemoteMessage.data`) → domain. Numeric fields
  * arrive stringified, so they are parsed with [String.toLongOrNull]. Returns null if the required
@@ -285,34 +275,35 @@ fun NotificationEntity.toDomain(): NotificationDomain = NotificationDomain(
  * Poll / list API path → Room row, scoped to [userId]. Returns null if the payload has no `data`.
  * @param createdTs receive/fetch time (payload carries no timestamp).
  */
-fun NotificationDto.toEntity(userId: Long, createdTs: Long, read: Boolean = false): NotificationEntity? {
-    val d = data ?: return null
-    return NotificationEntity(
-        notificationId = d.notificationId,
+fun NotificationListItemDto.toEntity(userId: Long, fallbackTs: Long): NotificationEntity =
+    NotificationEntity(
+        notificationId = id,
         userId = userId,
-        eventType = d.notificationType.orEmpty(),
-        navId = d.navId,
+        eventType = notificationType.orEmpty(),
+        navId = navId,
         title = title.orEmpty(),
         body = body.orEmpty(),
-        priority = d.priority,
-        createdTs = createdTs,
+        priority = priority,
+        createdTs = parseNotificationTs(createdDate) ?: fallbackTs,
         read = read,
-        senderUserId = d.senderUserId,
-        receiverUserId = d.receiverUserId,
-        beneficiaryId = d.beneficiaryId,
-        activityId = d.activityId,
-        referenceId = d.referenceId
+        senderUserId = senderUserId,
+        receiverUserId = receiverUserId,
+        appType = appType,
+        redirect = redirect,
+        readDate = readDate
     )
-}
 
-/**
- * List API response → Room rows, scoped to [userId]. Items with no `data` block are dropped.
- * @param createdTs receive/fetch time applied to every row (payload carries no timestamp). NOTE:
- * the poll consumer (T10) must preserve any existing local `read`/`cleared`/`createdTs` rather than
- * blindly replacing rows, so a soft-cleared notification isn't resurrected.
- */
 fun NotificationListResponse.toEntities(userId: Long, createdTs: Long): List<NotificationEntity> =
-    data.orEmpty().mapNotNull { it.toEntity(userId = userId, createdTs = createdTs) }
+    data?.notifications.orEmpty().map { it.toEntity(userId = userId, fallbackTs = createdTs) }
+
+private fun parseNotificationTs(iso: String?): Long? {
+    if (iso.isNullOrBlank()) return null
+    return try {
+        java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", java.util.Locale.US).parse(iso)?.time
+    } catch (e: Exception) {
+        null
+    }
+}
 
 /**
  * FCM push path (`RemoteMessage.data` string map) → Room row, scoped to [userId].

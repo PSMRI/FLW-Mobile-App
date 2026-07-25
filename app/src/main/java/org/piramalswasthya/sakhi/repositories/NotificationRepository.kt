@@ -1,15 +1,21 @@
 package org.piramalswasthya.sakhi.repositories
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.NotificationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.NotificationDomain
 import org.piramalswasthya.sakhi.model.NotificationEntity
 import org.piramalswasthya.sakhi.model.toDomain
+import org.piramalswasthya.sakhi.model.toEntities
+import org.piramalswasthya.sakhi.network.AmritApiService
+import timber.log.Timber
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +32,9 @@ import javax.inject.Singleton
 @Singleton
 class NotificationRepository @Inject constructor(
     private val notificationDao: NotificationDao,
-    private val preferenceDao: PreferenceDao
+    private val preferenceDao: PreferenceDao,
+    private val amritApiService: AmritApiService,
+    private val userRepo: UserRepo
 ) {
 
     /** Logged-in user id scoping every read/write, or null when no user is logged in. */
@@ -54,7 +62,59 @@ class NotificationRepository @Inject constructor(
 
     suspend fun upsert(notification: NotificationEntity) = notificationDao.upsert(notification)
 
-    suspend fun markRead(notificationId: Long) = notificationDao.markRead(listOf(notificationId))
+    suspend fun pullAndSaveNotifications(): Boolean {
+        return withContext(Dispatchers.IO) {
+            val user = preferenceDao.getLoggedInUser() ?: return@withContext false
+            try {
+                val response = amritApiService.getNotifications()
+                Timber.i("getNotifications123 HTTP=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+                val envelope = response.body()
+                if (response.code() == 200 && envelope != null) {
+                    Timber.i("getNotifications123 statusCode=${envelope.statusCode} status=${envelope.status} dataCount=${envelope.data?.notifications?.size}")
+                    when (envelope.statusCode) {
+                        200 -> {
+                            val rows = envelope.toEntities(
+                                userId = user.userId.toLong(),
+                                createdTs = System.currentTimeMillis()
+                            )
+                            Timber.i("getNotifications123 mappedRows=${rows.size}")
+                            notificationDao.upsert(rows)
+                            return@withContext true
+                        }
+
+                        401, 5002 -> {
+                            if (userRepo.refreshTokenTmc(user.userName, user.password))
+                                throw SocketTimeoutException("Refreshed Token!")
+                            else throw IllegalStateException("User Logged out!!")
+                        }
+
+                        5000 -> return@withContext true
+
+                        else -> throw IllegalStateException("${envelope.statusCode} received, don't know what to do!?")
+                    }
+                }
+            } catch (e: SocketTimeoutException) {
+                Timber.e("notifications pull error, retrying: $e")
+                return@withContext pullAndSaveNotifications()
+            } catch (e: Exception) {
+                Timber.d("Caught $e at notifications pull!")
+                return@withContext false
+            }
+            false
+        }
+    }
+
+    suspend fun markRead(notificationId: Long) {
+        withContext(Dispatchers.IO) {
+            notificationDao.markRead(listOf(notificationId))
+            try {
+                val response = amritApiService.markNotificationRead(notificationId)
+                Timber.i("markAsRead123 id=$notificationId HTTP=${response.code()} body=${response.body()?.string()} error=${response.errorBody()?.string()}")
+            } catch (e: Exception) {
+                Timber.e(e, "markAsRead failed for $notificationId")
+            }
+        }
+    }
 
     suspend fun markAllRead() {
         userId?.let { notificationDao.markAllRead(it) }
