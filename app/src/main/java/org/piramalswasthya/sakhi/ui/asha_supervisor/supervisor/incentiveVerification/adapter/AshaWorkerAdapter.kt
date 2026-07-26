@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.AshaWorker
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
@@ -53,7 +54,13 @@ class AshaWorkerAdapter(
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
                     tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
                     tvRejectedReason.visibility = View.GONE
-                    tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${worker.role})"
+                    if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
+
+                    } else {
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${worker.role})"
+
+                    }
                 }
 
                 VerificationStatus.PENDING -> {
@@ -70,7 +77,14 @@ class AshaWorkerAdapter(
                     tvRejectedReason.visibility = View.VISIBLE
                     tvStatusDate.text = "Rejected Date: ${HelperUtil.formatDate(worker.approvalDate)}"
                     tvRejectedReason.text = "Reason: ${worker.reason} ${worker.OtherReason}"
-                    tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+                    if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
+                        tvStatusBy.text = "By: ${worker.name}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
+
+                    } else {
+                        tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+
+
+                    }
 
                 }
 

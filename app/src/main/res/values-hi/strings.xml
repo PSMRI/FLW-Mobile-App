@@ -1377,6 +1377,8 @@
     <string name="back_with_mitanin_nfor_correction">सुधार हेतु\nमितानिन के पास भेजें</string>
     <string name="mitanin_monthly_detail">मितानिन मासिक विवरण</string>
     <string name="mitanin_yet_to_submit_ntheir_monthly_claim">वे मितानिन जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
+    <string name="supervisor_id_new">सुपरवाइज़र ID: %1$s</string>
+    <string name="trainer_id_new">मितानिन प्रशिक्षक ID: %1$s</string>
 
 
 
