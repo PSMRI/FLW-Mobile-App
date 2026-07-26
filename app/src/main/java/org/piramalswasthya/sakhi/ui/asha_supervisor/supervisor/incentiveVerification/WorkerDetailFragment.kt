@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
@@ -79,7 +80,15 @@ class WorkerDetailFragment : Fragment() {
         val monthName = monthNames[selectedMonth - 1]
 
         binding.tvWorkerInfo.text = "AshaId: $workerId , $scName , $monthName $selectedYear"
-        binding.tvSupervisorInfo.text = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.tvSupervisorInfo.text =
+                getString(R.string.trainer_id_new, preferenceDao.getEmployeeId())
+
+        } else {
+            binding.tvSupervisorInfo.text =
+                getString(R.string.supervisor_id_new, preferenceDao.getEmployeeId())
+
+        }
 
         viewModel.init(workerId, selectedMonth, selectedYear)
     }
@@ -267,8 +276,21 @@ class WorkerDetailFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        activity?.let {
-            (it as SupervisorActivity).updateActionBar(R.drawable.logo_circle, workerName)
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle_green,
+                    workerName
+                )
+            }
+        } else {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle,
+                    workerName
+                )
+            }
         }
     }
 

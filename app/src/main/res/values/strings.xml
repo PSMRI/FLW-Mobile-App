@@ -1544,7 +1544,8 @@
     <string name="ashas">ASHAs: %1$d</string>
     <string name="mitanins">Mitanin: %1$d</string>
     <string name="back_with_mitanin_nfor_correction">Back with Mitanin\nfor correction</string>
-
+    <string name="supervisor_id_new">Supervisor ID: %1$s</string>
+    <string name="trainer_id_new">Mitanin Trainer ID: %1$s</string>
 
 
 </resources>
