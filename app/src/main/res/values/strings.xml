@@ -1548,5 +1548,14 @@
     <string name="trainer_id_new">Mitanin Trainer ID: %1$s</string>
 
 
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="no_notifications_yet">No notifications yet</string>
+    <string name="clear_notifications">Clear notifications</string>
+    <string name="clear_notifications_confirm_title">Clear all notifications?</string>
+    <string name="clear_notifications_confirm_message">This removes all notifications from this list and can\'t be undone.</string>
+    <string name="notification_action_clear">Clear</string>
+    <string name="notification_action_cancel">Cancel</string>
+    <string name="notification_close">Close</string>
 </resources>
 

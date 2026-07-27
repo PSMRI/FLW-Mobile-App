@@ -46,6 +46,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
+import org.piramalswasthya.sakhi.database.room.dao.NotificationDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
@@ -112,6 +113,7 @@ import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
+import org.piramalswasthya.sakhi.model.NotificationEntity
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
@@ -200,10 +202,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         FilariaMDAFormResponseJsonEntity::class,
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
-        TBConfirmedTreatmentCache::class
+        TBConfirmedTreatmentCache::class,
+        NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 61, exportSchema = false
+    version = 63, exportSchema = false
 )
 
 @TypeConverters(
@@ -231,6 +234,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val maternalHealthDao: MaternalHealthDao
     abstract val pncDao: PncDao
     abstract val tbDao: TBDao
+    abstract val notificationDao: NotificationDao
     abstract val hrpDao: HrpDao
     abstract val deliveryOutcomeDao: DeliveryOutcomeDao
     abstract val infantRegDao: InfantRegDao
@@ -337,6 +341,52 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+
+            val MIGRATION_62_63 = object : Migration(62, 63) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        if (!columnExists(database, "NOTIFICATION", "appType"))
+                            database.execSQL("ALTER TABLE NOTIFICATION ADD COLUMN appType TEXT")
+                        if (!columnExists(database, "NOTIFICATION", "redirect"))
+                            database.execSQL("ALTER TABLE NOTIFICATION ADD COLUMN redirect TEXT")
+                        if (!columnExists(database, "NOTIFICATION", "readDate"))
+                            database.execSQL("ALTER TABLE NOTIFICATION ADD COLUMN readDate TEXT")
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+
+            val MIGRATION_61_62 = object : Migration(61, 62) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `NOTIFICATION` (
+                                `notificationId` INTEGER NOT NULL,
+                                `userId` INTEGER NOT NULL,
+                                `role` TEXT,
+                                `eventType` TEXT NOT NULL,
+                                `navId` TEXT,
+                                `title` TEXT NOT NULL,
+                                `body` TEXT NOT NULL,
+                                `priority` TEXT,
+                                `createdTs` INTEGER NOT NULL,
+                                `read` INTEGER NOT NULL,
+                                `cleared` INTEGER NOT NULL,
+                                `viewed` INTEGER NOT NULL,
+                                `senderUserId` INTEGER,
+                                `receiverUserId` INTEGER,
+                                `beneficiaryId` INTEGER,
+                                `activityId` INTEGER,
+                                `referenceId` INTEGER,
+                                PRIMARY KEY(`notificationId`)
+                            )
+                            """.trimIndent()
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
 
             val MIGRATION_60_61 = object : Migration(60, 61) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3413,7 +3463,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_57_58,
                         MIGRATION_58_59,
                         MIGRATION_59_60,
-                        MIGRATION_60_61
+                        MIGRATION_60_61,
+                        MIGRATION_61_62,
+                        MIGRATION_62_63
 
 
                     ).build()

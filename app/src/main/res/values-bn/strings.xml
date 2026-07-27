@@ -1457,4 +1457,13 @@
     </string-array>
 
 
+    <!-- Notifications -->
+    <string name="notifications_title">বিজ্ঞপ্তি</string>
+    <string name="no_notifications_yet">এখনও কোনো বিজ্ঞপ্তি নেই</string>
+    <string name="clear_notifications">বিজ্ঞপ্তি সাফ করুন</string>
+    <string name="clear_notifications_confirm_title">সমস্ত বিজ্ঞপ্তি মুছে ফেলবেন?</string>
+    <string name="clear_notifications_confirm_message">এটি এই তালিকা থেকে সমস্ত বিজ্ঞপ্তি সরিয়ে দেবে এবং এটি আর ফিরিয়ে আনা যাবে না।</string>
+    <string name="notification_action_clear">সাফ করুন</string>
+    <string name="notification_action_cancel">বাতিল করুন</string>
+    <string name="notification_close">বন্ধ করুন</string>
 </resources>
