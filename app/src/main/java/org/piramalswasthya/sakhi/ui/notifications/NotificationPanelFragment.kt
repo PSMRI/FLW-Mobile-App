@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -73,11 +72,6 @@ class NotificationPanelFragment : Fragment() {
             val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             v.updatePadding(top = top)
             insets
-        }
-        root.post {
-            val top = ViewCompat.getRootWindowInsets(root)
-                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
-            if (root.paddingTop < top) root.updatePadding(top = top)
         }
         ViewCompat.requestApplyInsets(root)
     }

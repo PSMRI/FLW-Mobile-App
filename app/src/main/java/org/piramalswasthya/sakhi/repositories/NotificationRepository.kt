@@ -1,11 +1,17 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.os.SystemClock
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.NotificationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -55,6 +61,28 @@ class NotificationRepository @Inject constructor(
     val unreadCount: Flow<Int> = flow {
         val id = userId
         if (id == null) emitAll(flowOf(0)) else emitAll(notificationDao.unreadCount(id))
+    }
+
+    private val pushPullScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var trailingPullJob: Job? = null
+    private var lastPullElapsed = 0L
+
+    @Synchronized
+    fun onPushReceived() {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastPullElapsed >= PUSH_PULL_DEBOUNCE_MS) {
+            lastPullElapsed = now
+            trailingPullJob?.cancel()
+            trailingPullJob = null
+            pushPullScope.launch { pullAndSaveNotifications() }
+        } else {
+            trailingPullJob?.cancel()
+            trailingPullJob = pushPullScope.launch {
+                delay(PUSH_PULL_DEBOUNCE_MS)
+                lastPullElapsed = SystemClock.elapsedRealtime()
+                pullAndSaveNotifications()
+            }
+        }
     }
 
     /** Insert / update rows (idempotent PK = server notificationId). Used by poll (T10) & FCM (T11). */
@@ -128,4 +156,8 @@ class NotificationRepository @Inject constructor(
     }
 
     suspend fun markViewed(notificationIds: List<Long>) = notificationDao.markViewed(notificationIds)
+
+    companion object {
+        private const val PUSH_PULL_DEBOUNCE_MS = 1500L
+    }
 }

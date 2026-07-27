@@ -12,16 +12,15 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.SakhiApplication
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.NotificationKeys
 import org.piramalswasthya.sakhi.model.notificationEntityFromFcm
 import org.piramalswasthya.sakhi.repositories.NotificationRepository
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.utils.FcmTokenUploader
+import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 
 
@@ -53,12 +52,10 @@ class FBMessaging : FirebaseMessagingService() {
         val title = remoteMessage.notification?.title ?: data["title"].orEmpty()
         val body = remoteMessage.notification?.body ?: data["body"].orEmpty()
 
-        // Persist to the in-app store first so the drawer bell badge and notification list
-        // (both observe Room) update in real time; then raise the system-tray notification.
-        persistToInApp(data, title, body)
-
         val type = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty()
         showNotification(title, body, type)
+        EntryPointAccessors.fromApplication(applicationContext, FbmEntryPoint::class.java)
+            .notificationRepository().onPushReceived()
     }
 
     /**
@@ -97,7 +94,16 @@ class FBMessaging : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, body: String, type: String) {
-        val intent = Intent(applicationContext, HomeActivity::class.java).apply {
+        val role = EntryPointAccessors.fromApplication(
+            applicationContext, FbmEntryPoint::class.java
+        ).preferenceDao().getLoggedInUser()?.role
+        val targetActivity = if (
+            role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) ||
+            role.equals(RoleConstants.ROLE_ANM, true) ||
+            role.equals(RoleConstants.ROLE_CHO, true)
+        ) SupervisorActivity::class.java else HomeActivity::class.java
+
+        val intent = Intent(applicationContext, targetActivity).apply {
             putExtra("FBM", true)
             putExtra("NotificationTypeId", type)
             putExtra("mTitle", title)
