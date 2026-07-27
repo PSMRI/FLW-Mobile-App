@@ -1,10 +1,13 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentIncentiveDashboardBinding
@@ -61,6 +65,42 @@ class IncentiveDashboardFragment : Fragment() {
             navigateToVerification(facility.facilityId, "")
         }
         binding.subCenterRV.adapter = adapter
+        val params = binding.cardPending.layoutParams as ConstraintLayout.LayoutParams
+
+        if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+            binding.tvTotalAshasLabel.text = getString(R.string.total_mitanins)
+            binding.tvAshaUnclaimedLabel.text = getString(R.string.mitanins_unclaimed)
+            binding.tvAshaSubtitle.text = getString(R.string.tap_to_view_mitanin_grouped)
+            binding.tvAshaUnclaimedSubtitle.text = getString(R.string.mitanin_yet_to_submit_ntheir_monthly_claim)
+            if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
+            binding.cardOverdue.visibility = View.GONE
+                params.marginEnd = 20.dpToPx(requireContext())
+
+            } else {
+                binding.cardOverdue.visibility = View.VISIBLE
+                params.marginEnd = 0.dpToPx(requireContext())
+
+            }
+            binding.imgAsha.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.logo_circle_green)
+            )
+        } else {
+            binding.tvAshaUnclaimedSubtitle.text = getString(R.string.ashas_yet_to_submit_ntheir_monthly_claim)
+
+            binding.tvTotalAshasLabel.text = getString(R.string.total_ashas)
+          binding.tvAshaSubtitle.text = getString(R.string.tap_to_view_ashas_grouped)
+          binding.tvAshaUnclaimedLabel.text = getString(R.string.asha_unclaimed)
+            binding.imgAsha.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.logo_circle)
+            )
+
+
+      }
+
+
+
+
+        binding.cardPending.layoutParams = params
 
         updateMonthYearText()
         setupMonthYearPicker()
@@ -206,5 +246,8 @@ class IncentiveDashboardFragment : Fragment() {
         super.onDestroyView()
         dismissNoInternetDialog()
         _binding = null
+    }
+    fun Int.dpToPx(context: Context): Int {
+        return (this * context.resources.displayMetrics.density).toInt()
     }
 }

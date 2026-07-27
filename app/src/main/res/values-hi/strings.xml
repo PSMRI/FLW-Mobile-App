@@ -1367,6 +1367,21 @@
     <string name="email">ईमेल</string>
     <string name="app_native_name">मितानिन</string>
     <string name="str_demo">डेमो</string>
+    <string name="mitanin_trainer">मितानिन प्रशिक्षक</string>
+    <string name="total_mitanins">कुल मितानिन</string>
+    <string name="mitanins_unclaimed">मितानिन अप्रमाणित</string>
+    <string name="asha_unclaimed">आशा अप्रमाणित</string>
+    <string name="tap_to_view_mitanin_grouped">मितानिन समूह देखने के लिए टैप करें।</string>
+    <string name="search_mitanin">मितानिन खोजें...</string>
+    <string name="mitanins">मितानिन: %1$d</string>
+    <string name="back_with_mitanin_nfor_correction">सुधार हेतु\nमितानिन के पास भेजें</string>
+    <string name="mitanin_monthly_detail">मितानिन मासिक विवरण</string>
+    <string name="mitanin_yet_to_submit_ntheir_monthly_claim">वे मितानिन जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
+    <string name="supervisor_id_new">सुपरवाइज़र ID: %1$s</string>
+    <string name="trainer_id_new">मितानिन प्रशिक्षक ID: %1$s</string>
+
+
+
 
     <!-- Notifications -->
     <string name="notifications_title">सूचनाएं</string>
