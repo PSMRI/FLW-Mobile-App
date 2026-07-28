@@ -48,6 +48,8 @@ class IncentiveDashboardFragment : Fragment() {
 
     private var noInternetDialog: NoInternetDialog? = null
 
+    var isApproved = false
+
     // -------------------------------------------------------------------------
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,15 +70,28 @@ class IncentiveDashboardFragment : Fragment() {
         val params = binding.cardPending.layoutParams as ConstraintLayout.LayoutParams
 
         if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+
+            binding.tvVerifiedSubtitle.visibility = View.GONE
+            binding.tvPendingSubtitle.visibility = View.GONE
+            binding.tvRejectedSubtitle.visibility = View.GONE
+            binding.tvAshaUnclaimedSubtitle.visibility = View.GONE
             binding.tvTotalAshasLabel.text = getString(R.string.total_mitanins)
             binding.tvAshaUnclaimedLabel.text = getString(R.string.mitanins_unclaimed)
             binding.tvAshaSubtitle.text = getString(R.string.tap_to_view_mitanin_grouped)
             binding.tvAshaUnclaimedSubtitle.text = getString(R.string.mitanin_yet_to_submit_ntheir_monthly_claim)
+            binding.tvOverdueSubtitle.text = getString(R.string.past_verify_by_5th)
             if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
+                isApproved = true
+                binding.tvVerifiedLabel.text = resources.getString(R.string.verified)
             binding.cardOverdue.visibility = View.GONE
                 params.marginEnd = 20.dpToPx(requireContext())
 
+
+
             } else {
+                isApproved = false
+                binding.tvVerifiedLabel.text = resources.getString(R.string.verified)
+
                 binding.cardOverdue.visibility = View.VISIBLE
                 params.marginEnd = 0.dpToPx(requireContext())
 
@@ -94,8 +109,13 @@ class IncentiveDashboardFragment : Fragment() {
                 ContextCompat.getDrawable(requireContext(), R.drawable.logo_circle)
             )
 
+            binding.tvVerifiedSubtitle.visibility = View.VISIBLE
+            binding.tvPendingSubtitle.visibility = View.VISIBLE
+            binding.tvRejectedSubtitle.visibility = View.VISIBLE
+            binding.tvAshaUnclaimedSubtitle.visibility = View.VISIBLE
+            binding.tvOverdueSubtitle.text = getString(R.string.past_verify_by_12th)
 
-      }
+        }
 
 
 
@@ -166,7 +186,7 @@ class IncentiveDashboardFragment : Fragment() {
     }
 
     private fun setupMonthYearPicker() {
-        binding.et1.setOnClickListener {
+        binding.cardMonth.setOnClickListener {
             val pd = MonthYearPickerDialog()
             pd.setListener { _, year, month, _ ->
                 selectedMonth = month
@@ -224,7 +244,14 @@ class IncentiveDashboardFragment : Fragment() {
     }
 
     private fun setClickListeners() {
-        binding.cardVerified.setOnClickListener    { navigateToVerification(0, "verified") }
+
+        if (isApproved) {
+            binding.cardVerified.setOnClickListener    { navigateToVerification(0, "approved") }
+
+        } else {
+            binding.cardVerified.setOnClickListener    { navigateToVerification(0, "verified") }
+
+        }
         binding.cardPending.setOnClickListener     { navigateToVerification(0, "pending") }
         binding.cardOverdue.setOnClickListener     { navigateToVerification(0, "overdue") }
         binding.cardRejected.setOnClickListener    { navigateToVerification(0, "rejected") }

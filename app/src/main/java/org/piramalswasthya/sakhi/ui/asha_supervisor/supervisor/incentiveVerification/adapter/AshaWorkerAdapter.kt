@@ -42,9 +42,19 @@ class AshaWorkerAdapter(
         private val tvStatusDate: TextView = itemView.findViewById(R.id.tvStatusDate)
         private val tvRejectedReason: TextView = itemView.findViewById(R.id.tvRejectedReason)
         private val tvStatusBy: TextView = itemView.findViewById(R.id.tvStatusBy)
+        private val textShort: TextView = itemView.findViewById(R.id.textShort)
 
+        fun getInitials(name: String): String {
+            return name.trim()
+                .split("\\s+".toRegex())
+                .filter { it.isNotEmpty() }
+                .take(2)
+                .joinToString("") { it.first().uppercase() }
+        }
         fun bind(worker: AshaWorker) {
             tvWorkerName.text = worker.name
+            textShort.text = getInitials(tvWorkerName.text.toString())
+
             tvAmount.text = formatAmount(worker.amount)
             tvAshaIdCenter.text = "${worker.ashaId} · ${worker.serviceCenter}"
 
@@ -78,10 +88,10 @@ class AshaWorkerAdapter(
                     tvStatusDate.text = "Rejected Date: ${HelperUtil.formatDate(worker.approvalDate)}"
                     tvRejectedReason.text = "Reason: ${worker.reason} ${worker.OtherReason}"
                     if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
-                        tvStatusBy.text = "By: ${worker.name}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
 
                     } else {
-                        tvStatusBy.text = "By: ${worker.name}\n(${worker.role})"
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${worker.role})"
 
 
                     }
@@ -100,6 +110,23 @@ class AshaWorkerAdapter(
                     statusBadge.text = "Pending"
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
                 }
+
+
+                VerificationStatus.APPROVED -> {
+                    statusBadge.text = "Approved"
+                    statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    tvStatusDate.visibility = View.GONE
+                    tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
+                    tvRejectedReason.visibility = View.GONE
+                    tvStatusBy.visibility = View.GONE
+                    if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
+
+                    } else {
+                        tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${worker.role})"
+
+                    }
+                }
             }
 
             itemView.setOnClickListener { onItemClick(worker) }
@@ -111,6 +138,7 @@ class AshaWorkerAdapter(
             return formatter.format(amount)
         }
     }
+
 
     class AshaWorkerDiffCallback : DiffUtil.ItemCallback<AshaWorker>() {
         override fun areItemsTheSame(oldItem: AshaWorker, newItem: AshaWorker) =

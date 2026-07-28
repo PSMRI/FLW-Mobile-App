@@ -48,6 +48,7 @@ class SupervisorViewModel @Inject constructor(
     private val initEnd = Calendar.getInstance().apply {
         setToStartOfTheDay()
     }.timeInMillis
+    fun getSuperVisorSubname(): String = pref.getLoggedInUser()?.role ?: ""
 
     private val _from = MutableStateFlow(initStart)
     val from: Flow<Long>

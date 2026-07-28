@@ -1,6 +1,10 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,10 +66,15 @@ class IncentiveVerificationFragment : Fragment() {
         if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
             binding.tvMonthlyDetailTitle.text = getString(R.string.mitanin_monthly_detail)
             binding.searchView.queryHint = getString(R.string.search_mitanin)
+            binding.monthlyDetailCard.visibility = View.GONE
+            binding.monthCard.visibility = View.VISIBLE
 
         } else {
             binding.tvMonthlyDetailTitle.text = getString(R.string.asha_monthly_detail)
             binding.searchView.queryHint = getString(R.string.search_asha)
+            binding.monthlyDetailCard.visibility = View.VISIBLE
+            binding.monthCard.visibility = View.GONE
+
 
         }
 
@@ -81,6 +90,16 @@ class IncentiveVerificationFragment : Fragment() {
 
         val monthNames = resources.getStringArray(R.array.months)
         binding.tvMonth.text = "${monthNames[selectedMonth - 1]}, $selectedYear"
+
+        val spannable = SpannableString("Month: ${monthNames[selectedMonth - 1]}, $selectedYear")
+        spannable.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            "Month:".length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.tvMonthnew.text = spannable
     }
 
     override fun onResume() {
@@ -101,6 +120,7 @@ class IncentiveVerificationFragment : Fragment() {
                 putInt("selected_month", selectedMonth)
                 putInt("selected_year", selectedYear)
                 putString("status", worker.status.name)
+                putInt("amount", worker.amount)
             }
             findNavController().navigate(R.id.workerDetailFragment, bundle)
         }

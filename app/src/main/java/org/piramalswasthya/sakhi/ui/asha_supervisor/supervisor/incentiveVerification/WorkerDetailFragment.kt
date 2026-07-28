@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
+import org.piramalswasthya.sakhi.utils.Log
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -53,6 +54,10 @@ class WorkerDetailFragment : Fragment() {
     private val selectedMonth by lazy {
         arguments?.getInt("selected_month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
     }
+
+    private val amount by lazy {
+        arguments?.getInt("amount")
+    }
     private val selectedYear by lazy {
         arguments?.getInt("selected_year") ?: Calendar.getInstance().get(Calendar.YEAR)
     }
@@ -75,16 +80,43 @@ class WorkerDetailFragment : Fragment() {
         setupClickListeners()
         observeViewModel()
 
+        binding.tvWorkerName.text = workerName
+        binding.tvTotalAmount.text = "₹$amount"
+
         val user = preferenceDao.getLoggedInUser()
         val monthNames = resources.getStringArray(R.array.months)
         val monthName = monthNames[selectedMonth - 1]
 
-        binding.tvWorkerInfo.text = "AshaId: $workerId , $scName , $monthName $selectedYear"
+        binding.tvWorkerInfo.text = "EmployeeID: $workerId , $scName , $monthName $selectedYear"
+        if (workerStatus=="VERIFIED") {
+
+            binding.layoutVerified.visibility = View.VISIBLE
+        } else {
+            binding.layoutVerified.visibility = View.GONE
+        }
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.tvWorkerName.visibility = View.VISIBLE
+            binding.summaryCard.visibility = View.VISIBLE
+            binding.tvSupervisorInfo.visibility = View.GONE
+
+            if (!viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
+                binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
+            } else {
+                binding.btnVerify.text = resources.getString(R.string.verify)
+
+            }
             binding.tvSupervisorInfo.text =
                 getString(R.string.trainer_id_new, preferenceDao.getEmployeeId())
 
         } else {
+            binding.tvWorkerName.visibility = View.GONE
+            binding.summaryCard.visibility = View.GONE
+
+            binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
+            binding.btnVerify.text = resources.getString(R.string.verify)
+
+
+            binding.tvSupervisorInfo.visibility = View.VISIBLE
             binding.tvSupervisorInfo.text =
                 getString(R.string.supervisor_id_new, preferenceDao.getEmployeeId())
 
@@ -96,6 +128,7 @@ class WorkerDetailFragment : Fragment() {
     private fun setupRecyclerViews() {
         activityAdapter = ActivityAdapter { activity ->
             navigateToBeneficiaryDetail(activity)
+
         }
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = activityAdapter
@@ -145,6 +178,8 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
+                    binding.tvClaimsCount.text = currentRecords.size.toString()
+
 
                     if (state.records.isEmpty()) {
                         binding.tvEmptyState.visibility = View.VISIBLE
@@ -154,12 +189,11 @@ class WorkerDetailFragment : Fragment() {
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
                         binding.rvActivities.visibility = View.VISIBLE
-                        binding.llHeader.visibility = View.VISIBLE
                         activityAdapter.submitList(state.records)
                         binding.cvMain.visibility = View.VISIBLE
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -298,4 +332,6 @@ class WorkerDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

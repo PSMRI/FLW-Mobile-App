@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
@@ -478,8 +477,16 @@ class SupervisorActivity : AppCompatActivity() {
 
         }
 
+
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.mitanin_trainer))
+            if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
+                binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.mitanin_trainer))
+
+            } else {
+                binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(viewModel.getSuperVisorSubname())
+
+            }
+
 
         } else {
             binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.menu_supervisor))

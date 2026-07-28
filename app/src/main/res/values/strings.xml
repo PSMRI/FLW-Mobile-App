@@ -1415,6 +1415,7 @@
     <string name="amount_rs">Amount (Rs.)</string>
     <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
     <string name="verify">✓ Verify</string>
+    <string name="approvedcheck">✓ Approve</string>
     <string name="reject">✕ Reject</string>
     <string name="reason_for_rejection">Reason for Rejection</string>
     <string name="confirm_rejection">Confirm Rejection</string>
@@ -1431,7 +1432,7 @@
     <string name="total_mitanins">Total Mitanins</string>
     <string name="select_month">Select Month</string>
     <string name="pending">Pending</string>
-    <string name="overdue">OverDue</string>
+    <string name="overdue">Overdue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
     <string name="cataract_surgery">Cataract Surgery</string>
@@ -1535,6 +1536,7 @@
     <string name="tap_to_view_mitanin_grouped">Tap to view Mitanin grouped.</string>
     <string name="awaiting_your_nverification">Awaiting your\nverification</string>
     <string name="past_verify_by_12th">Past verify-by 12th</string>
+    <string name="past_verify_by_5th">Past 5th (due date)</string>
     <string name="back_with_asha_nfor_correction">Back with ASHA\nfor correction</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">ASHAs yet to submit\ntheir monthly claim</string>
     <string name="mitanin_yet_to_submit_ntheir_monthly_claim">Mitanin yet to submit\ntheir monthly claim</string>
@@ -1557,5 +1559,11 @@
     <string name="notification_action_clear">Clear</string>
     <string name="notification_action_cancel">Cancel</string>
     <string name="notification_close">Close</string>
+    <string name="verify_will_commit_every_activity_listed_below_in_one_action">Verify will commit every activity listed below in one action.</string>
+    <string name="verified_by">Verified by: %1$s</string>
+    <string name="approved_by_mitanin_trainer">Approved by Mitanin Trainer</string>
+    <string name="all_sub_centre">All Sub centre</string>
+    <string name="activity_claimed">Activity Claimed</string>
+    <string name="total_claimed_amount">Total claimed amount.</string>
 </resources>
 

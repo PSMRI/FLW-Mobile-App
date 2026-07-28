@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentBeneficiaryDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
@@ -51,7 +52,8 @@ class BeneficiaryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = BeneficiaryAdapter()
+
+        adapter = BeneficiaryAdapter(activityName)
         binding.rvBeneficiaries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBeneficiaries.adapter = adapter
 
@@ -85,7 +87,12 @@ class BeneficiaryDetailFragment : Fragment() {
                         binding.llHeader.visibility = View.GONE
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
-                        binding.llHeader.visibility = View.VISIBLE
+                        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            binding.llHeader.visibility = View.GONE
+                        } else {
+                            binding.llHeader.visibility = View.VISIBLE
+
+                        }
                     }
                 }
                 is BeneficiaryUiState.Error -> {
