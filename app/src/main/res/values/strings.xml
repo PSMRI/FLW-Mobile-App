@@ -1563,7 +1563,7 @@
     <string name="verified_by">Verified by: %1$s</string>
     <string name="approved_by_mitanin_trainer">Approved by Mitanin Trainer</string>
     <string name="all_sub_centre">All Sub centre</string>
-    <string name="activity_claimed">Activity Claimed</string>
+    <string name="activity_claimed">Activity claimed\n</string>
     <string name="total_claimed_amount">Total claimed amount.</string>
 </resources>
 
