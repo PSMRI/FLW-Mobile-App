@@ -88,4 +88,8 @@
     <color name="overdue_dark_orange">#E65100</color>
     <color name="rejected_red">#D32F2F</color>
     <color name="unclaimed_grey">#607D8B</color>
+    <color name="unclaimed_pink">#FCFAF8</color>
+    <color name="unclaimed_green">#037E62</color>
+
+
 </resources>

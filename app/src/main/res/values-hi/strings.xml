@@ -1392,4 +1392,13 @@
     <string name="notification_action_clear">साफ़ करें</string>
     <string name="notification_action_cancel">रद्द करें</string>
     <string name="notification_close">बंद करें</string>
+    <string name="verify_will_commit_every_activity_listed_below_in_one_action">
+    सत्यापित करने पर नीचे सूचीबद्ध सभी गतिविधियाँ एक साथ सबमिट हो जाएँगी।
+</string>
+    <string name="verified_by">सत्यापित किया गया: %1$s</string>
+    <string name="approvedcheck">✓ स्वीकृत</string>
+    <string name="all_sub_centre">सभी उपकेंद्र</string>
+    <string name="activity_claimed">दावा की गई गतिविधियाँ</string>
+    <string name="total_claimed_amount">कुल दावा राशि</string>
+
 </resources>

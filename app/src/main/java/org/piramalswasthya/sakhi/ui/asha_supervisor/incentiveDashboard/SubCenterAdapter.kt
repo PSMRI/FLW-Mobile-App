@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -16,6 +17,13 @@ class SubCenterAdapter(private val onSubCenterClick: (Facility) -> Unit) : ListA
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(facility: Facility) {
+            if (position == itemCount - 1) {
+                binding.underLine.visibility = View.GONE
+            } else {
+                binding.underLine.visibility = View.VISIBLE
+            }
+
+
             binding.subCenterName.text = facility.facilityName
             if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                 binding.tvAshaCount.text = binding.root.context.getString(R.string.mitanins, facility.ashaCount)
@@ -41,6 +49,7 @@ class SubCenterAdapter(private val onSubCenterClick: (Facility) -> Unit) : ListA
 
     override fun onBindViewHolder(holder: SubCenterViewHolder, position: Int) {
         holder.bind(getItem(position))
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Facility>() {
