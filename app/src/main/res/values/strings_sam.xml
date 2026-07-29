@@ -3,6 +3,9 @@
     <string name="add_new_visit">Add New Visit</string>
     <string name="visit">Visit %1$d</string>
     <string name="visit_2">View or Add Visit</string>
+    <string name="ifa_visit">IFA Visit %1$d</string>
+    <string name="ifa_visits">IFA Visits</string>
+    <string name="ifa_visit_column">IFA Visit</string>
     <string name="check_sam_">Check SAM</string>
     <string name="severe_acute_malnutrition">Severe Acute Malnutrition</string>
     <string name="sam_form">SAM Form</string>
