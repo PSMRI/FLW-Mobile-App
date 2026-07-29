@@ -98,6 +98,8 @@ class WorkerDetailFragment : Fragment() {
             binding.tvWorkerName.visibility = View.VISIBLE
             binding.summaryCard.visibility = View.VISIBLE
             binding.tvSupervisorInfo.visibility = View.GONE
+            binding.cbVerifyDocuments.visibility = View.GONE
+
 
             if (!viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
                 binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
@@ -111,6 +113,7 @@ class WorkerDetailFragment : Fragment() {
         } else {
             binding.tvWorkerName.visibility = View.GONE
             binding.summaryCard.visibility = View.GONE
+            binding.cbVerifyDocuments.visibility = View.VISIBLE
 
             binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
             binding.btnVerify.text = resources.getString(R.string.verify)
@@ -239,15 +242,21 @@ class WorkerDetailFragment : Fragment() {
     }
 
     private fun onVerifyClicked() {
-        if (!binding.cbVerifyDocuments.isChecked) {
-            Toast.makeText(requireContext(), "Please verify documents before approving", Toast.LENGTH_SHORT).show()
+        val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+        if (!isMitaninFlavor && !binding.cbVerifyDocuments.isChecked) {
+            Toast.makeText(
+                requireContext(),
+                "Please verify documents before approving",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
+
         if (currentRecords.isEmpty()) {
             Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
             return
         }
-        // ✅ ClaimedIncentiveUI mein individual ids nahi — empty list pass karo
         viewModel.verifyActivities(
             ashaId = workerId,
             incentiveIds = emptyList()
