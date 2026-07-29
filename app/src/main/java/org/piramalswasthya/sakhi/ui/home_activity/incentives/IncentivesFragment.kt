@@ -68,6 +68,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.Objects
+import java.util.Timer
 import kotlin.math.max
 
 
@@ -307,22 +308,28 @@ class IncentivesFragment : Fragment() {
             viewModel.incentiveList.collect {
 
                 incentiveRecordList = it
-                 supervisorRole = if (
-                    BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
-                ) {
-                    if (incentiveRecordList.get(0).record.supervisorRole.equals("ASHA Supervisor")){
-                        getString(R.string.mitanin_trainer)
+                try {
+                    supervisorRole = if (
+                        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+                    ) {
 
+                        if (incentiveRecordList.get(0).record.supervisorRole.equals("ASHA Supervisor")){
+                            getString(R.string.mitanin_trainer)
+
+                        } else {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        }
                     } else {
-                        incentiveRecordList.get(0).record.supervisorRole
+                        if (incentiveRecordList.isNotEmpty() && incentiveRecordList[0].record.isClaimed) {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        } else {
+                            ""
+                        }
                     }
-                } else {
-                    if (incentiveRecordList.isNotEmpty() && incentiveRecordList[0].record.isClaimed) {
-                        incentiveRecordList.get(0).record.supervisorRole
-                    } else {
-                        ""
-                    }
+                } catch (e:Exception) {
+                    Timer("")
                 }
+
                 val activityList = it.map { it.activity }
                 val pending = activityList.filter { !it.isPaid }.sumOf { it.rate }
                 val processed = activityList.filter { it.isPaid }.sumOf { it.rate }
