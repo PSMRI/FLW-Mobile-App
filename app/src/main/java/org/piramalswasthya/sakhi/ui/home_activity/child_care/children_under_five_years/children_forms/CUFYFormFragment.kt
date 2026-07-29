@@ -51,6 +51,9 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
 import timber.log.Timber
 import java.util.Calendar
 
+/** layout_bottle_table declares weightSum 3; without the serial column only two remain. */
+private const val TWO_COLUMN_WEIGHT_SUM = 2f
+
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
 
@@ -257,17 +260,31 @@ class CUFYFormFragment : Fragment() {
 
     private fun tableRender() {
         binding.includeBottleTable.tableRv.layoutManager = LinearLayoutManager(requireContext())
+
+        // FLW-1129 — the Mitanin build never shows the raw bottle count, so the panel becomes
+        // "IFA Visit N | Date of Provision". Applies to add and view mode alike.
+        val showAsVisitNumber = isIfaVisitNumberingEnabled()
+        if (showAsVisitNumber) {
+            binding.includeBottleTable.tableHeading.text = getString(R.string.ifa_visits)
+            binding.includeBottleTable.sNo.visibility = View.GONE
+            binding.includeBottleTable.bottleNum.text = getString(R.string.ifa_visit_column)
+            binding.includeBottleTable.tableHeader.weightSum = TWO_COLUMN_WEIGHT_SUM
+        }
+
         viewModel.bottleList.observe(viewLifecycleOwner) { list ->
 
             if (formId.equals(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID, ignoreCase = true) && !list.isNullOrEmpty()) {
                 binding.includeBottleTable.llTable.visibility = View.VISIBLE
-                binding.includeBottleTable.tableRv.adapter = BottleAdapter(list)
+                binding.includeBottleTable.tableRv.adapter = BottleAdapter(list, showAsVisitNumber)
             } else {
                 binding.includeBottleTable.llTable.visibility = View.GONE
             }
         }
         viewModel.loadBottleData(benId, formId)
     }
+
+    private fun isIfaVisitNumberingEnabled(): Boolean =
+        isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID
 
     private fun refreshAdapter() {
         val visibleFields = viewModel.getVisibleFields().toMutableList()

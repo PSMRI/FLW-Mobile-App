@@ -3,6 +3,9 @@
     <string name="add_new_visit">नई भ्रमण जोड़ें</string>
     <string name="visit">भ्रमण %1$d</string>
     <string name="visit_2">भ्रमण देखें या जोड़ें</string>
+    <string name="ifa_visit">आईएफए भ्रमण %1$d</string>
+    <string name="ifa_visits">आईएफए भ्रमण</string>
+    <string name="ifa_visit_column">आईएफए भ्रमण</string>
     <string name="check_sam_">गंभीर कुपोषित की जांच</string>
     <string name="severe_acute_malnutrition">गंभीर तीव्र कुपोषण</string>
     <string name="sam_form">सैम फॉर्म</string>
