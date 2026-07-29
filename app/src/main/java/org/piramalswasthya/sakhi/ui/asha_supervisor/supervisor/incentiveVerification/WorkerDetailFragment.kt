@@ -99,6 +99,7 @@ class WorkerDetailFragment : Fragment() {
             binding.summaryCard.visibility = View.VISIBLE
             binding.tvSupervisorInfo.visibility = View.GONE
             binding.cbVerifyDocuments.visibility = View.GONE
+            binding.tthcheck.visibility = View.VISIBLE
 
 
             if (!viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
@@ -114,7 +115,7 @@ class WorkerDetailFragment : Fragment() {
             binding.tvWorkerName.visibility = View.GONE
             binding.summaryCard.visibility = View.GONE
             binding.cbVerifyDocuments.visibility = View.VISIBLE
-
+            binding.tthcheck.visibility = View.GONE
             binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
             binding.btnVerify.text = resources.getString(R.string.verify)
 

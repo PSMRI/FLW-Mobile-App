@@ -18,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -183,6 +184,11 @@ class SupervisorActivity : AppCompatActivity() {
         _binding = ActivitySupervisorBinding.inflate(layoutInflater)
         setContentView(binding.root)
         TapjackingProtectionHelper.enableTouchFiltering(this)
+
+         if(BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+             binding.toolbar.background =
+                 ContextCompat.getDrawable(this, R.color.supervisor_toolbar)
+         }
 
         setUpActionBar()
         setUpNavHeader()
