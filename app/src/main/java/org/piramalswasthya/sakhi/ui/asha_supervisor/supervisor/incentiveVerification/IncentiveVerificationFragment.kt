@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentIncentiveVerificationBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.AshaWorkerAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveVerificationViewModel
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.VerificationUiState
 import java.util.Calendar
@@ -91,7 +92,7 @@ class IncentiveVerificationFragment : Fragment() {
         val monthNames = resources.getStringArray(R.array.months)
         binding.tvMonth.text = "${monthNames[selectedMonth - 1]}, $selectedYear"
 
-        val spannable = SpannableString("Month: ${monthNames[selectedMonth - 1]}, $selectedYear")
+        val spannable = SpannableString("${resources.getString(R.string.month)}: ${monthNames[selectedMonth - 1]}, $selectedYear")
         spannable.setSpan(
             StyleSpan(Typeface.BOLD),
             0,
@@ -122,7 +123,10 @@ class IncentiveVerificationFragment : Fragment() {
                 putString("status", worker.status.name)
                 putInt("amount", worker.amount)
             }
-            findNavController().navigate(R.id.workerDetailFragment, bundle)
+            if (worker.status != VerificationStatus.UNCLAIMED) {
+                findNavController().navigate(R.id.workerDetailFragment, bundle)
+
+            }
         }
         binding.rvAshaWorkers.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(requireContext())

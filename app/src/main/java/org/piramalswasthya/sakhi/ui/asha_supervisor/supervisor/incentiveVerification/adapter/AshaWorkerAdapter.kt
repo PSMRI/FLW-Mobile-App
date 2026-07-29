@@ -60,9 +60,10 @@ class AshaWorkerAdapter(
 
             when (worker.status) {
                 VerificationStatus.VERIFIED -> {
-                    statusBadge.text = "Verified"
+                    statusBadge.text = textShort.context.getString(R.string.verified_text)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
-                    tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
+                    tvStatusDate.text =
+                        textShort.context.getString(R.string.verified_date_txt, worker.approvalDate)
                     tvRejectedReason.visibility = View.GONE
                     if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
                         tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
@@ -74,7 +75,7 @@ class AshaWorkerAdapter(
                 }
 
                 VerificationStatus.PENDING -> {
-                    statusBadge.text = "Pending"
+                    statusBadge.text = statusBadge.context.getString(R.string.pending_txt)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
                     tvStatusDate.visibility = View.GONE
                     tvRejectedReason.visibility = View.GONE
@@ -82,11 +83,15 @@ class AshaWorkerAdapter(
                 }
 
                 VerificationStatus.REJECTED -> {
-                    statusBadge.text = "Rejected"
+                    statusBadge.text = statusBadge.context.getString(R.string.rejected_txt)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
                     tvRejectedReason.visibility = View.VISIBLE
-                    tvStatusDate.text = "Rejected Date: ${HelperUtil.formatDate(worker.approvalDate)}"
-                    tvRejectedReason.text = "Reason: ${worker.reason} ${worker.OtherReason}"
+                    tvStatusDate.text = tvStatusDate.context.getString(
+                        R.string.rejected_date_txt,
+                        HelperUtil.formatDate(worker.approvalDate)
+                    )
+                    tvRejectedReason.text =
+                        tvRejectedReason.context.getString(R.string.reason_txt, worker.reason, worker.OtherReason)
                     if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {
                         tvStatusBy.text = "By: ${worker.verifiedByUserName}\n(${itemView.context.getString(R.string.mitanin_trainer)})"
 
@@ -99,7 +104,7 @@ class AshaWorkerAdapter(
                 }
 
                 VerificationStatus.OVERDUE -> {
-                    statusBadge.text = "Overdue"
+                    statusBadge.text = textShort.context.getString(R.string.overdue)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
                     tvStatusDate.visibility = View.GONE
                     tvRejectedReason.visibility = View.GONE
@@ -107,16 +112,22 @@ class AshaWorkerAdapter(
                 }
 
                 VerificationStatus.ALL -> {
-                    statusBadge.text = "Pending"
+                    statusBadge.text = statusBadge.context.getString(R.string.pending_txt)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                }
+
+                VerificationStatus.UNCLAIMED -> {
+                    tvAmount.visibility = View.INVISIBLE
+                    statusBadge.text = statusBadge.context.getString(R.string.unclaimed_txt)
+                    statusBadge.setBackgroundResource(R.drawable.unclaimed_grey)
                 }
 
 
                 VerificationStatus.APPROVED -> {
-                    statusBadge.text = "Approved"
+                    statusBadge.text = textShort.context.getString(R.string.verified_text)
                     statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
                     tvStatusDate.visibility = View.GONE
-                    tvStatusDate.text = "Verified Date: ${worker.approvalDate}"
+                    tvStatusDate.text = textShort.context.getString(R.string.verified_date_txt, worker.approvalDate)
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.visibility = View.GONE
                     if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && worker.role.equals("ASHA Supervisor")) {

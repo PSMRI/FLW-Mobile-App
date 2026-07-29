@@ -16,25 +16,6 @@
         android:orientation="vertical">
 
         <!-- Header -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingHorizontal="12dp">
-
-            <TextView
-                android:id="@+id/tvActivityName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Maternal Health"
-                android:textColor="#001B44"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Table Header -->
         <LinearLayout
@@ -43,6 +24,7 @@
             android:layout_height="40dp"
             android:background="#F5F7FA"
             android:padding="10dp"
+            android:visibility="gone"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp">
 
@@ -79,7 +61,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="12dp">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/gl_08"

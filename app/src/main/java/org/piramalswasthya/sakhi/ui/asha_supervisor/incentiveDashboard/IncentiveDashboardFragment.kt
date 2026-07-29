@@ -256,6 +256,7 @@ class IncentiveDashboardFragment : Fragment() {
         binding.cardOverdue.setOnClickListener     { navigateToVerification(0, "overdue") }
         binding.cardRejected.setOnClickListener    { navigateToVerification(0, "rejected") }
         binding.cardTotalAshas.setOnClickListener  { navigateToVerification(0, "") }
+        binding.cardAshaUnclaimed.setOnClickListener  { navigateToVerification(0, "unclaimed") }
     }
 
     private fun navigateToVerification(facilityId: Int, status: String) {

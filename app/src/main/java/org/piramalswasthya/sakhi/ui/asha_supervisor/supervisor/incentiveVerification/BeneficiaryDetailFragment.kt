@@ -1,10 +1,12 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -87,10 +89,17 @@ class BeneficiaryDetailFragment : Fragment() {
                         binding.llHeader.visibility = View.GONE
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
+                        val params = binding.llHeader.layoutParams as ConstraintLayout.LayoutParams
+
                         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                            binding.llHeader.visibility = View.GONE
+                            params.topMargin = 10.dpToPx()
+                            params.marginStart = 17.dpToPx()
+                            params.marginEnd = 17.dpToPx()
+
                         } else {
-                            binding.llHeader.visibility = View.VISIBLE
+                            params.topMargin = 0
+                            params.marginStart = 0
+                            params.marginEnd = 0
 
                         }
                     }
@@ -118,4 +127,7 @@ class BeneficiaryDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    fun Int.dpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
+
 }
