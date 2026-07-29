@@ -373,7 +373,10 @@ class SupervisorActivity : AppCompatActivity() {
                     this@SupervisorActivity,
                     notificationViewModel.unreadCount
                 ) {
-                    NotificationPanelFragment.open(supportFragmentManager)
+                    NotificationPanelFragment.open(
+                        supportFragmentManager,
+                        R.color.supervisor_toolbar
+                    )
                 }
             }
 

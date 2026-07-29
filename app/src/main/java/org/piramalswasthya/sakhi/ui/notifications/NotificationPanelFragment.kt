@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -41,6 +44,7 @@ class NotificationPanelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        applyToolbarColor(view)
         applyStatusBarInset(view)
 
         val rv = view.findViewById<RecyclerView>(R.id.rvNotifications)
@@ -65,6 +69,14 @@ class NotificationPanelFragment : Fragment() {
         }
 
         btnClearAll.setOnClickListener { confirmClearAll() }
+    }
+
+    private fun applyToolbarColor(root: View) {
+        val colorRes = arguments?.getInt(ARG_TOOLBAR_COLOR, DEFAULT_TOOLBAR_COLOR)
+            ?: DEFAULT_TOOLBAR_COLOR
+        val color = ContextCompat.getColor(requireContext(), colorRes)
+        root.setBackgroundColor(color)
+        root.findViewById<View>(R.id.appBarLayout).setBackgroundColor(color)
     }
 
     private fun applyStatusBarInset(root: View) {
@@ -114,11 +126,18 @@ class NotificationPanelFragment : Fragment() {
     companion object {
         const val TAG = "NotificationPanelFragment"
 
-        /** Show the panel full-screen over the host activity's content. */
-        fun open(fm: FragmentManager) {
+        private const val ARG_TOOLBAR_COLOR = "toolbar_color"
+
+        @ColorRes
+        private val DEFAULT_TOOLBAR_COLOR = R.color.seed
+
+        fun open(fm: FragmentManager, @ColorRes toolbarColor: Int = DEFAULT_TOOLBAR_COLOR) {
             if (fm.isStateSaved || fm.findFragmentByTag(TAG) != null) return
+            val fragment = NotificationPanelFragment().apply {
+                arguments = bundleOf(ARG_TOOLBAR_COLOR to toolbarColor)
+            }
             fm.beginTransaction()
-                .add(android.R.id.content, NotificationPanelFragment(), TAG)
+                .add(android.R.id.content, fragment, TAG)
                 .addToBackStack(TAG)
                 .commit()
         }

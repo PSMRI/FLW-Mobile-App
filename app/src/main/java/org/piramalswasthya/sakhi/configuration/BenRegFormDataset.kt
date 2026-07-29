@@ -2189,10 +2189,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
                 if (isAddSpouse) {
                     ageAtMarriage.max = getAgeFromDob(getLongFromDate(agePopup.value)).toLong()
-                    ageAtMarriage.value = calculateAgeAtMarriage(
+                    calculateAgeAtMarriage(
                         getLongFromDate(agePopup.value),
                         timeStampDateOfMarriageFromSpouse
-                    )?.toString() ?: Konstants.minAgeForMarriage.toString()
+                    )?.let { ageAtMarriage.value = it.toString() }
 
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0

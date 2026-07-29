@@ -21,12 +21,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace 'org.piramalswasthya.sakhi'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "org.piramalswasthya.sakhi"
         minSdk 25
-        targetSdk 35
+        targetSdk 36
         versionCode buildVersionCode()
         versionName buildVersionName()
         resourceConfigurations += ['en', 'hi', 'as','bn']
