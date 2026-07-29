@@ -33,7 +33,6 @@ class BeneficiaryAdapter(var activityName: String) : ListAdapter<BeneficiaryReco
 
                 is LayoutMtInnerBinding -> {
                     binding.tvSerialNo.text = position.toString()
-                    binding.tvActivityName.text = activityName
                     binding.tvBenId.text = "Ben ID: ${item.benId}"
                     binding.tvName.text = "Name: ${item.name ?: "-"}"
                     binding.tvRchId.text = "RCH ID: ${item.rchId ?: "N/A"}"

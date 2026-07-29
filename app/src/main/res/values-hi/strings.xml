@@ -1400,5 +1400,14 @@
     <string name="all_sub_centre">सभी उपकेंद्र</string>
     <string name="activity_claimed">दावा की गई गतिविधियाँ</string>
     <string name="total_claimed_amount">कुल दावा राशि</string>
+    <string name="monthly_summary">मासिक विवरण</string>
+    <string name="verified_text">सत्यापित</string>
+    <string name="verified_date_txt">सत्यापन तिथि: %1$s</string>
+    <string name="pending_txt">लंबित</string>
+    <string name="rejected_txt">अस्वीकृत</string>
+    <string name="rejected_date_txt">अस्वीकृति तिथि: %1$s</string>
+    <string name="reason_txt">कारण: %1$s %2$s</string>
+    <string name="unclaimed_txt">दावा नहीं किया गया</string>
+
 
 </resources>

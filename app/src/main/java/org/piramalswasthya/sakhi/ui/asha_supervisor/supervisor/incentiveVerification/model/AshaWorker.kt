@@ -66,6 +66,7 @@ enum class VerificationStatus {
     REJECTED,
     OVERDUE,
     APPROVED,
+    UNCLAIMED,
     ALL
 }
 

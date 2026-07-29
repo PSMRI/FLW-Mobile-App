@@ -1565,5 +1565,13 @@
     <string name="all_sub_centre">All Sub centre</string>
     <string name="activity_claimed">Activity claimed\n</string>
     <string name="total_claimed_amount">Total claimed amount.</string>
+    <string name="monthly_summary">Monthly Summary</string>
+    <string name="verified_text">Verified</string>
+    <string name="verified_date_txt">Verified Date: %1$s</string>
+    <string name="pending_txt">Pending</string>
+    <string name="rejected_txt">Rejected</string>
+    <string name="rejected_date_txt">Rejected Date: %1$s</string>
+    <string name="reason_txt">Reason: %1$s %2$s</string>
+    <string name="unclaimed_txt">Unclaimed</string>
 </resources>
 
