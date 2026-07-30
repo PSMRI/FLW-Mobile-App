@@ -593,7 +593,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         )
     }
 
-    suspend fun setFirstPageToRead(ben: BenRegCache?, familyHeadPhoneNo: Long?) {
+    suspend fun setFirstPageToRead(
+        ben: BenRegCache?,
+        familyHeadPhoneNo: Long?,
+        familySurname: String? = null
+    ) {
         val list = mutableListOf(
             pic,
             dateOfReg,
@@ -624,6 +628,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
             lastName.value = saved.lastName
+            if (saved.isKid && lastName.value.isNullOrBlank()) lastName.value = familySurname
             agePopup.value = getDateFromLong(saved.dob)
             fileUploadFront.value = saved?.kidDetails?.birthCertificateFileFrontView
             fileUploadBack.value = saved?.kidDetails?.birthCertificateFileBackView
@@ -1249,10 +1254,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
             lastName.value = saved.lastName
+            if (saved.isKid && lastName.value.isNullOrBlank()) lastName.value = hoF?.lastName
             // For Mitanin, name of an already-registered beneficiary must not be editable.
             if (isMitaninVariant) {
                 firstName.inputType = TEXT_VIEW
-                lastName.inputType = TEXT_VIEW
+                if (!lastName.value.isNullOrBlank()) lastName.inputType = TEXT_VIEW
             }
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()

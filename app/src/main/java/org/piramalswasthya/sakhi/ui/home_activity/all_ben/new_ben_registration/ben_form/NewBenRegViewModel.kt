@@ -211,7 +211,8 @@ class NewBenRegViewModel @Inject constructor(
                     parentFirstName = ben.firstName.toString()
                     dataset.setFirstPageToRead(
                         ben,
-                        familyHeadPhoneNo = household.family?.familyHeadPhoneNo
+                        familyHeadPhoneNo = household.family?.familyHeadPhoneNo,
+                        familySurname = household.family?.familyName
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
