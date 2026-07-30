@@ -31,6 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WorkerDetailFragment : Fragment() {
 
+    private var hasDefaultRecord: Boolean = false
     private var _binding: FragmentWorkerDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -87,7 +88,7 @@ class WorkerDetailFragment : Fragment() {
         val monthNames = resources.getStringArray(R.array.months)
         val monthName = monthNames[selectedMonth - 1]
 
-        binding.tvWorkerInfo.text = "EmployeeID: $workerId , $scName , $monthName $selectedYear"
+        binding.tvWorkerInfo.text = "EmployeeID: $workerId ,  $monthName $selectedYear"
         if (workerStatus=="VERIFIED") {
 
             binding.layoutVerified.visibility = View.VISIBLE
@@ -183,6 +184,12 @@ class WorkerDetailFragment : Fragment() {
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
                     binding.tvClaimsCount.text = currentRecords.size.toString()
+                     hasDefaultRecord = currentRecords.any { it.isDefault }
+                    if (hasDefaultRecord && BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && !viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
+                        binding.btnVerify.visibility = View.VISIBLE
+                    } else {
+                        binding.btnVerify.visibility = View.GONE
+                    }
 
 
                     if (state.records.isEmpty()) {
@@ -197,7 +204,7 @@ class WorkerDetailFragment : Fragment() {
                         binding.cvMain.visibility = View.VISIBLE
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE

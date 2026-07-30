@@ -396,8 +396,19 @@ class IncentivesFragment : Fragment() {
             val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
                     (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
+            val isRejectedClaim = try {
+                incentiveRecordList.isNotEmpty() &&
+                        incentiveRecordList[0].record.isClaimed &&
+                        incentiveRecordList[0].record.approvalStatus == 103
+            } catch (e: Exception) {
+                false
+            }
+
+
+            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+
             val isPreviousMonth = if (isMitaninVariant) {
-                isExactlyLastMonth && currentDay in 1..3
+                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
             } else {
                 when {
                     isExactlyLastMonth -> currentDay <= 12
