@@ -185,11 +185,12 @@ class WorkerDetailFragment : Fragment() {
                     currentRecords = state.records
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                      hasDefaultRecord = currentRecords.any { it.isDefault }
-                    if (hasDefaultRecord && BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) && !viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
-                        binding.btnVerify.visibility = View.VISIBLE
+                    binding.btnVerify.visibility = if (hasDefaultRecord && BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        View.VISIBLE
                     } else {
-                        binding.btnVerify.visibility = View.GONE
+                        View.GONE
                     }
+
 
 
                     if (state.records.isEmpty()) {
