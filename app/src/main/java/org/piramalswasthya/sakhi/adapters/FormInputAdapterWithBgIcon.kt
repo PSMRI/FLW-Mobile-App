@@ -45,6 +45,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormNumberPickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewPairWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormUploadImageBinding
@@ -619,6 +620,23 @@ class FormInputAdapterWithBgIcon (
         }
     }
 
+    class TextViewPairInputViewHolder private constructor(private val binding: RvItemFormTextViewPairWithBgIconBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding =
+                    RvItemFormTextViewPairWithBgIconBinding.inflate(layoutInflater, parent, false)
+                return TextViewPairInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement) {
+            binding.form = item
+            binding.executePendingBindings()
+        }
+    }
+
     class ImageViewInputViewHolder private constructor(private val binding: RvItemFormImageViewWithBgIconBinding) :
         ViewHolder(binding.root) {
         companion object {
@@ -1146,6 +1164,7 @@ class FormInputAdapterWithBgIcon (
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            InputType.TEXT_VIEW_PAIR -> TextViewPairInputViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -1175,6 +1194,7 @@ class FormInputAdapterWithBgIcon (
             )
 
             TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+            InputType.TEXT_VIEW_PAIR -> (holder as TextViewPairInputViewHolder).bind(item)
             IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                 item, imageClickListener, isEnabled
             )

@@ -352,6 +352,7 @@
     <string name="beneficiary_name">लाभार्थी का नाम</string>
     <string name="husband_s_name">पति का नाम</string>
     <string name="weeks_of_pregnancy">गर्भावस्था के सप्ताह</string>
+    <string name="days_of_pregnancy">गर्भावस्था के दिन</string>
     <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
     <string name="anc_visits">एएनसी भ्रमण</string>
     <string name="pnc_visits">प्रसवोत्तर देखभाल भ्रमण</string>

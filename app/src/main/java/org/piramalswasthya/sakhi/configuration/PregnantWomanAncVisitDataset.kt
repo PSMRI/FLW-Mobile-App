@@ -49,12 +49,13 @@ class PregnantWomanAncVisitDataset(
 
     private val weekOfPregnancy = FormElement(
         id = 2,
-        inputType = InputType.TEXT_VIEW,
+        inputType = InputType.TEXT_VIEW_PAIR,
         title = resources.getString(R.string.weeks_of_pregnancy),
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
         iconDrawableRes = R.drawable.ic_bmi,
+        secondaryTitle = resources.getString(R.string.days_of_pregnancy),
     )
 
     private val ancVisit = FormElement(
@@ -550,6 +551,8 @@ class PregnantWomanAncVisitDataset(
                 }
                 weeks.toString()
             }
+            weekOfPregnancy.secondaryValue =
+                weekOfPregnancy.value?.toIntOrNull()?.let { (it * 7).toString() }
         }
 
         ancVisit.value = visitNumber.toString()
@@ -568,6 +571,7 @@ class PregnantWomanAncVisitDataset(
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
+            weekOfPregnancy.secondaryValue = (woP * 7).toString()
             fileUploadFront.value = savedAnc.frontFilePath
             fileUploadBack.value = savedAnc.backFilePath
             isAborted.value =
@@ -710,6 +714,7 @@ class PregnantWomanAncVisitDataset(
                     }
 
                     weekOfPregnancy.value = weeks.toString()
+                    weekOfPregnancy.secondaryValue = (weeks * 7).toString()
                     val calcVisitNumber = when (weeks) {
                         in Konstants.minAnc1Week..Konstants.maxAnc1Week -> 1
                         in Konstants.minAnc2Week..Konstants.maxAnc2Week -> 2
