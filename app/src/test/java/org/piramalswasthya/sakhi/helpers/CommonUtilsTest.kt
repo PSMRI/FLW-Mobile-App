@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.helpers
 
 import android.content.Context
 import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.text.TextUtils
 import io.mockk.every
 import io.mockk.mockk
@@ -1525,5 +1527,325 @@ class CommonUtilsTest {
     @Test fun `getLocalizedGender returns empty for null`() {
         val ctx = mockk<Context>(relaxed = true)
         assertEquals("", ctx.getLocalizedGender(null))
+    }
+
+    // ===============================================================
+    // Full-predicate evaluation: every nullable / rchId branch of the
+    // filter chains is reached by using a beneficiary whose optional
+    // fields are ALL populated and a query that matches nothing, so no
+    // `||` operand short-circuits the rest of the chain.
+    // ===============================================================
+
+    private val noMatchQuery = "qqzzqq"
+
+    private fun mkRichBen(): BenBasicDomain = mkBen(
+        benId = 111L,
+        benFullName = "Alpha Beta",
+        benName = "Alpha",
+        benSurname = "Beta",
+        familyHeadName = "Gamma",
+        age = "25 years",
+        mobileNo = "9000000001",
+        rchId = "1234567890",
+        spouseName = "Delta",
+        fatherName = "Epsilon",
+        motherName = "Zeta",
+        gender = "female",
+        regDate = "01-01-2020",
+        hhId = 222L,
+        abhaId = "11-22-33-44",
+        dob = 100L
+    )
+
+    @Test fun `filterForBen evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterBenList(listOf(mkRichBen()), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterAdolesent evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterAdolescentList(listOf(mkAdolescent(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterEcTrackingList evaluates every optional predicate when nothing matches`() {
+        val list = listOf(mkEct(mkRichBen(), numChildren = "3", ectDate = 5L))
+        assertTrue(filterEcTrackingList(list, noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterEcRegistrationList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterEcRegistrationList(listOf(mkEcr(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterPwrRegistrationList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterPwrRegistrationList(listOf(mkPwr(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterPwAncList evaluates every optional predicate when nothing matches`() {
+        val list = listOf(
+            mkAnc(
+                mkRichBen(),
+                ancDate = 10L,
+                lmpString = "01-01-2026",
+                eddString = "10-10-2026",
+                weeks = "24 weeks"
+            )
+        )
+        assertTrue(filterPwAncList(list, noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterAbortionList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterAbortionList(listOf(mkAnc(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterPncDomainList evaluates every optional predicate when nothing matches`() {
+        val list = listOf(mkPnc(mkRichBen(), deliveryDate = "01-01-2024", pncDate = 5L))
+        assertTrue(filterPncDomainList(list, noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterInfantDomainList evaluates every optional predicate when nothing matches`() {
+        val list = listOf(mkInfant(mkRichBen(), babyName = "Rahul"))
+        assertTrue(filterInfantDomainList(list, noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterTbScreeningList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterTbScreeningList(listOf(mkTbScreening(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterTbSuspectedList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterTbSuspectedList(listOf(mkTbSuspected(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterMalariaConfirmedList evaluates every optional predicate when nothing matches`() {
+        assertTrue(
+            filterMalariaConfirmedList(listOf(mkMalaria(mkRichBen())), noMatchQuery).isEmpty()
+        )
+    }
+
+    @Test fun `filterBenHRPFormList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterBenHRPFormList(listOf(mkHrpa(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterBenHRNPFormList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterBenHRNPFormList(listOf(mkHrnpa(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterBenHRPTFormList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterBenHRPTFormList(listOf(mkHrpt(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterBenHRNPTFormList evaluates every optional predicate when nothing matches`() {
+        assertTrue(filterBenHRNPTFormList(listOf(mkHrnpt(mkRichBen())), noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterBenFormList form ben evaluates every optional predicate when nothing matches`() {
+        val list = listOf(
+            mkFormBen(
+                benId = 111L,
+                benName = "Alpha",
+                benSurname = "Beta",
+                familyHeadName = "Gamma",
+                age = "25 years",
+                mobileNo = "9000000001",
+                gender = "female",
+                regDate = "01-01-2020",
+                hhId = 222L,
+                rchId = "1234567890",
+                spouseName = "Delta",
+                fatherName = "Epsilon",
+                dateOfDeath = "02-02-2022"
+            )
+        )
+        assertTrue(filterBenFormList(list, noMatchQuery).isEmpty())
+    }
+
+    @Test fun `filterBenFormList childReg evaluates every optional predicate when nothing matches`() {
+        val list = listOf(mkChildReg(mkRichBen(), childBen = mkRichBen()))
+        assertTrue(filterBenFormList(list, noMatchQuery).isEmpty())
+    }
+
+    // --- last-operand matches: proves the tail of each chain is live ---
+
+    @Test fun `filterBenHRPFormList matches on father name only`() {
+        val list = listOf(mkHrpa(mkRichBen()), mkHrpa(mkBen(benName = "Other")))
+        assertEquals(1, filterBenHRPFormList(list, "epsilon").size)
+    }
+
+    @Test fun `filterBenHRNPTFormList matches on father name only`() {
+        val list = listOf(mkHrnpt(mkRichBen()), mkHrnpt(mkBen(benName = "Other")))
+        assertEquals(1, filterBenHRNPTFormList(list, "epsilon").size)
+    }
+
+    @Test fun `filterEcRegistrationList matches on a digits-only rchId`() {
+        val list = listOf(mkEcr(mkRichBen()), mkEcr(mkBen(benName = "Other")))
+        assertEquals(1, filterEcRegistrationList(list, "1234567890").size)
+    }
+
+    @Test fun `filterTbScreeningList matches on father name only`() {
+        val list = listOf(mkTbScreening(mkRichBen()), mkTbScreening(mkBen(benName = "Other")))
+        assertEquals(1, filterTbScreeningList(list, "epsilon").size)
+    }
+
+    // ===============================================================
+    // isWARA null-safety
+    // ===============================================================
+
+    @Test fun `filterBenList type 4 WARA rejects when isDeathValue is null`() {
+        val cal25 = Calendar.getInstance().apply { add(Calendar.YEAR, -25) }
+        val list = listOf(
+            createBen(
+                name = "UnknownDeathStatus",
+                gender = "Female",
+                dob = cal25.timeInMillis,
+                isDeathValue = null,
+                reproductiveStatusId = 1
+            )
+        )
+        assertTrue(filterBenList(list, 4).isEmpty())
+    }
+
+    @Test fun `filterBenList type 4 WARA rejects reproductive status 3`() {
+        val cal25 = Calendar.getInstance().apply { add(Calendar.YEAR, -25) }
+        val list = listOf(
+            createBen(
+                name = "ReproThree",
+                gender = "Female",
+                dob = cal25.timeInMillis,
+                isDeathValue = "false",
+                reproductiveStatusId = 3
+            )
+        )
+        assertTrue(filterBenList(list, 4).isEmpty())
+    }
+
+    // ===============================================================
+    // filterForImm - default arguments and the third alternate value
+    // ===============================================================
+
+    @Test fun `filterForImm uses empty defaults for the alternate values`() {
+        val imm = mkImm(age = "5 years", benName = "Asha")
+        // filterForImm strips spaces from the query but not from the age string
+        assertTrue(filterForImm(imm, "years"))
+        assertTrue(filterForImm(imm, "Asha"))
+        assertFalse(filterForImm(imm, "9 months"))
+    }
+
+    @Test fun `filterForImm matches the third alternate value`() {
+        val imm = mkImm(age = "11 months")
+        assertTrue(filterForImm(imm, "12 months", "9 months", "10 months", "11 months"))
+    }
+
+    @Test fun `filterImmunList 9-12 branch matches the third alternate 11 months`() {
+        val list = listOf(mkImm(age = "11 months"), mkImm(age = "5 years"))
+        assertEquals(1, filterImmunList(list, "9-12").size)
+    }
+
+    @Test fun `filterImmunList birth dose branch matches the one month fallback`() {
+        // "birth dose" rewrites the query to "1 month" with "1 day" as an alternate,
+        // and additionally lets through anyone whose age mentions days.
+        val list = listOf(mkImm(age = "1month"), mkImm(age = "5 years"))
+        assertEquals(1, filterImmunList(list, "birth dose").size)
+    }
+
+    // ===============================================================
+    // getPatientTypeByAge - legacy (pre-O) day / month borrow branches
+    // ===============================================================
+
+    @Test fun `getPatientTypeByAge borrows across the month boundary`() {
+        // dob is 30 years ago but one calendar day later than today, which forces
+        // either the day-borrow or the month-borrow branch depending on the date.
+        val cal = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.YEAR, -30)
+        }
+        assertEquals("adult", getPatientTypeByAge(cal.time))
+    }
+
+    @Test fun `getPatientTypeByAge treats a two month old as an infant`() {
+        val cal = Calendar.getInstance().apply { add(Calendar.MONTH, -2) }
+        assertEquals("infant", getPatientTypeByAge(cal.time))
+    }
+
+    @Test fun `getPatientTypeByAge treats a twelve year old as a child`() {
+        val cal = Calendar.getInstance().apply { add(Calendar.YEAR, -12) }
+        assertEquals("child", getPatientTypeByAge(cal.time))
+    }
+
+    @Test fun `getPatientTypeByAge treats an eighteen year old as adolescence`() {
+        val cal = Calendar.getInstance().apply { add(Calendar.YEAR, -18) }
+        assertEquals("adolescence", getPatientTypeByAge(cal.time))
+    }
+
+    // ===============================================================
+    // isInternetAvailable (legacy NetworkInfo path)
+    // ===============================================================
+
+    private fun contextWithNetworkInfo(info: NetworkInfo?): Context {
+        val ctx = mockk<Context>(relaxed = true)
+        val cm = mockk<ConnectivityManager>(relaxed = true)
+        every { ctx.getSystemService(Context.CONNECTIVITY_SERVICE) } returns cm
+        every { cm.activeNetworkInfo } returns info
+        return ctx
+    }
+
+    @Test fun `isInternetAvailable is true for an available connected network`() {
+        val info = mockk<NetworkInfo>(relaxed = true)
+        every { info.isAvailable } returns true
+        every { info.isConnected } returns true
+        assertTrue(isInternetAvailable(contextWithNetworkInfo(info)))
+    }
+
+    @Test fun `isInternetAvailable is false when there is no active network`() {
+        assertFalse(isInternetAvailable(contextWithNetworkInfo(null)))
+    }
+
+    @Test fun `isInternetAvailable is false when the network is not connected`() {
+        val info = mockk<NetworkInfo>(relaxed = true)
+        every { info.isAvailable } returns true
+        every { info.isConnected } returns false
+        assertFalse(isInternetAvailable(contextWithNetworkInfo(info)))
+    }
+
+    // ===============================================================
+    // getLocalizedAge - year / month / day append branches
+    // ===============================================================
+
+    private fun ageContext(): Context {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.year) } returns "Year"
+        every { ctx.getString(R.string.years) } returns "Years"
+        every { ctx.getString(R.string.month) } returns "Month"
+        every { ctx.getString(R.string.months) } returns "Months"
+        every { ctx.getString(R.string.day) } returns "Day"
+        every { ctx.getString(R.string.days) } returns "Days"
+        return ctx
+    }
+
+    @Test fun `getLocalizedAge appends the day part for someone born on the first of this month`() {
+        val now = Calendar.getInstance()
+        val dobCal = Calendar.getInstance().apply {
+            add(Calendar.YEAR, -1)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val days = now.get(Calendar.DAY_OF_MONTH) - 1
+        val expected = buildString {
+            append("1 Year")
+            if (days > 0) append(" $days ").append(if (days == 1) "Day" else "Days")
+        }
+        assertEquals(expected, getLocalizedAge(ageContext(), dobCal.timeInMillis))
+    }
+
+    @Test fun `getLocalizedAge appends the month part for someone born in January`() {
+        val now = Calendar.getInstance()
+        val dobCal = Calendar.getInstance().apply {
+            add(Calendar.YEAR, -2)
+            set(Calendar.MONTH, Calendar.JANUARY)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val months = now.get(Calendar.MONTH)
+        val days = now.get(Calendar.DAY_OF_MONTH) - 1
+        val expected = buildString {
+            append("2 Years")
+            if (months > 0) append(" $months ").append(if (months == 1) "Month" else "Months")
+            if (days > 0) append(" $days ").append(if (days == 1) "Day" else "Days")
+        }
+        assertEquals(expected, getLocalizedAge(ageContext(), dobCal.timeInMillis))
     }
 }

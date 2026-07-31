@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantTrackCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.HRPPregnantTrackCache
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
@@ -568,5 +569,231 @@ class HRPRepoTest : BaseRepositoryTest() {
         coEvery { tmcNetworkApiService.getHRNonPTrackData(any()) } returns jsonResponse(tokenRefresh)
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
         assertEquals(-1, repo.getHRNonPTrackDetailsFromServer(0))
+    }
+
+    // ---------------- parser bodies: responses that actually carry entries ----------------
+    // The shared `successData` fixture has an empty entries array, so every save* parser body
+    // is dead behind it. These build a payload WITH entries so the loops run.
+    // HRPRepo.getLongFromDate parses only "MMM d, yyyy h:mm:ss a".
+
+    private val serverDate = "Jul 22, 2023 8:17:23 AM"
+
+    private fun dataWithEntries(entriesJson: String): String {
+        val flattened = entriesJson.replace(Regex("\\s+"), " ")
+        val inner = """{"entries":$flattened}"""
+        val escaped = inner.replace("\\", "\\\\").replace("\"", "\\\"")
+        return """{"statusCode":200,"errorMessage":"","data":"$escaped"}"""
+    }
+
+    @Test
+    fun `getHRPAssess parses entries and saves new records`() = runTest {
+        val entries = """[
+            {"benId":1001,"visitDate":"$serverDate"},
+            {"benId":1002,"visitDate":"$serverDate"}
+        ]"""
+        coEvery { tmcNetworkApiService.getHRPAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getPregnantAssess(any<Long>()) } returns null
+
+        assertEquals(1, repo.getHRPAssessDetailsFromServer(0))
+        coVerify(atLeast = 1) { hrpDao.getPregnantAssess(any<Long>()) }
+    }
+
+    @Test
+    fun `getHRPAssess skips invalid benId and existing records`() = runTest {
+        val entries = """[
+            {"benId":0,"visitDate":"$serverDate"},
+            {"benId":-5,"visitDate":"$serverDate"},
+            {"benId":2001,"visitDate":"$serverDate"},
+            {"benId":2002}
+        ]"""
+        coEvery { tmcNetworkApiService.getHRPAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getPregnantAssess(2001L) } returns mockk<HRPPregnantAssessCache>(relaxed = true)
+
+        assertEquals(1, repo.getHRPAssessDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRPTrack parses entries and looks up existing track`() = runTest {
+        val entries = """[
+            {"benId":3001,"visit":"1","visitDate":"$serverDate"},
+            {"benId":3002,"visit":"2","visitDate":"$serverDate"},
+            {"benId":3003,"visit":"3"}
+        ]"""
+        coEvery { tmcNetworkApiService.getHRPTrackData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getHRPTrack(any(), any(), any(), any()) } returns null
+
+        assertEquals(1, repo.getHRPTrackDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRPTrack skips entries whose track already exists`() = runTest {
+        val entries = """[{"benId":3101,"visit":"1","visitDate":"$serverDate"}]"""
+        coEvery { tmcNetworkApiService.getHRPTrackData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getHRPTrack(any(), any(), any(), any()) } returns
+                mockk<HRPPregnantTrackCache>(relaxed = true)
+
+        assertEquals(1, repo.getHRPTrackDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRNonPAssess parses entries`() = runTest {
+        val entries = """[
+            {"benId":4001,"visitDate":"$serverDate"},
+            {"benId":4002}
+        ]"""
+        coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getNonPregnantAssess(any<Long>()) } returns null
+
+        assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRNonPAssess skips already saved records`() = runTest {
+        val entries = """[{"benId":4101,"visitDate":"$serverDate"}]"""
+        coEvery { tmcNetworkApiService.getHRNonPAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getNonPregnantAssess(any<Long>()) } returns
+                mockk<HRPNonPregnantAssessCache>(relaxed = true)
+
+        assertEquals(1, repo.getHRNonPAssessDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRNonPTrack parses entries`() = runTest {
+        val entries = """[
+            {"benId":5001,"visitDate":"$serverDate"},
+            {"benId":5002}
+        ]"""
+        coEvery { tmcNetworkApiService.getHRNonPTrackData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getHRPNonTrack(any(), any(), any()) } returns null
+
+        assertEquals(1, repo.getHRNonPTrackDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHRNonPTrack skips already saved tracks`() = runTest {
+        val entries = """[{"benId":5101,"visitDate":"$serverDate"}]"""
+        coEvery { tmcNetworkApiService.getHRNonPTrackData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getHRPNonTrack(any(), any(), any()) } returns
+                mockk<HRPNonPregnantTrackCache>(relaxed = true)
+
+        assertEquals(1, repo.getHRNonPTrackDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getHighRiskAssess parses entries`() = runTest {
+        val entries = """[
+            {"benId":6001,"visitDate":"$serverDate"},
+            {"benId":6002}
+        ]"""
+        coEvery { tmcNetworkApiService.getHighRiskAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getPregnantAssess(any<Long>()) } returns null
+
+        assertEquals(1, repo.getHighRiskAssessDetailsFromServer(0))
+    }
+
+    @Test
+    fun `getMicroBirthPlan parses entries`() = runTest {
+        val entries = """[
+            {"benId":7001,"visitDate":"$serverDate"},
+            {"benId":7002}
+        ]"""
+        coEvery { tmcNetworkApiService.getMicroBirthPlanAssessData(any()) } returns
+                jsonResponse(dataWithEntries(entries))
+        coEvery { hrpDao.getMicroBirthPlan(any<Long>()) } returns null
+
+        assertEquals(1, repo.getHighRiskAssessMicroBirthPlanDetailsFromServer(0))
+    }
+
+    // ---------------- pushUnSyncedRecords: the private chunk loops ----------------
+    // pushUnSyncedRecords() always returns true (worker must succeed); the value of these
+    // tests is that they drive the five private chunk loops end to end.
+
+    private val pushOk = """{"statusCode":200,"errorMessage":""}"""
+    private val pushTokenExpired = """{"statusCode":5002,"errorMessage":""}"""
+    private val pushFailed = """{"statusCode":9999,"errorMessage":""}"""
+
+    @Test
+    fun `pushUnSyncedRecords drives micro birth plan and track chunk loops`() = runTest {
+        coEvery { hrpDao.getHRPAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getMicroBirthPlan(any<SyncState>()) } returns
+                listOf(HRPMicroBirthPlanCache(benId = 8001L))
+        coEvery { hrpDao.getHRPTrack(any<SyncState>()) } returns
+                listOf(HRPPregnantTrackCache(benId = 8002L))
+        coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getHRNonPTrack(any<SyncState>()) } returns
+                listOf(HRPNonPregnantTrackCache(benId = 8003L))
+
+        coEvery { tmcNetworkApiService.saveMicroBirthPlanAssessData(any()) } returns jsonResponse(pushOk)
+        coEvery { tmcNetworkApiService.saveHRPTrackData(any()) } returns jsonResponse(pushOk)
+        coEvery { tmcNetworkApiService.saveHRNonPTrackData(any()) } returns jsonResponse(pushOk)
+        coEvery { hrpDao.getSavedRecord(any()) } returns null
+
+        assertTrue(repo.pushUnSyncedRecords())
+        coVerify(atLeast = 1) { tmcNetworkApiService.saveHRPTrackData(any()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords handles token expiry on every chunk`() = runTest {
+        coEvery { hrpDao.getHRPAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getMicroBirthPlan(any<SyncState>()) } returns
+                listOf(HRPMicroBirthPlanCache(benId = 8101L))
+        coEvery { hrpDao.getHRPTrack(any<SyncState>()) } returns
+                listOf(HRPPregnantTrackCache(benId = 8102L))
+        coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getHRNonPTrack(any<SyncState>()) } returns
+                listOf(HRPNonPregnantTrackCache(benId = 8103L))
+
+        coEvery { tmcNetworkApiService.saveMicroBirthPlanAssessData(any()) } returns jsonResponse(pushTokenExpired)
+        coEvery { tmcNetworkApiService.saveHRPTrackData(any()) } returns jsonResponse(pushTokenExpired)
+        coEvery { tmcNetworkApiService.saveHRNonPTrackData(any()) } returns jsonResponse(pushTokenExpired)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { hrpDao.getSavedRecord(any()) } returns null
+
+        assertTrue(repo.pushUnSyncedRecords())
+        coVerify(atLeast = 1) { userRepo.refreshTokenTmc(any(), any()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords handles server rejection and http errors`() = runTest {
+        coEvery { hrpDao.getHRPAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getMicroBirthPlan(any<SyncState>()) } returns
+                listOf(HRPMicroBirthPlanCache(benId = 8201L))
+        coEvery { hrpDao.getHRPTrack(any<SyncState>()) } returns
+                listOf(HRPPregnantTrackCache(benId = 8202L))
+        coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getHRNonPTrack(any<SyncState>()) } returns
+                listOf(HRPNonPregnantTrackCache(benId = 8203L))
+
+        coEvery { tmcNetworkApiService.saveMicroBirthPlanAssessData(any()) } returns jsonResponse(pushFailed)
+        coEvery { tmcNetworkApiService.saveHRPTrackData(any()) } returns jsonResponse("{}", code = 500)
+        coEvery { tmcNetworkApiService.saveHRNonPTrackData(any()) } throws RuntimeException("boom")
+        coEvery { hrpDao.getSavedRecord(any()) } returns null
+
+        assertTrue(repo.pushUnSyncedRecords())
+    }
+
+    @Test
+    fun `pushUnSyncedRecords drives the non pregnant assess loop through ecr mapping`() = runTest {
+        coEvery { hrpDao.getHRPAssess(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getMicroBirthPlan(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getHRPTrack(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getHRNonPTrack(any<SyncState>()) } returns emptyList()
+        coEvery { hrpDao.getNonPregnantAssess(any<SyncState>()) } returns
+                listOf(HRPNonPregnantAssessCache(benId = 8301L))
+
+        // A relaxed EcrPost keeps asPostModel (Base64 / file IO) out of the test.
+        coEvery { ecrRepo.getSavedRecord(any()) } returns mockk(relaxed = true)
+        coEvery { tmcNetworkApiService.saveHighRiskAssessData(any()) } returns jsonResponse(pushOk)
+
+        assertTrue(repo.pushUnSyncedRecords())
     }
 }

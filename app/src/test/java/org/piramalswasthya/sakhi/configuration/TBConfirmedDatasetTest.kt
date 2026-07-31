@@ -10,7 +10,9 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -39,6 +41,9 @@ class TBConfirmedDatasetTest : BaseViewModelTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.i(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
+        every { Log.w(any(), any<Throwable>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -163,5 +168,152 @@ class TBConfirmedDatasetTest : BaseViewModelTest() {
             ds.validateCurrentFollowUpDate()
         }
         assertNotNull(ds.listFlow)
+    }
+
+    // ===================== updateList-driven handler coverage =====================
+    // Element ids: 1 regimenType, 2 treatmentStartDate, 3 expectedCompletion, 4 followUpDate,
+    // 5 monthlyFollowUpDone, 6 adherence, 7 anyDiscomfort, 8 treatmentCompleted,
+    // 9 actualCompletionDate, 10 treatmentOutcome, 11 dateOfDeath, 12 placeOfDeath,
+    // 13 reasonForDeath, 14 reasonForNotCompleting.
+    // handleListOnValueChanged is PROTECTED - only reachable via the public updateList wrapper.
+
+    private suspend fun freshCreatePage(): TBConfirmedDataset {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, null, null)
+        return ds
+    }
+
+    @Test
+    fun `create page builds the base element list`() = runTest {
+        val ds = freshCreatePage()
+        val list = ds.listFlow.value
+        assertTrue("base list should be built", list.isNotEmpty())
+        // regimenType + treatmentStartDate + expectedCompletion + followUpDate + 3 more
+        assertTrue(list.any { it.id == 1 })
+        assertTrue(list.any { it.id == 2 })
+        assertTrue(list.any { it.id == 4 })
+    }
+
+    @Test
+    fun `updateList on regimen type recalculates expected completion`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(1, "opt0")
+        ds.updateList(1, 0)
+        assertTrue(ds.listFlow.value.any { it.id == 3 })
+    }
+
+    @Test
+    fun `updateList on treatment start date enables follow up`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(2, "01-01-2024")
+        ds.updateList(2, 0)
+        val followUp = ds.listFlow.value.firstOrNull { it.id == 4 }
+        assertNotNull(followUp)
+        assertTrue(followUp!!.isEnabled)
+    }
+
+    @Test
+    fun `updateList on follow up date runs validation`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(2, "01-01-2024")
+        ds.updateList(2, 0)
+        ds.setValueById(4, "01-03-2024")
+        ds.updateList(4, 0)
+        assertTrue(ds.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `treatment completed yes adds actual completion and outcome`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(true, "opt0"), null)
+        ds.setValueById(8, "opt0")
+        // triggerIndex for treatmentCompleted's yes-branch is index 0
+        ds.updateList(8, 0)
+        val ids = ds.listFlow.value.map { it.id }
+        assertTrue("actualTreatmentCompletionDate expected", ids.contains(9))
+        assertTrue("treatmentOutcome expected", ids.contains(10))
+    }
+
+    @Test
+    fun `treatment completed no swaps in reason for not completing`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(true, "opt0"), null)
+        ds.setValueById(8, "opt1")
+        ds.updateList(8, 1)
+        val ids = ds.listFlow.value.map { it.id }
+        assertTrue("reasonForNotCompleting expected", ids.contains(14))
+        assertFalse("treatmentOutcome should be removed", ids.contains(10))
+    }
+
+    @Test
+    fun `treatment outcome death adds death block then removes it`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(true, "opt0"), null)
+        ds.setValueById(8, "opt0")
+        ds.updateList(8, 0)
+        // tb_treatment_outcomes[3] == "opt3" with the mocked 80-entry array -> death branch
+        ds.setValueById(10, "opt3")
+        ds.updateList(10, 3)
+        var ids = ds.listFlow.value.map { it.id }
+        assertTrue("dateOfDeath expected", ids.contains(11))
+        assertTrue("placeOfDeath expected", ids.contains(12))
+        assertTrue("reasonForDeath expected", ids.contains(13))
+
+        ds.setValueById(10, "opt2")
+        ds.updateList(10, 2)
+        ids = ds.listFlow.value.map { it.id }
+        assertFalse("dateOfDeath removed", ids.contains(11))
+        assertFalse("placeOfDeath removed", ids.contains(12))
+    }
+
+    @Test
+    fun `edit page with follow up date exposes monthly follow up group`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(null, null, withFollowUp = true), null)
+        val ids = ds.listFlow.value.map { it.id }
+        assertTrue(ids.contains(4))
+        assertTrue(ids.contains(5))
+        assertTrue(ids.contains(6))
+        assertTrue(ids.contains(7))
+    }
+
+    @Test
+    fun `edit page without follow up hides monthly follow up group`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(null, null, withFollowUp = false), null)
+        val ids = ds.listFlow.value.map { it.id }
+        assertTrue(ids.contains(4))
+        assertFalse(ids.contains(5))
+        assertFalse(ids.contains(6))
+    }
+
+    @Test
+    fun `edit page with regimen already saved locks the regimen field`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), savedTb(false, null), null)
+        val regimen = ds.listFlow.value.firstOrNull { it.id == 1 }
+        assertNotNull(regimen)
+        assertFalse("regimen should be locked once saved", regimen!!.isEnabled)
+    }
+
+    @Test
+    fun `mapValues on populated create page`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(1, "opt0")
+        ds.updateList(1, 0)
+        ds.setValueById(5, "1")
+        ds.setValueById(6, "opt0")
+        ds.setValueById(7, "opt1")
+        val target = mockk<TBConfirmedTreatmentCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        assertTrue(ds.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `validate all fields on a freshly built create page`() = runTest {
+        val ds = freshCreatePage()
+        ds.validateAllFields()
+        ds.validateCurrentFollowUpDate()
+        assertTrue(ds.listFlow.value.isNotEmpty())
     }
 }

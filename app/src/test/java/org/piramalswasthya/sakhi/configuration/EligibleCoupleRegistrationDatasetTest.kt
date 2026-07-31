@@ -10,19 +10,27 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
 /**
@@ -52,6 +60,13 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        // Dataset.getLocalValueInArray / getEnglishValueInArray call Log.w when an entry is not
+        // present in the (mocked) resource array. Without this stub the un-mocked android.util.Log
+        // throws, aborting setUpPage at the very first child, which left most of the builder body
+        // and every list-dependent branch below it unreachable.
+        every { Log.w(any<String>(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -595,5 +610,252 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
             runCatching { d.setValueById(it, "opt1"); d.updateList(it, 0) }
         }
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: real assertions on the built page =========================
+    // With Log.w stubbed, setUpPage now runs to completion, so listFlow actually carries the built
+    // form and the assertions below can be structural instead of "assertNotNull(flow)".
+
+    @Test
+    fun `setUpPage emits a populated page for a fresh registration`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        val page = d.listFlow.value
+        assertTrue(page.isNotEmpty())
+        assertTrue(page.any { it.id == 0 })   // dateOfReg
+        assertTrue(page.any { it.id == 13 })  // noOfLiveChildren
+        assertEquals(page.size, d.getListSize())
+    }
+
+    @Test
+    fun `setUpPage inserts four form rows per live child`() = runTest {
+        val d = ds()
+        val kids = (0 until 3).map { benMockBr(if (it % 2 == 0) Gender.MALE else Gender.FEMALE) }
+        d.setUpPage(benMockBr(), null, null, kids)
+        val page = d.listFlow.value
+        listOf(17, 18, 19, 20, 22, 23, 24, 25, 27, 28, 29, 30).forEach { id ->
+            assertTrue("expected child field $id on the page", page.any { it.id == id })
+        }
+        assertTrue(d.getIndexOfAge1() >= 0)
+        assertTrue(d.getIndexOfGap1() >= 0)
+        assertTrue(d.getIndexOfLiveChildren() >= 0)
+    }
+
+    @Test
+    fun `setUpPage counts male and female children and caps the list at nine`() = runTest {
+        val d = ds()
+        val kids = (0 until 12).map { if (it % 2 == 0) benMockBr(Gender.MALE) else benMockBr(Gender.FEMALE) }
+        d.setUpPage(benMockBr(), null, null, kids)
+        val page = d.listFlow.value
+        assertEquals("9", page.first { it.id == 13 }.value)
+        assertEquals("5", page.first { it.id == 14 }.value)
+        assertEquals("4", page.first { it.id == 15 }.value)
+    }
+
+    @Test
+    fun `setUpPage with kit handed over adds the handover date and photo rows`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, kitSaved(true), emptyList())
+        val page = d.listFlow.value
+        assertTrue(page.any { it.id == 78 })
+        assertTrue(page.any { it.id == 77 })
+    }
+
+    @Test
+    fun `setUpPage with live children drops the nayi pahel kit block`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, listOf(benMockBr(Gender.MALE)))
+        val page = d.listFlow.value
+        assertTrue(page.none { it.id == 78 })
+        assertTrue(page.none { it.id == 75 })
+        assertTrue(page.none { it.id == 76 })
+    }
+
+    @Test
+    fun `setUpPage with a localized gender array resolves each child gender`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_baby_gender_array) } returns
+                arrayOf("Male", "Female")
+        val d = ds()
+        d.setUpPage(
+            benMockBr(),
+            null,
+            null,
+            listOf(benMockBr(Gender.MALE), benMockBr(Gender.FEMALE))
+        )
+        val page = d.listFlow.value
+        assertEquals("Male", page.first { it.id == 19 }.value)
+        assertEquals("Female", page.first { it.id == 24 }.value)
+    }
+
+    @Test
+    fun `isHighRisk is driven by the yes answers on the assessment radios`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(61, "opt1")
+        d.setValueById(62, "opt1")
+        d.setValueById(63, "opt1")
+        d.setValueById(65, "opt1")
+        d.setValueById(66, "opt1")
+        d.setValueById(67, "opt1")
+        d.setValueById(68, "opt1")
+        assertFalse(d.isHighRisk())
+
+        d.setValueById(65, "opt0")
+        assertTrue(d.isHighRisk())
+    }
+
+    @Test
+    fun `mapValueToBen flags a high risk beneficiary and reports no rch update`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(61, "opt0")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns null
+        assertFalse(d.mapValueToBen(ben))
+        verify { ben.isHrpStatus = true }
+    }
+
+    @Test
+    fun `mapValueToBen reports an update when the rch id changed`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(1, "123456789012")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "999999999999"
+        every { ben.processed } returns "P"
+        assertTrue(d.mapValueToBen(ben))
+    }
+
+    @Test
+    fun `mapValuesToAssess copies the english radio values onto the cache`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        listOf(61, 62, 63, 64, 65, 66, 67, 68).forEach { d.setValueById(it, "opt0") }
+        val assess = mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        d.mapValuesToAssess(assess, 0)
+        verify { assess.noOfDeliveries = "opt0" }
+        verify { assess.isHighRisk = true }
+    }
+
+    @Test
+    fun `mapValues writes the child block for the populated children`() = runTest {
+        val d = ds()
+        val kids = (0 until 3).map { benMockBr(Gender.MALE) }
+        d.setUpPage(benMockBr(), null, null, kids)
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.noOfLiveChildren = 3 }
+        verify { cache.noOfMaleChildren = 3 }
+    }
+
+    @Test
+    fun `setImageUriToFormElement stores the uri on the matching photo slot`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, kitSaved(true), emptyList())
+        val uri = mockk<Uri>(relaxed = true)
+        every { uri.toString() } returns "content://photo/1"
+        d.setImageUriToFormElement(75, uri)
+        d.setImageUriToFormElement(76, uri)
+        val page = d.listFlow.value
+        assertEquals("content://photo/1", page.first { it.id == 75 }.value)
+        assertEquals("content://photo/1", page.first { it.id == 76 }.value)
+    }
+
+    @Test
+    fun `child bundle helpers report emptiness build the row list and clear values`() {
+        fun fe(id: Int, value: String? = null) = FormElement(
+            id = id,
+            inputType = InputType.EDIT_TEXT,
+            required = false,
+            title = "t$id",
+            value = value
+        )
+
+        val empty = EligibleCoupleRegistrationDataset.ChildBundle(
+            fe(1), fe(2), fe(3), fe(4), fe(5)
+        )
+        assertTrue(empty.isEmpty())
+        assertEquals(5, empty.toFormList().size)
+
+        val filled = EligibleCoupleRegistrationDataset.ChildBundle(
+            fe(1), fe(2, "01-01-2015"), fe(3, "9"), fe(4, "Male"), fe(5, "2 years")
+        )
+        assertFalse(filled.isEmpty())
+        filled.clearValues()
+        assertTrue(filled.isEmpty())
+        assertNull(filled.gap.value)
+        assertNotNull(filled.toString())
+        assertEquals(filled, filled.copy())
+    }
+
+    @Test
+    fun `getMinimumSecondChildDob echoes the first child dob`() {
+        assertEquals(
+            "01-01-2015",
+            EligibleCoupleRegistrationDataset.getMinimumSecondChildDob("01-01-2015")
+        )
+        assertEquals(
+            "29-02-2016",
+            EligibleCoupleRegistrationDataset.getMinimumSecondChildDob("29-02-2016")
+        )
+    }
+
+    @Test
+    fun `updateList on the child dob chain recomputes ages and sibling gaps`() = runTest {
+        val d = ds()
+        val kids = (0 until 3).map { benMockBr(Gender.MALE) }
+        d.setUpPage(benMockBr2(), null, null, kids)
+        d.setValueById(17, "01-01-2010")
+        d.updateList(17, 0)
+        d.setValueById(22, "01-06-2012")
+        d.updateList(22, 0)
+        d.setValueById(27, "01-01-2015")
+        d.updateList(27, 0)
+        val page = d.listFlow.value
+        assertNotNull(page.first { it.id == 18 }.value)
+        assertNotNull(page.first { it.id == 20 }.value)
+        assertTrue(page.first { it.id == 25 }.value!!.contains("years"))
+    }
+
+    @Test
+    fun `updateList on a child gender recounts the male and female totals`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_baby_gender_array) } returns
+                arrayOf("Male", "Female")
+        val d = ds()
+        val kids = (0 until 3).map { benMockBr(Gender.MALE) }
+        d.setUpPage(benMockBr(), null, null, kids)
+        d.setValueById(19, "Male")
+        d.setValueById(24, "Female")
+        d.setValueById(29, "Female")
+        d.updateList(19, 0)
+        val page = d.listFlow.value
+        assertEquals("1", page.first { it.id == 14 }.value)
+        assertEquals("2", page.first { it.id == 15 }.value)
+    }
+
+    @Test
+    fun `updateList on noOfLiveChildren adds and removes whole child blocks`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(13, "2")
+        d.updateList(13, 0)
+        assertTrue(d.listFlow.value.any { it.id == 22 })
+
+        d.setValueById(13, "0")
+        d.updateList(13, 0)
+        assertTrue(d.listFlow.value.none { it.id == 22 })
+    }
+
+    @Test
+    fun `updateList on the kit handover radio shows then hides the photo rows`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(78, "opt0")
+        d.updateList(78, 0)
+        assertTrue(d.listFlow.value.any { it.id == 77 })
+
+        d.setValueById(78, "opt1")
+        d.updateList(78, 1)
+        assertTrue(d.listFlow.value.none { it.id == 77 })
     }
 }

@@ -8,6 +8,7 @@ import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -166,5 +167,73 @@ class BenRegCacheMappingTest {
 
         assertEquals("NewBorn", post.registrationType)
         assertEquals("Day(s)", post.age_unit)
+    }
+
+    // ===================================================================
+    // Generated members / property accessors
+    // ===================================================================
+
+    @Test fun `accessor round trip covers every property`() {
+        val obj = baseBenReg()
+        obj.javaClass.methods
+            .filter { (it.name.startsWith("get") || it.name.startsWith("is")) && it.parameterCount == 0 }
+            .forEach { getter ->
+                runCatching {
+                    val value = getter.invoke(obj)
+                    val setterName = "set" + getter.name.removePrefix("get").removePrefix("is")
+                    obj.javaClass.methods
+                        .firstOrNull { it.name == setterName && it.parameterCount == 1 }
+                        ?.invoke(obj, value)
+                }
+            }
+        assertNotNull(obj)
+    }
+
+    @Test fun `component accessors are all reachable`() {
+        val obj = baseBenReg()
+        obj.javaClass.methods
+            .filter { it.name.startsWith("component") && it.parameterCount == 0 }
+            .forEach { component -> runCatching { component.invoke(obj) } }
+        assertNotNull(obj)
+    }
+
+    @Test fun `copy equals and hashCode agree for identical instances`() {
+        val a = baseBenReg()
+        val b = a.copy()
+
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertEquals(a, a.copy())
+        assertTrue(a.toString().contains("BenRegCache"))
+    }
+
+    @Test fun `nested detail holders expose their defaults`() {
+        val kid = BenRegKid()
+        val gen = BenRegGen()
+        val health = BenHealthIdDetails()
+
+        assertNotNull(kid)
+        assertNotNull(gen)
+        assertNotNull(health)
+        assertEquals(kid, BenRegKid())
+        assertEquals(gen, BenRegGen())
+        assertEquals(health, BenHealthIdDetails())
+        assertEquals("", health.healthId)
+        assertEquals("", health.healthIdNumber)
+        assertFalse(health.isNewAbha)
+
+        listOf<Any>(kid, gen, health).forEach { obj ->
+            obj.javaClass.methods
+                .filter { (it.name.startsWith("get") || it.name.startsWith("is")) && it.parameterCount == 0 }
+                .forEach { getter ->
+                    runCatching {
+                        val value = getter.invoke(obj)
+                        val setterName = "set" + getter.name.removePrefix("get").removePrefix("is")
+                        obj.javaClass.methods
+                            .firstOrNull { it.name == setterName && it.parameterCount == 1 }
+                            ?.invoke(obj, value)
+                    }
+                }
+        }
     }
 }

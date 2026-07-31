@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -522,4 +523,363 @@ class VLFRepoTest : BaseRepositoryTest() {
         assertEquals(-1, repo.getFilariaMdaCampaignFromServer())
     }
 
+    // =====================================================
+    // multipart campaign uploads (no photos -> pure okhttp path)
+    // =====================================================
+
+    /** Response whose isSuccessful is explicitly stubbed. */
+    private fun uploadResponse(successful: Boolean): Response<ResponseBody> {
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns successful
+        every { response.code() } returns if (successful) 200 else 500
+        return response
+    }
+
+    @Test
+    fun `saveORSCampaignToServer marks record synced on success`() = runTest {
+        val cache = ORSCampaignCache(id = 1, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveORSCampaignToServer(cache))
+
+        assertEquals(SyncState.SYNCED, cache.syncState)
+        coVerify { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer returns false on unsuccessful response`() = runTest {
+        val cache = ORSCampaignCache(id = 1, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(false)
+
+        assertFalse(repo.saveORSCampaignToServer(cache))
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer skips photo paths that do not exist`() = runTest {
+        // JSONArray photo branch; the paths are neither data-uris nor content-uris,
+        // so the code falls through to File(path).exists() == false.
+        val cache = ORSCampaignCache(
+            id = 2,
+            formDataJson = """{"fields":{"campaign_photos":["/no/such/file-a.jpg"]}}""",
+            syncState = SyncState.UNSYNCED
+        )
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveORSCampaignToServer(cache))
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer marks record synced on success`() = runTest {
+        val cache =
+            PulsePolioCampaignCache(id = 1, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.savePulsePolioCampaignToServer(cache))
+
+        assertEquals(SyncState.SYNCED, cache.syncState)
+        coVerify { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer returns false on unsuccessful response`() = runTest {
+        val cache =
+            PulsePolioCampaignCache(id = 1, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(false)
+
+        assertFalse(repo.savePulsePolioCampaignToServer(cache))
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer skips photo paths that do not exist`() = runTest {
+        val cache = PulsePolioCampaignCache(
+            id = 3,
+            formDataJson = """{"fields":{"campaign_photos":["/no/such/file-b.jpg"]}}""",
+            syncState = SyncState.UNSYNCED
+        )
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.savePulsePolioCampaignToServer(cache))
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer marks record synced on success`() = runTest {
+        val cache = mockk<FilariaMDACampaignFormResponseJsonEntity>(relaxed = true)
+        every { cache.formDataJson } returns ""
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer returns false on unsuccessful response`() = runTest {
+        val cache = mockk<FilariaMDACampaignFormResponseJsonEntity>(relaxed = true)
+        every { cache.formDataJson } returns ""
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(false)
+
+        assertFalse(repo.saveMdaFilariaCampaignToServer(cache))
+    }
+
+    // =====================================================
+    // savefilariaMdaCampaignToServer parsing
+    // =====================================================
+
+    @Test
+    fun `savefilariaMdaCampaignToServer stores a new campaign entry`() = runTest {
+        coEvery { dbDao.getFilariaMdaCampaign(7) } returns null
+
+        repo.savefilariaMdaCampaignToServer("""[{"id":7,"fields":{"start_date":"01-05-2026"}}]""")
+
+        coVerify { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `savefilariaMdaCampaignToServer keeps an existing campaign entry`() = runTest {
+        coEvery { dbDao.getFilariaMdaCampaign(7) } returns
+                mockk<FilariaMDACampaignFormResponseJsonEntity>(relaxed = true)
+
+        repo.savefilariaMdaCampaignToServer("""[{"id":7,"fields":{"start_date":"01-05-2026"}}]""")
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `savefilariaMdaCampaignToServer ignores entries without a fields node`() = runTest {
+        repo.savefilariaMdaCampaignToServer("""[{"id":7}]""")
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    // =====================================================
+    // Filaria MDA pull data-shape branches
+    // =====================================================
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer stores entries from a json array`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":[{"id":21,"fields":{"start_date":"01-05-2026"}}]}"""
+        coEvery { api.getFilariaMdaCampaign() } returns jsonResponse(json)
+        coEvery { dbDao.getFilariaMdaCampaign(21) } returns null
+
+        assertEquals(1, repo.getFilariaMdaCampaignFromServer())
+        coVerify { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer stores entries from a stringified array`() = runTest {
+        loggedIn()
+        val json =
+            """{"statusCode":200,"data":"[{\"id\":22,\"fields\":{\"start_date\":\"01-05-2026\"}}]"}"""
+        coEvery { api.getFilariaMdaCampaign() } returns jsonResponse(json)
+        coEvery { dbDao.getFilariaMdaCampaign(22) } returns null
+
+        assertEquals(1, repo.getFilariaMdaCampaignFromServer())
+        coVerify { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer stores a single json object`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":{"id":23,"fields":{"start_date":"2026-05-01"}}}"""
+        coEvery { api.getFilariaMdaCampaign() } returns jsonResponse(json)
+        coEvery { dbDao.getFilariaMdaCampaign(23) } returns null
+
+        assertEquals(1, repo.getFilariaMdaCampaignFromServer())
+        coVerify { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer returns -1 when token refresh fails`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns jsonResponse("""{"statusCode":5002}""")
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+
+        assertEquals(-1, repo.getFilariaMdaCampaignFromServer())
+    }
+
+    // =====================================================
+    // ORS / Pulse Polio pull persistence
+    // =====================================================
+
+    @Test
+    fun `getORSCampaignFromServer stores a new entry`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":[{"id":31,"fields":{"campaign_date":"01-05-2026"}}]}"""
+        coEvery { api.getORSCampaignData() } returns jsonResponse(json)
+        coEvery { dbDao.getORSCampaign(31) } returns null
+
+        assertEquals(1, repo.getORSCampaignFromServer())
+        coVerify { dbDao.saveRecord(any<ORSCampaignCache>()) }
+    }
+
+    @Test
+    fun `getORSCampaignFromServer updates an existing entry`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":[{"id":32,"fields":{"campaign_date":"01-05-2026"}}]}"""
+        coEvery { api.getORSCampaignData() } returns jsonResponse(json)
+        val existing = ORSCampaignCache(id = 32, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { dbDao.getORSCampaign(32) } returns existing
+
+        assertEquals(1, repo.getORSCampaignFromServer())
+
+        assertEquals(SyncState.SYNCED, existing.syncState)
+        coVerify { dbDao.saveRecord(existing) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer stores a new entry`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":[{"id":41,"fields":{"campaign_date":"01-05-2026"}}]}"""
+        coEvery { api.getPulsePolioCampaignData() } returns jsonResponse(json)
+        coEvery { dbDao.getPulsePolioCampaign(41) } returns null
+
+        assertEquals(1, repo.getPulsePolioCampaignFromServer())
+        coVerify { dbDao.saveRecord(any<PulsePolioCampaignCache>()) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer updates an existing entry`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":[{"id":42,"fields":{"campaign_date":"01-05-2026"}}]}"""
+        coEvery { api.getPulsePolioCampaignData() } returns jsonResponse(json)
+        val existing =
+            PulsePolioCampaignCache(id = 42, formDataJson = null, syncState = SyncState.UNSYNCED)
+        coEvery { dbDao.getPulsePolioCampaign(42) } returns existing
+
+        assertEquals(1, repo.getPulsePolioCampaignFromServer())
+
+        assertEquals(SyncState.SYNCED, existing.syncState)
+        coVerify { dbDao.saveRecord(existing) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer returns -1 when token refresh fails`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns jsonResponse("""{"statusCode":5002}""")
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+
+        assertEquals(-1, repo.getPulsePolioCampaignFromServer())
+    }
+
+    // =====================================================
+    // getLastSubmissionDate campaign-form branches
+    // =====================================================
+
+    @Test
+    fun `getLastSubmissionDate picks the latest pulse polio campaign date`() = runTest {
+        every { vlfDao.getAllPulsePolioCampaignForDate() } returns flowOf(
+            listOf(
+                PulsePolioCampaignCache(
+                    id = 1,
+                    formDataJson = """{"fields":{"campaign_date":"2026-01-05"}}""",
+                    syncState = SyncState.SYNCED
+                ),
+                PulsePolioCampaignCache(
+                    id = 2,
+                    formDataJson = """{"fields":{"campaign_date":"2026-03-05"}}""",
+                    syncState = SyncState.SYNCED
+                ),
+                // No parsable fields node -> filtered out.
+                PulsePolioCampaignCache(id = 3, formDataJson = null, syncState = SyncState.SYNCED)
+            )
+        )
+
+        assertEquals("2026-03-05", repo.getLastSubmissionDate("pulse_polio_campaign_form").first())
+    }
+
+    @Test
+    fun `getLastSubmissionDate returns null when no ors campaign has a date`() = runTest {
+        every { vlfDao.getAllORSCampaignForDate() } returns flowOf(
+            listOf(ORSCampaignCache(id = 1, formDataJson = "not-json", syncState = SyncState.SYNCED))
+        )
+
+        assertNull(repo.getLastSubmissionDate("ors_campaign_form").first())
+    }
+
+    @Test
+    fun `getLastSubmissionDate picks the latest ors campaign date`() = runTest {
+        every { vlfDao.getAllORSCampaignForDate() } returns flowOf(
+            listOf(
+                ORSCampaignCache(
+                    id = 1,
+                    formDataJson = """{"fields":{"campaign_date":"2026-02-11"}}""",
+                    syncState = SyncState.SYNCED
+                )
+            )
+        )
+
+        assertEquals("2026-02-11", repo.getLastSubmissionDate("ors_campaign_form").first())
+    }
+
+    // =====================================================
+    // pushUnSyncedRecords chunk loop
+    // =====================================================
+
+    /** All five VLF push sub-methods see an empty unsynced list unless overridden. */
+    private fun stubNothingUnsynced() {
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns emptyList()
+        every { dbDao.getVHNC(SyncState.UNSYNCED) } returns emptyList()
+        every { dbDao.getPHC(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { dbDao.getAHD(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { dbDao.getDeworming(SyncState.UNSYNCED) } returns emptyList()
+    }
+
+    @Test
+    fun `pushUnSyncedRecords marks a VHND chunk synced on success`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } returns jsonResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify { api.saveVHNDData(any()) }
+        verify { cache.syncState = SyncState.SYNCED }
+        coVerify { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords leaves a VHND chunk unsynced on http error`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } returns jsonResponse("{}", code = 500)
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords refreshes the token for a VHND chunk auth failure`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } returns jsonResponse("""{"statusCode":5002}""")
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify { userRepo.refreshTokenTmc(any(), any()) }
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords leaves a VHND chunk unsynced on unexpected status`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } returns jsonResponse("""{"statusCode":9999}""")
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
 }

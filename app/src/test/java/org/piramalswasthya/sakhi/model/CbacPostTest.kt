@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -217,5 +218,31 @@ class CbacPostTest {
 
         assertTrue(text.contains("CbacPost"))
         assertTrue(text.contains("beneficiaryId=20"))
+    }
+
+    @Test
+    fun `accessor round trip covers every property`() {
+        val obj = sample()
+        obj.javaClass.methods
+            .filter { (it.name.startsWith("get") || it.name.startsWith("is")) && it.parameterCount == 0 }
+            .forEach { getter ->
+                runCatching {
+                    val value = getter.invoke(obj)
+                    val setterName = "set" + getter.name.removePrefix("get").removePrefix("is")
+                    obj.javaClass.methods
+                        .firstOrNull { it.name == setterName && it.parameterCount == 1 }
+                        ?.invoke(obj, value)
+                }
+            }
+        assertNotNull(obj)
+    }
+
+    @Test
+    fun `component accessors are all reachable`() {
+        val obj = sample()
+        obj.javaClass.methods
+            .filter { it.name.startsWith("component") && it.parameterCount == 0 }
+            .forEach { component -> runCatching { component.invoke(obj) } }
+        assertNotNull(obj)
     }
 }

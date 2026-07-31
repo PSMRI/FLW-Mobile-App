@@ -8,20 +8,29 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.util.Calendar
 
 /**
  * Consolidated coverage for [NewChildBenRegDataset] (merged from Deep + Branch + Branch2 + Branch3
@@ -47,6 +56,12 @@ class NewChildBenRegDatasetTest : BaseViewModelTest() {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        // setUpPage resolves every child's gender through Dataset.getLocalValueInArray, which falls
+        // back to Log.w when the value is missing from the mocked array. Un-stubbed, the real
+        // android.util.Log throws and setUpPage aborts on the very first child.
+        every { Log.w(any<String>(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -491,5 +506,217 @@ class NewChildBenRegDatasetTest : BaseViewModelTest() {
         runCatching { d.setValueById(17, "01-06-2026"); d.updateList(17, 0) }
         runCatching { d.setValueById(17, "01-01-2015"); d.updateList(17, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: real assertions now that setUpPage completes ================
+
+    private suspend fun dsWithChildren(count: Int): NewChildBenRegDataset {
+        val d = ds()
+        val kids = (0 until count).map { benMockBr(if (it % 2 == 0) Gender.MALE else Gender.FEMALE) }
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, kids, count
+        )
+        return d
+    }
+
+    @Test
+    fun `setUpPage emits the base rows plus five rows per child`() = runTest {
+        val d = dsWithChildren(2)
+        val page = d.listFlow.value
+        assertTrue(page.isNotEmpty())
+        assertTrue(page.any { it.id == 0 })   // dateOfReg
+        assertTrue(page.any { it.id == 12 })  // noOfChildren
+        listOf(111, 17, 18, 19, 20, 112, 22, 23, 24, 25).forEach { id ->
+            assertTrue("expected child field $id", page.any { it.id == id })
+        }
+        assertEquals("2", page.first { it.id == 12 }.value)
+        assertEquals(page.size, d.getListSize())
+    }
+
+    @Test
+    fun `setUpPage copies each child name dob and age onto the form`() = runTest {
+        val d = dsWithChildren(3)
+        val page = d.listFlow.value
+        assertEquals("FIRST", page.first { it.id == 111 }.value)
+        assertNotNull(page.first { it.id == 17 }.value)
+        assertEquals("5", page.first { it.id == 18 }.value)
+        assertTrue(page.first { it.id == 20 }.value!!.contains("years"))
+    }
+
+    @Test
+    fun `setUpPage caps the elder child count at five`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, emptyList(), 12
+        )
+        assertEquals("5", d.listFlow.value.first { it.id == 1 }.value)
+    }
+
+    @Test
+    fun `setUpPage with a localized gender array resolves the child genders`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0,
+            listOf(benMockBr(Gender.MALE), benMockBr(Gender.FEMALE)), 2
+        )
+        val page = d.listFlow.value
+        assertEquals("Male", page.first { it.id == 19 }.value)
+        assertEquals("Female", page.first { it.id == 24 }.value)
+    }
+
+    @Test
+    fun `updateList on a child gender drives the male and female recount`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = dsWithChildren(3)
+        d.setValueById(19, "Male")
+        d.setValueById(24, "Female")
+        d.setValueById(29, "Female")
+        d.updateList(19, 0)
+        assertTrue(d.getListSize() > 0)
+    }
+
+    @Test
+    fun `updateList on noOfChildren for a new record adds and removes child blocks`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            null,
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, emptyList(), 0
+        )
+        d.setValueById(12, "2")
+        d.updateList(12, 0)
+        assertTrue(d.listFlow.value.any { it.id == 22 })
+
+        d.setValueById(12, "0")
+        d.updateList(12, 0)
+        assertTrue(d.listFlow.value.none { it.id == 22 })
+    }
+
+    @Test
+    fun `updateList on the first child dob recomputes age gap and the newborn name`() = runTest {
+        val d = dsWithChildren(2)
+        d.setValueById(17, "01-01-2012")
+        d.updateList(17, 0)
+        val page = d.listFlow.value
+        assertNotNull(page.first { it.id == 18 }.value)
+        assertTrue(page.first { it.id == 20 }.value!!.contains("years"))
+
+        // a dob within three months forces the "Baby of <mother>" placeholder name
+        val recent = Dataset.getDateFromLong(System.currentTimeMillis())
+        d.setValueById(17, recent)
+        d.updateList(17, 0)
+        assertTrue(d.listFlow.value.first { it.id == 111 }.value!!.startsWith("Baby of"))
+    }
+
+    @Test
+    fun `updateList on a child name validates emptiness and casing`() = runTest {
+        val d = dsWithChildren(2)
+        d.setValueById(111, "")
+        d.updateList(111, 0)
+        d.setValueById(111, "baby name")
+        d.updateList(111, 0)
+        d.setValueById(111, "BABY NAME")
+        d.updateList(111, 0)
+        assertEquals("BABY NAME", d.listFlow.value.first { it.id == 111 }.value)
+    }
+
+    @Test
+    fun `mapChild builds a beneficiary for each populated child slot`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = dsWithChildren(3)
+        d.setValueById(19, "Male")
+        d.setValueById(24, "Female")
+        d.setValueById(29, "Transgender")
+        for (idx in 1..3) {
+            val child = d.mapChild(benMockBr(), idx)
+            assertNotNull(child)
+        }
+    }
+
+    @Test
+    fun `mapChild rejects a child whose gender has not been chosen`() = runTest {
+        val d = dsWithChildren(1)
+        d.setValueById(19, null)
+        val failure = runCatching { d.mapChild(benMockBr(), 1) }
+        assertTrue(failure.isFailure)
+    }
+
+    @Test
+    fun `mapValues copies the child counts and per-child data onto the cache`() = runTest {
+        val d = dsWithChildren(3)
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.noOfChildren = 3 }
+    }
+
+    @Test
+    fun `getMonthsFromDob returns zero for today and grows with age`() {
+        val d = ds()
+        assertEquals(0, d.getMonthsFromDob(System.currentTimeMillis()))
+        val twoYearsAgo = Calendar.getInstance().apply { add(Calendar.YEAR, -2) }.timeInMillis
+        assertEquals(24, d.getMonthsFromDob(twoYearsAgo))
+    }
+
+    @Test
+    fun `child bundle helpers report emptiness build the row list and clear values`() {
+        fun fe(id: Int, value: String? = null) = FormElement(
+            id = id,
+            inputType = InputType.EDIT_TEXT,
+            required = false,
+            title = "t$id",
+            value = value
+        )
+
+        val empty = ChildBundle(fe(1), fe(2), fe(3), fe(4), fe(5), fe(6))
+        assertTrue(empty.isEmpty())
+        assertEquals(6, empty.toFormList().size)
+
+        val filled = ChildBundle(
+            fe(1), fe(2, "BABY"), fe(3, "01-01-2015"), fe(4, "9"), fe(5, "Male"), fe(6, "2 years")
+        )
+        assertFalse(filled.isEmpty())
+        filled.clearValues()
+        assertTrue(filled.isEmpty())
+        assertNull(filled.gap.value)
+        assertNotNull(filled.toString())
+        assertEquals(filled, filled.copy())
+    }
+
+    @Test
+    fun `index getters resolve for every populated child slot`() = runTest {
+        val d = dsWithChildren(9)
+        assertTrue(d.getIndexOfChildren() >= 0)
+        assertTrue(d.getIndexOfAge1() >= 0)
+        assertTrue(d.getIndexOfGap1() >= 0)
+        assertTrue(d.getIndexOfAge2() >= 0)
+        assertTrue(d.getIndexOfGap2() >= 0)
+        assertTrue(d.getIndexOfAge3() >= 0)
+        assertTrue(d.getIndexOfGap3() >= 0)
+        assertTrue(d.getIndexOfAge4() >= 0)
+        assertTrue(d.getIndexOfGap4() >= 0)
+        assertTrue(d.getIndexOfAge5() >= 0)
+        assertTrue(d.getIndexOfGap5() >= 0)
+        assertTrue(d.getIndexOfAge6() >= 0)
+        assertTrue(d.getIndexOfGap6() >= 0)
+        assertTrue(d.getIndexOfAge7() >= 0)
+        assertTrue(d.getIndexOfGap7() >= 0)
+        assertTrue(d.getIndexOfAge8() >= 0)
+        assertTrue(d.getIndexOfGap8() >= 0)
+        assertTrue(d.getIndexOfAge9() >= 0)
+        assertTrue(d.getIndexOfGap9() >= 0)
     }
 }

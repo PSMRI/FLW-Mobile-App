@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.utils
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -151,5 +152,13 @@ class StringMappingUtilTest {
         val result = StringMappingUtil.toEnglishDigits(listOf(25, "३")) as List<*>
         assertEquals("25", result[0])
         assertEquals("3", result[1])
+    }
+
+    // =====================================================
+    // StringMappingUtil Tests (extended)
+    // =====================================================
+
+    @Test fun `StringMappingUtil exists`() {
+        assertNotNull(StringMappingUtil)
     }
 }

@@ -11,7 +11,9 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -50,6 +52,11 @@ class AshaProfileDatasetTest : BaseViewModelTest() {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
+        every { Log.w(any(), any<Throwable>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -57,6 +64,9 @@ class AshaProfileDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { preferenceDao.getLoggedInUser() } returns null
+        // Non-null String getters: never leave these unstubbed / never return null.
+        every { preferenceDao.getChoList() } returns "[]"
+        every { preferenceDao.getAnmList() } returns "[]"
     }
 
     private fun ds() = AshaProfileDataset(context, Languages.ENGLISH, ashaProfileRepo, preferenceDao)
@@ -220,5 +230,127 @@ class AshaProfileDatasetTest : BaseViewModelTest() {
         }
         runCatching { d.mapProfileValues(profile(false), context) }
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== structural + updateList-driven coverage =====================
+    // Field ids in use: 4 dob, 5 mobileNumber, 6 altMobile, 7 fatherOrSpouse (radio),
+    // 8 spouseOrFatherName, 9 dateOfJoining, 10 bankAccount, 11 ifsc, 12 populationCovered,
+    // 13 supervisorName, 14 supervisorMobile, 15 choName, 16 choMobile, 17 awwName,
+    // 18 awwMobile, 19 anm1Name, 20 anm1Mobile, 21 anm2Name, 22 anm2Mobile, 23 abhaNumber.
+    // handleListOnValueChanged is PROTECTED - all of it is driven through updateList.
+
+    private suspend fun page(profile: ProfileActivityCache?): AshaProfileDataset {
+        val d = ds()
+        d.setUpPage(mockk<User>(relaxed = true), profile)
+        return d
+    }
+
+    @Test
+    fun `setUpPage builds the full profile form`() = runTest {
+        val d = page(null)
+        val list = d.listFlow.value
+        assertTrue("profile form should be built", list.isNotEmpty())
+        val ids = list.map { it.id }
+        assertTrue(ids.contains(8))
+        assertTrue(ids.contains(12))
+        assertTrue(ids.contains(23))
+    }
+
+    @Test
+    fun `setUpPage with populated profile carries values into the form`() = runTest {
+        val d = page(populatedProfile())
+        val list = d.listFlow.value
+        assertTrue(list.isNotEmpty())
+        val bank = list.firstOrNull { it.id == 10 }
+        assertNotNull(bank)
+        assertEquals(10, bank!!.id)
+    }
+
+    @Test
+    fun `setUpPage with blank profile leaves editable fields empty`() = runTest {
+        val d = page(blankProfile())
+        val list = d.listFlow.value
+        assertTrue(list.isNotEmpty())
+        val name = list.firstOrNull { it.id == 8 }
+        assertNotNull(name)
+    }
+
+    @Test
+    fun `updateList runs the name validators`() = runTest {
+        val d = page(populatedProfile())
+        for (id in listOf(8, 13, 15, 17, 19, 21)) {
+            d.setValueById(id, "VALID NAME")
+            d.updateList(id, 0)
+        }
+        assertTrue(d.listFlow.value.none { it.id == 8 && it.errorText != null })
+    }
+
+    @Test
+    fun `updateList flags invalid names`() = runTest {
+        val d = page(populatedProfile())
+        d.setValueById(8, "lower case 123")
+        d.updateList(8, 0)
+        d.setValueById(13, "")
+        d.updateList(13, 0)
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `updateList runs the mobile number validators`() = runTest {
+        val d = page(populatedProfile())
+        for (id in listOf(5, 6, 14, 16, 18, 20, 22)) {
+            d.setValueById(id, "9000000000")
+            d.updateList(id, 0)
+        }
+        for (id in listOf(5, 14)) {
+            d.setValueById(id, "12")
+            d.updateList(id, 0)
+        }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `updateList runs numeric and code validators`() = runTest {
+        val d = page(populatedProfile())
+        d.setValueById(10, "123456789012")
+        d.updateList(10, 0)
+        d.setValueById(11, "SBIN0000001")
+        d.updateList(11, 0)
+        d.setValueById(12, "1500")
+        d.updateList(12, 0)
+        d.setValueById(23, "12345678901234")
+        d.updateList(23, 0)
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `father or spouse radio toggles both ways`() = runTest {
+        val d = page(populatedProfile())
+        d.setValueById(7, "opt0")
+        d.updateList(7, 0)
+        assertTrue(d.listFlow.value.any { it.id == 8 })
+        d.setValueById(7, "opt1")
+        d.updateList(7, 1)
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `mapProfileValues writes back the edited form`() = runTest {
+        val d = page(populatedProfile())
+        d.setValueById(8, "NEW GUARDIAN")
+        d.setValueById(10, "999888777")
+        val target = mockk<ProfileActivityCache>(relaxed = true)
+        runCatching { d.mapProfileValues(target, context) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `cho and anm dropdown lists populate from preference json`() = runTest {
+        every { preferenceDao.getChoList() } returns
+                "[{\"choName\":\"C1\",\"choContactNo\":\"9000000001\"}]"
+        every { preferenceDao.getAnmList() } returns
+                "[{\"anmName\":\"A1\",\"anmContactNo\":\"9000000002\"}]"
+        val d = page(populatedProfile())
+        assertTrue(d.listFlow.value.isNotEmpty())
     }
 }

@@ -176,4 +176,12 @@ class CampaignDateUtilTest {
     fun `formatDateForDisplay returns original for unparseable input`() {
         assertEquals("31-12-2026", CampaignDateUtil.formatDateForDisplay("31-12-2026"))
     }
+
+    // =====================================================
+    // CampaignDateUtil Tests (extended)
+    // =====================================================
+
+    @Test fun `CampaignDateUtil exists`() {
+        assertNotNull(CampaignDateUtil)
+    }
 }

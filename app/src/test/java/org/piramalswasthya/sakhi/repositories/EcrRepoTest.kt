@@ -6,6 +6,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -26,6 +27,7 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EcrPost
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
@@ -498,5 +500,243 @@ class EcrRepoTest : BaseRepositoryTest() {
 
         assertTrue(repo.pushAndUpdateEcrRecord())
         coVerify(atLeast = 1) { ecrDao.update(record) }
+    }
+
+    // =====================================================
+    // ECR pull payload parsing (getEcrCacheFromServerResponse / getHighRiskAssess)
+    // =====================================================
+
+    /** One fully-populated ECR pull record: two children, kit details and HRP flags. */
+    private fun ecrPullPayload(isRegistered: Boolean = true): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 100,
+            "registrationDate": "Jan 15, 2026 10:30:00 AM",
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "updatedDate": "Jan 16, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "updatedBy": "asha",
+            "lmpDate": "2026-01-01",
+            "bankAccountNumber": 1234567890,
+            "bankName": "SBI",
+            "branchName": "Main",
+            "ifsc": "SBIN0001234",
+            "numChildren": 2,
+            "dob1": "Jan 1, 2015 10:00:00 AM",
+            "age1": 11,
+            "gender1": "male",
+            "marriageFirstChildGap": 2,
+            "dob2": "Jan 1, 2018 10:00:00 AM",
+            "age2": 8,
+            "gender2": "female",
+            "firstAndSecondChildGap": 3,
+            "isRegistered": $isRegistered,
+            "isKitHandedOver": true,
+            "kitPhoto1": "photo1",
+            "kitPhoto2": "photo2",
+            "misCarriage": "yes",
+            "homeDelivery": "no",
+            "medicalIssues": "none",
+            "pastCSection": "no",
+            "isHighRisk": true
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEcrRecord saves parsed ecr and new high risk assessment`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayload())
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { ecrDao.getSavedECR(100L) } returns null
+        every { hrpDao.getNonPregnantAssess(100L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+        verify { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEcrRecord merges into an existing high risk assessment`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayload())
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        // ECR already stored locally -> the pulled copy must not overwrite it.
+        coEvery { ecrDao.getSavedECR(100L) } returns mockk(relaxed = true)
+        val existing = mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        every { hrpDao.getNonPregnantAssess(100L) } returns existing
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+        verify { existing.isHighRisk = true }
+        verify { hrpDao.saveRecord(existing) }
+    }
+
+    @Test
+    fun `pullAndPersistEcrRecord skips unregistered couples`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns
+                jsonResponse(ecrPullPayload(isRegistered = false))
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        every { hrpDao.getNonPregnantAssess(100L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+        // The high-risk assessment is parsed independently of isRegistered.
+        verify { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEcrRecord ignores records for unknown beneficiaries`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayload())
+        coEvery { benDao.getBen(100L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+        verify(exactly = 0) { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
+    }
+
+    // =====================================================
+    // ECT pull payload parsing (getEctCacheFromServerResponse)
+    // =====================================================
+
+    private fun ectPullPayload(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 100,
+            "visitDate": "Jan 15, 2026 10:30:00 AM",
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "updatedDate": "Jan 16, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "updatedBy": "asha",
+            "lmpDate": "2026-01-01",
+            "dateOfAntraInjection": "Jan 10, 2026 10:00:00 AM",
+            "dueDateOfAntraInjection": "20-04-2026",
+            "methodOfContraception": "Injectable/2",
+            "mpaFile": "mpa.pdf",
+            "dischargeSummary1": "d1.pdf",
+            "dischargeSummary2": "d2.pdf",
+            "isPregnancyTestDone": "Yes",
+            "isActive": true,
+            "pregnancyTestResult": "Negative",
+            "isPregnant": "No",
+            "usingFamilyPlanning": true
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEctRecord saves parsed tracking record`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(ectPullPayload())
+        coEvery { ecrDao.ectWithsameCreateDateExists(any()) } returns false
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.pullAndPersistEctRecord())
+
+        coVerify { ecrDao.upsert(any<EligibleCoupleTrackingCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEctRecord skips a record already stored for that date`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(ectPullPayload())
+        coEvery { ecrDao.ectWithsameCreateDateExists(any()) } returns true
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.pullAndPersistEctRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleTrackingCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEctRecord skips records for unknown beneficiaries`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(ectPullPayload())
+        coEvery { ecrDao.ectWithsameCreateDateExists(any()) } returns false
+        coEvery { benDao.getBen(100L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEctRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleTrackingCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEctRecord returns 0 when the payload cannot be parsed`() = runTest {
+        loggedIn()
+        // "data" is an object, not the expected array -> parse fails -> 0.
+        val json = """{"statusCode":200,"errorMessage":"","data":{}}"""
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(json)
+
+        assertEquals(0, repo.pullAndPersistEctRecord())
+    }
+
+    @Test
+    fun `pullAndPersistEcrRecord returns 0 when the payload cannot be parsed`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"errorMessage":"","data":{}}"""
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(json)
+
+        assertEquals(0, repo.pullAndPersistEcrRecord())
+    }
+
+    // =====================================================
+    // pushAndUpdateEctRecord upload loop
+    // =====================================================
+
+    @Test
+    fun `pushAndUpdateEctRecord uploads record successfully`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        val json = """{"errorMessage":"","statusCode":200}"""
+        coEvery { amritApiService.postEctForm(any()) } returns jsonResponse(json)
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+        coVerify { amritApiService.postEctForm(any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateEctRecord marks unsynced when upload fails`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        coEvery { amritApiService.postEctForm(any()) } returns jsonResponse("{}", code = 500)
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+    }
+
+    @Test
+    fun `pushAndUpdateEctRecord marks unsynced on token refresh response`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        coEvery { amritApiService.postEctForm(any()) } returns jsonResponse(tokenRefresh)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify { userRepo.refreshTokenTmc(any(), any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateEctRecord marks unsynced when statusCode is missing`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        coEvery { amritApiService.postEctForm(any()) } returns jsonResponse("""{"errorMessage":""}""")
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
     }
 }

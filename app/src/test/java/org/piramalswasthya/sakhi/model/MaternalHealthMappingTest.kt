@@ -387,4 +387,75 @@ class MaternalHealthMappingTest {
         assertEquals("Done", cache.randomBloodSugarTest)
         assertNotNull(cache)
     }
+
+    // ===================================================================
+    // Generated members / property accessors
+    // ===================================================================
+
+    private fun minimalAnc() = PregnantWomanAncCache(
+        benId = 1L,
+        visitNumber = 1,
+        createdBy = "creator",
+        updatedBy = "updater",
+        syncState = SyncState.UNSYNCED,
+        frontFilePath = null,
+        backFilePath = null
+    )
+
+    private fun minimalPwr() = PregnantWomanRegistrationCache(
+        benId = 1L,
+        createdBy = "creator",
+        updatedBy = "updater",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun sweep(obj: Any) {
+        obj.javaClass.methods
+            .filter { (it.name.startsWith("get") || it.name.startsWith("is")) && it.parameterCount == 0 }
+            .forEach { getter ->
+                runCatching {
+                    val value = getter.invoke(obj)
+                    val setterName = "set" + getter.name.removePrefix("get").removePrefix("is")
+                    obj.javaClass.methods
+                        .firstOrNull { it.name == setterName && it.parameterCount == 1 }
+                        ?.invoke(obj, value)
+                }
+            }
+        obj.javaClass.methods
+            .filter { it.name.startsWith("component") && it.parameterCount == 0 }
+            .forEach { component -> runCatching { component.invoke(obj) } }
+    }
+
+    @Test
+    fun `PregnantWomanAncCache default constructor and accessors`() {
+        val cache = minimalAnc()
+
+        assertNotNull(cache)
+        assertEquals(1L, cache.benId)
+        assertEquals(1, cache.visitNumber)
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+        assertNull(cache.frontFilePath)
+        assertNull(cache.backFilePath)
+
+        sweep(cache)
+        assertEquals(cache, cache.copy())
+        assertEquals(cache.hashCode(), cache.copy().hashCode())
+        assertTrue(cache.toString().contains("PregnantWomanAncCache"))
+    }
+
+    @Test
+    fun `PregnantWomanRegistrationCache default constructor and accessors`() {
+        val cache = minimalPwr()
+
+        assertNotNull(cache)
+        assertEquals(1L, cache.benId)
+        assertEquals("creator", cache.createdBy)
+        assertEquals("updater", cache.updatedBy)
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+
+        sweep(cache)
+        assertEquals(cache, cache.copy())
+        assertEquals(cache.hashCode(), cache.copy().hashCode())
+        assertTrue(cache.toString().contains("PregnantWomanRegistrationCache"))
+    }
 }

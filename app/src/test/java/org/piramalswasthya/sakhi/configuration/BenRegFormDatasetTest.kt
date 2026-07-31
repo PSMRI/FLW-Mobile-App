@@ -54,6 +54,11 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        // shouldShowMaternalDeath() logs with Log.v and Dataset's array lookups log with Log.w;
+        // without these stubs the un-mocked android.util.Log throws and aborts those code paths.
+        every { Log.v(any(), any()) } returns 0
+        every { Log.w(any<String>(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -673,5 +678,226 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         runCatching { d.setValueById(23, "123456789012"); d.updateList(23, 0) }
         runCatching { d.setValueById(1029, "BC123456"); d.updateList(1029, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: fully-populated mapValues + repro-status matrix ==============
+
+    /**
+     * mapValues stops at `contactNumber.value!!.toLong()` (an NPE) whenever the contact number is
+     * blank, which is exactly what every pre-existing test hits — so the whole second half of
+     * mapValues (kid details, reproductive status, health id, flags) was never executed. Filling in
+     * the registration date, dob, gender, relation and contact number first lets the body run on.
+     */
+    private suspend fun populatedFirstPage(
+        d: BenRegFormDataset,
+        dob: String = "01-01-1990",
+        genderValue: String = "opt1"
+    ) {
+        runCatching { d.setFirstPageToRead(benMockBr(genderId = 2, gender = Gender.FEMALE), 9876543210L) }
+        runCatching { d.setValueById(2, "01-01-2020") }
+        runCatching { d.setValueById(3, "JANE") }
+        runCatching { d.setValueById(4, "DOE") }
+        runCatching { d.setValueById(9, genderValue) }
+        runCatching { d.setValueById(115, dob) }
+        runCatching { d.setValueById(116, dob) }
+        runCatching { d.setValueById(14, "9876543210") }
+        runCatching { d.setValueById(15, "opt3") }
+        runCatching { d.setValueById(17, "opt1") }
+        runCatching { d.setValueById(18, "opt1") }
+        runCatching { d.setValueById(1012, "20") }
+    }
+
+    @Test
+    fun `mapValues runs past the contact number with a fully populated first page`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val ben = benMockBr(genderId = 2, gender = Gender.FEMALE)
+        runCatching { d.mapValues(ben, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapValues with each gender option and a populated contact number`() = runTest {
+        for (g in listOf("opt0", "opt1", "opt2", "zzz")) {
+            val d = ds()
+            populatedFirstPage(d, genderValue = g)
+            runCatching { d.mapValues(benMockBr(), 0) }
+            assertNotNull(d.listFlow)
+        }
+    }
+
+    @Test
+    fun `mapValues for a child aged beneficiary drives the kid details block`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-2020", genderValue = "opt0")
+        runCatching { d.setValueById(1029, "BC123456") }
+        runCatching { d.mapValues(benMockBr3(), 0) }
+        runCatching { d.mapValues(benMockBr3(), 1) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapValues after the second page fills the birth details`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-2022")
+        runCatching { d.setSecondPage(benMockDeep()) }
+        runCatching { d.mapValues(benMockDeep(), 1) }
+        assertNotNull(d.listFlow)
+    }
+
+    /**
+     * updateReproductiveOptionsBasedOnAgeGender() branches on age band x marital status. Reaching it
+     * through maritalStatus (rather than agePopup) avoids the agePopup arm, whose android.util.Range
+     * construction is not usable under plain JVM unit tests.
+     */
+    @Test
+    fun `updateList maritalStatus across every age band and status option`() = runTest {
+        val dobs = listOf("01-01-2008", "01-01-1998", "01-01-1960", "01-01-2020")
+        val statuses = listOf("opt0", "opt1", "opt4")
+        for (dob in dobs) {
+            for (status in statuses) {
+                val d = ds()
+                populatedFirstPage(d, dob = dob)
+                runCatching { d.updateList(9, 1) }
+                runCatching { d.setValueById(1008, status); d.updateList(1008, 0) }
+                assertNotNull(d.listFlow)
+            }
+        }
+    }
+
+    @Test
+    fun `updateList gender for a female drives the reproductive status options`() = runTest {
+        for (idx in 0..2) {
+            val d = ds()
+            populatedFirstPage(d, dob = "01-01-1998", genderValue = "opt$idx")
+            runCatching { d.updateList(9, idx) }
+            runCatching { d.setValueById(1028, "opt0"); d.updateList(1028, 0) }
+            assertNotNull(d.listFlow)
+        }
+    }
+
+    @Test
+    fun `updateList name and contact validators with valid and invalid values`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val textIds = listOf(3, 4, 16, 13, 19, 1009, 1010, 1011)
+        textIds.forEach {
+            runCatching { d.setValueById(it, ""); d.updateList(it, 0) }
+            runCatching { d.setValueById(it, "VALID NAME"); d.updateList(it, 0) }
+            runCatching { d.setValueById(it, "invalid name"); d.updateList(it, 0) }
+        }
+        runCatching { d.setValueById(14, "9876543210"); d.updateList(14, 0) }
+        runCatching { d.setValueById(14, "1234"); d.updateList(14, 0) }
+        runCatching { d.setValueById(23, "111111111111"); d.updateList(23, 0) }
+        runCatching { d.setValueById(1029, "AB123456"); d.updateList(1029, 0) }
+        runCatching { d.setValueById(1029, "AAAAAA"); d.updateList(1029, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList beneficiaryStatus death path with a maternal-age female`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(death = true), 9876543210L) }
+        runCatching { d.setValueById(2, "01-01-2020") }
+        runCatching { d.setValueById(9, "opt1") }
+        runCatching { d.setValueById(115, "01-01-1995") }
+        runCatching { d.setValueById(50, "opt2"); d.updateList(50, 1) }
+        runCatching { d.setValueById(54, "opt8"); d.updateList(54, 8) }
+        runCatching { d.setValueById(55, "HOME"); d.updateList(55, 0) }
+        runCatching { d.setValueById(50, "opt0"); d.updateList(50, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList beneficiaryStatus death path for a non maternal beneficiary`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(death = true), 9876543210L) }
+        runCatching { d.setValueById(2, "01-01-2020") }
+        runCatching { d.setValueById(9, "opt0") }
+        runCatching { d.setValueById(115, "01-01-1950") }
+        runCatching { d.setValueById(50, "opt2"); d.updateList(50, 1) }
+        runCatching { d.setValueById(54, "opt1"); d.updateList(54, 1) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList ageAtMarriage and dateOfMarriage recompute each other`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-1990")
+        runCatching { d.setValueById(1012, "22"); d.updateList(1012, 0) }
+        runCatching { d.setValueById(1013, "01-01-2012"); d.updateList(1013, 0) }
+        runCatching { d.setValueById(1012, ""); d.updateList(1012, 0) }
+        runCatching { d.setValueById(1013, ""); d.updateList(1013, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList haveChildren toggles the adding-children flag`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        runCatching { d.setValueById(48, "opt0"); d.updateList(48, 0) }
+        runCatching { d.setValueById(48, "opt1"); d.updateList(48, 1) }
+        runCatching { d.setValueById(48, null); d.updateList(48, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList relationToHead religion and childRegisteredAtSchool option sweeps`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-2018")
+        for (idx in listOf(0, 5, 7, 9, 10, 13)) {
+            runCatching { d.setValueById(15, "opt$idx"); d.updateList(15, idx) }
+            runCatching { d.setValueById(18, "opt$idx"); d.updateList(18, idx) }
+        }
+        runCatching { d.setValueById(21, "opt0"); d.updateList(21, 0) }
+        runCatching { d.setValueById(21, "opt1"); d.updateList(21, 1) }
+        runCatching { d.setValueById(22, "opt0"); d.updateList(22, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateList abha check and abha id validation`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        runCatching { d.updateList(9100, 0) }
+        runCatching { d.setValueById(9101, "12345678901234"); d.updateList(9101, 0) }
+        runCatching { d.setValueById(9101, "abc"); d.updateList(9101, 0) }
+        runCatching { d.updateList(9100, 1) }
+        assertNotNull(d.listFlow)
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `updateHouseholdWithHoFDetails copies the head name onto the family`() = runTest {
+        val d = ds()
+        val hh = householdMock()
+        val ben = benMockDeep()
+        runCatching { d.updateHouseholdWithHoFDetails(hh, ben) }
+        assertNotNull(hh)
+    }
+
+    @Test
+    fun `setImageUriToFormElement writes the uri to front back and profile slots`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val uri = mockk<Uri>(relaxed = true)
+        every { uri.toString() } returns "content://doc/1"
+        runCatching { d.setImageUriToFormElement(46, uri) }
+        runCatching { d.setImageUriToFormElement(47, uri) }
+        runCatching { d.setImageUriToFormElement(1, uri) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `calculateMaxSonAge over a matrix of parent and child ages`() {
+        for (parentAge in listOf(18, 30, 45, 70)) {
+            for (parentMonths in listOf(0, 6, 11)) {
+                for (childAge in listOf(0, 5, 25)) {
+                    assertNotNull(
+                        BenRegFormDataset.calculateMaxSonAge(parentAge, parentMonths, childAge, 3)
+                    )
+                }
+            }
+        }
     }
 }

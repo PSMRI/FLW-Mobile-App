@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.network
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -159,5 +161,89 @@ class ScreeningDtoMappingTest {
 
     @Test fun `confirmed toCache parses diagnosis date to positive long`() {
         assertTrue(confirmedDto().toCache().dateOfDiagnosis > 0L)
+    }
+
+    // =====================================================
+    // Generated data-class members (equals / hashCode / toString / copy)
+    // =====================================================
+
+    @Test fun `LeprosyScreeningDTO generated members behave consistently`() {
+        val dto = leprosyDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("LeprosyScreeningDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("other"))
+        assertNotEquals(dto, dto.copy(benId = 12L))
+        assertEquals(11L, dto.benId)
+        assertEquals(500L, dto.houseHoldDetailsId)
+        assertEquals("2023-01-15", dto.homeVisitDate)
+        assertEquals("2023-01-16", dto.leprosyStatusDate)
+        assertEquals("null", dto.dateOfDeath)
+        assertEquals("creator", dto.createdBy)
+        assertEquals("2023-01-10", dto.createdDate)
+        assertEquals("modifier", dto.modifiedBy)
+        assertEquals("2023-01-11", dto.lastModDate)
+    }
+
+    @Test fun `LeprosyScreeningDTO copy overrides only named fields`() {
+        val changed = leprosyDto().copy(leprosyStatus = "Negative", typeOfLeprosy = "PB")
+        assertEquals("Negative", changed.leprosyStatus)
+        assertEquals("PB", changed.typeOfLeprosy)
+        assertEquals(11L, changed.benId)
+        assertEquals("creator", changed.createdBy)
+        assertNotEquals(leprosyDto(), changed)
+    }
+
+    @Test fun `MalariaScreeningDTO generated members behave consistently`() {
+        val dto = malariaDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("MalariaScreeningDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals(7))
+        assertNotEquals(dto, dto.copy(benId = 23L))
+        assertEquals(22L, dto.benId)
+        assertEquals(7L, dto.visitId)
+        assertEquals(600L, dto.houseHoldDetailsId)
+        assertEquals("Alive", dto.beneficiaryStatus)
+        assertEquals("Negative", dto.rapidDiagnosticTest)
+        assertEquals("Test", dto.slideTestName)
+        assertEquals("No", dto.slideTestPf)
+        assertEquals("No", dto.slideTestPv)
+        assertEquals("Open", dto.caseStatus)
+    }
+
+    @Test fun `MalariaScreeningDTO toCache maps slide test and follow up details`() {
+        val cache = malariaDto().toCache()
+        assertEquals("Negative", cache.rapidDiagnosticTest)
+        assertEquals("Test", cache.slideTestName)
+        assertEquals("No", cache.slideTestPf)
+        assertEquals("No", cache.slideTestPv)
+        assertTrue(cache.dateOfRdt > 0L)
+        assertTrue(cache.dateOfSlideTest > 0L)
+        assertTrue(cache.followUpDate > 0L)
+        assertEquals(0L, cache.dateOfVisitBySupervisor)
+    }
+
+    @Test fun `MalariaConfirmedDTO generated members behave consistently`() {
+        val dto = confirmedDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("MalariaConfirmedDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(benId = 34L))
+        assertEquals(9, dto.diseaseId)
+        assertEquals(33L, dto.benId)
+        assertEquals(700L, dto.houseHoldDetailsId)
+        assertEquals("ACT", dto.treatmentGiven)
+        assertEquals("3", dto.day)
     }
 }

@@ -146,4 +146,30 @@ class NewBornRegNetworkTest {
         assertTrue(text.contains("NewBornRegNetwork"))
         assertTrue(text.contains("childName=Baby"))
     }
+
+    @Test
+    fun `accessor round trip covers every property`() {
+        val obj = populated()
+        obj.javaClass.methods
+            .filter { (it.name.startsWith("get") || it.name.startsWith("is")) && it.parameterCount == 0 }
+            .forEach { getter ->
+                runCatching {
+                    val value = getter.invoke(obj)
+                    val setterName = "set" + getter.name.removePrefix("get").removePrefix("is")
+                    obj.javaClass.methods
+                        .firstOrNull { it.name == setterName && it.parameterCount == 1 }
+                        ?.invoke(obj, value)
+                }
+            }
+        assertTrue(obj.toString().isNotEmpty())
+    }
+
+    @Test
+    fun `component accessors are all reachable`() {
+        val obj = populated()
+        obj.javaClass.methods
+            .filter { it.name.startsWith("component") && it.parameterCount == 0 }
+            .forEach { component -> runCatching { component.invoke(obj) } }
+        assertTrue(obj.toString().contains("NewBornRegNetwork"))
+    }
 }

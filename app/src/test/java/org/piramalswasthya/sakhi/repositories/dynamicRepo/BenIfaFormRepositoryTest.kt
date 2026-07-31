@@ -8,8 +8,11 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import com.google.gson.JsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -18,10 +21,13 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
+import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
 
@@ -126,5 +132,139 @@ class BenIfaFormRepositoryTest : BaseRepositoryTest() {
     fun `saveDownloadedVisitList does nothing for empty list`() = runTest {
         repo.saveDownloadedVisitList(emptyList(), "ifa")
         coVerify(exactly = 0) { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `getFormSchema saves and returns schema when api succeeds and no local schema`() = runTest {
+        val schema = mockk<FormSchemaDto>(relaxed = true)
+        every { schema.formId } returns "F1"
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns true
+        every { apiResponse.data } returns schema
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema("F1", any()) } returns response
+        coEvery { schemaDao.getSchema("F1") } returns null
+
+        assertSame(schema, repo.getFormSchema("F1"))
+        coVerify { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `getFormSchema falls back to null when api throws and db empty`() = runTest {
+        coEvery { api.fetchFormSchema(any(), any()) } throws RuntimeException("network")
+        coEvery { schemaDao.getSchema(any()) } returns null
+        every { context.assets } throws RuntimeException("no assets")
+
+        assertNull(repo.getFormSchema("F1"))
+        coVerify(exactly = 0) { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `getFormSchema falls back when api unsuccessful`() = runTest {
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns false
+        coEvery { api.fetchFormSchema(any(), any()) } returns response
+        coEvery { schemaDao.getSchema(any()) } returns null
+        every { context.assets } throws RuntimeException("no assets")
+
+        assertNull(repo.getFormSchema("F1"))
+    }
+
+    @Test
+    fun `getFormSchema falls back when api body reports failure`() = runTest {
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns false
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema(any(), any()) } returns response
+        coEvery { schemaDao.getSchema(any()) } returns null
+        every { context.assets } throws RuntimeException("no assets")
+
+        assertNull(repo.getFormSchema("F1"))
+        coVerify(exactly = 0) { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `saveFormSchemaToDb inserts built entity`() = runTest {
+        val schema = mockk<FormSchemaDto>(relaxed = true)
+        repo.saveFormSchemaToDb(schema)
+        coVerify { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `loadFormResponseJson returns null when no record`() = runTest {
+        coEvery { jsonDao.getFormResponse(any(), any()) } returns null
+        assertNull(repo.loadFormResponseJson(1L, "d"))
+    }
+
+    @Test
+    fun `insertOrUpdateFormResponse reuses existing record id`() = runTest {
+        val existing = mockk<BenIfaFormResponseJsonEntity>(relaxed = true)
+        val incoming = mockk<BenIfaFormResponseJsonEntity>(relaxed = true)
+        coEvery { jsonDao.getFormResponse(any(), any()) } returns existing
+
+        repo.insertOrUpdateFormResponse(incoming)
+
+        coVerify { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `getBottleList parses fields and keeps latest three`() = runTest {
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf(
+            """{"fields":{"visit_date":"01-01-2026","ifa_quantity":"2"}}""",
+            """{"fields":{"visit_date":"05-02-2026","ifa_quantity":"3"}}""",
+            """{"fields":{"visit_date":"09-03-2026","ifa_quantity":"4"}}""",
+            """{"fields":{"visit_date":"11-04-2026","ifa_quantity":"5"}}"""
+        )
+        val result = repo.getBottleList(1L, "ifa")
+        assertEquals(3, result.size)
+        assertEquals("11-04-2026", result[0].dateOfProvision)
+        assertEquals("5", result[0].bottleNumber)
+    }
+
+    @Test
+    fun `getBottleList swallows malformed json entries`() = runTest {
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf("not-json")
+        assertTrue(repo.getBottleList(1L, "ifa").isEmpty())
+    }
+
+    @Test
+    fun `canAddNewVisit returns true when stored visit is from another year`() = runTest {
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf(
+            """{"visitDate":"01-01-2000"}"""
+        )
+        assertTrue(repo.canAddNewVisit(1L))
+    }
+
+    @Test
+    fun `canAddNewVisit ignores unparsable visit dates`() = runTest {
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf("garbage")
+        assertTrue(repo.canAddNewVisit(1L))
+    }
+
+    @Test
+    fun `saveDownloadedVisitList upserts entity built from server payload`() = runTest {
+        val fields = JsonObject().apply {
+            addProperty("visit_date", "01-01-2026")
+            addProperty("ifa_quantity", 3)
+            addProperty("given", true)
+            add("nested", JsonObject())
+        }
+        val item = HBNCVisitResponse(
+            id = 7,
+            houseHoldId = 20L,
+            beneficiaryId = 10L,
+            visitDate = "01-01-2026",
+            eyeSide = "L",
+            fields = fields
+        )
+        coEvery { jsonDao.getFormResponse(any(), any()) } returns null
+
+        repo.saveDownloadedVisitList(listOf(item), "ifa")
+
+        coVerify { jsonDao.insertFormResponse(any()) }
     }
 }

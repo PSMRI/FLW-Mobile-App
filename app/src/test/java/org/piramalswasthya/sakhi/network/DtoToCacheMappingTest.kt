@@ -3,6 +3,8 @@ package org.piramalswasthya.sakhi.network
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 
@@ -234,5 +236,172 @@ class DtoToCacheMappingTest {
         assertEquals(500L, cache.houseHoldDetailsId)
         assertEquals("Suspected", cache.kalaAzarCaseStatus)
         assertNotNull(cache.rapidDiagnosticTest)
+    }
+
+    // =====================================================
+    // Generated data-class members (equals / hashCode / toString / copy)
+    // =====================================================
+
+    private fun hrpPregnantTrackDto() =
+        HRPPregnantTrackDTO(benId = 11L, visitDate = "01-01-2024", visit = "v1")
+
+    @Test fun `HRPPregnantTrackDTO generated members behave consistently`() {
+        val dto = hrpPregnantTrackDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("HRPPregnantTrackDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("other"))
+        assertNotEquals(dto, dto.copy(benId = 12L))
+        assertEquals(11L, dto.benId)
+        assertEquals("v1", dto.visit)
+        assertEquals("01-01-2024", dto.visitDate)
+    }
+
+    @Test fun `HRPPregnantTrackDTO copy overrides selected fields only`() {
+        val changed = hrpPregnantTrackDto().copy(visit = "v2")
+        assertEquals("v2", changed.visit)
+        assertEquals(11L, changed.benId)
+        assertEquals("01-01-2024", changed.visitDate)
+    }
+
+    private fun hrpMicroBirthPlanDto() = HRPMicroBirthPlanDTO(benId = 33L, bloodGroup = "O+")
+
+    @Test fun `HRPMicroBirthPlanDTO generated members behave consistently`() {
+        val dto = hrpMicroBirthPlanDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("HRPMicroBirthPlanDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals(0))
+        assertNotEquals(dto, dto.copy(bloodGroup = "A+"))
+        assertEquals(33L, dto.benId)
+        assertEquals("O+", dto.bloodGroup)
+    }
+
+    private fun hrpNonPregnantTrackDto() = HRPNonPregnantTrackDTO(
+        benId = 44L, visitDate = null, lmp = null, anemia = "yes", isPregnant = "no"
+    )
+
+    @Test fun `HRPNonPregnantTrackDTO generated members behave consistently`() {
+        val dto = hrpNonPregnantTrackDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("HRPNonPregnantTrackDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(anemia = "no"))
+        assertEquals(44L, dto.benId)
+        assertEquals("yes", dto.anemia)
+        assertEquals("no", dto.isPregnant)
+    }
+
+    private fun tbScreeningDto() = TBScreeningDTO(
+        id = 1L, benId = 66L, visitDate = null,
+        coughMoreThan2Weeks = true, bloodInSputum = false, feverMoreThan2Weeks = true,
+        lossOfWeight = false, nightSweats = true, historyOfTb = false,
+        takingAntiTBDrugs = false, familySufferingFromTB = true
+    )
+
+    @Test fun `TBScreeningDTO generated members behave consistently`() {
+        val dto = tbScreeningDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("TBScreeningDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(benId = 67L))
+        assertEquals(1L, dto.id)
+        assertEquals(66L, dto.benId)
+        assertEquals(true, dto.coughMoreThan2Weeks)
+        assertEquals(false, dto.bloodInSputum)
+        assertEquals(true, dto.feverMoreThan2Weeks)
+        assertEquals(false, dto.lossOfWeight)
+        assertEquals(true, dto.nightSweats)
+        assertEquals(false, dto.historyOfTb)
+        assertEquals(false, dto.takingAntiTBDrugs)
+        assertEquals(true, dto.familySufferingFromTB)
+    }
+
+    @Test fun `TBScreeningDTO toCache maps remaining symptom flags`() {
+        val cache = tbScreeningDto().copy(
+            bloodInSputum = true, lossOfWeight = true, historyOfTb = true, takingAntiTBDrugs = true
+        ).toCache()
+        assertEquals(true, cache.bloodInSputum)
+        assertEquals(true, cache.lossOfWeight)
+        assertEquals(true, cache.historyOfTb)
+        assertEquals(true, cache.takingAntiTBDrugs)
+        assertEquals(true, cache.nightSweats)
+    }
+
+    private fun aesScreeningDto() = AESScreeningDTO(
+        benId = 100L, visitDate = "01-01-2024", houseHoldDetailsId = 200L,
+        dateOfDeath = "01-01-2024", createdDate = "01-01-2024", aesJeCaseStatus = "Active"
+    )
+
+    @Test fun `AESScreeningDTO generated members behave consistently`() {
+        val dto = aesScreeningDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("AESScreeningDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(benId = 101L))
+        assertEquals(100L, dto.benId)
+        assertEquals(200L, dto.houseHoldDetailsId)
+        assertEquals("Active", dto.aesJeCaseStatus)
+        assertEquals("01-01-2024", dto.visitDate)
+        assertEquals("01-01-2024", dto.dateOfDeath)
+        assertEquals("01-01-2024", dto.createdDate)
+    }
+
+    private fun kalazarScreeningDto() = KALAZARScreeningDTO(
+        benId = 103L, visitDate = "01-01-2024", houseHoldDetailsId = 500L,
+        beneficiaryStatus = "Alive", dateOfDeath = "01-01-2024", placeOfDeath = "x",
+        otherPlaceOfDeath = "x", reasonForDeath = "x", otherReasonForDeath = "x",
+        rapidDiagnosticTest = "Neg", dateOfRdt = "01-01-2024", referToName = "Dr",
+        otherReferredFacility = "F", createdDate = "01-01-2024", createdBy = "creator",
+        kalaAzarCaseStatus = "Suspected"
+    )
+
+    @Test fun `KALAZARScreeningDTO generated members behave consistently`() {
+        val dto = kalazarScreeningDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("KALAZARScreeningDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(benId = 104L))
+        assertEquals(103L, dto.benId)
+        assertEquals(500L, dto.houseHoldDetailsId)
+        assertEquals("Alive", dto.beneficiaryStatus)
+        assertEquals("Neg", dto.rapidDiagnosticTest)
+        assertEquals("Dr", dto.referToName)
+        assertEquals("F", dto.otherReferredFacility)
+        assertEquals("creator", dto.createdBy)
+        assertEquals("Suspected", dto.kalaAzarCaseStatus)
+    }
+
+    @Test fun `KALAZARScreeningDTO toCache maps death and referral details`() {
+        val cache = kalazarScreeningDto().toCache()
+        assertEquals("x", cache.placeOfDeath)
+        assertEquals("x", cache.otherPlaceOfDeath)
+        assertEquals("x", cache.reasonForDeath)
+        assertEquals("x", cache.otherReasonForDeath)
+        assertEquals("Dr", cache.referToName)
+        assertEquals("F", cache.otherReferredFacility)
+        assertEquals(SyncState.SYNCED, cache.syncState)
     }
 }

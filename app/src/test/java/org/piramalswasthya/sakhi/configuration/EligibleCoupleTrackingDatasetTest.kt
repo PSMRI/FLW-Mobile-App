@@ -12,6 +12,7 @@ import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -38,6 +39,8 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.i(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -248,6 +251,70 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         runCatching { ds.setValueById(8, "opt0"); ds.updateList(8, 0) }
         runCatching { ds.setValueById(8, "opt1"); ds.updateList(8, 0) }
         assertNotNull(ds.listFlow)
+    }
+
+    // ===================== structural assertions on the built page =====================
+    // Every builder above is wrapped in runCatching, which hides a page that never built.
+    // These assert on listFlow so a broken setUpPage actually fails the test.
+
+    private suspend fun trackingPage(
+        saved: EligibleCoupleTrackingCache?,
+        noOfChildren: Int
+    ): EligibleCoupleTrackingDataset {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(
+            ben = mockk<BenRegCache>(relaxed = true),
+            dateOfReg = 1_600_000_000_000L,
+            lastTrack = null,
+            saved = saved,
+            noOfChildren = noOfChildren
+        )
+        return ds
+    }
+
+    @Test
+    fun `create page actually builds a non empty list`() = runTest {
+        val ds = trackingPage(null, 2)
+        val list = ds.listFlow.value
+        assertTrue("setUpPage must produce elements", list.isNotEmpty())
+        assertTrue("elements must carry titles", list.any { it.title.isNotEmpty() })
+    }
+
+    @Test
+    fun `edit page builds a non empty list`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt3")
+        val ds = trackingPage(saved, 2)
+        assertTrue("edit page must produce elements", ds.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `index getters return resolvable positions`() = runTest {
+        val ds = trackingPage(null, 2)
+        assertTrue(ds.getIndexOfIsPregnant() >= -1)
+        assertTrue(ds.getIndexOfMPA() >= -1)
+        assertTrue(ds.getIndexDeliveryDischargeSummary1() >= -1)
+        assertTrue(ds.getIndexDeliveryDischargeSummary2() >= -1)
+    }
+
+    @Test
+    fun `map values from a filled tracking page`() = runTest {
+        val ds = trackingPage(null, 2)
+        ds.setValueById(4, "opt0")
+        ds.updateList(4, 0)
+        ds.setValueById(5, "opt0")
+        ds.updateList(5, 0)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        assertTrue(ds.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `updateBen keeps the page intact`() = runTest {
+        val ds = trackingPage(null, 2)
+        val sizeBefore = ds.listFlow.value.size
+        ds.updateBen(mockk<BenRegCache>(relaxed = true))
+        assertTrue(sizeBefore > 0)
+        assertTrue(ds.listFlow.value.isNotEmpty())
     }
 
     @Test
