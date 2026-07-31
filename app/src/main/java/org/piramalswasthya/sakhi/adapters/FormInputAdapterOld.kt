@@ -814,6 +814,7 @@ class FormInputAdapterOld(
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW_PAIR -> TextViewInputViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -834,6 +835,7 @@ class FormInputAdapterOld(
             RADIO -> (holder as RadioInputViewHolder).bind(item, isEnabled)
             DATE_PICKER -> (holder as DatePickerInputViewHolder).bind(item, isEnabled)
             TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+            org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW_PAIR -> (holder as TextViewInputViewHolder).bind(item)
             IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                 item,
                 imageClickListener,

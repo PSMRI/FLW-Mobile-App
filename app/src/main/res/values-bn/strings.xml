@@ -369,6 +369,7 @@
     <string name="beneficiary_name">সুবিধাভোগীর নাম</string>
     <string name="husband_s_name">স্বামীর নাম</string>
     <string name="weeks_of_pregnancy">গর্ভাবস্থার সপ্তাহ</string>
+    <string name="days_of_pregnancy">গর্ভাবস্থার দিন</string>
     <string name="pregnancy_weeks">গর্ভাবস্থার সপ্তাহ</string>
     <string name="anc_visits">ANC পরিদর্শন</string>
     <string name="pnc_visits">PNC পরিদর্শন</string>

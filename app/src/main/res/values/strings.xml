@@ -414,6 +414,7 @@
     <string name="beneficiary_name">Beneficiary Name</string>
     <string name="husband_s_name">Husband\'s Name</string>
     <string name="weeks_of_pregnancy">Weeks Of Pregnancy</string>
+    <string name="days_of_pregnancy">Days Of Pregnancy</string>
     <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
     <string name="anc_visits">ANC VISITS</string>
     <string name="pnc_visits">PNC VISITS</string>

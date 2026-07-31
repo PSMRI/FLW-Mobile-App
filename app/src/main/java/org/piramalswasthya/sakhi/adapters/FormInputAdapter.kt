@@ -1193,6 +1193,7 @@ class FormInputAdapter(
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            InputType.TEXT_VIEW_PAIR -> TextViewInputViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -1306,6 +1307,7 @@ class FormInputAdapter(
                 )
 
                 TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+                InputType.TEXT_VIEW_PAIR -> (holder as TextViewInputViewHolder).bind(item)
                 IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                     item, imageClickListener, isEnabled
                 )
