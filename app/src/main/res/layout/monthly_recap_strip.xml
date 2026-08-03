@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Monthly Recap dashboard strip (Phase 1) - ONE reusable layout for every visible
-    state (READY / RESUME / REPLAY). State differences are applied at runtime through
-    content + visibility (see HomeIconsFragment#renderMonthlyRecapStrip), never through
-    separate layouts.
+    Monthly Recap dashboard card - ONE reusable layout for every visible state
+    (READY / RESUME / REPLAY). State differences are applied at runtime through
+    content + visibility (see HomeIconsFragment#renderMonthlyRecapStrip), never
+    through separate layouts.
 
-    Deep primary-blue gradient surface with white text and a white pill CTA. Text uses
-    ?attr/colorOnPrimary (white in this theme) because it sits on the primary-family
-    gradient; secondary lines use view alpha for hierarchy without new colours.
+    Design: not a band of brand colour. The surface is the same ivory-to-lilac wash
+    as the recap playback screen, so tapping the card feels like stepping into the
+    story rather than opening an unrelated screen. The ASHA-didi is the only
+    saturated element and stands on the base of the card.
+
+    Kept deliberately short. The card sits above the icon grid, so it must not own
+    the screen: the character is the tallest thing in it, one line of message, and
+    the CTA is a text + chevron rather than a filled pill (the whole card is the
+    click target anyway, so the pill was affordance the card did not need). No
+    stroke - a hairline on a light card over a light page only muddies the corners;
+    a single dp of elevation separates it cleanly.
 
     Accessibility: the whole card is a single click target. Its contentDescription is
-    set per state in code and the content container is marked noHideDescendants, so the
-    character, sparkles, badges, progress and CTA are never separately focused and the
-    CTA never creates a duplicate action.
+    set per state in code and the content container is marked noHideDescendants, so
+    the character, chips, progress and CTA are never separately focused and the CTA
+    never creates a duplicate action.
 
     Privacy: no beneficiary names, health information, medical conditions or counts.
 -->
@@ -21,63 +29,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_big"
+    android:layout_marginStart="@dimen/margin_big"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="@dimen/margin_big"
+    android:layout_marginBottom="10dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="?attr/colorPrimary"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="6dp"
-    app:rippleColor="?attr/colorOnPrimary">
+    app:cardBackgroundColor="@color/recap_playback_bg_top"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="1dp"
+    app:rippleColor="@color/recap_playback_count_accent"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_monthly_recap_strip"
         android:baselineAligned="false"
-        android:gravity="center_vertical"
+        android:gravity="bottom"
         android:importantForAccessibility="noHideDescendants"
         android:orientation="horizontal"
         android:paddingStart="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_wide"
-        android:paddingEnd="@dimen/padding_wide"
-        android:paddingBottom="@dimen/padding_wide">
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingEnd="@dimen/padding_wide">
 
-        <!-- Character illustration (decorative; sits on the card's warm glow) -->
-        <ImageView
+        <!-- The didi is the hero and now the tallest element, so she sets the card
+             height rather than riding along inside a taller text stack. Bottom
+             aligned with no bottom padding so she stands on the base of the card. -->
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/recap_character"
-            android:layout_width="wrap_content"
-            android:layout_height="108dp"
-            android:layout_marginEnd="@dimen/padding_wide"
-            android:adjustViewBounds="true"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="@dimen/padding_normal"
             android:contentDescription="@null"
-            android:src="@drawable/img_recap_character" />
+            app:lottie_autoPlay="false"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/recap_didi_dashboard" />
 
         <!-- Text column -->
         <LinearLayout
+            android:id="@+id/recap_text_column"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_normal"
+            android:paddingBottom="@dimen/padding_normal">
 
-            <!-- eyebrow row: state chip + month, inline -->
+            <!-- eyebrow: month, then the state chip -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- No letterSpacing / textAllCaps here. Both are Latin-script
+                     devices: Devanagari and Assamese join their characters and stack
+                     matras, so forced tracking pulls conjuncts apart and caps does
+                     nothing. Hindi and Assamese are the recap's only content
+                     languages, so the eyebrow is set plainly and a size larger. -->
+                <TextView
+                    android:id="@+id/recap_month_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="@color/recap_card_text_muted"
+                    android:textStyle="bold"
+                    tools:text="June" />
+
                 <TextView
                     android:id="@+id/recap_badge_new"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal6"
                     android:background="@drawable/bg_recap_badge_new"
-                    android:paddingStart="10dp"
+                    android:paddingStart="9dp"
                     android:paddingTop="3dp"
-                    android:paddingEnd="10dp"
+                    android:paddingEnd="9dp"
                     android:paddingBottom="3dp"
                     android:text="@string/monthly_recap_badge_new"
                     android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="@color/recap_playback_count_accent"
                     android:textStyle="bold"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -86,48 +120,42 @@
                     android:id="@+id/recap_badge_done"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal6"
                     android:background="@drawable/bg_recap_badge"
-                    android:paddingStart="10dp"
-                    android:paddingTop="2dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="2dp"
+                    android:paddingStart="9dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="9dp"
+                    android:paddingBottom="3dp"
                     android:text="@string/monthly_recap_badge_done"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="@color/recap_playback_count_accent"
                     android:textStyle="bold"
                     android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/recap_month_label"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_normal"
-                    android:layout_weight="1"
-                    android:alpha="0.9"
-                    android:gravity="end"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                    android:textColor="?attr/colorOnPrimary"
-                    tools:text="June" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/recap_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_normal"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:lineSpacingExtra="1dp"
+                android:maxLines="1"
                 android:text="@string/monthly_recap_title"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                android:textColor="?attr/colorOnPrimary"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/recap_playback_text"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/recap_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
-                android:alpha="0.92"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:lineSpacingExtra="1dp"
+                android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="@color/recap_card_text_muted"
                 tools:text="Your recap is ready — see the impact you made." />
 
             <ProgressBar
@@ -135,35 +163,31 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_normal"
+                android:layout_marginTop="6dp"
                 android:importantForAccessibility="no"
                 android:max="100"
-                android:progressTint="?attr/colorOnPrimary"
+                android:progressBackgroundTint="@color/recap_playback_progress_track"
+                android:progressTint="@color/recap_playback_progress_active"
                 android:visibility="gone"
                 tools:progress="40"
                 tools:visibility="visible" />
 
+            <!-- Text + chevron, not a filled pill: the whole card is already the
+                 click target, so this only has to name the action. -->
             <TextView
                 android:id="@+id/recap_cta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_wide"
-                android:background="@drawable/bg_recap_cta_pill"
+                android:layout_marginTop="6dp"
                 android:clickable="false"
                 android:drawableEnd="@drawable/ic_chevron_right"
-                android:drawablePadding="4dp"
-                android:drawableTint="?attr/colorPrimary"
-                android:elevation="3dp"
+                android:drawablePadding="1dp"
+                android:drawableTint="@color/recap_playback_count_accent"
                 android:focusable="false"
                 android:gravity="center_vertical"
-                android:minHeight="44dp"
-                android:paddingStart="20dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="14dp"
-                android:paddingBottom="8dp"
                 android:text="@string/monthly_recap_view_recap"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="@color/recap_playback_count_accent"
                 android:textStyle="bold"
                 tools:text="View Recap" />
         </LinearLayout>

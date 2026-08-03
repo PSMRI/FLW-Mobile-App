@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Premium surface for the Monthly Recap strip.
-    - Calm diagonal blue gradient (brand family; deep enough for white text contrast).
-    - A soft WARM orange glow low on the start side, so the ASHA-didi reads as seated
-      on a warm light rather than bolted into a cold box.
-    - A faint cool highlight top-end for gentle depth.
-    Rounded corners are clipped by the parent MaterialCardView. All colours local.
+    Monthly Recap dashboard card surface.
+
+    Deliberately NOT a block of brand colour: it reuses the recap PLAYBACK palette
+    (ivory -> blush -> lilac) so the dashboard card and the recap screen read as one
+    experience, and the ASHA-didi is the only saturated thing on it. Depth comes from
+    two very low-opacity washes rather than a strong fill, which keeps the dark text
+    legible and lets the card sit calmly among the dashboard icons.
+
+    Corners are clipped by the parent MaterialCardView. Base colours are the shared
+    recap tokens from colors.xml.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- calm brand-blue diagonal gradient -->
+    <!-- base: the recap playback wash, angled so the light falls toward the didi -->
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:angle="135"
-                android:startColor="#1E7099"
-                android:centerColor="#17608B"
-                android:endColor="#104F74"
+                android:angle="315"
+                android:startColor="@color/recap_playback_bg_top"
+                android:centerColor="@color/recap_playback_bg_mid"
+                android:endColor="@color/recap_playback_bg_bottom"
                 android:type="linear" />
         </shape>
     </item>
 
-    <!-- warm glow behind the character (bottom-start) -->
-    <item
-        android:width="210dp"
-        android:height="210dp"
-        android:bottom="-80dp"
-        android:gravity="bottom|start"
-        android:left="-80dp">
-        <shape android:shape="oval">
-            <solid android:color="#33FF7A2E" />
-        </shape>
-    </item>
-
-    <!-- faint cool highlight, top-end, for depth -->
+    <!-- soft violet halo low behind the character, so she is lit rather than boxed.
+         Sized against the SHORT card - a large oval here would read as a second
+         background rather than a glow. -->
     <item
         android:width="150dp"
         android:height="150dp"
-        android:gravity="top|end"
-        android:right="-50dp"
-        android:top="-60dp">
+        android:bottom="-72dp"
+        android:gravity="bottom|start"
+        android:left="-52dp">
         <shape android:shape="oval">
-            <solid android:color="#1FFFFFFF" />
+            <solid android:color="#1A7B6CD9" />
+        </shape>
+    </item>
+
+    <!-- warm highlight top-end for gentle depth -->
+    <item
+        android:width="110dp"
+        android:height="110dp"
+        android:gravity="top|end"
+        android:right="-40dp"
+        android:top="-46dp">
+        <shape android:shape="oval">
+            <solid android:color="#2EFFFFFF" />
         </shape>
     </item>
 </layer-list>

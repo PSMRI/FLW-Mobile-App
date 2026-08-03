@@ -155,7 +155,22 @@ class HomeIconsFragment : Fragment() {
         card.visibility = View.VISIBLE
         card.setOnClickListener { onRecapStripClicked(state) }
 
+        setUpRecapCharacterAnimation()
         playRecapEntrance(state, style)
+    }
+
+    /**
+     * The card character is a looping Lottie of the ASHA-didi — the same character
+     * who narrates the recap, so the card and the story feel like one experience.
+     * Reduced-motion devices get a single static frame and never play.
+     */
+    private fun setUpRecapCharacterAnimation() {
+        val character = _binding?.monthlyRecapStrip?.recapCharacter ?: return
+        if (recapAnimationsEnabled(requireContext())) {
+            character.playAnimation()
+        } else {
+            character.progress = 0f
+        }
     }
 
     private fun onRecapStripClicked(state: MonthlyRecapStripState) {
@@ -163,13 +178,11 @@ class HomeIconsFragment : Fragment() {
         if (now - lastRecapClickMs < RECAP_CLICK_DEBOUNCE_MS) return
         lastRecapClickMs = now
         when (state) {
-            // First viewing only: pick a language, which then opens playback.
-            MonthlyRecapStripState.READY -> navigateToRecapLanguageSelection()
-            // RESUME/REPLAY replay an ALREADY FROZEN story in its already-chosen
-            // language. Routing them back through language selection would let a
-            // second choice re-render a supposedly frozen recap, so both open
-            // playback directly (the ViewModel resumes at the stored scene;
-            // replay restarts at scene 0).
+            // Every visible state opens playback directly. The recap is narrated in
+            // the language the ASHA already uses the app in, so there is nothing to
+            // ask her first. The ViewModel resumes an IN_PROGRESS story at its stored
+            // scene; READY and REPLAY start at scene 0.
+            MonthlyRecapStripState.READY,
             MonthlyRecapStripState.RESUME,
             MonthlyRecapStripState.REPLAY -> navigateToRecapPlayback()
 
@@ -177,12 +190,7 @@ class HomeIconsFragment : Fragment() {
         }
     }
 
-    /** Opens the recap language-selection screen exactly once per accepted tap. */
-    private fun navigateToRecapLanguageSelection() {
-        navigateFromHome { it.navigate(HomeFragmentDirections.actionNavHomeToMonthlyRecapLanguageFragment()) }
-    }
-
-    /** Opens playback directly, bypassing language selection (resume/replay). */
+    /** Opens the recap playback screen exactly once per accepted tap. */
     private fun navigateToRecapPlayback() {
         navigateFromHome { it.navigate(HomeFragmentDirections.actionNavHomeToMonthlyRecapPlaybackFragment()) }
     }
@@ -208,19 +216,33 @@ class HomeIconsFragment : Fragment() {
         recapEntrancePlayed = true
         if (!style.animateEntrance || !recapAnimationsEnabled(requireContext())) return
 
-        val character = binding.monthlyRecapStrip.recapCharacter
+        val strip = binding.monthlyRecapStrip
+        val character = strip.recapCharacter
+        val text = strip.recapTextColumn
         val isReady = state == MonthlyRecapStripState.READY
 
+        // She arrives first, walking in from the start edge...
         character.translationX = -dp(if (isReady) 56f else 32f)
         character.alpha = 0f
-
         character.animate()
             .translationX(0f)
             .alpha(1f)
-            .setStartDelay(100L)
+            .setStartDelay(80L)
             .setDuration(if (isReady) 480L else 360L)
             .setInterpolator(DecelerateInterpolator())
             .withEndAction { onRecapEntranceSettled(isReady) }
+            .start()
+
+        // ...and the words settle in just behind her, so the card reads as one
+        // thing arriving rather than a character bolted onto a static banner.
+        text.translationY = dp(10f)
+        text.alpha = 0f
+        text.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setStartDelay(200L)
+            .setDuration(380L)
+            .setInterpolator(DecelerateInterpolator())
             .start()
     }
 
@@ -285,8 +307,13 @@ class HomeIconsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        // Cancel any recap entrance animation so it does not touch a destroyed view.
-        _binding?.monthlyRecapStrip?.recapCharacter?.animate()?.cancel()
+        // Cancel any recap entrance animation + stop the Lottie so neither touches
+        // a destroyed view.
+        _binding?.monthlyRecapStrip?.recapCharacter?.apply {
+            animate().cancel()
+            cancelAnimation()
+        }
+        _binding?.monthlyRecapStrip?.recapTextColumn?.animate()?.cancel()
         super.onDestroyView()
         _binding = null
     }

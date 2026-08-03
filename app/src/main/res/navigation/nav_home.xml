@@ -90,23 +90,9 @@
             android:id="@+id/action_homeFragment_to_ncdReferredListFragment"
             app:destination="@id/ncdRefferedList" />
         <action
-            android:id="@+id/action_nav_home_to_monthlyRecapLanguageFragment"
-            app:destination="@id/monthlyRecapLanguageFragment" />
-        <action
             android:id="@+id/action_nav_home_to_monthlyRecapPlaybackFragment"
             app:destination="@id/monthlyRecapPlaybackFragment" />
 
-    </fragment>
-    <fragment
-        android:id="@+id/monthlyRecapLanguageFragment"
-        android:name="org.piramalswasthya.sakhi.ui.home_activity.monthly_recap.MonthlyRecapLanguageFragment"
-        android:label="@string/monthly_recap_title"
-        tools:layout="@layout/fragment_monthly_recap_language" >
-        <action
-            android:id="@+id/action_monthlyRecapLanguageFragment_to_monthlyRecapPlaybackFragment"
-            app:destination="@id/monthlyRecapPlaybackFragment"
-            app:popUpTo="@id/monthlyRecapLanguageFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/monthlyRecapPlaybackFragment"
