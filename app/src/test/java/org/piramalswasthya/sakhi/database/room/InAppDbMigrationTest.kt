@@ -1,7 +1,14 @@
 package org.piramalswasthya.sakhi.database.room
 
+import android.database.Cursor
+import androidx.sqlite.db.SupportSQLiteDatabase
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.sql.Connection
@@ -104,5 +111,110 @@ class InAppDbMigrationTest {
 
         assertEquals(1, countWhere("isDeath = 0"))
         assertEquals(1, countWhere("isDeath = 1"))
+    }
+
+    // =====================================================
+    // InAppDb.tableExists() / InAppDb.columnExists()
+    // The migration helpers used by MIGRATION_56_57..60_61.
+    // =====================================================
+
+    @Test
+    fun `tableExists returns true when sqlite_master has a row`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
+        every { cursor.count } returns 1
+
+        assertTrue(InAppDb.tableExists(db, "BENEFICIARY"))
+        verify { cursor.close() }
+    }
+
+    @Test
+    fun `tableExists returns false when sqlite_master has no rows`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
+        every { cursor.count } returns 0
+
+        assertFalse(InAppDb.tableExists(db, "NO_SUCH_TABLE"))
+        verify { cursor.close() }
+    }
+
+    @Test
+    fun `tableExists queries sqlite_master with the table name bound`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
+        every { cursor.count } returns 1
+
+        InAppDb.tableExists(db, "VHNC")
+
+        verify {
+            db.query(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                arrayOf<Any?>("VHNC")
+            )
+        }
+    }
+
+    @Test
+    fun `columnExists returns true when pragma lists the column`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>()) } returns cursor
+        every { cursor.moveToNext() } returnsMany listOf(true, true, false)
+        every { cursor.getColumnIndexOrThrow("name") } returns 1
+        every { cursor.getString(1) } returnsMany listOf("beneficiaryId", "isDeath")
+
+        assertTrue(InAppDb.columnExists(db, "BENEFICIARY", "isDeath"))
+        verify { cursor.close() }
+    }
+
+    @Test
+    fun `columnExists returns false when pragma never lists the column`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>()) } returns cursor
+        every { cursor.moveToNext() } returnsMany listOf(true, true, false)
+        every { cursor.getColumnIndexOrThrow("name") } returns 1
+        every { cursor.getString(1) } returnsMany listOf("beneficiaryId", "isDeath")
+
+        assertFalse(InAppDb.columnExists(db, "BENEFICIARY", "abha_familyId"))
+        verify { cursor.close() }
+    }
+
+    @Test
+    fun `columnExists returns false for an empty pragma result`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>()) } returns cursor
+        every { cursor.moveToNext() } returns false
+
+        assertFalse(InAppDb.columnExists(db, "HOUSEHOLD", "isDeactivate"))
+        verify { cursor.close() }
+    }
+
+    @Test
+    fun `columnExists asks sqlite for the table info pragma`() {
+        val db = mockk<SupportSQLiteDatabase>()
+        val cursor = mockk<Cursor>(relaxed = true)
+        every { db.query(any<String>()) } returns cursor
+        every { cursor.moveToNext() } returns false
+
+        InAppDb.columnExists(db, "TB_SCREENING", "bmi")
+
+        verify { db.query("PRAGMA table_info(TB_SCREENING)") }
+    }
+
+    @Test
+    fun `normalize isDeath sql targets only corrupted values`() {
+        assertTrue(
+            InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
+                .contains("isDeath IS NULL OR (isDeath <> 0 AND isDeath <> 1)")
+        )
+        assertTrue(
+            InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
+                .startsWith("UPDATE BENEFICIARY SET isDeath = 0")
+        )
     }
 }

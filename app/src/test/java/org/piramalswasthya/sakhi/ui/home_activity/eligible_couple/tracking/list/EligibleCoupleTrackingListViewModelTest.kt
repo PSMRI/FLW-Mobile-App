@@ -7,10 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -79,5 +81,38 @@ class EligibleCoupleTrackingListViewModelTest : BaseViewModelTest() {
     fun `setClickedBenId does not throw`() = runTest {
         viewModel.setClickedBenId(42L)
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `scope is available`() {
+        assertNotNull(viewModel.scope)
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.SYNCING_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.SYNCING_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setClickedBenId then filter combine does not throw`() = runTest {
+        viewModel.setClickedBenId(77L)
+        viewModel.filterText("  Query  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+        assertNotNull(viewModel.bottomSheetList)
+    }
+
+    @Test
+    fun `setClickedBenId zero does not throw`() = runTest {
+        viewModel.setClickedBenId(0L)
+        advanceUntilIdle()
+        assertNotNull(viewModel.bottomSheetList)
     }
 }

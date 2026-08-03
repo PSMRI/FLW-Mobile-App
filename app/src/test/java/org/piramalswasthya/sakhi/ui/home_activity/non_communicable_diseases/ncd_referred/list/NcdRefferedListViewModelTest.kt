@@ -161,4 +161,55 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
         val categories = viewModel.categoryData()
         assertEquals(7, categories.size)
     }
+
+    @Test
+    fun `categoryData rebuilds to seven items after mutating and re-calling`() {
+        val first = viewModel.categoryData()
+        first.add("EXTRA")
+        val second = viewModel.categoryData()
+        assertEquals(7, second.size)
+        assertEquals("ALL", second[0])
+        assertEquals("MATERNAL", second[6])
+    }
+
+    @Test
+    fun `setSelectedFilter then filter combine does not throw`() = runTest {
+        viewModel.setSelectedFilter("NCD")
+        viewModel.filterText("ram")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `setSelectedFilter ALL keeps full list path`() = runTest {
+        viewModel.setSelectedFilter("ALL")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `setSelectedBenId updates getSelectedBenId`() = runTest {
+        assertEquals(0L, viewModel.getSelectedBenId())
+        viewModel.setSelectedBenId(321L)
+        advanceUntilIdle()
+        assertEquals(321L, viewModel.getSelectedBenId())
+    }
+
+    @Test
+    fun `getAshaId returns configured user id`() = runTest {
+        advanceUntilIdle()
+        assertEquals(456, viewModel.getAshaId())
+    }
+
+    @Test
+    fun `updateBottomSheetData does not throw_2`() = runTest {
+        viewModel.updateBottomSheetData(99L)
+        advanceUntilIdle()
+        assertNotNull(viewModel.selectedFilter)
+    }
+
+    @Test
+    fun `userName resolved from preferences`() {
+        assertEquals("TestUser", viewModel.userName)
+    }
 }

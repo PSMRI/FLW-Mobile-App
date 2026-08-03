@@ -173,7 +173,17 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.all {
+            it.maxHeapSize = "2560m"
+            it.jvmArgs "-XX:MaxMetaspaceSize=1024m"
+            it.forkEvery = 80
+        }
+    }
+
 }
+
+apply from: 'jacoco.gradle'
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -287,6 +297,7 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testImplementation "androidx.work:work-testing:$work_version"
     testImplementation 'org.xerial:sqlite-jdbc:3.45.3.0'
+    testImplementation 'org.json:json:20240303'
 
     // Instrumented Testing
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
