@@ -8,18 +8,22 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.MonthlyRecapMetricsCodec
 import org.piramalswasthya.sakhi.helpers.RecapClock
+import org.piramalswasthya.sakhi.helpers.RecapDataReadiness
 import org.piramalswasthya.sakhi.helpers.RecapScene
 import org.piramalswasthya.sakhi.helpers.RecapSceneComposer
 import org.piramalswasthya.sakhi.helpers.previousMonthWindow
+import org.piramalswasthya.sakhi.helpers.recapFreezeBlocker
 import org.piramalswasthya.sakhi.model.RecapContentLibrary
 import org.piramalswasthya.sakhi.model.MonthlyRecapCache
-import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsPayload
+import org.piramalswasthya.sakhi.model.RecapDiagnostics
+import org.piramalswasthya.sakhi.model.RecapFreezeBlocker
 import org.piramalswasthya.sakhi.model.RecapMetricStatus
 import org.piramalswasthya.sakhi.model.RecapStatus
 import org.piramalswasthya.sakhi.model.recapStatus
@@ -94,19 +98,16 @@ class MonthlyRecapRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Persists the recap-only language (never the global Sakhi language) for the
-     * current snapshot, creating it first when absent. Month, variant seed,
-     * metrics and completion state are preserved. Returns true on success.
+     * The language the recap is narrated in: whatever the ASHA already uses the app
+     * in. There is no separate recap language choice — she is never asked.
+     *
+     * The app supports more languages than the recap has content for (English is the
+     * app default, and Bangla exists too, while the content file carries only Hindi
+     * and Assamese). Unmatched languages fall back to Hindi inside
+     * [RecapSceneComposer], so this never returns a story-less recap on its own.
      */
-    suspend fun setRecapLanguage(language: MonthlyRecapLanguage): Boolean {
-        val recap = getOrCreateCurrentRecap() ?: run {
-            Timber.w("Monthly Recap: cannot persist language, no logged-in user")
-            return false
-        }
-        recapDao.setLanguage(
-            recap.userId, recap.recapYearMonth, language.token, clock.now().timeInMillis
-        )
-        return true
+    private suspend fun appLanguageToken(): String = withContext(Dispatchers.IO) {
+        preferenceDao.getCurrentLanguage().symbol
     }
 
     /** Playback foundation: NOT_STARTED → IN_PROGRESS (completed rows unaffected). */
@@ -163,7 +164,12 @@ class MonthlyRecapRepo @Inject constructor(
      * - concurrent callers are serialized by [metricsMutex] and a re-read inside
      *   the lock, so exactly one payload is stored and every caller returns it;
      * - a corrupt or unsupported stored payload is treated as absent and
-     *   regenerated deterministically (never crashes, never silently reinterpreted).
+     *   regenerated deterministically (never crashes, never silently reinterpreted);
+     * - it freezes ONLY when this install's local data can be trusted for the month
+     *   ([recapFreezeBlocker]) — otherwise the month is hidden and re-evaluated on the
+     *   next open, so a re-installed or mid-month device can never permanently lock in
+     *   a number lower than the ASHA's real work. An ALREADY-frozen payload is returned
+     *   as-is and never re-gated: it passed readiness when it was written.
      *
      * Does NOT change status/progress (metric generation is not playback), the
      * language, the variant seed or the snapshot identity. Intended to be called
@@ -184,7 +190,7 @@ class MonthlyRecapRepo @Inject constructor(
             decodeIfCurrent(fresh?.metricsJson, recap.recapYearMonth)?.let { return@withLock it }
 
             val now = clock.now().timeInMillis
-            val payload = metricsCalculator.calculate(
+            val raw = metricsCalculator.calculate(
                 userId = recap.userId,
                 userName = userName,
                 recapYearMonth = recap.recapYearMonth,
@@ -192,17 +198,55 @@ class MonthlyRecapRepo @Inject constructor(
                 windowEndMillisExclusive = recap.windowEndMillis,
                 generatedAt = now,
             )
-            // ZERO-MONTH GUARD: an all-zero payload is returned but NOT frozen.
-            // A first dashboard visit can run before the server pull lands the
-            // previous month's records; freezing zeros then would hide the recap
-            // for the whole month. Zero payloads show nothing anyway (empty-month
-            // rule), so deferring the freeze until real work is visible is safe —
-            // and the story is still always frozen BEFORE the ASHA ever sees it.
-            if (payload.categories.none {
+            val readiness = withContext(Dispatchers.IO) {
+                RecapDataReadiness(
+                    isFullPullComplete = preferenceDao.isFullPullComplete,
+                    localDataSince = preferenceDao.recapLocalDataSince(now),
+                )
+            }
+            // ONE freeze decision, covering both the long-standing zero-month rule
+            // and local-data readiness. See [recapFreezeBlocker] for the reasoning.
+            val blocker = recapFreezeBlocker(
+                readiness = readiness,
+                windowStartMillis = recap.windowStartMillis,
+                hasCountableWork = raw.categories.any {
                     it.status == RecapMetricStatus.AVAILABLE.name && it.categoryTotal > 0
+                },
+            )
+            val payload = raw.copy(
+                diagnostics = RecapDiagnostics(
+                    freezeBlocker = blocker.name,
+                    isFullPullComplete = readiness.isFullPullComplete,
+                    localDataSince = readiness.localDataSince,
+                    evaluatedAt = now,
+                    appVersionCode = BuildConfig.VERSION_CODE,
+                )
+            )
+            when (blocker) {
+                // ZERO-MONTH GUARD (unchanged): an all-zero payload is returned but
+                // NOT frozen. A first dashboard visit can run before the server pull
+                // lands the previous month's records; freezing zeros then would hide
+                // the recap for the whole month. Zero payloads show nothing anyway
+                // (empty-month rule), so deferring the freeze until real work is
+                // visible is safe — and the story is still always frozen BEFORE the
+                // ASHA ever sees it.
+                RecapFreezeBlocker.NO_COUNTABLE_WORK -> return@withLock payload
+
+                // NOT READY: counts exist but the local database cannot be trusted to
+                // be complete for this month. Freezing would permanently under-credit
+                // her work, so the month is hidden (empty categories => the recap does
+                // not open) and re-evaluated on her next visit inside the 1-7 window.
+                RecapFreezeBlocker.FULL_PULL_INCOMPLETE,
+                RecapFreezeBlocker.DEVICE_MISSED_PART_OF_MONTH -> {
+                    Timber.i(
+                        "Monthly Recap: not freezing %d — %s",
+                        recap.recapYearMonth,
+                        blocker.name,
+                    )
+                    return@withLock payload.copy(categories = emptyList())
                 }
-            ) {
-                return@withLock payload
+
+                RecapFreezeBlocker.NONE -> Unit // fall through and freeze
             }
             // Durable freeze boundary: only writes when metricsJson IS NULL.
             val updated = recapDao.setMetricsIfAbsent(
@@ -236,8 +280,13 @@ class MonthlyRecapRepo @Inject constructor(
     /**
      * Phase 7 — builds the personalised playback story for the current snapshot:
      * ensures the frozen metrics exist, then composes scenes deterministically
-     * from (frozen payload, snapshot language, frozen variantSeed) via
+     * from (frozen payload, the ASHA's app language, frozen variantSeed) via
      * [RecapSceneComposer]. Same snapshot → same story, replay-stable, offline.
+     *
+     * The language is read live from the app ([appLanguageToken]) rather than frozen,
+     * so switching the app language re-narrates the recap. That is safe: the variant
+     * seed is language-independent, so she keeps the same semantic sentences, and the
+     * frozen counts are untouched.
      *
      * Returns an EMPTY list when the month has no countable work (user decision:
      * the recap does not open at all) and null when no user is logged in or the
@@ -248,7 +297,7 @@ class MonthlyRecapRepo @Inject constructor(
         val recap = getOrCreateCurrentRecap() ?: return null
         return RecapSceneComposer(library).compose(
             payload = payload,
-            languageToken = recap.language,
+            languageToken = appLanguageToken(),
             variantSeed = recap.variantSeed,
         )
     }

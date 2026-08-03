@@ -223,6 +223,38 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
             pref.edit().putBoolean("FIRST TIME FULL PULL DONE", value).apply()
         }
 
+    /**
+     * Monthly Recap: earliest moment THIS INSTALL can be considered to have been
+     * accumulating the ASHA's records locally. The recap counts rows in the local
+     * database, so a snapshot may only be frozen for a month this install was
+     * present for; see [org.piramalswasthya.sakhi.helpers.recapFreezeBlocker].
+     *
+     * Stamped once, then stable. Seeded from the package's first-install time so
+     * devices that have been in use for months are NOT blocked when this build
+     * lands, while a re-install (which resets first-install time) correctly reads
+     * as a new device. A bogus/future value is clamped to [nowMillis].
+     *
+     * Cleared with everything else by [deleteForLogout], which the sign-in flow
+     * pairs with clearAllTables() — so the marker and the database it describes
+     * are wiped together.
+     */
+    private val recapLocalDataSinceKey = "MONTHLY RECAP LOCAL DATA SINCE"
+
+    fun recapLocalDataSince(nowMillis: Long): Long {
+        val stored = pref.getLong(recapLocalDataSinceKey, 0L)
+        if (stored > 0L) return stored
+        val seed = firstInstallTimeMillis()?.takeIf { it in 1..nowMillis } ?: nowMillis
+        pref.edit().putLong(recapLocalDataSinceKey, seed).apply()
+        return seed
+    }
+
+    private fun firstInstallTimeMillis(): Long? = try {
+        context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime
+    } catch (e: Exception) {
+        Timber.w(e, "Monthly Recap: first-install time unavailable; treating install as new")
+        null
+    }
+
     var isDevModeEnabled: Boolean
         get() = pref.getBoolean("DEV-MODE", false)
         set(value) {

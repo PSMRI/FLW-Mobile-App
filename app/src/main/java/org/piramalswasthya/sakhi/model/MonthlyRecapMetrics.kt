@@ -71,8 +71,57 @@ data class RecapCategoryMetric(
 }
 
 /**
+ * Why a calculated payload was NOT frozen. Ordered most-fundamental first; the
+ * first matching reason is the one reported.
+ *
+ * INTERNAL ONLY — like [RecapMetricStatus] this never reaches ASHA-facing text.
+ * A blocked recap is silently hidden and re-evaluated on the next open.
+ */
+enum class RecapFreezeBlocker {
+    /** Ready to freeze. */
+    NONE,
+
+    /** The one-shot server download has not finished on this install. */
+    FULL_PULL_INCOMPLETE,
+
+    /**
+     * This install did not exist for the whole recap month, so its local database
+     * cannot be trusted to hold every record the ASHA created that month
+     * (re-install, new device, or an ASHA who joined mid-month).
+     */
+    DEVICE_MISSED_PART_OF_MONTH,
+
+    /** Nothing countable happened — the existing celebration-only/zero rule. */
+    NO_COUNTABLE_WORK,
+}
+
+/**
+ * Why and under what conditions a recap payload was produced. Written into the
+ * payload so a wrong count found during UAT is investigable after the fact
+ * instead of unfalsifiable.
+ *
+ * Privacy-safe by the same rule as the rest of the payload: flags, timestamps
+ * and a version only — never record-level data.
+ */
+data class RecapDiagnostics(
+    /** [RecapFreezeBlocker] name. NONE means the payload was frozen. */
+    val freezeBlocker: String,
+    val isFullPullComplete: Boolean,
+    /** Millis from which this install's local data is considered complete. */
+    val localDataSince: Long,
+    /** When readiness was evaluated (device-local). */
+    val evaluatedAt: Long,
+    /** Build that produced this evaluation, so field reports can be pinned to a build. */
+    val appVersionCode: Int,
+)
+
+/**
  * Versioned aggregate payload persisted in MonthlyRecapCache.metricsJson and
  * frozen once generated for a (userId, recapYearMonth).
+ *
+ * [diagnostics] is additive and nullable: payloads frozen before it existed decode
+ * with null, so PAYLOAD_SCHEMA_VERSION deliberately does NOT change (bumping it
+ * would invalidate every already-frozen snapshot for a backward-compatible field).
  */
 data class MonthlyRecapMetricsPayload(
     val payloadSchemaVersion: Int,
@@ -82,6 +131,7 @@ data class MonthlyRecapMetricsPayload(
     val windowStartMillis: Long,
     val windowEndMillisExclusive: Long,
     val categories: List<RecapCategoryMetric>,
+    val diagnostics: RecapDiagnostics? = null,
 )
 
 object MonthlyRecapMetricsContract {

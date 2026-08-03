@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -18,14 +19,22 @@ import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.MonthlyRecapMetricsCodec
 import org.piramalswasthya.sakhi.helpers.RecapClock
+import org.piramalswasthya.sakhi.helpers.RecapContentCodec
 import org.piramalswasthya.sakhi.model.MonthlyRecapCache
-import org.piramalswasthya.sakhi.model.MonthlyRecapLanguage
 import org.piramalswasthya.sakhi.model.MonthlyRecapMetricsContract
+import org.piramalswasthya.sakhi.model.RecapFreezeBlocker
 import org.piramalswasthya.sakhi.model.RecapStatus
 import org.piramalswasthya.sakhi.model.User
 import java.util.Calendar
+
+/** Install date long before the June 2026 recap window — a trusted device. */
+private const val TRUSTED_INSTALL_MILLIS = 1_000_000_000_000L // Sept 2001
+
+/** 1 July 2026 UTC — after the June window, so the install missed part of the month. */
+private const val JULY_2026_MILLIS = 1_782_000_000_000L
 
 /**
  * In-memory DAO honouring the unique (userId, recapYearMonth) constraint via
@@ -144,6 +153,12 @@ class MonthlyRecapRepoTest {
             every { userName } returns "meena"
         }
         every { pref.getLoggedInUser() } returns user
+        // Default: a trusted device — full pull finished and the install long predates
+        // the June 2026 recap window. Individual tests override to exercise the gate.
+        every { pref.isFullPullComplete } returns true
+        every { pref.recapLocalDataSince(any()) } returns TRUSTED_INSTALL_MILLIS
+        // The recap follows the app's language; Hindi unless a test says otherwise.
+        every { pref.getCurrentLanguage() } returns Languages.HINDI
         cbacDataSource = mockk()
         householdDataSource = mockk()
         beneficiaryDataSource = mockk()
@@ -199,22 +214,11 @@ class MonthlyRecapRepoTest {
     }
 
     @Test
-    fun `language persists to the current snapshot`() = runTest {
-        assertTrue(repo.setRecapLanguage(MonthlyRecapLanguage.HINDI))
-        assertEquals("HI", dao.rows.single().language)
-        assertEquals(202606, dao.rows.single().recapYearMonth)
-    }
-
-    @Test
-    fun `language change preserves snapshot identity and variant seed`() = runTest {
-        val created = repo.getOrCreateCurrentRecap()!!
-        repo.setRecapLanguage(MonthlyRecapLanguage.HINDI)
-        repo.setRecapLanguage(MonthlyRecapLanguage.ASSAMESE)
-        val row = dao.rows.single()
-        assertEquals(created.id, row.id)
-        assertEquals(created.variantSeed, row.variantSeed)
-        assertEquals(created.recapYearMonth, row.recapYearMonth)
-        assertEquals("AS", row.language)
+    fun `snapshot no longer stores a recap-only language`() = runTest {
+        // The language screen is gone: the recap is narrated in the app's own
+        // language, so nothing writes this legacy column any more.
+        repo.getOrCreateCurrentRecap()
+        assertNull(dao.rows.single().language)
     }
 
     @Test
@@ -288,6 +292,103 @@ class MonthlyRecapRepoTest {
         assertEquals(12, activity.count)
     }
 
+    // ------------------------------------------------------------------
+    // Local-data readiness gate. The device counts rows in its own database,
+    // so a snapshot may only be frozen when that database can be trusted for
+    // the month. Every sync failure mode loses rows, so freezing an untrusted
+    // count would permanently under-credit the ASHA's work.
+    // ------------------------------------------------------------------
+
+    @Test
+    fun `does not freeze while the first full pull is still running`() = runTest {
+        every { pref.isFullPullComplete } returns false
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertNull(dao.rows.single().metricsJson) // nothing locked in
+        assertTrue(payload.categories.isEmpty())  // recap stays hidden this visit
+        assertEquals(
+            RecapFreezeBlocker.FULL_PULL_INCOMPLETE.name,
+            payload.diagnostics!!.freezeBlocker,
+        )
+    }
+
+    @Test
+    fun `does not freeze when the install is newer than the recap month`() = runTest {
+        // Re-install / new device: rows she created in June may never have arrived.
+        every { pref.recapLocalDataSince(any()) } returns JULY_2026_MILLIS
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertNull(dao.rows.single().metricsJson)
+        assertTrue(payload.categories.isEmpty())
+        assertEquals(
+            RecapFreezeBlocker.DEVICE_MISSED_PART_OF_MONTH.name,
+            payload.diagnostics!!.freezeBlocker,
+        )
+    }
+
+    @Test
+    fun `a blocked month freezes normally once the device becomes ready`() = runTest {
+        every { pref.isFullPullComplete } returns false
+        assertTrue(repo.ensureCurrentRecapMetrics()!!.categories.isEmpty())
+        assertNull(dao.rows.single().metricsJson)
+
+        // Pull completes; her next visit inside the 1-7 window succeeds.
+        every { pref.isFullPullComplete } returns true
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertEquals(
+            5,
+            payload.categories.first {
+                it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD
+            }.categoryTotal,
+        )
+        assertNotNull(dao.rows.single().metricsJson)
+        assertEquals(RecapFreezeBlocker.NONE.name, payload.diagnostics!!.freezeBlocker)
+    }
+
+    @Test
+    fun `an already frozen payload is returned even if the device stops being trusted`() = runTest {
+        repo.ensureCurrentRecapMetrics()
+        val frozen = dao.rows.single().metricsJson
+        assertNotNull(frozen)
+
+        // A later re-install must not retract a snapshot that passed readiness.
+        every { pref.isFullPullComplete } returns false
+        every { pref.recapLocalDataSince(any()) } returns JULY_2026_MILLIS
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertEquals(
+            5,
+            payload.categories.first {
+                it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD
+            }.categoryTotal,
+        )
+        assertEquals(frozen, dao.rows.single().metricsJson)
+    }
+
+    @Test
+    fun `diagnostics record why a zero month was not frozen`() = runTest {
+        coEvery { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) } returns 0
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        assertNull(dao.rows.single().metricsJson)
+        assertEquals(
+            RecapFreezeBlocker.NO_COUNTABLE_WORK.name,
+            payload.diagnostics!!.freezeBlocker,
+        )
+        // The zero path keeps its categories (unchanged behaviour); the
+        // celebration-only rule already renders nothing for them.
+        assertTrue(payload.categories.isNotEmpty())
+    }
+
+    @Test
+    fun `frozen payload carries the conditions it was generated under`() = runTest {
+        val payload = repo.ensureCurrentRecapMetrics()!!
+        val diagnostics = payload.diagnostics!!
+        assertEquals(RecapFreezeBlocker.NONE.name, diagnostics.freezeBlocker)
+        assertTrue(diagnostics.isFullPullComplete)
+        assertEquals(TRUSTED_INSTALL_MILLIS, diagnostics.localDataSince)
+        assertTrue(diagnostics.evaluatedAt > 0L)
+        // Survives the encode/decode round trip, so it is investigable later.
+        val stored = MonthlyRecapMetricsCodec.decodeOrNull(dao.rows.single().metricsJson)!!
+        assertEquals(RecapFreezeBlocker.NONE.name, stored.diagnostics!!.freezeBlocker)
+    }
+
     @Test
     fun `existing valid metrics are reused without recalculating`() = runTest {
         repo.ensureCurrentRecapMetrics()
@@ -318,14 +419,46 @@ class MonthlyRecapRepoTest {
         coVerify(exactly = 1) { cbacDataSource.countScreeningEvents(any(), any(), any(), any()) }
     }
 
+    // ------------------------------------------------------------------
+    // The recap follows the app's own language; there is no separate choice.
+    // ------------------------------------------------------------------
+
+    private fun bundledLibrary() = listOf(
+        java.io.File("src/main/res/raw/recap_content.json"),
+        java.io.File("app/src/main/res/raw/recap_content.json"),
+    ).firstOrNull { it.exists() }
+        ?.let { RecapContentCodec.decodeOrNull(it.readText(Charsets.UTF_8)) }
+        ?: error("bundled recap content not found")
+
     @Test
-    fun `language change does not alter a frozen metric`() = runTest {
-        repo.ensureCurrentRecapMetrics()
-        repo.setRecapLanguage(MonthlyRecapLanguage.HINDI)
-        repo.setRecapLanguage(MonthlyRecapLanguage.ASSAMESE)
-        val row = dao.rows.single()
-        assertEquals("AS", row.language)
-        assertEquals(5, MonthlyRecapMetricsCodec.decodeOrNull(row.metricsJson)!!.categories.first { it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD }.categoryTotal)
+    fun `story is narrated in the app language and switching it re-narrates`() = runTest {
+        val library = bundledLibrary()
+        every { pref.getCurrentLanguage() } returns Languages.HINDI
+        val hindi = repo.buildPersonalizedScenes(library)!!
+        assertTrue(hindi.isNotEmpty())
+
+        every { pref.getCurrentLanguage() } returns Languages.ASSAMESE
+        val assamese = repo.buildPersonalizedScenes(library)!!
+
+        assertEquals(hindi.size, assamese.size)          // same story shape
+        assertNotEquals(hindi.first().text, assamese.first().text) // different words
+        // ...and the frozen counts never moved.
+        assertEquals(
+            5,
+            MonthlyRecapMetricsCodec.decodeOrNull(dao.rows.single().metricsJson)!!
+                .categories.first {
+                    it.categoryId == MonthlyRecapMetricsContract.CATEGORY_NCD
+                }.categoryTotal,
+        )
+    }
+
+    @Test
+    fun `an app language with no recap content falls back instead of hiding the recap`() = runTest {
+        // English is the app DEFAULT but the content file has only Hindi and
+        // Assamese, so this path decides whether most ASHAs see anything at all.
+        every { pref.getCurrentLanguage() } returns Languages.ENGLISH
+        val scenes = repo.buildPersonalizedScenes(bundledLibrary())!!
+        assertTrue(scenes.isNotEmpty())
     }
 
     @Test
