@@ -1249,10 +1249,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(saved.regDate)
             firstName.value = saved.firstName
             lastName.value = saved.lastName
+            if (saved.isKid && lastName.value.isNullOrBlank()) lastName.value = hoF?.lastName
             // For Mitanin, name of an already-registered beneficiary must not be editable.
             if (isMitaninVariant) {
                 firstName.inputType = TEXT_VIEW
-                lastName.inputType = TEXT_VIEW
+                if (!lastName.value.isNullOrBlank()) lastName.inputType = TEXT_VIEW
             }
             agePopup.value = getDateFromLong(saved.dob)
             ageAtMarriage.max = getAgeFromDob(saved.dob).toLong()
@@ -2189,10 +2190,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
                 if (isAddSpouse) {
                     ageAtMarriage.max = getAgeFromDob(getLongFromDate(agePopup.value)).toLong()
-                    ageAtMarriage.value = calculateAgeAtMarriage(
+                    calculateAgeAtMarriage(
                         getLongFromDate(agePopup.value),
                         timeStampDateOfMarriageFromSpouse
-                    )?.toString() ?: Konstants.minAgeForMarriage.toString()
+                    )?.let { ageAtMarriage.value = it.toString() }
 
                     dateOfMarriage.value = getDateFromLong(
                         timeStampDateOfMarriageFromSpouse ?: 0

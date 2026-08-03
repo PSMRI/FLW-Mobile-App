@@ -1,266 +1,134 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
-import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.SakhiApplication
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.NotificationKeys
+import org.piramalswasthya.sakhi.model.notificationEntityFromFcm
+import org.piramalswasthya.sakhi.repositories.NotificationRepository
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
+import org.piramalswasthya.sakhi.utils.RoleConstants
+import timber.log.Timber
 
 
 class FBMessaging : FirebaseMessagingService() {
 
+    /**
+     * A [FirebaseMessagingService] is instantiated by the framework, so it can't use `@Inject`.
+     * Dependencies are resolved through Hilt's [EntryPointAccessors] instead.
+     */
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface FbmEntryPoint {
+        fun notificationRepository(): NotificationRepository
+        fun preferenceDao(): PreferenceDao
+    }
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("#####", "Refreshed token: $token")
+        Timber.d("Refreshed FCM token: $token")
+        // Upload the refreshed token for the logged-in user (no-op if not logged in).
+        FcmTokenUploader.uploadToken(applicationContext, token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        var mTitle = ""
-        var mBody = ""
-        var mUniqueNotificationCode = 0
-        var payloadCode = 0
-        var mType = ""
-        var notificationID = 0
-        var senderId = 0
-        var referenceId = 0
+        val data = remoteMessage.data
+        Timber.d("FCM message received: notification=${remoteMessage.notification}, data=$data")
 
-        try
-        {
+        // Prefer the notification block; fall back to data payload keys.
+        val title = remoteMessage.notification?.title ?: data["title"].orEmpty()
+        val body = remoteMessage.notification?.body ?: data["body"].orEmpty()
 
-            remoteMessage.data.let {
-                Log.d("#####", "Splash " + remoteMessage.data)
-                Log.d("#####", "Message data payload: " + remoteMessage.senderId)
-                Log.d("#####", "From: ${remoteMessage.from}")
-                Log.d("#####", "Title: ${remoteMessage.notification?.title}")
-                Log.d("#####", "Body: ${remoteMessage.notification?.body}")
-                Log.d("#####", "NotificationTypeId: ${it["NotificationTypeId"]}")
-
-                Log.d("payloadResponseData","GetData"+it.toString())
-
-                mType = "${it["NotificationTypeId"]}" // notificationTypeId
-
-
-
-//                mUniqueNotificationCode = "${it["NotificationTypeId"]}".toInt()   // notificationTypeId
-//                notificationID = "${it["NotificationId"]}".toInt() //  userId
-//                senderId = "${it["SenderId"]}".toInt() // senderId
-//                referenceId = "${it["AdditionalData"]}".toInt()
-
-//                var a = "${it}"
-//                Log.d("arty",""+a)
-
-                mBody = "${remoteMessage.notification!!.body}" //
-                mTitle = "${remoteMessage.notification!!.title}" // senderTitle
-
-//               var mSenderProfilePic = "${it["SenderProfilePic"]}"
-
-
-               /* if ("${it["AdditionalData"]}".toString().equals("") || "${it["AdditionalData"]}"==null)
-                {
-                    payloadCode = 0
-                }
-                else
-                {
-                    payloadCode = "${it["AdditionalData"]}".toInt()
-                }*/
-
-
-            }
-
-
-
-//            if(mUniqueNotificationCode==107){
-//
-//                Log.e("AAAAAMessage","HIt")
-//                messageUpdate!!.ApiUpdate()
-//            }
-            mShowNotification(mTitle, mBody, mUniqueNotificationCode, mType,payloadCode,referenceId,notificationID,senderId)
-
-        }
-        catch (e:Exception)
-        {
-            Log.d("msg", "onMessageReceivedDDDD: " + e.message.toString())
-            mShowNotification(mTitle, mBody, mUniqueNotificationCode, mType,payloadCode,referenceId,notificationID,senderId)
-
-
-        }
-
-
-
-//        var mTitle = remoteMessage.notification?.title
-//        var mBody = remoteMessage.notification?.body
-//        var type = ""
-//        var bookingId = ""
-//        var channelId = ""
-//        var coachId = ""
-//        var coachName = ""
-//        var uniqueCode = ""
-//        var statusName= ""
-//        var statusId = ""
-
-//        remoteMessage.data.let {
-//            Log.d("#####", "Message data payload: " + remoteMessage.data)
-//        }
-//
-//            val params = remoteMessage.data as Map<String, String>
-//            val json = JSONObject(params)
-//            var dataString = json.getString("Data")
-//
-//            val dataJson = JSONObject(dataString)
-
-//            type = json.getString("Type")
-//            Log.e("JSON OBJECT", json.toString())
-//            bookingId = dataJson.getString("bookingId")
-//            channelId = dataJson.getString("ChannelId")
-//            coachId = dataJson.getString("ConnectToUserId")
-//            coachName = dataJson.getString("ConnectToUserName")
-//            uniqueCode = dataJson.getString("UniqueCode")
-//            statusName = dataJson.getString("StatusName")
-//            statusId = dataJson.getString("StatusId")
-
-//            var iDdata = "${it["Data"]}"
-//            var dataiId = iDdata.split(",").toTypedArray()
-//            bookingId = dataiId[0]
-//        }
-
-//        remoteMessage.notification?.let {
-//            Log.d("#####", "Message Notification Body: ${it.body}")
-//            mBody = "${it.body}"
-//            mTitle = "${it.title}"
-//        }
-//        mShowNotification(mTitle!!, mBody!!)
+        val type = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty()
+        showNotification(title, body, type)
+        EntryPointAccessors.fromApplication(applicationContext, FbmEntryPoint::class.java)
+            .notificationRepository().onPushReceived()
     }
 
-    companion object{
-        var messageUpdate: MessageUpdate ?= null
+    /**
+     * Upserts the incoming push into [NotificationRepository] (Room), scoped to the locally
+     * logged-in user, so it surfaces on the toolbar bell badge and in the notification panel.
+     *
+     * No-op when no user is logged in, or when the payload lacks the required `notification_id`
+     * (in which case it still shows in the system tray but can't be de-duplicated against the
+     * poll/list sync, so it is intentionally not persisted). See [notificationEntityFromFcm].
+     */
+    private fun persistToInApp(data: Map<String, String>, title: String?, body: String?) {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            applicationContext, FbmEntryPoint::class.java
+        )
+        val userId = entryPoint.preferenceDao().getLoggedInUser()?.userId?.toLong() ?: run {
+            Timber.d("FCM message dropped from in-app store: no logged-in user")
+            return
+        }
+        val entity = notificationEntityFromFcm(
+            data = data,
+            title = title,
+            body = body,
+            userId = userId,
+            receivedTs = System.currentTimeMillis()
+        ) ?: run {
+            Timber.w("FCM message not persisted: missing/invalid ${NotificationKeys.NOTIFICATION_ID}")
+            return
+        }
+        /*CoroutineScope(Dispatchers.IO).launch {
+            entryPoint.notificationRepository().upsert(entity)
+        }*/
     }
 
-//    private fun mShowNotification(
-//        mTitle: String,
-//        mBody: String
-//    ) {
-//        var intent = Intent()
-//
-//            intent = Intent(this, HomeActivity::class.java)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//
-//        val pendingIntent = PendingIntent.getActivity(
-//            this, 0, intent,
-//            PendingIntent.FLAG_ONE_SHOT
-//        )
-//        val channelId = "circular_app_021"
-//        val channelName = "CIRCULAR_APP"
-//        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-//        val notificationBuilder = NotificationCompat.Builder(this, channelId).apply {
-//            setContentTitle(mTitle)
-//            setContentText(mBody)
-//            setAutoCancel(true)
-//            setContentIntent(pendingIntent)
-//            setSmallIcon(R.mipmap.ic_circular_launcher)
-//            val bigTextStyle = NotificationCompat.BigTextStyle()
-//            bigTextStyle.setBigContentTitle(mTitle)
-//            bigTextStyle.bigText(mBody)
-//            setStyle(bigTextStyle)
-//        }
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        // Since android Oreo notification channel is needed.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel = NotificationChannel(
-//                channelId,
-//                channelName,
-//                NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//            notificationManager.createNotificationChannel(channel)
-//
-//        }
-//        notificationManager.notify(0, notificationBuilder.build())
-//    }
+    companion object {
+        var messageUpdate: MessageUpdate? = null
+    }
 
-    private fun mShowNotification(
-        mTitle: String,
-        mBody: String,
-        mUniqueNotificationCode: Int,
-        mType: String,
-        payloadCode: Int,
-        referenceId: Int,
-        notificationID: Int,
-        senderId:Int
-    ) {
+    private fun showNotification(title: String, body: String, type: String) {
+        val role = EntryPointAccessors.fromApplication(
+            applicationContext, FbmEntryPoint::class.java
+        ).preferenceDao().getLoggedInUser()?.role
+        val targetActivity = if (
+            role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) ||
+            role.equals(RoleConstants.ROLE_ANM, true) ||
+            role.equals(RoleConstants.ROLE_CHO, true)
+        ) SupervisorActivity::class.java else HomeActivity::class.java
 
-        val intent = Intent(applicationContext, HomeActivity::class.java)
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
-        intent.putExtra("uniqueNotificationCode", mUniqueNotificationCode)
-        intent.putExtra("notificationId",notificationID)
-        intent.putExtra("senderId",senderId)
-        intent.putExtra("feedId",referenceId)
-        intent.putExtra("mTitle",mTitle)
-        intent.putExtra("FBM",true)
-
-
-//        val pendingIntent = PendingIntent.getActivity(
-//            this, 0, intent,
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-
+        val intent = Intent(applicationContext, targetActivity).apply {
+            putExtra("FBM", true)
+            putExtra("NotificationTypeId", type)
+            putExtra("mTitle", title)
+        }
 
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            intent,
             PendingIntent.FLAG_IMMUTABLE
         )
 
-
-        val channelId = "my_channel_id_180"
-        val channelName = "App"
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        val notificationBuilder = NotificationCompat.Builder(this, channelId).apply {
-            setContentTitle(mTitle)
-            setContentText(mBody)
-            setAutoCancel(true)
-            setContentIntent(pendingIntent)
-            setSmallIcon(R.drawable.ic_logo_icon)
-
-
-//            val bigTextStyle = NotificationCompat.BigTextStyle()
-//            bigTextStyle.setBigContentTitle(mTitle)
-//            bigTextStyle.bigText(mBody)
-//            setStyle(bigTextStyle)
-        }
+        val notification = NotificationCompat.Builder(this, SakhiApplication.NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setSmallIcon(R.drawable.ic_logo_icon)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-/*
-
-        if (mTitle == Constants.NOTIFICATION_TYPE_CREDIT|| mTitle == Constants.NOTIFICATION_TYPE_DEBIT) {
-            sendBroadcast(Intent().apply { action = "${Constants.NOTIFICATION_ACTION}${mTitle}" })
-        }
-*/
-
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        notificationManager.notify(0, notificationBuilder.build())
-
+        // Unique id so notifications stack instead of overwriting each other.
+        val uniqueId = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
+        notificationManager.notify(uniqueId, notification)
     }
-
 }
-
-

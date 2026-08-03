@@ -79,6 +79,8 @@
         <item name="colorSurface">@color/seed</item>
     </style>
 
+
+
     <style name="Theme.Custom.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>

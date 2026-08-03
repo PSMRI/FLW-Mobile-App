@@ -21,12 +21,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace 'org.piramalswasthya.sakhi'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "org.piramalswasthya.sakhi"
         minSdk 25
-        targetSdk 35
+        targetSdk 36
         versionCode buildVersionCode()
         versionName buildVersionName()
         resourceConfigurations += ['en', 'hi', 'as','bn']
@@ -232,10 +232,8 @@ dependencies {
 
    // implementation "org.jetbrains.kotlin:kotlin-metadata-jvm:2.2.0"
 
-    //firebase messaging
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
-//    implementation platform('com.google.firebase:firebase-bom:28.4.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    //firebase messaging (version managed by firebase-bom above)
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -286,8 +284,6 @@ dependencies {
 
 
 
-
-    implementation("com.google.firebase:firebase-messaging:24.0.0")
 
     // Unit Testing
     testImplementation 'junit:junit:4.13.2'

@@ -1,6 +1,10 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +15,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentIncentiveVerificationBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.AshaWorkerAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveVerificationViewModel
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.VerificationUiState
 import java.util.Calendar
@@ -58,6 +64,21 @@ class IncentiveVerificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+            binding.tvMonthlyDetailTitle.text = getString(R.string.mitanin_monthly_detail)
+            binding.searchView.queryHint = getString(R.string.search_mitanin)
+            binding.monthlyDetailCard.visibility = View.GONE
+            binding.monthCard.visibility = View.VISIBLE
+
+        } else {
+            binding.tvMonthlyDetailTitle.text = getString(R.string.asha_monthly_detail)
+            binding.searchView.queryHint = getString(R.string.search_asha)
+            binding.monthlyDetailCard.visibility = View.VISIBLE
+            binding.monthCard.visibility = View.GONE
+
+
+        }
+
         setupRecyclerView()
         setupSearchView()
         observeViewModel()
@@ -70,6 +91,16 @@ class IncentiveVerificationFragment : Fragment() {
 
         val monthNames = resources.getStringArray(R.array.months)
         binding.tvMonth.text = "${monthNames[selectedMonth - 1]}, $selectedYear"
+
+        val spannable = SpannableString("${resources.getString(R.string.month)}: ${monthNames[selectedMonth - 1]}, $selectedYear")
+        spannable.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            "Month:".length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.tvMonthnew.text = spannable
     }
 
     override fun onResume() {
@@ -90,8 +121,12 @@ class IncentiveVerificationFragment : Fragment() {
                 putInt("selected_month", selectedMonth)
                 putInt("selected_year", selectedYear)
                 putString("status", worker.status.name)
+                putInt("amount", worker.amount)
             }
-            findNavController().navigate(R.id.workerDetailFragment, bundle)
+            if (worker.status != VerificationStatus.UNCLAIMED) {
+                findNavController().navigate(R.id.workerDetailFragment, bundle)
+
+            }
         }
         binding.rvAshaWorkers.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(requireContext())

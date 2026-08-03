@@ -24,6 +24,7 @@ class IncentiveDashboardViewModel @Inject constructor(
 
     private val _dashboardData = MutableLiveData<DashboardUiState>()
     val dashboardData: LiveData<DashboardUiState> = _dashboardData
+    fun getSuperVisorSubname(): String = preferenceDao.getLoggedInUser()?.role ?: ""
 
     fun fetchDashboard(month: Int, year: Int, isRetry: Boolean = false) {
         viewModelScope.launch {
