@@ -249,4 +249,41 @@ class KonstantsTest {
     @Test fun `min week to show delivered is before anc4 max`() {
         assertTrue(Konstants.minWeekToShowDelivered < Konstants.maxAnc4Week)
     }
+
+    // =====================================================
+    // Konstants Derived Tests
+    // =====================================================
+
+    @Test fun `child age range is after infant`() {
+        assertTrue(Konstants.minAgeForChild > Konstants.maxAgeForInfant)
+    }
+
+    @Test fun `eligible couple range includes ncd min age`() {
+        assertTrue(Konstants.minAgeForNcd >= Konstants.minAgeForEligibleCouple)
+        assertTrue(Konstants.minAgeForNcd <= Konstants.maxAgeForEligibleCouple)
+    }
+
+    @Test fun `all age ranges have positive width`() {
+        assertTrue(Konstants.maxAgeForEligibleCouple > Konstants.minAgeForEligibleCouple)
+        assertTrue(Konstants.maxAgeForAdolescent > Konstants.minAgeForAdolescent)
+        assertTrue(Konstants.maxAgeForChild > Konstants.minAgeForChild)
+        assertTrue(Konstants.maxAgeForGenBen > Konstants.minAgeForGenBen)
+    }
+
+    @Test fun `anc weeks cover pregnancy period`() {
+        val totalCoverage = Konstants.maxAncWeek - Konstants.minAnc1Week
+        assertTrue(totalCoverage > 30) // ~37 weeks covered
+    }
+
+    @Test fun `baby low weight is less than 3000g`() {
+        assertTrue(Konstants.babyLowWeight < 3000.0)
+    }
+
+    @Test fun `ben id capacity is at least 50`() {
+        assertTrue(Konstants.benIdCapacity >= 50)
+    }
+
+    @Test fun `pnc ec gap is between 30 and 60 days`() {
+        assertTrue(Konstants.pncEcGap in 30..60)
+    }
 }

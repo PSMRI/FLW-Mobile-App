@@ -55,4 +55,20 @@ class NcdNonEligibleListViewModelTest : BaseViewModelTest() {
         viewModel.filterText("")
         advanceUntilIdle()
     }
+
+    @Test
+    fun `filterText with whitespace does not throw`() = runTest {
+        viewModel.filterText("  test  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `repeated filterText emissions do not throw`() = runTest {
+        viewModel.filterText("x")
+        viewModel.filterText("")
+        viewModel.filterText("y")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
 }

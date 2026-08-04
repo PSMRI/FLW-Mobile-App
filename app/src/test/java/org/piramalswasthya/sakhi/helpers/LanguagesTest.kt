@@ -60,4 +60,28 @@ class LanguagesTest {
     @Test fun `ASSAMESE symbol is not empty`() { assertTrue(Languages.ASSAMESE.symbol.isNotEmpty()) }
     @Test fun `all names are uppercase`() { Languages.values().forEach { assertEquals(it.name, it.name.uppercase()) } }
     @Test fun `all names are not blank`() { Languages.values().forEach { assertTrue(it.name.isNotBlank()) } }
+
+    // =====================================================
+    // Languages Interaction Tests
+    // =====================================================
+
+    @Test fun `Languages ENGLISH is first ordinal`() {
+        assertEquals(0, Languages.ENGLISH.ordinal)
+    }
+
+    @Test fun `Languages can iterate all values`() {
+        var count = 0
+        Languages.values().forEach { count++ }
+        assertEquals(4, count)
+    }
+
+    @Test fun `Languages symbols are all distinct`() {
+        val symbols = Languages.values().map { it.symbol }
+        assertEquals(symbols.size, symbols.toSet().size)
+    }
+
+    @Test fun `Languages names are all distinct`() {
+        val names = Languages.values().map { it.name }
+        assertEquals(names.size, names.toSet().size)
+    }
 }

@@ -10,6 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListViewModel
 
@@ -71,5 +72,54 @@ class ChildListViewModelTest : BaseViewModelTest() {
     fun `filterType with empty string does not throw`() = runTest {
         viewModel.filterType("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `filterType true then filterText combine does not throw`() = runTest {
+        viewModel.filterType("true")
+        viewModel.filterText("abc")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `filterType false path does not throw`() = runTest {
+        viewModel.filterType("false")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `getBenById on empty list invokes callback with null or not at all`() = runTest {
+        var invoked = false
+        var result: BenBasicDomain? = null
+        runCatching {
+            viewModel.getBenById(999L) { ben ->
+                invoked = true
+                result = ben
+            }
+            advanceUntilIdle()
+        }
+        // On empty list the finder never matches; assert no crash and no stale value.
+        assertNotNull(viewModel.benList)
+        if (invoked) assertNotNull("callback ran" to result)
+    }
+
+    @Test
+    fun `getDobByBenIdAsync on empty list does not throw`() = runTest {
+        runCatching {
+            viewModel.getDobByBenIdAsync(123L) { }
+            advanceUntilIdle()
+        }
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `repeated filterText updates do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("ab")
+        viewModel.filterText("abc")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
     }
 }

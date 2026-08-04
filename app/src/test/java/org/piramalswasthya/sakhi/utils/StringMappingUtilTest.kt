@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.utils
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -101,5 +102,63 @@ class StringMappingUtilTest {
     @Test
     fun `toEnglishDigits handles boolean passthrough`() {
         assertEquals(true, StringMappingUtil.toEnglishDigits(true))
+    }
+
+    // --- convertDate ---
+
+    @Test
+    fun `convertDate converts english dd-MM-yyyy to yyyy-MM-dd`() {
+        assertEquals("2026-03-25", StringMappingUtil.convertDate("25-03-2026"))
+    }
+
+    @Test
+    fun `convertDate converts hindi-digit date`() {
+        assertEquals("2026-03-25", StringMappingUtil.convertDate("२५-०३-२०२६"))
+    }
+
+    @Test
+    fun `convertDate returns empty for null`() {
+        assertEquals("", StringMappingUtil.convertDate(null))
+    }
+
+    @Test
+    fun `convertDate returns empty for empty string`() {
+        assertEquals("", StringMappingUtil.convertDate(""))
+    }
+
+    @Test
+    fun `convertDate returns empty for malformed date`() {
+        assertEquals("", StringMappingUtil.convertDate("not-a-date"))
+    }
+
+    @Test
+    fun `convertDate returns empty for wrong pattern`() {
+        assertEquals("", StringMappingUtil.convertDate("2026-03-25"))
+    }
+
+    // --- toEnglishDigits array branch ---
+
+    @Test
+    fun `toEnglishDigits converts array elements`() {
+        val input: Array<Any?> = arrayOf("१", "२", "hello")
+        val result = StringMappingUtil.toEnglishDigits(input) as Array<*>
+        assertEquals("1", result[0])
+        assertEquals("2", result[1])
+        assertEquals("hello", result[2])
+    }
+
+    @Test
+    fun `toEnglishDigits converts number inside list`() {
+        val result = StringMappingUtil.toEnglishDigits(listOf(25, "३")) as List<*>
+        assertEquals("25", result[0])
+        assertEquals("3", result[1])
+    }
+
+    // =====================================================
+    // StringMappingUtil Tests (extended)
+    // =====================================================
+
+    @Test fun `StringMappingUtil exists`() {
+        assertNotNull(StringMappingUtil)
     }
 }

@@ -2,12 +2,14 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -67,4 +69,49 @@ class PmjayRepoTest : BaseRepositoryTest() {
             assertTrue(e.message!!.contains("No user logged in"))
         }
     }
+
+    @Test
+    fun `savePmjayData delegates to dao upsert on success`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.upsert(cache) } returns Unit
+
+        assertTrue(repo.savePmjayData(cache))
+        coVerify(exactly = 1) { pmjayDao.upsert(cache) }
+    }
+
+    @Test
+    fun `savePmjayData returns false when upsert throws`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.upsert(cache) } throws RuntimeException("boom")
+
+        assertFalse(repo.savePmjayData(cache))
+    }
+
+    @Test
+    fun `processNewPmjay throws when no user logged in`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns null
+
+        try {
+            repo.processNewPmjay()
+            assertFalse("Should have thrown", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.contains("No user logged in"))
+        }
+    }
+
+    @Test
+    fun `processNewPmjay returns true when no unprocessed records`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns emptyList()
+
+        assertEquals(true, repo.processNewPmjay())
+    }
+
 }
