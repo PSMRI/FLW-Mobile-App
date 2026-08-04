@@ -15,7 +15,7 @@ class SimpleModelsTest {
     // =====================================================
 
     @Test fun `InputType has all expected values`() {
-        assertEquals(14, InputType.values().size)
+        assertEquals(15, InputType.values().size)
     }
 
     @Test fun `InputType EDIT_TEXT exists`() { assertNotNull(InputType.EDIT_TEXT) }
@@ -32,6 +32,14 @@ class SimpleModelsTest {
     @Test fun `InputType MULTIFILE_UPLOAD exists`() { assertNotNull(InputType.MULTIFILE_UPLOAD) }
     @Test fun `InputType BUTTON exists`() { assertNotNull(InputType.BUTTON) }
     @Test fun `InputType NUMBER_PICKER exists`() { assertNotNull(InputType.NUMBER_PICKER) }
+    @Test fun `InputType TEXT_VIEW_PAIR exists`() { assertNotNull(InputType.TEXT_VIEW_PAIR) }
+
+    @Test fun `InputType existing ordinals are unchanged by TEXT_VIEW_PAIR`() {
+        assertEquals(0, InputType.EDIT_TEXT.ordinal)
+        assertEquals(4, InputType.TEXT_VIEW.ordinal)
+        assertEquals(13, InputType.NUMBER_PICKER.ordinal)
+        assertEquals(14, InputType.TEXT_VIEW_PAIR.ordinal)
+    }
 
     @Test fun `InputType valueOf works`() {
         assertEquals(InputType.EDIT_TEXT, InputType.valueOf("EDIT_TEXT"))

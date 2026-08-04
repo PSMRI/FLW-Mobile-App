@@ -25,6 +25,7 @@
         android:allowBackup="false"
         android:extractNativeLibs="true"
         android:configChanges="locale|orientation"
+        android:enableOnBackInvokedCallback="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
@@ -38,6 +39,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.Sakhi"
         tools:targetApi="31">
+
+        <property
+            android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
+            android:value="true" />
+
         <activity
             android:name=".ui.service_location_activity.ServiceLocationActivity"
             android:exported="false" />

@@ -40,6 +40,9 @@ class WorkerDetailViewModel @Inject constructor(
         fetchClaimedIncentives(userId)
     }
 
+    fun getSuperVisorSubname(): String = preferenceDao.getLoggedInUser()?.role ?: ""
+
+
     private fun fetchClaimedIncentives(userId: Int) {
         viewModelScope.launch {
             _uiState.value = WorkerDetailUiState.Loading
@@ -189,7 +192,10 @@ data class ClaimedIncentiveUI(
     @SerializedName("amount") val amount: Int,
     @SerializedName("claimCount") val claimCount: Int,
     @SerializedName("isDefaultActivity") val isDefaultActivity: Boolean,
-    @SerializedName("totalAmount") val totalAmount: Int
+    @SerializedName("totalAmount") val totalAmount: Int,
+    @SerializedName("isDefault") val isDefault: Boolean,
+    @SerializedName("approvalStatus") val approvalStatus: Int,
+
 )
 
 sealed class WorkerDetailUiState {

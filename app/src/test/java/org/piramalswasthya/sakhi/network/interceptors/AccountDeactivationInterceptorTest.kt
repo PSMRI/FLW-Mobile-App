@@ -21,12 +21,8 @@ import timber.log.Timber
 /**
  * Unit tests for AccountDeactivationInterceptor.
  *
- * NOTE: Tests that verify deactivation detection (statusCode 5002 + keyword match)
- * cannot run in JVM unit tests because the interceptor uses org.json.JSONObject
- * which is an Android SDK class and is not available in local JVM tests.
- * Those tests require Android instrumented tests.
- *
- * The tests below cover response passthrough, edge cases, and error resilience.
+ * The real org.json implementation is on the unit-test classpath, so the
+ * statusCode == 5002 deactivation branch is exercised here directly.
  */
 class AccountDeactivationInterceptorTest {
 
@@ -135,13 +131,108 @@ class AccountDeactivationInterceptorTest {
 
     @Test
     fun `does not trigger deactivation for normal json`() {
-        // JSONObject is android stub in JVM tests, so the catch block handles it
         server.enqueue(MockResponse().setBody("""{"statusCode":200}"""))
 
         val response = buildClient().newCall(Request.Builder().url(server.url("/")).build()).execute()
 
         assertEquals(200, response.code)
         verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    // =====================================================
+    // Deactivation Detection (statusCode 5002)
+    // =====================================================
+
+    private fun execute() =
+        buildClient().newCall(Request.Builder().url(server.url("/")).build()).execute()
+            .also { it.body?.close() }
+
+    @Test
+    fun `triggers deactivation when status 5002 and message says deactivated`() {
+        val message = "Your account has been deactivated by the administrator"
+        server.enqueue(
+            MockResponse().setBody("""{"statusCode":5002,"errorMessage":"$message"}""")
+        )
+
+        val response = execute()
+
+        assertEquals(200, response.code)
+        verify(exactly = 1) { deactivationManager.emitIfCooldownPassed(message) }
+    }
+
+    @Test
+    fun `triggers deactivation when status 5002 and message says locked`() {
+        val message = "User account is locked"
+        server.enqueue(
+            MockResponse().setBody("""{"statusCode":5002,"errorMessage":"$message"}""")
+        )
+
+        execute()
+
+        verify(exactly = 1) { deactivationManager.emitIfCooldownPassed(message) }
+    }
+
+    @Test
+    fun `deactivation keyword match is case insensitive`() {
+        val message = "ACCOUNT DEACTIVATED"
+        server.enqueue(
+            MockResponse().setBody("""{"statusCode":5002,"errorMessage":"$message"}""")
+        )
+
+        execute()
+
+        verify(exactly = 1) { deactivationManager.emitIfCooldownPassed(message) }
+    }
+
+    @Test
+    fun `does not trigger deactivation for 5002 with unrelated message`() {
+        server.enqueue(
+            MockResponse().setBody("""{"statusCode":5002,"errorMessage":"Invalid password"}""")
+        )
+
+        execute()
+
+        verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    @Test
+    fun `does not trigger deactivation for 5002 without error message`() {
+        server.enqueue(MockResponse().setBody("""{"statusCode":5002}"""))
+
+        execute()
+
+        verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    @Test
+    fun `does not trigger deactivation for other status codes with deactivated text`() {
+        server.enqueue(
+            MockResponse().setBody("""{"statusCode":5001,"errorMessage":"account deactivated"}""")
+        )
+
+        execute()
+
+        verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    @Test
+    fun `does not trigger deactivation when statusCode field is absent`() {
+        server.enqueue(MockResponse().setBody("""{"errorMessage":"account deactivated"}"""))
+
+        execute()
+
+        verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    @Test
+    fun `deactivation response body is still readable downstream`() {
+        val body = """{"statusCode":5002,"errorMessage":"account deactivated"}"""
+        server.enqueue(MockResponse().setBody(body))
+
+        val response = buildClient().newCall(Request.Builder().url(server.url("/")).build()).execute()
+
+        assertEquals(body, response.body?.string())
+        verify(exactly = 1) { deactivationManager.emitIfCooldownPassed(any()) }
     }
 
     @Test

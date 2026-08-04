@@ -3,6 +3,9 @@
     <string name="add_new_visit">নতুন ভিজিট যোগ কৰক</string>
     <string name="visit">ভিজিট %1$d</string>
     <string name="visit_2">ভিজিট চাওক বা যোগ কৰক</string>
+    <string name="ifa_visit">IFA ভিজিট %1$d</string>
+    <string name="ifa_visits">IFA ভিজিট</string>
+    <string name="ifa_visit_column">IFA ভিজিট</string>
     <string name="check_sam_">SAM পৰীক্ষা কৰক</string>
     <string name="severe_acute_malnutrition">গুৰুতৰ তীব্ৰ অপুষ্টি</string>
     <string name="sam_form">SAM ফৰ্ম</string>

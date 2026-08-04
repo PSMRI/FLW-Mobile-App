@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.helpers
 import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -190,5 +191,29 @@ class TokenExpiryManagerTest {
 
             expectNoEvents()
         }
+    }
+
+    // =====================================================
+    // TokenExpiryManager Tests (extended)
+    // =====================================================
+
+    @Test fun `TokenExpiryManager can be created`() {
+        val manager = TokenExpiryManager()
+        assertNotNull(manager)
+    }
+
+    @Test fun `TokenExpiryManager onRefreshSuccess does not throw`() {
+        val manager = TokenExpiryManager()
+        manager.onRefreshSuccess()
+    }
+
+    @Test fun `TokenExpiryManager onRefreshFailed does not throw on first call`() {
+        val manager = TokenExpiryManager()
+        manager.onRefreshFailed()
+    }
+
+    @Test fun `TokenExpiryManager forceLogoutEvent is not null`() {
+        val manager = TokenExpiryManager()
+        assertNotNull(manager.forceLogoutEvent)
     }
 }

@@ -81,4 +81,40 @@ class NcdListViewModelTest : BaseViewModelTest() {
         viewModel.resetBenRegId()
         assertNull(viewModel.benRegId.value)
     }
+
+    @Test
+    fun `abha benId benRegId are null initially`() {
+        assertNull(viewModel.abha.value)
+        assertNull(viewModel.benId.value)
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `resetBenRegId keeps benRegId null`() {
+        viewModel.resetBenRegId()
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `resetBenRegId called twice does not throw`() {
+        viewModel.resetBenRegId()
+        viewModel.resetBenRegId()
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `filterText with whitespace and combine does not throw`() = runTest {
+        viewModel.filterText("  search  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `multiple filterText emissions do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("")
+        viewModel.filterText("b")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
 }

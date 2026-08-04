@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.CUFYFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.CUFYFormRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
@@ -25,6 +26,9 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
+/** Schema field that carries the auto-incremented IFA bottle tally. */
+private const val IFA_BOTTLE_COUNT_FIELD = "ifa_bottle_count"
 
 @HiltViewModel
 class CUFYFormViewModel @Inject constructor(
@@ -59,6 +63,14 @@ class CUFYFormViewModel @Inject constructor(
 
     private val _bottleList = MutableLiveData<List<BottleItem>>()
     val bottleList: LiveData<List<BottleItem>> = _bottleList
+
+    private val isMitaninVariant: Boolean =
+        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    /** True only while a Mitanin has the child IFA form open. */
+    private val hideIfaBottleCount: Boolean
+        get() = isMitaninVariant &&
+                _schema.value?.formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID
 
     fun loadBottleData(benId: Long, formId: String) {
         viewModelScope.launch {
@@ -373,9 +385,18 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
     }
 }
 
+    /**
+     * FLW-1129 — the Mitanin build no longer shows the raw IFA bottle count. It is filtered out of
+     * the render list only: the field keeps `visible = true` on the schema so it is still picked up
+     * by the payload builder in [saveFormResponses], which means the count the server receives is
+     * unchanged. Flipping `visible` instead would silently drop it from the push.
+     */
+    private fun isFieldHiddenFromUi(fieldId: String): Boolean =
+        hideIfaBottleCount && fieldId == IFA_BOTTLE_COUNT_FIELD
+
     fun getVisibleFields(): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
-            section.fields.filter { it.visible }.map { field ->
+            section.fields.filter { it.visible && !isFieldHiddenFromUi(it.fieldId) }.map { field ->
                 FormField(
                     fieldId = field.fieldId,
                     label = field.label,
@@ -448,56 +469,6 @@ suspend fun saveFormResponses(benId: Long, hhId: Long, recordId: Int = 0) {
         }
     }
 
-   /* suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
-        val savedList = repository.getSavedDataByFormId(
-            FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID,
-            benId
-        )
-
-        return savedList.sortedByDescending {
-            try {
-                val formDataJson = it.formDataJson
-                val jsonObject = JSONObject(formDataJson)
-                val fields = jsonObject.optJSONObject("fields")
-                val provisionDateStr = fields?.optString("ifa_provision_date", "")
-
-                if (provisionDateStr?.isNotEmpty()  == true) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
-                } else {
-                    val visitDateStr = it.visitDate
-                    if (visitDateStr.isNotEmpty()) {
-                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
-                    } else {
-                        null
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.tag("CUFYFormVM").e(e, "Error parsing date from JSON")
-                null
-            }
-        }.firstOrNull()?.let { latest ->
-            try {
-                val formDataJson = latest.formDataJson
-                val jsonObject = JSONObject(formDataJson)
-                val fields = jsonObject.optJSONObject("fields")
-                val provisionDateStr = fields?.optString("ifa_provision_date", "")
-
-                if (provisionDateStr?.isNotEmpty() == true) {
-                    SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(provisionDateStr)
-                } else {
-                    val visitDateStr = latest.visitDate
-                    if (visitDateStr.isNotEmpty()) {
-                        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(visitDateStr)
-                    } else {
-                        null
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.tag("CUFYFormVM").e(e, "Error parsing date from JSON for latest visit")
-                null
-            }
-        }
-    }*/
 
     suspend fun getPreviousIFAVisitDate(benId: Long): Date? {
         val savedList = repository.getSavedDataByFormId(
