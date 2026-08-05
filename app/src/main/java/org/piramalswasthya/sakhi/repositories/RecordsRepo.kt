@@ -229,11 +229,13 @@ class RecordsRepo @Inject constructor(
             .map { list -> list.map { it.asBasicDomainModel() } }
     val hrpListCount = menopauseList.map { it.size }
 
-    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage)
+    val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
+
+    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
         .map { list -> list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
 
-    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage)
+    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
         .map { list ->
             list.filter {
                 if (!it.savedPncRecords.isNullOrEmpty()) {
