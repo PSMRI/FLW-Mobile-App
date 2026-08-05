@@ -382,7 +382,7 @@ class ImmunizationFormFragment : Fragment(), OnCheckedChangeListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
+    override fun onCheckedChanged(p0: CompoundButton, isChecked: Boolean) {
         if (isChecked) {
             viewModel.list.forEach { item ->
                 if (item.state.name == "PENDING" || item.state.name == "OVERDUE") {

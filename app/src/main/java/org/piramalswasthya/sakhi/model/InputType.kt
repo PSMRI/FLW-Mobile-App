@@ -15,5 +15,6 @@ enum class InputType {
     FILE_UPLOAD,
     MULTIFILE_UPLOAD,
     BUTTON,
-    NUMBER_PICKER
+    NUMBER_PICKER,
+    TEXT_VIEW_PAIR
 }

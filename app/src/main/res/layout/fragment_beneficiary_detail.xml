@@ -30,7 +30,6 @@
             android:paddingEnd="8dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.Guideline

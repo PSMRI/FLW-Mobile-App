@@ -7,10 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.list.PncMotherListViewModel
 
@@ -26,6 +28,7 @@ class PncMotherListViewModelTest : BaseViewModelTest() {
     override fun setUp() {
         super.setUp()
         every { recordsRepo.pncMotherList } returns flowOf(emptyList())
+        every { recordsRepo.pncMotherNonFollowUpList } returns flowOf(emptyList())
         viewModel = PncMotherListViewModel(savedStateHandle, recordsRepo)
     }
 
@@ -72,5 +75,35 @@ class PncMotherListViewModelTest : BaseViewModelTest() {
     fun `updateBottomSheetData does not throw`() = runTest {
         viewModel.updateBottomSheetData(42L)
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.UNSYNCED_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.UNSYNCED_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `filter sort and bottom sheet combine does not throw`() = runTest {
+        viewModel.filterText("mother")
+        viewModel.setSortFilter(EcFilterType.OLDEST_FIRST)
+        viewModel.updateBottomSheetData(0L)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.OLDEST_FIRST, viewModel.getCurrentSort())
+        assertNotNull(viewModel.benList)
+        assertNotNull(viewModel.bottomSheetList)
+    }
+
+    @Test
+    fun `updateBottomSheetData with non-zero id does not throw`() = runTest {
+        viewModel.updateBottomSheetData(88L)
+        advanceUntilIdle()
+        assertNotNull(viewModel.bottomSheetList)
     }
 }

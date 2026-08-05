@@ -7,10 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,5 +60,33 @@ class EligibleCoupleListViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.UNSYNCED_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.UNSYNCED_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `filterText trims and lowercases without throwing`() = runTest {
+        viewModel.filterText("  MixedCase  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `sort then filter combine does not throw`() = runTest {
+        viewModel.setSortFilter(EcFilterType.OLDEST_FIRST)
+        viewModel.filterText("x")
+        advanceUntilIdle()
+        assertEquals(EcFilterType.OLDEST_FIRST, viewModel.getCurrentSort())
+        assertNotNull(viewModel.benList)
     }
 }

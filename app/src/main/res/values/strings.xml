@@ -414,6 +414,7 @@
     <string name="beneficiary_name">Beneficiary Name</string>
     <string name="husband_s_name">Husband\'s Name</string>
     <string name="weeks_of_pregnancy">Weeks Of Pregnancy</string>
+    <string name="days_of_pregnancy">Days Of Pregnancy</string>
     <string name="pregnancy_weeks">Weeks Of Pregnancy</string>
     <string name="anc_visits">ANC VISITS</string>
     <string name="pnc_visits">PNC VISITS</string>
@@ -1416,20 +1417,24 @@
     <string name="amount_rs">Amount (Rs.)</string>
     <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
     <string name="verify">✓ Verify</string>
+    <string name="approvedcheck">✓ Approve</string>
     <string name="reject">✕ Reject</string>
     <string name="reason_for_rejection">Reason for Rejection</string>
     <string name="confirm_rejection">Confirm Rejection</string>
     <string name="search_asha">Search ASHA....</string>
+    <string name="search_mitanin">Search Mitanin....</string>
     <string name="asha_monthly_detail">ASHA Monthly Detail</string>
+    <string name="mitanin_monthly_detail">Mitanin Monthly Detail</string>
     <string name="jan_2026">Jan, 2026</string>
     <string name="verified_0">Verified: 0</string>
     <string name="pending_0">Pending: 0</string>
     <string name="rejected_0">Rejected: 0</string>
     <string name="overdue_0">Overdue: 0</string>
     <string name="total_ashas">Total ASHAs</string>
+    <string name="total_mitanins">Total Mitanins</string>
     <string name="select_month">Select Month</string>
     <string name="pending">Pending</string>
-    <string name="overdue">OverDue</string>
+    <string name="overdue">Overdue</string>
     <string name="rejected">Rejected</string>
     <string name="claim">Claim</string>
     <string name="cataract_surgery">Cataract Surgery</string>
@@ -1530,11 +1535,45 @@
     <string name="str_eye_visit">Eye - Visit</string>
     <string name="forwarded_to_ncho_anm">Forwarded to\nCHO/ANM</string>
     <string name="tap_to_view_ashas_grouped">Tap to view ASHAs grouped.</string>
+    <string name="tap_to_view_mitanin_grouped">Tap to view Mitanin grouped.</string>
     <string name="awaiting_your_nverification">Awaiting your\nverification</string>
     <string name="past_verify_by_12th">Past verify-by 12th</string>
+    <string name="past_verify_by_5th">Past 5th (due date)</string>
     <string name="back_with_asha_nfor_correction">Back with ASHA\nfor correction</string>
     <string name="ashas_yet_to_submit_ntheir_monthly_claim">ASHAs yet to submit\ntheir monthly claim</string>
+    <string name="mitanin_yet_to_submit_ntheir_monthly_claim">Mitanin yet to submit\ntheir monthly claim</string>
+    <string name="mitanin_trainer">Mitanin Trainer</string>
+    <string name="asha_unclaimed">ASHA Unclaimed</string>
+    <string name="mitanins_unclaimed">Mitanin Unclaimed</string>
+    <string name="ashas">ASHAs: %1$d</string>
+    <string name="mitanins">Mitanin: %1$d</string>
+    <string name="back_with_mitanin_nfor_correction">Back with Mitanin\nfor correction</string>
+    <string name="supervisor_id_new">Supervisor ID: %1$s</string>
+    <string name="trainer_id_new">Mitanin Trainer ID: %1$s</string>
 
 
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="no_notifications_yet">No notifications yet</string>
+    <string name="clear_notifications">Clear notifications</string>
+    <string name="clear_notifications_confirm_title">Clear all notifications?</string>
+    <string name="clear_notifications_confirm_message">This removes all notifications from this list and can\'t be undone.</string>
+    <string name="notification_action_clear">Clear</string>
+    <string name="notification_action_cancel">Cancel</string>
+    <string name="notification_close">Close</string>
+    <string name="verify_will_commit_every_activity_listed_below_in_one_action">Verify will commit every activity listed below in one action.</string>
+    <string name="verified_by">Verified by: %1$s</string>
+    <string name="approved_by_mitanin_trainer">Approved by Mitanin Trainer</string>
+    <string name="all_sub_centre">All Sub centre</string>
+    <string name="activity_claimed">Activity claimed\n</string>
+    <string name="total_claimed_amount">Total claimed amount.</string>
+    <string name="monthly_summary">Monthly Summary</string>
+    <string name="verified_text">Verified</string>
+    <string name="verified_date_txt">Verified Date: %1$s</string>
+    <string name="pending_txt">Pending</string>
+    <string name="rejected_txt">Rejected</string>
+    <string name="rejected_date_txt">Rejected Date: %1$s</string>
+    <string name="reason_txt">Reason: %1$s %2$s</string>
+    <string name="unclaimed_txt">Unclaimed</string>
 </resources>
 

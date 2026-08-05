@@ -122,6 +122,7 @@
     <string name="beneficiary_name">লাভকাৰীৰ নাম</string>
     <string name="husband_s_name">পৰাৰৰ নাম</string>
     <string name="weeks_of_pregnancy">গৰ্ভাবস্থাৰ সপ্তাহ</string>
+    <string name="days_of_pregnancy">গৰ্ভাবস্থাৰ দিন</string>
     <string name="anc_visits">ANC দৰকাৰি</string>
     <string name="id">পৰিচয়পত্ৰ</string>
     <string name="no_of_children">শিশুৰ সংখ্যা</string>
@@ -1448,4 +1449,13 @@
     <string name="tb_suspected_leprosy_case">সন্দেহজনক কুষ্ঠ ৰোগী</string>
     <string name="tb_suspected_ncd_case">সন্দেহজনক NCD ৰোগী</string>
 
+    <!-- Notifications -->
+    <string name="notifications_title">জাননী</string>
+    <string name="no_notifications_yet">এতিয়ালৈকে কোনো জাননী নাই</string>
+    <string name="clear_notifications">জাননীসমূহ পৰিষ্কাৰ কৰক</string>
+    <string name="clear_notifications_confirm_title">সকলো জাননী আঁতৰাব নেকি?</string>
+    <string name="clear_notifications_confirm_message">ই এই তালিকাৰ পৰা সকলো জাননী আঁতৰাই দিব আৰু ইয়াক পুনৰ ঘূৰাই দিব নোৱাৰি।</string>
+    <string name="notification_action_clear">পৰিষ্কাৰ কৰক</string>
+    <string name="notification_action_cancel">বাতিল কৰক</string>
+    <string name="notification_close">বন্ধ কৰক</string>
 </resources>
