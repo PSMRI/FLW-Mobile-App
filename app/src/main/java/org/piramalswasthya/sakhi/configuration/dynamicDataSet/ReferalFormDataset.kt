@@ -47,7 +47,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         title = resources.getString(R.string.refer_date),
         arrayId = -1,
         required = true,
-        isEnabled = false,
+        isEnabled = true,
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
     )

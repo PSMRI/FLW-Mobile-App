@@ -103,7 +103,7 @@
     </string-array>
 
     <string-array name="defects">
-        <item>क्लेफ्ट लिप / क्लेफ्ट पैलेट</item>
+        <item>कटा हुआ होंठ / कटा हुआ पैलेट</item>
         <item>न्यूरल ट्यूब दोष (स्पाइनल बिफिडा)</item>
         <item>क्लब फुट</item>
         <item>हाइड्रोसेफलस</item>
@@ -159,7 +159,7 @@
         <item>आंगनवाड़ी केंद्र (AWC)</item>
     </string-array>
     <string-array name="imm_vaccinated_by_array">
-        <item>एएनएम (सहायक नर्स दाई)</item>
+        <item>एएनएम</item>
         <item>सीएचओ (सामुदायिक स्वास्थ्य अधिकारी)</item>
         <item>चिकित्सा अधिकारी</item>
     </string-array>

@@ -1149,6 +1149,7 @@ data class AdolscentHealthDTO(
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
     var sanitaryNapkinDistributed: Boolean? = null,
+    var isSanitaryNapkinUsed: Boolean? = null,
     var noOfPacketsDistributed: Int? = null,
     var place: String? = null,
     var distributionDate: String? = null,
