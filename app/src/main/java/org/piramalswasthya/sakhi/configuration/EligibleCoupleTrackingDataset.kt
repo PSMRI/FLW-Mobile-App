@@ -296,7 +296,11 @@ class EligibleCoupleTrackingDataset(
                         else
                             resources.getStringArray(R.array.yes_no)[1]
 
+                    list.add(usingFamilyPlanning)
+
                     if (saved.usingFamilyPlanning == true) {
+                        list.add(methodOfContraception)
+                    } else if (saved.methodOfContraception != null) {
                         list.add(methodOfContraception)
                     }
 
@@ -307,6 +311,8 @@ class EligibleCoupleTrackingDataset(
                             resources.getStringArray(R.array.ectdset_yes_no)[0]
                         else
                             resources.getStringArray(R.array.ectdset_yes_no)[1]
+
+                    list.add(usingFamilyPlanningMitanin)
 
                     if (saved.usingFamilyPlanning == true) {
                         list.add(methodOfContraception)
@@ -373,6 +379,7 @@ class EligibleCoupleTrackingDataset(
             }
 
             isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
+            list.add(isPregnant)
         }
 
         val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
