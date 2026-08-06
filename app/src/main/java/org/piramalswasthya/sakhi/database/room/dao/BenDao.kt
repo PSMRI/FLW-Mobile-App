@@ -558,6 +558,36 @@ interface BenDao {
     ): Flow<List<BenBasicCache>>
 
 
+/*
+    @Transaction
+    @Query("""
+SELECT b.*
+FROM ben_basic_cache b
+JOIN eligible_couple_reg r
+    ON b.benId = r.benId
+LEFT JOIN pregnancy_anc a
+    ON b.benId = a.benId
+LEFT JOIN eligible_couple_tracking ect
+    ON b.benId = ect.benId
+WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER)
+      BETWEEN :min AND :max
+AND b.reproductiveStatusId = 1
+AND b.isDeactivate = 0
+AND b.villageId = :selectedVillage
+AND (b.isDeath = 0 OR b.isDeath IS NULL OR b.isDeath = 'undefined')
+AND IFNULL(r.lmpDate, 0) != 0
+AND (
+    ect.methodOfContraception IS NULL
+    OR ect.methodOfContraception != 'FEMALE STERILIZATION'
+)
+GROUP BY b.benId
+""")
+    fun getAllEligibleTrackingList(
+        selectedVillage: Int,
+        min: Int = Konstants.minAgeForEligibleCouple,
+        max: Int = Konstants.maxAgeForEligibleCouple
+    ): Flow<List<BenWithEcTrackingCache>>*/
+
 //    @Query("SELECT b.benId as ecBenId,b.*, r.noOfLiveChildren as numChildren , t.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId left outer join eligible_couple_tracking t on t.benId=b.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage group by b.benId")
     @Transaction
 //    @Query("SELECT b.* FROM ben_basic_cache b join eligible_couple_reg r on b.benId=r.benId  LEFT JOIN pregnancy_anc a ON b.benId = a.benId WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) BETWEEN :min and :max and b.reproductiveStatusId = 1 and  b.villageId=:selectedVillage and isDeath = 0 or isDeath is NULL group by b.benId")
@@ -799,11 +829,12 @@ interface BenDao {
     //@Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join delivery_outcome del on ben.benId = del.benId left outer join pnc_visit pnc on pnc.benId = ben.benId WHERE reproductiveStatusId = 3 and (pnc.isActive is null or pnc.isActive == 1) and CAST((strftime('%s','now') - del.dateOfDelivery/1000)/60/60/24 AS INTEGER) BETWEEN :minPncDate and :maxPncDate and  villageId=:selectedVillage group by ben.benId")
     //@Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive == 1) AND ( del.dateOfDelivery IS NULL OR CAST((strftime('%s','now') - COALESCE(del.dateOfDelivery, 0)/1000)/60/60/24 AS INTEGER) BETWEEN :minPncDate AND :maxPncDate) AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
 
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive = 1) AND (pnc.pncPeriod IS NULL OR pnc.pncPeriod != 42)  AND (ben.isDeath IS NULL OR ben.isDeath = 0  OR ben.isDeath = 'undefined' ) AND ben.isDeactivate = 0 AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
+    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN delivery_outcome del ON ben.benId = del.benId LEFT OUTER JOIN pnc_visit pnc ON pnc.benId = ben.benId WHERE reproductiveStatusId = 3 AND (pnc.isActive IS NULL OR pnc.isActive = 1) AND (del.dateOfDelivery IS NULL OR del.dateOfDelivery >= :sixtyDaysAgo)  AND (ben.isDeath IS NULL OR ben.isDeath = 0  OR ben.isDeath = 'undefined' ) AND ben.isDeactivate = 0 AND (:selectedVillage IS NULL OR villageId = :selectedVillage) GROUP BY ben.benId")
     fun getAllPNCMotherList(
-        selectedVillage: Int
+        selectedVillage: Int,
 //        minPncDate: Long = 0,
 //        maxPncDate: Long = Konstants.pncEcGap
+        sixtyDaysAgo: Long
     ): Flow<List<BenWithDoAndPncCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE CAST(((strftime('%s','now') - dob/1000)/60/60/24) AS INTEGER) <= :max and villageId=:selectedVillage and isDeactivate=0")
