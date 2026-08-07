@@ -354,6 +354,7 @@ open class DeliveryOutcomeDataset(
         //dateOfDeath.min=pwr.lmpDate
         dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
         dateOfDelivery.min = maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate)
+        dateOfDelivery.value = getDateFromLong(maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate))
         dateOfDelivery.max =
             minOf(
                 System.currentTimeMillis(),
