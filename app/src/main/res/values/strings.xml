@@ -1575,5 +1575,6 @@
     <string name="rejected_date_txt">Rejected Date: %1$s</string>
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
 </resources>
 
