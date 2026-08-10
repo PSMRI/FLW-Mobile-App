@@ -241,6 +241,20 @@ class MonthlyRecapRepoTest {
     }
 
     @Test
+    fun `stored progress can never point past the last scene`() = runTest {
+        // progressScene is an INDEX, so a 5-scene story tops out at 4. Storing 5
+        // would make the recap resume one past its own end.
+        repo.onPlaybackOpened(totalScenes = 5)
+        repo.updateSafeProgress(5)
+        assertEquals(4, dao.rows.single().progressScene)
+        repo.updateSafeProgress(99)
+        assertEquals(4, dao.rows.single().progressScene)
+        // ...while the genuine last scene is still reachable.
+        repo.updateSafeProgress(4)
+        assertEquals(4, dao.rows.single().progressScene)
+    }
+
+    @Test
     fun `markCompleted moves snapshot to COMPLETED and started state cannot regress`() = runTest {
         repo.markStarted()
         repo.markCompleted()

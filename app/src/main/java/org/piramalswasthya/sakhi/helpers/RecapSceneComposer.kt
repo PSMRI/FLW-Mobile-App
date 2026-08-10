@@ -11,7 +11,15 @@ data class RecapScene(
     val type: Type,
     /** Resolved, display-ready text ({count} already substituted). */
     val text: String,
-    /** Lottie raw resource, or null for the animation-less WELCOME scene. */
+    /**
+     * Lottie raw resource for this scene. [RecapSceneComposer.compose] always
+     * assigns one — [RecapSceneComposer.WELCOME_ANIMATION] for WELCOME, a rotated
+     * entry from [RecapSceneComposer.STORY_ANIMATIONS] for CATEGORY, and
+     * [RecapSceneComposer.GOODBYE_ANIMATION] for GOODBYE.
+     *
+     * Nullable only so a scene can legitimately carry no animation; it does not
+     * mark any particular scene type. Playback simply skips the Lottie when null.
+     */
     val lottieRawRes: Int?,
     val categoryId: String? = null,
     val count: Int? = null,
@@ -27,17 +35,18 @@ data class RecapScene(
  * PURE + DETERMINISTIC: output depends only on (frozen metrics payload,
  * language token, frozen variantSeed, content library). The same snapshot
  * always replays the exact same story — no randomness, no clock — which is why
- * nothing new needs persisting (Phase 8 collapses into this determinism; the
- * DB stays at v61).
+ * nothing new needs persisting beyond the existing snapshot row.
  *
  * Composition rules (all user-approved):
  * - Scene order = the content file's category order; only categories that are
  *   AVAILABLE with count > 0 appear (deferred/zero are silently omitted).
  * - Band = the file's own bandDefinitions (SINGULAR/DOUBLE/MEDIUM/HIGH).
  * - Sentence variant = variantSeed-rotated pick from the band's variants.
- * - Animation: the welcome scene shows the dedicated welcome animation (girl_8);
- *   girl_1..girl_6 rotate per category scene starting at a seed offset so
- *   consecutive scenes NEVER repeat an action; girl_7 is reserved for goodbye.
+ * - Animation: the six ASHA-didi actions in [STORY_ANIMATIONS] rotate per category
+ *   scene from a seed offset, so within one recap every category scene shows a
+ *   DIFFERENT action and consecutive scenes never repeat. [WELCOME_ANIMATION] and
+ *   [GOODBYE_ANIMATION] reuse two of those six (the greeting wave and the thumbs
+ *   up) rather than being reserved extras — see their KDoc for why.
  * - EMPTY MONTH: if no category qualifies, returns an EMPTY list — the recap
  *   does not open at all (no fabricated celebration).
  */
@@ -77,7 +86,7 @@ class RecapSceneComposer(private val library: RecapContentLibrary) {
         // User decision: an all-zero month means the recap does not open at all.
         if (categoryScenes.isEmpty()) return emptyList()
 
-        // Rotate girl_1..girl_6 from a seed offset — consecutive scenes always differ.
+        // Rotate the six didi actions from a seed offset — consecutive scenes differ.
         val animationStart = ((variantSeed % STORY_ANIMATIONS.size) + STORY_ANIMATIONS.size)
             .toInt() % STORY_ANIMATIONS.size
         val animatedScenes = categoryScenes.mapIndexed { i, scene ->

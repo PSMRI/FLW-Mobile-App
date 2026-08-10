@@ -11,6 +11,14 @@ package org.piramalswasthya.sakhi.model
  * library server-side later only swaps the SOURCE — never these models nor the
  * composer that consumes them. Text placeholders: `{count}` only (the "this
  * month" phrasing is literal text inside each sentence, by design).
+ *
+ * ⚠️ EVERY property here MUST keep a default value. Kotlin only emits a synthetic
+ * no-arg constructor when all parameters have defaults; without one, Gson falls
+ * back to `Unsafe.allocateInstance` and leaves absent JSON keys as **null even in
+ * non-null `String` fields**. Those nulls then crash the validator instead of
+ * being rejected by it. With defaults, a missing key arrives as `""` or `0`, which
+ * [org.piramalswasthya.sakhi.helpers.RecapContentCodec] already rejects — so
+ * malformed content fails closed rather than throwing. Do not "tidy" these away.
  */
 data class RecapContentLibrary(
     val schemaVersion: Int = 0,
@@ -29,8 +37,8 @@ data class RecapContentLibrary(
  * (SINGULAR / DOUBLE / MEDIUM / HIGH), not per-category performance tiers.
  */
 data class RecapBandDefinition(
-    val id: String,
-    val minCount: Int,
+    val id: String = "",
+    val minCount: Int = 0,
     val maxCount: Int? = null,
 ) {
     fun contains(count: Int): Boolean =
@@ -38,11 +46,11 @@ data class RecapBandDefinition(
 }
 
 data class RecapLanguageContent(
-    val id: String,
+    val id: String = "",
     val name: String = "",
     /** Warm welcome line(s) shown before the first scene (no animation). */
     val intro: List<String> = emptyList(),
-    /** Warm goodbye line(s) for the final scene (girl_7 animation). */
+    /** Warm goodbye line(s) for the final scene. */
     val closing: List<String> = emptyList(),
     val categories: List<RecapCategoryContent> = emptyList(),
 ) {
@@ -51,7 +59,7 @@ data class RecapLanguageContent(
 }
 
 data class RecapCategoryContent(
-    val id: String,
+    val id: String = "",
     val name: String = "",
     val countMeaning: String = "",
     val unit: String = "",
@@ -62,11 +70,11 @@ data class RecapCategoryContent(
 }
 
 data class RecapBandContent(
-    val id: String,
+    val id: String = "",
     val sentences: List<RecapSentence> = emptyList(),
 )
 
 data class RecapSentence(
-    val id: String,
-    val text: String,
+    val id: String = "",
+    val text: String = "",
 )

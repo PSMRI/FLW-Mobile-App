@@ -139,7 +139,10 @@ class MonthlyRecapRepo @Inject constructor(
         val window = previousMonthWindow(clock.now())
         val recap = recapDao.get(userId, window.yearMonth) ?: return
         if (recap.recapStatus() != RecapStatus.IN_PROGRESS) return
-        val upper = recap.totalScenes?.takeIf { it > 0 } ?: Int.MAX_VALUE
+        // Scene INDICES run 0..totalScenes-1, so the last valid index is one less
+        // than the count. Clamping to totalScenes itself would let a stored progress
+        // point one past the end of the story, and reopening would resume nowhere.
+        val upper = recap.totalScenes?.takeIf { it > 0 }?.let { it - 1 } ?: Int.MAX_VALUE
         val safe = sceneIndex.coerceIn(0, upper)
         recapDao.updateProgress(userId, window.yearMonth, safe, clock.now().timeInMillis)
     }

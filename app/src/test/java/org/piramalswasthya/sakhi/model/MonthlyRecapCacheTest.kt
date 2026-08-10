@@ -46,7 +46,15 @@ class MonthlyRecapCacheTest {
     fun `corrupted progress is coerced into safe bounds`() {
         assertEquals(0, cache(progressScene = -4).safeProgressScene())
         assertEquals(3, cache(progressScene = 3, totalScenes = 10).safeProgressScene())
-        assertEquals(10, cache(progressScene = 99, totalScenes = 10).safeProgressScene())
+        // progressScene is an INDEX, so 10 scenes means a maximum of 9. An earlier
+        // version of this test expected 10, which locked in an off-by-one: resuming
+        // there would land one past the end of the story.
+        assertEquals(9, cache(progressScene = 99, totalScenes = 10).safeProgressScene())
+        assertEquals(9, cache(progressScene = 10, totalScenes = 10).safeProgressScene())
+        // The last scene is reachable, not clamped away.
+        assertEquals(9, cache(progressScene = 9, totalScenes = 10).safeProgressScene())
+        // A single-scene story can only ever resume at index 0.
+        assertEquals(0, cache(progressScene = 5, totalScenes = 1).safeProgressScene())
         // Unknown total: only the lower bound applies.
         assertEquals(99, cache(progressScene = 99, totalScenes = null).safeProgressScene())
     }

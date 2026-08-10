@@ -34,20 +34,29 @@ object RecapContentCodec {
 
     private val gson = Gson()
 
+    /**
+     * Decodes and fully validates the content library, or returns null.
+     *
+     * Validation runs INSIDE the try deliberately. Gson can hand back objects that
+     * violate their own Kotlin types (see the warning on [RecapContentLibrary]), so
+     * validation itself is a place a runtime failure can surface. Keeping it inside
+     * means this never throws at the caller: bad content always degrades to null,
+     * and the recap simply does not open.
+     */
     fun decodeOrNull(json: String?): RecapContentLibrary? {
         if (json.isNullOrBlank()) return null
-        val library = try {
-            gson.fromJson(json, RecapContentLibrary::class.java)
+        return try {
+            val library = gson.fromJson(json, RecapContentLibrary::class.java)
+                ?: return null
+            val rejection = validate(library)
+            if (rejection == null) {
+                library
+            } else {
+                Timber.e("Recap content rejected: $rejection")
+                null
+            }
         } catch (e: Exception) {
-            Timber.w(e, "Recap content: malformed JSON")
-            return null
-        }
-        if (library == null) return null
-        val rejection = validate(library)
-        return if (rejection == null) {
-            library
-        } else {
-            Timber.e("Recap content rejected: $rejection")
+            Timber.w(e, "Recap content: unusable library")
             null
         }
     }

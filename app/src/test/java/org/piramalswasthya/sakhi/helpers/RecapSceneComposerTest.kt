@@ -17,8 +17,8 @@ import java.io.File
  * bundled content library so the story the tests prove is the story the ASHA
  * sees. Covers: scene order (welcome → categories → goodbye), zero/UNAVAILABLE
  * omission, the empty-month no-open rule, {count} substitution, band mapping,
- * animation rotation (girl_7 reserved for goodbye; no consecutive repeats),
- * language fallback and full determinism.
+ * animation rotation (every category scene a different action, no consecutive
+ * repeats), language fallback and full determinism.
  */
 class RecapSceneComposerTest {
 

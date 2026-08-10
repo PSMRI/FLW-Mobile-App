@@ -36,10 +36,9 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.recapAnimationsEnabled
  *
  * Story-style auto-play: a slim segmented progress bar drives each scene
  * (welcome 3.5s, category scenes 6s). Every message scene pairs one sentence
- * with a DIFFERENT girl animation (the composer guarantees no consecutive
+ * with a DIFFERENT didi animation (the composer guarantees no consecutive
  * repeat); the speech bubble is visually attached to her, so the words feel
- * spoken. girl_7 is reserved for the goodbye scene, which never auto-advances —
- * it offers Replay instead.
+ * spoken. The goodbye scene never auto-advances — it offers Replay instead.
  *
  * Controls are BOTH gestural and visible: tap-left/tap-right/hold on the
  * overlay for people who know the story idiom, plus real Previous / Pause-Play /

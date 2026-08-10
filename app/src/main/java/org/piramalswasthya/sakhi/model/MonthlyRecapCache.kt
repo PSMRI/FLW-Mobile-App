@@ -100,9 +100,16 @@ fun MonthlyRecapCache.recapStatus(): RecapStatus = RecapStatus.fromToken(status)
 fun MonthlyRecapCache.recapLanguage(): MonthlyRecapLanguage? =
     MonthlyRecapLanguage.fromToken(language)
 
-/** Progress with corrupted values coerced into valid bounds. */
+/**
+ * Progress with corrupted values coerced into valid bounds.
+ *
+ * The upper bound is `totalScenes - 1`, not `totalScenes`: [progressScene] is an
+ * INDEX into the scene list, so a story of 5 scenes has valid indices 0..4.
+ * Clamping here (the resume path) as well as on write also repairs snapshots that
+ * an earlier build already stored one past the end.
+ */
 fun MonthlyRecapCache.safeProgressScene(): Int {
-    val upper = totalScenes?.takeIf { it > 0 }
+    val lastIndex = totalScenes?.takeIf { it > 0 }?.let { it - 1 }
     val coerced = progressScene.coerceAtLeast(0)
-    return if (upper != null) coerced.coerceAtMost(upper) else coerced
+    return if (lastIndex != null) coerced.coerceAtMost(lastIndex) else coerced
 }

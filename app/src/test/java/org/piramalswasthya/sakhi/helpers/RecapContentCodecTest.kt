@@ -100,6 +100,40 @@ class RecapContentCodecTest {
         assertNull(RecapContentCodec.decodeOrNull("""{"schemaVersion":1,"languages":[]}"""))
     }
 
+    @Test
+    fun `json missing the fields Kotlin declares non-null still fails closed`() {
+        // Gson bypasses Kotlin constructors unless every property has a default, so
+        // absent keys can land as null inside non-null String fields. Before the
+        // models carried defaults this threw a NullPointerException out of the
+        // validator instead of returning null. Each payload below omits a different
+        // required key at a different nesting depth.
+        val noBandId = """
+            {"schemaVersion":1,"contentVersion":1,
+             "bandDefinitions":[{"minCount":1}],
+             "languages":[{"id":"hi"},{"id":"as"}]}
+        """.trimIndent()
+
+        val noSentenceFields = """
+            {"schemaVersion":1,"contentVersion":1,
+             "bandDefinitions":[{"id":"SINGULAR","minCount":1}],
+             "languages":[{"id":"hi","intro":["x"],"closing":["y"],
+               "categories":[{"id":"NCD","bands":[{"id":"SINGULAR",
+                 "sentences":[{}]}]}]},
+              {"id":"as"}]}
+        """.trimIndent()
+
+        val noLanguageId = """
+            {"schemaVersion":1,"contentVersion":1,
+             "bandDefinitions":[{"id":"SINGULAR","minCount":1}],
+             "languages":[{"intro":["x"]},{"closing":["y"]}]}
+        """.trimIndent()
+
+        // The assertion that matters is that none of these THROW.
+        assertNull(RecapContentCodec.decodeOrNull(noBandId))
+        assertNull(RecapContentCodec.decodeOrNull(noSentenceFields))
+        assertNull(RecapContentCodec.decodeOrNull(noLanguageId))
+    }
+
     // ---- strict validation: bad content must be REJECTED, not silently degraded ----
 
     /** Mutates the real bundled JSON so each test changes exactly one thing. */
