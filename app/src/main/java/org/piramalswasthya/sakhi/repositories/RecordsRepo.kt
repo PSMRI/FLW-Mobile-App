@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
@@ -21,7 +23,9 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
+import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.BenWithDoAndPncCache
 import org.piramalswasthya.sakhi.model.HomeVisitUiState
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
@@ -41,6 +45,7 @@ class RecordsRepo @Inject constructor(
     private val vaccineDao: ImmunizationDao,
     private val maternalHealthDao: MaternalHealthDao,
     private val childRegistrationDao: ChildRegistrationDao,
+    private val benRepo: BenRepo,
     preferenceDao: PreferenceDao
 ) {
     private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
@@ -231,8 +236,46 @@ class RecordsRepo @Inject constructor(
 
     val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
 
+    private suspend fun updateWomanStatusAfter60Days(
+        item: BenWithDoAndPncCache
+    ) {
+
+        val benId = item.ben.benId
+
+        val ben = benRepo.getBenFromId(benId) ?: return
+
+        val activeDo = item.deliveryOutcomeCache
+            .firstOrNull { it.isActive }
+
+        val dateOfDelivery = activeDo?.dateOfDelivery ?: return
+
+        val daysSinceDelivery = TimeUnit.MILLISECONDS.toDays(
+            System.currentTimeMillis() - dateOfDelivery
+        )
+
+        val isAfter60Days = daysSinceDelivery >= 60
+
+        if (!isAfter60Days) return
+
+            if (ben.genDetails?.reproductiveStatusId != 1) {
+                ben.genDetails?.reproductiveStatus = "Eligible Couple"
+                ben.genDetails?.reproductiveStatusId = 1
+
+                if (ben.processed != "N") {
+                    ben.processed = "U"
+                }
+
+                ben.syncState = SyncState.UNSYNCED
+                benRepo.updateRecord(ben)
+
+        }
+    }
     val pncMotherList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
-        .map { list -> list.map { it.asBasicDomainModelForPNC() } }
+        .map { list ->
+            list.forEach {
+                updateWomanStatusAfter60Days(it)
+            }
+            list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
 
     val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
