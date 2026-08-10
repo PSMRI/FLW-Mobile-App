@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -114,4 +115,48 @@ class AadhaarValidationUtilsTest {
         val validCount = listOf(num0, num1, num2, num3, num4, num5, num6, num7, num8, num9).count { it }
         assertTrue("Exactly one checksum digit should be valid", validCount <= 1)
     }
+
+    // =====================================================
+    // AadhaarValidation Tests (extended)
+    // =====================================================
+
+    @Test fun `empty aadhaar is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("")) }
+    @Test fun `short aadhaar is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("12345")) }
+    @Test fun `11 digit aadhaar is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("12345678901")) }
+    @Test fun `13 digit aadhaar is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("1234567890123")) }
+    @Test fun `alpha aadhaar is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("abcdefghijkl")) }
+    @Test fun `aadhaar starting with 0 is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("012345678901")) }
+    @Test fun `aadhaar starting with 1 is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("112345678901")) }
+    @Test fun `aadhaar with spaces is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("1234 5678 9012")) }
+    @Test fun `12 digit aadhaar starting with 2 can be valid`() {
+        // Aadhaar numbers starting with 2-9 could be valid based on Verhoeff
+        val result = AadhaarValidationUtils.isValidAadhaar("234567890123")
+        // Just checking it doesn't throw
+        assertNotNull(result)
+    }
+
+    // =====================================================
+    // AadhaarValidation Object Tests
+    // =====================================================
+
+    @Test fun `AadhaarValidationUtils exists`() {
+        assertNotNull(AadhaarValidationUtils)
+    }
+
+    // =====================================================
+    // Additional AadhaarValidation Edge Cases
+    // =====================================================
+
+    @Test fun `aadhaar with special chars is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("@#\$%^&*()!+")) }
+    @Test fun `aadhaar with mixed alpha-num is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("1234abcd5678")) }
+    @Test fun `aadhaar with dashes is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("1234-5678-9012")) }
+    @Test fun `single digit is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("5")) }
+    @Test fun `blank string is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("   ")) }
+    @Test fun `aadhaar all zeros is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("000000000000")) }
+    @Test fun `aadhaar all ones is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("111111111111")) }
+    @Test fun `aadhaar with leading 2 could be valid`() { assertNotNull(AadhaarValidationUtils.isValidAadhaar("200000000000")) }
+    @Test fun `aadhaar with tab chars is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("\t123456789012")) }
+    @Test fun `aadhaar with newline is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("123456\n789012")) }
+    @Test fun `very long number is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("1".repeat(20))) }
+    @Test fun `empty after trim is invalid`() { assertFalse(AadhaarValidationUtils.isValidAadhaar("  \t  ")) }
 }

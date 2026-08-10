@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentSupervisorProfileBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import kotlin.getValue
@@ -33,6 +36,8 @@ class SupervisorProfileFragment : Fragment()  {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(resources.getString(R.string.logout))
             .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
+                // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                FcmTokenUploader.clearToken(requireActivity())
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(requireActivity())
                 WorkerUtils.cancelAllWork(requireActivity())
@@ -63,7 +68,26 @@ class SupervisorProfileFragment : Fragment()  {
         binding.emailtvValue.setText(viewModel.getUserEmail())
         binding.supervisorId.setText("EMP. ID : ${ viewModel.getEmpId().toString()}")
         binding.supervisorName.setText(viewModel.getSuperVisorname())
-        binding.subName.setText(viewModel.getSuperVisorSubname())
+        if ( BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.ivNhmLogo.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.logo_circle_green)
+            )
+            if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
+                binding.subName.setText(resources.getString(R.string.mitanin_trainer))
+
+            } else {
+                binding.subName.setText(viewModel.getSuperVisorSubname())
+            }
+
+
+
+        } else {
+            binding.subName.setText(viewModel.getSuperVisorSubname())
+            binding.ivNhmLogo.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.logo_circle)
+            )
+
+        }
         binding.districtvValue.text = viewModel.getDistrict()
         binding.blocktvValue.text = viewModel.getBlock()
         binding.subcentertvValue.text = viewModel.getSubcenter()
@@ -89,11 +113,21 @@ class SupervisorProfileFragment : Fragment()  {
 
     override fun onStart() {
         super.onStart()
-        activity?.let {
-            (it as SupervisorActivity).updateActionBar(
-                R.drawable.logo_circle,
-                getString(R.string.asha_profile)
-            )
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle_green,
+                    getString(R.string.asha_profile)
+                )
+            }
+        } else {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle,
+                    getString(R.string.asha_profile)
+                )
+            }
         }
+
     }
 }

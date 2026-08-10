@@ -49,12 +49,13 @@ class PregnantWomanAncVisitDataset(
 
     private val weekOfPregnancy = FormElement(
         id = 2,
-        inputType = InputType.TEXT_VIEW,
+        inputType = InputType.TEXT_VIEW_PAIR,
         title = resources.getString(R.string.weeks_of_pregnancy),
         required = false,
         showDrawable = true,
         backgroundDrawable = R.drawable.ic_bg_circular,
         iconDrawableRes = R.drawable.ic_bmi,
+        secondaryTitle = resources.getString(R.string.days_of_pregnancy),
     )
 
     private val ancVisit = FormElement(
@@ -550,6 +551,8 @@ class PregnantWomanAncVisitDataset(
                 }
                 weeks.toString()
             }
+            weekOfPregnancy.secondaryValue =
+                weekOfPregnancy.value?.toIntOrNull()?.let { (it * 7).toString() }
         }
 
         ancVisit.value = visitNumber.toString()
@@ -568,6 +571,7 @@ class PregnantWomanAncVisitDataset(
             }
             ancDate.value = getDateFromLong(savedAnc.ancDate)
             weekOfPregnancy.value = woP.toString()
+            weekOfPregnancy.secondaryValue = (woP * 7).toString()
             fileUploadFront.value = savedAnc.frontFilePath
             fileUploadBack.value = savedAnc.backFilePath
             isAborted.value =
@@ -650,22 +654,25 @@ class PregnantWomanAncVisitDataset(
     }
 
     private fun setUpTdX() {
-        if (regis.ttBooster != null) {
-            dateOfTTOrTdBooster.value = getDateFromLong(regis.ttBooster!!)
+        val tt1 = regis.tt1?.takeIf { it != 0L }
+        val tt2 = regis.tt2?.takeIf { it != 0L }
+        val ttBooster = regis.ttBooster?.takeIf { it != 0L }
+        if (ttBooster != null) {
+            dateOfTTOrTdBooster.value = getDateFromLong(ttBooster)
             dateOfTTOrTd1.inputType = InputType.TEXT_VIEW
             dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
             dateOfTTOrTdBooster.inputType = InputType.TEXT_VIEW
-        } else if (regis.tt1 == null) {
+        } else if (tt1 == null) {
             dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
         } else {
-            dateOfTTOrTd1.value = getDateFromLong(regis.tt1!!)
+            dateOfTTOrTd1.value = getDateFromLong(tt1)
             dateOfTTOrTdBooster.inputType = InputType.TEXT_VIEW
             dateOfTTOrTd1.inputType = InputType.TEXT_VIEW
-            if (regis.tt2 == null) {
-                dateOfTTOrTd2.min = regis.tt1!! + TimeUnit.DAYS.toMillis(28)
+            if (tt2 == null) {
+                dateOfTTOrTd2.min = tt1 + TimeUnit.DAYS.toMillis(28)
                 dateOfTTOrTd2.max = min(System.currentTimeMillis(), getEddFromLmp(regis.lmpDate))
             } else {
-                dateOfTTOrTd2.value = getDateFromLong(regis.tt2!!)
+                dateOfTTOrTd2.value = getDateFromLong(tt2)
                 dateOfTTOrTd2.inputType = InputType.TEXT_VIEW
             }
         }
@@ -707,6 +714,7 @@ class PregnantWomanAncVisitDataset(
                     }
 
                     weekOfPregnancy.value = weeks.toString()
+                    weekOfPregnancy.secondaryValue = (weeks * 7).toString()
                     val calcVisitNumber = when (weeks) {
                         in Konstants.minAnc1Week..Konstants.maxAnc1Week -> 1
                         in Konstants.minAnc2Week..Konstants.maxAnc2Week -> 2
@@ -945,7 +953,7 @@ class PregnantWomanAncVisitDataset(
                     highRiskReferralFacility,
                     hrpConfirm,
 
-                )
+                    )
 
                 val maternalDeathFields = listOf(
                     maternalDeathProbableCause,
@@ -1059,7 +1067,7 @@ class PregnantWomanAncVisitDataset(
     }
 
     private fun updateRegistrationForTdX() {
-        if (dateOfTTOrTd1.value.isNullOrBlank() || dateOfTTOrTd2.value.isNullOrBlank() || dateOfTTOrTdBooster.value.isNullOrBlank())
+        if (dateOfTTOrTd1.value.isNullOrBlank() && dateOfTTOrTd2.value.isNullOrBlank() && dateOfTTOrTdBooster.value.isNullOrBlank())
             return
         else {
             val td1 = if (dateOfTTOrTd1.inputType == InputType.DATE_PICKER) getLongFromDate(

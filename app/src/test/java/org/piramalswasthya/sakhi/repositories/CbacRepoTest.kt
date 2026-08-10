@@ -9,6 +9,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -19,13 +20,24 @@ import org.piramalswasthya.sakhi.base.BaseRepositoryTest
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.CbacCache
+import org.piramalswasthya.sakhi.model.CbacCachePush
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
+import retrofit2.Response
 
+/**
+ * Unit tests for [CbacRepo]. Consolidated from CbacRepoTest + Extra/Extra2/
+ * Extra3/Extra4: saveCbacData derived-field logic (tracing, sputum OR-operands),
+ * general persistence, the getter/updateReferStatus delegations, and the
+ * pull/push server methods (early returns, token-refresh recursion, upload-loop
+ * response branches, referral update).
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class CbacRepoTest : BaseRepositoryTest() {
 
@@ -37,6 +49,7 @@ class CbacRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var prefDao: PreferenceDao
     @MockK private lateinit var referalDao: NcdReferalDao
     @MockK private lateinit var cbacDao: CbacDao
+    @MockK private lateinit var benDao: BenDao
 
     private lateinit var cbacRepo: CbacRepo
 
@@ -45,6 +58,7 @@ class CbacRepoTest : BaseRepositoryTest() {
         super.setUp()
         every { context.resources } returns resources
         every { database.cbacDao } returns cbacDao
+        every { database.benDao } returns benDao
 
         cbacRepo = CbacRepo(context, database, userRepo, amritApiService, prefDao, referalDao)
     }
@@ -306,6 +320,174 @@ class CbacRepoTest : BaseRepositoryTest() {
     }
 
     // =====================================================
+    // push / pull coordinator early returns and guards
+    // =====================================================
+
+    @Test
+    fun `pushAndUpdateCbacRecord makes no api call when nothing unprocessed`() = runTest {
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns emptyList()
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify(exactly = 0) { amritApiService.postCbacs(any()) }
+    }
+
+    @Test(expected = NullPointerException::class)
+    fun `pullAndPersistCbacRecord throws when no user logged in`() = runTest {
+        every { prefDao.getLoggedInUser() } returns null
+
+        cbacRepo.pullAndPersistCbacRecord()
+    }
+
+    // -------- sputum OR-operand branch coverage --------
+
+    @Test
+    fun `saveCbacData sputum 1 when bloodSputum positive`() = runTest {
+        val c = cbac(bloodSputum = 1)
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        cbacRepo.saveCbacData(c, mockk<BenRegCache>(relaxed = true))
+        assertEquals("1", c.cbac_sputemcollection)
+    }
+
+    @Test
+    fun `saveCbacData sputum 1 when fivermore positive`() = runTest {
+        val c = cbac(fiveMore = 1)
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        cbacRepo.saveCbacData(c, mockk<BenRegCache>(relaxed = true))
+        assertEquals("1", c.cbac_sputemcollection)
+    }
+
+    @Test
+    fun `saveCbacData sputum 1 when loseWeight positive`() = runTest {
+        val c = cbac(loseWeight = 1)
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        cbacRepo.saveCbacData(c, mockk<BenRegCache>(relaxed = true))
+        assertEquals("1", c.cbac_sputemcollection)
+    }
+
+    @Test
+    fun `saveCbacData sputum 1 when nightSweats positive`() = runTest {
+        val c = cbac(nightSweats = 1)
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        cbacRepo.saveCbacData(c, mockk<BenRegCache>(relaxed = true))
+        assertEquals("1", c.cbac_sputemcollection)
+    }
+
+    // -------- pullAndPersistCbacRecord early returns --------
+
+    @Test
+    fun `pullAndPersistCbacRecord returns 0 when data array missing`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returns
+            response(200, """{"statusCode":200}""")
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+    }
+
+    @Test
+    fun `pullAndPersistCbacRecord returns 0 when data array empty`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returns
+            response(200, """{"statusCode":200,"data":[]}""")
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+    }
+
+    // ---------------- pullAndPersistCbacRecord token refresh recursion ----------------
+
+    @Test
+    fun `pullAndPersistCbacRecord recurses on 5002 then returns 0`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returnsMany listOf(
+            response(200, """{"statusCode":5002}"""),
+            response(200, """{"statusCode":200}""")
+        )
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+    }
+
+    // ---------------- pushAndUpdateCbacRecord upload loop ----------------
+
+    @Test
+    fun `pushAndUpdateCbacRecord marks record synced on Success response`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val push = unprocessed(benId = 1L)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(push)
+        coEvery { referalDao.getReferalFromBenId(1L) } returns null
+        coEvery { amritApiService.postCbacs(any()) } returns
+            response(200, """{"status":"Success","data":{"visitCode":"12","benVisitID":"34"}}""")
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify { amritApiService.postCbacs(any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateCbacRecord counts failure on non-Success response`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val push = unprocessed(benId = 2L)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(push)
+        coEvery { amritApiService.postCbacs(any()) } returns
+            response(200, """{"status":"Failed"}""")
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify { amritApiService.postCbacs(any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateCbacRecord skips parsing on null body`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val push = unprocessed(benId = 3L)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(push)
+        coEvery { amritApiService.postCbacs(any()) } returns response(200, null)
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify { amritApiService.postCbacs(any()) }
+    }
+
+    // ---------------- pushAndUpdateCbacRecord referral update / catch ----------------
+
+    @Test
+    fun `pushAndUpdateCbacRecord updates matching referral on Success`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val push = unprocessed(benId = 7L)
+        val refer = mockk<ReferalCache>(relaxed = true)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(push)
+        coEvery { referalDao.getReferalFromBenId(7L) } returns refer
+        coEvery { amritApiService.postCbacs(any()) } returns
+            response(200, """{"status":"Success","data":{"visitCode":"12","benVisitID":"34"}}""")
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify { referalDao.update(refer) }
+    }
+
+    @Test
+    fun `pushAndUpdateCbacRecord counts failure when api throws`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val push = unprocessed(benId = 8L)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(push)
+        coEvery { amritApiService.postCbacs(any()) } throws RuntimeException("boom")
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify { amritApiService.postCbacs(any()) }
+    }
+
+    @Test
+    fun `pullAndPersistCbacRecord returns 0 with empty data array`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returns
+            response(200, """{"statusCode":200,"data":[]}""")
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+        coVerify(exactly = 0) { cbacDao.insertAll(any()) }
+    }
+
+    // =====================================================
     // Helpers
     // =====================================================
 
@@ -322,6 +504,14 @@ class CbacRepoTest : BaseRepositoryTest() {
             every { it.vanId } returns vanId
             every { it.password } returns "password"
         }
+    }
+
+    private fun mockUser(): User = mockk<User>(relaxed = true).also {
+        every { it.userName } returns "asha"
+        every { it.userId } returns 1
+        every { it.serviceMapId } returns 10
+        every { it.vanId } returns 4
+        every { it.password } returns "pwd"
     }
 
     private fun createCbacCache(
@@ -349,5 +539,41 @@ class CbacRepoTest : BaseRepositoryTest() {
             cbac_loseofweight_pos = loseWeight,
             cbac_nightsweats_pos = nightSweats
         )
+    }
+
+    private fun cbac(
+        tbHistory: Int = 0, coughing: Int = 0, bloodSputum: Int = 0,
+        fiveMore: Int = 0, loseWeight: Int = 0, nightSweats: Int = 0
+    ) = CbacCache(
+        benId = 1L,
+        ashaId = 1,
+        syncState = SyncState.UNSYNCED,
+        cbac_tbhistory_pos = tbHistory,
+        cbac_coughing_pos = coughing,
+        cbac_bloodsputum_pos = bloodSputum,
+        cbac_fivermore_pos = fiveMore,
+        cbac_loseofweight_pos = loseWeight,
+        cbac_nightsweats_pos = nightSweats
+    )
+
+    private fun response(code: Int, json: String?): Response<ResponseBody> {
+        val resp = mockk<Response<ResponseBody>>(relaxed = true)
+        every { resp.code() } returns code
+        if (json != null) {
+            val body = mockk<ResponseBody>()
+            every { body.string() } returns json
+            every { resp.body() } returns body
+        } else {
+            every { resp.body() } returns null
+        }
+        return resp
+    }
+
+    private fun unprocessed(benId: Long = 1L): CbacCachePush {
+        val cbac = mockk<CbacCache>(relaxed = true)
+        every { cbac.benId } returns benId
+        val push = mockk<CbacCachePush>(relaxed = true)
+        every { push.cbac } returns cbac
+        return push
     }
 }

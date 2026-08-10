@@ -33,7 +33,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:padding="10dp">
 
                     <ImageView
                         android:id="@+id/imgAsha"
@@ -84,7 +84,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@string/tap_to_view_ashas_grouped"
                         android:textSize="12sp"
-                        android:textColor="@color/md_theme_light_ongray"
+                        android:textColor="@color/holo_green_dark"
                         app:layout_constraintEnd_toStartOf="@id/ivArrow"
                         app:layout_constraintStart_toEndOf="@id/imgAsha"
                         app:layout_constraintTop_toBottomOf="@id/tvTotalAshasCount"/>
@@ -106,31 +106,162 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardTotalAshas"/>
 
-            <!-- Month Dropdown -->
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/tilMonthYear"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="18dp"
-                android:hint="@string/select_month"
-
+                app:layout_constraintStart_toStartOf="@+id/tvIncentiveTitle"
+                app:layout_constraintTop_toBottomOf="@+id/tvIncentiveTitle"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tvIncentiveTitle"
-                app:layout_constraintTop_toTopOf="@id/tvIncentiveTitle"
-                app:layout_constraintBottom_toBottomOf="@id/tvIncentiveTitle">
+                android:layout_marginEnd="20dp"
+                android:paddingTop="8dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et1"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+                <!-- Month Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/cardBlock"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:strokeColor="#E5E7EB"
+                    app:strokeWidth="1dp"
 
-            </com.google.android.material.textfield.TextInputLayout>
+                  >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="16dp">
+
+                        <TextView
+                            android:id="@+id/tvMonthLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/month"
+                            android:textAllCaps="true"
+                            android:textColor="#6B7280"
+                            android:textSize="12sp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="10dp"/>
+
+                        <TextView
+                            android:id="@+id/et1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="July 2026"
+                            android:textColor="#001B44"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            app:layout_constraintTop_toBottomOf="@id/tvMonthLabel"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/imgMonth"/>
+
+                        <ImageView
+                            android:id="@+id/imgMonth"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_drop_down"
+                            android:tint="#94A3B8"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Block Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBlock"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#E5E7EB"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintStart_toEndOf="@id/cardMonth"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                   >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="16dp">
+
+                        <TextView
+                            android:id="@+id/tvBlockLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/str_sub_center"
+                            android:textAllCaps="true"
+                            android:textColor="#6B7280"
+                            android:textSize="12sp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="10dp"/>
+
+                        <TextView
+                            android:id="@+id/tvBlock"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/all_sub_centre"
+                            android:textColor="#001B44"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            app:layout_constraintTop_toBottomOf="@id/tvBlockLabel"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/imgBlock"/>
+
+                        <ImageView
+                            android:id="@+id/imgBlock"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_drop_down"
+                            android:tint="#94A3B8"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Month Dropdown -->
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                android:id="@+id/tilMonthYear"-->
+<!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginEnd="18dp"-->
+<!--                android:hint="@string/select_month"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/tvIncentiveTitle"-->
+
+<!--                app:layout_constraintTop_toBottomOf="@id/tvIncentiveTitle"-->
+<!--                >-->
+
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:id="@+id/et1"-->
+<!--                    android:clickable="true"-->
+<!--                    android:focusable="false"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:singleLine="true"-->
+<!--                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>-->
+
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
 
             <!-- Sub-Centre Dropdown -->
 
@@ -204,6 +335,7 @@
                 android:layout_marginStart="8dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
+                android:layout_marginEnd="20dp"
                 app:layout_constraintEnd_toStartOf="@id/cardOverdue"
                 app:layout_constraintStart_toEndOf="@id/cardVerified"
                 app:layout_constraintTop_toTopOf="@id/cardVerified">
@@ -266,6 +398,7 @@
                 android:layout_marginEnd="20dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cardPending"
                 app:layout_constraintTop_toTopOf="@id/cardVerified">
@@ -418,7 +551,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
                             android:layout_toEndOf="@id/unclaimedIcon"
-                            android:text="ASHA Unclaimed"
+                            android:text="@string/asha_unclaimed"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white"/>
@@ -479,6 +612,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="10dp"
+                        android:visibility="gone"
                         android:background="@color/read_only"/>
 
                     <androidx.recyclerview.widget.RecyclerView

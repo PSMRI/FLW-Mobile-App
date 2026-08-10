@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
@@ -19,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -47,6 +47,11 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
+import org.piramalswasthya.sakhi.utils.BellBadgeHelper
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
+import org.piramalswasthya.sakhi.utils.FcmTopicManager
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.util.Locale
 import javax.inject.Inject
@@ -81,6 +86,8 @@ class SupervisorActivity : AppCompatActivity() {
 
 
     private val viewModel: SupervisorViewModel by viewModels()
+
+    private val notificationViewModel: NotificationPanelViewModel by viewModels()
 
     private val langChooseAlert by lazy {
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -122,6 +129,8 @@ class SupervisorActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.logout))
             .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
+                // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                FcmTokenUploader.clearToken(this)
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(this)
                 WorkerUtils.cancelAllWork(this)
@@ -176,10 +185,20 @@ class SupervisorActivity : AppCompatActivity() {
         setContentView(binding.root)
         TapjackingProtectionHelper.enableTouchFiltering(this)
 
+         if(BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)){
+             binding.toolbar.background =
+                 ContextCompat.getDrawable(this, R.color.supervisor_toolbar)
+         }
+
         setUpActionBar()
         setUpNavHeader()
         setUpFirstTimePullWorker()
         setUpMenu()
+
+        // Subscribe to the user-scoped topic and register this device's FCM token with the server
+        // for the logged-in supervisor/CHO/ANM (and, going forward, Mitanin Trainer).
+        FcmTopicManager.subscribe(pref.getLoggedInUser()?.userId)
+        FcmTokenUploader.uploadToken(this)
 
         val permissions = arrayOf<String>(
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -354,6 +373,17 @@ class SupervisorActivity : AppCompatActivity() {
                 val syncMenu = menu.findItem(R.id.sync_status)
                 syncMenu.isVisible = false
 
+                val notifMenu = menu.findItem(R.id.toolbar_menu_notifications)
+                BellBadgeHelper.bind(
+                    notifMenu,
+                    this@SupervisorActivity,
+                    notificationViewModel.unreadCount
+                ) {
+                    NotificationPanelFragment.open(
+                        supportFragmentManager,
+                        R.color.supervisor_toolbar
+                    )
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -456,6 +486,21 @@ class SupervisorActivity : AppCompatActivity() {
 
         }
 
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
+                binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.mitanin_trainer))
+
+            } else {
+                binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(viewModel.getSuperVisorSubname())
+
+            }
+
+
+        } else {
+            binding.navView.menu.findItem(R.id.supervisorFragment).setTitle(getString(R.string.menu_supervisor))
+
+        }
         binding.navView.menu.findItem(R.id.menu_logout).setOnMenuItemClickListener {
             logoutAlert.show()
             true

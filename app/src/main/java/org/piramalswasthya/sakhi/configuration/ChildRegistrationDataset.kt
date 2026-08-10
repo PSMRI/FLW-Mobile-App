@@ -341,7 +341,7 @@ class ChildRegistrationDataset(
             syncState = SyncState.UNSYNCED,
             //Mapping values
             firstName = childName.value,
-            lastName = null,
+            lastName = motherBen.lastName,
             regDate = getLongFromDate(dateOfReg.value),
             dob = dob,
             age = age,

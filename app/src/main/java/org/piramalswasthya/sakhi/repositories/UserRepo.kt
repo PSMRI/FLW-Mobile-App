@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.repositories
 
-import android.widget.Toast
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
@@ -426,8 +425,7 @@ class UserRepo @Inject constructor(
             try {
                 val requestBody = mapOf(
                     "userId" to userId,
-                    "token" to token,
-                    "updatedAt" to updatedAt
+                    "token" to token
                 )
 
                 val response = amritApiService.saveFirebaseToken(requestBody)
@@ -439,6 +437,27 @@ class UserRepo @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Exception while saving Firebase token")
+            }
+        }
+    }
+
+    /**
+     * Unbinds this device's FCM token from [userId] on the server (called on logout) so a
+     * subsequent user on the same device does not receive token-targeted pushes for [userId].
+     */
+    suspend fun clearFirebaseToken(userId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf<String, Any>("userId" to userId)
+                val response = amritApiService.clearFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token cleared successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to clear Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while clearing Firebase token")
             }
         }
     }

@@ -8,10 +8,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.infant_reg.list.InfantRegListViewModel
 
@@ -60,5 +63,31 @@ class InfantRegListViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `onlyLowBirthWeight defaults to false from saved state`() {
+        assertFalse(viewModel.onlyLowBirthWeight)
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.UNSYNCED_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.UNSYNCED_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `filter then sort combine does not throw`() = runTest {
+        viewModel.filterText("baby")
+        viewModel.setSortFilter(EcFilterType.AGE_WISE)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.AGE_WISE, viewModel.getCurrentSort())
+        assertNotNull(viewModel.benList)
     }
 }

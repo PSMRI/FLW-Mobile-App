@@ -44,6 +44,8 @@ class IncentiveVerificationViewModel @Inject constructor(
             "pending"  -> VerificationStatus.PENDING
             "rejected" -> VerificationStatus.REJECTED
             "overdue"  -> VerificationStatus.OVERDUE
+            "approved"  -> VerificationStatus.APPROVED
+            "unclaimed"  -> VerificationStatus.UNCLAIMED
             else       -> VerificationStatus.ALL
         }
         fetchAshaList()
@@ -60,6 +62,8 @@ class IncentiveVerificationViewModel @Inject constructor(
             VerificationStatus.PENDING  -> 102
             VerificationStatus.REJECTED -> 103
             VerificationStatus.OVERDUE  -> 104
+            VerificationStatus.APPROVED  -> 105
+            VerificationStatus.UNCLAIMED  -> 106
             VerificationStatus.ALL      -> 0
         }
 
@@ -142,6 +146,8 @@ class IncentiveVerificationViewModel @Inject constructor(
         102  -> VerificationStatus.PENDING
         103  -> VerificationStatus.REJECTED
         104  -> VerificationStatus.OVERDUE
+        105  -> VerificationStatus.APPROVED
+        106  -> VerificationStatus.UNCLAIMED
         else -> VerificationStatus.PENDING
     }
 }

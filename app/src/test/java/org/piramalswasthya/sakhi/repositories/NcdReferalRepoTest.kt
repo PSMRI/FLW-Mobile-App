@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
@@ -82,4 +83,37 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         repo.pushAndUpdateNCDReferRecord()
         coVerify { referalDao.getAllUnprocessedReferals() }
     }
+
+    @Test
+    fun `toApiDateFormat returns ISO-like timestamp string`() {
+        val result = with(repo) { 0L.toApiDateFormat() }
+        assertTrue(
+            "Unexpected format: $result",
+            result.matches(Regex("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"))
+        )
+    }
+
+    @Test
+    fun `saveReferedNCD delegates to dao upsert`() = runTest {
+        val cache = mockk<ReferalCache>(relaxed = true)
+        coEvery { referalDao.upsert(cache) } returns Unit
+
+        repo.saveReferedNCD(cache)
+
+        coVerify(exactly = 1) { referalDao.upsert(cache) }
+    }
+
+    @Test
+    fun `pullAndPersistReferRecord throws when no user logged in`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns null
+
+        try {
+            repo.pullAndPersistReferRecord()
+            assertTrue("Should have thrown", false)
+        } catch (e: NullPointerException) {
+            // expected: userName!! on a null user
+        }
+        coVerify(exactly = 0) { amritApiService.getCbacReferData(any()) }
+    }
+
 }

@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
             }
             launch {
                 if (pref.getProfilePicUri() == null) {
-                    currentUser.let { user ->1
+                    currentUser.let { user ->
                         var imageUri = withContext(Dispatchers.IO) {
                             database.profileDao.getProfileActivityById(user.userId.toLong())
                         }?.profileImage?.takeIf { it.isNotEmpty() }

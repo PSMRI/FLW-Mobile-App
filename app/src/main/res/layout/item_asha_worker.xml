@@ -11,7 +11,27 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="10dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/nameAlpha"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardCornerRadius="30dp"
+            android:layout_margin="1dp"
+            app:cardBackgroundColor="#EAF6F2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            >
+            <TextView
+                android:id="@+id/textShort"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="AR"/>
+
+        </androidx.cardview.widget.CardView>
 
         <!-- Name -->
         <TextView
@@ -21,8 +41,9 @@
             android:textColor="#333333"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginStart="5dp"
             app:layout_constraintEnd_toStartOf="@+id/statusBadge"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/nameAlpha"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sunita Devi" />
 
@@ -46,9 +67,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="#666666"
+            android:layout_marginStart="5dp"
+
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="@+id/tvWorkerName"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/nameAlpha"
             app:layout_constraintTop_toBottomOf="@id/tvWorkerName"
             tools:text="ASH124 · Rampur SC" />
 
@@ -85,9 +108,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginStart="5dp"
+
             android:textColor="#666666"
             android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/nameAlpha"
             app:layout_constraintTop_toBottomOf="@id/tvAshaIdCenter"
             tools:text="Verified Date: 12 Oct 2026"/>
         <TextView
@@ -95,10 +120,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginStart="5dp"
+
             android:textColor="#666666"
             android:textSize="13sp"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/nameAlpha"
             app:layout_constraintEnd_toStartOf="@id/statusBadge"
             app:layout_constraintTop_toBottomOf="@id/tvStatusDate"
             tools:text="Reason: Documents missing"/>

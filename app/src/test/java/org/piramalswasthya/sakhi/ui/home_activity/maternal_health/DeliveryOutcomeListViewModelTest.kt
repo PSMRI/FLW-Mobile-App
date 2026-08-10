@@ -1,7 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health
 
+import android.util.Log
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -23,6 +25,8 @@ class DeliveryOutcomeListViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        mockkStatic(Log::class)
+        every { Log.i(any(), any()) } returns 0
         every { recordsRepo.getDeliveredWomenList() } returns flowOf(emptyList())
         viewModel = DeliveryOutcomeListViewModel(recordsRepo)
     }

@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
+import android.health.connect.datatypes.units.Length
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -58,6 +59,7 @@ import org.piramalswasthya.sakhi.model.IncentiveDomainDTO
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.drawMultilineText
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import java.io.File
 import java.io.FileOutputStream
@@ -66,12 +68,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.Objects
+import java.util.Timer
 import kotlin.math.max
 
 
 @AndroidEntryPoint
 class IncentivesFragment : Fragment() {
 
+    private  var supervisorRole: String = ""
     private var _binding: FragmentIncentivesBinding? = null
     private val binding: FragmentIncentivesBinding
         get() = _binding!!
@@ -299,10 +303,33 @@ class IncentivesFragment : Fragment() {
         }
 
 
+
         lifecycleScope.launch {
             viewModel.incentiveList.collect {
 
                 incentiveRecordList = it
+                try {
+                    supervisorRole = if (
+                        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+                    ) {
+
+                        if (incentiveRecordList.get(0).record.supervisorRole.equals("ASHA Supervisor")){
+                            getString(R.string.mitanin_trainer)
+
+                        } else {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        }
+                    } else {
+                        if (incentiveRecordList.isNotEmpty() && incentiveRecordList[0].record.isClaimed) {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        } else {
+                            ""
+                        }
+                    }
+                } catch (e:Exception) {
+                    Timer("")
+                }
+
                 val activityList = it.map { it.activity }
                 val pending = activityList.filter { !it.isPaid }.sumOf { it.rate }
                 val processed = activityList.filter { it.isPaid }.sumOf { it.rate }
@@ -332,6 +359,8 @@ class IncentivesFragment : Fragment() {
                 groupedAdapter.submitList(groupedList)
             }
         }
+
+
 
         binding.fetchData.setOnClickListener {
             binding.claimlayout.visibility = View.VISIBLE
@@ -367,12 +396,26 @@ class IncentivesFragment : Fragment() {
             val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
                     (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
-            val isPreviousMonth = when {
-                isExactlyLastMonth -> currentDay <= 12
-                isSelectedPreviousMonth -> true
-                else -> false
+            val isRejectedClaim = try {
+                incentiveRecordList.isNotEmpty() &&
+                        incentiveRecordList[0].record.isClaimed &&
+                        incentiveRecordList[0].record.approvalStatus == 103
+            } catch (e: Exception) {
+                false
             }
 
+
+            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+
+            val isPreviousMonth = if (isMitaninVariant) {
+                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
+            } else {
+                when {
+                    isExactlyLastMonth -> currentDay <= 12
+                    isSelectedPreviousMonth -> true
+                    else -> false
+                }
+            }
             binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
 
             binding.claimbtn.setOnClickListener {
@@ -385,6 +428,7 @@ class IncentivesFragment : Fragment() {
 
             if (incentiveRecordList.isNotEmpty()) {
                 if (incentiveRecordList.get(0).record.isClaimed) {
+
                     binding.claimbtn.text = "Claimed"
                     binding.claimbtn.isClickable = false
                     binding.claimbtn.isEnabled = false
@@ -393,7 +437,7 @@ class IncentivesFragment : Fragment() {
                     binding.approved.setOnClickListener {
                         showRejectedDialog(
                             incentiveRecordList.get(0).record.approvalStatus,
-                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})",
+                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${supervisorRole})",
                             incentiveRecordList.get(0).record.reason,
                             incentiveRecordList.get(0).record.approvalDate,
                             incentiveRecordList.get(0).record.calimedDate,
@@ -463,7 +507,7 @@ class IncentivesFragment : Fragment() {
                             binding.approved.setOnClickListener {
                                 showRejectedDialog(
                                     incentiveRecordList.get(0).record.approvalStatus,
-                                    "${incentiveRecordList.get(0).record.verifiedByUserName} (${incentiveRecordList.get(0).record.supervisorRole})" ,
+                                    "${incentiveRecordList.get(0).record.verifiedByUserName} (${supervisorRole})" ,
                                     incentiveRecordList.get(0).record.reason,
                                     incentiveRecordList.get(0).record.approvalDate,
                                     incentiveRecordList.get(0).record.calimedDate,

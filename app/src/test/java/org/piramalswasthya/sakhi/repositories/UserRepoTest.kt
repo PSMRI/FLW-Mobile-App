@@ -7,6 +7,8 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -21,25 +23,12 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import retrofit2.HttpException
 import retrofit2.Response
 
-/**
- * Unit tests for UserRepo.
- *
- * NOTE: authenticateUser(), saveToken(), and getTokenAmrit() tests are limited
- * because UserRepo internally constructs CryptoUtil which loads a native JNI
- * library (KeyUtils/libsakhi.so). This cannot be loaded in JVM unit tests.
- *
- * To make authenticateUser() fully testable, CryptoUtil should be injected
- * via constructor instead of being instantiated directly inside UserRepo.
- * TODO: Refactor UserRepo to inject CryptoUtil for full testability.
- *
- * The tests below cover refreshTokenTmc() and saveFirebaseToken() which
- * do NOT depend on the native library.
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepoTest : BaseRepositoryTest() {
 
@@ -54,10 +43,6 @@ class UserRepoTest : BaseRepositoryTest() {
 
     private val jsonMediaType = "application/json".toMediaTypeOrNull()
 
-    private fun jsonBody(json: String) = json.toResponseBody(jsonMediaType)
-
-    private fun emptyErrorBody() = "".toResponseBody(jsonMediaType)
-
     @Before
     override fun setUp() {
         super.setUp()
@@ -66,6 +51,10 @@ class UserRepoTest : BaseRepositoryTest() {
         every { TokenInsertTmcInterceptor.setJwt(any()) } returns Unit
         userRepo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService)
     }
+
+    private fun jsonBody(json: String) = json.toResponseBody(jsonMediaType)
+
+    private fun emptyErrorBody() = "".toResponseBody(jsonMediaType)
 
     // =====================================================
     // refreshTokenTmc() Tests
@@ -88,21 +77,23 @@ class UserRepoTest : BaseRepositoryTest() {
         coEvery { preferenceDao.registerAmritToken(any()) } returns Unit
         every { preferenceDao.lastAmritTokenFetchTimestamp = any() } returns Unit
 
-        val responseJson = """{"statusCode":200,"data":{"jwtToken":"new_jwt","refreshToken":"new_refresh","key":"new_token"}}"""
+        // The refresh endpoint returns tokens at the top level (see UserRepo.refreshTokenTmc
+        // and TokenAuthenticator), unlike the login endpoint which nests them under "data".
+        val responseJson = """{"statusCode":200,"jwtToken":"new_jwt","refreshToken":"new_refresh"}"""
         val response = Response.success(jsonBody(responseJson))
         coEvery { amritApiService.getRefreshToken(any()) } returns response
 
         val result = userRepo.refreshTokenTmc("testuser", "password")
 
-        // refreshTokenTmc returns true on success, or true on generic exception (code quirk)
-        assertTrue("Should return true on success or on generic exception catch", result)
+        assertTrue(result)
+        coVerify { preferenceDao.registerJWTAmritToken("new_jwt") }
+        coVerify { preferenceDao.registerRefreshToken("new_refresh") }
     }
 
     @Test
-    fun `refreshTokenTmc non-200 status returns false`() = runTest {
-        // NOTE: In the actual code, catch(e: Exception) returns true.
-        // So if errorMessage parsing throws, it returns true instead of false.
-        // This test verifies the non-200 path when JSON is well-formed.
+    fun `refreshTokenTmc with blank jwt returns false`() = runTest {
+        // A well-formed body without a jwtToken (e.g. an error payload) must not
+        // be treated as a successful refresh.
         every { preferenceDao.getRefreshToken() } returns "old_refresh_token"
 
         val responseJson = """{"statusCode":401,"errorMessage":"Token expired"}"""
@@ -111,11 +102,7 @@ class UserRepoTest : BaseRepositoryTest() {
 
         val result = userRepo.refreshTokenTmc("testuser", "password")
 
-        // The code has a generic catch that returns true for any exception.
-        // If the JSON parsing succeeds, non-200 status returns false.
-        // If Timber throws (not planted in tests), the catch returns true.
-        // Either way, the method completes without crashing.
-        assertTrue("refreshTokenTmc should complete without crashing", result || !result)
+        assertFalse(result)
     }
 
     @Test
@@ -147,4 +134,62 @@ class UserRepoTest : BaseRepositoryTest() {
 
         userRepo.saveFirebaseToken(1, "firebase_token", "2026-03-17")
     }
+
+    // ---------------- unProcessedRecordCount ----------------
+
+    @Test
+    fun `unProcessedRecordCount exposes syncDao flow`() {
+        val flow: Flow<List<SyncStatusCache>> = flowOf(emptyList())
+        every { syncDao.getSyncStatus() } returns flow
+        val repo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService)
+        assertEquals(flow, repo.unProcessedRecordCount)
+    }
+
+    // ---------------- setFacilityData guards ----------------
+
+    @Test
+    fun `setFacilityData swallows HttpException`() = runTest {
+        val errorResponse = Response.error<String>(500, emptyErrorBody())
+        coEvery { amritApiService.getUserDetailsById(any()) } throws HttpException(errorResponse)
+
+        // Should complete without throwing.
+        userRepo.setFacilityData(42)
+    }
+
+    @Test
+    fun `setFacilityData swallows generic exception`() = runTest {
+        coEvery { amritApiService.getUserDetailsById(any()) } throws RuntimeException("boom")
+
+        userRepo.setFacilityData(42)
+    }
+
+    // ---------------- refreshTokenTmc extra branches ----------------
+
+    @Test
+    fun `refreshTokenTmc returns false on generic exception`() = runTest {
+        every { preferenceDao.getRefreshToken() } returns "stored_token"
+        coEvery { amritApiService.getRefreshToken(any()) } throws RuntimeException("network")
+
+        assertFalse(userRepo.refreshTokenTmc("user", "pass"))
+    }
+
+    @Test
+    fun `refreshTokenTmc returns false on unsuccessful response`() = runTest {
+        every { preferenceDao.getRefreshToken() } returns "stored_token"
+        coEvery { amritApiService.getRefreshToken(any()) } returns
+            Response.error(500, emptyErrorBody())
+
+        assertFalse(userRepo.refreshTokenTmc("user", "pass"))
+    }
+
+    // ---------------- saveFirebaseToken unsuccessful branch ----------------
+
+    @Test
+    fun `saveFirebaseToken unsuccessful response does not throw`() = runTest {
+        coEvery { amritApiService.saveFirebaseToken(any()) } returns
+            Response.error(400, emptyErrorBody())
+
+        userRepo.saveFirebaseToken(1, "token", "2026-03-17")
+    }
+
 }

@@ -1,14 +1,17 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentBeneficiaryDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
@@ -51,7 +54,8 @@ class BeneficiaryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = BeneficiaryAdapter()
+
+        adapter = BeneficiaryAdapter(activityName)
         binding.rvBeneficiaries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBeneficiaries.adapter = adapter
 
@@ -85,7 +89,19 @@ class BeneficiaryDetailFragment : Fragment() {
                         binding.llHeader.visibility = View.GONE
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
-                        binding.llHeader.visibility = View.VISIBLE
+                        val params = binding.llHeader.layoutParams as ConstraintLayout.LayoutParams
+
+                        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            params.topMargin = 10.dpToPx()
+                            params.marginStart = 17.dpToPx()
+                            params.marginEnd = 17.dpToPx()
+
+                        } else {
+                            params.topMargin = 0
+                            params.marginStart = 0
+                            params.marginEnd = 0
+
+                        }
                     }
                 }
                 is BeneficiaryUiState.Error -> {
@@ -111,4 +127,7 @@ class BeneficiaryDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    fun Int.dpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
+
 }

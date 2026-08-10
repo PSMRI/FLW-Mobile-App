@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -84,6 +85,8 @@ class SignInFragment : Fragment() {
                     if (it > 0) {
                         WorkerUtils.triggerAmritPushWorker(requireContext())
                     } else {
+                        // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                        FcmTokenUploader.clearToken(requireContext())
                         lifecycleScope.launch {
                             viewModel.logout()
                         }
@@ -311,20 +314,10 @@ class SignInFragment : Fragment() {
             }
         }
 
-        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-          binding.tvDemo?.visibility =View.VISIBLE
-        } else {
-            binding.tvDemo?.visibility =View.GONE
-        }
-    }
-
-    private fun updateSelectedLangText(language: Languages) {
-        binding.tvSelectedLang?.text = when (language) {
-            Languages.ENGLISH  -> getString(R.string.text_english)
-            Languages.HINDI    -> getString(R.string.text_hindi)
-            Languages.ASSAMESE -> getString(R.string.text_assamese)
-            Languages.BANGLA   -> getString(R.string.text_bangali)
-        }
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+        val isNonProdMitanin = isMitanin &&
+                (!BuildConfig.FLAVOR.equals("mitanin", ignoreCase = true) || BuildConfig.DEBUG)
+        binding.tvDemo?.visibility = if (isNonProdMitanin) View.VISIBLE else View.GONE
     }
 
     private fun updateSelectedLangText(language: Languages) {

@@ -6,10 +6,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.EcFilterType
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.child_reg.list.ChildRegListViewModel
 
@@ -55,5 +57,26 @@ class ChildRegListViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `getCurrentSort default is NEWEST_FIRST`() {
+        assertEquals(EcFilterType.NEWEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `setSortFilter updates current sort`() = runTest {
+        viewModel.setSortFilter(EcFilterType.OLDEST_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.OLDEST_FIRST, viewModel.getCurrentSort())
+    }
+
+    @Test
+    fun `filter then sort combine does not throw`() = runTest {
+        viewModel.filterText("child")
+        viewModel.setSortFilter(EcFilterType.SYNCING_FIRST)
+        advanceUntilIdle()
+        assertEquals(EcFilterType.SYNCING_FIRST, viewModel.getCurrentSort())
+        assertNotNull(viewModel.benList)
     }
 }

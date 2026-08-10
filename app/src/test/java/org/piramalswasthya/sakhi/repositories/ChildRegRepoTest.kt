@@ -19,6 +19,11 @@ import org.piramalswasthya.sakhi.model.ChildRegCache
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
 
+/**
+ * Unit tests for [ChildRegRepo]. Consolidated from ChildRegRepoTest + Extra3Test:
+ * the getChildReg / saveChildReg / getDeliveryOutcome / getInfantReg dao
+ * delegations, including null returns and exact-argument forwarding.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChildRegRepoTest : BaseRepositoryTest() {
 
@@ -136,5 +141,54 @@ class ChildRegRepoTest : BaseRepositoryTest() {
         repo.getInfantRegFromMotherBenId(500L, 3)
 
         coVerify { infantRegDao.getInfantReg(500L, 3) }
+    }
+
+    // =====================================================
+    // Exact-argument forwarding (Extra3)
+    // =====================================================
+
+    @Test
+    fun `getChildReg forwards exact benId to dao`() = runTest {
+        val child = mockk<ChildRegCache>()
+        coEvery { childRegDao.getInfantReg(777L) } returns child
+
+        assertEquals(child, repo.getChildReg(777L))
+        coVerify { childRegDao.getInfantReg(777L) }
+    }
+
+    @Test
+    fun `saveChildReg forwards exact cache to dao`() = runTest {
+        val child = mockk<ChildRegCache>(relaxed = true)
+        coEvery { childRegDao.saveInfantReg(child) } returns Unit
+
+        repo.saveChildReg(child)
+
+        coVerify(exactly = 1) { childRegDao.saveInfantReg(child) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomeRepoFromMotherBenId forwards exact benId to dao`() = runTest {
+        val outcome = mockk<DeliveryOutcomeCache>()
+        coEvery { deliveryOutcomeDao.getDeliveryOutcome(321L) } returns outcome
+
+        assertEquals(outcome, repo.getDeliveryOutcomeRepoFromMotherBenId(321L))
+        coVerify { deliveryOutcomeDao.getDeliveryOutcome(321L) }
+    }
+
+    @Test
+    fun `getInfantRegFromMotherBenId forwards baby index zero to dao`() = runTest {
+        val infant = mockk<InfantRegCache>()
+        coEvery { infantRegDao.getInfantReg(400L, 0) } returns infant
+
+        assertEquals(infant, repo.getInfantRegFromMotherBenId(400L, 0))
+        coVerify { infantRegDao.getInfantReg(400L, 0) }
+    }
+
+    @Test
+    fun `getInfantRegFromMotherBenId returns null and forwards high baby index`() = runTest {
+        coEvery { infantRegDao.getInfantReg(400L, 5) } returns null
+
+        assertNull(repo.getInfantRegFromMotherBenId(400L, 5))
+        coVerify { infantRegDao.getInfantReg(400L, 5) }
     }
 }

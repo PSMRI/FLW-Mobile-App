@@ -61,8 +61,31 @@ interface AmritApiService {
         @Query("userId") userId: Int
     ): UserNetworkResponse
 
-    @POST("common-api/firebaseNotification/userToken")
-    suspend fun saveFirebaseToken(@Body json: Map<String, Any>): Response<ResponseBody>
+    @POST("common-api/firebaseNotification/updateToken")
+    suspend fun saveFirebaseToken(@Body json: @JvmSuppressWildcards Map<String, Any>): Response<ResponseBody>
+
+    // NOTE: placeholder — the backend contract for unbinding a device token from a user on
+    // logout is not yet confirmed. Path + request body will be reconciled with the AMRIT team.
+    @POST("common-api/firebaseNotification/clearUserToken")
+    suspend fun clearFirebaseToken(@Body json: @JvmSuppressWildcards Map<String, Any>): Response<ResponseBody>
+
+    // --- In-app notifications (T8) ---
+    // NOTE: dummy/placeholder endpoints — the backend contract is not yet confirmed.
+    // Paths + request/response shapes will be reconciled when the AMRIT team finalizes it.
+    @POST("flw-api/notification/list")
+    suspend fun getNotifications(): Response<NotificationListResponse>
+
+    @PUT("flw-api/notification/{notificationId}/read")
+    suspend fun markNotificationRead(@Path("notificationId") notificationId: Long): Response<ResponseBody>
+
+    @POST("flw-api/notification/markAllRead")
+    suspend fun markAllNotificationsRead(@Body request: NotificationUserRequest): Response<ResponseBody>
+
+    @POST("flw-api/notification/clear")
+    suspend fun clearNotifications(@Body request: NotificationIdsRequest): Response<ResponseBody>
+
+    @POST("flw-api/notification/clearAll")
+    suspend fun clearAllNotifications(@Body request: NotificationUserRequest): Response<ResponseBody>
 
     @POST("tm-api/registrar/registrarBeneficaryRegistrationNew")
     suspend fun getBenIdFromBeneficiarySending(@Body beneficiaryDataSending: BeneficiaryDataSending): Response<ResponseBody>

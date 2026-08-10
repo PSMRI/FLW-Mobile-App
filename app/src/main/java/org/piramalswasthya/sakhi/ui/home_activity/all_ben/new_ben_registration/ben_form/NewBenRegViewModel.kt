@@ -209,6 +209,9 @@ class NewBenRegViewModel @Inject constructor(
                     isOtpVerified = ben.isConsent
                     parentName = ben.firstName + " " + ben.lastName
                     parentFirstName = ben.firstName.toString()
+                    if (ben.isKid && ben.lastName.isNullOrBlank()) {
+                        ben.lastName = household.family?.familyName
+                    }
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo

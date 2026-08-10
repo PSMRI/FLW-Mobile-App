@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.home_activity.immunization_due
 import android.content.Context
 import android.content.res.Resources
 import androidx.lifecycle.SavedStateHandle
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
@@ -18,6 +19,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.ImmunizationCategory
 import org.piramalswasthya.sakhi.ui.home_activity.immunization_due.child_immunization.list.ChildImmunizationListViewModel
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
@@ -41,6 +43,7 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
         every { mockResources.getString(R.string.all) } returns "ALL"
         every { savedStateHandle.get<Boolean>(any()) } returns null
         every { vaccineDao.getBenWithImmunizationRecords(any(), any()) } returns flowOf(emptyList())
+        coEvery { vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD) } returns emptyList()
         viewModel = ChildImmunizationListViewModel(vaccineDao, preferenceDao, context, savedStateHandle)
     }
 
@@ -119,5 +122,47 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
         viewModel.categoryData()
         val categories = viewModel.categoryData()
         assertNotNull(categories)
+    }
+
+    @Test
+    fun `categoryData builds a list starting with ALL`() {
+        val categories = viewModel.categoryData()
+        assertNotNull(categories)
+        assertEquals("ALL", categories[0])
+    }
+
+    @Test
+    fun `categoryData rebuilds after mutation`() {
+        val first = viewModel.categoryData()
+        first.add("EXTRA")
+        val second = viewModel.categoryData()
+        assertEquals("ALL", second[0])
+    }
+
+    @Test
+    fun `toEnglishCategory returns empty for unknown localized value`() {
+        assertEquals("", viewModel.toEnglishCategory("unknown-value"))
+    }
+
+    @Test
+    fun `toEnglishCategory returns empty for ALL index zero`() {
+        // "ALL" maps to index 0 which the method treats as no category
+        assertEquals("", viewModel.toEnglishCategory("ALL"))
+    }
+
+    @Test
+    fun `getSelectedBenId is zero initially`() {
+        assertEquals(0L, viewModel.getSelectedBenId())
+    }
+
+    @Test
+    fun `updateBottomSheetData then filterText combine does not throw`() = runTest {
+        viewModel.updateBottomSheetData(12L)
+        viewModel.filterText("  Baby  ")
+        advanceUntilIdle()
+        assertEquals(12L, viewModel.getSelectedBenId())
+        assertNotNull(viewModel.immunizationBenList)
+        assertNotNull(viewModel.bottomSheetContent)
+        assertNotNull(viewModel.isSelectedBenDeathFlow)
     }
 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
@@ -23,12 +24,14 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
+import org.piramalswasthya.sakhi.utils.Log
 import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkerDetailFragment : Fragment() {
 
+    private var hasDefaultRecord: Boolean = false
     private var _binding: FragmentWorkerDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -52,6 +55,10 @@ class WorkerDetailFragment : Fragment() {
     private val selectedMonth by lazy {
         arguments?.getInt("selected_month") ?: (Calendar.getInstance().get(Calendar.MONTH) + 1)
     }
+
+    private val amount by lazy {
+        arguments?.getInt("amount")
+    }
     private val selectedYear by lazy {
         arguments?.getInt("selected_year") ?: Calendar.getInstance().get(Calendar.YEAR)
     }
@@ -74,12 +81,51 @@ class WorkerDetailFragment : Fragment() {
         setupClickListeners()
         observeViewModel()
 
+        binding.tvWorkerName.text = workerName
+        binding.tvTotalAmount.text = "₹$amount"
+
         val user = preferenceDao.getLoggedInUser()
         val monthNames = resources.getStringArray(R.array.months)
         val monthName = monthNames[selectedMonth - 1]
 
-        binding.tvWorkerInfo.text = "AshaId: $workerId , $scName , $monthName $selectedYear"
-        binding.tvSupervisorInfo.text = "Supervisor ID: ${preferenceDao.getEmployeeId()}"
+        binding.tvWorkerInfo.text = "EmployeeID: $workerId ,  $monthName $selectedYear"
+        if (workerStatus=="VERIFIED") {
+
+            binding.layoutVerified.visibility = View.VISIBLE
+        } else {
+            binding.layoutVerified.visibility = View.GONE
+        }
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            binding.tvWorkerName.visibility = View.VISIBLE
+            binding.summaryCard.visibility = View.VISIBLE
+            binding.tvSupervisorInfo.visibility = View.GONE
+            binding.cbVerifyDocuments.visibility = View.GONE
+            binding.tthcheck.visibility = View.VISIBLE
+
+
+            if (!viewModel.getSuperVisorSubname().equals("ASHA Supervisor")) {
+                binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
+            } else {
+                binding.btnVerify.text = resources.getString(R.string.verify)
+
+            }
+            binding.tvSupervisorInfo.text =
+                getString(R.string.trainer_id_new, preferenceDao.getEmployeeId())
+
+        } else {
+            binding.tvWorkerName.visibility = View.GONE
+            binding.summaryCard.visibility = View.GONE
+            binding.cbVerifyDocuments.visibility = View.VISIBLE
+            binding.tthcheck.visibility = View.GONE
+            binding.role.text =  resources.getString(R.string.verified_by, viewModel.getSuperVisorSubname())
+            binding.btnVerify.text = resources.getString(R.string.verify)
+
+
+            binding.tvSupervisorInfo.visibility = View.VISIBLE
+            binding.tvSupervisorInfo.text =
+                getString(R.string.supervisor_id_new, preferenceDao.getEmployeeId())
+
+        }
 
         viewModel.init(workerId, selectedMonth, selectedYear)
     }
@@ -87,6 +133,7 @@ class WorkerDetailFragment : Fragment() {
     private fun setupRecyclerViews() {
         activityAdapter = ActivityAdapter { activity ->
             navigateToBeneficiaryDetail(activity)
+
         }
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = activityAdapter
@@ -136,6 +183,15 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
+                    binding.tvClaimsCount.text = currentRecords.size.toString()
+                     hasDefaultRecord = currentRecords.any { it.isDefault }
+                    binding.btnVerify.visibility = if (hasDefaultRecord && BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
+
+
 
                     if (state.records.isEmpty()) {
                         binding.tvEmptyState.visibility = View.VISIBLE
@@ -145,12 +201,11 @@ class WorkerDetailFragment : Fragment() {
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
                         binding.rvActivities.visibility = View.VISIBLE
-                        binding.llHeader.visibility = View.VISIBLE
                         activityAdapter.submitList(state.records)
                         binding.cvMain.visibility = View.VISIBLE
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -196,15 +251,21 @@ class WorkerDetailFragment : Fragment() {
     }
 
     private fun onVerifyClicked() {
-        if (!binding.cbVerifyDocuments.isChecked) {
-            Toast.makeText(requireContext(), "Please verify documents before approving", Toast.LENGTH_SHORT).show()
+        val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+        if (!isMitaninFlavor && !binding.cbVerifyDocuments.isChecked) {
+            Toast.makeText(
+                requireContext(),
+                "Please verify documents before approving",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
+
         if (currentRecords.isEmpty()) {
             Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
             return
         }
-        // ✅ ClaimedIncentiveUI mein individual ids nahi — empty list pass karo
         viewModel.verifyActivities(
             ashaId = workerId,
             incentiveIds = emptyList()
@@ -267,8 +328,21 @@ class WorkerDetailFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        activity?.let {
-            (it as SupervisorActivity).updateActionBar(R.drawable.logo_circle, workerName)
+
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle_green,
+                    workerName
+                )
+            }
+        } else {
+            activity?.let {
+                (it as SupervisorActivity).updateActionBar(
+                    R.drawable.logo_circle,
+                    workerName
+                )
+            }
         }
     }
 
@@ -276,4 +350,6 @@ class WorkerDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

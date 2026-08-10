@@ -352,6 +352,7 @@
     <string name="beneficiary_name">लाभार्थी का नाम</string>
     <string name="husband_s_name">पति का नाम</string>
     <string name="weeks_of_pregnancy">गर्भावस्था के सप्ताह</string>
+    <string name="days_of_pregnancy">गर्भावस्था के दिन</string>
     <string name="pregnancy_weeks">गर्भावस्था के सप्ताह</string>
     <string name="anc_visits">एएनसी भ्रमण</string>
     <string name="pnc_visits">प्रसवोत्तर देखभाल भ्रमण</string>
@@ -1367,6 +1368,48 @@
     <string name="email">ईमेल</string>
     <string name="app_native_name">मितानिन</string>
     <string name="str_demo">डेमो</string>
+    <string name="mitanin_trainer">मितानिन प्रशिक्षक</string>
+    <string name="total_mitanins">कुल मितानिन</string>
+    <string name="mitanins_unclaimed">मितानिन अप्रमाणित</string>
+    <string name="asha_unclaimed">आशा अप्रमाणित</string>
+    <string name="tap_to_view_mitanin_grouped">मितानिन समूह देखने के लिए टैप करें।</string>
+    <string name="search_mitanin">मितानिन खोजें...</string>
+    <string name="mitanins">मितानिन: %1$d</string>
+    <string name="back_with_mitanin_nfor_correction">सुधार हेतु\nमितानिन के पास भेजें</string>
+    <string name="mitanin_monthly_detail">मितानिन मासिक विवरण</string>
+    <string name="mitanin_yet_to_submit_ntheir_monthly_claim">वे मितानिन जिन्होंने अभी तक\nअपना मासिक दावा जमा नहीं किया है</string>
+    <string name="supervisor_id_new">सुपरवाइज़र ID: %1$s</string>
+    <string name="trainer_id_new">मितानिन प्रशिक्षक ID: %1$s</string>
+
+
+
+
+    <!-- Notifications -->
+    <string name="notifications_title">सूचनाएं</string>
+    <string name="no_notifications_yet">अभी तक कोई सूचना नहीं</string>
+    <string name="clear_notifications">सूचनाएं साफ़ करें</string>
+    <string name="clear_notifications_confirm_title">सभी सूचनाएं हटाएं?</string>
+    <string name="clear_notifications_confirm_message">इससे इस सूची की सभी सूचनाएं हट जाएंगी और इसे पूर्ववत नहीं किया जा सकता।</string>
+    <string name="notification_action_clear">साफ़ करें</string>
+    <string name="notification_action_cancel">रद्द करें</string>
+    <string name="notification_close">बंद करें</string>
+    <string name="verify_will_commit_every_activity_listed_below_in_one_action">
+    सत्यापित करने पर नीचे सूचीबद्ध सभी गतिविधियाँ एक साथ सबमिट हो जाएँगी।
+</string>
+    <string name="verified_by">सत्यापित किया गया: %1$s</string>
+    <string name="approvedcheck">✓ स्वीकृत</string>
+    <string name="all_sub_centre">सभी उपकेंद्र</string>
+    <string name="activity_claimed">दावा की गई गतिविधियाँ</string>
+    <string name="total_claimed_amount">कुल दावा राशि</string>
+    <string name="monthly_summary">मासिक विवरण</string>
+    <string name="verified_text">सत्यापित</string>
+    <string name="verified_date_txt">सत्यापन तिथि: %1$s</string>
+    <string name="pending_txt">लंबित</string>
+    <string name="rejected_txt">अस्वीकृत</string>
+    <string name="rejected_date_txt">अस्वीकृति तिथि: %1$s</string>
+    <string name="reason_txt">कारण: %1$s %2$s</string>
+    <string name="unclaimed_txt">दावा नहीं किया गया</string>
+
 
     <!-- Monthly Recap dashboard strip (Phase 1) -->
     <string name="monthly_recap_title">मासिक रिकैप</string>
