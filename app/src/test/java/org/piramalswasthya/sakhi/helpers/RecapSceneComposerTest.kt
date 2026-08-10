@@ -154,13 +154,17 @@ class RecapSceneComposerTest {
         )
         val anims = scenes.filter { it.type == RecapScene.Type.CATEGORY }.map { it.lottieRawRes!! }
         assertEquals(6, anims.size)
-        assertEquals(6, anims.toSet().size) // all six actions distinct across the story
+        // The point of the rotation: in one recap no ASHA sees the same action twice
+        // across her category scenes, however many categories she has.
+        assertEquals(6, anims.toSet().size)
         anims.zipWithNext().forEach { (a, b) -> assertNotEquals(a, b) }
-        assertTrue(anims.none { it == RecapSceneComposer.GOODBYE_ANIMATION })
         assertTrue(anims.all { it in RecapSceneComposer.STORY_ANIMATIONS })
-        // Welcome (girl_8) is dedicated and distinct from story + goodbye animations.
-        assertTrue(RecapSceneComposer.WELCOME_ANIMATION !in RecapSceneComposer.STORY_ANIMATIONS)
+        // Welcome and goodbye reuse two of the six actions (the wave and the thumbs
+        // up) rather than being reserved extras — see RecapSceneComposer. They must
+        // still differ from each other, so the story never opens and closes alike.
         assertNotEquals(RecapSceneComposer.WELCOME_ANIMATION, RecapSceneComposer.GOODBYE_ANIMATION)
+        assertTrue(RecapSceneComposer.WELCOME_ANIMATION in RecapSceneComposer.STORY_ANIMATIONS)
+        assertTrue(RecapSceneComposer.GOODBYE_ANIMATION in RecapSceneComposer.STORY_ANIMATIONS)
     }
 
     // ---- determinism ----

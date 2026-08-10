@@ -118,16 +118,36 @@ class RecapSceneComposer(private val library: RecapContentLibrary) {
         private const val WELCOME_SALT = 101
         private const val GOODBYE_SALT = 202
 
-        /** The six interchangeable story actions; girl_7 goodbye, girl_8 welcome. */
+        /**
+         * The six ASHA-didi actions, one per category scene.
+         *
+         * The rotation above starts at a seed-derived offset and then steps through
+         * this list, so within one recap **every category scene gets a different
+         * action**, consecutive scenes never repeat, and two ASHAs (or two months)
+         * start on different actions. Six entries covers the six countable
+         * categories, which is the maximum a single recap can show.
+         *
+         * [WELCOME_ANIMATION] and [GOODBYE_ANIMATION] deliberately reuse two of
+         * these rather than being reserved extras: the greeting wave and the
+         * thumbs-up are the two actions that actually mean "hello" and "well done",
+         * and with six assets that semantic fit is worth more than absolute
+         * uniqueness. In a full six-category recap those two therefore appear twice,
+         * at opposite ends of the story. Adding two more distinct actions here would
+         * remove even that.
+         */
         val STORY_ANIMATIONS = listOf(
-            R.raw.recap_girl_1,
-            R.raw.recap_girl_2,
-            R.raw.recap_girl_3,
-            R.raw.recap_girl_4,
-            R.raw.recap_girl_5,
-            R.raw.recap_girl_6,
+            R.raw.recap_didi_1, // neutral, hands down
+            R.raw.recap_didi_2, // resting, slight hand movement
+            R.raw.recap_didi_3, // hand to chin
+            R.raw.recap_didi_4, // still, calm
+            R.raw.recap_didi_5, // greeting wave
+            R.raw.recap_didi_6, // two-handed thumbs up
         )
-        val GOODBYE_ANIMATION = R.raw.recap_girl_7
-        val WELCOME_ANIMATION = R.raw.recap_girl_8
+
+        /** Thumbs up — the closing "well done". Also in [STORY_ANIMATIONS]. */
+        val GOODBYE_ANIMATION = R.raw.recap_didi_6
+
+        /** Greeting wave — she opens the story. Also in [STORY_ANIMATIONS]. */
+        val WELCOME_ANIMATION = R.raw.recap_didi_5
     }
 }
