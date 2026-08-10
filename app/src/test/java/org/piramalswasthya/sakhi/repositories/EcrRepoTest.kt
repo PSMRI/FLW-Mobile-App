@@ -31,6 +31,7 @@ import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
+import java.net.SocketTimeoutException
 
 /**
  * Unit tests for [EcrRepo]. Consolidated from EcrRepoTest + Extra/Extra2/Extra3:
@@ -738,5 +739,41 @@ class EcrRepoTest : BaseRepositoryTest() {
         assertTrue(repo.pushAndUpdateEctRecord())
 
         coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+    }
+
+    // ---------------- postECRDataToAmritServer / postECTDataToAmritServer retry exhaustion ----------------
+
+    @Test
+    fun `postECRDataToAmritServer exhausts retries when the api keeps timing out`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.postEcrForm(any()) } throws SocketTimeoutException()
+
+        assertFalse(repo.postECRDataToAmritServer(mutableSetOf(mockk<EcrPost>(relaxed = true))))
+
+        coVerify(exactly = 4) { amritApiService.postEcrForm(any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateEctRecord marks unsynced when the api keeps timing out`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        coEvery { amritApiService.postEctForm(any()) } throws SocketTimeoutException()
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify(exactly = 4) { amritApiService.postEctForm(any()) }
+        coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+    }
+
+    @Test
+    fun `postECRDataToAmritServer returns false when response body is null`() = runTest {
+        loggedIn()
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.code() } returns 200
+        every { response.body() } returns null
+        coEvery { amritApiService.postEcrForm(any()) } returns response
+
+        assertFalse(repo.postECRDataToAmritServer(mutableSetOf(mockk<EcrPost>(relaxed = true))))
     }
 }

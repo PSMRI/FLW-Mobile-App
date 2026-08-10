@@ -178,6 +178,10 @@ android {
             it.maxHeapSize = "2560m"
             it.jvmArgs "-XX:MaxMetaspaceSize=1024m"
             it.forkEvery = 80
+            it.testLogging {
+                events "failed", "standardError"
+                exceptionFormat = "full"
+            }
         }
     }
 

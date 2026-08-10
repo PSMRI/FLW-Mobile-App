@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -45,6 +46,8 @@ class MalariaIRSViewModelTest : BaseViewModelTest() {
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = MalariaIRSViewModel(savedStateHandle, preferenceDao, context, malariaRepo, benRepo, recordsRepo)
     }
 

@@ -1,17 +1,29 @@
 package org.piramalswasthya.sakhi.utils
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.util.Base64
+import android.util.TypedValue
 import android.widget.Toast
+import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentActivity
+import io.mockk.Runs
+import io.mockk.answers
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
+import io.mockk.thirdArg
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
@@ -30,7 +42,10 @@ import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import java.io.File
+import java.nio.file.Files
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class HelperUtilTest {
@@ -1517,10 +1532,703 @@ class HelperUtilTest {
     }
 
     // =====================================================
+    // updateAgeDTO() - day/month borrow branches
+    // =====================================================
+
+    private fun expectedAge(calNow: Calendar, birthCal: Calendar): Triple<Int, Int, Int> {
+        var years = calNow.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR)
+        var months = calNow.get(Calendar.MONTH) - birthCal.get(Calendar.MONTH)
+        if (months < 0) {
+            years -= 1
+            months += 12
+        }
+        var days = calNow.get(Calendar.DAY_OF_MONTH) - birthCal.get(Calendar.DAY_OF_MONTH)
+        if (days < 0) {
+            if (months == 0) {
+                years -= 1
+                months += 11
+                days += 30
+            } else {
+                months -= 1
+                days += 30
+            }
+        }
+        return Triple(years, months, days)
+    }
+
+    @Test
+    fun `updateAgeDTO borrows a day and rolls the month from zero to eleven`() {
+        val calNow: Calendar = Calendar.getInstance()
+        val birthCal = (calNow.clone() as Calendar).apply {
+            add(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.YEAR, -5)
+        }
+
+        val ageDTO = AgeUnitDTO(0, 0, 0)
+        HelperUtil.updateAgeDTO(ageDTO, birthCal)
+
+        val (expYears, expMonths, expDays) = expectedAge(calNow, birthCal)
+        assertEquals(expYears, ageDTO.years)
+        assertEquals(expMonths, ageDTO.months)
+        assertEquals(expDays, ageDTO.days)
+    }
+
+    @Test
+    fun `updateAgeDTO borrows a day when the month remainder is non zero`() {
+        val calNow: Calendar = Calendar.getInstance()
+        val birthCal = (calNow.clone() as Calendar).apply {
+            add(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.MONTH, -3)
+            add(Calendar.YEAR, -3)
+        }
+
+        val ageDTO = AgeUnitDTO(0, 0, 0)
+        HelperUtil.updateAgeDTO(ageDTO, birthCal)
+
+        val (expYears, expMonths, expDays) = expectedAge(calNow, birthCal)
+        assertEquals(expYears, ageDTO.years)
+        assertEquals(expMonths, ageDTO.months)
+        assertEquals(expDays, ageDTO.days)
+    }
+
+    @Test
+    fun `updateAgeDTO borrows a year when the birth month is later than the current month`() {
+        val calNow: Calendar = Calendar.getInstance()
+        val birthCal = (calNow.clone() as Calendar).apply {
+            add(Calendar.MONTH, 2)
+            add(Calendar.YEAR, -3)
+        }
+
+        val ageDTO = AgeUnitDTO(0, 0, 0)
+        HelperUtil.updateAgeDTO(ageDTO, birthCal)
+
+        val (expYears, expMonths, expDays) = expectedAge(calNow, birthCal)
+        assertEquals(expYears, ageDTO.years)
+        assertEquals(expMonths, ageDTO.months)
+        assertEquals(expDays, ageDTO.days)
+    }
+
+    // =====================================================
+    // getDiffYears() - equal day boundary
+    // =====================================================
+
+    @Test
+    fun `getDiffYears does not decrement when the day matches exactly`() {
+        val a = Calendar.getInstance().apply { set(2000, Calendar.JANUARY, 15) }
+        val b = Calendar.getInstance().apply { set(2026, Calendar.JANUARY, 15) }
+        assertEquals(26, HelperUtil.getDiffYears(a, b))
+    }
+
+    // =====================================================
+    // isValidName() - additional regex edge cases
+    // =====================================================
+
+    @Test
+    fun `isValidName rejects name starting with a hyphen`() {
+        assertFalse(HelperUtil.isValidName("-John"))
+    }
+
+    @Test
+    fun `isValidName rejects name ending with a hyphen`() {
+        assertFalse(HelperUtil.isValidName("John-"))
+    }
+
+    @Test
+    fun `isValidName accepts name with multiple internal spaces`() {
+        assertTrue(HelperUtil.isValidName("Mary  Jane"))
+    }
+
+    @Test
+    fun `isValidName rejects whitespace only input`() {
+        assertFalse(HelperUtil.isValidName("   "))
+    }
+
+    @Test
+    fun `isValidName accepts a two letter name`() {
+        assertTrue(HelperUtil.isValidName("Al"))
+    }
+
+    // =====================================================
+    // parseDateToMillis() - invalid calendar dates
+    // =====================================================
+
+    @Test
+    fun `parseDateToMillis returns 0 for a non existent february day`() {
+        assertEquals(0L, HelperUtil.parseDateToMillis("30-02-2026"))
+    }
+
+    @Test
+    fun `parseDateToMillis returns 0 for a day that does not exist in april`() {
+        assertEquals(0L, HelperUtil.parseDateToMillis("31-04-2026"))
+    }
+
+    // =====================================================
+    // parseSelections() - null entries fallback path
+    // =====================================================
+
+    @Test
+    fun `parseSelections throws when there is no delimiter and no entries to match against`() {
+        try {
+            HelperUtil.parseSelections("justtext", null)
+            assertTrue("Expected an NPE for the null entries fallback path", false)
+        } catch (e: NullPointerException) {
+            // documents the current behavior of the entries!! fallback
+        }
+    }
+
+    // =====================================================
+    // fileToBase64()
+    // =====================================================
+
+    @Test
+    fun `fileToBase64 encodes file bytes using Base64 NO_WRAP`() {
+        val tempFile = File.createTempFile("helper_util_test_", ".bin")
+        try {
+            tempFile.writeBytes(byteArrayOf(1, 2, 3, 4))
+            mockkStatic(Base64::class)
+            every { Base64.encodeToString(byteArrayOf(1, 2, 3, 4), Base64.NO_WRAP) } returns "AQIDBA=="
+
+            val result = HelperUtil.fileToBase64(tempFile)
+
+            assertEquals("AQIDBA==", result)
+        } finally {
+            tempFile.delete()
+        }
+    }
+
+    // =====================================================
+    // convertDpToPixel()
+    // =====================================================
+
+    @Test
+    fun `convertDpToPixel delegates to TypedValue applyDimension`() {
+        mockkStatic(TypedValue::class)
+        val metrics = mockk<android.util.DisplayMetrics>(relaxed = true)
+        val ctx = mockk<Context>(relaxed = true)
+        val res = mockk<Resources>(relaxed = true)
+        every { ctx.resources } returns res
+        every { res.displayMetrics } returns metrics
+        every {
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, metrics)
+        } returns 48f
+
+        val result = HelperUtil.convertDpToPixel(16f, ctx)
+
+        assertEquals(48f, result, 0.0001f)
+    }
+
+    // =====================================================
+    // getLocalizedResources() / getLocalizedContext()
+    // =====================================================
+
+    private fun contextForLocalization(): Context {
+        val configuration = mockk<Configuration>(relaxed = true)
+        val resources = mockk<Resources>(relaxed = true)
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.resources } returns resources
+        every { resources.configuration } returns configuration
+        return ctx
+    }
+
+    @Test
+    fun `getLocalizedResources returns the resources of the localized context`() {
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        val ctx = contextForLocalization()
+        val localizedContext = mockk<Context>(relaxed = true)
+        val localizedResources = mockk<Resources>(relaxed = true)
+        every { ctx.createConfigurationContext(any()) } returns localizedContext
+        every { localizedContext.resources } returns localizedResources
+
+        val result = HelperUtil.getLocalizedResources(ctx, Languages.HINDI)
+
+        assertEquals(localizedResources, result)
+        verify { ctx.createConfigurationContext(any()) }
+    }
+
+    @Test
+    fun `getLocalizedContext returns the created configuration context`() {
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        val ctx = contextForLocalization()
+        val localizedContext = mockk<Context>(relaxed = true)
+        every { ctx.createConfigurationContext(any()) } returns localizedContext
+
+        val result = HelperUtil.getLocalizedContext(ctx, Languages.BANGLA)
+
+        assertEquals(localizedContext, result)
+    }
+
+    // =====================================================
+    // setEnLocaleForDatePicker() / setOriginalLocaleForDatePicker()
+    // =====================================================
+
+    private fun activityForDatePicker(): Pair<FragmentActivity, Resources> {
+        val activity = mockk<FragmentActivity>(relaxed = true)
+        val resources = mockk<Resources>(relaxed = true)
+        val configuration = mockk<Configuration>(relaxed = true)
+        every { activity.resources } returns resources
+        every { resources.configuration } returns configuration
+        every { resources.displayMetrics } returns mockk(relaxed = true)
+        return activity to resources
+    }
+
+    @Test
+    fun `setEnLocaleForDatePicker updates the activity resources to English`() {
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        val (activity, resources) = activityForDatePicker()
+
+        HelperUtil.setEnLocaleForDatePicker(activity)
+
+        verify { resources.updateConfiguration(any(), any()) }
+        assertEquals("en", Locale.getDefault().language)
+    }
+
+    @Test
+    fun `setOriginalLocaleForDatePicker restores the given locale`() {
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        val (activity, resources) = activityForDatePicker()
+
+        HelperUtil.setOriginalLocaleForDatePicker(activity, Locale("hi"))
+
+        verify { resources.updateConfiguration(any(), any()) }
+        assertEquals("hi", Locale.getDefault().language)
+    }
+
+    // =====================================================
+    // Context.createTempImageUri()
+    // =====================================================
+
+    @Test
+    fun `createTempImageUri writes a temp file and returns a FileProvider uri`() {
+        mockkStatic(FileProvider::class)
+        val tempDir = Files.createTempDirectory("helper_util_pics").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES) } returns tempDir
+        every { ctx.packageName } returns "org.piramalswasthya.sakhi"
+        val expectedUri = mockk<Uri>()
+        every {
+            FileProvider.getUriForFile(ctx, "org.piramalswasthya.sakhi.provider", any())
+        } returns expectedUri
+
+        val result = with(HelperUtil) { ctx.createTempImageUri() }
+
+        assertEquals(expectedUri, result)
+    }
+
+    // =====================================================
+    // findFragmentActivity() - the FragmentActivity-found branch
+    // =====================================================
+
+    @Test
+    fun `findFragmentActivity returns the FragmentActivity found in the wrapper chain`() {
+        val activity = mockk<FragmentActivity>(relaxed = true)
+        val wrapper = mockk<ContextWrapper>()
+        every { wrapper.baseContext } returns activity
+        with(HelperUtil) {
+            assertEquals(activity, wrapper.findFragmentActivity())
+        }
+    }
+
+    // =====================================================
+    // detectExtAndMime() - remaining short-circuit combinations
+    // =====================================================
+
+    @Test
+    fun `detectExtAndMime does not match pdf when the second byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x25, 0x00, 0x44, 0x46))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match pdf when the third byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x25, 0x50, 0x00, 0x46))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match pdf when the fourth byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x25, 0x50, 0x44, 0x00))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match jpeg when the second byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0xFF.toByte(), 0x00, 0xFF.toByte(), 0x00))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match jpeg when the third byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0x00, 0x00))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match png when the second byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x89.toByte(), 0x00, 0x4E, 0x47))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match png when the third byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x89.toByte(), 0x50, 0x00, 0x47))
+        )
+    }
+
+    @Test
+    fun `detectExtAndMime does not match png when the fourth byte differs`() {
+        assertEquals(
+            "bin" to "application/octet-stream",
+            HelperUtil.detectExtAndMime(byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x00))
+        )
+    }
+
+    // =====================================================
+    // getahd() / getVHND() / getSaasBahuSamalonLocalization() / getUWINLocalization()
+    // - the localized-array-too-short fallback branch
+    // =====================================================
+
+    @Test
+    fun `getahd returns the raw value when the localized array is short`() {
+        val ctx = contextWithArray(R.array.ahd_place_options, arrayOf("A-School"))
+        with(HelperUtil) {
+            assertEquals("Community center", ctx.getahd("Community center"))
+        }
+    }
+
+    @Test
+    fun `getVHND returns the raw value when the localized array is short`() {
+        val ctx = contextWithArray(R.array.place_of_vhsnc, arrayOf("V-Anganwadi"))
+        with(HelperUtil) {
+            assertEquals("Community center", ctx.getVHND("Community center"))
+        }
+    }
+
+    @Test
+    fun `getSaasBahuSamalonLocalization returns the raw value when the localized array is short`() {
+        val ctx = contextWithArray(R.array.place_array, arrayOf("S-HWC"))
+        with(HelperUtil) {
+            assertEquals("Community center", ctx.getSaasBahuSamalonLocalization("Community center"))
+        }
+    }
+
+    @Test
+    fun `getUWINLocalization returns the raw value when the localized array is short`() {
+        val ctx = contextWithArray(R.array.place_of_delivery_options, arrayOf("U-HWC"))
+        with(HelperUtil) {
+            assertEquals("Community center", ctx.getUWINLocalization("Community center"))
+        }
+    }
+
+    // =====================================================
+    // parseSelections() - remaining branch gaps
+    // =====================================================
+
+    @Test
+    fun `parseSelections skips JSON parsing when the closing bracket is missing`() {
+        assertEquals(listOf("abc"), HelperUtil.parseSelections("[abc", arrayOf("abc")))
+    }
+
+    @Test
+    fun `parseSelections filters blank segments when splitting on pipe`() {
+        assertEquals(listOf("a", "b"), HelperUtil.parseSelections("a| |b", null))
+    }
+
+    // =====================================================
+    // copyToTemp() - success paths
+    // =====================================================
+
+    @Test
+    fun `copyToTemp copies the input stream content into a suffixed temp file`() {
+        val tempDir = Files.createTempDirectory("helper_util_copy").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns "hello".byteInputStream()
+
+        val result = HelperUtil.copyToTemp(mockk(relaxed = true), "doc.pdf", ctx)
+
+        assertNotNull(result)
+        assertEquals("hello", result!!.readText())
+        result.delete()
+    }
+
+    @Test
+    fun `copyToTemp copies the input stream content into a suffixless temp file`() {
+        val tempDir = Files.createTempDirectory("helper_util_copy_noext").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns "world".byteInputStream()
+
+        val result = HelperUtil.copyToTemp(mockk(relaxed = true), "noextension", ctx)
+
+        assertNotNull(result)
+        assertEquals("world", result!!.readText())
+        result.delete()
+    }
+
+    @Test
+    fun `copyToTemp returns an empty temp file when the input stream is unavailable`() {
+        val tempDir = Files.createTempDirectory("helper_util_copy_null").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns null
+
+        val result = HelperUtil.copyToTemp(mockk(relaxed = true), "doc.pdf", ctx)
+
+        assertNotNull(result)
+        assertEquals(0L, result!!.length())
+        result.delete()
+    }
+
+    // =====================================================
+    // Downloads log writers - success paths
+    // =====================================================
+
+    private fun stubAvailableDownloadsDir(dir: File) {
+        mockkStatic(Environment::class)
+        mockkStatic(android.util.Log::class)
+        every { Environment.getExternalStoragePublicDirectory(any()) } returns dir
+        every { android.util.Log.d(any(), any()) } returns 0
+        every { android.util.Log.e(any(), any()) } returns 0
+    }
+
+    @Test
+    fun `saveApiResponseToDownloads writes the payload and logs success`() {
+        val tempDir = Files.createTempDirectory("helper_util_downloads1").toFile()
+        tempDir.deleteOnExit()
+        stubAvailableDownloadsDir(tempDir)
+
+        HelperUtil.saveApiResponseToDownloads(context, "api_response_success.txt", "payload")
+
+        verify { android.util.Log.d("SAVE_FILE", any()) }
+        assertEquals("payload", File(tempDir, "api_response_success.txt").readText())
+    }
+
+    @Test
+    fun `deliveryOutcomeDBLogMethod writes the payload and logs success`() {
+        val tempDir = Files.createTempDirectory("helper_util_downloads2").toFile()
+        tempDir.deleteOnExit()
+        stubAvailableDownloadsDir(tempDir)
+
+        HelperUtil.deliveryOutcomeDBLogMethod(context, "db_log_success.txt", "payload")
+
+        verify { android.util.Log.d("SAVE_FILE", any()) }
+        assertEquals("payload", File(tempDir, "db_log_success.txt").readText())
+    }
+
+    @Test
+    fun `deliveryOutcomeUpdatePNCWorkerMethod writes the payload and logs success`() {
+        val tempDir = Files.createTempDirectory("helper_util_downloads3").toFile()
+        tempDir.deleteOnExit()
+        stubAvailableDownloadsDir(tempDir)
+
+        HelperUtil.deliveryOutcomeUpdatePNCWorkerMethod(context, "pnc_worker_success.txt", "payload")
+
+        verify { android.util.Log.d("SAVE_FILE", any()) }
+        assertEquals("payload", File(tempDir, "pnc_worker_success.txt").readText())
+    }
+
+    @Test
+    fun `deliveryOutcomeRepoMethod writes the payload and logs success`() {
+        val tempDir = Files.createTempDirectory("helper_util_downloads4").toFile()
+        tempDir.deleteOnExit()
+        stubAvailableDownloadsDir(tempDir)
+
+        HelperUtil.deliveryOutcomeRepoMethod(context, "repo_success.txt", "payload")
+
+        verify { android.util.Log.d("SAVE_FILE", any()) }
+        assertEquals("payload", File(tempDir, "repo_success.txt").readText())
+    }
+
+    // =====================================================
+    // getFilesName() - remaining content-scheme branches
+    // =====================================================
+
+    @Test
+    fun `getFilesName falls back to path when the resolver returns no cursor`() {
+        val uri = contentUri()
+        every { uri.path } returns "/documents/xyz/file.jpg"
+        val ctx = contextWithCursor(uri, null)
+        assertEquals("file.jpg", HelperUtil.getFilesName(uri, ctx))
+    }
+
+    @Test
+    fun `getFilesName falls back to path when the cursor has no first row`() {
+        val uri = contentUri()
+        every { uri.path } returns "/documents/xyz/file.jpg"
+        val ctx = contextWithCursor(uri, displayNameCursor("ignored.jpg", moveToFirst = false))
+        assertEquals("file.jpg", HelperUtil.getFilesName(uri, ctx))
+    }
+
+    // =====================================================
+    // checkAndShowMUACAlert() / checkAndShowWeightForHeightAlert()
+    // - the SAM-detected alert branches
+    // =====================================================
+
+    private fun stubAlertDialogBuilder() {
+        mockkConstructor(AlertDialog.Builder::class)
+        every { anyConstructed<AlertDialog.Builder>().setTitle(any<CharSequence>()) } answers { self as AlertDialog.Builder }
+        every { anyConstructed<AlertDialog.Builder>().setMessage(any<CharSequence>()) } answers { self as AlertDialog.Builder }
+        every {
+            anyConstructed<AlertDialog.Builder>().setPositiveButton(any<CharSequence>(), any())
+        } answers { self as AlertDialog.Builder }
+        every { anyConstructed<AlertDialog.Builder>().show() } returns mockk<AlertDialog>(relaxed = true)
+    }
+
+    @Test
+    fun `checkAndShowMUACAlert shows an alert dialog and returns true for a SAM value`() {
+        stubAlertDialogBuilder()
+        assertTrue(HelperUtil.checkAndShowMUACAlert(context, "10.0"))
+    }
+
+    @Test
+    fun `checkAndShowWeightForHeightAlert shows an alert dialog and returns true for SAM status`() {
+        stubAlertDialogBuilder()
+        assertTrue(HelperUtil.checkAndShowWeightForHeightAlert(context, "SAM"))
+    }
+
+    // =====================================================
     // HelperUtil Tests (extended)
     // =====================================================
 
     @Test fun `HelperUtil exists`() {
         assertNotNull(HelperUtil)
+    }
+
+    @Test
+    fun `getLongFromDate throws IllegalStateException when parse returns null without a ParseException`() {
+        mockkConstructor(SimpleDateFormat::class)
+        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
+        try {
+            HelperUtil.getLongFromDate("17-03-2026")
+            assertTrue("Expected an IllegalStateException", false)
+        } catch (e: IllegalStateException) {
+            assertEquals("Invalid date for dateReg", e.message)
+        }
+    }
+
+    @Test
+    fun `parseDateToMillis returns 0 when parse returns null without throwing`() {
+        mockkConstructor(SimpleDateFormat::class)
+        every { anyConstructed<SimpleDateFormat>().setLenient(any()) } just Runs
+        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
+        assertEquals(0L, HelperUtil.parseDateToMillis("17-03-2026"))
+    }
+
+    @Test
+    fun `formatDate returns empty when parse succeeds without throwing but yields no date`() {
+        mockkConstructor(SimpleDateFormat::class)
+        every { anyConstructed<SimpleDateFormat>().setTimeZone(any()) } just Runs
+        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
+        assertEquals("", HelperUtil.formatDate("2026-03-17T12:00:00.000Z"))
+    }
+
+    @Test
+    fun `getFileSizeInMB returns null when the descriptor is null`() {
+        val uri = mockk<Uri>(relaxed = true)
+        val ctx = mockk<Context>(relaxed = true)
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openFileDescriptor(uri, "r") } returns null
+        with(HelperUtil) {
+            assertNull(ctx.getFileSizeInMB(uri))
+        }
+    }
+
+    @Test
+    fun `compressImageToTemp resizes and compresses a large image`() {
+        mockkStatic(BitmapFactory::class)
+        every {
+            BitmapFactory.decodeStream(any(), any(), any())
+        } answers {
+            val opts = thirdArg<BitmapFactory.Options>()
+            opts.outWidth = 2560
+            opts.outHeight = 1920
+            mockk<Bitmap>(relaxed = true)
+        }
+        val tempDir = Files.createTempDirectory("helper_util_compress").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns "x".byteInputStream()
+
+        val result = HelperUtil.compressImageToTemp(mockk(relaxed = true), "img.jpg", ctx)
+
+        assertNotNull(result)
+        result!!.delete()
+    }
+
+    @Test
+    fun `compressImageToTemp falls back to copyToTemp when the decoded bounds are invalid`() {
+        mockkStatic(BitmapFactory::class)
+        every {
+            BitmapFactory.decodeStream(any(), any(), any())
+        } answers {
+            val opts = thirdArg<BitmapFactory.Options>()
+            opts.outWidth = -1
+            opts.outHeight = -1
+            null
+        }
+        val tempDir = Files.createTempDirectory("helper_util_compress_invalid").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns "y".byteInputStream()
+
+        val result = HelperUtil.compressImageToTemp(mockk(relaxed = true), "img.jpg", ctx)
+
+        assertNotNull(result)
+        result!!.delete()
+    }
+
+    @Test
+    fun `base64ToTempFile decodes and writes bytes to a temp file`() {
+        mockkStatic(Base64::class)
+        mockkStatic(FileProvider::class)
+        val bytes = byteArrayOf(0x25, 0x50, 0x44, 0x46)
+        every { Base64.decode(any<String>(), any()) } returns bytes
+        val tempDir = Files.createTempDirectory("helper_util_b64").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.packageName } returns "org.piramalswasthya.sakhi"
+        val expectedUri = mockk<Uri>()
+        every {
+            FileProvider.getUriForFile(ctx, "org.piramalswasthya.sakhi.provider", any())
+        } returns expectedUri
+
+        val result = HelperUtil.base64ToTempFile("data:application/pdf;base64,JVBERi0=", tempDir, ctx)
+
+        assertEquals(expectedUri, result)
     }
 }

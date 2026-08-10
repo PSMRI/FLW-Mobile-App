@@ -41,7 +41,7 @@ class BenRegisterCHOViewModelTest : BaseViewModelTest() {
         every { Log.i(any(), any()) } returns 0
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray()
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns ""
         every { mockResources.getString(any(), any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH

@@ -7,6 +7,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -44,6 +46,8 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
         every { savedStateHandle.get<Boolean>(any()) } returns null
         every { vaccineDao.getBenWithImmunizationRecords(any(), any()) } returns flowOf(emptyList())
         coEvery { vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD) } returns emptyList()
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = ChildImmunizationListViewModel(vaccineDao, preferenceDao, context, savedStateHandle)
     }
 

@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -19,6 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
 import org.piramalswasthya.sakhi.database.room.InAppDb
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -85,7 +87,17 @@ class HbycRepoTest : BaseRepositoryTest() {
         coEvery { hbycDao.getAllUnprocessedHbyc() } returns listOf(cache)
         coEvery { database.householdDao.getHousehold(any()) } returns mockk(relaxed = true)
         coEvery { database.benDao.getBen(any(), any()) } returns mockk(relaxed = true)
-        coEvery { database.hbycDao.hbycCount() } returns 0
+        coEvery { hbycDao.hbycCount() } returns 0
+    }
+
+    /** Wires the household/ben/count lookups and returns [count] independent unprocessed records. */
+    private fun manyUnprocessedRecords(count: Int): List<HBYCCache> {
+        val caches = (1..count).map { mockk<HBYCCache>(relaxed = true) }
+        coEvery { hbycDao.getAllUnprocessedHbyc() } returns caches
+        coEvery { database.householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(any(), any()) } returns mockk(relaxed = true)
+        coEvery { hbycDao.hbycCount() } returns 0
+        return caches
     }
 
     @Test
@@ -275,5 +287,60 @@ class HbycRepoTest : BaseRepositoryTest() {
         oneUnprocessedRecord()
         coEvery { amritApiService.pushHBYCToServer(any()) } returns nullBodyResponse()
         assertEquals(-1, repo.pushHBYCDetails())
+    }
+
+    @Test
+    fun `updateSyncStatus no-ops and push still returns 1 when there are no unprocessed records`() = runTest {
+        loggedIn()
+        coEvery { hbycDao.getAllUnprocessedHbyc() } returns emptyList()
+        coEvery { amritApiService.pushHBYCToServer(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        assertEquals(1, repo.pushHBYCDetails())
+
+        coVerify(exactly = 0) { hbycDao.upsert(any()) }
+    }
+
+    @Test
+    fun `updateSyncStatus marks every record synced and processed when multiple records succeed`() = runTest {
+        loggedIn()
+        val caches = manyUnprocessedRecords(3)
+        coEvery { amritApiService.pushHBYCToServer(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        assertEquals(1, repo.pushHBYCDetails())
+
+        caches.forEach { cache ->
+            verify { cache.syncState = SyncState.SYNCED }
+            verify { cache.processed = "P" }
+            coVerify { hbycDao.upsert(cache) }
+        }
+    }
+
+    @Test
+    fun `push returns 0 when updateSyncStatus throws for the only unprocessed record`() = runTest {
+        loggedIn()
+        oneUnprocessedRecord()
+        coEvery { hbycDao.upsert(any()) } throws RuntimeException("upsert failed")
+        coEvery { amritApiService.pushHBYCToServer(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        assertEquals(0, repo.pushHBYCDetails())
+    }
+
+    @Test
+    fun `push returns 0 when second record fails mid-loop after first record was synced`() = runTest {
+        loggedIn()
+        val caches = manyUnprocessedRecords(2)
+        val (first, second) = caches
+        coEvery { hbycDao.upsert(second) } throws RuntimeException("upsert failed")
+        coEvery { amritApiService.pushHBYCToServer(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":"","data":"[]"}""")
+
+        assertEquals(0, repo.pushHBYCDetails())
+
+        verify { first.syncState = SyncState.SYNCED }
+        verify { first.processed = "P" }
+        coVerify { hbycDao.upsert(first) }
     }
 }

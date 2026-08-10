@@ -33,7 +33,7 @@ class AHDViewModelTest : BaseViewModelTest() {
         super.setUp()
         mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray(); every { mockResources.getString(any()) } returns ""
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No"); every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         viewModel = AHDViewModel(savedStateHandle, preferenceDao, context, vlfRepo)
     }

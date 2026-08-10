@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
+import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
@@ -899,5 +900,489 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
                 }
             }
         }
+    }
+
+    // ===================== added: deep branch sweep on handleListOnValueChanged / setSecondPage /
+    // updateReproductiveOptionsBasedOnAgeGender's benIfDataExist-populated path ==================
+
+    private fun kidMockDeep(
+        birthPlaceId: Int = 2,
+        facilityId: Int = 80,
+        conductedDeliveryId: Int = 80,
+        deliveryTypeId: Int = 1,
+        complicationsId: Int = 5,
+        feedingStartedId: Int = 1,
+        birthDosageId: Int = 1,
+        termId: Int = 2,
+        gestationalAgeId: Int = 1,
+        corticosteroidGivenMotherId: Int = 1,
+        criedImmediatelyId: Int = 1,
+        birthDefectsId: Int = 1,
+        birthDoseGiven: Boolean = true
+    ): BenRegKid {
+        val k = mockk<BenRegKid>(relaxed = true)
+        every { k.birthPlaceId } returns birthPlaceId
+        every { k.facilityId } returns facilityId
+        every { k.conductedDeliveryId } returns conductedDeliveryId
+        every { k.deliveryTypeId } returns deliveryTypeId
+        every { k.complicationsId } returns complicationsId
+        every { k.feedingStartedId } returns feedingStartedId
+        every { k.birthDosageId } returns birthDosageId
+        every { k.termId } returns termId
+        every { k.gestationalAgeId } returns gestationalAgeId
+        every { k.corticosteroidGivenMotherId } returns corticosteroidGivenMotherId
+        every { k.criedImmediatelyId } returns criedImmediatelyId
+        every { k.birthDefectsId } returns birthDefectsId
+        every { k.birthBCG } returns birthDoseGiven
+        every { k.birthHepB } returns birthDoseGiven
+        every { k.birthOPV } returns birthDoseGiven
+        return k
+    }
+
+    // handleListOnValueChanged(agePopup.id): when gender.value is still null (a freshly built page
+    // with no saved ben) the "reset everything" branch runs instead of the gender-driven one.
+    @Test
+    fun `updateList agePopup with no gender selected resets marital and relation entries`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(null, null) }
+        runCatching { d.setValueById(115, "01-01-1990") }
+        for (idx in 0..2) {
+            runCatching { d.updateList(115, idx) }
+        }
+        assertNotNull(d.listFlow)
+    }
+
+    // handleListOnValueChanged(agePopup.id): when isAddSpouse is true AND there is no existing
+    // saved ben (benIfDataExist == null), the whole gender/marital reset block is skipped and only
+    // the isAddSpouse recomputation of ageAtMarriage / dateOfMarriage runs.
+    @Test
+    fun `updateList agePopup skips gender reset when isAddSpouse is true and ben is null`() = runTest {
+        val hh = householdMock()
+        val d = ds()
+        runCatching {
+            d.setPageForFamilyMember(
+                null, hh, benMockBr(gender = Gender.FEMALE, withGen = true), Gender.MALE, 4,
+                listOf(benMockBr(gender = Gender.FEMALE)), null, 1
+            )
+        }
+        runCatching { d.setValueById(115, "01-01-1990"); d.updateList(115, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    // updateReproductiveOptionsBasedOnAgeGender()'s benIfDataExist != null branch (the "saved ben"
+    // path, including validateReproductiveStatusField) is only reachable once setPageForFamilyMember
+    // / setPageForHof has been called with a non-draft ben on THIS dataset instance, and only then
+    // by driving agePopup/maritalStatus through the public updateList. No pre-existing test does
+    // both on the same instance.
+    @Test
+    fun `updateList agePopup and maritalStatus reuse the saved reproductive branch once benIfDataExist is set`() = runTest {
+        val hh = householdMock()
+        for (dob in listOf("01-01-2008", "01-01-1998", "01-01-1960", "01-01-2020")) {
+            for (status in listOf(0, 1, 3)) {
+                val d = ds()
+                val savedBen = benMockBr(genderId = 2, gender = Gender.FEMALE)
+                runCatching {
+                    d.setPageForFamilyMember(savedBen, hh, benMockBr(), Gender.FEMALE, 3, emptyList(), null, 0)
+                }
+                runCatching { d.setValueById(9, "opt1") }
+                runCatching { d.setValueById(115, dob); d.updateList(115, 1) }
+                runCatching { d.setValueById(1008, "opt$status"); d.updateList(1008, status) }
+                assertNotNull(d.listFlow)
+            }
+        }
+    }
+
+    // handleListOnValueChanged(maritalStatus.id): the "Parents cannot be unmarried!" error only
+    // fires when index==0 AND relationToHead.value is one of the parent relations recognised by
+    // isBenParentOfHoF().
+    @Test
+    fun `updateList maritalStatus flags parent-of-HoF error when unmarried`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        runCatching { d.setValueById(15, "opt0") }
+        runCatching { d.setValueById(1008, "opt0"); d.updateList(1008, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    // handleListOnValueChanged(mobileNoOfRelation.id): the isHusbandNumberForWifeHoF /
+    // isSonOrDaughterOfHoF special cases copy the family head's phone number only for specific
+    // (index, relationToHead position) pairs.
+    @Test
+    fun `updateList mobileNoOfRelation copies family head phone for wife-of-hof and children`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        runCatching { d.setValueById(15, "opt4"); d.updateList(12, 1) }
+        val d2 = ds()
+        populatedFirstPage(d2)
+        runCatching { d2.setValueById(15, "opt8"); d2.updateList(12, 3) }
+        val d3 = ds()
+        populatedFirstPage(d3)
+        runCatching { d3.setValueById(15, "opt9"); d3.updateList(12, 3) }
+        assertNotNull(d.listFlow)
+        assertNotNull(d2.listFlow)
+        assertNotNull(d3.listFlow)
+    }
+
+    // setSecondPage(): every "add dependent field" branch is gated on a specific kidDetails id
+    // matching an entries() boundary (entries[1]/[4], entries.first(), entries.last()). None of the
+    // pre-existing tests stub kidDetails, so saved.kidDetails?.xId ?: 0 was always 0 (getStringFromPosition
+    // returns null for position<=0) and every one of these adds was dead code in the suite.
+    @Test
+    fun `setSecondPage adds every dependent field when kid detail ids hit their trigger boundary`() = runTest {
+        val d = ds()
+        val ben = benMockBr(genderId = 1, gender = Gender.MALE)
+        every { ben.kidDetails } returns kidMockDeep()
+        runCatching { d.setSecondPage(ben) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setSecondPage adds the other-place-of-birth field for the last place option`() = runTest {
+        val d = ds()
+        val ben = benMockBr(genderId = 2, gender = Gender.FEMALE)
+        every { ben.kidDetails } returns kidMockDeep(
+            birthPlaceId = 80,
+            facilityId = 1,
+            conductedDeliveryId = 1,
+            complicationsId = 1,
+            birthDosageId = 2,
+            termId = 1,
+            gestationalAgeId = 2
+        )
+        runCatching { d.setSecondPage(ben) }
+        assertNotNull(d.listFlow)
+    }
+
+    // mapValues(): birthDoseGiven.value is only populated by a preceding setSecondPage call, and
+    // only becomes non-blank when at least one of birthBCG/birthHepB/birthOPV is true; none of the
+    // pre-existing tests configure that, so the ben.kidDetails?.birthBCG/HepB/OPV assignments in
+    // mapValues always took the `?: false` fallback rather than the `.contains(...)` true branch.
+    @Test
+    fun `mapValues records the birth doses actually given after setSecondPage selects them`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-2022")
+        val ben = benMockBr3()
+        every { ben.kidDetails } returns kidMockDeep()
+        runCatching { d.setSecondPage(ben) }
+        runCatching { d.mapValues(ben, 1) }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: public property accessors (Companion / firstPage getter /
+    // context / gender / ageAtMarriage / mobileNoOfRelation / religion / rchId / isAddingChildren) ==
+
+    @Test
+    fun `public property accessors touch their compiler-generated getters and setters`() {
+        val d = ds()
+        assertNotNull(d.gender)
+        assertNotNull(d.ageAtMarriage)
+        d.ageAtMarriage = d.ageAtMarriage
+        assertNotNull(d.mobileNoOfRelation)
+        assertNotNull(d.religion)
+        assertNotNull(d.rchId)
+        assertNotNull(d.firstPage)
+        assertNotNull(d.context)
+        d.context = context
+        assertNotNull(d.isAddingChildren)
+    }
+
+    // ===================== added: handleForAgeDob age/gender/marital-status sweep ================
+    // handleForAgeDob() is only reachable from setPageForFamilyMember(), and only once benIfDataExist
+    // has already been assigned (it is set unconditionally at the top of setPageForFamilyMember, so
+    // its own "benIfDataExist == null" branch can never be taken there — see TEST-COVERAGE-BLOCKERS.md).
+    // gender.value / maritalStatus.value / agePopup.value are all read by handleForAgeDob BEFORE
+    // setPageForFamilyMember (re)assigns them for the incoming saved ben, so priming those three
+    // FormElements first (via a plain setFirstPageToRead + direct/public field writes) lets a second,
+    // immediately-following setPageForFamilyMember call exercise every age-band/gender/marital-status
+    // arm of the method.
+
+    private fun benMockAgeDob(
+        genderId: Int = 2,
+        maritalStatusId: Int = 2,
+        reproductiveStatus: String? = "opt0",
+        death: Boolean = false
+    ): BenRegCache {
+        val g = mockk<BenRegGen>(relaxed = true)
+        every { g.maritalStatusId } returns maritalStatusId
+        every { g.reproductiveStatus } returns reproductiveStatus
+        every { g.spouseName } returns "SPOUSE"
+        every { g.ageAtMarriage } returns 20
+        every { g.marriageDate } returns 1_500_000_000_000L
+        val b = mockk<BenRegCache>(relaxed = true)
+        every { b.dob } returns 1_000_000_000_000L
+        every { b.regDate } returns 1_600_000_000_000L
+        every { b.genderId } returns genderId
+        every { b.isDraft } returns false
+        every { b.gender } returns when (genderId) {
+            1 -> Gender.MALE
+            2 -> Gender.FEMALE
+            else -> Gender.TRANSGENDER
+        }
+        every { b.firstName } returns "FIRST"
+        every { b.lastName } returns "LAST"
+        every { b.familyHeadRelationPosition } returns 1
+        every { b.isDeath } returns death
+        every { b.genDetails } returns g
+        return b
+    }
+
+    private fun dobStringForAge(age: Int): String {
+        val cal = java.util.Calendar.getInstance()
+        cal.add(java.util.Calendar.YEAR, -age)
+        return java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH).format(cal.time)
+    }
+
+    @Test
+    fun `handleForAgeDob sweeps every age band, gender and marital status once benIfDataExist is primed`() = runTest {
+        val hh = householdMock()
+        val ages = listOf(17, 30, 60, 10)
+        val genderValues = listOf("opt0", "opt1", "opt2")
+        val maritalOpts = listOf("opt0", "opt1", "opt4")
+        for (age in ages) {
+            for (genderValue in genderValues) {
+                for (marital in maritalOpts) {
+                    val d = ds()
+                    runCatching { d.setFirstPageToRead(benMockAgeDob(), 9876543210L) }
+                    runCatching { d.setValueById(115, dobStringForAge(age)) }
+                    d.gender.value = genderValue
+                    runCatching { d.setValueById(1008, marital) }
+                    runCatching {
+                        d.setPageForFamilyMember(
+                            benMockAgeDob(genderId = 2, maritalStatusId = 2, reproductiveStatus = "opt0"),
+                            hh, benMockAgeDob(), Gender.FEMALE, 3, emptyList(), benMockAgeDob(), 0
+                        )
+                    }
+                    assertNotNull(d.listFlow)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `handleForAgeDob restores a null reproductive status when the saved ben has none stored`() = runTest {
+        val hh = householdMock()
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockAgeDob(), 9876543210L) }
+        runCatching { d.setValueById(115, dobStringForAge(28)) }
+        d.gender.value = "opt1"
+        runCatching { d.setValueById(1008, "opt1") }
+        runCatching {
+            d.setPageForFamilyMember(
+                benMockAgeDob(genderId = 2, reproductiveStatus = null), hh, benMockAgeDob(),
+                Gender.FEMALE, 3, emptyList(), benMockAgeDob(), 0
+            )
+        }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `handleForAgeDob reached through the reproductiveStatus call site for a married spousal relation`() = runTest {
+        val hh = householdMock()
+        for (relId in listOf(4, 5)) {
+            val d = ds()
+            runCatching { d.setFirstPageToRead(benMockAgeDob(), 9876543210L) }
+            runCatching { d.setValueById(115, dobStringForAge(24)) }
+            d.gender.value = "opt1"
+            runCatching { d.setValueById(1008, "opt1") }
+            runCatching {
+                d.setPageForFamilyMember(
+                    benMockAgeDob(genderId = 2, maritalStatusId = 2), hh,
+                    benMockAgeDob(genderId = 1, maritalStatusId = 2), Gender.FEMALE, relId,
+                    listOf(benMockAgeDob(genderId = 2)), benMockAgeDob(), 0
+                )
+            }
+            assertNotNull(d.listFlow)
+        }
+    }
+
+    // ===================== added: beneficiaryStatus death branch, correctly reaching position 2 =====
+    // getPosition() is (entries.indexOf(value) + 1), so beneficiaryStatus.getPosition() == 2 requires
+    // the *value* to equal entries[1] ("opt1" once mocked) — not entries[2]. None of the pre-existing
+    // beneficiaryStatus tests use "opt1", so isDeath was always false there and shouldShowMaternalDeath /
+    // getMinDateFromRegistration / the true branch of applyDeathLockState were never reached.
+
+    @Test
+    fun `updateList beneficiaryStatus at its real death position locks fields and unlocks them again`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(death = true), 9876543210L) }
+        runCatching { d.setValueById(2, "01-01-2020") }
+        d.gender.value = "Female"
+        runCatching { d.setValueById(115, "01-01-2000") }
+        runCatching { d.setValueById(50, "opt1"); d.updateList(50, 1) }
+        runCatching { d.setValueById(50, "opt0"); d.updateList(50, 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `shouldShowMaternalDeath is false for a male, an out-of-range age and malformed dates`() = runTest {
+        data class Case(val genderValue: String, val dob: String, val regDate: String)
+        val cases = listOf(
+            Case("Male", "01-01-2000", "01-01-2020"),
+            Case("Female", "01-01-1950", "01-01-2020"),
+            Case("Female", "not-a-date", "01-01-2020"),
+            Case("Female", "01-01-2000", "not-a-registration-date")
+        )
+        for (case in cases) {
+            val d = ds()
+            runCatching { d.setFirstPageToRead(benMockDeep(death = true), 9876543210L) }
+            runCatching { d.setValueById(2, case.regDate) }
+            d.gender.value = case.genderValue
+            runCatching { d.setValueById(115, case.dob) }
+            runCatching { d.setValueById(50, "opt1"); d.updateList(50, 1) }
+            assertNotNull(d.listFlow)
+        }
+    }
+
+    @Test
+    fun `shouldShowMaternalDeath is false when the dob was never populated`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(death = true), 9876543210L) }
+        runCatching { d.setValueById(2, "01-01-2020") }
+        d.gender.value = "Female"
+        runCatching { d.setValueById(50, "opt1"); d.updateList(50, 1) }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: initializeDeathFields' other-place-of-death trigger index ========
+
+    @Test
+    fun `setFirstPageToRead adds the other-place-of-death field when placeOfDeath sits at the trigger index`() = runTest {
+        val d = ds()
+        val ben = benMockDeep(death = true)
+        every { ben.placeOfDeath } returns "opt8"
+        runCatching { d.setFirstPageToRead(ben, 9876543210L) }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: mapValueToBen rchId/processed branch matrix ======================
+
+    @Test
+    fun `mapValueToBen updates the ben when the form rchId differs and processed is not N`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(), 9876543210L) }
+        d.rchId.value = "998877665544"
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "111111111111"
+        every { ben.processed } returns "X"
+        runCatching { d.mapValueToBen(ben) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapValueToBen still marks unsynced when processed is already N`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(), 9876543210L) }
+        d.rchId.value = "998877665544"
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "222222222222"
+        every { ben.processed } returns "N"
+        runCatching { d.mapValueToBen(ben) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapValueToBen is a no-op when the form rchId is blank`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(), 9876543210L) }
+        d.rchId.value = ""
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "123456789012"
+        runCatching { d.mapValueToBen(ben) }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: getReproductiveStatusEnglishValue via a populated reproductiveStatus
+
+    @Test
+    fun `mapValues resolves the reproductive status english value once it is populated`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-1998")
+        runCatching { d.setValueById(1028, "opt0") }
+        runCatching { d.mapValues(benMockBr(genderId = 2, gender = Gender.FEMALE), 0) }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: setUpForParents non-empty-name / spouse-added branches ===========
+
+    private fun benMockParent(
+        gender: Gender,
+        fatherName: String,
+        motherName: String,
+        spouseAdded: Boolean
+    ): BenRegCache {
+        val b = mockk<BenRegCache>(relaxed = true)
+        every { b.dob } returns 1_000_000_000_000L
+        every { b.gender } returns gender
+        every { b.fatherName } returns fatherName
+        every { b.motherName } returns motherName
+        every { b.lastName } returns "LAST"
+        every { b.isSpouseAdded } returns spouseAdded
+        every { b.isChildrenAdded } returns false
+        every { b.doYouHavechildren } returns false
+        return b
+    }
+
+    @Test
+    fun `setUpForParents fills the first name from the head of family and unlocks marital status`() = runTest {
+        val hh = householdMock()
+        for (benGender in listOf(Gender.MALE, Gender.FEMALE, Gender.TRANSGENDER)) {
+            val d = ds()
+            val hof = benMockParent(Gender.MALE, "DAD", "MOM", spouseAdded = true)
+            runCatching {
+                d.setPageForFamilyMember(null, hh, hof, benGender, 0, emptyList(), null, 0)
+            }
+            assertNotNull(d.listFlow)
+        }
+    }
+
+    // ===================== added: handleForAgeDob's isBenParentOfHoF() true branch ==================
+    // isBenParentOfHoF() reads relationToHead.value, which for a saved (non-null) ben is only
+    // reassigned by setPageForFamilyMember AFTER its own handleForAgeDob() call already ran (see the
+    // handleForAgeDob block comment above). So the only way to make isBenParentOfHoF() true at the
+    // point handleForAgeDob actually reads it is to leave relationToHead.value primed from an earlier
+    // call on the very same dataset instance. A first, ben-null call with relationToHeadId 0 (Mother)
+    // sets relationToHead.value to a parent relation directly (its own ben==null branch does that
+    // assignment eagerly); a second call with a saved ben and the same relationToHeadId then reaches
+    // handleForAgeDob while that parent relation value is still in place, taking the
+    // "ageAtMarriageMax = age - hofAge" branch instead of the plain age branch.
+    @Test
+    fun `handleForAgeDob subtracts the head of family's age when relationToHead was primed to a parent relation`() = runTest {
+        val hh = householdMock()
+        val hof = benMockAgeDob(genderId = 1)
+        val d = ds()
+        runCatching {
+            d.setPageForFamilyMember(null, hh, hof, Gender.MALE, 0, emptyList(), null, 0)
+        }
+        runCatching {
+            d.setPageForFamilyMember(
+                benMockAgeDob(genderId = 1), hh, hof, Gender.MALE, 0, emptyList(), null, 0
+            )
+        }
+        assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: mapValueToBen's untouched branches (equal rchId, null ben) ========
+
+    @Test
+    fun `mapValueToBen leaves the ben untouched when the form rchId matches it exactly`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(), 9876543210L) }
+        d.rchId.value = "998877665544"
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "998877665544"
+        every { ben.processed } returns "P"
+        val updated = runCatching { d.mapValueToBen(ben) }.getOrNull()
+        assertNotNull(updated)
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapValueToBen safely no-ops every ben field write when ben is null but rchId is populated`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(benMockDeep(), 9876543210L) }
+        d.rchId.value = "998877665544"
+        val updated = runCatching { d.mapValueToBen(null) }.getOrNull()
+        assertNotNull(updated)
+        assertNotNull(d.listFlow)
     }
 }

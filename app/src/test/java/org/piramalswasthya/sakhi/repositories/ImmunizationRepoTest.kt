@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -87,6 +88,18 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
         every { response.code() } returns code
         every { response.body() } returns null
         return response
+    }
+
+    private fun vaccineJson(id: Int, name: String) =
+        """{"vaccineId":$id,"vaccineName":"$name","minAllowedAgeInMillis":0,"maxAllowedAgeInMillis":100,"category":"CHILD","immunizationService":"BIRTH"}"""
+
+    private fun vaccinesResponseBody(vaccinesJsonArray: String): Response<ResponseBody> {
+        val outer = JSONObject().apply {
+            put("statusCode", 200)
+            put("errorMessage", "")
+            put("data", vaccinesJsonArray)
+        }
+        return Response.success(jsonBody(outer.toString()))
     }
 
     @Test
@@ -326,5 +339,62 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
         coEvery { immunizationDao.getVaccineById(any()) } returns null
 
         assertTrue(repo.pushUnSyncedChildImmunizationRecords())
+    }
+
+    @Test
+    fun `saveVaccinesFromResponse adds new vaccine when not existing`() = runTest {
+        loggedIn()
+        val vaccinesJson = "[${vaccineJson(1, "BCG")}]"
+        coEvery { amritApiService.getAllChildVaccines(any()) } returns vaccinesResponseBody(vaccinesJson)
+        coEvery { immunizationDao.getVaccineByName("BCG") } returns null
+        coEvery { immunizationDao.addVaccine(any()) } returns Unit
+
+        assertEquals(1, repo.getVaccineDetailsFromServer())
+        coVerify { immunizationDao.addVaccine(any()) }
+    }
+
+    @Test
+    fun `saveVaccinesFromResponse skips adding vaccine when already exists`() = runTest {
+        loggedIn()
+        val vaccinesJson = "[${vaccineJson(1, "BCG")}]"
+        coEvery { amritApiService.getAllChildVaccines(any()) } returns vaccinesResponseBody(vaccinesJson)
+        coEvery { immunizationDao.getVaccineByName("BCG") } returns mockk<Vaccine>(relaxed = true)
+
+        assertEquals(1, repo.getVaccineDetailsFromServer())
+        coVerify(exactly = 0) { immunizationDao.addVaccine(any()) }
+    }
+
+    @Test
+    fun `saveVaccinesFromResponse skips mitanin-only vaccine on non-mitanin flavor`() = runTest {
+        loggedIn()
+        val vaccinesJson = "[${vaccineJson(1, "PCV-1")}]"
+        coEvery { amritApiService.getAllChildVaccines(any()) } returns vaccinesResponseBody(vaccinesJson)
+
+        assertEquals(1, repo.getVaccineDetailsFromServer())
+        coVerify(exactly = 0) { immunizationDao.getVaccineByName(any()) }
+        coVerify(exactly = 0) { immunizationDao.addVaccine(any()) }
+    }
+
+    @Test
+    fun `saveVaccinesFromResponse processes mixed list skipping mitanin-only and adding others`() = runTest {
+        loggedIn()
+        val vaccinesJson = "[${vaccineJson(1, "PCV-1")},${vaccineJson(2, "BCG")}]"
+        coEvery { amritApiService.getAllChildVaccines(any()) } returns vaccinesResponseBody(vaccinesJson)
+        coEvery { immunizationDao.getVaccineByName("BCG") } returns null
+        coEvery { immunizationDao.addVaccine(any()) } returns Unit
+
+        assertEquals(1, repo.getVaccineDetailsFromServer())
+        coVerify(exactly = 1) { immunizationDao.addVaccine(any()) }
+        coVerify(exactly = 0) { immunizationDao.getVaccineByName("PCV-1") }
+        coVerify(exactly = 1) { immunizationDao.getVaccineByName("BCG") }
+    }
+
+    @Test
+    fun `getVaccineDetails returns 0 when vaccine data is malformed`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.getAllChildVaccines(any()) } returns
+            Response.success(jsonBody("""{"statusCode":200,"errorMessage":"","data":"not-a-json-array"}"""))
+
+        assertEquals(0, repo.getVaccineDetailsFromServer())
     }
 }

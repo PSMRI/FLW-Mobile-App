@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -36,9 +37,11 @@ class FilariaFormViewModelTest : BaseViewModelTest() {
         super.setUp()
         mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray(); every { mockResources.getString(any()) } returns ""
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No"); every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { benRepo.getBenFromId(any()) } returns null; coEvery { filariaRepo.getFilariaScreening(any<Long>()) } returns null
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = FilariaFormViewModel(savedStateHandle, preferenceDao, context, filariaRepo, benRepo)
     }
 

@@ -109,6 +109,147 @@ class OtherCachesTest {
         assertEquals(100L, a.hhId)
     }
 
+    private fun fpotFullyPopulated() = FPOTCache(
+        id = 1,
+        benId = 1L,
+        hhId = 100L,
+        monthlySerialNumber = "M1",
+        annualSerialNumber = "A1",
+        spouseName = "Spouse",
+        category = "APL",
+        benAddress = "Address",
+        contactNumber = "9999999999",
+        educationalQualification = "Graduate",
+        numChildren = "2",
+        youngestChildAge = "5",
+        sterilization = true,
+        mrCheckListFilled = true,
+        dateOfOperation = 1_600_000_000_000L,
+        femaleSterilization = "Yes",
+        secondFollowUpExpectedDate = 1_600_100_000_000L,
+        followUpActualDate = 1_600_200_000_000L,
+        followUpDetails = "Details",
+        secondPostFollowUpCounselling = "Counselling",
+        thirdFollowUpExpectedDate = 1_600_300_000_000L,
+        menstruationStarted = true,
+        spermatozoaFoundInSemen = "Yes",
+        thirdPostFollowUpCounselling = "Counselling2",
+        sterilizationOrVasectomyIssueDate = 1_600_400_000_000L,
+        notIssuedReason = "Reason",
+        sterilizationOrVasectomyDocSubmitted = "Yes",
+        remarks = "Remark",
+        createdBy = "creator",
+        createdDate = 1_600_500_000_000L,
+        processed = "N"
+    )
+
+    @Test fun `FPOTCache equals true for identical instances`() {
+        assertEquals(fpotFullyPopulated(), fpotFullyPopulated())
+    }
+
+    @Test fun `FPOTCache equals false when spouseName differs`() {
+        assertNotEquals(fpotFullyPopulated(), fpotFullyPopulated().copy(spouseName = "Other"))
+    }
+
+    @Test fun `FPOTCache equals false when sterilization differs`() {
+        assertNotEquals(fpotFullyPopulated(), fpotFullyPopulated().copy(sterilization = false))
+    }
+
+    @Test fun `FPOTCache equals false when createdDate differs`() {
+        assertNotEquals(fpotFullyPopulated(), fpotFullyPopulated().copy(createdDate = 1L))
+    }
+
+    @Test fun `FPOTCache equals false against null and different type`() {
+        val cache = fpotFullyPopulated()
+        assertFalse(cache.equals(null))
+        assertFalse(cache.equals("not a cache"))
+        assertTrue(cache.equals(cache))
+    }
+
+    @Test fun `FPOTCache hashCode equal for equal objects`() {
+        assertEquals(fpotFullyPopulated().hashCode(), fpotFullyPopulated().hashCode())
+    }
+
+    @Test fun `FPOTCache hashCode does not throw when optional fields are null`() {
+        val minimal = FPOTCache(benId = 1L, hhId = 100L)
+        assertNotNull(minimal.hashCode())
+    }
+
+    @Test fun `FPOTCache toString contains key field values`() {
+        val text = fpotFullyPopulated().toString()
+        assertTrue(text.contains("FPOTCache"))
+        assertTrue(text.contains("Spouse"))
+    }
+
+    @Test fun `FPOTCache sterilization true and false`() {
+        assertEquals(true, fpotFullyPopulated().copy(sterilization = true).sterilization)
+        assertEquals(false, fpotFullyPopulated().copy(sterilization = false).sterilization)
+    }
+
+    @Test fun `FPOTCache mrCheckListFilled true and false`() {
+        assertEquals(true, fpotFullyPopulated().copy(mrCheckListFilled = true).mrCheckListFilled)
+        assertEquals(false, fpotFullyPopulated().copy(mrCheckListFilled = false).mrCheckListFilled)
+    }
+
+    @Test fun `FPOTCache menstruationStarted true and false`() {
+        assertEquals(true, fpotFullyPopulated().copy(menstruationStarted = true).menstruationStarted)
+        assertEquals(false, fpotFullyPopulated().copy(menstruationStarted = false).menstruationStarted)
+    }
+
+    // =====================================================
+    // FPOTPost Tests
+    // =====================================================
+
+    private fun fpotPostFullyPopulated() = FPOTPost(
+        abortionPost = "no",
+        ageOfYoung = "5",
+        annualSerialNumber = "A1",
+        beneficiaryAddress = "addr",
+        beneficiaryAge = "28",
+        beneficiaryName = "Name",
+        beneficiaryid = 1L,
+        createdBy = "creator",
+        createdDate = "2024-01-01",
+        educationalQualification = "Grad",
+        exceptlaproscopy = "no",
+        grade = "A",
+        houseoldId = "H1",
+        husbandWifeName = "Spouse",
+        inTheDateOperation = "2024-01-02",
+        intervalMiniLap = "yes",
+        latitude = 12.0,
+        loginId = 1,
+        longitude = 77.0,
+        medicalRecord = "rec",
+        monthlySerialNumber = "M1",
+        phoneNumber = "9999999999",
+        postMiniLap = "no",
+        postnatalSterlization = "no",
+        sterilizationConsent = "yes",
+        totalLiveChild = "2",
+        traditional = "no",
+        updatedBy = "updater",
+        updatedDate = 1_600_000_000_000L
+    )
+
+    @Test fun `FPOTPost equals true for identical instances`() {
+        assertEquals(fpotPostFullyPopulated(), fpotPostFullyPopulated())
+    }
+
+    @Test fun `FPOTPost equals false when beneficiaryName differs`() {
+        assertNotEquals(fpotPostFullyPopulated(), fpotPostFullyPopulated().copy(beneficiaryName = "Other"))
+    }
+
+    @Test fun `FPOTPost hashCode equal for equal objects`() {
+        assertEquals(fpotPostFullyPopulated().hashCode(), fpotPostFullyPopulated().hashCode())
+    }
+
+    @Test fun `FPOTPost toString contains key field values`() {
+        val text = fpotPostFullyPopulated().toString()
+        assertTrue(text.contains("FPOTPost"))
+        assertTrue(text.contains("Spouse"))
+    }
+
     // =====================================================
     // PMJAYCache Tests
     // =====================================================

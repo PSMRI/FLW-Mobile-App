@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -42,10 +43,12 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray()
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { benRepo.getBenFromId(any()) } returns null
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
     }
 

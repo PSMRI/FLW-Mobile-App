@@ -50,6 +50,7 @@ def coverageExclusions = [
         '**/di/**',
         // Android view layer (not unit-tested; ViewModels are kept)
         '**/*Fragment.*', '**/*Fragment$*.*',
+        '**/*Fragement.*', '**/*Fragement$*.*',
         '**/*Activity.*', '**/*Activity$*.*',
         '**/*Adapter.*', '**/*Adapter$*.*',
         '**/*Dialog.*', '**/*Dialog$*.*',

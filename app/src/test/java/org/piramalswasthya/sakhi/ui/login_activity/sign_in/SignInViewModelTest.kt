@@ -5,7 +5,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -37,6 +39,8 @@ class SignInViewModelTest : BaseViewModelTest() {
         super.setUp()
         every { pref.getLoggedInUser() } returns null
         every { userRepo.unProcessedRecordCount } returns flowOf(emptyList())
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = SignInViewModel(userRepo, database, pref)
     }
 
