@@ -203,10 +203,12 @@ enum class NotificationEventType(
 
 /**
  * Deeplink target carried by `nav_id`. Consumed by the DeeplinkRouter (Phase 2 / T17).
- * Only [INCENTIVE_APPROVAL] is confirmed so far; more targets are added with FLW-1083/1084.
+ * [INCENTIVE_APPROVAL] (Supervisor→verification screen) and [INCENTIVE_SCREEN] (ASHA→
+ * `IncentivesFragment`) are confirmed; more targets are added with FLW-1083/1084.
  */
 enum class NotificationNavTarget(val navId: String) {
     INCENTIVE_APPROVAL("INCENTIVE_APPROVAL"),
+    INCENTIVE_SCREEN("INCENTIVE_SCREEN"),
     NONE("");
 
     companion object {
