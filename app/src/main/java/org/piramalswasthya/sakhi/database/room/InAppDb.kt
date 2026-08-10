@@ -352,7 +352,6 @@ abstract class InAppDb : RoomDatabase() {
                     )
                 }
             }
-
             val MIGRATION_62_63 = object : Migration(62, 63) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     try {
