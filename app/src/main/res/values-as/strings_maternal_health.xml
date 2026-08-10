@@ -234,6 +234,30 @@
         <item>নহয়</item>
     </string-array>
 
+    <string-array name="method_of_contraception_for_zero_child">
+        <item>নিজে</item>
+        <item>অন্তৰা বেজী</item>
+        <item>কপাৰ টি (IUCD)</item>
+        <item>কন্ডম</item>
+        <item>মালা এন</item>
+        <item>ছায়া</item>
+        <item>ECP</item>
+        <item>অন্য যেকোনো পদ্ধতি</item>
+    </string-array>
+    <string-array name="method_of_contraception">
+        <item>নিজে</item>
+        <item>অন্তৰা বেজী</item>
+        <item>কপাৰ টি (IUCD)</item>
+        <item>কন্ডম</item>
+        <item>মালা এন</item>
+        <item>ছায়া</item>
+        <item>ECP</item>
+        <item>পুৰুষৰ নিৰ্বাচন</item>
+        <item>নাৰীৰ নিৰ্বাচন</item>
+<!--        <item>MiniLap</item>-->
+        <item>অন্য যেকোনো পদ্ধতি</item>
+    </string-array>
+
     <!--  Post Natal Care -->
     <string name="pnc_period">PNC সময়</string>
     <string name="pnc_visit_date">PNC দৰ্শনীৰ তাৰিখ</string>
