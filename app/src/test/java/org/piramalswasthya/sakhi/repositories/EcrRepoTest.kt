@@ -31,6 +31,7 @@ import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
+import java.net.SocketTimeoutException
 
 /**
  * Unit tests for [EcrRepo]. Consolidated from EcrRepoTest + Extra/Extra2/Extra3:
@@ -738,5 +739,258 @@ class EcrRepoTest : BaseRepositoryTest() {
         assertTrue(repo.pushAndUpdateEctRecord())
 
         coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+    }
+
+    // ---------------- postECRDataToAmritServer / postECTDataToAmritServer retry exhaustion ----------------
+
+    @Test
+    fun `postECRDataToAmritServer exhausts retries when the api keeps timing out`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.postEcrForm(any()) } throws SocketTimeoutException()
+
+        assertFalse(repo.postECRDataToAmritServer(mutableSetOf(mockk<EcrPost>(relaxed = true))))
+
+        coVerify(exactly = 4) { amritApiService.postEcrForm(any()) }
+    }
+
+    @Test
+    fun `pushAndUpdateEctRecord marks unsynced when the api keeps timing out`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        coEvery { ecrDao.getAllUnprocessedECT() } returns listOf(record)
+        coEvery { amritApiService.postEctForm(any()) } throws SocketTimeoutException()
+
+        assertTrue(repo.pushAndUpdateEctRecord())
+
+        coVerify(exactly = 4) { amritApiService.postEctForm(any()) }
+        coVerify(atLeast = 2) { ecrDao.updateEligibleCoupleTracking(record) }
+    }
+
+    @Test
+    fun `postECRDataToAmritServer returns false when response body is null`() = runTest {
+        loggedIn()
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.code() } returns 200
+        every { response.body() } returns null
+        coEvery { amritApiService.postEcrForm(any()) } returns response
+
+        assertFalse(repo.postECRDataToAmritServer(mutableSetOf(mockk<EcrPost>(relaxed = true))))
+    }
+
+    // =====================================================
+    // retry exhaustion on the pull side
+    // =====================================================
+
+    @Test
+    fun `pullAndPersistEcrRecord returns -1 after exhausting retries on repeated timeout`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } throws SocketTimeoutException()
+
+        assertEquals(-1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 4) { tmcNetworkApiService.getEcrFormData(any()) }
+    }
+
+    @Test
+    fun `pullAndPersistEctRecord returns -1 after exhausting retries on repeated timeout`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } throws SocketTimeoutException()
+
+        assertEquals(-1, repo.pullAndPersistEctRecord())
+
+        coVerify(exactly = 4) { tmcNetworkApiService.getEctFormData(any()) }
+    }
+
+    // =====================================================
+    // getEcrCacheFromServerResponse - full/minimal field coverage
+    // =====================================================
+
+    private fun ecrPullPayloadNineChildren(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 200,
+            "registrationDate": "Jan 15, 2026 10:30:00 AM",
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "isRegistered": true,
+            "numChildren": 9,
+            "dob1": "Jan 1, 2001 10:00:00 AM", "age1": 25, "gender1": "male", "marriageFirstChildGap": 1,
+            "dob2": "Jan 1, 2002 10:00:00 AM", "age2": 24, "gender2": "female", "firstAndSecondChildGap": 2,
+            "dob3": "Jan 1, 2003 10:00:00 AM", "age3": 23, "gender3": "male", "secondAndThirdChildGap": 3,
+            "dob4": "Jan 1, 2004 10:00:00 AM", "age4": 22, "gender4": "female", "thirdAndFourthChildGap": 4,
+            "dob5": "Jan 1, 2005 10:00:00 AM", "age5": 21, "gender5": "male", "fourthAndFifthChildGap": 5,
+            "dob6": "Jan 1, 2006 10:00:00 AM", "age6": 20, "gender6": "female", "fifthANdSixthChildGap": 6,
+            "dob7": "Jan 1, 2007 10:00:00 AM", "age7": 19, "gender7": "male", "sixthAndSeventhChildGap": 7,
+            "dob8": "Jan 1, 2008 10:00:00 AM", "age8": 18, "gender8": "female", "seventhAndEighthChildGap": 8,
+            "dob9": "Jan 1, 2009 10:00:00 AM", "age9": 17, "gender9": "male", "eighthAndNinthChildGap": 9
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEcrRecord parses all nine children with alternating genders`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayloadNineChildren())
+        coEvery { benDao.getBen(200L) } returns mockk(relaxed = true)
+        coEvery { ecrDao.getSavedECR(200L) } returns null
+        every { hrpDao.getNonPregnantAssess(200L) } returns null
+        coEvery { ecrDao.upsert(match<EligibleCoupleRegCache> { it.noOfMaleChildren == 5 && it.noOfFemaleChildren == 4 }) } returns Unit
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify { ecrDao.upsert(match<EligibleCoupleRegCache> { it.noOfMaleChildren == 5 && it.noOfFemaleChildren == 4 }) }
+    }
+
+    private fun ecrPullPayloadMinimal(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 300,
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "isRegistered": true
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEcrRecord uses createdDate fallback when optional fields absent`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayloadMinimal())
+        coEvery { benDao.getBen(300L) } returns mockk(relaxed = true)
+        coEvery { ecrDao.getSavedECR(300L) } returns null
+        every { hrpDao.getNonPregnantAssess(300L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify {
+            ecrDao.upsert(match<EligibleCoupleRegCache> {
+                it.noOfChildren == 0 && it.bankAccount == null && it.gender1 == null
+            })
+        }
+    }
+
+    private fun ecrPullPayloadInvalidGender(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 400,
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "isRegistered": true,
+            "numChildren": 1,
+            "dob1": "Jan 1, 2001 10:00:00 AM",
+            "age1": 25,
+            "gender1": "unknown"
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEcrRecord skips record when gender is invalid`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayloadInvalidGender())
+        coEvery { benDao.getBen(400L) } returns mockk(relaxed = true)
+        every { hrpDao.getNonPregnantAssess(400L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+    }
+
+    private fun ecrPullPayloadBadCreatedDate(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 500,
+            "createdDate": "not-a-date",
+            "createdBy": "asha",
+            "isRegistered": true
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEcrRecord skips both ecr and high risk assessment when createdDate is invalid`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayloadBadCreatedDate())
+        coEvery { benDao.getBen(500L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        coVerify(exactly = 0) { ecrDao.upsert(any<EligibleCoupleRegCache>()) }
+        verify(exactly = 0) { hrpDao.saveRecord(any<HRPNonPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `pullAndPersistEcrRecord defaults missing high risk flags when absent`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEcrFormData(any()) } returns jsonResponse(ecrPullPayloadMinimal())
+        coEvery { benDao.getBen(300L) } returns mockk(relaxed = true)
+        coEvery { ecrDao.getSavedECR(300L) } returns null
+        every { hrpDao.getNonPregnantAssess(300L) } returns null
+
+        assertEquals(1, repo.pullAndPersistEcrRecord())
+
+        verify {
+            hrpDao.saveRecord(match<HRPNonPregnantAssessCache> {
+                it.isHighRisk == false && it.misCarriage == null
+            })
+        }
+    }
+
+    // =====================================================
+    // getEctCacheFromServerResponse - additional field coverage
+    // =====================================================
+
+    private fun ectPullPayloadMinimal(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 600,
+            "visitDate": "Jan 15, 2026 10:30:00 AM",
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "createdBy": "asha"
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEctRecord defaults missing optional fields`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(ectPullPayloadMinimal())
+        coEvery { ecrDao.ectWithsameCreateDateExists(any()) } returns false
+        coEvery { benDao.getBen(600L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.pullAndPersistEctRecord())
+
+        coVerify {
+            ecrDao.upsert(match<EligibleCoupleTrackingCache> {
+                it.isActive == false && it.isPregnancyTestDone == null && it.methodOfContraception == null
+            })
+        }
+    }
+
+    private fun ectPullPayloadNoSlashContraception(): String = """
+        {"statusCode":200,"errorMessage":"","data":[
+          {
+            "benId": 700,
+            "visitDate": "Jan 15, 2026 10:30:00 AM",
+            "createdDate": "Jan 15, 2026 10:30:00 AM",
+            "createdBy": "asha",
+            "methodOfContraception": "Condom",
+            "antraDose": "manualDose"
+          }
+        ]}
+    """.trimIndent()
+
+    @Test
+    fun `pullAndPersistEctRecord falls back to antraDose field when contraception has no slash`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getEctFormData(any()) } returns jsonResponse(ectPullPayloadNoSlashContraception())
+        coEvery { ecrDao.ectWithsameCreateDateExists(any()) } returns false
+        coEvery { benDao.getBen(700L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.pullAndPersistEctRecord())
+
+        coVerify {
+            ecrDao.upsert(match<EligibleCoupleTrackingCache> { it.antraDose == "manualDose" })
+        }
     }
 }

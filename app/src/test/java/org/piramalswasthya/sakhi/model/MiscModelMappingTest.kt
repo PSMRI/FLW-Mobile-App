@@ -2,11 +2,13 @@ package org.piramalswasthya.sakhi.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.ABHAGeneratedDTO
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
+import org.piramalswasthya.sakhi.network.getLongFromDate
 
 /**
  * Pure mapper coverage for assorted model classes:
@@ -48,6 +50,96 @@ class MiscModelMappingTest {
         assertEquals("N", cache.processed)
         assertEquals(SyncState.SYNCED, cache.syncState)
         assertEquals("colY", cache.mohalla)
+    }
+
+    @Test fun `CDRCache asPostModel maps visitDate to null when unset`() {
+        val post = cdrCache().copy(visitDate = null).asPostModel()
+        assertNull(post.visitDate)
+    }
+
+    @Test fun `CDRCache asPostModel formats visitDate when populated`() {
+        val post = cdrCache().copy(visitDate = 1_600_000_000_000L).asPostModel()
+        assertNotNull(post.visitDate)
+    }
+
+    @Test fun `CDRCache asPostModel maps timeOfDeath to null when unset`() {
+        val post = cdrCache().asPostModel()
+        assertNull(post.timeOfDeath)
+    }
+
+    @Test fun `CDRCache asPostModel formats timeOfDeath when populated`() {
+        val post = cdrCache().copy(timeOfDeath = 1_600_000_000_000L).asPostModel()
+        assertNotNull(post.timeOfDeath)
+    }
+
+    @Test fun `CDRCache asPostModel maps dateOfNotification to null when unset`() {
+        val post = cdrCache().asPostModel()
+        assertNull(post.dateOfNotification)
+    }
+
+    @Test fun `CDRCache asPostModel formats dateOfNotification when populated`() {
+        val post = cdrCache().copy(dateOfNotification = 1_600_000_000_000L).asPostModel()
+        assertNotNull(post.dateOfNotification)
+    }
+
+    @Test fun `CDRCache asPostModel maps createdDate to null when unset`() {
+        val post = cdrCache().copy(createdDate = null).asPostModel()
+        assertNull(post.createdDate)
+    }
+
+    @Test fun `CDRCache asPostModel maps updatedDate to null when unset`() {
+        val post = cdrCache().copy(updatedDate = null).asPostModel()
+        assertNull(post.updatedDate)
+    }
+
+    @Test fun `CDRPost asCacheModel formats visitDate when populated`() {
+        val cache = CDRPost(id = 1, benId = 1L, visitDate = "2024-01-01").asCacheModel()
+        assertEquals(getLongFromDate("2024-01-01"), cache.visitDate)
+    }
+
+    @Test fun `CDRPost asCacheModel maps visitDate to null when unset`() {
+        val cache = CDRPost(id = 1, benId = 1L).asCacheModel()
+        assertNull(cache.visitDate)
+    }
+
+    @Test fun `CDRPost asCacheModel formats timeOfDeath when populated`() {
+        val cache = CDRPost(id = 1, benId = 1L, timeOfDeath = "2024-01-01").asCacheModel()
+        assertEquals(getLongFromDate("2024-01-01"), cache.timeOfDeath)
+    }
+
+    @Test fun `CDRPost asCacheModel maps timeOfDeath to null when unset`() {
+        val cache = CDRPost(id = 1, benId = 1L).asCacheModel()
+        assertNull(cache.timeOfDeath)
+    }
+
+    @Test fun `CDRPost asCacheModel formats dateOfNotification when populated`() {
+        val cache = CDRPost(id = 1, benId = 1L, dateOfNotification = "2024-01-01").asCacheModel()
+        assertEquals(getLongFromDate("2024-01-01"), cache.dateOfNotification)
+    }
+
+    @Test fun `CDRPost asCacheModel maps dateOfNotification to null when unset`() {
+        val cache = CDRPost(id = 1, benId = 1L).asCacheModel()
+        assertNull(cache.dateOfNotification)
+    }
+
+    @Test fun `CDRPost asCacheModel formats createdDate when populated`() {
+        val cache = CDRPost(id = 1, benId = 1L, createdDate = "2024-01-01").asCacheModel()
+        assertEquals(getLongFromDate("2024-01-01"), cache.createdDate)
+    }
+
+    @Test fun `CDRPost asCacheModel maps createdDate to null when unset`() {
+        val cache = CDRPost(id = 1, benId = 1L).asCacheModel()
+        assertNull(cache.createdDate)
+    }
+
+    @Test fun `CDRPost asCacheModel formats updatedDate when populated`() {
+        val cache = CDRPost(id = 1, benId = 1L, updatedDate = "2024-01-01").asCacheModel()
+        assertEquals(getLongFromDate("2024-01-01"), cache.updatedDate)
+    }
+
+    @Test fun `CDRPost asCacheModel maps updatedDate to null when unset`() {
+        val cache = CDRPost(id = 1, benId = 1L).asCacheModel()
+        assertNull(cache.updatedDate)
     }
 
     // =====================================================

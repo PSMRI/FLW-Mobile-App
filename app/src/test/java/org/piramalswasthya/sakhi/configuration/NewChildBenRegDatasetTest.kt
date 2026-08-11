@@ -719,4 +719,99 @@ class NewChildBenRegDatasetTest : BaseViewModelTest() {
         assertTrue(d.getIndexOfAge9() >= 0)
         assertTrue(d.getIndexOfGap9() >= 0)
     }
+
+    @Test
+    fun `setUpPage uses the default hoFSpouse value when the argument is omitted`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben = mockk<EligibleCoupleRegCache>(relaxed = true),
+            household = mockk<HouseholdCache>(relaxed = true),
+            hoF = benMockBr(),
+            benGender = Gender.FEMALE,
+            relationToHeadId = 9,
+            selectedben = selectedBenMock(true),
+            isAddspouse = 0,
+            childList = emptyList(),
+            elderChildCount = 0
+        )
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList clears a blank child name when the newborn is older than three months`() = runTest {
+        val d = dsWithChildren(1)
+        d.setValueById(111, null)
+        d.setValueById(17, "01-01-2015")
+        d.updateList(17, 0)
+        assertEquals("", d.listFlow.value.first { it.id == 111 }.value)
+    }
+
+    @Test
+    fun `updateList on noOfChildren for an existing record with no filled children bounds the first dob by marriage`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, emptyList(), 0
+        )
+        d.setValueById(12, "2")
+        d.updateList(12, 0)
+        assertTrue(d.listFlow.value.any { it.id == 22 })
+    }
+
+    @Test
+    fun `updateList on noOfChildren for an existing record with partially filled children bounds the next dob`() = runTest {
+        val d = dsWithChildren(2)
+        d.setValueById(12, "4")
+        d.updateList(12, 0)
+        assertTrue(d.listFlow.value.any { it.id == 32 })
+    }
+
+    @Test
+    fun `updateList on the second child dob validates the gap against the first child`() = runTest {
+        val d = dsWithChildren(2)
+        d.setValueById(22, "01-06-2015")
+        d.updateList(22, 0)
+        assertNotNull(d.listFlow.value.first { it.id == 25 }.value)
+    }
+
+    @Test
+    fun `updateList on the ninth child dob has no next child bound to update`() = runTest {
+        val d = dsWithChildren(9)
+        d.setValueById(57, "01-06-2015")
+        d.updateList(57, 0)
+        assertNotNull(d.listFlow.value.first { it.id == 58 }.value)
+    }
+
+    @Test
+    fun `updateList on a child gender recount ignores a transgender entry`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = dsWithChildren(3)
+        d.setValueById(19, "Male")
+        d.setValueById(24, "Female")
+        d.setValueById(29, "Transgender")
+        d.updateList(29, 0)
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.noOfMaleChildren = 1 }
+        verify { cache.noOfFemaleChildren = 1 }
+    }
+
+    @Test
+    fun `mapValues maps an unresolved gender1 value to null`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, listOf(benMockBr(Gender.TRANSGENDER)), 1
+        )
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.gender1 = null }
+    }
 }

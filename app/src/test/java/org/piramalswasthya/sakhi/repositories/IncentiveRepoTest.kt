@@ -1,10 +1,13 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -20,9 +23,13 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.IncentiveActivityWithRecords
 import org.piramalswasthya.sakhi.model.IncentiveCache
+import org.piramalswasthya.sakhi.model.UploadResponse
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
+import java.io.File
+import java.io.InputStream
+import java.nio.file.Files
 
 /**
  * Unit tests for [IncentiveRepo]. Consolidated from the previously separate
@@ -257,5 +264,175 @@ class IncentiveRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getAllIncentiveRecords(requestBody = any()) } returns jsonResponse(json)
 
         assertFalse(repo.pullAndSaveAllIncentiveRecords(mockk<User>(relaxed = true)))
+    }
+
+    private val cacheDir: File by lazy { Files.createTempDirectory("incentive_repo_test").toFile() }
+
+    private fun stubUploadUri(path: String?): Uri {
+        mockkStatic(Uri::class)
+        val uri = mockk<Uri>(relaxed = true)
+        every { uri.scheme } returns "file"
+        every { uri.path } returns path
+        every { Uri.parse(any()) } returns uri
+        return uri
+    }
+
+    private fun stubResolver(uri: Uri, inputStream: InputStream?, mimeType: String? = "image/jpeg") {
+        val resolver = mockk<ContentResolver>(relaxed = true)
+        every { context.contentResolver } returns resolver
+        every { resolver.openInputStream(uri) } returns inputStream
+        every { resolver.getType(uri) } returns mimeType
+    }
+
+    private fun successfulUploadResponse(uploadResponse: UploadResponse = mockk(relaxed = true)): Response<UploadResponse> {
+        val response = mockk<Response<UploadResponse>>(relaxed = true)
+        every { response.isSuccessful } returns true
+        every { response.body() } returns uploadResponse
+        return response
+    }
+
+    @Test
+    fun `uploadIncentiveFiles succeeds and deletes the temp file afterwards`() = runTest {
+        val uri = stubUploadUri("/storage/emulated/0/photo.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "hello".byteInputStream(), "image/jpeg")
+        val uploadResponse = mockk<UploadResponse>(relaxed = true)
+        coEvery {
+            amritApiService.uploadIncentiveDocuments(any(), any(), any(), any(), any())
+        } returns successfulUploadResponse(uploadResponse)
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/1")
+        )
+
+        assertTrue(result.isSuccess)
+        assertEquals(uploadResponse, result.getOrNull())
+        assertFalse(File(cacheDir, "photo.jpg").exists())
+    }
+
+    @Test
+    fun `uploadIncentiveFiles falls back to a generated name and generic mime type`() = runTest {
+        val uri = stubUploadUri(null)
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "data".byteInputStream(), null)
+        coEvery {
+            amritApiService.uploadIncentiveDocuments(any(), any(), any(), any(), any())
+        } returns successfulUploadResponse()
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/2")
+        )
+
+        assertTrue(result.isSuccess)
+        assertTrue(cacheDir.listFiles()?.isEmpty() ?: true)
+    }
+
+    @Test
+    fun `uploadIncentiveFiles returns failure when the response is not successful`() = runTest {
+        val uri = stubUploadUri("/storage/photo.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "hello".byteInputStream())
+        val response = mockk<Response<UploadResponse>>(relaxed = true)
+        every { response.isSuccessful } returns false
+        every { response.code() } returns 400
+        every { response.message() } returns "Bad Request"
+        coEvery {
+            amritApiService.uploadIncentiveDocuments(any(), any(), any(), any(), any())
+        } returns response
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/3")
+        )
+
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull()?.message?.contains("400") == true)
+    }
+
+    @Test
+    fun `uploadIncentiveFiles returns failure when the response body is null`() = runTest {
+        val uri = stubUploadUri("/storage/photo.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "hello".byteInputStream())
+        val response = mockk<Response<UploadResponse>>(relaxed = true)
+        every { response.isSuccessful } returns true
+        every { response.body() } returns null
+        coEvery {
+            amritApiService.uploadIncentiveDocuments(any(), any(), any(), any(), any())
+        } returns response
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/4")
+        )
+
+        assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `uploadIncentiveFiles returns failure and still cleans up temp files when the api call throws`() = runTest {
+        val uri = stubUploadUri("/storage/photo.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "hello".byteInputStream())
+        coEvery {
+            amritApiService.uploadIncentiveDocuments(any(), any(), any(), any(), any())
+        } throws RuntimeException("boom")
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/5")
+        )
+
+        assertTrue(result.isFailure)
+        assertEquals("boom", result.exceptionOrNull()?.message)
+        assertFalse(File(cacheDir, "photo.jpg").exists())
+    }
+
+    @Test
+    fun `uploadIncentiveFiles returns failure when the input stream is null`() = runTest {
+        val uri = stubUploadUri("/storage/photo.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, null)
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/6")
+        )
+
+        assertTrue(result.isFailure)
+        assertEquals("No valid files to upload", result.exceptionOrNull()?.message)
+    }
+
+    @Test
+    fun `uploadIncentiveFiles discards an empty temp file`() = runTest {
+        val uri = stubUploadUri("/storage/empty.jpg")
+        every { context.cacheDir } returns cacheDir
+        stubResolver(uri, "".byteInputStream())
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/7")
+        )
+
+        assertTrue(result.isFailure)
+        assertEquals("No valid files to upload", result.exceptionOrNull()?.message)
+        assertFalse(File(cacheDir, "empty.jpg").exists())
+    }
+
+    @Test
+    fun `uploadIncentiveFiles returns failure when the cache directory does not exist`() = runTest {
+        val uri = stubUploadUri("/storage/photo.jpg")
+        every { context.cacheDir } returns File("flw_missing_cache_dir_for_incentive_repo_test")
+        stubResolver(uri, "hello".byteInputStream())
+
+        val result = repo.uploadIncentiveFiles(
+            id = 1L, userId = 2L, moduleName = "m", activityName = "a",
+            fileUris = listOf("content://media/8")
+        )
+
+        assertTrue(result.isFailure)
+        assertEquals("No valid files to upload", result.exceptionOrNull()?.message)
     }
 }

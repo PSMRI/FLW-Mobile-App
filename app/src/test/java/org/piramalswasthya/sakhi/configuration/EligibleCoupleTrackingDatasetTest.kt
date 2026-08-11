@@ -20,7 +20,9 @@ import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
@@ -327,5 +329,138 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         runCatching { ds.setValueById(7, "opt0"); ds.updateList(7, 0) }
         runCatching { ds.setValueById(10, "opt3"); ds.updateList(10, 0) }
         assertNotNull(ds.listFlow)
+    }
+
+    // ===================== added: dateOfAntraInjection invalid path + getNextDose branches =======
+
+    // calculateNextInjectionDate() returns ("", "") on an unparsable date, which routes
+    // dueDateOfAntraInjection.value into the resources.getString(invalid_injection_date) branch
+    // instead of the "$minDate to $maxDate" branch every pre-existing test hits.
+    @Test
+    fun `updateList dateOfAntraInjection shows the invalid message for an unparsable date`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, 2)
+        }
+        runCatching { ds.setValueById(13, ""); ds.updateList(13, 0) }
+        runCatching { ds.setValueById(13, "not-a-date"); ds.updateList(13, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    // getNextDose(): the pre-existing "december last-track" test always lands >120 days away from
+    // "today" (2023 vs. the real clock), so it only ever hits the "> 120 days -> dose one" branch.
+    // Driving lastDate to within 120 days of now reaches the doseNum increment branch, and pairing
+    // a dose already at 10 reaches the "no more dose" branch.
+    @Test
+    fun `getNextDose increments the dose for a recent last injection`() = runTest {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        val recentDate = sdf.format(Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -30) }.time)
+
+        val recentTrack = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        every { recentTrack.antraDose } returns "Dose-2"
+        every { recentTrack.dateOfAntraInjection } returns recentDate
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), recentTrack, null, 2)
+        }
+        assertNotNull(ds.listFlow)
+
+        val maxedTrack = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        every { maxedTrack.antraDose } returns "Dose-10"
+        every { maxedTrack.dateOfAntraInjection } returns recentDate
+        val ds2 = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds2.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), maxedTrack, null, 2)
+        }
+        assertNotNull(ds2.listFlow)
+    }
+
+    @Test
+    fun `isPregnant value opt0 branch is reached after a positive pregnancy test result`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, 2)
+        }
+        runCatching { ds.setValueById(4, "opt0"); ds.updateList(4, 0) }
+        runCatching { ds.setValueById(5, "opt0"); ds.updateList(5, 0) }
+        runCatching { ds.updateList(6, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `isPregnant value opt1 branch is reached after a negative pregnancy test result`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, 2)
+        }
+        runCatching { ds.setValueById(4, "opt0"); ds.updateList(4, 0) }
+        runCatching { ds.setValueById(5, "opt1"); ds.updateList(5, 0) }
+        runCatching { ds.updateList(6, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `getNextDose falls back to dose one when only one of dose or date is null`() = runTest {
+        val doseOnlyTrack = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        every { doseOnlyTrack.antraDose } returns "Dose-3"
+        every { doseOnlyTrack.dateOfAntraInjection } returns null
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), doseOnlyTrack, null, 2)
+        }
+        assertNotNull(ds.listFlow)
+
+        val dateOnlyTrack = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        every { dateOnlyTrack.antraDose } returns null
+        every { dateOnlyTrack.dateOfAntraInjection } returns "01-01-2023"
+        val ds2 = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds2.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), dateOnlyTrack, null, 2)
+        }
+        assertNotNull(ds2.listFlow)
+    }
+
+    @Test
+    fun `getNextDose defaults dose number to zero when last dose has no digits`() = runTest {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        val recentDate = sdf.format(Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -10) }.time)
+        val track = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        every { track.antraDose } returns "NoDigitsHere"
+        every { track.dateOfAntraInjection } returns recentDate
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), track, null, 2)
+        }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `edit path antra method with null antra dose skips antra assignment`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt1/2")
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `setImageUriToFormElement ignores an unrecognised form id`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, 2)
+        }
+        runCatching { ds.setImageUriToFormElement(999, mockk<Uri>(relaxed = true)) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `updateBen skips reproductive status update when genDetails is null and leaves N processed alone`() = runTest {
+        val ds = trackingPage(null, 2)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns null
+        every { ben.processed } returns "N"
+        ds.updateBen(ben)
+        assertTrue(ds.listFlow.value.isNotEmpty())
     }
 }

@@ -2,7 +2,9 @@ package org.piramalswasthya.sakhi.ui.home_activity.home
 
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -46,6 +48,8 @@ class HomeViewModelTest : BaseViewModelTest() {
         every { database.profileDao } returns profileDao
         every { benIdGenDao.liveCount() } returns flowOf(0)
         every { userRepo.unProcessedRecordCount } returns flowOf(emptyList())
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = HomeViewModel(database, pref, userRepo, ashaProfileRepo)
     }
 

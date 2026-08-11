@@ -6,9 +6,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -17,6 +19,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -296,5 +299,263 @@ class DeliveryOutcomeRepoTest : BaseRepositoryTest() {
         val result = DeliveryOutcomeRepo.getCurrentDate(0L)
         assertTrue(result.contains("T"))
         assertTrue(result.endsWith(".000Z"))
+    }
+
+    // =====================================================
+    // processNewDeliveryOutcome() -> postDataToAmritServer() push branches
+    // =====================================================
+
+    private fun unprocessedRecord(benId: Long = 10L): DeliveryOutcomeCache {
+        val record = mockk<DeliveryOutcomeCache>(relaxed = true)
+        every { record.benId } returns benId
+        coEvery { deliveryOutcomeDao.getAllUnprocessedDeliveryOutcomes() } returns listOf(record)
+        coEvery { benDao.getBen(benId) } returns mockk(relaxed = true)
+        coEvery { deliveryOutcomeDao.updateDeliveryOutcome(any()) } returns Unit
+        return record
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks synced on 200 200 success`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.SYNCED }
+        verify { record.processed = "P" }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome retries and succeeds after token refresh on 401`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returnsMany listOf(
+            jsonResponse("""{"statusCode":401,"errorMessage":""}"""),
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""")
+        )
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.SYNCED }
+        verify { record.processed = "P" }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced when token refresh fails on 401`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"statusCode":401,"errorMessage":""}""")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        verify(exactly = 0) { record.processed = "P" }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced on unexpected response status code`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"statusCode":9999,"errorMessage":""}""")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced when http status is not 200`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""", code = 500)
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced when push response body is null`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns nullBodyResponse()
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced on malformed json push response`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("not a json body")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome retries and succeeds when server call throws socket timeout`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        var callCount = 0
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } answers {
+            callCount++
+            if (callCount == 1) throw SocketTimeoutException("boom")
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""")
+        }
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.SYNCED }
+        verify { record.processed = "P" }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced when statusCode field is explicitly null`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"statusCode":null,"errorMessage":"oops"}""")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewDeliveryOutcome marks unsynced when statusCode field is missing`() = runTest {
+        loggedIn()
+        val record = unprocessedRecord()
+        coEvery { amritApiService.postDeliveryOutcomeForm(any()) } returns
+            jsonResponse("""{"errorMessage":"oops"}""")
+
+        val result = repo.processNewDeliveryOutcome()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    // =====================================================
+    // getDeliveryOutcomesFromServer() -> saveDeliveryOutcomeCacheFromResponse() branches
+    // =====================================================
+
+    @Test
+    fun `getDeliveryOutcomesFromServer returns 0 when data field missing on 200`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"errorMessage":""}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+
+        assertEquals(0, repo.getDeliveryOutcomesFromServer())
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer skips record with non positive benId`() = runTest {
+        loggedIn()
+        val data = """[{"benId":0,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"}]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { benDao.getBen(any()) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer skips record when beneficiary not found locally`() = runTest {
+        loggedIn()
+        val data = """[{"benId":10,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"}]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+        coEvery { benDao.getBen(10L) } returns null
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { deliveryOutcomeDao.saveDeliveryOutcome(any()) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer skips record when cache already exists locally`() = runTest {
+        loggedIn()
+        val data = """[{"benId":10,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"}]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+        coEvery { benDao.getBen(10L) } returns mockk(relaxed = true)
+        coEvery { deliveryOutcomeDao.getDeliveryOutcome(10L) } returns mockk(relaxed = true)
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { deliveryOutcomeDao.saveDeliveryOutcome(any()) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer saves new cache when none exists locally`() = runTest {
+        loggedIn()
+        val data = """[{"benId":10,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"}]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+        coEvery { benDao.getBen(10L) } returns mockk(relaxed = true)
+        coEvery { deliveryOutcomeDao.getDeliveryOutcome(10L) } returns null
+        coEvery { deliveryOutcomeDao.saveDeliveryOutcome(any()) } returns Unit
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 1) { deliveryOutcomeDao.saveDeliveryOutcome(any()) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer skips record when createdDate is null`() = runTest {
+        loggedIn()
+        val data = """[{"benId":10,"createdBy":"x","updatedBy":"y"}]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { benDao.getBen(any()) }
+    }
+
+    @Test
+    fun `getDeliveryOutcomesFromServer continues processing remaining records when one throws`() = runTest {
+        loggedIn()
+        val data = """[
+            {"benId":11,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"},
+            {"benId":12,"createdDate":"2024-01-01T00:00:00.000Z","createdBy":"x","updatedBy":"y"}
+        ]"""
+        val json = """{"statusCode":200,"errorMessage":"","data":${JSONObject.quote(data)}}"""
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse(json)
+        coEvery { benDao.getBen(11L) } throws RuntimeException("db error")
+        coEvery { benDao.getBen(12L) } returns mockk(relaxed = true)
+        coEvery { deliveryOutcomeDao.getDeliveryOutcome(12L) } returns null
+        coEvery { deliveryOutcomeDao.saveDeliveryOutcome(any()) } returns Unit
+
+        val result = repo.getDeliveryOutcomesFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 1) { deliveryOutcomeDao.saveDeliveryOutcome(any()) }
     }
 }

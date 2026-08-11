@@ -25,10 +25,12 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.LeprosyDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.json.JSONObject
 import retrofit2.Response
 
 /**
@@ -94,6 +96,18 @@ class LeprosyRepoTest : BaseRepositoryTest() {
         val followUp = mockk<LeprosyFollowUpCache>(relaxed = true)
         every { followUp.syncState } returns SyncState.UNSYNCED
         return followUp
+    }
+
+    private fun screeningEntryJson(benId: Long, homeVisitDate: String? = "2024-01-15"): String {
+        val dateField = homeVisitDate?.let { "\"homeVisitDate\":\"$it\"," } ?: ""
+        return """{"benId":$benId,$dateField"leprosyStatusDate":"2024-01-15","dateOfDeath":"2024-01-15","houseHoldDetailsId":1,"createdBy":"asha","createdDate":"2024-01-15","modifiedBy":"asha","lastModDate":"2024-01-15","treatmentStartDate":"2024-01-15","treatmentEndDate":"2024-01-15"}"""
+    }
+
+    private fun dataStringResponse(statusCode: Int, dataString: String): String {
+        val obj = JSONObject()
+        obj.put("statusCode", statusCode)
+        obj.put("data", dataString)
+        return obj.toString()
     }
 
     @Test
@@ -552,5 +566,181 @@ class LeprosyRepoTest : BaseRepositoryTest() {
         coEvery { tmcNetworkApiService.saveLeprosyFollowUpData(any()) } throws RuntimeException("boom")
 
         assertEquals(1, repo.pushUnSyncedLeprosyFollowUpData())
+    }
+
+    @Test
+    fun `screening pull saves new record when array format and ben exists`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 501L)
+        val responseJson = dataStringResponse(200, "[$entry]")
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(501L, any(), any()) } returns null
+        coEvery { benDao.getBen(501L) } returns mockk(relaxed = true)
+        coEvery { leprosyDao.saveLeprosyScreening(any()) } returns Unit
+
+        assertEquals(1, repo.getLeprosyScreeningDetailsFromServer())
+        coVerify { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips saving when cache already exists`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 502L)
+        val responseJson = dataStringResponse(200, "[$entry]")
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(502L, any(), any()) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getLeprosyScreeningDetailsFromServer())
+        coVerify(exactly = 0) { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips saving when ben does not exist locally`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 503L)
+        val responseJson = dataStringResponse(200, "[$entry]")
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(503L, any(), any()) } returns null
+        coEvery { benDao.getBen(503L) } returns null
+
+        assertEquals(1, repo.getLeprosyScreeningDetailsFromServer())
+        coVerify(exactly = 0) { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull parses requestDTO object format with leprosyLists`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 504L)
+        val requestObj = """{"userId":42,"leprosyLists":[$entry]}"""
+        val responseJson = dataStringResponse(200, requestObj)
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(504L, any(), any()) } returns null
+        coEvery { benDao.getBen(504L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getLeprosyScreeningDetailsFromServer())
+        coVerify { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips entry with missing homeVisitDate`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 505L, homeVisitDate = null)
+        val responseJson = dataStringResponse(200, "[$entry]")
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+
+        assertEquals(1, repo.getLeprosyScreeningDetailsFromServer())
+        coVerify(exactly = 0) { leprosyDao.saveLeprosyScreening(any()) }
+        coVerify(exactly = 0) { benDao.getBen(any()) }
+    }
+
+    @Test
+    fun `screening pull returns -1 on 200 with null body`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, null)
+        assertEquals(-1, repo.getLeprosyScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `all leprosy pull saves new screening when ben exists`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 601L)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(601L, any(), any()) } returns null
+        coEvery { benDao.getBen(601L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getAllLeprosyDataFromServer())
+        coVerify { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `all leprosy pull skips saving when ben does not exist`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 602L)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(602L, any(), any()) } returns null
+        coEvery { benDao.getBen(602L) } returns null
+
+        assertEquals(1, repo.getAllLeprosyDataFromServer())
+        coVerify(exactly = 0) { leprosyDao.saveLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `all leprosy pull updates existing screening`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 603L)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        val existing = mockk<LeprosyScreeningCache>(relaxed = true)
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(603L, any(), any()) } returns existing
+
+        assertEquals(1, repo.getAllLeprosyDataFromServer())
+        coVerify { leprosyDao.updateLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `all leprosy pull skips entry with missing homeVisitDate`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 604L, homeVisitDate = null)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, responseJson)
+
+        assertEquals(1, repo.getAllLeprosyDataFromServer())
+        coVerify(exactly = 0) { leprosyDao.saveLeprosyScreening(any()) }
+        coVerify(exactly = 0) { leprosyDao.updateLeprosyScreening(any()) }
+    }
+
+    @Test
+    fun `all leprosy pull returns 0 when save throws exception`() = runTest {
+        loggedIn()
+        val entry = screeningEntryJson(benId = 605L)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.getLeprosyScreening(605L, any(), any()) } throws RuntimeException("boom")
+
+        assertEquals(0, repo.getAllLeprosyDataFromServer())
+    }
+
+    @Test
+    fun `all leprosy pull returns -1 on 200 with null body`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getAllLeprosyData(any()) } returns response(200, null)
+        assertEquals(-1, repo.getAllLeprosyDataFromServer())
+    }
+
+    @Test
+    fun `all followup pull returns -1 on 200 with null body`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getAllLeprosyFollowUpData(any()) } returns response(200, null)
+        assertEquals(-1, repo.getAllLeprosyFollowUpDataFromServer())
+    }
+
+    @Test
+    fun `followup push returns 1 on 200 null body chunk`() = runTest {
+        loggedIn()
+        coEvery { leprosyDao.getAllFollowUpsByBenId() } returns listOf(unsyncedFollowUp())
+        coEvery { tmcNetworkApiService.saveLeprosyFollowUpData(any()) } returns response(200, null)
+
+        assertEquals(1, repo.pushUnSyncedLeprosyFollowUpData())
+    }
+
+    @Test
+    fun `followup push processes multiple chunks and marks synced`() = runTest {
+        loggedIn()
+        val followUps = List(21) { unsyncedFollowUp() }
+        coEvery { leprosyDao.getAllFollowUpsByBenId() } returns followUps
+        coEvery { tmcNetworkApiService.saveLeprosyFollowUpData(any()) } returns
+            response(200, """{"statusCode":200}""")
+
+        assertEquals(1, repo.pushUnSyncedLeprosyFollowUpData())
+        coVerify(atLeast = 21) { leprosyDao.updateFollowUp(any()) }
+    }
+
+    @Test
+    fun `getBenWithLeprosyData returns data when exists`() = runTest {
+        val data = mockk<BenWithLeprosyScreeningCache>(relaxed = true)
+        coEvery { benDao.getBenWithLeprosyScreeningAndFollowUps(5L) } returns data
+        assertEquals(data, repo.getBenWithLeprosyData(5L))
     }
 }
