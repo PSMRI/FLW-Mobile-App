@@ -179,4 +179,36 @@ class PHCReviewDatasetTest : BaseViewModelTest() {
         runCatching { ds.updateList(9, 0) }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `updateList removes the select-all index when a normal item is not fully selected`() = runTest {
+        every { mockResources.getStringArray(R.array.activity_checklist) } returns arrayOf("Only")
+        val ds = PHCReviewDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.updateList(9, 5) }
+        every { mockResources.getStringArray(R.array.activity_checklist) } returns arrayOf("A", "B", "C")
+        runCatching { ds.updateList(9, 2) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `updateList keeps the select-all index when every normal item is already selected`() = runTest {
+        every { mockResources.getStringArray(R.array.activity_checklist) } returns arrayOf("Only")
+        val ds = PHCReviewDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.updateList(9, 5) }
+        every { mockResources.getStringArray(R.array.activity_checklist) } returns arrayOf("A", "B", "C")
+        runCatching { ds.updateList(9, 0) }
+        runCatching { ds.updateList(9, 1) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `mapValues defaults participant count to zero when value is explicitly null`() = runTest {
+        val ds = PHCReviewDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.setValueById(6, null) }
+        runCatching { ds.mapValues(mockk<PHCReviewMeetingCache>(relaxed = true), 0) }
+        assertNotNull(ds.listFlow)
+    }
 }

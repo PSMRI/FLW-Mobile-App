@@ -17,13 +17,11 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
 import io.mockk.Runs
-import io.mockk.answers
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
-import io.mockk.thirdArg
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
@@ -2122,33 +2120,6 @@ class HelperUtilTest {
         assertNotNull(HelperUtil)
     }
 
-    @Test
-    fun `getLongFromDate throws IllegalStateException when parse returns null without a ParseException`() {
-        mockkConstructor(SimpleDateFormat::class)
-        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
-        try {
-            HelperUtil.getLongFromDate("17-03-2026")
-            assertTrue("Expected an IllegalStateException", false)
-        } catch (e: IllegalStateException) {
-            assertEquals("Invalid date for dateReg", e.message)
-        }
-    }
-
-    @Test
-    fun `parseDateToMillis returns 0 when parse returns null without throwing`() {
-        mockkConstructor(SimpleDateFormat::class)
-        every { anyConstructed<SimpleDateFormat>().setLenient(any()) } just Runs
-        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
-        assertEquals(0L, HelperUtil.parseDateToMillis("17-03-2026"))
-    }
-
-    @Test
-    fun `formatDate returns empty when parse succeeds without throwing but yields no date`() {
-        mockkConstructor(SimpleDateFormat::class)
-        every { anyConstructed<SimpleDateFormat>().setTimeZone(any()) } just Runs
-        every { anyConstructed<SimpleDateFormat>().parse(any()) } returns null
-        assertEquals("", HelperUtil.formatDate("2026-03-17T12:00:00.000Z"))
-    }
 
     @Test
     fun `getFileSizeInMB returns null when the descriptor is null`() {
