@@ -21,13 +21,20 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.model.NotificationDomain
+import org.piramalswasthya.sakhi.model.NotificationNavTarget
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import timber.log.Timber
 
 /**
  * Full-screen notification panel. Added over `android.R.id.content` via [open] so it can be shown
  * from both HomeActivity (ASHA) and SupervisorActivity (Supervisor/CHO/ANM) without touching
  * either nav graph. Back button / close button pop it off the back stack.
  *
- * Phase 1: tap marks-as-read only (no navigation — deeplinking arrives in T17).
+ * Tap always marks-as-read; it additionally deeplinks for the nav_id targets handled in
+ * [onNotificationTapped] (currently INCENTIVE_SCREEN → ASHA's `IncentivesFragment`). Unhandled/
+ * unknown nav_id values, or a host activity that doesn't support a given target, fall through to
+ * mark-read only — never a crash.
  */
 @AndroidEntryPoint
 class NotificationPanelFragment : Fragment() {
@@ -55,7 +62,7 @@ class NotificationPanelFragment : Fragment() {
         view.findViewById<android.widget.ImageView>(R.id.iv_back).setOnClickListener { close() }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { close() }
 
-        adapter = NotificationAdapter { item -> viewModel.markRead(item.notificationId) }
+        adapter = NotificationAdapter { item -> onNotificationTapped(item) }
         rv.layoutManager = LinearLayoutManager(requireContext())
         rv.adapter = adapter
 
@@ -90,6 +97,31 @@ class NotificationPanelFragment : Fragment() {
 
     private fun close() {
         parentFragmentManager.popBackStack()
+    }
+
+    /**
+     * Tap always marks-as-read regardless of nav_id. If the resolved [NotificationNavTarget] has a
+     * handler for the current host, the panel is closed and the host navigates; otherwise this is a
+     * no-op beyond mark-read (unknown nav_id, or a role/host that doesn't support this target — e.g.
+     * a Supervisor/CHO/ANM notification carrying an ASHA-only nav_id).
+     */
+    private fun onNotificationTapped(item: NotificationDomain) {
+        viewModel.markRead(item.notificationId)
+        when (NotificationNavTarget.fromNavId(item.navId)) {
+            NotificationNavTarget.INCENTIVE_SCREEN -> navigateToIncentivesScreen()
+            NotificationNavTarget.INCENTIVE_APPROVAL -> Unit // not wired yet (Supervisor side)
+            NotificationNavTarget.NONE -> Unit
+        }
+    }
+
+    private fun navigateToIncentivesScreen() {
+        val homeActivity = activity as? HomeActivity
+        if (homeActivity == null) {
+            Timber.w("INCENTIVE_SCREEN nav_id tapped but host is not HomeActivity; skipping navigation")
+            return
+        }
+        close()
+        homeActivity.navigateToIncentivesFromNotification()
     }
 
     private fun attachSwipeToDismiss(rv: RecyclerView) {
