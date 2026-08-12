@@ -18,6 +18,8 @@ import javax.inject.Singleton
 class PreferenceDao @Inject constructor(@ApplicationContext private val context: Context) {
 
     private val pref = PreferenceManager.getInstance(context)
+
+    private val plainPrefs = context.getSharedPreferences("sakhi_plain_prefs", Context.MODE_PRIVATE)
     fun deleteAmritToken() {
         val editor = pref.edit()
         val prefKey = context.getString(R.string.PREF_D2D_API_KEY)
@@ -149,14 +151,24 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
 
     fun saveSetLanguage(language: Languages) {
         val key = context.getString(R.string.PREF_current_saved_language)
-        val editor = pref.edit()
-        editor.putString(key, language.symbol)
-        editor.apply()
+        plainPrefs.edit().putString(key, language.symbol).apply()
     }
 
     fun getCurrentLanguage(): Languages {
         val key = context.getString(R.string.PREF_current_saved_language)
-        return when (pref.getString(key, null)) {
+        var saved = plainPrefs.getString(key, null)
+        if (saved == null) {
+            saved = try {
+                pref.getString(key, null)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to read legacy encrypted language pref")
+                null
+            }
+            if (saved != null) {
+                plainPrefs.edit().putString(key, saved).apply()
+            }
+        }
+        return when (saved) {
             Languages.ASSAMESE.symbol -> Languages.ASSAMESE
             Languages.HINDI.symbol -> Languages.HINDI
             Languages.ENGLISH.symbol -> Languages.ENGLISH
