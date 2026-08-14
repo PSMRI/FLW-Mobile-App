@@ -202,6 +202,7 @@
         <item>Grand Daughter</item>
         <item>Son in Law</item>
         <item>Daughter in Law</item>
+        <item>Brother in Law</item>
         <item>Other</item>
     </string-array>
     <string-array name="nbr_relationship_to_head_unmarried_filter">
@@ -215,6 +216,7 @@
         <item>Grand Daughter</item>
         <item>Son in Law</item>
         <item>Daughter in Law</item>
+        <item>Brother in Law</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_male">
@@ -227,6 +229,7 @@
         <item>Father in Law</item>
         <item>Grand Son</item>
         <item>Son in Law</item>
+        <item>Brother in Law</item>
         <item>Other</item>
     </string-array>
 

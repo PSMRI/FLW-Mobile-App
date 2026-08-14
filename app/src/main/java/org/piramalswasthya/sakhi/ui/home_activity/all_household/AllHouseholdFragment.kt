@@ -416,6 +416,7 @@ class AllHouseholdFragment : Fragment() {
 
         if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
             list.remove(common[4])
+            list.remove(common[18])
         }
         return list
     }
