@@ -19,6 +19,9 @@ interface NcdReferalDao {
     @Query("SELECT * FROM NCD_REFER WHERE benId = :benId LIMIT 1")
     suspend fun getReferalFromBenId(benId: Long): ReferalCache?
 
+    @Query("SELECT * FROM NCD_REFER WHERE benId = :benId")
+    fun getReferalListFromBenId(benId: Long): List<ReferalCache>
+
     @Query("SELECT * FROM NCD_REFER WHERE syncState = 0")
     suspend fun getAllUnprocessedReferals(): List<ReferalCache>
 
