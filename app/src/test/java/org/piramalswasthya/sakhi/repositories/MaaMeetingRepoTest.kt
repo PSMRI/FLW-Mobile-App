@@ -454,7 +454,11 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
             MaaMeetingGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
         )
         val slot = io.mockk.slot<MaaMeetingEntity>()
-        every { dao.insert(capture(slot)) } returns 1L
+        every {
+            dao.replaceLocalCopyWithServerMeeting(
+                capture(slot), any(), any(), any(), any(), any(), any(), any()
+            )
+        } returns Unit
 
         repo.downSyncAndPersist()
 
@@ -487,9 +491,14 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
         stubParsedMeetingsResponse(
             MaaMeetingGetAllResponse(data = listOf(item1, item2), statusCode = 200, status = "OK")
         )
+        every {
+            dao.replaceLocalCopyWithServerMeeting(
+                any(), any(), any(), any(), any(), any(), any(), any()
+            )
+        } returns Unit
 
         repo.downSyncAndPersist()
 
-        verify(exactly = 2) { dao.insert(any()) }
+        verify(exactly = 2) { dao.replaceLocalCopyWithServerMeeting(any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 }
