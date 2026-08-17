@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
@@ -47,6 +48,29 @@ interface MaaMeetingDao {
         villageName: String?,
         syncedState: SyncState = SyncState.SYNCED
     )
+
+    @Transaction
+    fun replaceLocalCopyWithServerMeeting(
+        entity: MaaMeetingEntity,
+        serverId: Long,
+        meetingDate: String?,
+        place: String?,
+        participants: Int?,
+        ashaId: Int?,
+        villageName: String?,
+        syncedState: SyncState = SyncState.SYNCED
+    ) {
+        deleteLocalCopiesOfServerMeeting(
+            serverId = serverId,
+            meetingDate = meetingDate,
+            place = place,
+            participants = participants,
+            ashaId = ashaId,
+            villageName = villageName,
+            syncedState = syncedState
+        )
+        insert(entity)
+    }
 
     @Query("delete from MAA_MEETING")
     fun clearAll()

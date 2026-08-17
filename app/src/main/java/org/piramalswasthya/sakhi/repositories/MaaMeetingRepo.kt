@@ -185,7 +185,8 @@ class MaaMeetingRepo @Inject constructor(
             // assigns its id, remove that local copy before inserting the
             // canonical server row. This also repairs duplicates created by
             // older app versions.
-            dao.deleteLocalCopiesOfServerMeeting(
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = entity,
                 serverId = entity.id,
                 meetingDate = entity.meetingDate,
                 place = entity.place,
@@ -193,7 +194,6 @@ class MaaMeetingRepo @Inject constructor(
                 ashaId = entity.ashaId,
                 villageName = entity.villageName
             )
-            dao.insert(entity)
         }
 
     }
