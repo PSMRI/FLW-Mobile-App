@@ -210,8 +210,16 @@ class CbacRepo @Inject constructor(
                         val dataObject = jsonBody.getJSONObject("data")
                         val visitCode = dataObject.getString("visitCode")
                         val benVisitID = dataObject.getString("benVisitID")
-                        val referRecord = referalDao.getReferalFromBenId(benId)
-                        referRecord?.let { refer ->
+                        Timber.d(
+                            "CBAC SUCCESS: benId=$benId, visitCode=$visitCode, benVisitID=$benVisitID"
+                        )
+                        val referRecord = referalDao.getReferalListFromBenId(benId)
+                        Timber.d(
+                            "Referral records for benId=$benId = ${referRecord.size}"
+                        )
+                        referRecord.forEach { refer ->
+                            Timber.d("Updating referral id=${refer.id}, benId=${refer.benId}")
+
                             refer.visitCode = visitCode.toLongOrNull()
                             refer.benVisitID = benVisitID.toLongOrNull()
                             referalDao.update(refer)
