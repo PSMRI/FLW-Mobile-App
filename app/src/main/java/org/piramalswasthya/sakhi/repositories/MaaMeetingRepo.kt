@@ -181,6 +181,18 @@ class MaaMeetingRepo @Inject constructor(
                 syncState = SyncState.SYNCED
             )
 
+            // A locally-created row has an auto-generated id. Once the server
+            // assigns its id, remove that local copy before inserting the
+            // canonical server row. This also repairs duplicates created by
+            // older app versions.
+            dao.deleteLocalCopiesOfServerMeeting(
+                serverId = entity.id,
+                meetingDate = entity.meetingDate,
+                place = entity.place,
+                participants = entity.participants,
+                ashaId = entity.ashaId,
+                villageName = entity.villageName
+            )
             dao.insert(entity)
         }
 

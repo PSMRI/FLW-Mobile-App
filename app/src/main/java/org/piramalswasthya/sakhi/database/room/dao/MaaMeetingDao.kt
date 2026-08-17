@@ -28,6 +28,26 @@ interface MaaMeetingDao {
     @Query("SELECT * FROM MAA_MEETING")
     fun getAllMaaData(): Flow<List<MaaMeetingEntity>>
 
+    @Query("""
+        DELETE FROM MAA_MEETING
+        WHERE id != :serverId
+          AND syncState = :syncedState
+          AND meetingDate IS :meetingDate
+          AND place IS :place
+          AND participants IS :participants
+          AND ashaId IS :ashaId
+          AND villageName IS :villageName
+    """)
+    fun deleteLocalCopiesOfServerMeeting(
+        serverId: Long,
+        meetingDate: String?,
+        place: String?,
+        participants: Int?,
+        ashaId: Int?,
+        villageName: String?,
+        syncedState: SyncState = SyncState.SYNCED
+    )
+
     @Query("delete from MAA_MEETING")
     fun clearAll()
 
