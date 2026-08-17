@@ -94,4 +94,25 @@ interface AbhaApiService {
 
     @POST("v1/registration/aadhaar/verifyBio")
     suspend fun verifyBio(@Body aadhaarVerifyBioRequest: AadhaarVerifyBioRequest): Response<ResponseBody>
+
+    @POST("v3/enrollment/enrol/auth/init")
+    suspend fun generateFaceAuthTxn(
+        @Body request: FaceAuthInitRequest,
+        @Header("REQUEST-ID") requestId: String,
+        @Header("TIMESTAMP") timestamp: String
+    ): Response<ResponseBody>
+
+    @POST("v3/enrollment/enrol/capturePID")
+    suspend fun capturePID(
+        @Body request: CapturePIDRequest,
+        @Header("REQUEST-ID") requestId: String,
+        @Header("TIMESTAMP") timestamp: String
+    ): Response<ResponseBody>
+
+    @POST("v3/enrollment/enrol/byAadhaar")
+    suspend fun enrollByFace(
+        @Body request: FaceEnrollmentRequest,
+        @Header("REQUEST-ID") requestId: String,
+        @Header("TIMESTAMP") timestamp: String
+    ): Response<ResponseBody>
 }

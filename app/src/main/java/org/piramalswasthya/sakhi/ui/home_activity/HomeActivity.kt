@@ -342,6 +342,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         viewModel.unprocessedRecordsCount.observe(this) {
             if (it > 0) {
                 val now = SystemClock.elapsedRealtime()
+
                 if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
                     if (isInternetAvailable(this)) {
                         lastAutoTriggerPushTime = now

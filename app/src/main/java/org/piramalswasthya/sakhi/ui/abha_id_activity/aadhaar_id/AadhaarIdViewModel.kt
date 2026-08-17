@@ -3,7 +3,14 @@ package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.network.CapturePIDRequest
+import org.piramalswasthya.sakhi.network.FaceAuthData
+import org.piramalswasthya.sakhi.network.FaceBlock
+import org.piramalswasthya.sakhi.network.FaceEnrollmentRequest
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.AbhaIdRepo
 import timber.log.Timber
 import java.util.Date
@@ -20,7 +27,11 @@ AadhaarIdViewModel @Inject constructor(
         ERROR_NETWORK,
         SUCCESS,
         STATE_DETAILS_SUCCESS,
-        ABHA_GENERATED_SUCCESS
+        ABHA_GENERATED_SUCCESS,
+        RD_APP_NOT_INSTALLED,
+        FACE_TXN_GENERATED,
+        FACE_CAPTURE_PENDING,
+        FACE_ENROLL_SUCCESS
     }
 
     enum class Abha {
@@ -29,9 +40,17 @@ AadhaarIdViewModel @Inject constructor(
         SEARCH
     }
 
+
+    private var _faceAuthTxnId: String? = null
+    val faceAuthTxnId: String
+        get() = _faceAuthTxnId ?: ""
+
+    private var _pidData: String? = null
+    val pidData: String
+        get() = _pidData ?: ""
     //    val aadhaarVerificationTypeValues = arrayOf("Aadhaar ID", "Fingerprint")
-    val aadhaarVerificationTypeValues = arrayOf("Aadhaar No")
-    private val _aadhaarVerificationTypes = MutableLiveData(aadhaarVerificationTypeValues[0])
+    val aadhaarVerificationTypeValues = arrayOf("Aadhaar No","Face Authentication")
+    private val _aadhaarVerificationTypes = MutableLiveData(aadhaarVerificationTypeValues[0],)
     val aadhaarVerificationTypes: LiveData<String>
         get() = _aadhaarVerificationTypes
 
@@ -168,5 +187,81 @@ AadhaarIdViewModel @Inject constructor(
 
     fun setVerificationType(verificationType: String) {
         _verificationType.value = verificationType
+    }
+
+
+
+    fun startFaceAuthEnrollment() {
+        viewModelScope.launch {
+            _state.value = State.LOADING
+            when (val result = abhaIdRepo.generateFaceAuthTxn()) {
+                is NetworkResult.Success -> {
+                    _faceAuthTxnId = result.data.txnId
+                    _state.value = State.FACE_TXN_GENERATED
+                }
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+                NetworkResult.NetworkError -> _state.value = State.ERROR_NETWORK
+            }
+        }
+    }
+
+    // Called from the Fragment once RD Service returns PID_DATA in onActivityResult
+    fun onFaceCaptured(pidData: String) {
+        _pidData = pidData
+        submitCapturedPid()
+    }
+
+    private fun submitCapturedPid() {
+        viewModelScope.launch {
+            _state.value = State.LOADING
+            val request = CapturePIDRequest(txnId = faceAuthTxnId, pid = pidData)
+            when (val result = abhaIdRepo.submitCapturePID(request)) {
+                is NetworkResult.Success -> {
+                    when (result.data.status) {
+                        "COMPLETE" -> completeFaceEnrollment()
+                        "FAILED" -> {
+                            _errorMessage.value = "Face authentication failed. Please try again."
+                            _state.value = State.ERROR_SERVER
+                        }
+                        // PENDING / VERIFIED — if you want to poll every 5-10s per the PDF,
+                        // have the Fragment re-call submitCapturedPid() on a timer while in this state
+                        else -> _state.value = State.FACE_CAPTURE_PENDING
+                    }
+                }
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+                NetworkResult.NetworkError -> _state.value = State.ERROR_NETWORK
+            }
+        }
+    }
+
+    private fun completeFaceEnrollment() {
+        viewModelScope.launch {
+            val request = FaceEnrollmentRequest(
+                authData = FaceAuthData(
+                    face = FaceBlock(
+                        txnId = faceAuthTxnId,
+                        aadhaar = aadhaarNumber,
+                        mobile = mobileNumber
+                    )
+                )
+            )
+            when (val result = abhaIdRepo.enrollByFace(request)) {
+                is NetworkResult.Success -> {
+                    _abhaResponse = com.google.gson.Gson().toJson(result.data)
+                    _state.value = State.FACE_ENROLL_SUCCESS
+                }
+                is NetworkResult.Error -> {
+                    _errorMessage.value = result.message
+                    _state.value = State.ERROR_SERVER
+                }
+                NetworkResult.NetworkError -> _state.value = State.ERROR_NETWORK
+            }
+        }
     }
 }

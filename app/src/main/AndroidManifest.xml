@@ -123,4 +123,13 @@
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />
     </queries>
+
+    <queries>
+        <package android:name="in.gov.uidai.facerd" />
+<!--        <package android:name="in.gov.uidai.facerd"/>-->
+
+        <intent>
+            <action android:name="in.gov.uidai.rdservice.face.CAPTURE"/>
+        </intent>
+    </queries>
 </manifest>

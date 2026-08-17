@@ -1,9 +1,12 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id
 
+
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,6 +19,8 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarIdBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel.State
+import org.piramalswasthya.sakhi.utils.Log
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -29,6 +34,7 @@ class AadhaarIdFragment : Fragment() {
     val viewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
     private lateinit var navController: NavController
+
     private val aadhaarNavController by lazy {
         val navHostFragment: NavHostFragment =
             childFragmentManager.findFragmentById(R.id.nav_host_fragment_find_abha) as NavHostFragment
@@ -59,6 +65,14 @@ class AadhaarIdFragment : Fragment() {
             viewLifecycleOwner,
             onBackPressedCallback
         )
+
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            viewModel.aadhaarVerificationTypeValues
+        )
+
+        binding.actvAadharVerificationDropdown.setAdapter(adapter)
 
         binding.createToggle.setOnClickListener {
             binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
@@ -112,11 +126,21 @@ class AadhaarIdFragment : Fragment() {
                 0 -> {
                     viewModel.setVerificationType("OTP")
                 }
-
                 1 -> {
+                    viewModel.setVerificationType("FA")
+                    val rdServiceHelper = RdServiceHelper(requireContext())
+                    if (!rdServiceHelper.isRdAppInstalled()) {
+                        rdServiceHelper.redirectToPlayStore(requireActivity())
+                    } else {
+                        viewModel.startFaceAuthEnrollment()
+                    }
+
+                }
+
+              /*  1 -> {
                     viewModel.setVerificationType("FP")
                     binding.rgGovAsha.visibility = View.INVISIBLE
-                }
+                }*/
             }
         }
 
@@ -149,6 +173,7 @@ class AadhaarIdFragment : Fragment() {
                                 )
                             )
                         }
+
                     }
                 }
 
@@ -176,6 +201,26 @@ class AadhaarIdFragment : Fragment() {
                         )
                     )
                 }
+
+                State.FACE_TXN_GENERATED -> {
+                    binding.pbLoadingAadharId.visibility = View.INVISIBLE
+                    binding.clContentAadharId.visibility = View.VISIBLE
+                    Timber.d("FACE_TXN_GENERATED reached, txnId=${viewModel.faceAuthTxnId}")
+                    val rdServiceHelper = RdServiceHelper(requireContext(),)
+
+                    rdServiceHelper.launchFaceCapture(requireActivity())
+                }
+
+
+
+                State.FACE_ENROLL_SUCCESS -> {
+                    // TODO: navigate wherever your OTP flow lands after a successful ABHA creation —
+                    // I don't have that destination fragment, so wire this to match your existing
+                    // post-success navigation (likely similar to ABHA_GENERATED_SUCCESS above).
+                }
+                else -> {
+
+                }
             }
         }
 
@@ -188,6 +233,7 @@ class AadhaarIdFragment : Fragment() {
             }
         }
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -237,6 +283,20 @@ class AadhaarIdFragment : Fragment() {
 
 
 
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d("FaceRD", "requestCode=$requestCode resultCode=$resultCode data=$data")
+
+        if (requestCode == RdServiceHelper.REQUEST_CODE_FACE_CAPTURE) {
+            Log.d("FaceRD", "extras: ${data?.extras?.keySet()?.joinToString()}")
+
+            val rdServiceHelper = RdServiceHelper(requireContext())
+            rdServiceHelper.parseCaptureResult(resultCode, data)
+                .onSuccess { pidData -> viewModel.onFaceCaptured(pidData) }
+                .onFailure { viewModel.setState(AadhaarIdViewModel.State.ERROR_SERVER) }
         }
     }
 

@@ -29,11 +29,16 @@ import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpRequest
 import org.piramalswasthya.sakhi.network.AbhaVerifyMobileOtpResponse
 import org.piramalswasthya.sakhi.network.AddHealthIdRecord
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.CapturePIDRequest
+import org.piramalswasthya.sakhi.network.CapturePIDResponse
 import org.piramalswasthya.sakhi.network.CreateAbhaIdGovRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdRequest
 import org.piramalswasthya.sakhi.network.CreateAbhaIdResponse
 import org.piramalswasthya.sakhi.network.CreateHIDResponse
 import org.piramalswasthya.sakhi.network.CreateHealthIdRequest
+import org.piramalswasthya.sakhi.network.FaceAuthInitRequest
+import org.piramalswasthya.sakhi.network.FaceAuthInitResponse
+import org.piramalswasthya.sakhi.network.FaceEnrollmentRequest
 import org.piramalswasthya.sakhi.network.GenerateOtpHid
 import org.piramalswasthya.sakhi.network.LoginGenerateOtpRequest
 import org.piramalswasthya.sakhi.network.LoginGenerateOtpResponse
@@ -825,6 +830,83 @@ class AbhaIdRepo @Inject constructor(
             abhaGenerated.saveAbhaGenrated(abha)
         } catch (e: Exception) {
             Timber.e(e, "Failed to save ABHA model")
+        }
+    }
+
+    suspend fun generateFaceAuthTxn(): NetworkResult<FaceAuthInitResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = abhaApiService.generateFaceAuthTxn(
+                    request = FaceAuthInitRequest(),
+                    requestId = generateUUID(),
+                    timestamp = getCurrentTimestamp()
+                )
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    val result = Gson().fromJson(responseBody, FaceAuthInitResponse::class.java)
+                    NetworkResult.Success(result)
+                } else {
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    suspend fun submitCapturePID(req: CapturePIDRequest): NetworkResult<CapturePIDResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = abhaApiService.capturePID(req, generateUUID(), getCurrentTimestamp())
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    val result = Gson().fromJson(responseBody, CapturePIDResponse::class.java)
+                    NetworkResult.Success(result)
+                } else {
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    suspend fun enrollByFace(req: FaceEnrollmentRequest): NetworkResult<AbhaVerifyAadhaarOtpResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                req.authData.face.aadhaar = encryptData(req.authData.face.aadhaar)
+                val response = abhaApiService.enrollByFace(req, generateUUID(), getCurrentTimestamp())
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    val result = Gson().fromJson(responseBody, AbhaVerifyAadhaarOtpResponse::class.java)
+                    NetworkResult.Success(result)
+                } else {
+                    sendErrorResponse(response)
+                }
+            } catch (e: IOException) {
+                NetworkResult.Error(-1, "Unable to connect to Internet!")
+            } catch (e: JSONException) {
+                NetworkResult.Error(-2, "Invalid response! Please try again!")
+            } catch (e: SocketTimeoutException) {
+                NetworkResult.Error(-3, "Request Timed out! Please try again!")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                NetworkResult.Error(-4, e.message ?: "Unknown Error")
+            }
         }
     }
 }
