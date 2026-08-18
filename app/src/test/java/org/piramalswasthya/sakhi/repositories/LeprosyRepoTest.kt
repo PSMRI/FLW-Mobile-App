@@ -743,4 +743,13 @@ class LeprosyRepoTest : BaseRepositoryTest() {
         coEvery { benDao.getBenWithLeprosyScreeningAndFollowUps(5L) } returns data
         assertEquals(data, repo.getBenWithLeprosyData(5L))
     }
+
+    @Test
+    fun `screening pull returns 0 when data payload is malformed`() = runTest {
+        loggedIn()
+        val responseJson = dataStringResponse(200, "not a valid json")
+        coEvery { tmcNetworkApiService.getMalariaScreeningData(any()) } returns response(200, responseJson)
+
+        assertEquals(0, repo.getLeprosyScreeningDetailsFromServer())
+    }
 }

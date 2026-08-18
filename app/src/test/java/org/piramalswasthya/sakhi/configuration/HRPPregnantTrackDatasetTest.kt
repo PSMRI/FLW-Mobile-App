@@ -55,6 +55,12 @@ class HRPPregnantTrackDatasetTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `HRPPregnantTrackCache exposes id`() {
+        val cache = HRPPregnantTrackCache(id = 9, benId = 1L)
+        assertEquals(9, cache.id)
+    }
+
+    @Test
     fun hrpPregnantTrackDeep() = runTest {
         val ds = HRPPregnantTrackDataset(context, Languages.ENGLISH)
         val ben = mockk<BenRegCache>(relaxed = true)

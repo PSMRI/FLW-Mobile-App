@@ -343,4 +343,79 @@ class HbycRepoTest : BaseRepositoryTest() {
         verify { first.processed = "P" }
         coVerify { hbycDao.upsert(first) }
     }
+
+    // =====================================================
+    // processNewHbyc() record-loop Tests
+    // =====================================================
+
+    @Test
+    fun `processNewHbyc marks single record synced when household and ben exist`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        coEvery { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<HBYCCache>(relaxed = true)
+        coEvery { hbycDao.getAllUnprocessedHBYC() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(any(), any()) } returns mockk(relaxed = true)
+        coEvery { hbycDao.hbycCount() } returns 3
+
+        val result = repo.processNewHbyc()
+
+        assertTrue(result)
+        verify { cache.syncState = SyncState.SYNCING }
+        coVerify { hbycDao.setSynced(cache) }
+    }
+
+    @Test
+    fun `processNewHbyc skips record and continues when household is missing`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        coEvery { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<HBYCCache>(relaxed = true)
+        every { cache.hhId } returns 111L
+        coEvery { hbycDao.getAllUnprocessedHBYC() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(111L) } returns null
+
+        val result = repo.processNewHbyc()
+
+        assertTrue(result)
+        coVerify(exactly = 0) { hbycDao.setSynced(cache) }
+    }
+
+    @Test
+    fun `processNewHbyc skips record and continues when beneficiary is missing`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        coEvery { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<HBYCCache>(relaxed = true)
+        every { cache.hhId } returns 222L
+        every { cache.benId } returns 333L
+        coEvery { hbycDao.getAllUnprocessedHBYC() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(222L) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(222L, 333L) } returns null
+
+        val result = repo.processNewHbyc()
+
+        assertTrue(result)
+        coVerify(exactly = 0) { hbycDao.setSynced(cache) }
+    }
+
+    @Test
+    fun `processNewHbyc continues to remaining records after one fails`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        coEvery { preferenceDao.getLoggedInUser() } returns user
+        val failing = mockk<HBYCCache>(relaxed = true)
+        every { failing.hhId } returns 444L
+        val succeeding = mockk<HBYCCache>(relaxed = true)
+        every { succeeding.hhId } returns 555L
+        every { succeeding.benId } returns 666L
+        coEvery { hbycDao.getAllUnprocessedHBYC() } returns listOf(failing, succeeding)
+        coEvery { database.householdDao.getHousehold(444L) } returns null
+        coEvery { database.householdDao.getHousehold(555L) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(555L, 666L) } returns mockk(relaxed = true)
+        coEvery { hbycDao.hbycCount() } returns 1
+
+        val result = repo.processNewHbyc()
+
+        assertTrue(result)
+        coVerify(exactly = 0) { hbycDao.setSynced(failing) }
+        coVerify { hbycDao.setSynced(succeeding) }
+    }
 }

@@ -25,6 +25,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.ConditionalLogic
+import org.piramalswasthya.sakhi.model.dynamicEntity.FieldValidationDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -79,14 +80,16 @@ class MosquitoNetFormViewModelTest : BaseViewModelTest() {
         id: String,
         value: Any? = null,
         default: Any? = null,
-        conditional: ConditionalLogic? = null
+        conditional: ConditionalLogic? = null,
+        validation: FieldValidationDto? = null
     ) = FormFieldDto(
         fieldId = id,
         label = "L-$id",
         type = "text",
         conditional = conditional,
         default = default ?: value,
-        value = value
+        value = value,
+        validation = validation
     )
 
     private fun schemaOf(vararg fields: FormFieldDto) = FormSchemaDto(
@@ -229,6 +232,32 @@ class MosquitoNetFormViewModelTest : BaseViewModelTest() {
         val visible = viewModel.getVisibleFields()
         assertEquals(1, visible.size)
         assertEquals("hasNet", visible.first().fieldId)
+    }
+
+    @Test
+    fun `getVisibleFields maps the full validation block`() = runTest {
+        loadSchema(
+            schemaOf(
+                field(
+                    "age",
+                    validation = FieldValidationDto(
+                        min = 1f,
+                        max = 120f,
+                        maxLength = 3,
+                        regex = "\\d+",
+                        errorMessage = "invalid",
+                        decimalPlaces = 0,
+                        maxSizeMB = 5,
+                        afterField = "dob",
+                        beforeField = "gender"
+                    )
+                )
+            )
+        )
+        val visible = viewModel.getVisibleFields()
+        assertEquals(1, visible.size)
+        assertEquals(120f, visible.first().validation?.max)
+        assertEquals("invalid", visible.first().validation?.errorMessage)
     }
 
     @Test

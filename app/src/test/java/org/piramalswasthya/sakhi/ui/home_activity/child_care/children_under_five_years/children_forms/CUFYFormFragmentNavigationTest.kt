@@ -187,4 +187,14 @@ class CUFYFormFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = CUFYFormFragmentArgs(benId = 10L, hhId = 20L)
+        assertNull(a.visitType)
+        assertFalse(a.isViewMode)
+        assertNull(a.formDataJson)
+        assertEquals(0, a.recordId)
+        assertEquals("sam_visit_001", a.formId)
+    }
 }

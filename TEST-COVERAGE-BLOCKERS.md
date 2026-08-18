@@ -275,6 +275,14 @@ raise it** under the current architecture; flagging it here so it isn't accident
 future coverage session. If real login-path coverage is ever wanted, the fix has to be in `src/main`
 (inject an `EncryptionProvider` interface instead of constructing `CryptoUtil` directly).
 
+**Recurred 2026-08-14:** a later session's `UserRepoAuthTest.kt` (21 tests, targeting
+`authenticateUser`/`saveToken`, both of which call `getTokenAmrit`) hit the exact same wall —
+`mockkConstructor(CryptoUtil::class)` plus an attempt to also `mockkStatic(System::class)` and stub
+`loadLibrary` before `mockkObject(KeyUtils)`. The `System.loadLibrary` mock didn't take either: MockK
+cannot retransform `java.lang.System` (a JDK bootstrap class), so the real native call still ran and
+threw from inside the `every { }` recording block itself. All 21 tests failed 100% of the time; the file
+was deleted rather than fixed. Confirms this blocker has no test-side workaround, full stop.
+
 ## 5. Two more dead/unreachable catch-and-branch findings (same class of bug as `PullFromAmritWorker`'s in section 3)
 
 - **`AbhaIdRepo.kt`** — both `createHealthIdWithUid` and `mapHealthIDToBeneficiary` (and by inspection,

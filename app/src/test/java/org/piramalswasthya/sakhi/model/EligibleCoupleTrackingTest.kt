@@ -404,6 +404,30 @@ class EligibleCoupleTrackingTest {
         assertTrue(domain.allowFill)
     }
 
+    @Test fun `ECTNetwork constructor uses defaults when optional fields are omitted`() {
+        val network = ECTNetwork(
+            benId = 1L,
+            visitDate = "2026-01-01T00:00:00.000",
+            isPregnancyTestDone = null,
+            pregnancyTestResult = null,
+            isPregnant = null,
+            usingFamilyPlanning = null,
+            methodOfContraception = null,
+            isActive = true,
+            createdBy = "creator",
+            createdDate = "2026-01-01T00:00:00.000",
+            updatedBy = "modifier",
+            updatedDate = "2026-01-01T00:00:00.000",
+            lmp_date = 1L
+        )
+
+        assertNotNull(network)
+        assertNull(network.lmpDate)
+        assertNull(network.dateOfSterilisation)
+        assertNull(network.mpaFile)
+        assertNull(network.dischargeSummary1)
+    }
+
     @Test fun `asDomainModel maps ECTDomain fields including filled on string`() {
         val record = EligibleCoupleTrackingCache(
             benId = 9L,

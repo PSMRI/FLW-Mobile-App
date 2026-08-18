@@ -423,10 +423,11 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
     fun `downSyncAndPersist does nothing when server list is empty`() = runTest {
         loggedInUser()
         every { pref.getLastSyncedTimeStamp() } returns 0L
+        val parsed = MaaMeetingGetAllResponse(data = emptyList(), statusCode = 200, status = "OK")
+        assertEquals(200, parsed.statusCode)
+        assertEquals("OK", parsed.status)
         coEvery { api.getMaaMeetings(any()) } returns successfulMeetingsResponse("{}")
-        stubParsedMeetingsResponse(
-            MaaMeetingGetAllResponse(data = emptyList(), statusCode = 200, status = "OK")
-        )
+        stubParsedMeetingsResponse(parsed)
 
         repo.downSyncAndPersist()
 

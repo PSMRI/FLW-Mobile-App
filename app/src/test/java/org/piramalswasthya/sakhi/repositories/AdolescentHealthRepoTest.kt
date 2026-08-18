@@ -270,4 +270,176 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
             coVerify(exactly = 0) { adolescentHealthDao.saveAdolescentHealth(it) }
         }
     }
+
+    // =====================================================
+    // getadolescentHealthCacheFromServer() Tests
+    // =====================================================
+
+    @Test
+    fun `getadolescentHealthCacheFromServer saves new record on inner statusCode 200`() = runTest {
+        loggedIn()
+        val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 200)
+        outer.put("data", dtoJson)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+        coEvery { adolescentHealthDao.getAdolescentHealth(1L, any(), any()) } returns null
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(1L) } returns ben
+        coEvery { adolescentHealthDao.saveAdolescentHealth(any()) } returns Unit
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 1) { adolescentHealthDao.saveAdolescentHealth(any()) }
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer skips save when record already exists`() = runTest {
+        loggedIn()
+        val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 200)
+        outer.put("data", dtoJson)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+        val existing = mockk<AdolescentHealthCache>(relaxed = true)
+        coEvery { adolescentHealthDao.getAdolescentHealth(1L, any(), any()) } returns existing
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { adolescentHealthDao.saveAdolescentHealth(any()) }
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer skips save when ben not found`() = runTest {
+        loggedIn()
+        val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 200)
+        outer.put("data", dtoJson)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+        coEvery { adolescentHealthDao.getAdolescentHealth(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns null
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { adolescentHealthDao.saveAdolescentHealth(any()) }
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns 0 when data payload is malformed`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 200)
+        outer.put("data", "not a valid json array")
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(0, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -2 when inner 5002 refresh succeeds`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 5002)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+        coEvery { userRepo.refreshTokenTmc("asha", "pwd") } returns true
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-2, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -1 when inner 5002 refresh fails`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 5002)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+        coEvery { userRepo.refreshTokenTmc("asha", "pwd") } returns false
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns 0 when inner 5000 has no record found`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "No record found")
+        outer.put("statusCode", 5000)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(0, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -1 when inner 5000 has other error message`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "Some other error")
+        outer.put("statusCode", 5000)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -1 when inner statusCode is unknown`() = runTest {
+        loggedIn()
+        val outer = org.json.JSONObject()
+        outer.put("errorMessage", "")
+        outer.put("statusCode", 4321)
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -1 when outer statusCode is not 200`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(500)
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -1 when response body is null`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, null)
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun `getadolescentHealthCacheFromServer returns -2 when network call times out`() = runTest {
+        loggedIn()
+        coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } throws
+            java.net.SocketTimeoutException("timeout")
+
+        val result = repo.getadolescentHealthCacheFromServer()
+
+        assertEquals(-2, result)
+    }
 }

@@ -153,10 +153,16 @@ class AadhaarOtpViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `verifyOtpClicked success with middleName sets full name and OTP_VERIFY_SUCCESS`() = runTest {
+        val tokens = Tokens(
+            token = "tok-1",
+            expiresIn = 300,
+            refreshToken = "refresh-1",
+            refreshExpiresIn = 1800
+        )
         val response = AbhaVerifyAadhaarOtpResponse(
             message = "success",
             txnId = "txn-1",
-            tokens = Tokens(token = "tok-1"),
+            tokens = tokens,
             ABHAProfile = ABHAProfile(
                 firstName = "John",
                 middleName = "K",
@@ -177,6 +183,9 @@ class AadhaarOtpViewModelTest : BaseViewModelTest() {
         assertEquals("john@abdm", viewModel.phrAddress)
         assertEquals("9876543210", viewModel.mobileNumber)
         assertTrue(viewModel.abhaResponse.isNotEmpty())
+        assertEquals(300, tokens.expiresIn)
+        assertEquals("refresh-1", tokens.refreshToken)
+        assertEquals(1800, tokens.refreshExpiresIn)
     }
 
     @Test

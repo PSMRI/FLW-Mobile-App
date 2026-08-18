@@ -103,4 +103,46 @@ class InfantRegMappingTest {
         // gender is intentionally not mapped by toCacheModel()
         assertNull(cache.gender)
     }
+
+    // ---------------------------------------------------------------
+    // InfantRegDomain
+    // ---------------------------------------------------------------
+
+    @Test
+    fun `InfantRegDomain omitting optional args falls back to defaults`() {
+        val mother = BenBasicDomain(
+            benId = 91L,
+            hhId = 5L,
+            reproductiveStatusId = 1,
+            regDate = "01-01-2024",
+            benName = "Asha",
+            gender = "FEMALE",
+            dob = 0L,
+            relToHeadId = 1,
+            mobileNo = "9999999999",
+            familyHeadName = "Head",
+            syncState = SyncState.UNSYNCED,
+            isConsent = true,
+            isSpouseAdded = false,
+            isChildrenAdded = false,
+            isMarried = true
+        )
+        val deliveryOutcome = DeliveryOutcomeCache(
+            benId = 91L,
+            isActive = true,
+            createdBy = "asha",
+            updatedBy = "asha",
+            syncState = SyncState.UNSYNCED
+        )
+
+        val domain = InfantRegDomain(
+            motherBen = mother,
+            babyIndex = 0,
+            deliveryOutcome = deliveryOutcome,
+            savedIr = null
+        )
+
+        assertEquals("Baby 0 of ${mother.benFullName}", domain.babyName)
+        assertNull(domain.syncState)
+    }
 }

@@ -337,9 +337,11 @@ class NotificationModelsTest {
         assertEquals(ids, ids.copy())
         assertEquals(ids.hashCode(), ids.copy().hashCode())
         assertEquals(listOf(1L, 2L), ids.notificationIds)
+        assertEquals(1L, ids.userId)
         assertTrue(ids.toString().contains("NotificationIdsRequest"))
         val user = NotificationUserRequest(userId = 7L)
         assertEquals(user, NotificationUserRequest(userId = 7L))
+        assertEquals(7L, user.userId)
         assertNotEquals(user, NotificationUserRequest(userId = 8L))
         assertFalse(user.equals(null))
     }

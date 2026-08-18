@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -39,6 +41,7 @@ import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
+import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class VLFRepoTest : BaseRepositoryTest() {
@@ -1693,5 +1696,109 @@ class VLFRepoTest : BaseRepositoryTest() {
         val result = repo.isFormFilledForCurrentMonth().first()
 
         assertFalse(result["VHND"]!!)
+    }
+
+    // =====================================================
+    // saveMdaFilariaCampaignToServer photo handling
+    // =====================================================
+
+    private fun mdaFormData(photos: Any): String =
+        JSONObject().put("fields", JSONObject().put("mda_photos", photos)).toString()
+
+    private fun mdaCache(formDataJson: String): FilariaMDACampaignFormResponseJsonEntity {
+        val cache = mockk<FilariaMDACampaignFormResponseJsonEntity>(relaxed = true)
+        every { cache.formDataJson } returns formDataJson
+        return cache
+    }
+
+    private fun tempPhoto(): File {
+        val file = File.createTempFile("mda_test_photo_", ".jpg")
+        file.writeBytes(byteArrayOf(1, 2, 3))
+        file.deleteOnExit()
+        return file
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer attaches photos listed in an encoded json array`() =
+        runTest {
+            val file = tempPhoto()
+            val cache = mdaCache(mdaFormData(JSONArray().put(file.absolutePath).toString()))
+            coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+            assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+            coVerify { api.saveFilariaMdaCampaign(match { it.size == 2 }) }
+            coVerify { dbDao.saveRecord(cache) }
+        }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer attaches photos listed in a json array field`() = runTest {
+        val file = tempPhoto()
+        val cache = mdaCache(mdaFormData(JSONArray().put(file.absolutePath)))
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer skips a photo path that does not exist`() = runTest {
+        val cache = mdaCache(mdaFormData("no-such-photo.jpg"))
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer skips a data uri it cannot decode`() = runTest {
+        val cache = mdaCache(mdaFormData("data:image/jpeg;base64,QUJD"))
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer skips a content uri it cannot resolve`() = runTest {
+        val cache = mdaCache(mdaFormData("content://media/external/images/1"))
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer sends only the form when there are no photos`() = runTest {
+        val cache = mdaCache("""{"fields":{}}""")
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer sends only the form when fields are absent`() = runTest {
+        val cache = mdaCache("""{"other":1}""")
+        coEvery { api.saveFilariaMdaCampaign(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify { api.saveFilariaMdaCampaign(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveMdaFilariaCampaignToServer returns false when the upload throws`() = runTest {
+        val cache = mdaCache("")
+        coEvery { api.saveFilariaMdaCampaign(any()) } throws RuntimeException("network down")
+
+        assertFalse(repo.saveMdaFilariaCampaignToServer(cache))
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
     }
 }

@@ -125,6 +125,8 @@ class HouseholdMappingTest {
         val domain = basic.asBasicDomainModel()
         assertEquals(9001L, domain.hhId)
         assertEquals(4, domain.numMembers)
+        assertEquals(9001L, basic.household.householdId)
+        assertEquals(4, basic.numMembers)
     }
 
     @Test fun `asBasicDomainModel null family gives Not Available`() {

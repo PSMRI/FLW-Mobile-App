@@ -142,4 +142,55 @@ class ImmunizationMappingTest {
         val cache = post.toCacheModel()
         assertEquals(0L, cache.date)
     }
+
+    @Test fun `Vaccine omitting optional args falls back to defaults`() {
+        val vaccine = Vaccine(
+            vaccineId = 1,
+            vaccineName = "BCG",
+            minAllowedAgeInMillis = 0L,
+            maxAllowedAgeInMillis = 1000L,
+            category = ImmunizationCategory.CHILD,
+            immunizationService = ChildImmunizationCategory.BIRTH
+        )
+        assertEquals(1000L, vaccine.overdueDurationSinceMinInMillis)
+        assertNull(vaccine.dependantVaccineId)
+        assertNull(vaccine.dependantCoolDuration)
+    }
+
+    @Test fun `VaccineDomain omitting optional args falls back to defaults`() {
+        val domain = VaccineDomain(
+            vaccineId = 1,
+            vaccineName = "BCG",
+            vaccineCategory = ChildImmunizationCategory.BIRTH,
+            state = VaccineState.PENDING
+        )
+        assertEquals(false, domain.isSwitchChecked)
+        assertEquals("", domain.dueDate)
+    }
+
+    @Test fun `VaccineCategoryDomain omitting optional args falls back to defaults`() {
+        val domain = VaccineCategoryDomain(
+            category = ChildImmunizationCategory.BIRTH,
+            vaccineStateList = emptyList()
+        )
+        assertEquals(ChildImmunizationCategory.BIRTH.name, domain.categoryString)
+        assertEquals(false, domain.isBenDeath)
+    }
+
+    @Test fun `VaccineCategoryDomain exposes category, vaccineStateList and isBenDeath setter`() {
+        val vaccine = VaccineDomain(
+            vaccineId = 1,
+            vaccineName = "BCG",
+            vaccineCategory = ChildImmunizationCategory.BIRTH,
+            state = VaccineState.PENDING
+        )
+        val domain = VaccineCategoryDomain(
+            category = ChildImmunizationCategory.BIRTH,
+            vaccineStateList = listOf(vaccine)
+        )
+        assertEquals(ChildImmunizationCategory.BIRTH, domain.category)
+        assertEquals(1, domain.vaccineStateList.size)
+        domain.isBenDeath = true
+        assertEquals(true, domain.isBenDeath)
+    }
 }

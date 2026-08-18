@@ -4,7 +4,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Environment
+import androidx.core.app.NotificationCompat
 import androidx.work.Data
+import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import io.mockk.Runs
@@ -12,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -111,5 +114,19 @@ class DownloadCardWorkerTest : BaseRepositoryTest() {
         val result = worker(fileName = "abha_card.pdf").doWork()
 
         assertTrue(result is ListenableWorker.Result.Failure)
+    }
+
+    @Test
+    fun getForegroundInfo_returnsForegroundInfo() = runTest {
+        mockkConstructor(NotificationCompat.Builder::class)
+        every { anyConstructed<NotificationCompat.Builder>().setContentTitle(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setContentText(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setSmallIcon(any<Int>()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setProgress(any(), any(), any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().build() } returns mockk(relaxed = true)
+
+        val result = worker().getForegroundInfo()
+
+        assertNotNull(result)
     }
 }

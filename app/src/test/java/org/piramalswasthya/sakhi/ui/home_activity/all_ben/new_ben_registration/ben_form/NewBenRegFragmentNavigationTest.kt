@@ -208,4 +208,13 @@ class NewBenRegFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = NewBenRegFragmentArgs(hhId = 10L, relToHeadId = 21)
+        assertEquals(0L, a.benId)
+        assertEquals(0L, a.selectedBenId)
+        assertEquals(0, a.gender)
+        assertEquals(0, a.isAddSpouse)
+    }
 }

@@ -308,4 +308,78 @@ class KalaAzarRepoTest : BaseRepositoryTest() {
         coEvery { api.getMalariaScreeningData(any()) } returns resp(500)
         assertEquals(-1, repo.getKalaAzarScreeningDetailsFromServer())
     }
+
+    // ---------------- saveKalaAzarScreeningCacheFromResponse ----------------
+
+    private fun kalaAzarEntryJson(): String =
+        """{"benId":1,"visitDate":"2024-01-15","houseHoldDetailsId":1,"beneficiaryStatus":"Alive","dateOfDeath":"","placeOfDeath":"","otherPlaceOfDeath":"","reasonForDeath":"","otherReasonForDeath":"","rapidDiagnosticTest":"","dateOfRdt":"","referToName":"","otherReferredFacility":"","createdDate":"2024-01-15","createdBy":"asha"}"""
+
+    private fun pullOuterJson(dataJson: String): String {
+        val outer = org.json.JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataJson)
+        return outer.toString()
+    }
+
+    @Test
+    fun `pull saves new record from array-shaped data when ben exists and no cache yet`() = runTest {
+        loggedIn()
+        val dataJson = "[${kalaAzarEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { kalaAzarDao.getKalaAzarScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getKalaAzarScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { kalaAzarDao.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `pull saves new record from object-shaped data with kalaAzarLists wrapper`() = runTest {
+        loggedIn()
+        val dataJson = """{"userId":0,"kalaAzarLists":[${kalaAzarEntryJson()}]}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { kalaAzarDao.getKalaAzarScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getKalaAzarScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { kalaAzarDao.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `pull skips save when kala azar cache already exists`() = runTest {
+        loggedIn()
+        val dataJson = "[${kalaAzarEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { kalaAzarDao.getKalaAzarScreening(1L, any(), any()) } returns
+            mockk<KalaAzarScreeningCache>(relaxed = true)
+
+        assertEquals(1, repo.getKalaAzarScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { kalaAzarDao.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `pull skips save when ben does not exist`() = runTest {
+        loggedIn()
+        val dataJson = "[${kalaAzarEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { kalaAzarDao.getKalaAzarScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns null
+
+        assertEquals(1, repo.getKalaAzarScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { kalaAzarDao.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `pull returns 0 when data payload is malformed`() = runTest {
+        loggedIn()
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200(pullOuterJson("not a valid json"))
+
+        assertEquals(0, repo.getKalaAzarScreeningDetailsFromServer())
+    }
 }

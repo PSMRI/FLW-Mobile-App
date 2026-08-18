@@ -5,6 +5,8 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.coEvery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -67,5 +69,38 @@ class PushChildHBYCToAmritWorkerTest : BaseRepositoryTest() {
     @Test
     fun doWork_returnsAResult_whenDependenciesYieldNoData() = runTest {
         assertNotNull(worker().doWork())
+    }
+
+    @Test
+    fun doSyncWork_returnsSuccess_whenRepoReturnsOne() = runTest {
+        coEvery { hbycRepo.pushHBYCDetails() } returns 1
+        assertTrue(worker().doWork() is ListenableWorker.Result.Success)
+    }
+
+    @Test
+    fun doSyncWork_stampsLastSyncedTime_whenRepoReturnsOne() = runTest {
+        coEvery { hbycRepo.pushHBYCDetails() } returns 1
+        worker().doWork()
+        verify { preferenceDao.setLastSyncedTimeStamp(any()) }
+    }
+
+    @Test
+    fun doSyncWork_reportsSyncFalse_whenRepoReturnsZero() = runTest {
+        coEvery { hbycRepo.pushHBYCDetails() } returns 0
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals("Sync operation returned false", result.outputData.getString("error"))
+    }
+
+    @Test
+    fun doSyncWork_reportsWorkerName_whenRepoReturnsZero() = runTest {
+        coEvery { hbycRepo.pushHBYCDetails() } returns 0
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals(worker().workerName, result.outputData.getString("worker_name"))
+    }
+
+    @Test
+    fun doSyncWork_returnsSuccess_whenRepoThrows_becauseInnerFailureIsSwallowed() = runTest {
+        coEvery { hbycRepo.pushHBYCDetails() } throws RuntimeException("network down")
+        assertTrue(worker().doWork() is ListenableWorker.Result.Success)
     }
 }

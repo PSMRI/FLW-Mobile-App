@@ -397,4 +397,72 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
 
         assertEquals(0, repo.getVaccineDetailsFromServer())
     }
+
+    // ---------------- saveImmunizationCacheFromResponse ----------------
+
+    private fun immunizationEntryJson(beneficiaryId: Long = 1L, vaccineId: Int = 2) =
+        """{"beneficiaryId":$beneficiaryId,"vaccineId":$vaccineId,"createdBy":"asha","modifiedBy":"asha"}"""
+
+    private fun immunizationOuterJson(dataJson: String): String {
+        val outer = JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataJson)
+        return outer.toString()
+    }
+
+    @Test
+    fun `getImmunizationDetails saves new record when array data has no existing cache`() = runTest {
+        loggedIn()
+        val dataJson = "[${immunizationEntryJson()}]"
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(1L, 2) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(any()) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(any()) }
+    }
+
+    @Test
+    fun `getImmunizationDetails skips save when immunization record already exists`() = runTest {
+        loggedIn()
+        val dataJson = "[${immunizationEntryJson()}]"
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(1L, 2) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 0) { immunizationDao.addImmunizationRecord(any()) }
+    }
+
+    @Test
+    fun `getImmunizationDetails saves record when data is object wrapper containing array`() = runTest {
+        loggedIn()
+        val dataJson = """{"entries":[${immunizationEntryJson()}]}"""
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(1L, 2) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(any()) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(any()) }
+    }
+
+    @Test
+    fun `getImmunizationDetails saves single record when data is a bare object`() = runTest {
+        loggedIn()
+        val dataJson = immunizationEntryJson()
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(1L, 2) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(any()) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(any()) }
+    }
 }

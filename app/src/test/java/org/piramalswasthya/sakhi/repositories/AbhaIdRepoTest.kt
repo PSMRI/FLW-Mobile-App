@@ -129,6 +129,131 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         assertEquals(-4, (result as NetworkResult.Error).code)
     }
 
+    @Test
+    fun `addHealthIdRecord returns success on statusCode 200`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        val body = JSONObject().apply {
+            put("statusCode", 200)
+            put("data", "record-added")
+        }.toString()
+        coEvery { amritApiService.addHealthIdRecord(any()) } returns jsonResponse(body)
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Success)
+        assertEquals(body, (result as NetworkResult.Success<*>).data)
+    }
+
+    @Test
+    fun `addHealthIdRecord refreshes token and retries on session expired`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        val expiredBody = JSONObject().apply {
+            put("statusCode", 401)
+            put("errorMessage", "Invalid login key or session is expired")
+        }.toString()
+        val successBody = JSONObject().apply {
+            put("statusCode", 200)
+            put("data", "record-added")
+        }.toString()
+        coEvery { amritApiService.addHealthIdRecord(any()) } returnsMany listOf(
+            jsonResponse(expiredBody), jsonResponse(successBody)
+        )
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Success)
+        coVerify(exactly = 1) { userRepo.refreshTokenTmc(any(), any()) }
+        coVerify(exactly = 2) { amritApiService.addHealthIdRecord(any()) }
+    }
+
+    @Test
+    fun `addHealthIdRecord returns error message for other 401-family codes`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        val body = JSONObject().apply {
+            put("statusCode", 5000)
+            put("errorMessage", "Some backend error")
+        }.toString()
+        coEvery { amritApiService.addHealthIdRecord(any()) } returns jsonResponse(body)
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals("Some backend error", (result as NetworkResult.Error).message)
+        coVerify(exactly = 0) { userRepo.refreshTokenTmc(any(), any()) }
+    }
+
+    @Test
+    fun `addHealthIdRecord returns generic error for unrecognized statusCode`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        val body = """{"statusCode":400,"message":"bad request"}"""
+        coEvery { amritApiService.addHealthIdRecord(any()) } returns jsonResponse(body)
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(0, (result as NetworkResult.Error).code)
+        assertEquals(body, result.message)
+    }
+
+    @Test
+    fun `addHealthIdRecord returns generic error when response body is null`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { amritApiService.addHealthIdRecord(any()) } returns jsonResponse(null)
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(0, (result as NetworkResult.Error).code)
+        assertEquals("null", result.message)
+    }
+
+    @Test
+    fun `addHealthIdRecord returns json error for malformed response body`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { amritApiService.addHealthIdRecord(any()) } returns jsonResponse("not-json")
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-2, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `addHealthIdRecord returns network error on IOException`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { amritApiService.addHealthIdRecord(any()) } throws IOException("no net")
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `addHealthIdRecord returns the IOException-branch error on SocketTimeoutException (dead specific catch)`() =
+        runTest {
+            every { prefDao.getLoggedInUser() } returns testUser()
+            coEvery { amritApiService.addHealthIdRecord(any()) } throws SocketTimeoutException("timeout")
+
+            val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals(-1, (result as NetworkResult.Error).code)
+        }
+
+    @Test
+    fun `addHealthIdRecord returns unknown error on generic exception`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { amritApiService.addHealthIdRecord(any()) } throws RuntimeException("boom")
+
+        val result = repo.addHealthIdRecord(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-4, (result as NetworkResult.Error).code)
+        assertEquals("boom", (result as NetworkResult.Error).message)
+    }
+
     // ---------------- saveAbhaModelFromRequest ----------------
 
     @Test
@@ -844,6 +969,18 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
     // ---------------- generateOtpHid ----------------
 
     @Test
+    fun `GenerateOtpHid exposes auth fields`() {
+        val payload = GenerateOtpHid(
+            authMethod = "healthid",
+            healthId = "asha@abdm",
+            healthIdNumber = "11-1111-1111-1111"
+        )
+        assertEquals("healthid", payload.authMethod)
+        assertEquals("asha@abdm", payload.healthId)
+        assertEquals("11-1111-1111-1111", payload.healthIdNumber)
+    }
+
+    @Test
     fun `generateOtpHid returns success txnId on statusCode 200`() = runTest {
         val body = JSONObject().apply {
             put("statusCode", 200)
@@ -891,6 +1028,18 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
     }
 
     // ---------------- verifyOtpAndGenerateHealthCard ----------------
+
+    @Test
+    fun `ValidateOtpHid exposes otp fields`() {
+        val payload = ValidateOtpHid(
+            otp = "123456",
+            txnId = "txn-abc",
+            authMethod = "healthid"
+        )
+        assertEquals("123456", payload.otp)
+        assertEquals("txn-abc", payload.txnId)
+        assertEquals("healthid", payload.authMethod)
+    }
 
     @Test
     fun `verifyOtpAndGenerateHealthCard returns success data on statusCode 200`() = runTest {

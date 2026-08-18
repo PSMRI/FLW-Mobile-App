@@ -394,12 +394,13 @@ class TBConfirmedDatasetTest : BaseViewModelTest() {
 
         ds.setValueById(4, "10-02-2021")
         ds.updateList(4, 0)
-        var completed = ds.listFlow.value.first { it.id == 8 }
-        assertFalse("below threshold should stay disabled", completed.isEnabled)
+        assertTrue(
+            "below threshold should not add the completion element",
+            ds.listFlow.value.none { it.id == 8 })
 
         ds.setValueById(4, "10-06-2021")
         ds.updateList(4, 0)
-        completed = ds.listFlow.value.first { it.id == 8 }
+        var completed = ds.listFlow.value.first { it.id == 8 }
         assertTrue("threshold reached should enable completion", completed.isEnabled)
 
         ds.setValueById(1, "opt9")

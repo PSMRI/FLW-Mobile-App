@@ -18,6 +18,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.model.dynamicEntity.ConditionalLogic
+import org.piramalswasthya.sakhi.model.dynamicEntity.FieldValidationDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
@@ -80,14 +81,16 @@ class FilariaMdaFormCampaignViewModelTest : BaseViewModelTest() {
         id: String,
         default: Any? = null,
         conditional: ConditionalLogic? = null,
-        options: Any? = null
+        options: Any? = null,
+        validation: FieldValidationDto? = null
     ) = FormFieldDto(
         fieldId = id,
         label = id,
         type = "text",
         options = options,
         conditional = conditional,
-        default = default
+        default = default,
+        validation = validation
     )
 
     private fun campaignSchema(vararg fields: FormFieldDto) = FormSchemaDto(
@@ -411,5 +414,35 @@ class FilariaMdaFormCampaignViewModelTest : BaseViewModelTest() {
         assertEquals(1, fields.size)
         assertEquals("has_symptom", fields.first().fieldId)
         assertEquals(2, fields.first().options?.size)
+    }
+
+    @Test
+    fun `getVisibleFields maps the full validation block`() = runTest {
+        stubCampaign(
+            campaignSchema(
+                campaignField(
+                    "age",
+                    validation = FieldValidationDto(
+                        min = 1f,
+                        max = 120f,
+                        maxLength = 3,
+                        regex = "\\d+",
+                        errorMessage = "invalid",
+                        decimalPlaces = 0,
+                        maxSizeMB = 5,
+                        afterField = "dob",
+                        beforeField = "gender"
+                    )
+                )
+            )
+        )
+        viewModel.loadFormSchema("MDAC_01", viewMode = false)
+        advanceUntilIdle()
+
+        val fields = viewModel.getVisibleFields()
+
+        assertEquals(1, fields.size)
+        assertEquals(120f, fields.first().validation?.max)
+        assertEquals("invalid", fields.first().validation?.errorMessage)
     }
 }

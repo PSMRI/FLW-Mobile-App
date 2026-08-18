@@ -201,4 +201,12 @@ class AntenatalCounsellingFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = AntenatalCounsellingFragmentArgs(benId = 10L, visitNumber = 21)
+        assertFalse(a.viewMode)
+        assertEquals("", a.visitDate)
+        assertFalse(a.lastItemClick)
+    }
 }

@@ -58,6 +58,11 @@ class SyncStatusTest {
         assertEquals(17, copy.totalCount)
     }
 
+    @Test fun `SyncStatusDomain exposes syncing count`() {
+        val domain = SyncStatusDomain("BEN", 10, 5, 2)
+        assertEquals(2, domain.syncing)
+    }
+
     // =====================================================
     // asDomainModel() Extension Tests
     // =====================================================
@@ -97,5 +102,14 @@ class SyncStatusTest {
         val result = list.asDomainModel(emptyArray(), emptyArray())
         assertEquals(10, result[0].synced)
         assertEquals(5, result[0].notSynced)
+    }
+
+    @Test fun `asDomainModel sets syncing count correctly`() {
+        val list = listOf(
+            SyncStatusCache(1, "BEN", SyncState.SYNCED, 10),
+            SyncStatusCache(2, "BEN", SyncState.SYNCING, 3)
+        )
+        val result = list.asDomainModel(emptyArray(), emptyArray())
+        assertEquals(3, result[0].syncing)
     }
 }

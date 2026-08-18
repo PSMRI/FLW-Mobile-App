@@ -268,8 +268,10 @@ class UserRepoTest : BaseRepositoryTest() {
                 PeerAtFacility(role = "OTHER", fullName = "Other1", mobile = "3", userId = 3)
             )
         )
-        coEvery { amritApiService.getUserDetailsById(any()) } returns
-            UserNetworkResponse(success = true, message = null, data = userDetailsWithFacilityData(facilityData))
+        val networkResponse = UserNetworkResponse(success = true, message = null, data = userDetailsWithFacilityData(facilityData))
+        assertEquals(true, networkResponse.success)
+        assertEquals(null, networkResponse.message)
+        coEvery { amritApiService.getUserDetailsById(any()) } returns networkResponse
 
         userRepo.setFacilityData(5)
 

@@ -41,6 +41,7 @@ import org.piramalswasthya.sakhi.model.BenWithHRPTrackingCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.HouseholdNetwork
+import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
@@ -2975,5 +2976,842 @@ class BenRepoTest : BaseRepositoryTest() {
             assertTrue(kid?.birthBCG ?: false)
             assertTrue(kid?.birthHepB ?: false)
             assertTrue(kid?.birthOPV ?: false)
+        }
+
+    // =====================================================
+    // getBenCacheFromServerResponse: benExists skip, death detail
+    // fields, per-record JSONException / NumberFormatException
+    // recovery and the user_image branch
+    // =====================================================
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker skips ben cache record when ben already exists locally`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(9001L, 5001L) } returns mockk(relaxed = true)
+            var upsertedBens = -1
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                upsertedBens = varargSize(arg<Any?>(0))
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayload())
+
+            assertEquals(3, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(0, upsertedBens)
+        }
+
+    private fun benPullPayloadDeathDetails(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6301,
+                "houseoldId": 9401,
+                "ashaId": 11,
+                "BenRegId": 7401,
+                "isDeath": true,
+                "dateOfDeath": "Jan 20, 2026 10:00:00 AM",
+                "timeOfDeath": "10:00 AM",
+                "reasonOfDeath": "Illness",
+                "reasonOfDeathId": 2,
+                "placeOfDeath": "Home",
+                "placeOfDeathId": 1,
+                "otherPlaceOfDeath": "",
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male",
+                  "genderId": 1,
+                  "age": 30,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker maps full death detail fields when isDeath is true`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadDeathDetails())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured)
+            assertTrue(captured?.isDeath ?: false)
+            assertEquals("true", captured?.isDeathValue)
+            assertEquals("Jan 20, 2026 10:00:00 AM", captured?.dateOfDeath)
+            assertEquals("10:00 AM", captured?.timeOfDeath)
+            assertEquals("Illness", captured?.reasonOfDeath)
+            assertEquals(2, captured?.reasonOfDeathId)
+            assertEquals("Home", captured?.placeOfDeath)
+            assertEquals(1, captured?.placeOfDeathId)
+            assertNull(captured?.otherPlaceOfDeath)
+        }
+
+    private fun benPullPayloadOneMissingAshaId(totalPage: Int = 2): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6401,
+                "houseoldId": 9501,
+                "BenRegId": 7501,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male",
+                  "genderId": 1,
+                  "age": 30,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              },
+              {
+                "benficieryid": 6402,
+                "houseoldId": 9502,
+                "ashaId": 11,
+                "BenRegId": 7502,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Female",
+                  "genderId": 2,
+                  "age": 28,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1998 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker skips record that throws JSONException but keeps processing others`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: List<BenRegCache> = emptyList()
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                captured = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }.filterIsInstance<BenRegCache>()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadOneMissingAshaId())
+
+            assertEquals(2, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(1, captured.size)
+            assertEquals(6402L, captured[0].beneficiaryId)
+        }
+
+    private fun benPullPayloadOneBadContactNumber(totalPage: Int = 2): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6501,
+                "houseoldId": 9601,
+                "ashaId": 11,
+                "BenRegId": 7601,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male",
+                  "genderId": 1,
+                  "age": 30,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "contact_number": "not-a-number",
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              },
+              {
+                "benficieryid": 6502,
+                "houseoldId": 9602,
+                "ashaId": 11,
+                "BenRegId": 7602,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Female",
+                  "genderId": 2,
+                  "age": 28,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1998 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker skips record with non numeric contact number but keeps processing others`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: List<BenRegCache> = emptyList()
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                captured = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }.filterIsInstance<BenRegCache>()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadOneBadContactNumber())
+
+            assertEquals(2, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(1, captured.size)
+            assertEquals(6502L, captured[0].beneficiaryId)
+        }
+
+    private fun benPullPayloadWithUserImage(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6601,
+                "houseoldId": 9701,
+                "ashaId": 11,
+                "BenRegId": 7701,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male",
+                  "genderId": 1,
+                  "age": 30,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "user_image": "ZmFrZS1pbWFnZS1ieXRlcw==",
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker attempts to save server image when user_image field present`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadWithUserImage())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured)
+            assertEquals(6601L, captured?.beneficiaryId)
+        }
+
+    // =====================================================
+    // getBenIdsFromLocal: minBenId elvis-null branch
+    // =====================================================
+
+    @Test
+    fun `getBenIdsGeneratedFromServer floors minBenId to -1 when dao returns null`() = runTest {
+        loggedIn()
+        coEvery { benIdGenDao.count() } returns 0
+        coEvery { benDao.getMinBenId() } returns null
+        var insertedCount = -1
+        coEvery { benIdGenDao.insert(*anyVararg()) } answers {
+            insertedCount = varargSize(arg<Any?>(0))
+        }
+
+        repo.getBenIdsGeneratedFromServer(maxCount = 3)
+
+        coVerify { benDao.getMinBenId() }
+        assertEquals(3, insertedCount)
+    }
+
+    // =====================================================
+    // createBenIdAtServerByBeneficiarySending: infantReg?.let
+    // null / non-null and processed-flag branches
+    // =====================================================
+
+    @Test
+    fun `processNewBen skips infant reg update when no infant registration found for child ben id`() =
+        runTest {
+            loggedIn()
+            every { context.filesDir } returns tempFilesDir()
+            val ben = benCacheMock(hhId = 15L, benId = -11L)
+            coEvery { benDao.getAllUnsyncedBen(any()) } returns listOf(ben)
+            coEvery { benDao.getAllBenForSyncWithServer(any()) } returns emptyList()
+            coEvery { infantRegRepo.getInfantRegFromChildBenId(-11L) } returns null
+            val json = """{"statusCode":200,"data":{"response":"ok","benGenId":"77","benRegId":"78"}}"""
+            coEvery { tmcNetworkApiService.getBenIdFromBeneficiarySending(any<BeneficiaryDataSending>()) } returns
+                    jsonResponse(json)
+
+            assertTrue(repo.processNewBen())
+
+            coVerify(exactly = 0) { infantRegRepo.update(any()) }
+        }
+
+    @Test
+    fun `processNewBen keeps infant reg processed as N and still updates child ben id when found`() =
+        runTest {
+            loggedIn()
+            every { context.filesDir } returns tempFilesDir()
+            val ben = benCacheMock(hhId = 16L, benId = -12L)
+            coEvery { benDao.getAllUnsyncedBen(any()) } returns listOf(ben)
+            coEvery { benDao.getAllBenForSyncWithServer(any()) } returns emptyList()
+            val infantReg = mockk<InfantRegCache>(relaxed = true)
+            every { infantReg.processed } returns "N"
+            coEvery { infantRegRepo.getInfantRegFromChildBenId(-12L) } returns infantReg
+            val json = """{"statusCode":200,"data":{"response":"ok","benGenId":"81","benRegId":"82"}}"""
+            coEvery { tmcNetworkApiService.getBenIdFromBeneficiarySending(any<BeneficiaryDataSending>()) } returns
+                    jsonResponse(json)
+
+            assertTrue(repo.processNewBen())
+
+            verify { infantReg.childBenId = 81L }
+            verify { infantReg.syncState = SyncState.UNSYNCED }
+            verify(exactly = 0) { infantReg.processed = "U" }
+            coVerify { infantRegRepo.update(infantReg) }
+        }
+
+    // =====================================================
+    // createBenIdAtServerByBeneficiarySending: 401 branch of
+    // (responseStatusCode == 5002 || responseStatusCode == 401)
+    // =====================================================
+
+    @Test
+    fun `processNewBen sets ben unsynced when create-ben-id returns 401 and refresh fails`() = runTest {
+        loggedIn()
+        every { context.filesDir } returns tempFilesDir()
+        val ben = benCacheMock(hhId = 14L, benId = -10L)
+        coEvery { benDao.getAllUnsyncedBen(any()) } returns listOf(ben)
+        coEvery { benDao.getAllBenForSyncWithServer(any()) } returns emptyList()
+        val json = """{"statusCode":401,"errorMessage":"unauthorized"}"""
+        coEvery { tmcNetworkApiService.getBenIdFromBeneficiarySending(any<BeneficiaryDataSending>()) } returns
+                jsonResponse(json)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+
+        assertTrue(repo.processNewBen())
+
+        coVerify { userRepo.refreshTokenTmc("asha", "pwd") }
+        coVerify { benDao.setSyncState(14L, -10L, SyncState.UNSYNCED) }
+    }
+
+    // =====================================================
+    // uploadBenBatch: kid-network-model inclusion condition
+    // (it.ageUnitId != 3 || it.age < 15)
+    // =====================================================
+
+    @Test
+    fun `processNewBen does not build kid network model for an adult beneficiary`() = runTest {
+        loggedIn()
+        val ben = benCacheMock(hhId = 71L, benId = 701L)
+        every { ben.ageUnitId } returns 3
+        every { ben.age } returns 20
+        coEvery { benDao.getAllUnsyncedBen(any()) } returns emptyList()
+        coEvery { benDao.getAllBenForSyncWithServer(any()) } returns listOf(ben)
+        coEvery { tmcNetworkApiService.submitRmnchDataAmrit(any()) } returns
+                jsonResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.processNewBen())
+
+        verify(exactly = 0) { ben.asKidNetworkModel(any()) }
+    }
+
+    @Test
+    fun `processNewBen builds kid network model when age is under 15 despite ageUnitId 3`() = runTest {
+        loggedIn()
+        val ben = benCacheMock(hhId = 72L, benId = 702L)
+        every { ben.ageUnitId } returns 3
+        every { ben.age } returns 10
+        coEvery { benDao.getAllUnsyncedBen(any()) } returns emptyList()
+        coEvery { benDao.getAllBenForSyncWithServer(any()) } returns listOf(ben)
+        coEvery { tmcNetworkApiService.submitRmnchDataAmrit(any()) } returns
+                jsonResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.processNewBen())
+
+        verify { ben.asKidNetworkModel(any()) }
+    }
+
+    // =====================================================
+    // getBeneficiariesFromServer (BenBasicDomain): isDeath else
+    // branch and reasonOfDeathId/placeOfDeathId elvis fallback
+    // =====================================================
+
+    private fun basicDomainDeathDefaultsPayload(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 8001,
+                "houseoldId": 9801,
+                "ashaId": 11,
+                "BenRegId": 7801,
+                "reasonOfDeathId": 0,
+                "placeOfDeathId": 0,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": { "familyHeadName": "Head Name" },
+                "beneficiaryDetails": {
+                  "registrationDate": "Jan 15, 2026 10:30:00 AM",
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "gender": "Male",
+                  "age": 30,
+                  "contact_number": "9876543210",
+                  "fatherName": "Father Name",
+                  "rchid": "RCH123",
+                  "hrpStatus": false,
+                  "reproductiveStatusId": 2
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServer defaults isDeath false and reasonPlaceOfDeathId to -1 when zero`() =
+        runTest {
+            loggedIn()
+            coEvery { benDao.getBen(any(), any()) } returns null
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(basicDomainDeathDefaultsPayload())
+
+            val (pageSize, list) = repo.getBeneficiariesFromServer(0)
+
+            assertEquals(1, pageSize)
+            assertEquals(1, list.size)
+            assertFalse(list[0].isDeath)
+            assertEquals(-1, list[0].reasonOfDeathId)
+            assertEquals(-1, list[0].placeOfDeathId)
+        }
+
+    // =====================================================
+    // getBeneficiariesFromServerForWorker (BenRegCache): same
+    // reasonOfDeathId/placeOfDeathId elvis fallback
+    // =====================================================
+
+    private fun benPullPayloadDeathDetailsZeroIds(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6302,
+                "houseoldId": 9402,
+                "ashaId": 11,
+                "BenRegId": 7402,
+                "isDeath": true,
+                "reasonOfDeathId": 0,
+                "placeOfDeathId": 0,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male","genderId": 1,"age": 30,"age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM","familyHeadRelationPosition": 1,
+                  "latitude": 12.34,"longitude": 56.78,"aadha_noId": 0,
+                  "stateId": 1, "stateName": "State","districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block","villageId": 4, "villageName": "Village",
+                  "createdBy": "asha","createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker maps reasonOfDeathId and placeOfDeathId to -1 when zero`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadDeathDetailsZeroIds())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(-1, captured?.reasonOfDeathId)
+            assertEquals(-1, captured?.placeOfDeathId)
+        }
+
+    // =====================================================
+    // saveGeneralOPDData: non-empty entries mapping branch
+    // =====================================================
+
+    @Test
+    fun `getGeneralOPD maps and stores non-empty entries`() = runTest {
+        loggedIn()
+        val json = """{"statusCode":200,"data":{"entries":[{"beneficiaryId":501}]}}"""
+        coEvery { tmcNetworkApiService.getgeneralOPDBeneficiaries(any()) } returns jsonResponse(json)
+        var captured: List<Any?>? = null
+        coEvery { generalOpdDao.insertAll(any()) } answers {
+            captured = arg<List<Any?>>(0)
+        }
+
+        assertEquals(1, repo.getGeneralOPDBeneficiariesFromServertoWorker(0))
+        assertEquals(1, captured?.size)
+    }
+
+    // =====================================================
+    // getBenCacheFromServerResponse: household-not-found
+    // continue branch
+    // =====================================================
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker skips ben cache entry when household not found locally`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns null
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var upsertedBens = -1
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                upsertedBens = varargSize(arg<Any?>(0))
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayload())
+
+            assertEquals(3, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(0, upsertedBens)
+        }
+
+    // =====================================================
+    // getBenCacheFromServerResponse: birthPlace else-null branch
+    // (bornbirthDeatils non-empty but without the "birthPlace" key)
+    // =====================================================
+
+    private fun benPullPayloadKidNoBirthPlace(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6102,
+                "houseoldId": 9302,
+                "ashaId": 11,
+                "BenRegId": 7302,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": { "birthDefects": "None" },
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Female","genderId": 2,"age": 5,"age_unit": "Years",
+                  "dob": "Jan 15, 2021 10:30:00 AM","familyHeadRelationPosition": 3,
+                  "latitude": 12.34,"longitude": 56.78,"aadha_noId": 0,
+                  "stateId": 1, "stateName": "State","districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block","villageId": 4, "villageName": "Village",
+                  "createdBy": "asha","createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker leaves birthPlace null when bornbirthDeatils lacks the key`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadKidNoBirthPlace())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured?.kidDetails)
+            assertNull(captured?.kidDetails?.birthPlace)
+            assertEquals("None", captured?.kidDetails?.birthDefects)
+        }
+
+    // =====================================================
+    // getBenCacheFromServerResponse: healthIdDetails isNewAbha
+    // else-false branch (abhaHealthDetails present without the
+    // "isNewAbha" key)
+    // =====================================================
+
+    private fun benPullPayloadAbhaNoIsNewFlag(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6103,
+                "houseoldId": 9303,
+                "ashaId": 11,
+                "BenRegId": 7303,
+                "abhaHealthDetails": {
+                  "HealthIdNumber": "33-3333-3333",
+                  "HealthID": "noisnewflag@abdm"
+                },
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male","genderId": 1,"age": 30,"age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM","familyHeadRelationPosition": 1,
+                  "latitude": 12.34,"longitude": 56.78,"aadha_noId": 0,
+                  "stateId": 1, "stateName": "State","districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block","villageId": 4, "villageName": "Village",
+                  "createdBy": "asha","createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker defaults healthIdDetails isNewAbha to false when key absent`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadAbhaNoIsNewFlag())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured?.healthIdDetails)
+            assertFalse(captured?.healthIdDetails?.isNewAbha ?: true)
+            assertEquals("noisnewflag@abdm", captured?.healthIdDetails?.healthId)
+        }
+
+    // =====================================================
+    // getHouseholdCacheFromServerResponse: per-record
+    // JSONException catch (malformed household/beneficiary
+    // details don't abort the whole page)
+    // =====================================================
+
+    private fun benPullPayloadEmptyHouseholdAndBenDetails(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 6401,
+                "houseoldId": 9401,
+                "ashaId": 1,
+                "BenRegId": 7401,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {}
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker skips malformed household record without throwing`() =
+        runTest {
+            loggedIn()
+            coEvery { householdDao.getHousehold(any()) } returns null
+            coEvery { benDao.getBen(any(), any()) } returns null
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadEmptyHouseholdAndBenDetails())
+            var upsertedHouseholds = -1
+            coEvery { householdDao.upsert(*anyVararg()) } answers {
+                upsertedHouseholds = varargSize(arg<Any?>(0))
+            }
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(0, upsertedHouseholds)
+        }
+
+    // =====================================================
+    // getHouseholdCacheFromServerResponse: literal string "null"
+    // normalization branches (houseNo/wardNo/wardName/mohallaName/
+    // residentialArea)
+    // =====================================================
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker normalizes literal-string null household fields to null`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns null
+            var captured: HouseholdCache? = null
+            coEvery { householdDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<HouseholdCache>().firstOrNull()
+            }
+            val json = benPullPayload()
+                .replace("\"houseno\": \"12A\",", "\"houseno\": \"null\",")
+                .replace("\"wardNo\": \"3\",", "\"wardNo\": \"null\",")
+                .replace("\"wardName\": \"Ward 3\",", "\"wardName\": \"null\",")
+                .replace("\"mohallaName\": \"Mohalla\",", "\"mohallaName\": \"null\",")
+                .replace("\"residentialArea\": \"Urban\",", "\"residentialArea\": \"null\",")
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns jsonResponse(json)
+
+            assertEquals(3, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured)
+            assertNull(captured?.family?.houseNo)
+            assertNull(captured?.family?.wardNo)
+            assertNull(captured?.family?.wardName)
+            assertNull(captured?.family?.mohallaName)
+            assertNull(captured?.details?.residentialArea)
         }
 }

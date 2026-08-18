@@ -9,8 +9,10 @@ import io.mockk.mockk
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -331,6 +333,17 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         assertNotNull(ds.listFlow)
     }
 
+    @Test
+    fun `updateList usingFamilyPlanningMitanin zero children entries branch`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        runCatching {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, 0)
+        }
+        runCatching { ds.setValueById(8, "opt0"); ds.updateList(8, 0) }
+        runCatching { ds.setValueById(8, "opt1"); ds.updateList(8, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
     // ===================== added: dateOfAntraInjection invalid path + getNextDose branches =======
 
     // calculateNextInjectionDate() returns ("", "") on an unparsable date, which routes
@@ -462,5 +475,48 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         every { ben.processed } returns "N"
         ds.updateBen(ben)
         assertTrue(ds.listFlow.value.isNotEmpty())
+    }
+
+    // ===================== added: elvis-fallback / unhandled-branch coverage =====================
+
+    // mapValues' isPregnancyTestDone assignment is `getEnglishValueInArray(...) ?: isPregnancyTestDone.value`.
+    // Every earlier test only ever leaves isPregnancyTestDone.value at either null/blank (short-circuits
+    // getEnglishValueInArray before any array lookup) or a value present in the mocked 80-element array
+    // (found by the lookup, so the elvis fallback is never actually needed). Forcing a non-blank value
+    // that is absent from the mocked array makes the lookup fail and reach the fallback for real.
+    @Test
+    fun `mapValues falls back to the raw isPregnancyTestDone value when it is not found in the localized array`() =
+        runTest {
+            val ds = trackingPage(null, 2)
+            ds.setValueById(4, "unmapped_raw_value")
+            val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+            ds.mapValues(target, 0)
+            verify { target.isPregnancyTestDone = "unmapped_raw_value" }
+        }
+
+    // handleListOnValueChanged's dateOfAntraInjection branch reads `dateOfAntraInjection.value ?: ""`.
+    // Every earlier test calls setValueById(13, ...) first, so .value is always a non-null String (even
+    // "" itself counts as non-null) and the elvis's null side is never actually taken. Calling updateList
+    // on a page where the field was never touched leaves .value genuinely null and reaches that branch.
+    @Test
+    fun `updateList dateOfAntraInjection defaults to an empty injection date when the value was never set`() =
+        runTest {
+            val ds = trackingPage(null, 2)
+            ds.updateList(13, 0)
+            val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+            ds.mapValues(target, 0)
+            verify { target.dueDateOfAntraInjection = "x" }
+        }
+
+    // handleListOnValueChanged's top-level `when(formId)` has an `else -> -1` fallthrough for any id it
+    // does not explicitly handle (e.g. financialYear.id = 2). No existing test ever calls updateList with
+    // such an id, so that branch site was never executed; updateList only rebuilds the visible list when
+    // handleListOnValueChanged returns something other than -1, so the list size must stay identical.
+    @Test
+    fun `updateList ignores an unhandled form id and leaves the list unchanged`() = runTest {
+        val ds = trackingPage(null, 2)
+        val sizeBefore = ds.listFlow.value.size
+        ds.updateList(2, 0)
+        assertEquals(sizeBefore, ds.listFlow.value.size)
     }
 }

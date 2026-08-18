@@ -131,6 +131,15 @@ class NewChildBenRegDatasetTest : BaseViewModelTest() {
         return b
     }
 
+    private fun selectedBenMockNoGenDetails(): BenRegCache {
+        val b = benMockBr(Gender.FEMALE)
+        every { b.householdId } returns 42L
+        every { b.communityId } returns 1
+        every { b.contactNumber } returns 9876543210L
+        every { b.genDetails } returns null
+        return b
+    }
+
     // Branch3 variant ben (parameterized genderId).
     private fun benMockBr3(gender: Gender = Gender.FEMALE, genderId: Int = 2): BenRegCache {
         val b = mockk<BenRegCache>(relaxed = true)
@@ -813,5 +822,131 @@ class NewChildBenRegDatasetTest : BaseViewModelTest() {
         val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
         d.mapValues(cache, 0)
         verify { cache.gender1 = null }
+    }
+
+    @Test
+    fun `setUpPage skips ageAtMarriage assignment when selected ben has no marriage details`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMockNoGenDetails(), 0, emptyList(), 0
+        )
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `setUpPage assigns a null child gender through the fallback branch`() = runTest {
+        val childWithNullGender = benMockBr(Gender.MALE)
+        every { childWithNullGender.gender } returns null
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, listOf(childWithNullGender), 1
+        )
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList on noOfChildren for an existing record without marriage details skips the min dob bound`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMockNoGenDetails(), 0, emptyList(), 0
+        )
+        d.setValueById(12, "2")
+        d.updateList(12, 0)
+        assertTrue(d.listFlow.value.any { it.id == 22 })
+    }
+
+    @Test
+    fun `updateList on a child dob defaults to empty mother name when selectedBen is null`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            null, 0, listOf(benMockBr(Gender.MALE), benMockBr(Gender.FEMALE)), 2
+        )
+        val recent = Dataset.getDateFromLong(System.currentTimeMillis())
+        d.setValueById(22, recent)
+        d.updateList(22, 0)
+        assertTrue(d.listFlow.value.first { it.id == 112 }.value!!.startsWith("Baby of"))
+    }
+
+    @Test
+    fun `updateList retains an existing non-blank child name when the newborn is older than three months`() = runTest {
+        val d = dsWithChildren(2)
+        d.setValueById(112, "EXISTING NAME")
+        d.setValueById(22, "01-01-2015")
+        d.updateList(22, 0)
+        assertEquals("EXISTING NAME", d.listFlow.value.first { it.id == 112 }.value)
+    }
+
+    @Test
+    fun `mapChild resolves each declared gender option across all nine children`() = runTest {
+        val d = dsWithChildren(9)
+        val genderIds = listOf(19, 24, 29, 34, 39, 44, 49, 54, 59)
+        for ((idx, gid) in genderIds.withIndex()) {
+            for (opt in listOf("opt0", "opt1", "opt2")) {
+                d.setValueById(gid, opt)
+                val child = d.mapChild(benMockBr(), idx + 1)
+                assertNotNull(child)
+            }
+        }
+    }
+
+    @Test
+    fun `mapValues resolves gender and count branches across nine children with real gender array`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = dsWithChildren(9)
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.gender1 = Gender.MALE }
+        verify { cache.gender2 = Gender.FEMALE }
+        verify { cache.gender9 = Gender.MALE }
+        verify { cache.noOfChildren = 9 }
+    }
+
+    @Test
+    fun `mapValues resolves gender1 as female when the first child is female`() = runTest {
+        every { mockResources.getStringArray(R.array.ecr_gender_array) } returns
+                arrayOf("Male", "Female", "Transgender")
+        val d = ds()
+        d.setUpPage(
+            mockk<EligibleCoupleRegCache>(relaxed = true),
+            mockk<HouseholdCache>(relaxed = true),
+            benMockBr(), Gender.FEMALE, 9, emptyList(),
+            selectedBenMock(true), 0, listOf(benMockBr(Gender.FEMALE)), 1
+        )
+        val cache = mockk<EligibleCoupleRegCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.gender1 = Gender.FEMALE }
+    }
+
+    @Test
+    fun `ChildBundle isEmpty short-circuits across each field independently`() {
+        fun fe(id: Int, value: String? = null) = FormElement(
+            id = id,
+            inputType = InputType.EDIT_TEXT,
+            required = false,
+            title = "t$id",
+            value = value
+        )
+
+        val onlyAgeFilled = ChildBundle(fe(1), fe(2), fe(3), fe(4, "5"), fe(5), fe(6))
+        assertFalse(onlyAgeFilled.isEmpty())
+
+        val onlyGenderFilled = ChildBundle(fe(1), fe(2), fe(3), fe(4), fe(5, "Male"), fe(6))
+        assertFalse(onlyGenderFilled.isEmpty())
+
+        val onlyNameFilled = ChildBundle(fe(1), fe(2, "NAME"), fe(3), fe(4), fe(5), fe(6))
+        assertFalse(onlyNameFilled.isEmpty())
     }
 }
