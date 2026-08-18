@@ -971,6 +971,7 @@
     <string name="PREF_user_entry">logged-in-user</string>
     <string name="PREF_full_load_pull_progress">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri">DP_URI_cat</string>
     <string name="app_name">Sakhi</string>
@@ -1481,4 +1482,8 @@
     <string name="monthly_recap_playback_play_cd">চলাওক</string>
     <string name="monthly_recap_music_on_cd">নেপথ্য সংগীত বন্ধ কৰক</string>
     <string name="monthly_recap_music_off_cd">নেপথ্য সংগীত চলাওক</string>
+    <string name="notification_recap_channel_name">মাহেকীয়া ৰিকেপ</string>
+    <string name="notification_recap_channel_description">আপোনাৰ মাহেকীয়া ৰিকেপ চাবলৈ মনত পেলোৱা</string>
+    <string name="notification_recap_title">আপোনাৰ মাহ, ৭৫ ছেকেণ্ডত</string>
+    <string name="notification_recap_body">যোৱা মাহৰ আপোনাৰ ৰিকেপ সাজু। চাবলৈ টিপক।</string>
 </resources>

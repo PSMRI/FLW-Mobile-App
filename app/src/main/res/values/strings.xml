@@ -14,6 +14,7 @@
     <string name="PREF_user_entry" translatable="false">logged-in-user</string>
     <string name="PREF_full_load_pull_progress" translatable="false">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page" translatable="false">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
@@ -1613,5 +1614,10 @@
     <string name="monthly_recap_playback_play_cd">Play</string>
     <string name="monthly_recap_music_on_cd">Turn background music off</string>
     <string name="monthly_recap_music_off_cd">Turn background music on</string>
+    <string name="notification_recap_channel_id" translatable="false">sakhi-recap0</string>
+    <string name="notification_recap_channel_name">Monthly Recap</string>
+    <string name="notification_recap_channel_description">A monthly reminder to watch your personal recap</string>
+    <string name="notification_recap_title">Your month, in 75 seconds</string>
+    <string name="notification_recap_body">Your recap for last month is ready. Tap to watch it.</string>
 </resources>
 

@@ -609,6 +609,7 @@
     <string name="PREF_user_entry">logged-in-user</string>
     <string name="PREF_full_load_pull_progress">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri">DP_URI_cat</string>
     <string name="_0">0</string>
@@ -1434,4 +1435,8 @@
     <string name="monthly_recap_playback_play_cd">चलाएँ</string>
     <string name="monthly_recap_music_on_cd">पृष्ठभूमि संगीत बंद करें</string>
     <string name="monthly_recap_music_off_cd">पृष्ठभूमि संगीत चालू करें</string>
+    <string name="notification_recap_channel_name">मासिक रीकैप</string>
+    <string name="notification_recap_channel_description">आपके मासिक रीकैप को देखने की मासिक याद दिलाना</string>
+    <string name="notification_recap_title">आपका महीना, 75 सेकंड में</string>
+    <string name="notification_recap_body">पिछले महीने का आपका रीकैप तैयार है। देखने के लिए टैप करें।</string>
 </resources>

@@ -60,6 +60,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.LocalMonthlyRecapAvailability
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.MonthlyRecapAvailabilityProvider
 import org.piramalswasthya.sakhi.helpers.RecapClock
 import org.piramalswasthya.sakhi.helpers.SystemRecapClock
@@ -281,8 +282,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMonthlyRecapAvailability(clock: RecapClock): MonthlyRecapAvailabilityProvider =
-        LocalMonthlyRecapAvailability(clock)
+    fun provideMonthlyRecapAvailability(
+        clock: RecapClock,
+        configProvider: GamificationConfigProvider,
+        pref: PreferenceDao,
+    ): MonthlyRecapAvailabilityProvider =
+        LocalMonthlyRecapAvailability(clock, configProvider, pref)
 
     @Singleton
     @Provides
