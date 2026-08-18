@@ -35,6 +35,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -216,6 +217,24 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         val navHostFragment: NavHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_home) as NavHostFragment
         navHostFragment.navController
+    }
+
+    /**
+     * Entry point for notification tap deeplinking (nav_id = INCENTIVE_SCREEN). Safe to call from
+     * any state: no-ops (with a log) instead of crashing if the nav graph/host isn't ready or the
+     * destination can't be resolved, since this runs off a background-originated notification tap.
+     */
+    fun navigateToIncentivesFromNotification() {
+        try {
+            if (navController.currentDestination?.id == R.id.incentivesFragment) return
+            navController.navigate(
+                R.id.incentivesFragment,
+                null,
+                NavOptions.Builder().setLaunchSingleTop(true).build()
+            )
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to navigate to incentivesFragment from notification tap")
+        }
     }
 
     var showMenuHome: Boolean = false

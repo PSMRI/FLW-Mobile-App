@@ -1469,4 +1469,7 @@
     <string name="notification_action_clear">সাফ করুন</string>
     <string name="notification_action_cancel">বাতিল করুন</string>
     <string name="notification_close">বন্ধ করুন</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    প্রসবের তারিখ শেষ ANC ভিজিটের তারিখের আগে হতে পারে না।
+</string>
 </resources>

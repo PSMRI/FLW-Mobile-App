@@ -103,12 +103,6 @@ class HBNCFormViewModel @Inject constructor(
 
             if (localSchemaToRender == null) return@launch
 
-            launch {
-                val updatedSchema = repository.getFormSchema(formId, lang)
-                if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-                }
-            }
-
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {

@@ -1458,4 +1458,7 @@
     <string name="notification_action_clear">পৰিষ্কাৰ কৰক</string>
     <string name="notification_action_cancel">বাতিল কৰক</string>
     <string name="notification_close">বন্ধ কৰক</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    প্ৰসৱৰ তাৰিখ শেষৰ ANC ভিজিটৰ তাৰিখতকৈ আগৰ হ\'ব নোৱাৰে।
+</string>
 </resources>

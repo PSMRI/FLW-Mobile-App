@@ -1411,6 +1411,8 @@
     <string name="rejected_date_txt">अस्वीकृति तिथि: %1$s</string>
     <string name="reason_txt">कारण: %1$s %2$s</string>
     <string name="unclaimed_txt">दावा नहीं किया गया</string>
-
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    प्रसव की तिथि अंतिम एएनसी विज़िट की तिथि से पहले नहीं हो सकती।
+</string>
 
 </resources>

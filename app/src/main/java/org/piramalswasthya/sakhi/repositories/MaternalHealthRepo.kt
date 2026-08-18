@@ -644,7 +644,8 @@ class MaternalHealthRepo @Inject constructor(
         benId: Long,
         visitNumber: Int,
         isDelivered: Boolean,
-        userName: String
+        userName: String,
+        delivaryDate : Long
     ) {
 
         val todayDate = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -663,7 +664,7 @@ class MaternalHealthRepo @Inject constructor(
                     frontFilePath = "",
                     backFilePath = "",
                     isActive = true,
-                    ancDate = Dataset.Companion.getLongFromDate(todayDate),
+                    ancDate = delivaryDate,
                     visitDate = Dataset.Companion.getLongFromDate(todayDate),
 
                 )
