@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Home module grid. The Monthly Recap strip is added as an additive element
+    ABOVE the existing module RecyclerView. The RecyclerView keeps its id
+    (rv_icon_grid) and all original attributes so existing binding/adapter
+    behaviour is preserved. The strip supports View.GONE without leaving space.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rv_icon_grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:splitMotionEvents="false"
     android:background="?attr/colorOnSecondary"
-    android:padding="@dimen/padding_small"
-    android:clipToPadding="false"
-    tools:itemCount="1"
-    tools:listitem="@layout/rv_item_icon_grid" />
+    android:orientation="vertical">
+
+    <!-- GONE by default: this layout is shared by many icon-grid screens (Eligible
+         Couple, Child Care, NCD, etc.). Only HomeIconsFragment makes the strip
+         visible, so it can never appear on any other screen. -->
+    <include
+        android:id="@+id/monthly_recap_strip"
+        layout="@layout/monthly_recap_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_icon_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:splitMotionEvents="false"
+        android:background="?attr/colorOnSecondary"
+        android:padding="@dimen/padding_small"
+        android:clipToPadding="false"
+        tools:itemCount="1"
+        tools:listitem="@layout/rv_item_icon_grid" />
+</LinearLayout>

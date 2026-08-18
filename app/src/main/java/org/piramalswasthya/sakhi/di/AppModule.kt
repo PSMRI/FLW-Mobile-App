@@ -27,6 +27,8 @@ import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.EcrDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
@@ -57,6 +59,11 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
+import org.piramalswasthya.sakhi.helpers.LocalMonthlyRecapAvailability
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
+import org.piramalswasthya.sakhi.helpers.MonthlyRecapAvailabilityProvider
+import org.piramalswasthya.sakhi.helpers.RecapClock
+import org.piramalswasthya.sakhi.helpers.SystemRecapClock
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -267,6 +274,23 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideMonthlyRecapDao(database: InAppDb): MonthlyRecapDao = database.monthlyRecapDao
+
+    @Singleton
+    @Provides
+    fun provideRecapClock(): RecapClock = SystemRecapClock()
+
+    @Singleton
+    @Provides
+    fun provideMonthlyRecapAvailability(
+        clock: RecapClock,
+        configProvider: GamificationConfigProvider,
+        pref: PreferenceDao,
+    ): MonthlyRecapAvailabilityProvider =
+        LocalMonthlyRecapAvailability(clock, configProvider, pref)
+
+    @Singleton
+    @Provides
     fun provideBenDao(database: InAppDb): BenDao = database.benDao
 
     @Singleton
@@ -281,6 +305,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCbacDao(database: InAppDb): CbacDao = database.cbacDao
+
+    @Provides
+    fun provideEcrDao(database: InAppDb): EcrDao = database.ecrDao
 
     @Singleton
     @Provides

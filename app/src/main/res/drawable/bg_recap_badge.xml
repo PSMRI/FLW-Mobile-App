@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Quiet chip for the "Completed" marker on the light card. Matches the New chip
+     so neither competes with the violet CTA pill. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/recap_playback_progress_track" />
+    <corners android:radius="12dp" />
+</shape>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Monthly Recap playback (Phase 7): auto-playing personalised story.
+
+  Layout balance (user decision — "even 50/50"): the girl and the message share
+  the screen as co-equals. EVERY scene (welcome, category, goodbye) uses the
+  same girl + attached-bubble structure — the welcome just carries the greeting
+  animation (girl_8) with no count. The girl is height-capped (~40%) so she
+  never dominates, and the message card is the prominent, clearly-readable
+  partner (20sp) rather than a footnote.
+
+  Z-order: the gesture overlay sits BELOW the progress row, close button and the
+  visible Prev/Pause/Next controls, so it never steals their clicks; it is also
+  hidden from accessibility (the visible buttons are the accessible controls).
+
+  Adaptive to small screens / large fonts / long Assamese text: the girl is the
+  flexible chain element (0dp, 1:1, capped 120-240dp) — when the message grows,
+  the girl gives up space instead of anything clipping off-screen.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_recap_playback">
+
+    <!-- Girl (Lottie) — a warm, co-equal presence; capped so it never dominates. -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/recapPlaybackGirl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:contentDescription="@string/monthly_recap_playback_girl_cd"
+        app:layout_constraintBottom_toTopOf="@id/recapBubbleTail"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="240dp"
+        app:layout_constraintHeight_min="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recapPlaybackClose"
+        app:layout_constraintVertical_bias="0.45"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintWidth_max="240dp"
+        app:lottie_loop="true"
+        tools:src="@tools:sample/avatars" />
+
+    <!-- Tail: attaches the bubble to the girl (slight overlap via translationY). -->
+    <ImageView
+        android:id="@+id/recapBubbleTail"
+        android:layout_width="26dp"
+        android:layout_height="14dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/recap_bubble_tail"
+        android:translationY="7dp"
+        app:layout_constraintBottom_toTopOf="@id/recapBubbleCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recapPlaybackGirl" />
+
+    <!-- The message — the prominent, clearly-readable partner to the girl. -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/recapBubbleCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="22dp"
+        app:cardBackgroundColor="@color/recap_playback_bubble"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="7dp"
+        app:layout_constraintBottom_toTopOf="@id/recapReplayButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recapBubbleTail">
+
+        <TextView
+            android:id="@+id/recapSceneText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingExtra="7dp"
+            android:paddingHorizontal="26dp"
+            android:paddingVertical="26dp"
+            android:textColor="@color/recap_playback_text"
+            android:textSize="20sp"
+            tools:text="इस महीने आपने 12 CBAC स्वास्थ्य स्क्रीनिंग पूरी कीं।" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/recapReplayButton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/recap_playback_progress_active"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:text="@string/monthly_recap_playback_replay"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:cornerRadius="26dp"
+        app:layout_constraintBottom_toTopOf="@id/recapControlsRow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recapBubbleCard"
+        tools:visibility="visible" />
+
+    <!-- Loading state: shown until the story is composed. -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/recapLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="@color/recap_playback_progress_active"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Full-screen gesture layer (hold to pause, tap left/right). Hidden from
+         accessibility: the visible controls below are the accessible path. -->
+    <View
+        android:id="@+id/recapTouchOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
+    <!-- Segmented story progress (segments added in code, one per scene). -->
+    <LinearLayout
+        android:id="@+id/recapProgressRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="16dp"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/recapPlaybackClose"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/monthly_recap_playback_close_cd"
+        android:padding="8dp"
+        android:src="@drawable/ic_recap_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recapProgressRow" />
+
+    <!-- Visible, accessible playback controls: Previous / Pause-Play / Next. -->
+    <LinearLayout
+        android:id="@+id/recapControlsRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/recapPrevButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/monthly_recap_playback_prev_cd"
+            android:src="@drawable/ic_recap_prev" />
+
+        <ImageButton
+            android:id="@+id/recapPauseButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/monthly_recap_playback_pause_cd"
+            android:src="@drawable/ic_recap_pause" />
+
+        <ImageButton
+            android:id="@+id/recapNextButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/monthly_recap_playback_next_cd"
+            android:src="@drawable/ic_recap_next" />
+
+        <!-- Music on/off — silences ONLY the music; the story keeps playing. -->
+        <ImageButton
+            android:id="@+id/recapMusicToggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/monthly_recap_music_on_cd"
+            android:src="@drawable/ic_recap_music_on" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@
     <string name="PREF_user_entry" translatable="false">logged-in-user</string>
     <string name="PREF_full_load_pull_progress" translatable="false">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page" translatable="false">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
@@ -1574,5 +1575,49 @@
     <string name="rejected_date_txt">Rejected Date: %1$s</string>
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
+
+    <!-- Monthly Recap dashboard strip (Phase 1) -->
+    <string name="monthly_recap_title">Monthly Recap</string>
+    <string name="monthly_recap_ready_message">Your recap is ready — see the impact you made.</string>
+    <string name="monthly_recap_resume_message">Pick up where you left off.</string>
+    <string name="monthly_recap_replay_message">Look back on your month anytime.</string>
+    <string name="monthly_recap_view_recap">View Recap</string>
+    <string name="monthly_recap_continue_recap">Continue Recap</string>
+    <string name="monthly_recap_watch_again">Watch Again</string>
+    <string name="monthly_recap_badge_new">New</string>
+    <string name="monthly_recap_badge_done">Completed</string>
+    <string name="monthly_recap_cd_ready">New Monthly Recap available. Your recap is ready to view.</string>
+    <string name="monthly_recap_cd_resume">Monthly Recap in progress. Continue where you left off.</string>
+    <string name="monthly_recap_cd_replay">Monthly Recap completed. Watch it again.</string>
+
+    <!-- Monthly Recap language selection (Phase 2).
+         The instruction and option labels are deliberately FIXED bilingual strings
+         (translatable=false): both are always shown together so the ASHA understands
+         the choice regardless of the current app language. The recap-language choice
+         never changes the global Sakhi app language.
+         TODO: verify the Assamese wording with the project's language reviewers
+         before production release. -->
+    <string name="monthly_recap_lang_instruction_hi" translatable="false">नमस्ते! अपनी मासिक झलक देखने के लिए भाषा चुनें</string>
+    <string name="monthly_recap_lang_instruction_as" translatable="false">নমস্কাৰ! আপোনাৰ মাহেকীয়া সাৰাংশ চাবলৈ ভাষা বাছনি কৰক</string>
+    <string name="monthly_recap_lang_hindi" translatable="false">हिन्दी</string>
+    <string name="monthly_recap_lang_assamese" translatable="false">অসমীয়া</string>
+    <string name="monthly_recap_lang_selected_hi" translatable="false">आपने हिन्दी चुनी है</string>
+    <string name="monthly_recap_lang_selected_as" translatable="false">আপুনি অসমীয়া বাছনি কৰিছে</string>
+    <!-- Localized screen announcement for TalkBack (translated normally). -->
+    <string name="monthly_recap_lang_screen_cd">Choose the language for your Monthly Recap</string>
+    <string name="monthly_recap_playback_close_cd">Close your Monthly Recap</string>
+    <string name="monthly_recap_playback_replay">Watch again</string>
+    <string name="monthly_recap_playback_girl_cd">Your ASHA didi celebrating your work</string>
+    <string name="monthly_recap_playback_prev_cd">Previous message</string>
+    <string name="monthly_recap_playback_next_cd">Next message</string>
+    <string name="monthly_recap_playback_pause_cd">Pause</string>
+    <string name="monthly_recap_playback_play_cd">Play</string>
+    <string name="monthly_recap_music_on_cd">Turn background music off</string>
+    <string name="monthly_recap_music_off_cd">Turn background music on</string>
+    <string name="notification_recap_channel_id" translatable="false">sakhi-recap0</string>
+    <string name="notification_recap_channel_name">Monthly Recap</string>
+    <string name="notification_recap_channel_description">A monthly reminder to watch your personal recap</string>
+    <string name="notification_recap_title">Your month, in 75 seconds</string>
+    <string name="notification_recap_body">Your recap for last month is ready. Tap to watch it.</string>
 </resources>
 
