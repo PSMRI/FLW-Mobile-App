@@ -38,6 +38,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var vaccineDao: ImmunizationDao
     @MockK private lateinit var maternalHealthDao: MaternalHealthDao
     @MockK private lateinit var childRegistrationDao: ChildRegistrationDao
+    @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var pref: PreferenceDao
 
     private lateinit var repo: RecordsRepo
@@ -50,7 +51,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
         every { pref.getLocationRecord() } returns locationRecord()
         repo = RecordsRepo(
             context, householdDao, benDao, ancHomeVisitDao,
-            vaccineDao, maternalHealthDao, childRegistrationDao, pref
+            vaccineDao, maternalHealthDao, childRegistrationDao, benRepo, pref
         )
     }
 
