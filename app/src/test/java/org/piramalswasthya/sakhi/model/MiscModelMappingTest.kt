@@ -393,11 +393,33 @@ class MiscModelMappingTest {
     }
 
     @Test fun `IncentiveActivityWithRecords asDomainModel maps activity and records`() {
-        val domain = IncentiveActivityWithRecords(
+        val withRecords = IncentiveActivityWithRecords(
             activity = activityCache(),
             records = listOf(recordCache())
-        ).asDomainModel()
+        )
+        assertEquals(80L, withRecords.activity.id)
+        assertEquals(1, withRecords.records.size)
+        val domain = withRecords.asDomainModel()
         assertEquals(80L, domain.activity.id)
         assertEquals(1, domain.records.size)
+    }
+
+    @Test fun `UserDomain exposes districts and blocks`() {
+        val loc = LocationEntity(1, "loc")
+        val user = UserDomain(
+            userId = 1,
+            userName = "u",
+            password = "p",
+            country = LocationEntity(0, "India"),
+            states = listOf(loc),
+            districts = listOf(loc),
+            blocks = listOf(loc),
+            villages = listOf(loc),
+            contactNo = "999",
+            userType = "asha",
+            loggedIn = true
+        )
+        assertEquals(1, user.districts.size)
+        assertEquals(1, user.blocks.size)
     }
 }

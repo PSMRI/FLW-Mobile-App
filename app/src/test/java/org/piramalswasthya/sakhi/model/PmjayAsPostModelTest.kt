@@ -128,4 +128,14 @@ class PmjayAsPostModelTest {
         val post = cache().asPostModel(user(), household(), ben(), pmjayCount = 1)
         assertNotNull(post.registrationDate)
     }
+
+    @Test
+    fun `PMJAYPost constructor uses defaults when optional fields are omitted`() {
+        val post = PMJAYPost(beneficiaryid = 1L)
+        assertEquals(1L, post.beneficiaryid)
+        assertNotNull(post.createdDate)
+        assertEquals(0, post.loginId)
+        assertEquals("", post.userimage)
+        assertNotNull(post)
+    }
 }

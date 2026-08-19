@@ -270,9 +270,10 @@ class SaasBahuSammelanRepoTest : BaseRepositoryTest() {
     fun `SaasBahuSamelanGettDataFromServer clears dao and inserts nothing when data is null`() = runTest {
         loggedIn()
         coEvery { api.getSaasBahuSammelans(any()) } returns successfulResponse("{}")
-        stubParsedResponse(
-            SaasBahuSammelanGetAllResponse(data = null, statusCode = 200, status = "OK")
-        )
+        val parsed = SaasBahuSammelanGetAllResponse(data = null, statusCode = 200, status = "OK")
+        assertEquals(200, parsed.statusCode)
+        assertEquals("OK", parsed.status)
+        stubParsedResponse(parsed)
 
         repo.SaasBahuSamelanGettDataFromServer()
 

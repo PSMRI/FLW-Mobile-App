@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.util.Log
+import android.util.Range
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
@@ -14,6 +15,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -113,6 +115,9 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
 
         mockkStatic(Uri::class)
         every { Uri.parse(any()) } returns mockk(relaxed = true)
+
+        mockkConstructor(Range::class)
+        every { anyConstructed<Range<Int>>().contains(any<Int>()) } returns true
 
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources

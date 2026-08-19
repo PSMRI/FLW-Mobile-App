@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import java.net.SocketTimeoutException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -17,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.MdsrDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.MDSRCache
@@ -251,6 +253,72 @@ class MdsrRepoTest : BaseRepositoryTest() {
         assertTrue(result)
         coVerify { amritApiService.postMdsrForm(any()) }
         coVerify(atLeast = 1) { mdsrDao.updateMdsrRecord(record) }
+    }
+
+    // =====================================================
+    // processNewMdsr() -> postMdsrForm() branch coverage
+    // =====================================================
+
+    @Test
+    fun `processNewMdsr marks record unsynced when no user logged in`() = runTest {
+        coEvery { preferenceDao.getLoggedInUser() } returns null
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(exactly = 0) { amritApiService.postMdsrForm(any()) }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced on unrecognized inner statusCode`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        val json = """{"statusCode":9999,"errorMessage":""}"""
+        coEvery { amritApiService.postMdsrForm(any()) } returns jsonResponse(json)
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced when statusCode key is missing from response`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        val json = """{"errorMessage":""}"""
+        coEvery { amritApiService.postMdsrForm(any()) } returns jsonResponse(json)
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced when inner response body is null on 200`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        coEvery { amritApiService.postMdsrForm(any()) } returns nullBodyResponse()
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
     }
 
 }

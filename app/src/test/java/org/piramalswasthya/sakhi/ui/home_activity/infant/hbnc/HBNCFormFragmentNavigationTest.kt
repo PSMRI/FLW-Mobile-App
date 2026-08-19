@@ -187,4 +187,12 @@ class HBNCFormFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = HBNCFormFragmentArgs(benId = 10L, hhId = 20L)
+        assertNull(a.visitDay)
+        assertFalse(a.isViewMode)
+        assertEquals("hbnc_form_001", a.formId)
+    }
 }

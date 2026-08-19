@@ -488,4 +488,20 @@ class PncMappingTest {
         assertEquals(a.hashCode(), b.hashCode())
         assertTrue(a.toString().contains("BenWithDoAndPncCache"))
     }
+
+    @Test
+    fun `BenWithDoAndPncCache exposes ben deliveryOutcomeCache and savedPncRecords`() {
+        val ben = benBasic()
+        val deliveryOutcomes = listOf(deliveryOutcome())
+        val pncRecords = listOf(pncRecord(pncPeriod = 1, pncDate = 111L))
+        val benWithDoAndPnc = BenWithDoAndPncCache(
+            ben = ben,
+            deliveryOutcomeCache = deliveryOutcomes,
+            savedPncRecords = pncRecords
+        )
+
+        assertEquals(ben, benWithDoAndPnc.ben)
+        assertEquals(deliveryOutcomes, benWithDoAndPnc.deliveryOutcomeCache)
+        assertEquals(pncRecords, benWithDoAndPnc.savedPncRecords)
+    }
 }

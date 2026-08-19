@@ -10,6 +10,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -51,6 +52,12 @@ class HRPNonPregnantTrackDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { mockResources.getString(any(), any(), any()) } returns "x"
+    }
+
+    @Test
+    fun `HRPNonPregnantTrackCache exposes id`() {
+        val cache = HRPNonPregnantTrackCache(id = 5, benId = 1L)
+        assertEquals(5, cache.id)
     }
 
     @Test

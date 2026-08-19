@@ -4,19 +4,24 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.util.Log
+import android.util.Range
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.BenHealthIdDetails
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
@@ -67,6 +72,8 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { preferenceDao.getLoggedInUser() } returns null
+        mockkConstructor(Range::class)
+        every { anyConstructed<Range<Int>>().contains(any<Int>()) } returns true
     }
 
     // ---------- shared factories ----------
@@ -1384,5 +1391,153 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         val updated = runCatching { d.mapValueToBen(null) }.getOrNull()
         assertNotNull(updated)
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: mapValues' mobileNoOfRelationId==5 / isHoF / isAddSppouse /
+    // ayushman-prefill healthIdDetails / height-and-weight-at-birth branches =====================
+
+    // mapValues: `if (ben.mobileNoOfRelationId == 5) familyHeadPhoneNo!!.toLong() else ...` — the
+    // family-head branch is only reachable by stubbing the mock getter directly, since a mocked
+    // BenRegCache does not link a property's setter (written earlier in the same mapValues body) back
+    // to its own getter.
+    @Test
+    fun `mapValues pulls the contact number from the family head phone when mobileNoOfRelationId is five`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.mobileNoOfRelationId } returns 5
+        runCatching { d.mapValues(ben, 0) }
+        verify { ben.contactNumber = 9876543210L }
+    }
+
+    // mapValues: `ben.familyHeadRelationPosition = if (isHoF) 19 else ...` and the sibling
+    // mobileNoOfRelationId/tempMobileNoOfRelationId assignments. isHoF is a real private flag on the
+    // dataset only ever set true inside setPageForHof; no pre-existing test calls mapValues after
+    // setPageForHof on the same instance.
+    @Test
+    fun `mapValues marks the family head relation position and mobile relation ids once setPageForHof ran`() = runTest {
+        val d = ds()
+        val hh = householdMock()
+        runCatching { d.setPageForHof(benMockDeep(), hh, null) }
+        runCatching { d.setValueById(14, "9876543210") }
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { d.mapValues(ben, 0) }
+        verify { ben.familyHeadRelationPosition = 19 }
+        verify { ben.mobileNoOfRelationId = 1 }
+        verify { ben.tempMobileNoOfRelationId = 1 }
+    }
+
+    // mapValues: `ben.isSpouseAdded = if (isAddSppouse == 1) true else when(ben.familyHeadRelationPosition) {...}`.
+    // isAddSppouse is a real private field, only ever set from setPageForFamilyMember's isAddspouse
+    // parameter; no pre-existing test drives it to 1 and then calls mapValues on the same instance.
+    @Test
+    fun `mapValues marks isSpouseAdded true once isAddSppouse was primed via setPageForFamilyMember`() = runTest {
+        val hh = householdMock()
+        val d = ds()
+        runCatching {
+            d.setPageForFamilyMember(
+                null, hh, benMockBr(gender = Gender.FEMALE), Gender.MALE, 3, emptyList(), null, 1
+            )
+        }
+        runCatching { d.setValueById(14, "9876543210") }
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { d.mapValues(ben, 0) }
+        verify { ben.isSpouseAdded = true }
+    }
+
+    // mapValues: the `when (ben.familyHeadRelationPosition) { 5 -> true; 6 -> true; else -> false }`
+    // arm of the same isSpouseAdded assignment, reached only when isAddSppouse != 1. The read of
+    // ben.familyHeadRelationPosition happens after mapValues has already written to it earlier in the
+    // same call, so (as with mobileNoOfRelationId above) the mock getter must be stubbed directly.
+    @Test
+    fun `mapValues marks isSpouseAdded true for wife and husband relation-to-head positions`() = runTest {
+        for (position in listOf(5, 6)) {
+            val d = ds()
+            populatedFirstPage(d)
+            val ben = mockk<BenRegCache>(relaxed = true)
+            every { ben.familyHeadRelationPosition } returns position
+            runCatching { d.mapValues(ben, 0) }
+            verify { ben.isSpouseAdded = true }
+        }
+    }
+
+    @Test
+    fun `mapValues leaves isSpouseAdded false for an unrelated relation-to-head position`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.familyHeadRelationPosition } returns 2
+        runCatching { d.mapValues(ben, 0) }
+        verify { ben.isSpouseAdded = false }
+    }
+
+    // mapValues: `if (prefilledAbhaId != null || prefilledFamilyId != null) { val hid = ben.healthIdDetails
+    // ?: BenHealthIdDetails().also {...}; ... }`. prefilledAbhaId/prefilledFamilyId are only ever
+    // assigned inside prefillFromAyushmanCard (or the abhaMember branch of setPageForHof); no
+    // pre-existing test calls mapValues afterwards on the same instance, so this whole block — and
+    // both the "create a new BenHealthIdDetails" and "reuse the existing one" sub-branches — were
+    // previously unreached. prefillFromAyushmanCard's own setValueById calls are no-ops unless the
+    // targeted ids are already part of the built list, so a page must be built first.
+    private fun ayushmanMember(abhId: String?, familyId: String?): FamilyMember {
+        val member = mockk<FamilyMember>(relaxed = true)
+        every { member.name } returns "JANE DOE"
+        every { member.gender } returns "Female"
+        every { member.dob } returns "01-01-1990"
+        every { member.mobileNo } returns "9876543210"
+        every { member.abhId } returns abhId
+        every { member.familyId } returns familyId
+        return member
+    }
+
+    @Test
+    fun `mapValues creates a new health id details from a prefilled ayushman abha id and family id`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(null, null) }
+        runCatching { d.prefillFromAyushmanCard(ayushmanMember("12345678901234", "FAM123")) }
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.healthIdDetails } returns null
+        runCatching { d.mapValues(ben, 0) }
+        verify { ben.healthIdDetails = any() }
+    }
+
+    @Test
+    fun `mapValues reuses an existing health id details object when an ayushman prefill is present`() = runTest {
+        val d = ds()
+        runCatching { d.setFirstPageToRead(null, null) }
+        runCatching { d.prefillFromAyushmanCard(ayushmanMember("98765432109876", "FAM999")) }
+        val ben = mockk<BenRegCache>(relaxed = true)
+        val existingHid = BenHealthIdDetails()
+        every { ben.healthIdDetails } returns existingHid
+        runCatching { d.mapValues(ben, 0) }
+        assertEquals("98765432109876", existingHid.healthIdNumber)
+        assertEquals("FAM999", existingHid.familyId)
+    }
+
+    @Test
+    fun `mapValues does not touch health id details when no ayushman prefill occurred`() = runTest {
+        val d = ds()
+        populatedFirstPage(d)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { d.mapValues(ben, 0) }
+        verify(exactly = 0) { ben.healthIdDetails = any() }
+    }
+
+    // mapValues: `babyHeight.value?.takeIf { it.isNotEmpty() }?.toDouble() ?: 0.0` (and the weight
+    // sibling) — babyHeight/babyWeight are always part of the second-page list, but no pre-existing
+    // test ever populates their value before calling mapValues, so only the `?: 0.0` fallback arm was
+    // ever reached.
+    @Test
+    fun `mapValues records the actual height and weight recorded at birth`() = runTest {
+        val d = ds()
+        populatedFirstPage(d, dob = "01-01-2022", genderValue = "opt0")
+        runCatching { d.setSecondPage(benMockBr3()) }
+        runCatching { d.setValueById(42, "120.5") }
+        runCatching { d.setValueById(43, "12.3") }
+        val ben = benMockBr3()
+        val kid = mockk<BenRegKid>(relaxed = true)
+        every { ben.kidDetails } returns kid
+        runCatching { d.mapValues(ben, 1) }
+        verify { kid.heightAtBirth = 120.5 }
+        verify { kid.weightAtBirth = 12.3 }
     }
 }

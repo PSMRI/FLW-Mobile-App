@@ -423,10 +423,11 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
     fun `downSyncAndPersist does nothing when server list is empty`() = runTest {
         loggedInUser()
         every { pref.getLastSyncedTimeStamp() } returns 0L
+        val parsed = MaaMeetingGetAllResponse(data = emptyList(), statusCode = 200, status = "OK")
+        assertEquals(200, parsed.statusCode)
+        assertEquals("OK", parsed.status)
         coEvery { api.getMaaMeetings(any()) } returns successfulMeetingsResponse("{}")
-        stubParsedMeetingsResponse(
-            MaaMeetingGetAllResponse(data = emptyList(), statusCode = 200, status = "OK")
-        )
+        stubParsedMeetingsResponse(parsed)
 
         repo.downSyncAndPersist()
 
@@ -454,11 +455,7 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
             MaaMeetingGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
         )
         val slot = io.mockk.slot<MaaMeetingEntity>()
-        every {
-            dao.replaceLocalCopyWithServerMeeting(
-                capture(slot), any(), any(), any(), any(), any(), any(), any()
-            )
-        } returns Unit
+        every { dao.insert(capture(slot)) } returns 1L
 
         repo.downSyncAndPersist()
 
@@ -491,14 +488,9 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
         stubParsedMeetingsResponse(
             MaaMeetingGetAllResponse(data = listOf(item1, item2), statusCode = 200, status = "OK")
         )
-        every {
-            dao.replaceLocalCopyWithServerMeeting(
-                any(), any(), any(), any(), any(), any(), any(), any()
-            )
-        } returns Unit
 
         repo.downSyncAndPersist()
 
-        verify(exactly = 2) { dao.replaceLocalCopyWithServerMeeting(any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 2) { dao.insert(any()) }
     }
 }

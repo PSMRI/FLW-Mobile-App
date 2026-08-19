@@ -1,11 +1,13 @@
 package org.piramalswasthya.sakhi.work
 
 import android.content.Context
+import androidx.core.app.NotificationCompat
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -125,5 +127,21 @@ class PullKalaAzarFormAmritWorkerTest : BaseRepositoryTest() {
 
         assertEquals("PullKalaAzarFormAmritWorker", result.outputData.getString("worker_name"))
         assertEquals("boom", result.outputData.getString("error"))
+    }
+
+    @Test
+    fun getForegroundInfo_returnsForegroundInfo() = runTest {
+        mockkConstructor(NotificationCompat.Builder::class)
+        every { anyConstructed<NotificationCompat.Builder>().setContentTitle(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setContentText(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setSmallIcon(any<Int>()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setProgress(any(), any(), any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setOngoing(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().build() } returns mockk(relaxed = true)
+        every { context.getString(any()) } returns "channel_id"
+
+        val result = worker().getForegroundInfo()
+
+        assertNotNull(result)
     }
 }

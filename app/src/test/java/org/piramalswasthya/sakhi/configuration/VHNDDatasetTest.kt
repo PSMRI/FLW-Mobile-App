@@ -11,6 +11,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -143,6 +144,20 @@ class VHNDDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(null) }
         runCatching { ds.setUpPage(populatedCache()) }
         assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `setUpPage defaults beneficiary count to zero when cache value is null`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { cache.vhndDate } returns "01-01-2024"
+        every { cache.place } returns "opt3"
+        every { cache.noOfBeneficiariesAttended } returns null
+        every { cache.image1 } returns "uri1"
+        every { cache.image2 } returns "uri2"
+        ds.setUpPage(cache)
+        val beneficiaryField = ds.listFlow.value.first { it.id == 4 }
+        assertEquals("0", beneficiaryField.value)
     }
 
     @Test

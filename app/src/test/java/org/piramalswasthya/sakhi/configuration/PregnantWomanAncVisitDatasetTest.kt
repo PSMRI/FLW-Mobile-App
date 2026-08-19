@@ -11,7 +11,9 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -394,5 +396,151 @@ class PregnantWomanAncVisitDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { d.updateList(77777, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    // ---- additional targeted branch coverage ----
+
+    // anyHighRisk true but selected condition is not the "other" entry -> otherHighRiskCondition
+    // must NOT be added, unlike lateHighRiskSaved() which picks the last entry.
+    private fun savedHighRiskNotOther(): PregnantWomanAncCache {
+        val s = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { s.ancDate } returns lmp + 200L * 24 * 60 * 60 * 1000
+        every { s.isAborted } returns false
+        every { s.hrpConfirmed } returns false
+        every { s.pregnantWomanDelivered } returns false
+        every { s.anyHighRisk } returns true
+        every { s.highRisk } returns "opt1"
+        every { s.bpSystolic } returns 120
+        every { s.bpDiastolic } returns 80
+        every { s.visitNumber } returns 2
+        return s
+    }
+
+    // maternalDeath true but placeOfDeath resolves to an index other than 8 -> otherPlaceOfDeath
+    // must NOT be added, unlike savedMaternalDeath() which uses index 8.
+    private fun savedMaternalDeathPlaceNotOther(): PregnantWomanAncCache {
+        val s = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { s.ancDate } returns lmp + 200L * 24 * 60 * 60 * 1000
+        every { s.isAborted } returns false
+        every { s.hrpConfirmed } returns false
+        every { s.pregnantWomanDelivered } returns false
+        every { s.anyHighRisk } returns false
+        every { s.maternalDeath } returns true
+        every { s.placeOfDeath } returns "opt2"
+        every { s.maternalDeathProbableCause } returns "opt1"
+        every { s.deathDate } returns lmp + 190L * 24 * 60 * 60 * 1000
+        every { s.bpSystolic } returns 120
+        every { s.bpDiastolic } returns 80
+        every { s.visitNumber } returns 2
+        return s
+    }
+
+    @Test
+    fun `setUpPage saved null reuses leftover ancDate for late weeks branch`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(3, ben, regis2(), null, false, lateHighRiskSaved())
+        runCatching { d.setUpPage(4, ben, regis2(), null, false, null) }
+        assertEquals(-1, d.getIndexById(19))
+        assertTrue(d.getIndexById(20) != -1)
+    }
+
+    @Test
+    fun `setUpPage saved null reuses leftover ancDate for early weeks branch`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, earlySaved())
+        runCatching { d.setUpPage(2, ben, regis2(), null, false, null) }
+        assertTrue(d.getIndexById(19) != -1)
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    @Test
+    fun `setUpPage anyHighRisk true with non-other condition skips otherHighRiskCondition`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(2, ben, regis2(), null, false, savedHighRiskNotOther())
+        assertTrue(d.getIndexById(22) != -1)
+        assertEquals(-1, d.getIndexById(23))
+    }
+
+    @Test
+    fun `setUpPage maternalDeath true with placeOfDeath index not other skips otherPlaceOfDeath`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(2, ben, regis2(), null, false, savedMaternalDeathPlaceNotOther())
+        runCatching { d.mapValues(mockk<PregnantWomanAncCache>(relaxed = true), 0) }
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList ancDate handler for early weeks adds folic and removes ifa`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        val earlyDateStr = Dataset.getDateFromLong(lmp + 35L * 24 * 60 * 60 * 1000)
+        d.setValueById(4, "opt0")
+        d.setValueById(27, "opt0")
+        d.setValueById(1, earlyDateStr)
+        d.updateList(1, 0)
+        assertTrue(d.getIndexById(19) != -1)
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    @Test
+    fun `updateList ancDate handler returns early when isAborted is yes`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        val anc2WeekDateStr = Dataset.getDateFromLong(lmp + 105L * 24 * 60 * 60 * 1000)
+        d.setValueById(27, "opt0")
+        d.setValueById(1, anc2WeekDateStr)
+        d.updateList(1, 0)
+        d.setValueById(4, "opt79")
+        d.setValueById(3, "1")
+        d.updateList(1, 0)
+        val ancVisitElement = d.listFlow.value.find { it.id == 3 }
+        assertEquals("1", ancVisitElement?.value)
+    }
+
+    @Test
+    fun `updateList isAborted else branch with week above and below delivery threshold`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        d.setValueById(27, "opt0")
+        d.setValueById(4, "opt0")
+        d.setValueById(2, "30")
+        d.updateList(4, 0)
+        val countWithHighWeek = d.listFlow.value.count { it.id == 31 }
+        d.setValueById(4, "opt0")
+        d.setValueById(2, "10")
+        d.updateList(4, 0)
+        val countWithLowWeek = d.listFlow.value.count { it.id == 31 }
+        assertEquals(countWithHighWeek - 1, countWithLowWeek)
+    }
+
+    @Test
+    fun `updateList hb handler skips minmax validation on invalid decimal format`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        d.setValueById(12, "12.567")
+        d.updateList(12, 0)
+        val hbElement = d.listFlow.value.find { it.id == 12 }
+        assertNotNull(hbElement?.errorText)
+    }
+
+    @Test
+    fun `updateList anyHighRisk handler catches malformed bp value`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        d.setValueById(12, "8.0")
+        d.setValueById(9, "abc/def")
+        d.setValueById(21, "opt1")
+        runCatching { d.updateList(21, 1) }
+        assertNotNull(d.listFlow.value)
+        assertTrue(d.listFlow.value.isNotEmpty())
     }
 }

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
@@ -16,6 +17,7 @@ import android.util.TypedValue
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -2202,4 +2204,122 @@ class HelperUtilTest {
 
         assertEquals(expectedUri, result)
     }
+
+    // =====================================================
+    // getAgeStrFromAgeUnit() - remaining separator combinations
+    // =====================================================
+
+    @Test
+    fun `getAgeStrFromAgeUnit with years and days but no months`() {
+        val age = AgeUnitDTO(years = 2, months = 0, days = 10)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
+        assertEquals("2 Years, 10 Days ", result)
+    }
+
+    @Test
+    fun `getAgeStrFromAgeUnit with months and days but no years`() {
+        val age = AgeUnitDTO(years = 0, months = 2, days = 10)
+        val result = HelperUtil.getAgeStrFromAgeUnit(context, age)
+        assertEquals("2 Months, 10 Days ", result)
+    }
+
+    // =====================================================
+    // getYearRange() - default argument branch
+    // =====================================================
+
+    @Test
+    fun `getYearRange with default argument uses the current time`() {
+        val (start, end) = HelperUtil.getYearRange()
+        val nowCal = Calendar.getInstance()
+        val startCal = Calendar.getInstance().apply { timeInMillis = start }
+        assertTrue("start must precede end", start < end)
+        assertEquals(nowCal.get(Calendar.YEAR), startCal.get(Calendar.YEAR))
+    }
+
+    // =====================================================
+    // getLongFromDateStr() / getLongFromDateMDY() - exception path
+    // SimpleDateFormat.parse(String) throws ParseException on a bad
+    // string rather than returning null, so these functions have no
+    // internal catch and the exception propagates to the caller.
+    // =====================================================
+
+    @Test
+    fun `getLongFromDateStr throws for an unparseable date`() {
+        try {
+            HelperUtil.getLongFromDateStr("not-a-date")
+            assertTrue("Should have thrown", false)
+        } catch (e: Exception) {
+            // Expected: parse() throws instead of returning null
+        }
+    }
+
+    @Test
+    fun `getLongFromDateMDY throws for an unparseable date`() {
+        try {
+            HelperUtil.getLongFromDateMDY("not-a-date")
+            assertTrue("Should have thrown", false)
+        } catch (e: Exception) {
+            // Expected: parse() throws instead of returning null
+        }
+    }
+
+    // =====================================================
+    // compressImageToTemp() - full-size decode returns null
+    // =====================================================
+
+    @Test
+    fun `compressImageToTemp falls back to copyToTemp when the full decode returns null`() {
+        mockkStatic(BitmapFactory::class)
+        var callCount = 0
+        every {
+            BitmapFactory.decodeStream(any(), any(), any())
+        } answers {
+            callCount++
+            val opts = thirdArg<BitmapFactory.Options>()
+            if (callCount == 1) {
+                opts.outWidth = 500
+                opts.outHeight = 500
+                mockk<Bitmap>(relaxed = true)
+            } else {
+                null
+            }
+        }
+        val tempDir = Files.createTempDirectory("helper_util_compress_nullbmp").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.cacheDir } returns tempDir
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        every { ctx.contentResolver } returns resolver
+        every { resolver.openInputStream(any()) } returns "z".byteInputStream()
+
+        val result = HelperUtil.compressImageToTemp(mockk(relaxed = true), "img.jpg", ctx)
+
+        assertNotNull(result)
+        result!!.delete()
+    }
+
+    // =====================================================
+    // base64ToTempFile() - payload without a data uri prefix
+    // =====================================================
+
+    @Test
+    fun `base64ToTempFile decodes a raw base64 payload without a data uri prefix`() {
+        mockkStatic(Base64::class)
+        mockkStatic(FileProvider::class)
+        val bytes = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte(), 0x00)
+        every { Base64.decode("JVBERi0=", any()) } returns bytes
+        val tempDir = Files.createTempDirectory("helper_util_b64_raw").toFile()
+        tempDir.deleteOnExit()
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.packageName } returns "org.piramalswasthya.sakhi"
+        val expectedUri = mockk<Uri>()
+        every {
+            FileProvider.getUriForFile(ctx, "org.piramalswasthya.sakhi.provider", any())
+        } returns expectedUri
+
+        val result = HelperUtil.base64ToTempFile("JVBERi0=", tempDir, ctx)
+
+        assertEquals(expectedUri, result)
+    }
+
 }

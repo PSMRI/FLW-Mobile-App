@@ -119,4 +119,13 @@ class IncentiveVerificationFragmentArgsTest {
         every { anyConstructed<Bundle>().putString(any(), any()) } returns Unit
         assertNotNull(args().toBundle())
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = IncentiveVerificationFragmentArgs()
+        assertEquals("", a.status)
+        assertEquals(0, a.facilityId)
+        assertEquals(0, a.selectedMonth)
+        assertEquals(0, a.selectedYear)
+    }
 }

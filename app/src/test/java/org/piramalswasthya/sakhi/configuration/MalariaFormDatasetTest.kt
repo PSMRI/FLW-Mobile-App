@@ -10,6 +10,8 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -435,5 +437,110 @@ class MalariaFormDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { d.updateList(9999, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    // ---- Additional deep-branch coverage ----
+
+    private fun deathCaseNonLastPlaceAndReason(): MalariaScreeningCache {
+        val s = mockk<MalariaScreeningCache>(relaxed = true)
+        every { s.caseStatus } returns "opt79"
+        every { s.caseDate } returns 1_600_000_000_000L
+        every { s.followUpDate } returns 1_610_000_000_000L
+        every { s.malariaTestType } returns 1
+        every { s.malariaSlideTestType } returns 1
+        every { s.beneficiaryStatus } returns "opt79"
+        every { s.dateOfDeath } returns 1_620_000_000_000L
+        every { s.placeOfDeath } returns "opt0"
+        every { s.reasonForDeath } returns "opt0"
+        every { s.feverMoreThanTwoWeeks } returns false
+        every { s.fluLikeIllness } returns false
+        return s
+    }
+
+    @Test
+    fun `setUpPage death case with non-last place and reason omits other fields`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), deathCaseNonLastPlaceAndReason()) }
+        assertNotEquals(-1, d.getIndexById(4))
+        assertEquals(-1, d.getIndexById(5))
+        assertEquals(-1, d.getIndexById(30))
+    }
+
+    @Test
+    fun `setUpPage caseStatus resolved but test type unset adds testType only`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 0, 0, null, null, null)
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertEquals(-1, d.getIndexById(17))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `setUpPage slide only test type with pv result adds slideTestPv not slideTestPf`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 2, 2, null, "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(27))
+        assertNotEquals(-1, d.getIndexById(20))
+        assertEquals(-1, d.getIndexById(19))
+    }
+
+    @Test
+    fun `setUpPage both test types with resolved rapid result skips dateOfTest insertion`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 3, 1, "opt2", "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertEquals(-1, d.getIndexById(18))
+    }
+
+    @Test
+    fun `updateList symptoms unanswered leaves testType absent then primary yes adds it`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), null) }
+        runCatching { d.updateList(7, 0) }
+        assertEquals(-1, d.getIndexById(28))
+        d.setValueById(7, "opt0")
+        runCatching { d.updateList(7, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    @Test
+    fun `updateList secondary symptoms alone trigger suspected via count threshold`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), null) }
+        d.setValueById(7, "opt1")
+        d.setValueById(8, "opt1")
+        d.setValueById(9, "opt1")
+        d.setValueById(10, "opt0")
+        d.setValueById(11, "opt0")
+        runCatching { d.updateList(11, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic negative and other results without both test type`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.setValueById(17, "opt1"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+        runCatching { d.setValueById(17, "opt0"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
     }
 }

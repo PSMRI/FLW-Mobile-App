@@ -8,6 +8,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.ReferralRequest
 
 /**
  * Extra coverage for JsonAdapters.kt mappers/helpers not exercised by
@@ -824,6 +825,150 @@ class JsonAdaptersTest {
         assertEquals(base.txnId, changed.txnId)
         assertEquals(base.token, changed.token)
         assertEquals(base.expiresIn, changed.expiresIn)
+    }
+
+    @Test fun `TmcAuthUserRequest constructor uses defaults when authKey and doLogout omitted`() {
+        val request = TmcAuthUserRequest(
+            userName = "asha_user",
+            password = "secret"
+        )
+        assertEquals("asha_user", request.userName)
+        assertEquals("secret", request.password)
+        assertEquals("", request.authKey)
+        assertTrue(request.doLogout)
+    }
+
+    @Test fun `ReferralRequest exposes constructor value`() {
+        val ncdReferal = NCDReferalDTO(
+            benId = 1L,
+            referredToInstituteID = null,
+            refrredToAdditionalServiceList = null,
+            referredToInstituteName = null,
+            referralReason = null,
+            revisitDate = "2023-01-01",
+            vanID = null,
+            parkingPlaceID = null,
+            beneficiaryRegID = null,
+            benVisitID = null,
+            visitCode = null,
+            providerServiceMapID = null,
+            createdBy = null,
+            type = null
+        )
+        val request = ReferralRequest(refer = ncdReferal)
+        assertEquals(ncdReferal, request.refer)
+    }
+
+    @Test fun `AdolescentHealthRequestDTO exposes constructor values`() {
+        val dto = AdolescentHealthRequestDTO(userId = 5, adolescentHealths = emptyList())
+        assertEquals(5, dto.userId)
+        assertTrue(dto.adolescentHealths.isEmpty())
+    }
+
+    @Test fun `FilariaScreeningRequestDTO exposes constructor values`() {
+        val dto = FilariaScreeningRequestDTO(userId = 6, filariaLists = emptyList())
+        assertEquals(6, dto.userId)
+    }
+
+    @Test fun `GetCBACRequest exposes constructor value`() {
+        val dto = GetCBACRequest(createdBy = "creator")
+        assertEquals("creator", dto.createdBy)
+    }
+
+    @Test fun `KalaAzarScreeningRequestDTO exposes constructor values`() {
+        val dto = KalaAzarScreeningRequestDTO(userId = 7, kalaAzarLists = emptyList())
+        assertEquals(7, dto.userId)
+    }
+
+    @Test fun `LeprosyScreeningRequestDTO exposes constructor values`() {
+        val dto = LeprosyScreeningRequestDTO(userId = 8, leprosyLists = emptyList())
+        assertEquals(8, dto.userId)
+    }
+
+    @Test fun `MalariaConfirmedRequestDTO exposes constructor values`() {
+        val dto = MalariaConfirmedRequestDTO(userId = 9, malariaFollowListUp = emptyList())
+        assertEquals(9, dto.userId)
+    }
+
+    @Test fun `MalariaScreeningRequestDTO exposes constructor values`() {
+        val dto = MalariaScreeningRequestDTO(userId = 10, malariaLists = emptyList())
+        assertEquals(10, dto.userId)
+    }
+
+    @Test fun `TBConfirmedRequestDTO exposes constructor values`() {
+        val dto = TBConfirmedRequestDTO(userId = 11, tbConfirmedList = emptyList())
+        assertEquals(11, dto.userId)
+    }
+
+    @Test fun `TBScreeningRequestDTO exposes constructor values`() {
+        val dto = TBScreeningRequestDTO(userId = 12, tbScreeningList = emptyList())
+        assertEquals(12, dto.userId)
+    }
+
+    @Test fun `TBSuspectedRequestDTO exposes constructor values`() {
+        val dto = TBSuspectedRequestDTO(userId = 13, tbSuspectedList = emptyList())
+        assertEquals(13, dto.userId)
+    }
+
+    @Test fun `sendOtpRequest exposes constructor value`() {
+        val dto = sendOtpRequest(mobNo = "9999999999")
+        assertEquals("9999999999", dto.mobNo)
+    }
+
+    @Test fun `AESScreeningRequestDTO exposes constructor values`() {
+        val dto = AESScreeningRequestDTO(userId = 14, aesJeLists = emptyList())
+        assertEquals(14, dto.userId)
+        assertTrue(dto.aesJeLists.isEmpty())
+    }
+
+    @Test fun `GetBenHealthIdRequest exposes constructor values`() {
+        val dto = GetBenHealthIdRequest(beneficiaryRegID = 100L, beneficiaryID = 200L)
+        assertEquals(100L, dto.beneficiaryRegID)
+        assertEquals(200L, dto.beneficiaryID)
+    }
+
+    @Test fun `GetVHNDRequest exposes constructor values`() {
+        val dto = GetVHNDRequest(formType = "VHND", userId = 15)
+        assertEquals("VHND", dto.formType)
+        assertEquals(15, dto.userId)
+    }
+
+    @Test fun `UserDataDTO exposes constructor values`() {
+        val dto = UserDataDTO(userId = 16, entries = listOf("x"))
+        assertEquals(16, dto.userId)
+        assertEquals(listOf("x"), dto.entries)
+    }
+
+    @Test fun `UserDetailsByAyushmanCardNoRequest exposes constructor values`() {
+        val dto = UserDetailsByAyushmanCardNoRequest(cardNo = "card-1", houseHoldId = "hh-1")
+        assertEquals("card-1", dto.cardNo)
+        assertEquals("hh-1", dto.houseHoldId)
+    }
+
+    @Test fun `ValidateOtpRequest exposes constructor values`() {
+        val dto = ValidateOtpRequest(otp = 123456, mobNo = "9999999999")
+        assertEquals(123456, dto.otp)
+        assertEquals("9999999999", dto.mobNo)
+    }
+
+    @Test fun `IRSScreeningRequestDTO exposes constructor value`() {
+        val dto = IRSScreeningRequestDTO(rounds = emptyList())
+        assertTrue(dto.rounds.isEmpty())
+    }
+
+    @Test fun `TmcUserDetailsRequest exposes constructor value`() {
+        val dto = TmcUserDetailsRequest(userID = 17)
+        assertEquals(17, dto.userID)
+    }
+
+    @Test fun `AbhaTokenRequest constructor uses default grantType when omitted`() {
+        val request = AbhaTokenRequest(
+            clientId = "id",
+            clientSecret = "secret"
+        )
+        assertEquals("client_credentials", request.grantType)
+        assertEquals("id", request.clientId)
+        assertEquals("secret", request.clientSecret)
     }
 
     @Test fun `Accounts exposes constructor values and generated members`() {

@@ -5,6 +5,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.coEvery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -67,5 +68,51 @@ class PushCdrToAmritWorkerTest : BaseRepositoryTest() {
     @Test
     fun doWork_returnsAResult_whenDependenciesYieldNoData() = runTest {
         assertNotNull(worker().doWork())
+    }
+
+    @Test
+    fun doSyncWork_returnsSuccess_whenRepoReturnsTrue() = runTest {
+        coEvery { cdrRepo.processNewCdr() } returns true
+        assertTrue(worker().doWork() is ListenableWorker.Result.Success)
+    }
+
+    @Test
+    fun doSyncWork_reportsSyncFalse_whenRepoReturnsFalse() = runTest {
+        coEvery { cdrRepo.processNewCdr() } returns false
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals("Sync operation returned false", result.outputData.getString("error"))
+    }
+
+    @Test
+    fun doSyncWork_reportsWorkerName_whenRepoReturnsFalse() = runTest {
+        coEvery { cdrRepo.processNewCdr() } returns false
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals(worker().workerName, result.outputData.getString("worker_name"))
+    }
+
+    @Test
+    fun doWork_retries_whenSocketTimeoutExceptionThrown() = runTest {
+        coEvery { cdrRepo.processNewCdr() } throws java.net.SocketTimeoutException("timeout")
+        assertTrue(worker().doWork() is ListenableWorker.Result.Retry)
+    }
+
+    @Test
+    fun doWork_retries_whenIOExceptionThrown() = runTest {
+        coEvery { cdrRepo.processNewCdr() } throws java.io.IOException("offline")
+        assertTrue(worker().doWork() is ListenableWorker.Result.Retry)
+    }
+
+    @Test
+    fun doWork_returnsFailureWithMessage_whenGenericExceptionThrown() = runTest {
+        coEvery { cdrRepo.processNewCdr() } throws IllegalStateException("boom")
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals("boom", result.outputData.getString("error"))
+    }
+
+    @Test
+    fun doWork_returnsFailureWithUnknownError_whenExceptionHasNoMessage() = runTest {
+        coEvery { cdrRepo.processNewCdr() } throws RuntimeException()
+        val result = worker().doWork() as ListenableWorker.Result.Failure
+        assertEquals("Unknown error", result.outputData.getString("error"))
     }
 }

@@ -268,7 +268,9 @@ class ProfileUserMappingTest {
 
     @Test fun `ProfileCache asDomainModel wraps activity`() {
         val activity = ProfileActivityCache(id = 77L, name = "P")
-        val domain = ProfileCache(activity = activity).asDomainModel()
+        val cache = ProfileCache(activity = activity)
+        assertSame(activity, cache.activity)
+        val domain = cache.asDomainModel()
         assertSame(activity, domain.activity)
         assertEquals(77L, domain.activity.id)
         assertEquals("P", domain.activity.name)

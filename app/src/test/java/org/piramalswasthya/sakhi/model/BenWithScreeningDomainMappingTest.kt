@@ -90,7 +90,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `filaria domain with cache passes ben and screening`() {
         val cache = FilariaScreeningCache(benId = 1L, houseHoldDetailsId = 100L)
-        val d = BenWithFilariaScreeningCache(ben(), cache).asFilariaScreeningDomainModel()
+        val benWithFilaria = BenWithFilariaScreeningCache(ben(), cache)
+        assertEquals(1L, benWithFilaria.ben.benId)
+        assertEquals(cache, benWithFilaria.filariaScreeningCache)
+        val d = benWithFilaria.asFilariaScreeningDomainModel()
         assertEquals(1L, d.ben.benId)
         assertEquals("MALE", d.ben.gender)
         assertEquals(cache, d.filaria)
@@ -106,7 +109,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `malaria domain with cache`() {
         val cache = MalariaScreeningCache(benId = 1L, visitId = 3L, houseHoldDetailsId = 101L)
-        val d = BenWithMalariaScreeningCache(ben(), cache).asMalariaScreeningDomainModel()
+        val benWithMalaria = BenWithMalariaScreeningCache(ben(), cache)
+        assertEquals(1L, benWithMalaria.ben.benId)
+        assertEquals(cache, benWithMalaria.malaria)
+        val d = benWithMalaria.asMalariaScreeningDomainModel()
         assertEquals(cache, d.tb)
         assertEquals(1L, d.ben.benId)
     }
@@ -120,7 +126,11 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `malariaConfirmed domain maps slideTestName and cache`() {
         val cache = MalariaConfirmedCasesCache(benId = 1L, houseHoldDetailsId = 102L)
-        val d = BenWithMalariaConfirmedCache(ben(), cache, "Slide-A").asMalariaConfirmedDomainModel()
+        val benWithMalariaConfirmed = BenWithMalariaConfirmedCache(ben(), cache, "Slide-A")
+        assertEquals(1L, benWithMalariaConfirmed.ben.benId)
+        assertEquals(cache, benWithMalariaConfirmed.malariaConfirmed)
+        assertEquals("Slide-A", benWithMalariaConfirmed.slideTestName)
+        val d = benWithMalariaConfirmed.asMalariaConfirmedDomainModel()
         assertEquals(cache, d.malariaConfirmed)
         assertEquals("Slide-A", d.slideTestName)
         assertEquals(1L, d.ben.benId)
@@ -136,7 +146,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `kalaAzar domain with cache`() {
         val cache = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 103L)
-        val d = BenWithKALAZARScreeningCache(ben(), cache).asKALAZARScreeningDomainModel()
+        val benWithKalaAzar = BenWithKALAZARScreeningCache(ben(), cache)
+        assertEquals(1L, benWithKalaAzar.ben.benId)
+        assertEquals(cache, benWithKalaAzar.kalazarScreening)
+        val d = benWithKalaAzar.asKALAZARScreeningDomainModel()
         assertEquals(cache, d.kala)
         assertEquals(1L, d.ben.benId)
     }
@@ -149,7 +162,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `aes domain with cache`() {
         val cache = AESScreeningCache(benId = 1L, houseHoldDetailsId = 104L)
-        val d = BenWithAESScreeningCache(ben(), cache).asAESScreeningDomainModel()
+        val benWithAes = BenWithAESScreeningCache(ben(), cache)
+        assertEquals(1L, benWithAes.ben.benId)
+        assertEquals(cache, benWithAes.aesScreening)
+        val d = benWithAes.asAESScreeningDomainModel()
         assertEquals(cache, d.aes)
         assertEquals(1L, d.ben.benId)
     }
@@ -162,7 +178,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `tbScreening domain with cache`() {
         val cache = TBScreeningCache(benId = 1L)
-        val d = BenWithTbScreeningCache(ben(), cache).asTbScreeningDomainModel()
+        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache)
+        assertEquals(1L, benWithTbScreening.ben.benId)
+        assertEquals(cache, benWithTbScreening.tb)
+        val d = benWithTbScreening.asTbScreeningDomainModel()
         assertEquals(cache, d.tb)
         assertEquals(1L, d.ben.benId)
     }
@@ -176,7 +195,11 @@ class BenWithScreeningDomainMappingTest {
     @Test fun `tbSuspected domain maps suspected and confirmed list`() {
         val suspected = TBSuspectedCache(benId = 1L)
         val confirmed = listOf(TBConfirmedTreatmentCache(benId = 1L))
-        val d = BenWithTbSuspectedCache(ben(), suspected, confirmed).asTbSuspectedDomainModel()
+        val benWithTbSuspected = BenWithTbSuspectedCache(ben(), suspected, confirmed)
+        assertEquals(1L, benWithTbSuspected.ben.benId)
+        assertEquals(suspected, benWithTbSuspected.tbSuspected)
+        assertEquals(1, benWithTbSuspected.tbConfirmedList.size)
+        val d = benWithTbSuspected.asTbSuspectedDomainModel()
         assertEquals(suspected, d.tbSuspected)
         assertEquals(1, d.tbConfirmedList.size)
         assertEquals(1L, d.ben.benId)
@@ -194,7 +217,10 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `adolescent domain with cache`() {
         val cache = AdolescentHealthCache(benId = 1L)
-        val d = BenWithAdolescentCache(ben(), cache).asAdolescentDomainModel()
+        val benWithAdolescent = BenWithAdolescentCache(ben(), cache)
+        assertEquals(1L, benWithAdolescent.ben.benId)
+        assertEquals(cache, benWithAdolescent.tb)
+        val d = benWithAdolescent.asAdolescentDomainModel()
         assertEquals(cache, d.adolescent)
         assertEquals(1L, d.ben.benId)
     }
@@ -206,7 +232,10 @@ class BenWithScreeningDomainMappingTest {
     // ===================== ABHA generated =====================
 
     @Test fun `abha generated domain with null abha`() {
-        val d = BenWithABHAGeneratedCache(ben(), null).asBenWithABHAGeneratedDomainModel()
+        val benWithAbha = BenWithABHAGeneratedCache(ben(), null)
+        assertEquals(1L, benWithAbha.ben.benId)
+        assertNull(benWithAbha.abha)
+        val d = benWithAbha.asBenWithABHAGeneratedDomainModel()
         assertNull(d.abha)
         assertEquals(1L, d.ben.benId)
     }
@@ -218,7 +247,10 @@ class BenWithScreeningDomainMappingTest {
             IRSRoundScreening(rounds = 1, householdId = 200L),
             IRSRoundScreening(rounds = 2, householdId = 200L)
         )
-        val d = BenWithScreeningRound(ben(), rounds).asScreeningRoundDomainModel()
+        val benWithRound = BenWithScreeningRound(ben(), rounds)
+        assertEquals(1L, benWithRound.ben.benId)
+        assertEquals(2, benWithRound.round.size)
+        val d = benWithRound.asScreeningRoundDomainModel()
         assertEquals(2, d.round.size)
     }
 
@@ -284,6 +316,18 @@ class BenWithScreeningDomainMappingTest {
         assertNull(d.currentFollowUp)
     }
 
+    @Test fun `BenWithLeprosyScreeningDomain exposes ben`() {
+        val domain = BenWithLeprosyScreeningDomain(
+            ben = ben().asBasicDomainModel(),
+            leprosy = null,
+            followUps = emptyList(),
+            currentFollowUp = null,
+            currentVisitFollowUps = emptyList(),
+            lastFollowUp = null
+        )
+        assertEquals(1L, domain.ben.benId)
+    }
+
     // ===================== Maternal PWR domain =====================
 
     private fun pwr(active: Boolean, benId: Long = 1L) = PregnantWomanRegistrationCache(
@@ -310,6 +354,12 @@ class BenWithScreeningDomainMappingTest {
     @Test fun `pwr domain with empty list is null`() {
         val d = BenWithPwrCache(ben(), emptyList()).asPwrDomainModel()
         assertNull(d.pwr)
+    }
+
+    @Test fun `pwr cache maps to form domain model`() {
+        val form = BenWithPwrCache(ben(), emptyList()).asBenBasicDomainModelForHRPPregAssessmentForm()
+        assertEquals(1L, form.benId)
+        assertEquals("John", form.benName)
     }
 
     // ===================== AHD / Deworming copy mappers =====================

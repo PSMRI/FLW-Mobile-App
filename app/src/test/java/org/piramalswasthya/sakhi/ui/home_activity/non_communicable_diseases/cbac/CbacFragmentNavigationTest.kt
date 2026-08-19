@@ -154,4 +154,12 @@ class CbacFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun constructor_usesDefaults_whenOptionalArgumentsOmitted() {
+        val a = CbacFragmentArgs()
+        assertEquals(0L, a.benId)
+        assertEquals(0, a.cbacId)
+        assertEquals(0, a.ashaId)
+    }
 }

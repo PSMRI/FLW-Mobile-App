@@ -6,7 +6,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -48,6 +50,17 @@ class IconDatasetTest : BaseViewModelTest() {
     }
 
     private fun ds() = IconDataset(recordsRepo, preferenceDao, adolescentHealthRepo)
+
+    @Test
+    fun `getImmunizationDataset and getVillageLevelFormsDataset apply colorPrimary on single item lists`() {
+        val d = ds()
+        val immunization = d.getImmunizationDataset(resources)
+        val vlf = d.getVillageLevelFormsDataset(resources)
+        assertEquals(1, immunization.size)
+        assertTrue(immunization[0].colorPrimary)
+        assertEquals(1, vlf.size)
+        assertTrue(vlf[0].colorPrimary)
+    }
 
     @Test
     fun `all icon builder methods execute`() {

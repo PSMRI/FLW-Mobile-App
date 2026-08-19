@@ -299,6 +299,22 @@ class AllHouseholdViewModelTest : BaseViewModelTest() {
         assertEquals(h1, h2)
     }
 
+    @Test
+    fun `HouseHoldBasicDomain full constructor and createdTimeStamp setter`() {
+        val domain = HouseHoldBasicDomain(
+            hhId = 9L,
+            headName = "Gita",
+            headSurname = "Devi",
+            contactNumber = "9333333333",
+            headFullName = "Gita Devi",
+            numMembers = 2,
+            isDeactivate = false,
+            createdTimeStamp = 10L
+        )
+        domain.createdTimeStamp = 999L
+        assertEquals(999L, domain.createdTimeStamp)
+    }
+
     private fun household(
         hhId: Long,
         headName: String,

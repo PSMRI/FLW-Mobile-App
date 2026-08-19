@@ -581,7 +581,8 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
             benId = 999L,
             visitNumber = 1,
             isDelivered = false,
-            userName = "asha"
+            userName = "asha",
+            delivaryDate = 0L
         )
 
         coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) }
@@ -605,7 +606,8 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
             benId = 10L,
             visitNumber = 2,
             isDelivered = false,
-            userName = "asha1"
+            userName = "asha1",
+            delivaryDate = 0L
         )
 
         assertEquals("N", savedSlot.captured.processed)
@@ -640,7 +642,8 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
             benId = 20L,
             visitNumber = 1,
             isDelivered = true,
-            userName = "asha2"
+            userName = "asha2",
+            delivaryDate = 0L
         )
 
         assertEquals("U", existingAncCache.processed)
@@ -676,7 +679,8 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
             benId = 30L,
             visitNumber = 3,
             isDelivered = true,
-            userName = "asha3"
+            userName = "asha3",
+            delivaryDate = 0L
         )
 
         assertEquals("N", existingAncCache.processed)
