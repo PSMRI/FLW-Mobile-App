@@ -513,6 +513,11 @@ interface AmritApiService {
         @Body body: Map<String, Int>
     ): Response<ResponseBody>
 
+    @POST("flw-api/ashaSupervisor/getSubCenter")
+    suspend fun getSubCenterDashboard(
+        @Body body: Map<String, Int>
+    ): Response<ResponseBody>
+
 
     @POST("flw-api/ashaSupervisor/getAshaListByFacility")
     suspend fun getAshaListByFacility(

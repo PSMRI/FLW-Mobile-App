@@ -702,9 +702,19 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
-            // reproductiveStatus.value = saved.genDetails?.reproductiveStatus
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let {
-                reproductiveStatus.getStringFromPosition(it)
+
+            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let { statusId ->
+                when (statusId) {
+                    5 -> {
+                        if (saved.isMarried) {
+                            reproductiveStatus.entries?.lastOrNull()
+
+                        } else {
+                            resources.getString(R.string.dd_ag)
+                        }
+                    }
+                    else -> reproductiveStatus.getStringFromPosition(statusId)
+                }
             }
 
             // Restore haveChildren value for married females
