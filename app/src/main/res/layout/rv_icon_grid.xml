@@ -1,13 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rv_icon_grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:splitMotionEvents="false"
     android:background="?attr/colorOnSecondary"
-    android:padding="@dimen/padding_small"
-    android:clipToPadding="false"
-    tools:itemCount="1"
-    tools:listitem="@layout/rv_item_icon_grid" />
+    android:orientation="vertical">
+
+    <!-- Badges live progress widget (LLD: never reads zero; hidden by kill switch) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_badge_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_small"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:cardCornerRadius="@dimen/padding_normal"
+        app:cardElevation="8dp"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_normal">
+
+            <ImageView
+                android:id="@+id/iv_badge_widget_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/badge_widget_title"
+                android:scaleType="centerInside"
+                tools:src="@drawable/badge_steady_syncer" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_normal"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_badge_widget_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Steady Syncer — 3 of 4" />
+
+                <ProgressBar
+                    android:id="@+id/pb_badge_widget"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    tools:progress="75" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/badge_widget_title"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="?attr/colorPrimary" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_icon_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="@dimen/padding_small"
+        android:splitMotionEvents="false"
+        tools:itemCount="1"
+        tools:listitem="@layout/rv_item_icon_grid" />
+
+</LinearLayout>

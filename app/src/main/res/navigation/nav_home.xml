@@ -6,6 +6,12 @@
     app:startDestination="@+id/homeFragment">
 
     <fragment
+        android:id="@+id/badgeShelfFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.badges.BadgeShelfFragment"
+        android:label="@string/badge_shelf_title"
+        tools:layout="@layout/fragment_badge_shelf" />
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragment"
         android:label="@string/menu_home"
@@ -13,6 +19,9 @@
         <action
             android:id="@+id/action_nav_home_to_allBenFragment"
             app:destination="@id/allBenFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_badgeShelfFragment"
+            app:destination="@id/badgeShelfFragment" />
         <action
             android:id="@+id/action_nav_home_to_abhaBenFragment"
             app:destination="@id/abhaBenFragment" />
