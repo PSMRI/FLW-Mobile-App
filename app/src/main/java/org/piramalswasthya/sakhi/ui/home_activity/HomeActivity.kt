@@ -59,6 +59,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
@@ -124,6 +125,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var tokenExpiryManager: TokenExpiryManager
+
+    @Inject
+    lateinit var taskCompletionBus: TaskCompletionBus
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -658,6 +662,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
+        WorkerUtils.triggerBadgeWorkers(this)
+        taskCompletionBus.start()
 //        WorkerUtils.triggerMaaMeetingWorker(this)
 //        WorkerUtils.triggerSaasBahuSammelanWorker(this)
         if (!pref.isFullPullComplete)

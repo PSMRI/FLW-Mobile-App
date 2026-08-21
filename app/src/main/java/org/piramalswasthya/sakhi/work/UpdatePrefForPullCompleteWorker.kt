@@ -11,13 +11,17 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.BadgeDates
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 
 @HiltWorker
 class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
     private val preferenceDao: PreferenceDao,
+    private val badgeDao: BadgeDao,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -29,6 +33,13 @@ class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         preferenceDao.isFullPullComplete = true
+        // Badges (LLD §3.1 Steady Syncer): log the successful sync week
+        try {
+            val now = System.currentTimeMillis()
+            badgeDao.insertSyncLog(BadgeSyncLogCache(BadgeDates.weekKey(now), now))
+            WorkerUtils.triggerAdHocBadgeEvaluation(appContext)
+        } catch (_: Exception) {
+        }
         return Result.success()
     }
 

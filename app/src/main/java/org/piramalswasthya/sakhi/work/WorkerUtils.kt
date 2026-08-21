@@ -739,6 +739,34 @@ object WorkerUtils {
             )
     }
 
+    /**
+     * Badges module (LLD §2): nightly time-based re-evaluation + config/earned
+     * synchronization. Idempotent — safe to call on every home entry.
+     */
+    fun triggerBadgeWorkers(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueueUniquePeriodicWork(
+            BadgeEvaluatorWorker.periodicName,
+            ExistingPeriodicWorkPolicy.KEEP,
+            PeriodicWorkRequest.Builder(BadgeEvaluatorWorker::class.java, 1, TimeUnit.DAYS)
+                .build()
+        )
+        workManager.enqueueUniqueWork(
+            BadgeSyncWorker.name,
+            ExistingWorkPolicy.KEEP,
+            syncRequestBuilder<BadgeSyncWorker>().build()
+        )
+    }
+
+    /** One-shot badge recompute, used after sync milestones. */
+    fun triggerAdHocBadgeEvaluation(context: Context) {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            BadgeEvaluatorWorker.oneShotName,
+            ExistingWorkPolicy.KEEP,
+            OneTimeWorkRequest.Builder(BadgeEvaluatorWorker::class.java).build()
+        )
+    }
+
     fun triggerAdHocPncEcUpdateWorker(context: Context) {
         val workRequest = OneTimeWorkRequest.Builder(UpdatePNCToECWorker::class.java).build()
         WorkManager.getInstance(context)

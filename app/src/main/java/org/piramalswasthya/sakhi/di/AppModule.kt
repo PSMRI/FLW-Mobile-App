@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -60,6 +61,7 @@ import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.BadgeApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
@@ -434,5 +436,25 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
+
+    @Singleton
+    @Provides
+    fun provideBadgeDao(database: InAppDb): BadgeDao = database.badgeDao
+
+    // Badges module (LLD §4.2): rides the existing authenticated client with
+    // its token insert + 401 refresh behaviour.
+    @Singleton
+    @Provides
+    fun provideBadgeApiService(
+        moshi: Moshi,
+        @Named(UAT_CLIENT) httpClient: OkHttpClient
+    ): BadgeApiService {
+        return Retrofit.Builder()
+            .baseUrl(KeyUtils.baseTMCUrl())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(httpClient)
+            .build()
+            .create(BadgeApiService::class.java)
+    }
 
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Badges module (LLD Badges) -->
+    <string name="badge_shelf_title">My Badges</string>
+    <string name="badge_widget_title">Badges</string>
+    <string name="badge_widget_get_started">Start earning — sync your app this week!</string>
+    <string name="badge_widget_progress">%1$s — %2$d of %3$d</string>
+    <string name="badge_progress_of">%1$d of %2$d</string>
+    <string name="badge_level">Level %1$d</string>
+    <string name="badge_not_started">Not started yet</string>
+    <string name="badge_earned_times">Earned %1$d time(s)</string>
+    <string name="badge_streak_weeks">%1$d week streak</string>
+    <string name="badge_streak_months">%1$d month streak</string>
+    <string name="badge_grace_remaining">%1$d grace left</string>
+
+    <string name="badge_steady_syncer_title">Steady Syncer</string>
+    <string name="badge_steady_syncer_desc">Sync your app at least once every week</string>
+    <string name="badge_timely_reporter_title">Timely Reporter</string>
+    <string name="badge_timely_reporter_desc">Submit your monthly incentive form on time</string>
+    <string name="badge_complete_worker_title">Complete Worker</string>
+    <string name="badge_complete_worker_desc">Stay active in 4+ health domains every quarter</string>
+    <string name="badge_community_voice_title">Community Voice</string>
+    <string name="badge_community_voice_desc">Organize all 4 meeting types (MAA, NDD, AHD, U-WIN)</string>
+    <string name="badge_maternal_journey_title">Maternal Journey</string>
+    <string name="badge_maternal_journey_desc">Complete maternal care journeys through institutional delivery</string>
+    <string name="badge_child_fully_protected_title">Child Fully Protected</string>
+    <string name="badge_child_fully_protected_desc">Complete the full childhood immunization schedule</string>
+    <string name="badge_digital_identity_title">Digital Identity</string>
+    <string name="badge_digital_identity_desc">Generate ABHA IDs after household registration</string>
+    <string name="badge_vulnerable_baby_title">Vulnerable Baby Cared For</string>
+    <string name="badge_vulnerable_baby_desc">Complete all 7 HBNC visits for an SNCU/LBW baby</string>
+    <string name="badge_critical_referral_title">Critical Referral Made</string>
+    <string name="badge_critical_referral_desc">Refer a SAM child to the NRC</string>
+</resources>

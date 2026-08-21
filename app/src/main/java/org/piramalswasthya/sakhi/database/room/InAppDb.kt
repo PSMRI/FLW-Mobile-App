@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -113,6 +114,11 @@ import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
+import org.piramalswasthya.sakhi.model.BadgeConfigCache
+import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.model.BadgeStateCache
+import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 import org.piramalswasthya.sakhi.model.NotificationEntity
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -203,10 +209,16 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
         TBConfirmedTreatmentCache::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        //Badges (LLD §4.1)
+        BadgeEarnedCache::class,
+        BadgeStateCache::class,
+        BadgeSyncLogCache::class,
+        BadgeStreakFreezeCache::class,
+        BadgeConfigCache::class
     ],
     views = [BenBasicCache::class],
-    version = 63, exportSchema = false
+    version = 64, exportSchema = false
 )
 
 @TypeConverters(
@@ -272,6 +284,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
+
+    abstract val badgeDao: BadgeDao
 
     companion object {
         @Volatile
@@ -341,6 +355,79 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+
+            // Badges module (LLD §4.1) — additive only, no health-table changes.
+            val MIGRATION_63_64 = object : Migration(63, 64) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_EARNED` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `userId` INTEGER NOT NULL,
+                                `badgeId` TEXT NOT NULL,
+                                `level` INTEGER NOT NULL,
+                                `caseRef` TEXT NOT NULL,
+                                `earnedAt` INTEGER NOT NULL,
+                                `synced` INTEGER NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_BADGE_EARNED_userId_badgeId_level_caseRef` " +
+                                    "ON `BADGE_EARNED` (`userId`, `badgeId`, `level`, `caseRef`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_STATE` (
+                                `badgeId` TEXT NOT NULL,
+                                `currentLevel` INTEGER NOT NULL,
+                                `progress` INTEGER NOT NULL,
+                                `nextTarget` INTEGER NOT NULL,
+                                `streakCount` INTEGER NOT NULL,
+                                `graceRemaining` INTEGER NOT NULL,
+                                `lastEvaluatedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`badgeId`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_SYNC_LOG` (
+                                `weekKey` TEXT NOT NULL,
+                                `syncCompletedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`weekKey`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_STREAK_FREEZE` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `badgeId` TEXT NOT NULL,
+                                `startDate` INTEGER NOT NULL,
+                                `endDate` INTEGER NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_BADGE_STREAK_FREEZE_badgeId_startDate_endDate` " +
+                                    "ON `BADGE_STREAK_FREEZE` (`badgeId`, `startDate`, `endDate`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_CONFIG` (
+                                `key` TEXT NOT NULL,
+                                `value` TEXT NOT NULL,
+                                `updatedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`key`)
+                            )
+                            """.trimIndent()
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
 
             val MIGRATION_62_63 = object : Migration(62, 63) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3465,7 +3552,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_59_60,
                         MIGRATION_60_61,
                         MIGRATION_61_62,
-                        MIGRATION_62_63
+                        MIGRATION_62_63,
+                        MIGRATION_63_64
 
 
                     ).build()
