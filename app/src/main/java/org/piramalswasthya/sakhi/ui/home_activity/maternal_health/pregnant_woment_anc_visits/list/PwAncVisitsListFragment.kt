@@ -16,6 +16,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.CompositeDateValidator
+import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
@@ -270,7 +272,13 @@ class PwAncVisitsListFragment : Fragment() {
         val constraints = CalendarConstraints.Builder()
             .setStart(item.ancDate)
             .setEnd(System.currentTimeMillis())
-            .setValidator(DateValidatorPointForward.from(item.ancDate))
+            .setValidator(
+                CompositeDateValidator.allOf(
+                listOf(
+                    DateValidatorPointForward.from(item.ancDate),
+                    DateValidatorPointBackward.before(System.currentTimeMillis() + 1)
+                )
+            ))
             .build()
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText(getString(R.string.do_delivery_date))

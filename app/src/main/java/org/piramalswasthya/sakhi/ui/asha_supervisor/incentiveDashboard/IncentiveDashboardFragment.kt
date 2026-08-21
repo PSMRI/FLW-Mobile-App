@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentIncentiveDashboardBinding
 import org.piramalswasthya.sakhi.network.NetworkMonitor
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.asha_supervisor.dialog.NoInternetDialog
+import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.Facility
 import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import java.util.Calendar
 import javax.inject.Inject
@@ -42,6 +43,7 @@ class IncentiveDashboardFragment : Fragment() {
 
     private var selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
     private var selectedYear  = Calendar.getInstance().get(Calendar.YEAR)
+    private var subCenterId  = 0
 
     /** Tracks current connectivity so onResume can decide whether to fetch. */
     private var isNetworkAvailable = false
@@ -49,6 +51,8 @@ class IncentiveDashboardFragment : Fragment() {
     private var noInternetDialog: NoInternetDialog? = null
 
     var isApproved = false
+
+    private var facilitiesList: List<Facility> = emptyList()
 
     // -------------------------------------------------------------------------
     override fun onCreateView(
@@ -124,12 +128,40 @@ class IncentiveDashboardFragment : Fragment() {
 
         updateMonthYearText()
         setupMonthYearPicker()
+        setupSubCentrePicker()
+        observerSubcenterAPI(adapter)
+
         observeViewModel(adapter)
         setClickListeners()
         observeNetwork()          // ← new
 
         val user = preferenceDao.getLoggedInUser()
 
+    }
+
+    private fun observerSubcenterAPI(adapter: SubCenterAdapter) {
+        viewModel.subCenterData.observe(viewLifecycleOwner) { state ->
+            if (_binding == null) return@observe
+            when (state) {
+                is SubCenterUiState.Loading -> {
+
+                }
+                is SubCenterUiState.Success -> {
+                    binding.progressBar.visibility    = View.GONE
+                    binding.nestedScrollView.visibility = View.VISIBLE
+                    val data    = state.data
+                    facilitiesList = data.facilities
+                    adapter.submitList(data.facilities)
+
+
+                }
+                is SubCenterUiState.Error -> {
+                    binding.progressBar.visibility    = View.GONE
+                    binding.nestedScrollView.visibility = View.VISIBLE
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -143,10 +175,15 @@ class IncentiveDashboardFragment : Fragment() {
                     isNetworkAvailable = available
                     if (available) {
                         dismissNoInternetDialog()
-                        // Fetch fresh data whenever connectivity is restored
                         viewModel.fetchDashboard(
                             month = selectedMonth + 1,
-                            year  = selectedYear
+                            year  = selectedYear,
+                            subcenterId = subCenterId
+                        )
+
+                        viewModel.getSubcenter(
+                            month = selectedMonth + 1,
+                            year  = selectedYear,
                         )
                     } else {
                         showNoInternetDialog()
@@ -174,7 +211,8 @@ class IncentiveDashboardFragment : Fragment() {
         if (isNetworkAvailable) {
             viewModel.fetchDashboard(
                 month = selectedMonth + 1,
-                year  = selectedYear
+                year  = selectedYear,
+                  subCenterId
             )
         }
     }
@@ -196,11 +234,54 @@ class IncentiveDashboardFragment : Fragment() {
                 if (isNetworkAvailable) {
                     viewModel.fetchDashboard(
                         month = selectedMonth + 1,
-                        year  = selectedYear
+                        year  = selectedYear ,
+                        subCenterId
                     )
                 }
             }
             pd.show(parentFragmentManager, "MonthYearPickerDialog")
+        }
+    }
+
+    private fun setupSubCentrePicker() {
+        binding.cardBlock.setOnClickListener {
+            if (facilitiesList.isEmpty()) {
+                Toast.makeText(requireContext(), "No sub-centres available", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val names = mutableListOf(getString(R.string.all_sub_centre))
+            names.addAll(facilitiesList.map { it.facilityName })
+
+            val checkedIndex = if (subCenterId == 0) {
+                0
+            } else {
+                facilitiesList.indexOfFirst { it.facilityId == subCenterId }.let { if (it == -1) 0 else it + 1 }
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.str_sub_center))
+                .setSingleChoiceItems(names.toTypedArray(), checkedIndex) { dialog, which ->
+                    if (which == 0) {
+                        subCenterId = 0
+                        binding.tvBlock.text = getString(R.string.all_sub_centre)
+                    } else {
+                        val selected = facilitiesList[which - 1]
+                        subCenterId = selected.facilityId!!
+                        binding.tvBlock.text = selected.facilityName
+                    }
+                    dialog.dismiss()
+
+                    if (isNetworkAvailable) {
+                        viewModel.fetchDashboard(
+                            month = selectedMonth + 1,
+                            year = selectedYear,
+                            subcenterId = subCenterId
+                        )
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
     }
 
@@ -232,7 +313,6 @@ class IncentiveDashboardFragment : Fragment() {
                     binding.tvAshaUnclaimedCount.text = summary.unclaimed.toString()
                     binding.tvSubCentreTitle.text =
                         "${resources.getString(R.string.sub_center_under_you_4)} (${data.facilities.size})"
-                    adapter.submitList(data.facilities)
                 }
                 is DashboardUiState.Error -> {
                     binding.progressBar.visibility    = View.GONE
@@ -246,18 +326,18 @@ class IncentiveDashboardFragment : Fragment() {
     private fun setClickListeners() {
 
         if (isApproved) {
-            binding.cardVerified.setOnClickListener    { navigateToVerification(0, "approved") }
+            binding.cardVerified.setOnClickListener    { navigateToVerification(subCenterId, "approved") }
 
         } else {
-            binding.cardVerified.setOnClickListener    { navigateToVerification(0, "verified") }
+            binding.cardVerified.setOnClickListener    { navigateToVerification(subCenterId, "verified") }
 
         }
-        binding.cardPending.setOnClickListener     { navigateToVerification(0, "pending") }
-        binding.cardOverdue.setOnClickListener     { navigateToVerification(0, "overdue") }
-        binding.cardRejected.setOnClickListener    { navigateToVerification(0, "rejected") }
-        binding.cardTotalAshas.setOnClickListener  { navigateToVerification(0, "") }
+        binding.cardPending.setOnClickListener     { navigateToVerification(subCenterId, "pending") }
+        binding.cardOverdue.setOnClickListener     { navigateToVerification(subCenterId, "overdue") }
+        binding.cardRejected.setOnClickListener    { navigateToVerification(subCenterId, "rejected") }
+        binding.cardTotalAshas.setOnClickListener  { navigateToVerification(subCenterId, "") }
         if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            binding.cardAshaUnclaimed.setOnClickListener  { navigateToVerification(0, "unclaimed") }
+            binding.cardAshaUnclaimed.setOnClickListener  { navigateToVerification(subCenterId, "unclaimed") }
 
         }
     }
