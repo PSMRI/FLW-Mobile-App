@@ -447,4 +447,18 @@
         <item>নৱেম্বৰ</item>
         <item>ডিচেম্বৰ</item>
     </string-array>
+
+    <string-array name="maternal_health_past_illness">
+        <item>একো নাই</item>
+        <item>টিবি (যক্ষ্মা ৰোগ)</item>
+        <item>মধুমেহ</item>
+        <item>উচ্চ ৰক্তচাপ</item>
+        <item>হৃদৰোগ</item>
+        <item>মৃগী</item>
+        <item>যৌন সংক্ৰমণ / প্ৰজনন তন্ত্ৰৰ সংক্ৰমণ</item>
+        <item>হেপাটাইটিছ-বি</item>
+        <item>হাঁপানি</item>
+        <item>চিকেল চেল</item>
+        <item>আন কোনো</item>
+    </string-array>
 </resources>
