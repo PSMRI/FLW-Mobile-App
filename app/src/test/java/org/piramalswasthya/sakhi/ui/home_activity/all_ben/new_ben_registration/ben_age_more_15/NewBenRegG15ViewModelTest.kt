@@ -83,8 +83,10 @@ class NewBenRegG15ViewModelTest : BaseViewModelTest() {
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
 
+        val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
+        every { Dispatchers.Default } returns realDefaultDispatcher
 
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -256,5 +258,68 @@ class NewBenRegG15ViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertNotNull(vm.formList)
+    }
+
+    @Test
+    fun `saveForm allocates a beneficiary id for a new draft and marks the save successful`() = runTest {
+        val draftBen = mockk<BenRegCache>(relaxed = true)
+        every { draftBen.beneficiaryId } returns -1L
+        every { draftBen.familyHeadRelationPosition } returns 1
+        every { draftBen.createdDate } returns null
+        every { draftBen.dob } returns 500000000000L
+        every { draftBen.regDate } returns 1650000000000L
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns draftBen
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(NewBenRegG15ViewModel.State.SAVE_SUCCESS, vm.state.value)
+        coVerify { benRepo.substituteBenIdForDraft(draftBen) }
+        coVerify { benRepo.persistRecord(draftBen) }
+    }
+
+    @Test
+    fun `saveForm updates an existing beneficiary without allocating a new draft id`() = runTest {
+        val existingBen = mockk<BenRegCache>(relaxed = true)
+        every { existingBen.beneficiaryId } returns 42L
+        every { existingBen.familyHeadRelationPosition } returns 1
+        every { existingBen.createdDate } returns 1600000000000L
+        every { existingBen.dob } returns 500000000000L
+        every { existingBen.regDate } returns 1650000000000L
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns existingBen
+
+        val vm = buildVm(benId = 42L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(NewBenRegG15ViewModel.State.SAVE_SUCCESS, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.substituteBenIdForDraft(any()) }
+        coVerify { benRepo.persistRecord(existingBen) }
+    }
+
+    @Test
+    fun `saveForm marks the state as failed when persisting the record throws an IllegalAccessError`() = runTest {
+        val existingBen = mockk<BenRegCache>(relaxed = true)
+        every { existingBen.beneficiaryId } returns 42L
+        every { existingBen.familyHeadRelationPosition } returns 1
+        every { existingBen.createdDate } returns 1600000000000L
+        every { existingBen.dob } returns 500000000000L
+        every { existingBen.regDate } returns 1650000000000L
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns existingBen
+        coEvery { benRepo.persistRecord(any()) } throws IllegalAccessError("boom")
+
+        val vm = buildVm(benId = 42L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(NewBenRegG15ViewModel.State.SAVE_FAILED, vm.state.value)
     }
 }

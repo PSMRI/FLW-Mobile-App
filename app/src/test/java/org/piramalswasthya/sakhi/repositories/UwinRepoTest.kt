@@ -453,6 +453,50 @@ class UwinRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `downSyncAndPersist swallows per-image decode failures and leaves uploaded files null`() = runTest {
+        loggedIn()
+        val item = UwinRepo.UwinServerItem(
+            id = 7,
+            ashaId = 42,
+            meetingDate = "2026-01-15",
+            place = "Hall",
+            participants = 4,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(
+                data = UwinRepo.UwinData(entries = listOf(item)),
+                statusCode = 200,
+                status = "OK"
+            )
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        val persisted = slot.captured.single()
+        assertNull(persisted.uploadedFiles1)
+        assertNull(persisted.uploadedFiles2)
+    }
+
+    @Test
+    fun `postUwinSession swallows multipart build failure and still calls api`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 15
+        every { network.uploadedFiles1 } returns "content://provider/1"
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify { uwinDao.updateSyncState(15, SyncState.SYNCED) }
+    }
+
+    @Test
     fun `tryUpsync returns false when a session fails to sync`() = runTest {
         loggedIn()
         val cache = mockk<UwinCache>(relaxed = true)

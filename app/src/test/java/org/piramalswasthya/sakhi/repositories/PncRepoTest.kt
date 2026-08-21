@@ -371,6 +371,56 @@ class PncRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `getPncVisitsFromServer inserts record when not already saved`() = runTest {
+        loggedIn()
+        val innerData = """[{"benId":5,"pncPeriod":1,"isActive":true,"pncDate":"2024-01-01","sterilisationDate":"2024-01-01","motherDeath":false,"createdBy":"asha","createdDate":"2024-01-01","updatedBy":"asha","updatedDate":"2024-01-01"}]"""
+        val json = """{"errorMessage":"","statusCode":200,"data":${org.json.JSONObject.quote(innerData)}}"""
+        coEvery { amritApiService.getPncVisitsData(any()) } returns resp(200, json)
+        coEvery { pncDao.getSavedRecord(5L, 1) } returns null
+        coEvery { pncDao.insert(any()) } returns Unit
+
+        assertEquals(1, repo.getPncVisitsFromServer())
+        coVerify { pncDao.insert(match { it.benId == 5L }) }
+    }
+
+    @Test
+    fun `processPncVisits marks unsynced when server keeps returning 5002`() = runTest {
+        loggedIn()
+        val record = mockk<PNCVisitCache>(relaxed = true)
+        coEvery { pncDao.getAllUnprocessedPncVisits() } returns listOf(record)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { amritApiService.postPncForm(any()) } returns
+            resp(200, """{"statusCode":5002,"errorMessage":""}""")
+
+        assertTrue(repo.processPncVisits())
+        coVerify(atLeast = 1) { pncDao.update(record) }
+        coVerify(exactly = 1) { amritApiService.postPncForm(any()) }
+    }
+
+    @Test
+    fun `processPncVisits marks unsynced on malformed json response`() = runTest {
+        loggedIn()
+        val record = mockk<PNCVisitCache>(relaxed = true)
+        coEvery { pncDao.getAllUnprocessedPncVisits() } returns listOf(record)
+        coEvery { amritApiService.postPncForm(any()) } returns resp(200, "not-json")
+
+        assertTrue(repo.processPncVisits())
+        coVerify(atLeast = 1) { pncDao.update(record) }
+    }
+
+    @Test
+    fun `processPncVisits marks unsynced when network call times out repeatedly`() = runTest {
+        loggedIn()
+        val record = mockk<PNCVisitCache>(relaxed = true)
+        coEvery { pncDao.getAllUnprocessedPncVisits() } returns listOf(record)
+        coEvery { amritApiService.postPncForm(any()) } throws SocketTimeoutException("timeout")
+
+        assertTrue(repo.processPncVisits())
+        coVerify(atLeast = 1) { pncDao.update(record) }
+        coVerify(atLeast = 4) { amritApiService.postPncForm(any()) }
+    }
+
+    @Test
     fun `processPncVisits counts multiple successful uploads`() = runTest {
         loggedIn()
         val r1 = mockk<PNCVisitCache>(relaxed = true)

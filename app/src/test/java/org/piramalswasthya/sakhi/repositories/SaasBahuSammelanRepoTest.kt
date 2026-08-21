@@ -354,6 +354,41 @@ class SaasBahuSammelanRepoTest : BaseRepositoryTest() {
         repo.SaasBahuSamelanGettDataFromServer()
     }
 
+    @Test
+    fun `pushUnSyncedRecords attaches multipart image parts when local record has images`() = runTest {
+        loggedIn()
+        io.mockk.mockkObject(org.piramalswasthya.sakhi.utils.HelperUtil)
+        io.mockk.mockkStatic(android.net.Uri::class)
+        val parsedUri = mockk<android.net.Uri>(relaxed = true)
+        every { android.net.Uri.parse("content://provider/img1") } returns parsedUri
+        every {
+            org.piramalswasthya.sakhi.utils.HelperUtil.getFileName(parsedUri, appContext)
+        } returns "img1.jpg"
+        every { appContext.contentResolver.getType(parsedUri) } returns "image/jpeg"
+        val tempFile = java.io.File.createTempFile("saas_test_", ".jpg")
+        tempFile.writeBytes(byteArrayOf(1, 2, 3))
+        every {
+            org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(parsedUri, "img1.jpg", appContext)
+        } returns tempFile
+
+        val row = mockk<SaasBahuSammelanCache>(relaxed = true)
+        every { row.sammelanImages } returns listOf("content://provider/img1")
+        every { saasBahuDao.getBySyncState(SyncState.UNSYNCED) } returns listOf(row)
+        coEvery {
+            api.postSaasBahuSammelanMultipart(any(), any(), any(), any(), any())
+        } returns sammelanResponse("""{"statusCode":200}""")
+
+        val result = repo.pushUnSyncedRecordsSaasBahuSammelan()
+
+        assertTrue(result)
+        coVerify {
+            api.postSaasBahuSammelanMultipart(
+                any(), any(), any(), any(), match { it.isNotEmpty() }
+            )
+        }
+        tempFile.delete()
+    }
+
     @Test(expected = NullPointerException::class)
     fun `SaasBahuSamelanGettDataFromServer throws when item ashaId is null`() = runTest {
         loggedIn()

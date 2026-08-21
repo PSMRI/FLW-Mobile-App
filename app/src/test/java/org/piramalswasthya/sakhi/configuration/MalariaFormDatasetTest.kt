@@ -543,4 +543,74 @@ class MalariaFormDatasetTest : BaseViewModelTest() {
         assertNotEquals(-1, d.getIndexById(18))
         assertEquals(-1, d.getIndexById(27))
     }
+
+    @Test
+    fun `setUpPage rapid only test type skips dateOfTest when rapid result already resolved`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 1, 0, "opt2", "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(17))
+        assertEquals(-1, d.getIndexById(18))
+    }
+
+    @Test
+    fun `setUpPage slide only test type pf branch skips dateOfSlidetest when pf result resolved`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 2, 1, null, "opt2", "opt2")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(21))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic negative result adds only dateOfTest when test type not both`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.updateList(28, 0) }
+        runCatching { d.setValueById(17, "opt1"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic other result adds only dateOfTest when test type not both`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.updateList(28, 0) }
+        runCatching { d.setValueById(17, "opt0"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `updateBen applies reproductive status and processed flag when genDetails present`() = runTest {
+        val d = ds()
+        val gen = mockk<org.piramalswasthya.sakhi.model.BenRegGen>(relaxed = true)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns gen
+        every { ben.processed } returns "P"
+        d.updateBen(ben)
+        io.mockk.verify { gen.reproductiveStatusId = 2 }
+        io.mockk.verify { ben.processed = "U" }
+    }
+
+    @Test
+    fun `updateBen tolerates null genDetails and keeps a new record unprocessed`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns null
+        every { ben.processed } returns "N"
+        d.updateBen(ben)
+        io.mockk.verify(exactly = 0) { ben.processed = "U" }
+    }
 }

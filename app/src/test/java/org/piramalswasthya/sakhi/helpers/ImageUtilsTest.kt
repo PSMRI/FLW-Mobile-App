@@ -194,4 +194,68 @@ class ImageUtilsTest {
 
         assertNull(result)
     }
+
+    // ===================================================
+    // saveBenImageFromCameraToStorage() - reachable file-guard and
+    // compression-failure branches without a real Bitmap decoder
+    // ===================================================
+
+    @Test
+    fun `saveBenImageFromCameraToStorage returns null when the copied file is empty`() = runTest {
+        val filesDir = Files.createTempDirectory("imageutils-cam-empty-files").toFile().apply { deleteOnExit() }
+        mockkStatic(Uri::class)
+        val uri = mockk<Uri>()
+        every { Uri.parse(any()) } returns uri
+        val resolver = mockk<ContentResolver>(relaxed = true)
+        every { resolver.openInputStream(uri) } returns java.io.ByteArrayInputStream(ByteArray(0))
+        val context = mockk<Context>(relaxed = true)
+        every { context.contentResolver } returns resolver
+        every { context.filesDir } returns filesDir
+
+        val result = ImageUtils.saveBenImageFromCameraToStorage(context, "content://fake", 8L)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `saveBenImageFromCameraToStorage returns null when compression fails to decode the copied image`() = runTest {
+        val filesDir = Files.createTempDirectory("imageutils-cam-files").toFile().apply { deleteOnExit() }
+        val cacheDir = Files.createTempDirectory("imageutils-cam-cache").toFile().apply { deleteOnExit() }
+        mockkStatic(Uri::class)
+        val uri = mockk<Uri>()
+        every { Uri.parse(any()) } returns uri
+        val bytes = "not-a-real-image".toByteArray()
+        val resolver = mockk<ContentResolver>(relaxed = true)
+        every { resolver.openInputStream(uri) } returns java.io.ByteArrayInputStream(bytes)
+        val context = mockk<Context>(relaxed = true)
+        every { context.contentResolver } returns resolver
+        every { context.filesDir } returns filesDir
+        every { context.cacheDir } returns cacheDir
+
+        val result = ImageUtils.saveBenImageFromCameraToStorage(context, "content://fake", 7L)
+
+        assertNull(result)
+    }
+
+    // ===================================================
+    // saveBenImageFromServerToStorage() - compression-failure branch
+    // reached via real file write, without a real Bitmap decoder
+    // ===================================================
+
+    @Test
+    fun `saveBenImageFromServerToStorage returns null when compression fails to decode the written image`() = runTest {
+        val filesDir = Files.createTempDirectory("imageutils-server-files").toFile().apply { deleteOnExit() }
+        val cacheDir = Files.createTempDirectory("imageutils-server-cache").toFile().apply { deleteOnExit() }
+        val context = mockk<Context>(relaxed = true)
+        every { context.filesDir } returns filesDir
+        every { context.cacheDir } returns cacheDir
+
+        mockkStatic(Base64::class)
+        val bytes = "not-a-real-image".toByteArray()
+        every { Base64.decode(any<String>(), any()) } returns bytes
+
+        val result = ImageUtils.saveBenImageFromServerToStorage(context, "encoded", 9L)
+
+        assertNull(result)
+    }
 }

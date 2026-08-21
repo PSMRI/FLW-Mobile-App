@@ -3814,4 +3814,266 @@ class BenRepoTest : BaseRepositoryTest() {
             assertNull(captured?.family?.mohallaName)
             assertNull(captured?.details?.residentialArea)
         }
+
+    // =====================================================
+    // getBenCacheFromServerResponse: reserved debug-id logging
+    // block (benId == 700623622919L) and otherPlaceOfDeath
+    // non-empty branch
+    // =====================================================
+
+    private fun benPullPayloadDebugIdWithOtherPlaceOfDeath(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 700623622919,
+                "houseoldId": 9801,
+                "ashaId": 11,
+                "BenRegId": 7801,
+                "isDeath": true,
+                "dateOfDeath": "Jan 20, 2026 10:00:00 AM",
+                "timeOfDeath": "10:00 AM",
+                "reasonOfDeath": "Illness",
+                "reasonOfDeathId": 2,
+                "placeOfDeath": "Other",
+                "placeOfDeathId": 3,
+                "otherPlaceOfDeath": "Relative's House",
+                "isSpouseAdded": true,
+                "isChildrenAdded": false,
+                "isMarried": true,
+                "doYouHavechildren": true,
+                "noofAlivechildren": 1,
+                "noOfchildren": 1,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {
+                  "gender": "Male",
+                  "genderId": 1,
+                  "age": 30,
+                  "age_unit": "Years",
+                  "dob": "Jan 15, 1996 10:30:00 AM",
+                  "familyHeadRelationPosition": 1,
+                  "latitude": 12.34,
+                  "longitude": 56.78,
+                  "aadha_noId": 0,
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village",
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker logs and maps the reserved debug beneficiary id with a non-empty otherPlaceOfDeath`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: BenRegCache? = null
+            coEvery { benDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<BenRegCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadDebugIdWithOtherPlaceOfDeath())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured)
+            assertEquals(700623622919L, captured?.beneficiaryId)
+            assertEquals("Relative's House", captured?.otherPlaceOfDeath)
+        }
+
+    // =====================================================
+    // getHouseholdCacheFromServerResponse: in-batch dedup via
+    // result.map { it.householdId }.contains(hhId) when two
+    // beneficiaries in the same page share a household id
+    // =====================================================
+
+    private fun benPullPayloadSharedHousehold(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 8001,
+                "houseoldId": 9901,
+                "ashaId": 11,
+                "BenRegId": 7901,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {
+                  "familyHeadName": "Shared Head",
+                  "familyHeadPhoneNo": "9876543211",
+                  "type_bpl_apl": "APL",
+                  "bpl_aplId": 1,
+                  "residentialArea": "Urban",
+                  "residentialAreaId": 1,
+                  "other_residentialArea": "",
+                  "houseType": "Pucca",
+                  "houseTypeId": 1,
+                  "other_houseType": "",
+                  "houseOwnerShip": "Owned",
+                  "houseOwnerShipId": 1,
+                  "seperateKitchen": "Yes",
+                  "seperateKitchenId": 1,
+                  "fuelUsed": "LPG",
+                  "fuelUsedId": 1,
+                  "other_fuelUsed": "",
+                  "sourceofDrinkingWater": "Tap",
+                  "sourceofDrinkingWaterId": 1,
+                  "other_sourceofDrinkingWater": "",
+                  "avalabilityofElectricity": "Yes",
+                  "avalabilityofElectricityId": 1,
+                  "other_avalabilityofElectricity": "",
+                  "availabilityofToilet": "Yes",
+                  "availabilityofToiletId": 1,
+                  "other_availabilityofToilet": "",
+                  "serverUpdatedStatus": 1,
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM",
+                  "isDeactivate": false
+                },
+                "beneficiaryDetails": {
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village"
+                }
+              },
+              {
+                "benficieryid": 8002,
+                "houseoldId": 9901,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {},
+                "beneficiaryDetails": {}
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker creates only one household when two records in the same page share a household id`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns null
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var upsertedHouseholds = -1
+            coEvery { householdDao.upsert(*anyVararg()) } answers {
+                upsertedHouseholds = varargSize(arg<Any?>(0))
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadSharedHousehold())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertEquals(1, upsertedHouseholds)
+        }
+
+    // =====================================================
+    // getHouseholdCacheFromServerResponse: isDeactivate true
+    // branch (has key, value true)
+    // =====================================================
+
+    private fun benPullPayloadHouseholdDeactivated(totalPage: Int = 1): String = """
+        {
+          "statusCode": 200,
+          "errorMessage": "",
+          "data": {
+            "totalPage": $totalPage,
+            "data": [
+              {
+                "benficieryid": 8101,
+                "houseoldId": 9902,
+                "ashaId": 11,
+                "BenRegId": 7902,
+                "abhaHealthDetails": {},
+                "bornbirthDeatils": {},
+                "householdDetails": {
+                  "familyHeadName": "Deactivated Head",
+                  "familyHeadPhoneNo": "9876543212",
+                  "type_bpl_apl": "APL",
+                  "bpl_aplId": 1,
+                  "residentialArea": "Urban",
+                  "residentialAreaId": 1,
+                  "other_residentialArea": "",
+                  "houseType": "Pucca",
+                  "houseTypeId": 1,
+                  "other_houseType": "",
+                  "houseOwnerShip": "Owned",
+                  "houseOwnerShipId": 1,
+                  "seperateKitchen": "Yes",
+                  "seperateKitchenId": 1,
+                  "fuelUsed": "LPG",
+                  "fuelUsedId": 1,
+                  "other_fuelUsed": "",
+                  "sourceofDrinkingWater": "Tap",
+                  "sourceofDrinkingWaterId": 1,
+                  "other_sourceofDrinkingWater": "",
+                  "avalabilityofElectricity": "Yes",
+                  "avalabilityofElectricityId": 1,
+                  "other_avalabilityofElectricity": "",
+                  "availabilityofToilet": "Yes",
+                  "availabilityofToiletId": 1,
+                  "other_availabilityofToilet": "",
+                  "serverUpdatedStatus": 1,
+                  "createdBy": "asha",
+                  "createdDate": "Jan 15, 2026 10:30:00 AM",
+                  "isDeactivate": true
+                },
+                "beneficiaryDetails": {
+                  "stateId": 1, "stateName": "State",
+                  "districtid": 2, "districtname": "District",
+                  "blockId": 3, "blockName": "Block",
+                  "villageId": 4, "villageName": "Village"
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+    @Test
+    fun `getBeneficiariesFromServerForWorker maps household isDeactivate true when server flags it`() =
+        runTest {
+            loggedIn()
+            stubLocationRecord()
+            coEvery { householdDao.getHousehold(any()) } returns null
+            coEvery { benDao.getBen(any(), any()) } returns null
+            var captured: HouseholdCache? = null
+            coEvery { householdDao.upsert(*anyVararg()) } answers {
+                val arg0 = arg<Any?>(0)
+                val list = when (arg0) {
+                    is Array<*> -> arg0.toList()
+                    is Collection<*> -> arg0.toList()
+                    else -> emptyList<Any?>()
+                }
+                captured = list.filterIsInstance<HouseholdCache>().firstOrNull()
+            }
+            coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
+                    jsonResponse(benPullPayloadHouseholdDeactivated())
+
+            assertEquals(1, repo.getBeneficiariesFromServerForWorker(0))
+            assertNotNull(captured)
+            assertTrue(captured?.isDeactivate ?: false)
+        }
 }

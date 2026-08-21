@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac
 
 import android.app.Application
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -12,9 +14,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import org.piramalswasthya.sakhi.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -1125,6 +1129,127 @@ class CbacViewModelTest : BaseViewModelTest() {
         assertEquals(0, cache.cbac_coughing_pos)
         assertEquals(0, cache.cbac_sufferingtb_pos)
         assertEquals(0, cache.cbac_feeling_unsteady_posi)
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // localized resources (dataValid messages / score labels)
+    // ----------------------------------------------------------------------------------------
+
+    private fun mockLocalizedResources(): Resources {
+        val mockResources = mockk<Resources>(relaxed = true)
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        every { context.resources } returns mockResources
+        every { context.createConfigurationContext(any()) } returns context
+        return mockResources
+    }
+
+    @Test
+    fun `raAgeText resolves the localized age bucket label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getStringArray(R.array.cbac_age) } returns
+            arrayOf("Below 30", "30-39", "40-49", "50-59", "60 and above")
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        assertEquals("60 and above", vm.raAgeText.latest())
+    }
+
+    @Test
+    fun `raTotalScore renders the localized total score label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(R.string.total_score_wihout_semi_colon) } returns "Total Score"
+
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setSmoke(1)
+        assertEquals("Total Score: 1", vm.raTotalScore.latest())
+    }
+
+    @Test
+    fun `phq2TotalScore renders the localized total score label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(R.string.total_score_wihout_semi_colon) } returns "Total Score"
+
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setLi(1)
+        vm.setFd(1)
+        assertEquals("Total Score: 2", vm.phq2TotalScore.latest())
+    }
+
+    @Test
+    fun `dataValid resolves a localized message for every mandatory field in turn`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(any<Int>()) } returns "required"
+
+        val fieldMutators = listOf<CbacCache.() -> Unit>(
+            { cbac_age_posi = 0 },
+            { cbac_smoke_posi = 0 },
+            { cbac_alcohol_posi = 0 },
+            { cbac_waist_posi = 0 },
+            { cbac_pa_posi = 0 },
+            { cbac_familyhistory_posi = 0 },
+            { cbac_sufferingtb_pos = 0 },
+            { cbac_antitbdrugs_pos = 0 },
+            { cbac_tbhistory_pos = 0 },
+            { cbac_coughing_pos = 0 },
+            { cbac_bloodsputum_pos = 0 },
+            { cbac_fivermore_pos = 0 },
+            { cbac_loseofweight_pos = 0 },
+            { cbac_nightsweats_pos = 0 },
+            { cbac_uicers_pos = 0 },
+            { cbac_tingling_palm_posi = 0 },
+            { cbac_cloudy_posi = 0 },
+            { cbac_diffreading_posi = 0 },
+            { cbac_pain_ineyes_posi = 0 },
+            { cbac_redness_ineyes_posi = 0 },
+            { cbac_diff_inhearing_posi = 0 },
+            { cbac_sortnesofbirth_pos = 0 },
+            { cbac_historyoffits_pos = 0 },
+            { cbac_difficultyinmouth_pos = 0 },
+            { cbac_growth_in_mouth_posi = 0 },
+            { cbac_toneofvoice_pos = 0 },
+            { cbac_white_or_red_patch_posi = 0 },
+            { cbac_Pain_while_chewing_posi = 0 },
+            { cbac_hyper_pigmented_patch_posi = 0 },
+            { cbac_any_thickend_skin_posi = 0 },
+            { cbac_nodules_on_skin_posi = 0 },
+            { cbac_numbness_on_palm_posi = 0 },
+            { cbac_clawing_of_fingers_posi = 0 },
+            { cbac_tingling_or_numbness_posi = 0 },
+            { cbac_inability_close_eyelid_posi = 0 },
+            { cbac_diff_holding_obj_posi = 0 },
+            { cbac_weekness_in_feet_posi = 0 },
+            { cbac_lumpinbreast_pos = 0 },
+            { cbac_blooddischage_pos = 0 },
+            { cbac_changeinbreast_pos = 0 },
+            { cbac_bleedingbtwnperiods_pos = 0 },
+            { cbac_bleedingaftermenopause_pos = 0 },
+            { cbac_bleedingafterintercourse_pos = 0 },
+            { cbac_foulveginaldischarge_pos = 0 },
+            { cbac_feeling_unsteady_posi = 0 },
+            { cbac_suffer_physical_disability_posi = 0 },
+            { cbac_needing_help_posi = 0 },
+            { cbac_forgetting_names_posi = 0 }
+        )
+
+        for ((index, mutate) in fieldMutators.withIndex()) {
+            val cache = fullCbac().apply(mutate)
+            val vm = editVm(cache)
+            advanceUntilIdle()
+
+            vm.submitForm()
+            advanceUntilIdle()
+
+            assertEquals("field index $index", CbacViewModel.State.MISSING_FIELD, vm.state.value)
+            assertEquals("field index $index", "required", vm.missingFieldString)
+        }
     }
 
     private companion object {

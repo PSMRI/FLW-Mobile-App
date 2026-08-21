@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -43,6 +44,7 @@ class VHNCViewModelTest : BaseViewModelTest() {
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }; every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { vlfRepo.getVHNC(any()) } returns null
+        every { vlfRepo.vhncList } returns flowOf(emptyList())
     }
 
     private fun buildVm(): VHNCViewModel = VHNCViewModel(savedStateHandle, preferenceDao, context, vlfRepo)

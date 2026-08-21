@@ -17,6 +17,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
@@ -28,6 +30,7 @@ import org.piramalswasthya.sakhi.model.MaaMeetingGetAllResponse
 import org.piramalswasthya.sakhi.model.MaaMeetingServerItem
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -455,7 +458,17 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
             MaaMeetingGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
         )
         val slot = io.mockk.slot<MaaMeetingEntity>()
-        every { dao.insert(capture(slot)) } returns 1L
+        every {
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = capture(slot),
+                serverId = any(),
+                meetingDate = any(),
+                place = any(),
+                participants = any(),
+                ashaId = any(),
+                villageName = any()
+            )
+        } returns Unit
 
         repo.downSyncAndPersist()
 
@@ -468,6 +481,89 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
         assertEquals(42, persisted.ashaId)
         assertTrue(persisted.meetingImages.isNullOrEmpty())
         assertEquals(SyncState.SYNCED, persisted.syncState)
+    }
+
+    @Test
+    fun `downSyncAndPersist swallows per-image decode failures and leaves images empty`() = runTest {
+        loggedInUser()
+        every { pref.getLastSyncedTimeStamp() } returns 0L
+        val item = MaaMeetingServerItem(
+            id = 15,
+            meetingDate = "15-01-2026",
+            place = "Community Hall",
+            mitaninActivityCheckList = null,
+            noOfLactingMother = null,
+            noOfPragnentWoment = null,
+            villageName = "Village A",
+            participants = 10,
+            ashaId = 42,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { api.getMaaMeetings(any()) } returns successfulMeetingsResponse("{}")
+        stubParsedMeetingsResponse(
+            MaaMeetingGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
+        )
+        val slot = io.mockk.slot<MaaMeetingEntity>()
+        every {
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = capture(slot),
+                serverId = any(),
+                meetingDate = any(),
+                place = any(),
+                participants = any(),
+                ashaId = any(),
+                villageName = any()
+            )
+        } returns Unit
+
+        repo.downSyncAndPersist()
+
+        assertTrue(slot.captured.meetingImages.isNullOrEmpty())
+    }
+
+    @Test
+    fun `tryUpsync attaches multipart image parts when local record has images`() = runTest {
+        loggedInUser(userId = 9)
+        mockkObject(HelperUtil)
+        mockkStatic(android.net.Uri::class)
+        val parsedUri = mockk<android.net.Uri>(relaxed = true)
+        every { android.net.Uri.parse("content://provider/img1") } returns parsedUri
+        every { HelperUtil.getFileName(parsedUri, appContext) } returns "img1.jpg"
+        every { appContext.contentResolver.getType(parsedUri) } returns "image/jpeg"
+        val tempFile = java.io.File.createTempFile("maa_test_", ".jpg")
+        tempFile.writeBytes(byteArrayOf(1, 2, 3))
+        every { HelperUtil.compressImageToTemp(parsedUri, "img1.jpg", appContext) } returns tempFile
+
+        val row = MaaMeetingEntity(
+            id = 60L,
+            meetingDate = "01-05-2026",
+            place = "Hall",
+            participants = 2,
+            mitaninActivityCheckList = null,
+            villageName = "V60",
+            noOfPragnentWomen = "1",
+            noOfLactingMother = "1",
+            ashaId = 9,
+            meetingImages = listOf("content://provider/img1"),
+            syncState = SyncState.UNSYNCED
+        )
+        every { dao.getBySyncState(SyncState.UNSYNCED) } returns listOf(row)
+
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns true
+        coEvery {
+            api.postMaaMeetingMultipart(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns response
+
+        repo.tryUpsync()
+
+        coVerify(exactly = 1) {
+            api.postMaaMeetingMultipart(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(),
+                match { it.isNotEmpty() }
+            )
+        }
+        tempFile.delete()
     }
 
     @Test
@@ -491,6 +587,16 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
 
         repo.downSyncAndPersist()
 
-        verify(exactly = 2) { dao.insert(any()) }
+        verify(exactly = 2) {
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = any(),
+                serverId = any(),
+                meetingDate = any(),
+                place = any(),
+                participants = any(),
+                ashaId = any(),
+                villageName = any()
+            )
+        }
     }
 }

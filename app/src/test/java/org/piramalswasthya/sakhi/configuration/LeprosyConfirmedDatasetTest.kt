@@ -12,17 +12,24 @@ import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LeprosyConfirmedDatasetTest : BaseViewModelTest() {
@@ -153,7 +160,9 @@ class LeprosyConfirmedDatasetTest : BaseViewModelTest() {
         followUpDate: Long = DAY_MS * 19100,
         treatmentStartDate: Long = DAY_MS * 19000,
         leprosyStatus: String? = "opt2",
-        referToName: String? = "opt3"
+        referToName: String? = "opt3",
+        symptomsPosition: Int? = 0,
+        visitLabel: String? = "Visit -2"
     ) = LeprosyFollowUpCache(
         benId = 11L,
         visitNumber = 2,
@@ -167,8 +176,8 @@ class LeprosyConfirmedDatasetTest : BaseViewModelTest() {
         homeVisitDate = DAY_MS * 18990,
         leprosySymptoms = "opt0",
         typeOfLeprosy = "opt1",
-        leprosySymptomsPosition = 0,
-        visitLabel = "Visit -2",
+        leprosySymptomsPosition = symptomsPosition,
+        visitLabel = visitLabel,
         leprosyStatus = leprosyStatus,
         referToName = referToName,
         treatmentStartDate = treatmentStartDate
@@ -493,6 +502,186 @@ class LeprosyConfirmedDatasetTest : BaseViewModelTest() {
         every { benNotProcessed.processed } returns "N"
         ds.updateBen(benNotProcessed)
         assertNotNull(ds.listFlow)
+    }
+
+    private fun element(ds: LeprosyConfirmedDataset, id: Int): FormElement =
+        ds.listFlow.value.first { it.id == id }
+
+    private fun asFormDate(millis: Long): String =
+        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(millis))
+
+    private fun monthsFromNow(months: Int): Long =
+        Calendar.getInstance().apply { add(Calendar.MONTH, months) }.timeInMillis
+
+    @Test
+    fun `a follow up recorded this month blocks the next one and reports availability`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(), followUp(followUpDate = System.currentTimeMillis()))
+        assertFalse(element(ds, 12).isEnabled)
+        val message = ds.getNextFollowUpAvailabilityMessage()
+        assertNotNull(message)
+        assertTrue(message!!.startsWith("Next follow-up will be available from"))
+    }
+
+    @Test
+    fun `a follow up recorded last month re-opens the date picker`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(), followUp(followUpDate = monthsFromNow(-1)))
+        assertTrue(element(ds, 12).isEnabled)
+        assertNull(ds.getNextFollowUpAvailabilityMessage())
+    }
+
+    private fun currentYear(): Int = Calendar.getInstance().get(Calendar.YEAR)
+
+    private fun marchFirstThisYear(): Long = Calendar.getInstance().apply {
+        set(Calendar.YEAR, currentYear())
+        set(Calendar.MONTH, Calendar.MARCH)
+        set(Calendar.DAY_OF_MONTH, 1)
+        set(Calendar.HOUR_OF_DAY, 12)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    @Test
+    fun `treatment status stays on the pre completion list while treatment is running`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(
+            null,
+            screening(treatmentStartDate = marchFirstThisYear(), typeOfLeprosy = "opt1"),
+            null
+        )
+        assertEquals("01-09-${currentYear()}", element(ds, 21).value)
+        ds.setValueById(12, "01-02-${currentYear()}")
+        ds.updateList(12, 0)
+        val status = element(ds, 19)
+        assertEquals(R.array.leprosy_treatment_status_before_time, status.arrayId)
+        assertEquals("", status.value)
+    }
+
+    @Test
+    fun `treatment status switches to the completion list once the expected end month is reached`() =
+        runTest {
+            val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+            ds.setUpPage(
+                null,
+                screening(treatmentStartDate = marchFirstThisYear(), typeOfLeprosy = "opt1"),
+                null
+            )
+            ds.setValueById(12, "01-10-${currentYear()}")
+            ds.updateList(12, 0)
+            assertEquals(R.array.leprosy_treatment_status, element(ds, 19).arrayId)
+        }
+
+    @Test
+    fun `treatment status list is left alone when either date is missing`() = runTest {
+        val noFollowUpDate = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        noFollowUpDate.setUpPage(null, screening(), null)
+        noFollowUpDate.updateList(12, 0)
+        assertEquals(
+            R.array.leprosy_treatment_status_before_time,
+            element(noFollowUpDate, 19).arrayId
+        )
+
+        val noEstimation = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        noEstimation.setUpPage(null, screening(treatmentStartDate = 0L), null)
+        noEstimation.setValueById(12, "15-06-2025")
+        noEstimation.updateList(12, 0)
+        assertEquals(R.array.leprosy_treatment_status_before_time, element(noEstimation, 19).arrayId)
+    }
+
+    @Test
+    fun `a blank type of leprosy clears the expected completion date`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(treatmentStartDate = 0L), null)
+        ds.setValueById(16, "   ")
+        ds.setValueById(17, "01-01-2025")
+        ds.updateList(17, 0)
+        assertEquals("", element(ds, 21).value)
+    }
+
+    @Test
+    fun `saved screening with an unparsable visit label and out of range symptoms`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(
+            null,
+            screening(visitLabel = "Visit -abc", symptomsPosition = 200),
+            null
+        )
+        assertEquals("opt1", element(ds, 14).value)
+    }
+
+    @Test
+    fun `follow up page defaults a missing symptom position and visit label`() = runTest {
+        val nullPosition = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        nullPosition.setUpPage(
+            null,
+            followUp(symptomsPosition = null, visitLabel = "Visit -abc")
+        )
+        assertEquals("opt1", element(nullPosition, 14).value)
+
+        val outOfRange = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        outOfRange.setUpPage(null, followUp(symptomsPosition = 200, visitLabel = null))
+        assertEquals("opt1", element(outOfRange, 14).value)
+    }
+
+    @Test
+    fun `a follow up without a stored screening still builds the page`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, null, followUp())
+        assertEquals(10, ds.listFlow.value.size)
+        assertNotNull(element(ds, 15).value)
+    }
+
+    @Test
+    fun `updateBen tolerates a beneficiary without general details`() {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns null
+        every { ben.processed } returns "P"
+        ds.updateBen(ben)
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `validateForm surfaces the follow up date validation error`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(), null)
+        ds.setValueById(12, asFormDate(System.currentTimeMillis() + DAY_MS * 30))
+        assertEquals("Follow-up date cannot be in the future", ds.validateForm())
+    }
+
+    @Test
+    fun `validateForm accepts an in progress treatment status without an end date`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(), null)
+        ds.setValueById(12, "15-06-2025")
+        ds.updateList(12, 0)
+        ds.setValueById(19, "opt5")
+        assertNull(ds.validateForm())
+    }
+
+    @Test
+    fun `rebuilding the dropdown keeps a selection that is still valid`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screening(), null)
+        ds.setValueById(12, "15-06-2025")
+        ds.updateList(12, 0)
+        ds.setValueById(19, "opt5")
+        ds.updateList(12, 0)
+        assertEquals("opt5", element(ds, 19).value)
+    }
+
+    @Test
+    fun `three arg page falls back to the follow up treatment start date`() = runTest {
+        val ds = LeprosyConfirmedDataset(context, Languages.ENGLISH)
+        ds.setUpPage(
+            null,
+            screening(treatmentStartDate = 0L),
+            followUp(treatmentStartDate = DAY_MS * 19000)
+        )
+        assertNotNull(element(ds, 17).value)
+        assertEquals(10, ds.listFlow.value.size)
     }
 
     companion object {

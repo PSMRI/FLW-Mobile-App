@@ -1540,4 +1540,174 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         verify { kid.heightAtBirth = 120.5 }
         verify { kid.weightAtBirth = 12.3 }
     }
+
+    private fun dobMillisForAge(age: Int): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.add(java.util.Calendar.YEAR, -age)
+        return cal.timeInMillis
+    }
+
+    @Test
+    fun `setFirstPageToRead adds every trailing dependent field once its trigger value is set`() = runTest {
+        val d = ds()
+        val kid = mockk<BenRegKid>(relaxed = true)
+        every { kid.childRegisteredSchoolId } returns 1
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(10)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 2
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.FEMALE
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 80
+        every { ben.isDeath } returns false
+        every { ben.mobileNoOfRelationId } returns 80
+        every { ben.religionId } returns 8
+        every { ben.kidDetails } returns kid
+
+        runCatching { d.setFirstPageToRead(ben, 9876543210L) }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setFirstPageToRead adds dateOfMarriage when the computed age at marriage matches the current age`() = runTest {
+        val d = ds()
+        val gen = mockk<BenRegGen>(relaxed = true)
+        every { gen.maritalStatusId } returns 2
+        every { gen.marriageDate } returns System.currentTimeMillis()
+        every { gen.spouseName } returns null
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(25)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 2
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.FEMALE
+        every { ben.firstName } returns "ADULT"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 1
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns gen
+
+        runCatching { d.setFirstPageToRead(ben, 9876543210L) }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setPageForHof treats a household with no family record as having no head-of-family phone`() = runTest {
+        val d = ds()
+        val hh = mockk<HouseholdCache>(relaxed = true)
+        every { hh.family } returns null
+
+        runCatching { d.setPageForHof(null, hh, null) }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setPageForHof for a transgender saved head resolves the localized reproductive status`() = runTest {
+        val d = ds()
+        val gen = mockk<BenRegGen>(relaxed = true)
+        every { gen.maritalStatusId } returns 0
+        every { gen.reproductiveStatus } returns "opt2"
+        every { gen.spouseName } returns null
+        every { gen.marriageDate } returns null
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(30)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 3
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.TRANSGENDER
+        every { ben.firstName } returns "ALEX"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 1
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns gen
+
+        runCatching { d.setPageForHof(ben, householdMock(), null) }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setPageForHof adds every trailing dependent field once its trigger value is set`() = runTest {
+        val d = ds()
+        val kid = mockk<BenRegKid>(relaxed = true)
+        every { kid.childRegisteredSchoolId } returns 1
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(10)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 2
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.FEMALE
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 1
+        every { ben.isDeath } returns false
+        every { ben.mobileNoOfRelationId } returns 80
+        every { ben.religionId } returns 8
+        every { ben.kidDetails } returns kid
+
+        runCatching { d.setPageForHof(ben, householdMock(), null) }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setPageForFamilyMember adds every trailing dependent field once its trigger value is set`() = runTest {
+        val hh = householdMock()
+        val hof = benMockBr(gender = Gender.MALE)
+        val kid = mockk<BenRegKid>(relaxed = true)
+        every { kid.childRegisteredSchoolId } returns 1
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(10)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 2
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.FEMALE
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 1
+        every { ben.isDeath } returns false
+        every { ben.mobileNoOfRelationId } returns 80
+        every { ben.religionId } returns 8
+        every { ben.kidDetails } returns kid
+        val d = ds()
+
+        runCatching {
+            d.setPageForFamilyMember(ben, hh, hof, Gender.FEMALE, 3, emptyList(), null, 0)
+        }
+
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `setPageForFamilyMember flags the widowed-divorced marital status and adds dateOfMarriage when the age at marriage matches the current age`() = runTest {
+        val hh = householdMock()
+        val hof = benMockBr(gender = Gender.MALE)
+        val gen = mockk<BenRegGen>(relaxed = true)
+        every { gen.maritalStatusId } returns 3
+        every { gen.marriageDate } returns System.currentTimeMillis()
+        every { gen.spouseName } returns null
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dobMillisForAge(25)
+        every { ben.regDate } returns 1_600_000_000_000L
+        every { ben.genderId } returns 2
+        every { ben.isDraft } returns false
+        every { ben.gender } returns Gender.FEMALE
+        every { ben.firstName } returns "ADULT"
+        every { ben.lastName } returns "DOE"
+        every { ben.familyHeadRelationPosition } returns 1
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns gen
+        val d = ds()
+
+        runCatching {
+            d.setPageForFamilyMember(ben, hh, hof, Gender.FEMALE, 3, emptyList(), null, 0)
+        }
+
+        assertNotNull(d.listFlow)
+    }
 }

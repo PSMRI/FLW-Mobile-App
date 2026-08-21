@@ -19,6 +19,7 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -32,6 +33,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -41,6 +43,8 @@ import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.HouseholdFamily
+import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
@@ -109,9 +113,10 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
 
+        val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
-        every { Dispatchers.Default } returns testDispatcher
+        every { Dispatchers.Default } returns realDefaultDispatcher
 
         mockkStatic(Uri::class)
         every { Uri.parse(any()) } returns mockk(relaxed = true)
@@ -354,6 +359,69 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `setUpPage fails re-registration when the saved beneficiary cannot be found`() = runTest {
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns null
+
+        val vm = buildVm(benId = 5L)
+        vm.setRecordExist(false)
+        advanceUntilIdle()
+
+        assertEquals(NewBenRegViewModel.State.SAVE_FAILED, vm.state.value)
+    }
+
+    @Test
+    fun `setUpPage backfills a kid's blank last name from the household family`() = runTest {
+        every { ben.isKid } returns true
+        every { ben.lastName } returns null
+        val family = mockk<HouseholdFamily>(relaxed = true)
+        every { family.familyName } returns "Sharma"
+        every { household.family } returns family
+
+        val vm = buildVm(benId = 5L)
+        advanceUntilIdle()
+
+        verify { ben.lastName = "Sharma" }
+        assertNotNull(vm.formList)
+    }
+
+    @Test
+    fun `setUpPage leaves a non-blank last name untouched even for a kid`() = runTest {
+        every { ben.isKid } returns true
+        every { ben.lastName } returns "Lal"
+
+        val vm = buildVm(benId = 5L)
+        advanceUntilIdle()
+
+        verify(exactly = 0) { ben.lastName = any() }
+        assertNotNull(vm.formList)
+    }
+
+    @Test
+    fun `setUpPage exposes the beneficiary's isDeath flag as alive when false`() = runTest {
+        every { ben.isDeath } returns false
+
+        val vm = buildVm(benId = 5L)
+        advanceUntilIdle()
+
+        assertEquals(false, vm.isDeath.value)
+    }
+
+    @Test
+    fun `setUpPage falls back to the male head of family when no wife is on record`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.MALE, 1))
+        coEvery { ecrRepo.getSavedRecord(any()) } returns null
+
+        val vm = buildVm(relToHeadId = 8)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.getSavedRecord(100L) }
+    }
+
+    @Test
     fun `setUpPage re-registers a head of family whose record was reset`() = runTest {
         val vm = buildVm(relToHeadId = 18, benId = 5L)
         vm.setRecordExist(false)
@@ -547,6 +615,224 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
     }
 
+    @Test
+    fun `saveForm keeps the existing beneficiary record without creating a new one`() = runTest {
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.getMinBenId() }
+        coVerify { benRepo.persistRecord(ben) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm updates the mother record when the head of family is female`() = runTest {
+        every { ben.gender } returns Gender.FEMALE
+
+        val vm = buildVm(relToHeadId = 18, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { benRepo.updateMotherInChildren(any(), any(), any(), SyncState.UNSYNCED) }
+        coVerify { benRepo.updateBabyName(any(), any(), any(), SyncState.UNSYNCED) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+
+    @Test
+    fun `saveForm preserves an already-set created date`() = runTest {
+        every { ben.createdDate } returns 5_000_000L
+
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { benRepo.persistRecord(ben) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fails cleanly when persisting the beneficiary throws`() = runTest {
+        coEvery { benRepo.persistRecord(any()) } throws IllegalAccessError("disk full")
+
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(NewBenRegViewModel.State.SAVE_FAILED, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot three`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 8)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot four`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 9)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot five`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 8)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot six`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 9)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot seven`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns 6L
+        every { ecr.dob7 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 8)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot eight`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns 6L
+        every { ecr.dob7 } returns 7L
+        every { ecr.dob8 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 9)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm assigns an eligible-couple child to slot nine explicitly`() = runTest {
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns
+                listOf(familyMemberBen(100L, Gender.FEMALE, 1))
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns 6L
+        every { ecr.dob7 } returns 7L
+        every { ecr.dob8 } returns 8L
+        every { ecr.dob9 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm(relToHeadId = 8)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
 
     @Test
     fun `consent flag round trips`() {
@@ -704,5 +990,192 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         assertEquals(true, vm.recordExists.value)
         vm.setRecordExist(false)
         assertEquals(false, vm.recordExists.value)
+    }
+
+    @Test
+    fun `saveForm marks the household unsynced when the beneficiary is the wife`() = runTest {
+        every { ben.familyHeadRelationPosition } returns 5
+
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm marks the household unsynced when the beneficiary is the husband`() = runTest {
+        every { ben.familyHeadRelationPosition } returns 6
+
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED) }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm updates the wife's marriage age when the head of family is married`() = runTest {
+        val genDetails = BenRegGen()
+        genDetails.maritalStatusId = 2
+        genDetails.marriageDate = 946684800000L
+        genDetails.ageAtMarriage = 22
+        every { ben.genDetails } returns genDetails
+
+        val vm = buildVm(relToHeadId = 18, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify {
+            benRepo.updateMarriageAgeOfWife(946684800000L, 22, ben.householdId, any(), SyncState.UNSYNCED)
+        }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm updates the husband's marriage age when a non head of family is married`() = runTest {
+        val genDetails = BenRegGen()
+        genDetails.maritalStatusId = 2
+        genDetails.marriageDate = 946684800000L
+        genDetails.ageAtMarriage = 25
+        every { ben.genDetails } returns genDetails
+
+        val vm = buildVm(relToHeadId = 3, benId = 5L)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify {
+            benRepo.updateMarriageAgeOfHusband(946684800000L, 25, ben.householdId, any(), SyncState.UNSYNCED)
+        }
+        assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `getFormPreviewData renders an image element as an image preview item`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.IMAGE_VIEW
+        element.value = "content://media/image1"
+        element.title = "Photo"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "Photo" }
+        assertTrue(item.isImage)
+        assertEquals("", item.value)
+    }
+
+    @Test
+    fun `getFormPreviewData swallows a bad uri on an image element`() = runTest {
+        every { Uri.parse(any()) } throws IllegalArgumentException("bad uri")
+
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.IMAGE_VIEW
+        element.value = "not a uri"
+        element.title = "BadPhoto"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "BadPhoto" }
+        assertTrue(item.isImage)
+        assertNull(item.imageUri)
+    }
+
+    @Test
+    fun `getFormPreviewData renders a null value as a dash`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.EDIT_TEXT
+        element.value = null
+        element.title = "NullField"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "NullField" }
+        assertEquals("-", item.value)
+        assertFalse(item.isImage)
+    }
+
+    @Test
+    fun `getFormPreviewData renders a blank value as a dash`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.EDIT_TEXT
+        element.value = "   "
+        element.title = "BlankField"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "BlankField" }
+        assertEquals("-", item.value)
+    }
+
+    @Test
+    fun `getFormPreviewData joins comma separated values with a space`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.EDIT_TEXT
+        element.value = "Cough,Fever, Cold"
+        element.title = "Symptoms"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "Symptoms" }
+        assertEquals("Cough, Fever, Cold", item.value)
+    }
+
+    @Test
+    fun `getFormPreviewData truncates a value longer than 400 characters`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.EDIT_TEXT
+        element.value = "a".repeat(450)
+        element.title = "LongField"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "LongField" }
+        assertEquals(401, item.value.length)
+        assertTrue(item.value.endsWith("…"))
+    }
+
+    @Test
+    fun `getFormPreviewData renders a plain short value as is`() = runTest {
+        val vm = buildVm()
+        advanceUntilIdle()
+        val element = vm.formList.value.first()
+        element.inputType = InputType.EDIT_TEXT
+        element.value = "Ramesh"
+        element.title = "NameField"
+
+        unmockkStatic(Dispatchers::class)
+        val preview = vm.getFormPreviewData()
+
+        val item = preview.first { it.label == "NameField" }
+        assertEquals("Ramesh", item.value)
+        assertFalse(item.isImage)
     }
 }

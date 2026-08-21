@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
+import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -319,6 +320,89 @@ class MdsrRepoTest : BaseRepositoryTest() {
 
         assertTrue(result)
         verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced when server keeps returning 5002`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        val json = """{"statusCode":5002,"errorMessage":""}"""
+        coEvery { amritApiService.postMdsrForm(any()) } returns jsonResponse(json)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(exactly = 1) { amritApiService.postMdsrForm(any()) }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced on malformed json response`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        coEvery { amritApiService.postMdsrForm(any()) } returns jsonResponse("not-json")
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced when network call times out repeatedly`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        coEvery { amritApiService.postMdsrForm(any()) } throws SocketTimeoutException("timeout")
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(atLeast = 4) { amritApiService.postMdsrForm(any()) }
+    }
+
+    // =====================================================
+    // getMdsrFromServer() -> saveMdsrCacheFromResponse() branch coverage
+    // =====================================================
+
+    @Test
+    fun `getMdsrFromServer inserts new mdsr entries not already cached`() = runTest {
+        loggedIn()
+        val dataJson = """[{"benId":10}]"""
+        val outerJson = """{"statusCode":200,"errorMessage":"","data":${Gson().toJson(dataJson)}}"""
+        coEvery { amritApiService.getMdsrData(any()) } returns jsonResponse(outerJson)
+        coEvery { mdsrDao.getMDSR(10L) } returns null
+        coEvery { mdsrDao.upsert(any()) } returns Unit
+
+        val result = repo.getMdsrFromServer()
+
+        assertEquals(1, result)
+        coVerify { mdsrDao.upsert(match { it.benId == 10L }) }
+    }
+
+    @Test
+    fun `getMdsrFromServer skips mdsr entries already cached locally`() = runTest {
+        loggedIn()
+        val dataJson = """[{"benId":10}]"""
+        val outerJson = """{"statusCode":200,"errorMessage":"","data":${Gson().toJson(dataJson)}}"""
+        coEvery { amritApiService.getMdsrData(any()) } returns jsonResponse(outerJson)
+        val existing = mockk<MDSRCache>(relaxed = true)
+        coEvery { mdsrDao.getMDSR(10L) } returns existing
+
+        val result = repo.getMdsrFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { mdsrDao.upsert(any()) }
     }
 
 }

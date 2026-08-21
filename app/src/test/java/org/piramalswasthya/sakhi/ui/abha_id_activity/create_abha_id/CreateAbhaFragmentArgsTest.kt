@@ -122,4 +122,160 @@ class CreateAbhaFragmentArgsTest {
         every { anyConstructed<Bundle>().putString(any(), any()) } returns Unit
         assertNotNull(args().toBundle())
     }
+
+    @Test
+    fun fromBundle_throws_whenNameMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("name") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenNameIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenPhrAddressMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("phrAddress") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenPhrAddressIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        every { bundle.getString("phrAddress") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaNumberMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("abhaNumber") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        every { bundle.getString("phrAddress") } returns "v3"
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaNumberIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        every { bundle.getString("phrAddress") } returns "v3"
+        every { bundle.getString("abhaNumber") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaResponseMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("abhaResponse") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        every { bundle.getString("phrAddress") } returns "v3"
+        every { bundle.getString("abhaNumber") } returns "v4"
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaResponseIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("name") } returns "v2"
+        every { bundle.getString("phrAddress") } returns "v3"
+        every { bundle.getString("abhaNumber") } returns "v4"
+        every { bundle.getString("abhaResponse") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenNameMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1"))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenNameIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhrAddressMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2"))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhrAddressIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2", "phrAddress" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaNumberMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2", "phrAddress" to "v3"))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaNumberIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2", "phrAddress" to "v3", "abhaNumber" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaResponseMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2", "phrAddress" to "v3", "abhaNumber" to "v4"))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaResponseIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "name" to "v2", "phrAddress" to "v3", "abhaNumber" to "v4", "abhaResponse" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            CreateAbhaFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
 }

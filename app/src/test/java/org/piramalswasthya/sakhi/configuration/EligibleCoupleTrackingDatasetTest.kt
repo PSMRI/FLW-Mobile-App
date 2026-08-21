@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -518,5 +519,22 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         val sizeBefore = ds.listFlow.value.size
         ds.updateList(2, 0)
         assertEquals(sizeBefore, ds.listFlow.value.size)
+    }
+
+    @Test
+    fun `antraDoseValue noOfChildrens lastDose and lastDateofDose properties are readable and writable`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.antraDoseValue = "Dose-5"
+        assertEquals("Dose-5", ds.antraDoseValue)
+        ds.noOfChildrens = 4
+        assertEquals(4, ds.noOfChildrens)
+        ds.lastDose = "Dose-2"
+        assertEquals("Dose-2", ds.lastDose)
+        ds.lastDateofDose = "01-01-2023"
+        assertEquals("01-01-2023", ds.lastDateofDose)
+        ds.lastDose = null
+        assertNull(ds.lastDose)
+        ds.lastDateofDose = null
+        assertNull(ds.lastDateofDose)
     }
 }

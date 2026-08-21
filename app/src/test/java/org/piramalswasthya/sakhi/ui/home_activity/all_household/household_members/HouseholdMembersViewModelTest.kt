@@ -18,7 +18,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.repositories.BenRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -186,5 +190,122 @@ class HouseholdMembersViewModelTest : BaseViewModelTest() {
 
         val result = viewModel.canDeleteHoF(1L)
         assertFalse(result)
+    }
+
+    // =====================================================
+    // deActivateBeneficiary() Tests
+    // =====================================================
+
+    private fun locationRecord(): LocationRecord {
+        val entity = LocationEntity(id = 1, name = "test")
+        return LocationRecord(
+            country = entity, state = entity, district = entity, block = entity, village = entity
+        )
+    }
+
+    private fun benBasicDomain(benId: Long = 1L, hhId: Long = 1L, isDeactivate: Boolean = false) =
+        BenBasicDomain(
+            benId = benId,
+            hhId = hhId,
+            reproductiveStatusId = 0,
+            regDate = "01-01-2026",
+            benName = "Test",
+            gender = "Female",
+            dob = System.currentTimeMillis() - 1000L,
+            relToHeadId = 1,
+            mobileNo = "9999999999",
+            familyHeadName = "Head",
+            syncState = SyncState.SYNCED,
+            isConsent = true,
+            isSpouseAdded = false,
+            isChildrenAdded = false,
+            isMarried = false,
+            isDeactivate = isDeactivate
+        )
+
+    private fun benRegCache(processed: String? = "N", isDeactivate: Boolean = false) = BenRegCache(
+        householdId = 1L,
+        beneficiaryId = 1L,
+        isDeath = false,
+        reasonOfDeathId = 0,
+        placeOfDeathId = 0,
+        ashaId = 1,
+        isKid = false,
+        isAdult = true,
+        locationRecord = locationRecord(),
+        syncState = SyncState.SYNCED,
+        isDraft = false,
+        processed = processed,
+        isDeactivate = isDeactivate
+    )
+
+    @Test
+    fun `deActivateBeneficiary does nothing to repo when benRegCache not found`() = runTest {
+        val domain = benBasicDomain(benId = 10L, isDeactivate = false)
+        coEvery { benRepo.getBenFromId(10L) } returns null
+
+        viewModel.deActivateBeneficiary(domain)
+        advanceUntilIdle()
+
+        assertTrue(domain.isDeactivate)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+        coVerify(exactly = 0) { benRepo.deactivateBeneficiary(any()) }
+    }
+
+    @Test
+    fun `deActivateBeneficiary updates record without touching sync state when processed is N`() = runTest {
+        val domain = benBasicDomain(benId = 11L, isDeactivate = false)
+        val cache = benRegCache(processed = "N", isDeactivate = false)
+        coEvery { benRepo.getBenFromId(11L) } returns cache
+        coEvery { benRepo.deactivateBeneficiary(any()) } returns true
+
+        viewModel.deActivateBeneficiary(domain)
+        advanceUntilIdle()
+
+        assertTrue(domain.isDeactivate)
+        assertTrue(cache.isDeactivate)
+        assertEquals("N", cache.processed)
+        assertEquals(SyncState.SYNCED, cache.syncState)
+        assertEquals(0, cache.serverUpdatedStatus)
+        coVerify(exactly = 1) { benRepo.updateRecord(cache) }
+        coVerify(exactly = 1) { benRepo.deactivateBeneficiary(listOf(cache)) }
+    }
+
+    @Test
+    fun `deActivateBeneficiary marks record unsynced and bumps status when processed is not N`() = runTest {
+        val domain = benBasicDomain(benId = 12L, isDeactivate = false)
+        val cache = benRegCache(processed = "P", isDeactivate = false)
+        coEvery { benRepo.getBenFromId(12L) } returns cache
+        coEvery { benRepo.deactivateBeneficiary(any()) } returns true
+
+        viewModel.deActivateBeneficiary(domain)
+        advanceUntilIdle()
+
+        assertTrue(domain.isDeactivate)
+        assertTrue(cache.isDeactivate)
+        assertEquals("U", cache.processed)
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+        assertEquals(2, cache.serverUpdatedStatus)
+        coVerify(exactly = 1) { benRepo.updateRecord(cache) }
+        coVerify(exactly = 1) { benRepo.deactivateBeneficiary(listOf(cache)) }
+    }
+
+    @Test
+    fun `deActivateBeneficiary toggles an already-deactivated beneficiary back to active`() = runTest {
+        val domain = benBasicDomain(benId = 13L, isDeactivate = true)
+        val cache = benRegCache(processed = null, isDeactivate = true)
+        coEvery { benRepo.getBenFromId(13L) } returns cache
+        coEvery { benRepo.deactivateBeneficiary(any()) } returns false
+
+        viewModel.deActivateBeneficiary(domain)
+        advanceUntilIdle()
+
+        assertFalse(domain.isDeactivate)
+        assertFalse(cache.isDeactivate)
+        assertEquals("U", cache.processed)
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+        assertEquals(2, cache.serverUpdatedStatus)
+        coVerify(exactly = 1) { benRepo.updateRecord(cache) }
+        coVerify(exactly = 1) { benRepo.deactivateBeneficiary(listOf(cache)) }
     }
 }

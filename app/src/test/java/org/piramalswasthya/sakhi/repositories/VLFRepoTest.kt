@@ -1801,4 +1801,504 @@ class VLFRepoTest : BaseRepositoryTest() {
 
         coVerify(exactly = 0) { dbDao.saveRecord(cache) }
     }
+
+    // =====================================================
+    // ORS / Pulse Polio upload photo handling
+    // =====================================================
+
+    private fun campaignFormData(photos: Any, key: String = "campaign_photos"): String =
+        JSONObject().put("fields", JSONObject().put(key, photos)).toString()
+
+    private fun orsCache(formDataJson: String?): ORSCampaignCache =
+        ORSCampaignCache(id = 500, formDataJson = formDataJson, syncState = SyncState.UNSYNCED)
+
+    private fun ppCache(formDataJson: String?): PulsePolioCampaignCache =
+        PulsePolioCampaignCache(id = 501, formDataJson = formDataJson, syncState = SyncState.UNSYNCED)
+
+    @Test
+    fun `saveORSCampaignToServer attaches photos listed in an encoded json array`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.saveORSCampaignToServer(
+                orsCache(campaignFormData(JSONArray().put(file.absolutePath).toString()))
+            )
+        )
+
+        coVerify { api.saveORSCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer attaches photos listed in a json array field`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.saveORSCampaignToServer(orsCache(campaignFormData(JSONArray().put(file.absolutePath))))
+        )
+
+        coVerify { api.saveORSCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer reads photos from the camelCase field name`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.saveORSCampaignToServer(
+                orsCache(campaignFormData(JSONArray().put(file.absolutePath), key = "campaignPhotos"))
+            )
+        )
+
+        coVerify { api.saveORSCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer skips a photo string that is not a json array`() = runTest {
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveORSCampaignToServer(orsCache(campaignFormData("no-such-photo.jpg"))))
+
+        coVerify { api.saveORSCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer skips a data uri it cannot decode`() = runTest {
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.saveORSCampaignToServer(orsCache(campaignFormData("data:image/jpeg;base64,QUJD")))
+        )
+
+        coVerify { api.saveORSCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer skips a content uri it cannot resolve`() = runTest {
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.saveORSCampaignToServer(
+                orsCache(campaignFormData("content://media/external/images/9"))
+            )
+        )
+
+        coVerify { api.saveORSCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer sends only the form when fields are absent`() = runTest {
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveORSCampaignToServer(orsCache("""{"other":1}""")))
+
+        coVerify { api.saveORSCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer sends only the form when the payload is not json`() = runTest {
+        coEvery { api.saveORSCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.saveORSCampaignToServer(orsCache("not-json-at-all")))
+
+        coVerify { api.saveORSCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `saveORSCampaignToServer returns false when the upload throws`() = runTest {
+        val cache = orsCache(null)
+        coEvery { api.saveORSCampaignData(any()) } throws RuntimeException("network down")
+
+        assertFalse(repo.saveORSCampaignToServer(cache))
+
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer attaches photos listed in an encoded json array`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(
+                ppCache(campaignFormData(JSONArray().put(file.absolutePath).toString()))
+            )
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer attaches photos listed in a json array field`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(
+                ppCache(campaignFormData(JSONArray().put(file.absolutePath)))
+            )
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer reads photos from the camelCase field name`() = runTest {
+        val file = tempPhoto()
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(
+                ppCache(campaignFormData(JSONArray().put(file.absolutePath), key = "campaignPhotos"))
+            )
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 2 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer skips a photo string that is not a json array`() = runTest {
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(ppCache(campaignFormData("no-such-photo.jpg")))
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer skips a data uri it cannot decode`() = runTest {
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(
+                ppCache(campaignFormData("data:image/jpeg;base64,QUJD"))
+            )
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer skips a content uri it cannot resolve`() = runTest {
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(
+            repo.savePulsePolioCampaignToServer(
+                ppCache(campaignFormData("content://media/external/images/8"))
+            )
+        )
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer sends only the form when fields are absent`() = runTest {
+        coEvery { api.savePulsePolioCampaignData(any()) } returns uploadResponse(true)
+
+        assertTrue(repo.savePulsePolioCampaignToServer(ppCache("""{"other":1}""")))
+
+        coVerify { api.savePulsePolioCampaignData(match { it.size == 1 }) }
+    }
+
+    @Test
+    fun `savePulsePolioCampaignToServer returns false when the upload throws`() = runTest {
+        val cache = ppCache(null)
+        coEvery { api.savePulsePolioCampaignData(any()) } throws RuntimeException("network down")
+
+        assertFalse(repo.savePulsePolioCampaignToServer(cache))
+
+        assertEquals(SyncState.UNSYNCED, cache.syncState)
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    // =====================================================
+    // campaign pull: unexpected data shapes and null bodies
+    // =====================================================
+
+    private fun nullBodyResponse(code: Int = 200): Response<ResponseBody> {
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.code() } returns code
+        every { response.body() } returns null
+        return response
+    }
+
+    @Test
+    fun `getORSCampaignFromServer returns 0 when the data node is absent`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns jsonResponse("""{"statusCode":200}""")
+
+        assertEquals(0, repo.getORSCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<ORSCampaignCache>()) }
+    }
+
+    @Test
+    fun `getORSCampaignFromServer returns 0 when the data node is a number`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns jsonResponse("""{"statusCode":200,"data":7}""")
+
+        assertEquals(0, repo.getORSCampaignFromServer())
+    }
+
+    @Test
+    fun `getORSCampaignFromServer returns -1 when the body is null`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns nullBodyResponse()
+
+        assertEquals(-1, repo.getORSCampaignFromServer())
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer returns 0 when the data node is absent`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns jsonResponse("""{"statusCode":200}""")
+
+        assertEquals(0, repo.getPulsePolioCampaignFromServer())
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer returns 0 when the data node is a number`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":7}""")
+
+        assertEquals(0, repo.getPulsePolioCampaignFromServer())
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer returns -1 on unexpected status`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns jsonResponse("""{"statusCode":9999}""")
+
+        assertEquals(-1, repo.getPulsePolioCampaignFromServer())
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer returns -1 when the body is null`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns nullBodyResponse()
+
+        assertEquals(-1, repo.getPulsePolioCampaignFromServer())
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer returns 0 when the data node is absent`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns jsonResponse("""{"statusCode":200}""")
+
+        assertEquals(0, repo.getFilariaMdaCampaignFromServer())
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer returns 0 when the data node is a number`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns
+                jsonResponse("""{"statusCode":200,"data":7}""")
+
+        assertEquals(0, repo.getFilariaMdaCampaignFromServer())
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer saves nothing for a stringified primitive`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns
+                jsonResponse("""{"statusCode":200,"data":"5"}""")
+
+        assertEquals(1, repo.getFilariaMdaCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<FilariaMDACampaignFormResponseJsonEntity>()) }
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer returns 0 when the data string is not json`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns
+                jsonResponse("""{"statusCode":200,"data":"{oops"}""")
+
+        assertEquals(0, repo.getFilariaMdaCampaignFromServer())
+    }
+
+    @Test
+    fun `getFilariaMdaCampaignFromServer returns -1 when the body is null`() = runTest {
+        loggedIn()
+        coEvery { api.getFilariaMdaCampaign() } returns nullBodyResponse()
+
+        assertEquals(-1, repo.getFilariaMdaCampaignFromServer())
+    }
+
+    // =====================================================
+    // saveORSCampaignFromServer / savePulsePolioCampaignFromServer skip branches
+    // =====================================================
+
+    @Test
+    fun `getORSCampaignFromServer skips an entry whose id is zero`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[{"id":0,"fields":{"a":1}}]}""")
+
+        assertEquals(1, repo.getORSCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<ORSCampaignCache>()) }
+    }
+
+    @Test
+    fun `getORSCampaignFromServer skips an entry with neither fields nor formDataJson`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[{"id":61}]}""")
+
+        assertEquals(1, repo.getORSCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<ORSCampaignCache>()) }
+    }
+
+    @Test
+    fun `getORSCampaignFromServer keeps going when one entry is not an object`() = runTest {
+        loggedIn()
+        coEvery { api.getORSCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[5,{"id":62,"fields":{"a":1}}]}""")
+        coEvery { dbDao.getORSCampaign(62) } returns null
+
+        assertEquals(1, repo.getORSCampaignFromServer())
+
+        coVerify(exactly = 1) { dbDao.saveRecord(any<ORSCampaignCache>()) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer skips an entry whose id is zero`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[{"id":0,"fields":{"a":1}}]}""")
+
+        assertEquals(1, repo.getPulsePolioCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<PulsePolioCampaignCache>()) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer skips an entry with no fields node`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[{"id":63}]}""")
+
+        assertEquals(1, repo.getPulsePolioCampaignFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<PulsePolioCampaignCache>()) }
+    }
+
+    @Test
+    fun `getPulsePolioCampaignFromServer keeps going when one entry is not an object`() = runTest {
+        loggedIn()
+        coEvery { api.getPulsePolioCampaignData() } returns
+                jsonResponse("""{"statusCode":200,"data":[5,{"id":64,"fields":{"a":1}}]}""")
+        coEvery { dbDao.getPulsePolioCampaign(64) } returns null
+
+        assertEquals(1, repo.getPulsePolioCampaignFromServer())
+
+        coVerify(exactly = 1) { dbDao.saveRecord(any<PulsePolioCampaignCache>()) }
+    }
+
+    // =====================================================
+    // remaining push chunk branches
+    // =====================================================
+
+    @Test
+    fun `pushUnSyncedRecords catches an exception during a VHND chunk push`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } throws RuntimeException("network down")
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords skips VHND chunk update when response body is null`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveVHNDData(any()) } returns nullBodyResponse()
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords skips PHC chunk update when response body is null`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<PHCReviewMeetingCache>(relaxed = true)
+        every { dbDao.getPHC(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.savePHCData(any()) } returns nullBodyResponse()
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords skips Deworming chunk update when response body is null`() = runTest {
+        loggedIn()
+        stubNothingUnsynced()
+        val cache = mockk<DewormingCache>(relaxed = true)
+        coEvery { dbDao.getDeworming(SyncState.UNSYNCED) } returns listOf(cache)
+        coEvery { api.saveDewormingData(any()) } returns nullBodyResponse()
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(cache) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords returns true when every unsynced list is null`() = runTest {
+        loggedIn()
+        every { dbDao.getVHND(SyncState.UNSYNCED) } returns null
+        every { dbDao.getVHNC(SyncState.UNSYNCED) } returns null
+        every { dbDao.getPHC(SyncState.UNSYNCED) } returns null
+        coEvery { dbDao.getAHD(SyncState.UNSYNCED) } returns null
+        coEvery { dbDao.getDeworming(SyncState.UNSYNCED) } returns null
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { api.saveVHNDData(any()) }
+    }
+
+    // =====================================================
+    // exposed list flows map dao rows through their converters
+    // =====================================================
+
+    @Test
+    fun `exposed list flows map every dao row`() = runTest {
+        every { vlfDao.getAllVHND() } returns flowOf(listOf(mockk<VHNDCache>(relaxed = true)))
+        every { vlfDao.getAllVHNC() } returns flowOf(listOf(mockk<VHNCCache>(relaxed = true)))
+        every { vlfDao.getAllPHC() } returns
+                flowOf(listOf(mockk<PHCReviewMeetingCache>(relaxed = true)))
+        every { vlfDao.getAllAHD() } returns flowOf(listOf(mockk<AHDCache>(relaxed = true)))
+        every { vlfDao.getAllDeworming() } returns
+                flowOf(listOf(mockk<DewormingCache>(relaxed = true)))
+        every { vlfDao.getAllPulsePolioCampaign() } returns
+                flowOf(listOf(mockk<PulsePolioCampaignCache>(relaxed = true)))
+        every { vlfDao.getAllORSCampaign() } returns
+                flowOf(listOf(mockk<ORSCampaignCache>(relaxed = true)))
+
+        val fresh = VLFRepo(database, userRepo, preferenceDao, api, vlfDao, appContext)
+
+        assertEquals(1, fresh.vhndList.first().size)
+        assertEquals(1, fresh.vhncList.first().size)
+        assertEquals(1, fresh.phcList.first().size)
+        assertEquals(1, fresh.ahdList.first().size)
+        assertEquals(1, fresh.dewormingList.first().size)
+        assertEquals(1, fresh.pulsePolioCampaignList.first().size)
+        assertEquals(1, fresh.orsCampaignList.first().size)
+    }
 }

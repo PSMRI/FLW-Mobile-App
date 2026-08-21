@@ -8,9 +8,14 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -337,5 +342,85 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { d.updateList(88888, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `lmp updateList without a registration date skips the week of pregnancy calculation`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val weekIdx = d.getIndexOfWeeksPregnancy()
+        d.setValueById(7, "01-01-2023")
+        d.updateList(7, 0)
+        if (weekIdx >= 0) {
+            assertNull(d.listFlow.value[weekIdx].value)
+        }
+        val eddIdx = d.getIndexOfEdd()
+        assertTrue(eddIdx >= 0)
+        assertNotNull(d.listFlow.value[eddIdx].value)
+    }
+
+    @Test
+    fun `height at or below 139 flags a short stature reading`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "100")
+        d.updateList(12, 0)
+        assertTrue(d.isHighRisk())
+    }
+
+    @Test
+    fun `height above 139 does not flag a short stature reading`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "170")
+        d.updateList(12, 0)
+        assertFalse(d.isHighRisk())
+    }
+
+    @Test
+    fun `pastIllness selecting a middle option leaves other illness hidden`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, "5")
+        d.updateList(19, 5)
+        assertEquals(-1, d.getIndexById(20))
+        assertEquals("5", d.listFlow.value.first { it.id == 19 }.value)
+    }
+
+    @Test
+    fun `pastIllness selecting none clears the value back to zero`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, "3")
+        d.updateList(19, 3)
+        d.updateList(19, 0)
+        assertEquals("0", d.listFlow.value.first { it.id == 19 }.value)
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    @Test
+    fun `mapValueToBenRegId flags an existing beneficiary as high risk`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "100")
+        d.updateList(12, 0)
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "N"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.isHrpStatus = true }
+    }
+
+    @Test
+    fun `mapValueToBenRegId reports no update for a low risk unchanged beneficiary`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        val updated = d.mapValueToBenRegId(benCache)
+        assertFalse(updated)
     }
 }

@@ -8,16 +8,23 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenWithCbacCache
+import org.piramalswasthya.sakhi.model.CbacCache
+import org.piramalswasthya.sakhi.model.BenBasicCache
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -176,5 +183,83 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
         viewModel.yearsList(    context = context)
         val years = viewModel.yearsList(    context = context)
         assertEquals(11, years.size)
+    }
+
+    private fun benCache(benId: Long, ageInt: Int, screened: Boolean): BenWithCbacCache {
+        val domain = mockk<BenBasicDomain>(relaxed = true)
+        every { domain.benId } returns benId
+        every { domain.ageInt } returns ageInt
+        val ben = mockk<BenBasicCache>(relaxed = true)
+        every { ben.asBasicDomainModel() } returns domain
+        val cbacRecords = if (screened) listOf(CbacCache(benId = benId, ashaId = 1, syncState = SyncState.SYNCED)) else emptyList()
+        return BenWithCbacCache(ben = ben, savedCbacRecords = cbacRecords)
+    }
+
+    @Test
+    fun `benList returns all matching beneficiaries when category is ALL`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true), benCache(2L, 50, screened = false))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+
+        val list = vm.benList.first()
+
+        assertEquals(2, list.size)
+    }
+
+    @Test
+    fun `benList filters to only screened beneficiaries`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true), benCache(2L, 50, screened = false))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+        vm.setSelectedCategory("Screened")
+        advanceUntilIdle()
+
+        val list = vm.benList.first()
+
+        assertEquals(1, list.size)
+        assertEquals(1L, list[0].ben.benId)
+    }
+
+    @Test
+    fun `benList filters to only not-screened beneficiaries`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true), benCache(2L, 50, screened = false))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+        vm.setSelectedCategory("Not Screened")
+        advanceUntilIdle()
+
+        val list = vm.benList.first()
+
+        assertEquals(1, list.size)
+        assertEquals(2L, list[0].ben.benId)
+    }
+
+    @Test
+    fun `benList applies the selected age band`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true), benCache(2L, 60, screened = true))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+        vm.setSelectedYear(vm.yearForPosition(2))
+        advanceUntilIdle()
+
+        val list = vm.benList.first()
+
+        assertEquals(1, list.size)
+        assertEquals(1L, list[0].ben.benId)
+    }
+
+    @Test
+    fun `yearForPosition returns null for position zero`() {
+        assertEquals(null, viewModel.yearForPosition(0))
+    }
+
+    @Test
+    fun `yearForPosition returns the expected age band start`() {
+        assertEquals(35, viewModel.yearForPosition(1))
+        assertEquals(80, viewModel.yearForPosition(10))
     }
 }

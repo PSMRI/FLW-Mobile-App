@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.ABHAGeneratedDTO
@@ -172,6 +173,177 @@ class MiscModelMappingTest {
         assertEquals("s2", cache.blockMOSign)
         assertEquals("N", cache.processed)
         assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
+    // =====================================================
+    // getMonth() / getYear() / getDays()
+    // =====================================================
+
+    @Test fun `getMonth returns a two digit value`() {
+        assertTrue(getMonth().matches(Regex("\\d{2}")))
+    }
+
+    @Test fun `getYear returns a four digit value`() {
+        assertTrue(getYear().matches(Regex("\\d{4}")))
+    }
+
+    @Test fun `getDays returns a two digit value`() {
+        assertTrue(getDays().matches(Regex("\\d{2}")))
+    }
+
+    // =====================================================
+    // List<BenWithAncDoPncCache>.filterMdsr()
+    // =====================================================
+
+    private fun mdsrBen(benId: Long = 1L) = BenBasicCache(
+        benId = benId,
+        hhId = 2L,
+        regDate = 1_600_000_000_000L,
+        benName = "Jane",
+        benSurname = "Doe",
+        gender = Gender.FEMALE,
+        dob = 500_000_000_000L,
+        relToHeadId = 1,
+        mobileNo = 9998887776L,
+        fatherName = "Bob",
+        motherName = "Mary",
+        familyHeadName = "Head",
+        spouseName = null,
+        rchId = "RCH1",
+        hrpStatus = false,
+        syncState = SyncState.SYNCED,
+        reproductiveStatusId = 2,
+        lastMenstrualPeriod = null,
+        isKid = false,
+        immunizationStatus = false,
+        villageId = 5,
+        abhaId = "abha1",
+        isNewAbha = true,
+        cbacFilled = false,
+        cbacSyncState = SyncState.SYNCED,
+        cdrFilled = false,
+        cdrSyncState = SyncState.SYNCED,
+        mdsrFilled = false,
+        mdsrSyncState = SyncState.SYNCED,
+        pmsmaSyncState = SyncState.SYNCED,
+        pmsmaFilled = false,
+        hbncFilled = false,
+        hbycFilled = false,
+        pwrFilled = false,
+        pwrSyncState = SyncState.SYNCED,
+        doSyncState = SyncState.SYNCED,
+        irSyncState = SyncState.SYNCED,
+        crSyncState = SyncState.SYNCED,
+        ecrFilled = false,
+        ectFilled = false,
+        tbsnFilled = false,
+        tbsnSyncState = SyncState.SYNCED,
+        tbspFilled = false,
+        tbspSyncState = SyncState.SYNCED,
+        hrppaFilled = false,
+        hrpnpaFilled = false,
+        hrpmbpFilled = false,
+        hrptFilled = false,
+        hrptrackingDone = false,
+        hrnptrackingDone = false,
+        hrnptFilled = false,
+        hrppaSyncState = SyncState.SYNCED,
+        hrpnpaSyncState = SyncState.SYNCED,
+        hrpmbpSyncState = SyncState.SYNCED,
+        hrptSyncState = SyncState.SYNCED,
+        hrnptSyncState = SyncState.SYNCED,
+        isDelivered = false,
+        pwHrp = false,
+        irFilled = false,
+        isMdsr = false,
+        crFilled = false,
+        doFilled = false,
+        isConsent = true,
+        isSpouseAdded = false,
+        isChildrenAdded = false,
+        isMarried = false
+    )
+
+    private fun mdsrDeliveryOutcome(complication: String? = null) = DeliveryOutcomeCache(
+        benId = 1L,
+        isActive = true,
+        complication = complication,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun mdsrPnc(motherDeath: Boolean = false) = PNCVisitCache(
+        benId = 1L,
+        pncPeriod = 1,
+        isActive = true,
+        motherDeath = motherDeath,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun mdsrAnc(maternalDeath: Boolean? = null) = PregnantWomanAncCache(
+        benId = 1L,
+        visitNumber = 1,
+        maternalDeath = maternalDeath,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED,
+        frontFilePath = null,
+        backFilePath = null
+    )
+
+    @Test fun `filterMdsr keeps a record whose anc reports a maternal death`() {
+        val record = BenWithAncDoPncCache(
+            ben = mdsrBen(),
+            anc = listOf(mdsrAnc(maternalDeath = true)),
+            deliveryOutcome = listOf(mdsrDeliveryOutcome()),
+            pnc = listOf(mdsrPnc())
+        )
+
+        val result = listOf(record).filterMdsr()
+
+        assertEquals(1, result.size)
+    }
+
+    @Test fun `filterMdsr keeps a record whose delivery outcome complication is DEATH`() {
+        val record = BenWithAncDoPncCache(
+            ben = mdsrBen(),
+            anc = listOf(mdsrAnc()),
+            deliveryOutcome = listOf(mdsrDeliveryOutcome(complication = "DEATH")),
+            pnc = listOf(mdsrPnc())
+        )
+
+        val result = listOf(record).filterMdsr()
+
+        assertEquals(1, result.size)
+    }
+
+    @Test fun `filterMdsr keeps a record whose pnc reports a mother death`() {
+        val record = BenWithAncDoPncCache(
+            ben = mdsrBen(),
+            anc = listOf(mdsrAnc()),
+            deliveryOutcome = listOf(mdsrDeliveryOutcome()),
+            pnc = listOf(mdsrPnc(motherDeath = true))
+        )
+
+        val result = listOf(record).filterMdsr()
+
+        assertEquals(1, result.size)
+    }
+
+    @Test fun `filterMdsr drops a record with no death indicators`() {
+        val record = BenWithAncDoPncCache(
+            ben = mdsrBen(),
+            anc = listOf(mdsrAnc()),
+            deliveryOutcome = listOf(mdsrDeliveryOutcome()),
+            pnc = listOf(mdsrPnc())
+        )
+
+        val result = listOf(record).filterMdsr()
+
+        assertTrue(result.isEmpty())
     }
 
     // =====================================================

@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -10,11 +11,141 @@ import org.piramalswasthya.sakhi.database.room.SyncState
  * Tests for the pure mapper functions in InfantReg.kt:
  *  - InfantRegCache.asPostModel()
  *  - InfantRegPost.toCacheModel()
+ *  - BenWithDoAndIrCache.asBasicDomainModel()
  *
- * Skipped: BenWithDoAndIrCache.asBasicDomainModel() and InfantRegWithBen
- * mappers (require BenBasicCache + DeliveryOutcome graphs).
+ * Skipped: InfantRegWithBen mappers (require a BenBasicCache graph beyond what
+ * BenWithDoAndIrCache already exercises).
  */
 class InfantRegMappingTest {
+
+    private fun irBen(benId: Long = 1L) = BenBasicCache(
+        benId = benId,
+        hhId = 2L,
+        regDate = 1_600_000_000_000L,
+        benName = "Jane",
+        benSurname = "Doe",
+        gender = Gender.FEMALE,
+        dob = 500_000_000_000L,
+        relToHeadId = 1,
+        mobileNo = 9998887776L,
+        fatherName = "Bob",
+        motherName = "Mary",
+        familyHeadName = "Head",
+        spouseName = null,
+        rchId = "RCH1",
+        hrpStatus = false,
+        syncState = SyncState.SYNCED,
+        reproductiveStatusId = 2,
+        lastMenstrualPeriod = null,
+        isKid = false,
+        immunizationStatus = false,
+        villageId = 5,
+        abhaId = "abha1",
+        isNewAbha = true,
+        cbacFilled = false,
+        cbacSyncState = SyncState.SYNCED,
+        cdrFilled = false,
+        cdrSyncState = SyncState.SYNCED,
+        mdsrFilled = false,
+        mdsrSyncState = SyncState.SYNCED,
+        pmsmaSyncState = SyncState.SYNCED,
+        pmsmaFilled = false,
+        hbncFilled = false,
+        hbycFilled = false,
+        pwrFilled = false,
+        pwrSyncState = SyncState.SYNCED,
+        doSyncState = SyncState.SYNCED,
+        irSyncState = SyncState.SYNCED,
+        crSyncState = SyncState.SYNCED,
+        ecrFilled = false,
+        ectFilled = false,
+        tbsnFilled = false,
+        tbsnSyncState = SyncState.SYNCED,
+        tbspFilled = false,
+        tbspSyncState = SyncState.SYNCED,
+        hrppaFilled = false,
+        hrpnpaFilled = false,
+        hrpmbpFilled = false,
+        hrptFilled = false,
+        hrptrackingDone = false,
+        hrnptrackingDone = false,
+        hrnptFilled = false,
+        hrppaSyncState = SyncState.SYNCED,
+        hrpnpaSyncState = SyncState.SYNCED,
+        hrpmbpSyncState = SyncState.SYNCED,
+        hrptSyncState = SyncState.SYNCED,
+        hrnptSyncState = SyncState.SYNCED,
+        isDelivered = false,
+        pwHrp = false,
+        irFilled = false,
+        isMdsr = false,
+        crFilled = false,
+        doFilled = false,
+        isConsent = true,
+        isSpouseAdded = false,
+        isChildrenAdded = false,
+        isMarried = false
+    )
+
+    private fun irDeliveryOutcome(liveBirth: Int?) = DeliveryOutcomeCache(
+        benId = 1L,
+        isActive = true,
+        liveBirth = liveBirth,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun irSavedInfant(babyIndex: Int) = InfantRegCache(
+        motherBenId = 1L,
+        isActive = true,
+        babyIndex = babyIndex,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED
+    )
+
+    @Test
+    fun `BenWithDoAndIrCache asBasicDomainModel returns one domain per live birth including unsaved infants`() {
+        val record = BenWithDoAndIrCache(
+            ben = irBen(),
+            deliveryOutcomeCache = listOf(irDeliveryOutcome(liveBirth = 2)),
+            savedIrRecords = listOf(irSavedInfant(babyIndex = 0))
+        )
+
+        val domains = record.asBasicDomainModel(onlySavedInfants = false)
+
+        assertEquals(2, domains.size)
+        assertNotNull(domains[0].savedIr)
+        assertNull(domains[1].savedIr)
+    }
+
+    @Test
+    fun `BenWithDoAndIrCache asBasicDomainModel skips unsaved infants when onlySavedInfants is true`() {
+        val record = BenWithDoAndIrCache(
+            ben = irBen(),
+            deliveryOutcomeCache = listOf(irDeliveryOutcome(liveBirth = 2)),
+            savedIrRecords = listOf(irSavedInfant(babyIndex = 0))
+        )
+
+        val domains = record.asBasicDomainModel(onlySavedInfants = true)
+
+        assertEquals(1, domains.size)
+        assertEquals(0, domains[0].babyIndex)
+    }
+
+    @Test
+    fun `BenWithDoAndIrCache asBasicDomainModel returns empty list when liveBirth is zero`() {
+        val record = BenWithDoAndIrCache(
+            ben = irBen(),
+            deliveryOutcomeCache = listOf(irDeliveryOutcome(liveBirth = 0)),
+            savedIrRecords = emptyList()
+        )
+
+        val domains = record.asBasicDomainModel(onlySavedInfants = false)
+
+        assertTrue(domains.isEmpty())
+    }
 
     // ---------------------------------------------------------------
     // InfantRegCache.asPostModel()

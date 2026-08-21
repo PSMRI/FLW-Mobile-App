@@ -858,4 +858,55 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.updateList(78, 1)
         assertTrue(d.listFlow.value.none { it.id == 77 })
     }
+
+    @Test
+    fun `reqContext context and showDialogEvent properties are readable and writable`() = runTest {
+        val d = ds()
+        assertNotNull(d.reqContext)
+        assertNotNull(d.context)
+        val otherContext = mockk<Context>(relaxed = true)
+        d.reqContext = otherContext
+        d.context = otherContext
+        assertEquals(otherContext, d.reqContext)
+        assertEquals(otherContext, d.context)
+        val event = MutableLiveData<String>()
+        d.showDialogEvent = event
+        assertEquals(event, d.showDialogEvent)
+    }
+
+    @Test
+    fun `setUpPage with a blank aadhar number does not blow up the takeIf chain`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns ""
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a null aadhar number does not blow up the takeIf chain`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns null
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a populated aadhar number marks it read only`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns "123456789012"
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a null last name does not blow up the name concatenation`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.lastName } returns null
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
 }

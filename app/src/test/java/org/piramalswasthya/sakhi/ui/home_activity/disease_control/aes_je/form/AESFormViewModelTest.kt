@@ -5,10 +5,12 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,6 +31,7 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.repositories.AESRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
@@ -57,8 +60,10 @@ class AESFormViewModelTest : BaseViewModelTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         every { Log.w(any(), any<String>()) } returns 0
+        val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
+        every { Dispatchers.Default } returns realDefaultDispatcher
 
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -66,6 +71,7 @@ class AESFormViewModelTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns ""
 
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
+        every { context.resources } returns mockResources
         coEvery { benRepo.getBenFromId(any()) } returns null
         coEvery { aesRepo.getAESScreening(any()) } returns null
         viewModel = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
@@ -213,5 +219,76 @@ class AESFormViewModelTest : BaseViewModelTest() {
     fun `getIndexOfDate returns a value without throwing`() {
         val index = viewModel.getIndexOfDate()
         assertNotNull(index)
+    }
+
+    @Test
+    fun `saveForm on non death record saves screening and sets SAVE_SUCCESS`() = runTest {
+        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Alive")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        coVerify { aesRepo.saveAESScreening(any()) }
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
+    @Test
+    fun `saveForm on death record with processed N keeps processed as N`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status) } returns arrayOf("Alive", "Death")
+        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache().copy(processed = "N")
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertEquals("N", benRecord.processed)
+    }
+
+    @Test
+    fun `saveForm on death record when maternal ben not found still saves screening`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status) } returns arrayOf("Alive", "Death")
+        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns null
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+        coVerify { aesRepo.saveAESScreening(any()) }
+    }
+
+    @Test
+    fun `saveForm sets SAVE_FAILED when saving screening throws`() = runTest {
+        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Alive")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+        coEvery { aesRepo.saveAESScreening(any()) } throws RuntimeException("db error")
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_FAILED, vm.state.value)
     }
 }
