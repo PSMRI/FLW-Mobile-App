@@ -116,6 +116,9 @@ class IncentiveDashboardFragment : Fragment() {
             binding.tvVerifiedSubtitle.visibility = View.VISIBLE
             binding.tvPendingSubtitle.visibility = View.VISIBLE
             binding.tvRejectedSubtitle.visibility = View.VISIBLE
+            binding.cardOverdue.visibility = View.VISIBLE
+            params.marginEnd = 0.dpToPx(requireContext())
+
             binding.tvAshaUnclaimedSubtitle.visibility = View.VISIBLE
             binding.tvOverdueSubtitle.text = getString(R.string.past_verify_by_12th)
 
@@ -336,10 +339,9 @@ class IncentiveDashboardFragment : Fragment() {
         binding.cardOverdue.setOnClickListener     { navigateToVerification(subCenterId, "overdue") }
         binding.cardRejected.setOnClickListener    { navigateToVerification(subCenterId, "rejected") }
         binding.cardTotalAshas.setOnClickListener  { navigateToVerification(subCenterId, "") }
-        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            binding.cardAshaUnclaimed.setOnClickListener  { navigateToVerification(subCenterId, "unclaimed") }
+        binding.cardAshaUnclaimed.setOnClickListener  { navigateToVerification(subCenterId, "unclaimed") }
 
-        }
+
     }
 
     private fun navigateToVerification(facilityId: Int, status: String) {
