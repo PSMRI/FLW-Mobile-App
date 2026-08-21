@@ -433,7 +433,6 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
     val hrpTrackingNonPregListCount = benDao.getAllHRPTrackingNonPregListCount(selectedVillage)
 
 
-    val lowWeightBabiesCount = benDao.getLowWeightBabiesCount(selectedVillage)
 
     fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
         .map { list -> list.map { it.asPwrDomainModel() } }
@@ -547,6 +546,10 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         .map { list -> list.flatMap { it.asBasicDomainModel(true) } }
 
     fun getInfantRegisterCount() = benDao.getInfantRegisterCount(selectedVillage)
+
+    val lowWeightBabiesCount =  getListForLowWeightInfantReg()
+        .map { it.size }
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val hrpCount = maternalHealthDao.getAllPregnancyAssessRecords().transformLatest { it ->

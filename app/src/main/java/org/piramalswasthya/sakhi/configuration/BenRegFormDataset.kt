@@ -713,6 +713,14 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                             resources.getString(R.string.dd_ag)
                         }
                     }
+                    6-> {
+                        if (saved.isMarried) {
+                            reproductiveStatus.entries?.lastOrNull()
+
+                        } else {
+                            ""
+                        }
+                    }
                     else -> reproductiveStatus.getStringFromPosition(statusId)
                 }
             }
