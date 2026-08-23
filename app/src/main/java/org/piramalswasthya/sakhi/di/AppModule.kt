@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
@@ -440,6 +441,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideBadgeDao(database: InAppDb): BadgeDao = database.badgeDao
+
+    @Singleton
+    @Provides
+    fun provideEveningNotifDao(database: InAppDb): EveningNotifDao = database.eveningNotifDao
 
     // Badges module (LLD §4.2): rides the existing authenticated client with
     // its token insert + 401 refresh behaviour.

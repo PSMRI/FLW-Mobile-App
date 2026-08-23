@@ -1,9 +1,19 @@
 package org.piramalswasthya.sakhi.badges.domain
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
@@ -25,7 +35,8 @@ class BadgeEvaluator @Inject constructor(
     private val badgeDao: BadgeDao,
     private val facts: BadgeFactsReader,
     private val streakEngine: StreakEngine,
-    private val pref: PreferenceDao
+    private val pref: PreferenceDao,
+    @ApplicationContext private val context: Context
 ) {
 
     private val mutex = Mutex()
@@ -66,9 +77,71 @@ class BadgeEvaluator @Inject constructor(
             }
 
             badgeDao.upsertStates(states)
-            if (earned.isNotEmpty()) badgeDao.insertEarned(earned)
+            if (earned.isNotEmpty()) {
+                // skip celebration on the first-ever evaluation (historical backfill)
+                val hadEarnedBefore = badgeDao.getEarned(userId).isNotEmpty()
+                val insertedIds = badgeDao.insertEarned(earned)
+                if (hadEarnedBefore) {
+                    insertedIds.zip(earned)
+                        .firstOrNull { it.first != -1L }
+                        ?.let { celebrate(it.second) }
+                }
+            }
             Timber.d("Badges: evaluated ${states.size} badges, ${earned.size} candidate awards")
         }
+    }
+
+    /** Daytime celebration when a new milestone unlocks (checkAndUnlock). */
+    private fun celebrate(newRow: BadgeEarnedCache) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            ) return
+            val def = BadgeDefinitions.byId(newRow.badgeId) ?: return
+            val name = pref.getLoggedInUser()?.name ?: ""
+            val body = context.getString(
+                R.string.badge_unlock_notification, name, context.getString(def.titleRes)
+            )
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                manager.createNotificationChannel(
+                    NotificationChannel(
+                        CELEBRATION_CHANNEL_ID,
+                        context.getString(R.string.badge_shelf_title),
+                        NotificationManager.IMPORTANCE_DEFAULT
+                    )
+                )
+            }
+            val intent = context.packageManager
+                .getLaunchIntentForPackage(context.packageName)
+                ?.apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP }
+            val pending = intent?.let {
+                PendingIntent.getActivity(
+                    context, CELEBRATION_ID, it,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            }
+            manager.notify(
+                CELEBRATION_ID,
+                NotificationCompat.Builder(context, CELEBRATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle(context.getString(R.string.badge_shelf_title))
+                    .setContentText(body)
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                    .setContentIntent(pending)
+                    .setAutoCancel(true)
+                    .build()
+            )
+        } catch (e: Exception) {
+            Timber.w(e, "Badges: celebration notification failed")
+        }
+    }
+
+    companion object {
+        private const val CELEBRATION_CHANNEL_ID = "badge_celebration"
+        private const val CELEBRATION_ID = 20003
     }
 
     private suspend fun evaluate(

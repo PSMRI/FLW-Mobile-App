@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
@@ -116,6 +117,9 @@ import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.BadgeConfigCache
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.model.FormSaveLogCache
+import org.piramalswasthya.sakhi.model.NotifHistoryCache
+import org.piramalswasthya.sakhi.model.NotifTemplateCache
 import org.piramalswasthya.sakhi.model.BadgeStateCache
 import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
 import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
@@ -215,10 +219,14 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         BadgeStateCache::class,
         BadgeSyncLogCache::class,
         BadgeStreakFreezeCache::class,
-        BadgeConfigCache::class
+        BadgeConfigCache::class,
+        //Evening Notification (Notification LLD §4)
+        NotifTemplateCache::class,
+        NotifHistoryCache::class,
+        FormSaveLogCache::class
     ],
     views = [BenBasicCache::class],
-    version = 64, exportSchema = false
+    version = 65, exportSchema = false
 )
 
 @TypeConverters(
@@ -286,6 +294,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract val syncDao: SyncDao
 
     abstract val badgeDao: BadgeDao
+
+    abstract val eveningNotifDao: EveningNotifDao
 
     companion object {
         @Volatile
@@ -355,6 +365,65 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+
+            // Evening Notification module (Notification LLD §4) — additive only.
+            val MIGRATION_64_65 = object : Migration(64, 65) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_templates` (
+                                `templateId` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL,
+                                `language` TEXT NOT NULL,
+                                `bodyTemplate` TEXT NOT NULL,
+                                `libraryVersion` INTEGER NOT NULL,
+                                PRIMARY KEY(`templateId`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_templates_bucket_language` " +
+                                    "ON `notification_templates` (`bucket`, `language`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_history` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `templateId` TEXT NOT NULL,
+                                `shownDate` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_history_bucket` " +
+                                    "ON `notification_history` (`bucket`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `form_save_log` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `formType` TEXT NOT NULL,
+                                `beneficiaryId` INTEGER NOT NULL,
+                                `ashaWorkerId` INTEGER NOT NULL,
+                                `savedAt` INTEGER NOT NULL,
+                                `dateKey` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_form_save_log_beneficiaryId_formType_dateKey` " +
+                                    "ON `form_save_log` (`beneficiaryId`, `formType`, `dateKey`)"
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_form_save_log_dateKey` " +
+                                    "ON `form_save_log` (`dateKey`)"
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
 
             // Badges module (LLD §4.1) — additive only, no health-table changes.
             val MIGRATION_63_64 = object : Migration(63, 64) {
@@ -3553,7 +3622,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_60_61,
                         MIGRATION_61_62,
                         MIGRATION_62_63,
-                        MIGRATION_63_64
+                        MIGRATION_63_64,
+                        MIGRATION_64_65
 
 
                     ).build()

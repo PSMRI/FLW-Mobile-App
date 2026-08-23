@@ -6,6 +6,12 @@
     app:startDestination="@+id/homeFragment">
 
     <fragment
+        android:id="@+id/journeyFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.journey.JourneyFragment"
+        android:label="@string/journey_title"
+        tools:layout="@layout/fragment_journey" />
+
+    <fragment
         android:id="@+id/badgeShelfFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.badges.BadgeShelfFragment"
         android:label="@string/badge_shelf_title"

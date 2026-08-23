@@ -60,6 +60,8 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
+import org.piramalswasthya.sakhi.notifications.NotificationEngine
+import org.piramalswasthya.sakhi.notifications.NotificationScheduler
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
@@ -128,6 +130,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var taskCompletionBus: TaskCompletionBus
+
+    @Inject
+    lateinit var eveningNotificationScheduler: NotificationScheduler
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -319,6 +324,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         setUpMenu()
 
         askForPermissions()
+
+        eveningNotificationScheduler.schedule()
+        routeToJourneyIfRequested(intent)
 
         if (isChatSupportEnabled)
         {
@@ -658,6 +666,27 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     fun setHomeMenuItemVisibility(show: Boolean) {
         showMenuHome = show
         invalidateOptionsMenu()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        routeToJourneyIfRequested(intent)
+    }
+
+    /** Evening notification tap → Journey screen (Notification LLD §1). */
+    private fun routeToJourneyIfRequested(intent: Intent?) {
+        if (intent?.getBooleanExtra(NotificationEngine.EXTRA_OPEN_JOURNEY, false) == true) {
+            intent.removeExtra(NotificationEngine.EXTRA_OPEN_JOURNEY)
+            // post: nav back-stack restore runs after onCreate and would wipe
+            // an immediate navigate; after first layout the graph is settled
+            binding.root.post {
+                try {
+                    navController.navigate(R.id.journeyFragment)
+                } catch (e: Exception) {
+                    Timber.e(e, "Journey navigation from notification failed")
+                }
+            }
+        }
     }
 
     private fun setUpFirstTimePullWorker() {
