@@ -327,6 +327,7 @@ class LeprosyConfirmedFromViewModelTest : BaseViewModelTest() {
             advanceUntilIdle()
 
             assertEquals(LeprosyConfirmedFromViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+            unmockkStatic(Dispatchers::class)
             coVerify(exactly = 0) { leprosyRepo.completeVisitAndStartNext(any()) }
         }
 

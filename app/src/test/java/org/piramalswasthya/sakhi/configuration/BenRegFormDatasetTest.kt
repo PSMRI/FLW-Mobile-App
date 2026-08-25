@@ -28,7 +28,9 @@ import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.HouseholdFamily
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.R
 
 /**
  * Unit tests for [BenRegFormDataset]. Consolidated into a single class from the previous
@@ -1709,5 +1711,221 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         }
 
         assertNotNull(d.listFlow)
+    }
+
+    // ===================== added: calculateAgeAtMarriage day-of-year and min-age branches =========
+    // calculateAgeAtMarriage() decrements the naive year difference by one whenever the marriage's
+    // day-of-year falls before the birthday's day-of-year within the same calendar year, and discards
+    // the whole result via takeIf{} when it comes out below Konstants.minAgeForMarriage (12). None of
+    // the pre-existing tests pin the dob/marriageDate to specific calendar dates, so which of these
+    // branches actually ran was accidental. setFirstPageToRead's ageAtMarriage.value is the only public
+    // surface this private helper's return value reaches, so it is asserted on directly here.
+
+    private fun millisFor(year: Int, month: Int, day: Int): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(year, month, day, 0, 0, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
+
+    private fun benMockMarriage(dobMillis: Long, marriageDateVal: Long?): BenRegCache {
+        val g = mockk<BenRegGen>(relaxed = true)
+        every { g.marriageDate } returns marriageDateVal
+        every { g.spouseName } returns null
+        every { g.maritalStatusId } returns 2
+        val b = mockk<BenRegCache>(relaxed = true)
+        every { b.dob } returns dobMillis
+        every { b.regDate } returns 1_600_000_000_000L
+        every { b.genderId } returns 2
+        every { b.isDraft } returns false
+        every { b.gender } returns Gender.FEMALE
+        every { b.firstName } returns "MARY"
+        every { b.lastName } returns "JANE"
+        every { b.familyHeadRelationPosition } returns 1
+        every { b.isDeath } returns false
+        every { b.genDetails } returns g
+        return b
+    }
+
+    @Test
+    fun `calculateAgeAtMarriage does not decrement when the marriage day-of-year is on or after the birthday`() = runTest {
+        val d = ds()
+        val dob = millisFor(2000, java.util.Calendar.JANUARY, 10)
+        val marriage = millisFor(2020, java.util.Calendar.JANUARY, 20)
+        runCatching { d.setFirstPageToRead(benMockMarriage(dob, marriage), 9876543210L) }
+        assertEquals("20", d.ageAtMarriage.value)
+    }
+
+    @Test
+    fun `calculateAgeAtMarriage decrements when the marriage day-of-year is before the birthday`() = runTest {
+        val d = ds()
+        val dob = millisFor(2000, java.util.Calendar.JANUARY, 20)
+        val marriage = millisFor(2020, java.util.Calendar.JANUARY, 10)
+        runCatching { d.setFirstPageToRead(benMockMarriage(dob, marriage), 9876543210L) }
+        assertEquals("19", d.ageAtMarriage.value)
+    }
+
+    @Test
+    fun `calculateAgeAtMarriage returns null when the computed age is below the minimum marriage age`() = runTest {
+        val d = ds()
+        val dob = millisFor(2015, java.util.Calendar.JANUARY, 1)
+        val marriage = millisFor(2020, java.util.Calendar.JANUARY, 1)
+        runCatching { d.setFirstPageToRead(benMockMarriage(dob, marriage), 9876543210L) }
+        assertEquals(null, d.ageAtMarriage.value)
+    }
+
+    @Test
+    fun `calculateAgeAtMarriage returns null when no marriage date is stored`() = runTest {
+        val d = ds()
+        val dob = millisFor(2000, java.util.Calendar.JANUARY, 10)
+        runCatching { d.setFirstPageToRead(benMockMarriage(dob, null), 9876543210L) }
+        assertEquals(null, d.ageAtMarriage.value)
+    }
+
+    // ===================== added: Ayushman prefill helper branches, via setPageForHof's abhaMember
+    // block (which assigns straight to the FormElement fields, unlike prefillFromAyushmanCard which
+    // routes through setValueById/list and is a no-op on a dataset with no page built yet) ============
+    // mapAyushmanGenderToIndex / sanitizeAyushmanMobile / parseAyushmanDobToFormDate /
+    // approxFormDateFromAge are private pure helpers only reachable this way; their real effect lands
+    // in the built list, which is asserted on directly below.
+
+    private fun householdWithPhone(phone: Long?): HouseholdCache {
+        val hh = mockk<HouseholdCache>(relaxed = true)
+        every { hh.family } returns HouseholdFamily(familyHeadPhoneNo = phone)
+        return hh
+    }
+
+    private fun fieldValue(d: BenRegFormDataset, id: Int): String? =
+        d.listFlow.value.find { it.id == id }?.value
+
+    @Test
+    fun `setPageForHof leaves gender unset for an unrecognized ayushman gender string`() = runTest {
+        val d = ds()
+        val member = FamilyMember(
+            name = "JOHN SMITH", gender = "unspecified", dob = "01-01-1990", mobileNo = "9876543210"
+        )
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals(null, fieldValue(d, 9))
+    }
+
+    @Test
+    fun `setPageForHof truncates a mobile number carrying a country code to its last ten digits`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JOHN SMITH", gender = "Male", mobileNo = "919876543210")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals("9876543210", fieldValue(d, 14))
+    }
+
+    @Test
+    fun `setPageForHof ignores a too-short ayushman mobile number and keeps the household default`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JOHN SMITH", gender = "Male", mobileNo = "12345")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals("8000000000", fieldValue(d, 14))
+    }
+
+    @Test
+    fun `setPageForHof ignores an ayushman mobile number with an invalid leading digit`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JOHN SMITH", gender = "Male", mobileNo = "1234567890")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals("8000000000", fieldValue(d, 14))
+    }
+
+    @Test
+    fun `setPageForHof parses an ayushman dob given in plain yyyy-MM-dd format`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JANE DOE", gender = "Female", dob = "1990-05-15")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals("15-05-1990", fieldValue(d, 115))
+    }
+
+    @Test
+    fun `setPageForHof parses an ayushman dob given in ISO datetime format`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JANE DOE", gender = "Female", dob = "1985-03-20T10:15:30.000")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals("20-03-1985", fieldValue(d, 115))
+    }
+
+    @Test
+    fun `setPageForHof falls back to an age-derived dob when the ayushman dob is in the future`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JANE DOE", gender = "Female", dob = "2099-01-01", age = "40")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        val cal = java.util.Calendar.getInstance()
+        cal.add(java.util.Calendar.YEAR, -40)
+        val expected = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH).format(cal.time)
+        assertEquals(expected, fieldValue(d, 115))
+    }
+
+    @Test
+    fun `setPageForHof falls back to an age-derived dob when the ayushman dob yields an out-of-range age`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JANE DOE", gender = "Female", dob = "1850-01-01", age = "70")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        val cal = java.util.Calendar.getInstance()
+        cal.add(java.util.Calendar.YEAR, -70)
+        val expected = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH).format(cal.time)
+        assertEquals(expected, fieldValue(d, 115))
+    }
+
+    @Test
+    fun `setPageForHof leaves the dob unset when the ayushman member has neither a usable dob nor age`() = runTest {
+        val d = ds()
+        val member = FamilyMember(name = "JANE DOE", gender = "Female")
+        runCatching { d.setPageForHof(null, householdWithPhone(8000000000L), member) }
+        assertEquals(null, fieldValue(d, 115))
+    }
+
+    // ===================== added: validateReproductiveStatusField's literal English-string match =====
+    // getReproductiveStatusEnglishValue() resolves the localized reproductiveStatus value back to its
+    // English array entry, and validateReproductiveStatusField() only re-enables the dropdown when that
+    // English value is literally "Adolescent Girl" (15-19, married) or "Not Applicable" (20-49, married).
+    // The suite's default resource stub returns generic "opt0".."optN" strings for every array id, so
+    // that literal comparison can never succeed against it — exactly the array-mock-too-generic trap
+    // flagged for this class. Stubbing one specific array (nbr_reproductive_status_array2) with the real
+    // "Adolescent Girl" text lets the comparison actually resolve to true.
+    @Test
+    fun `validateReproductiveStatusField re-enables the dropdown for a married adolescent girl once the english text actually matches`() = runTest {
+        every { mockResources.getStringArray(R.array.nbr_reproductive_status_array2) } returns
+            arrayOf("Married Adolescent", "Adolescent Girl")
+
+        val hh = householdMock()
+        val savedBen = benMockAgeDobLocal(genderId = 2, maritalStatusId = 2, age = 17)
+        val hof = benMockBr(gender = Gender.MALE)
+        val d = ds()
+        runCatching { d.setPageForFamilyMember(savedBen, hh, hof, Gender.FEMALE, 3, emptyList(), null, 0) }
+
+        runCatching { d.setValueById(1028, "Adolescent Girl") }
+        runCatching { d.setValueById(1008, "opt1") }
+        runCatching { d.updateList(1008, 1) }
+
+        val repro = d.listFlow.value.find { it.id == 1028 }
+        assertEquals("Adolescent Girl", repro?.value)
+        assertEquals(org.piramalswasthya.sakhi.model.InputType.DROPDOWN, repro?.inputType)
+    }
+
+    private fun benMockAgeDobLocal(genderId: Int, maritalStatusId: Int, age: Int): BenRegCache {
+        val g = mockk<BenRegGen>(relaxed = true)
+        every { g.maritalStatusId } returns maritalStatusId
+        every { g.reproductiveStatus } returns null
+        every { g.spouseName } returns "SPOUSE"
+        every { g.ageAtMarriage } returns 20
+        every { g.marriageDate } returns 1_500_000_000_000L
+        val cal = java.util.Calendar.getInstance()
+        cal.add(java.util.Calendar.YEAR, -age)
+        val b = mockk<BenRegCache>(relaxed = true)
+        every { b.dob } returns cal.timeInMillis
+        every { b.regDate } returns 1_600_000_000_000L
+        every { b.genderId } returns genderId
+        every { b.isDraft } returns false
+        every { b.gender } returns Gender.FEMALE
+        every { b.firstName } returns "TEEN"
+        every { b.lastName } returns "GIRL"
+        every { b.familyHeadRelationPosition } returns 3
+        every { b.isDeath } returns false
+        every { b.genDetails } returns g
+        return b
     }
 }

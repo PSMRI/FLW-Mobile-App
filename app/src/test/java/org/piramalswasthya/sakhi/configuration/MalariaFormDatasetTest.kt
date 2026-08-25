@@ -18,6 +18,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
@@ -612,5 +613,99 @@ class MalariaFormDatasetTest : BaseViewModelTest() {
         every { ben.processed } returns "N"
         d.updateBen(ben)
         io.mockk.verify(exactly = 0) { ben.processed = "U" }
+    }
+
+    // ---- Gap coverage: "both" test-type path with pf slide option + independently-resolved
+    // slidePv/slidePf results (previously only the pv-slide-option variant, with both results
+    // unresolved together, was exercised for this else branch of setUpPage). ----
+
+    @Test
+    fun `setUpPage both test type path with pf slide option and unresolved slide results`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 3, 1, "opt0", "opt2", "opt2")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertNotEquals(-1, d.getIndexById(18))
+        assertNotEquals(-1, d.getIndexById(27))
+        assertNotEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(20))
+        assertEquals(-1, d.getIndexById(21))
+    }
+
+    // ---- Gap coverage: the symptom-branch try/catch in handleListOnValueChanged silently
+    // swallows an exception when the localized dc_case_status array is too short to index [4].
+    // Every existing test relies on the generic 80-entry mock, so the catch body never ran. ----
+
+    @Test
+    fun `updateList symptom branch swallows exception from short case status array`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        every { mockResources.getStringArray(R.array.dc_case_status) } returns arrayOf("opt0", "opt1")
+        d.setValueById(7, "opt0")
+        runCatching { d.updateList(7, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    // ---- Gap coverage: slideTestOptions.id handler has no trailing else - when the value
+    // matches neither pf_pv[0] nor pf_pv[1], both triggerDependants calls are skipped. ----
+
+    @Test
+    fun `updateList slideTestOptions value matching neither pf nor pv skips both triggers`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(27, "unmatched")
+        runCatching { d.updateList(27, 0) }
+        assertEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    // ---- Gap coverage: mapValues was only ever exercised with a relaxed mockk cache model,
+    // so assignments ran but no test verified the actually computed values. Use a real cache
+    // instance and assert the mapped fields for both a "yes" (suspected) and a "no" record. ----
+
+    @Test
+    fun `mapValues maps suspected all-yes record onto real cache model`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        val cache = MalariaScreeningCache(benId = 1L, visitId = 1L, houseHoldDetailsId = 1L)
+        d.mapValues(cache, 0)
+        assertEquals(true, cache.feverMoreThanTwoWeeks)
+        assertEquals(true, cache.fluLikeIllness)
+        assertEquals(true, cache.shakingChills)
+        assertEquals(true, cache.headache)
+        assertEquals(true, cache.muscleAches)
+        assertEquals(true, cache.tiredness)
+        assertEquals(true, cache.nausea)
+        assertEquals(true, cache.vomiting)
+        assertEquals(true, cache.diarrhea)
+        assertEquals(1, cache.diseaseTypeID)
+        assertEquals(1L, cache.visitId)
+    }
+
+    @Test
+    fun `mapValues maps negative-answers record onto real cache model`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                savedMock(false, "opt1", 1, 0, "opt0")
+            )
+        }
+        val cache = MalariaScreeningCache(benId = 2L, visitId = 2L, houseHoldDetailsId = 2L)
+        d.mapValues(cache, 0)
+        assertEquals(false, cache.feverMoreThanTwoWeeks)
+        assertEquals(false, cache.fluLikeIllness)
+        assertEquals(false, cache.shakingChills)
+        assertEquals(false, cache.headache)
+        assertEquals(false, cache.muscleAches)
+        assertEquals(false, cache.tiredness)
+        assertEquals(false, cache.nausea)
+        assertEquals(false, cache.vomiting)
+        assertEquals(false, cache.diarrhea)
+        assertEquals(1, cache.diseaseTypeID)
     }
 }

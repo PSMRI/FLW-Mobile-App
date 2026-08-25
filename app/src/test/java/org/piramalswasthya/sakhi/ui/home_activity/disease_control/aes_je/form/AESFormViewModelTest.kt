@@ -238,10 +238,26 @@ class AESFormViewModelTest : BaseViewModelTest() {
         coVerify(exactly = 0) { benRepo.updateRecord(any()) }
     }
 
+    private fun mockDeathArrays() {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death", "Unknown")
+        every { mockResources.getStringArray(R.array.death_place) } returns arrayOf("Home", "Hospital")
+        every { mockResources.getStringArray(R.array.reason_death) } returns arrayOf("Fever", "Accident")
+        every { mockResources.getStringArray(R.array.benificary_case_status) } returns arrayOf("Alive", "Death", "Fever")
+    }
+
+    private fun deathScreening(): AESScreeningCache = AESScreeningCache(
+        benId = 1L,
+        houseHoldDetailsId = 10L,
+        beneficiaryStatus = "Death",
+        dateOfDeath = 1700000000000L,
+        placeOfDeath = "Home",
+        reasonForDeath = "Fever"
+    )
+
     @Test
     fun `saveForm on death record with processed N keeps processed as N`() = runTest {
-        every { mockResources.getStringArray(R.array.benificary_case_status) } returns arrayOf("Alive", "Death")
-        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        mockDeathArrays()
+        val screening = deathScreening()
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { aesRepo.getAESScreening(1L) } returns screening
         val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
@@ -254,13 +270,16 @@ class AESFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(vm.isDeath)
         assertEquals("N", benRecord.processed)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { benRepo.updateRecord(benRecord) }
     }
 
     @Test
     fun `saveForm on death record when maternal ben not found still saves screening`() = runTest {
-        every { mockResources.getStringArray(R.array.benificary_case_status) } returns arrayOf("Alive", "Death")
-        val screening = AESScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        mockDeathArrays()
+        val screening = deathScreening()
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { aesRepo.getAESScreening(1L) } returns screening
         val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
@@ -272,9 +291,62 @@ class AESFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(vm.isDeath)
         unmockkStatic(Dispatchers::class)
         coVerify(exactly = 0) { benRepo.updateRecord(any()) }
         coVerify { aesRepo.saveAESScreening(any()) }
+    }
+
+    @Test
+    fun `saveForm on death record with processed not N sets processed to U and populates death fields`() = runTest {
+        mockDeathArrays()
+        val screening = deathScreening()
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache()
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(vm.isDeath)
+        assertTrue(benRecord.isDeath)
+        assertEquals("Death", benRecord.isDeathValue)
+        assertEquals("U", benRecord.processed)
+        assertEquals("Fever", benRecord.reasonOfDeath)
+        assertEquals(2, benRecord.reasonOfDeathId)
+        assertEquals("Home", benRecord.placeOfDeath)
+        assertEquals(0, benRecord.placeOfDeathId)
+        assertEquals(SyncState.UNSYNCED, benRecord.syncState)
+        assertNotNull(benRecord.dateOfDeath)
+        assertTrue(benRecord.dateOfDeath!!.isNotEmpty())
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { benRepo.updateRecord(benRecord) }
+    }
+
+    @Test
+    fun `saveForm sets SAVE_FAILED when death branch benRepo update throws`() = runTest {
+        mockDeathArrays()
+        val screening = deathScreening()
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { aesRepo.getAESScreening(1L) } returns screening
+        val vm = AESFormViewModel(savedStateHandle, preferenceDao, context, aesRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache()
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+        coEvery { benRepo.updateRecord(any()) } throws RuntimeException("update failed")
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(AESFormViewModel.State.SAVE_FAILED, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { aesRepo.saveAESScreening(any()) }
     }
 
     @Test

@@ -17,7 +17,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class IncentiveVerificationFragmentArgsTest {
+class IncentiveVerificationFragmentNavigationTest {
 
     private lateinit var bundle: Bundle
 

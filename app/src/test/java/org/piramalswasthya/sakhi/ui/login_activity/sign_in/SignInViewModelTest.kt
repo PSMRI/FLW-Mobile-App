@@ -82,6 +82,21 @@ class SignInViewModelTest : BaseViewModelTest() {
     }
 
     // =====================================================
+    // logout() Tests
+    // =====================================================
+
+    @Test
+    fun `logout clears db and prefs and sets logoutComplete`() = runTest {
+        every { database.clearAllTables() } returns Unit
+        viewModel.logout()
+        advanceUntilIdle()
+        io.mockk.verify(exactly = 1) { database.clearAllTables() }
+        io.mockk.verify(exactly = 1) { pref.deleteForLogout() }
+        assertNull(viewModel.loggedInUser.value)
+        assertEquals(true, viewModel.logoutComplete.value)
+    }
+
+    // =====================================================
     // loginInClicked() Tests
     // =====================================================
 

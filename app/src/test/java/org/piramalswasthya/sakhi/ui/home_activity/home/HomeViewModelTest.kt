@@ -302,9 +302,9 @@ class HomeViewModelTest : BaseViewModelTest() {
 
         verify { pref.saveProfilePicUri(restoredUri) }
         assertEquals(restoredUri, vm.restoredProfilePicUri.value)
-        coVerify(exactly = 0) { ashaProfileRepo.pullAndSaveAshaProfile(any(), any()) }
         unmockkStatic(Dispatchers::class)
         unmockkStatic(Uri::class)
+        coVerify(exactly = 0) { ashaProfileRepo.pullAndSaveAshaProfile(any(), any()) }
     }
 
     @Test
@@ -359,8 +359,8 @@ class HomeViewModelTest : BaseViewModelTest() {
         HomeViewModel(database, pref, userRepo, ashaProfileRepo)
         advanceUntilIdle()
 
+        unmockkStatic(Dispatchers::class)
         coVerify(exactly = 0) { profileDao.getProfileActivityById(any()) }
         coVerify(exactly = 0) { ashaProfileRepo.pullAndSaveAshaProfile(any(), any()) }
-        unmockkStatic(Dispatchers::class)
     }
 }

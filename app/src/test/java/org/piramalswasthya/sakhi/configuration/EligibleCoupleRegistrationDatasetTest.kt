@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -32,6 +33,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Unit tests for [EligibleCoupleRegistrationDataset]. Consolidated into a single class from the
@@ -908,5 +912,88 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         every { ben.lastName } returns null
         runCatching { d.setUpPage(ben, null, null, emptyList()) }
         assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    private fun dateDaysAgo(days: Int): String {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DAY_OF_YEAR, -days)
+        return SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
+    }
+
+    private fun kitSavedNoHandoverDate(): EligibleCoupleRegCache {
+        val s = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { s.isKitHandedOver } returns true
+        every { s.kitHandedOverDate } returns null
+        return s
+    }
+
+    @Test
+    fun `isHighRisk also matches when the current age string equals the yes value`() = runTest {
+        every { mockResources.getStringArray(R.array.yes_no) } returns arrayOf("25", "no")
+        val ben = benMockBr()
+        every { ben.dob } returns System.currentTimeMillis() - (25L * 365 + 100) * 24 * 3600 * 1000
+        val d = ds()
+        d.setUpPage(ben, null, null, emptyList())
+        assertTrue(d.isHighRisk())
+    }
+
+    @Test
+    fun `setUpPage with a null genDetails computes the marriage gap from the epoch`() = runTest {
+        val ben = benMockBr()
+        every { ben.genDetails } returns null
+        val d = ds()
+        d.setUpPage(ben, null, null, listOf(benMockBr(Gender.MALE)))
+        val page = d.listFlow.value
+        assertEquals("31 years", page.first { it.id == 20 }.value)
+    }
+
+    @Test
+    fun `updateList on child dob fields without a prior sibling skips gap computation`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        val before = d.listFlow.value
+        listOf(22, 27, 32, 37, 42, 47, 52, 57).forEach { id -> d.updateList(id, 0) }
+        assertSame(before, d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList child dob within 548 days marks timeLessThan18m as yes`() = runTest {
+        val d = ds()
+        val kids = listOf(benMockBr(Gender.MALE), benMockBr(Gender.FEMALE))
+        d.setUpPage(benMockBr(), null, null, kids)
+        d.setValueById(17, "01-01-2010")
+        d.updateList(17, 0)
+        d.setValueById(22, dateDaysAgo(100))
+        d.updateList(22, 0)
+        val page = d.listFlow.value
+        assertEquals("opt0", page.first { it.id == 62 }.value)
+    }
+
+    @Test
+    fun `setUpPage with kit handed over but no handover date leaves the date field blank`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, kitSavedNoHandoverDate(), emptyList())
+        val page = d.listFlow.value
+        assertNull(page.first { it.id == 74 }.value)
+    }
+
+    @Test
+    fun `mapValueToBen reports no update when the rch id is unchanged`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(1, "123456789012")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "123456789012"
+        assertFalse(d.mapValueToBen(ben))
+        verify(exactly = 0) { ben.rchId = any() }
+    }
+
+    @Test
+    fun `mapValuesToAssess maps a null age when no beneficiary was loaded`() = runTest {
+        val d = ds()
+        d.setUpPage(null, null, null, emptyList())
+        val assess = mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        d.mapValuesToAssess(assess, 0)
+        verify { assess.age = null }
     }
 }

@@ -371,6 +371,43 @@ class MdsrRepoTest : BaseRepositoryTest() {
         coVerify(atLeast = 4) { amritApiService.postMdsrForm(any()) }
     }
 
+    @Test
+    fun `processNewMdsr marks synced when push retries once after timeout then succeeds`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        var callCount = 0
+        coEvery { amritApiService.postMdsrForm(any()) } coAnswers {
+            callCount++
+            if (callCount == 1) throw SocketTimeoutException("timed out")
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""")
+        }
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        coVerify(exactly = 2) { amritApiService.postMdsrForm(any()) }
+        verify { record.syncState = SyncState.SYNCED }
+    }
+
+    @Test
+    fun `processNewMdsr marks unsynced when postMdsrForm throws JSONException directly`() = runTest {
+        loggedIn()
+        val record = mockk<MDSRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<MdsrPost>(relaxed = true)
+        coEvery { mdsrDao.getAllUnprocessedMdsr() } returns listOf(record)
+        coEvery { mdsrDao.updateMdsrRecord(record) } returns Unit
+        coEvery { amritApiService.postMdsrForm(any()) } throws org.json.JSONException("bad json")
+
+        val result = repo.processNewMdsr()
+
+        assertTrue(result)
+        coVerify(exactly = 1) { amritApiService.postMdsrForm(any()) }
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
     // =====================================================
     // getMdsrFromServer() -> saveMdsrCacheFromResponse() branch coverage
     // =====================================================

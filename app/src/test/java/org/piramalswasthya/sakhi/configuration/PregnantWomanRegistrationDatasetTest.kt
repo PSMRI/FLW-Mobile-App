@@ -18,6 +18,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -54,6 +55,11 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }
+        // pwrdst_yes_no is a real 2-entry Yes/No array in production; the generic 80-entry
+        // stub above breaks any `entries!!.last()` comparison against it (position-2 value
+        // never equals the 80th generic entry), silently killing the "not first pregnancy"
+        // branch in setUpPage. Override it to mirror production so that branch is reachable.
+        every { mockResources.getStringArray(R.array.pwrdst_yes_no) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { mockResources.getString(any(), any(), any()) } returns "x"
@@ -422,5 +428,148 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         every { benCache.isHrpStatus } returns false
         val updated = d.mapValueToBenRegId(benCache)
         assertFalse(updated)
+    }
+
+    // The mock resource array for R.array.pwrdst_yes_no was previously a generic 80-entry
+    // array, which meant `isFirstPregnancy.value == isFirstPregnancy.entries!!.last()` in
+    // setUpPage could never be true (position-2 value != 80th generic entry), so the whole
+    // "not first pregnancy" block (previous-pregnancy count, complication dropdown, and its
+    // nested "other complication" text field) was silently dead in every test. Now that the
+    // array is mocked as the real 2-entry ["Yes","No"], a saved record with is1st = false
+    // genuinely reaches that block, and a complication value equal to the array's last entry
+    // reaches the nested "other complication" addition too.
+    @Test
+    fun `saved not-first pregnancy with last complication option surfaces the extra fields`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns false
+        every { s.isHrp } returns false
+        every { s.pastIllness } returns "1"
+        every { s.numPrevPregnancy } returns 3
+        every { s.complicationPrevPregnancy } returns "opt79"
+        every { s.otherComplication } returns "OTHER COMPLICATION TEXT"
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+
+        val prevPregIdx = d.getIndexById(22)
+        val complicationIdx = d.getIndexById(23)
+        val otherComplicationIdx = d.getIndexById(24)
+
+        assertTrue(prevPregIdx >= 0)
+        assertTrue(complicationIdx >= 0)
+        assertTrue(otherComplicationIdx >= 0)
+        assertEquals("3", d.listFlow.value[prevPregIdx].value)
+        assertEquals("opt79", d.listFlow.value[complicationIdx].value)
+        assertEquals("OTHER COMPLICATION TEXT", d.listFlow.value[otherComplicationIdx].value)
+    }
+
+    @Test
+    fun `saved first pregnancy does not surface the not-first-pregnancy fields`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns true
+        every { s.isHrp } returns false
+        every { s.pastIllness } returns "1"
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+        assertEquals(-1, d.getIndexById(24))
+    }
+
+    // dateOfReg is a single class-level FormElement instance reused across setUpPage calls.
+    // Once a saved record populates dateOfReg.value, a *subsequent* setUpPage call sees a
+    // non-null dateOfReg.value at the very top of the method (before ben/saved reassign it),
+    // exercising the `dateOfReg.value?.let { ... }` block that a first-time call never reaches.
+    @Test
+    fun `second setUpPage call sees a dateOfReg value carried over from the prior call`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns true
+        every { s.isHrp } returns false
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+        val dateOfRegIdx = d.getIndexById(1)
+        assertNotNull(d.listFlow.value[dateOfRegIdx].value)
+
+        runCatching { d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null) }
+        assertNotNull(d.listFlow)
+    }
+
+    // pastIllness.value defaults to "0" and setUpPage always reassigns it to a non-null
+    // string, so the `?: mutableSetOf()` elvis fallback inside handleListOnValueChanged's
+    // "else" branch is only reachable if a caller explicitly clears the value to null first.
+    @Test
+    fun `pastIllness update with a cleared value falls back to an empty selection set`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, null)
+        d.updateList(19, 5)
+        // pastIllness.value was null going in, so the elvis fallback yields an empty
+        // selection set; with nothing to remove, the recomputed value collapses to "0".
+        assertEquals("0", d.listFlow.value.first { it.id == 19 }.value)
+    }
+
+    @Test
+    fun `mapValuesForAssess maps every populated risk field and leaves age null without a ben`() = runTest {
+        val d = ds()
+        val assess = HRPPregnantAssessCache(
+            benId = 1L,
+            noOfDeliveries = "opt0",
+            timeLessThan18m = "opt1",
+            heightShort = "opt0",
+            rhNegative = "opt1",
+            homeDelivery = "opt0",
+            badObstetric = "opt1",
+            multiplePregnancy = "opt0",
+            lmpDate = 1_000_000_000_000L
+        )
+        d.setUpPage(null, assess, null, null, null)
+
+        val out = HRPPregnantAssessCache(benId = 1L)
+        d.mapValuesForAssess(out, 0)
+
+        assertEquals("opt0", out.noOfDeliveries)
+        assertEquals("opt1", out.timeLessThan18m)
+        assertEquals("opt0", out.heightShort)
+        assertNull(out.age)
+        assertEquals("opt1", out.rhNegative)
+        assertEquals("opt0", out.homeDelivery)
+        assertEquals("opt1", out.badObstetric)
+        assertEquals("opt0", out.multiplePregnancy)
+    }
+
+    @Test
+    fun `mapValueToBenRegId returns true and updates ben when rch id changes`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(2, "1234567890")
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns "9999999999"
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "N"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.rchId = "1234567890" }
+        verify { benCache.isHrpStatus = false }
+        verify(exactly = 0) { benCache.processed = "U" }
+    }
+
+    @Test
+    fun `mapValueToBenRegId sets processed to U when rch id changes and processed was not N`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(2, "1234567890")
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "P"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.processed = "U" }
     }
 }

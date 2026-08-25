@@ -521,6 +521,136 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         assertEquals(sizeBefore, ds.listFlow.value.size)
     }
 
+    // ===================== added: genuinely-untested branches (non-flavor-gated) =====================
+    //
+    // NOTE ON A STRUCTURAL LIMIT IN THIS CLASS: every `!BuildConfig.FLAVOR.contains("mitanin",
+    // ignoreCase = true)` check in EligibleCoupleTrackingDataset (setUpPage's FP-restore branch,
+    // the mpaFileUpload1/discharge-summary gating, every handleListOnValueChanged mitanin/non-mitanin
+    // split, and mapValues' usingFamilyPlanning ternary) always evaluates to `true` under the
+    // "niramayDebug" variant this project's coverage is measured against, because BuildConfig.FLAVOR
+    // is the compile-time constant "niramay" there and MockK cannot intercept a plain static-final
+    // field read. The mitanin-only else-branches in each of those sites are therefore permanently
+    // unreachable from a unit test without editing app/src/main (same limitation already documented
+    // in VHNDDatasetTest.kt for that class) - no new test below attempts to force them.
+
+    @Test
+    fun `edit path shows saved method of contraception even when not currently using family planning`() =
+        runTest {
+            val saved = ectSaved(isPregTest = "opt1", usingFP = false, method = "opt3")
+            val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+            assertTrue(
+                "methodOfContraception must be shown when a method was previously saved even if usingFamilyPlanning is false",
+                ds.getIndexById(10) >= 0
+            )
+        }
+
+    @Test
+    fun `edit path lmp date uses saved value even when saved lmp date is zero`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = false)
+        every { saved.lmpDate } returns 0L
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        val expectedLmp = Dataset.getLongFromDate(Dataset.getDateFromLong(0L))
+        verify { target.lmpDate = expectedLmp }
+    }
+
+    @Test
+    fun `setUpPage throws when noOfChildren is null`() = runTest {
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        var threw = false
+        try {
+            ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, null, null)
+        } catch (e: NullPointerException) {
+            threw = true
+        }
+        assertTrue("setUpPage must throw when noOfChildren is null", threw)
+    }
+
+    // The pre-existing method-variant tests call mapValues() through runCatching without asserting
+    // on the mutated cache, so the three-way `when` in mapValues (last()/methods[1]/else) is reached
+    // but its actual output was never checked. These verify the real computed strings.
+
+    @Test
+    fun `mapValues concatenates english method and antra dose for the dose based method`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt1/2", antra = "opt2")
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        verify { target.methodOfContraception = "opt1/x" }
+    }
+
+    @Test
+    fun `mapValues uses the free text value for the other method option`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt99")
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        verify { target.methodOfContraception = "opt99" }
+    }
+
+    @Test
+    fun `mapValues resolves the plain english value for a standard method`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt3")
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        verify { target.methodOfContraception = "opt3" }
+    }
+
+    @Test
+    fun `mapValues marks using family planning true when the yes option was selected`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = true, method = "opt3")
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        verify { target.usingFamilyPlanning = true }
+    }
+
+    @Test
+    fun `mapValues marks using family planning false when the no option was selected`() = runTest {
+        val saved = ectSaved(isPregTest = "opt1", usingFP = false)
+        val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)
+        ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        verify { target.usingFamilyPlanning = false }
+    }
+
+    // The pre-existing "updateList drives value changed handlers" test only checks that setting the
+    // injection date to "01-01-2023" doesn't throw; it never checks what dueDateOfAntraInjection
+    // actually becomes. This verifies the real computed "$minDate to $maxDate" string.
+    @Test
+    fun `updateList dateOfAntraInjection computes the real due date range for a valid date`() = runTest {
+        val ds = trackingPage(null, 2)
+        ds.setValueById(4, "opt1")
+        ds.updateList(4, 0)
+        ds.setValueById(7, "opt0")
+        ds.updateList(7, 0)
+        ds.setValueById(10, "opt1")
+        ds.updateList(10, 0)
+        ds.setValueById(13, "01-01-2023")
+        ds.updateList(13, 0)
+        val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
+        ds.mapValues(target, 0)
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+        val base = sdf.parse("01-01-2023")!!
+        val cal = Calendar.getInstance()
+        cal.time = base
+        cal.add(Calendar.DAY_OF_YEAR, 76)
+        val minDate = sdf.format(cal.time)
+        cal.time = base
+        cal.add(Calendar.DAY_OF_YEAR, 120)
+        val maxDate = sdf.format(cal.time)
+        verify { target.dueDateOfAntraInjection = "$minDate to $maxDate" }
+    }
+
     @Test
     fun `antraDoseValue noOfChildrens lastDose and lastDateofDose properties are readable and writable`() = runTest {
         val ds = EligibleCoupleTrackingDataset(context, Languages.ENGLISH)

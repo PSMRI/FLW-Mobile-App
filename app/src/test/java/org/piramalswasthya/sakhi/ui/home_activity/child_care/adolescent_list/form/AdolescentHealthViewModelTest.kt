@@ -35,7 +35,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AdolescentHealthFormViewModelTest : BaseViewModelTest() {
+class AdolescentHealthViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var context: Context
     @MockK private lateinit var preferenceDao: PreferenceDao
@@ -146,7 +146,7 @@ class AdolescentHealthFormViewModelTest : BaseViewModelTest() {
 
         assertEquals(AdolescentHealthFormViewModel.State.SAVE_SUCCESS, vm.state.value)
         unmockkStatic(Dispatchers::class)
-        coVerify(exactly = 0) { adolescentHealthRepo.saveAdolescentHealth(any()) }
+        coVerify(exactly = 1) { adolescentHealthRepo.saveAdolescentHealth(any()) }
     }
 
     @Test

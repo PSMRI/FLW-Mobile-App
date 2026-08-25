@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -34,6 +35,7 @@ class VHNDDatasetTest : BaseViewModelTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.i(any(), any()) } returns 0
+        every { Log.w(any<String>(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -172,5 +174,68 @@ class VHNDDatasetTest : BaseViewModelTest() {
         runCatching { ds.setImageUriToFormElement(2, blankUri2) }
         runCatching { ds.setUpPage(null) }
         assertNotNull(ds.listFlow)
+    }
+
+    // ===================== added: real round-trip coverage via a real VHNDCache =====================
+    // Every pre-existing "populated cache" test used a relaxed mockk<VHNDCache>() for both the
+    // input to setUpPage() and the output of mapValues(), so no test ever verified an actual
+    // computed value survived the getLocalValueInArray/getEnglishValueInArray/getPosition round
+    // trip (mockk relaxed mocks don't persist values written through property setters the way a
+    // real data class does). These tests use real VHNDCache instances end to end so the
+    // assertions check actual state, not just "doesn't throw".
+    //
+    // NOTE ON A STRUCTURAL LIMIT IN THIS CLASS: every mitanin-only branch here is gated behind
+    // `BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)` (the extra list fields in
+    // setUpPage, the whole populated-cache mitanin block, the whole mitanin block in mapValues,
+    // and therefore the private toCsv() helper it exclusively calls). Coverage for this project is
+    // measured against the "niramayDebug" variant (see app/jacoco.gradle, default coverageVariant),
+    // whose BuildConfig.FLAVOR is the compile-time constant "niramay" - it can never equal
+    // "mitanin" in that variant, and MockK cannot intercept a plain getstatic read of a
+    // `public static final String` field (only method calls), so this condition cannot be forced
+    // true from a unit test without editing app/src/main. All of that gated code is therefore
+    // permanently unreachable for the coverage numbers this ticket is measured against; no test
+    // added here (or addable without touching src/main) can move it from "missed" to "covered".
+
+    @Test
+    fun `mapValues writes real computed values back to cache using a real VHNDCache`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = VHNDCache(
+            id = 1,
+            vhndDate = "20-02-2024",
+            place = "opt7",
+            noOfBeneficiariesAttended = 15,
+            image1 = "img1.jpg",
+            image2 = "img2.jpg"
+        )
+        ds.setUpPage(cache)
+
+        val result = VHNDCache(id = 1, vhndDate = "")
+        ds.mapValues(result, 0)
+
+        assertEquals("20-02-2024", result.vhndDate)
+        assertEquals("opt7", result.place)
+        assertEquals(8, result.vhndPlaceId)
+        assertEquals(15, result.noOfBeneficiariesAttended)
+        assertEquals("img1.jpg", result.image1)
+        assertEquals("img2.jpg", result.image2)
+    }
+
+    @Test
+    fun `setUpPage and mapValues resolve to null when place value is not present in resource array`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = VHNDCache(
+            id = 2,
+            vhndDate = "01-01-2024",
+            place = "totally-unmatched-place-value",
+            noOfBeneficiariesAttended = 3
+        )
+        ds.setUpPage(cache)
+        val placeField = ds.listFlow.value.first { it.id == 3 }
+        assertNull(placeField.value)
+
+        val result = VHNDCache(id = 2, vhndDate = "")
+        ds.mapValues(result, 0)
+        assertNull(result.place)
+        assertEquals(0, result.vhndPlaceId)
     }
 }

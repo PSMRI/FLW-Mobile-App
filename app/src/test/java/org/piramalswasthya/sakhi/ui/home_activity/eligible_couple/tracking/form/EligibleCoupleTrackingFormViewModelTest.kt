@@ -4,12 +4,16 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -18,11 +22,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
+import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HRPRepo
@@ -52,6 +60,40 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
         every { ben.genDetails } returns null
         every { ben.regDate } returns 0L
         return ben
+    }
+
+    private fun stubArray(id: Int, vararg values: String) {
+        every { mockResources.getStringArray(id) } returns arrayOf(*values)
+    }
+
+    private fun buildTrackingRecord(
+        visitDate: Long = 1700000000000L,
+        isPregnancyTestDone: String? = "No",
+        pregnancyTestResult: String? = null,
+        isPregnant: String? = "No",
+        usingFamilyPlanning: Boolean? = null,
+        methodOfContraception: String? = null,
+    ): EligibleCoupleTrackingCache = EligibleCoupleTrackingCache(
+        benId = 1L,
+        visitDate = visitDate,
+        isPregnancyTestDone = isPregnancyTestDone,
+        pregnancyTestResult = pregnancyTestResult,
+        isPregnant = isPregnant,
+        usingFamilyPlanning = usingFamilyPlanning,
+        methodOfContraception = methodOfContraception,
+        createdBy = "asha1",
+        updatedBy = "asha1",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun rebuildViewModelInEditMode(
+        existing: EligibleCoupleTrackingCache,
+        ben: BenRegCache
+    ): EligibleCoupleTrackingFormViewModel {
+        coEvery { ecrRepo.getBenFromId(any()) } returns ben
+        coEvery { ecrRepo.getEct(any(), any()) } returns existing
+        coEvery { ecrRepo.getSavedRecord(any()) } returns mockk(relaxed = true)
+        return EligibleCoupleTrackingFormViewModel(savedStateHandle, preferenceDao, context, ecrRepo, benRepo, hrpRepo)
     }
 
     @Before
@@ -150,6 +192,193 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(false, viewModel.isPregnant)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+        coVerify(exactly = 0) { hrpRepo.saveRecord(any<HRPPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `saveForm updates beneficiary to permanently sterilised when method is Female Sterilization`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        stubArray(
+            R.array.method_of_contraception,
+            "Self", "ANTRA Injection", "Copper T (IUCD)", "Condom", "Mala N",
+            "Chaya", "ECP", "MALE STERILIZATION", "FEMALE STERILIZATION", "Any Other Method"
+        )
+        val ben = mockBen()
+        val existing = buildTrackingRecord(
+            methodOfContraception = "FEMALE STERILIZATION",
+            isPregnant = "No",
+            usingFamilyPlanning = true
+        )
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(false, viewModel.isPregnant)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { benRepo.updateRecord(ben) }
+        coVerify(exactly = 0) { hrpRepo.saveRecord(any<HRPPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `saveForm does not sterilise beneficiary for a non-sterilization contraception method`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        stubArray(
+            R.array.method_of_contraception,
+            "Self", "ANTRA Injection", "Copper T (IUCD)", "Condom", "Mala N",
+            "Chaya", "ECP", "MALE STERILIZATION", "FEMALE STERILIZATION", "Any Other Method"
+        )
+        val ben = mockBen()
+        val existing = buildTrackingRecord(
+            methodOfContraception = "Condom",
+            isPregnant = "No",
+            usingFamilyPlanning = true
+        )
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(false, viewModel.isPregnant)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+        coVerify(exactly = 0) { hrpRepo.getPregnantAssess(any()) }
+        coVerify(exactly = 0) { hrpRepo.saveRecord(any<HRPPregnantAssessCache>()) }
+    }
+
+    @Test
+    fun `saveForm creates a default pregnant assess record when isPregnant is Yes and no assess exists`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        val ben = mockBen()
+        val existing = buildTrackingRecord(isPregnant = "Yes")
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        coEvery { hrpRepo.getPregnantAssess(any()) } returns null
+        coEvery { hrpRepo.getNonPregnantAssess(any()) } returns null
+        val slot = slot<HRPPregnantAssessCache>()
+        coEvery { hrpRepo.saveRecord(capture(slot)) } just Runs
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(true, viewModel.isPregnant)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { benRepo.updateRecord(ben) }
+        assertEquals(1L, slot.captured.benId)
+        assertEquals(false, slot.captured.isHighRisk)
+        assertEquals(null, slot.captured.noOfDeliveries)
+    }
+
+    @Test
+    fun `saveForm copies non-pregnant assess fields and flags high risk when any field is Yes`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        val ben = mockBen()
+        val existing = buildTrackingRecord(isPregnant = "Yes")
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        val nonPreg = HRPNonPregnantAssessCache(
+            benId = 1L,
+            noOfDeliveries = "No",
+            timeLessThan18m = "Yes",
+            heightShort = "No",
+            age = "No"
+        )
+        coEvery { hrpRepo.getPregnantAssess(any()) } returns null
+        coEvery { hrpRepo.getNonPregnantAssess(any()) } returns nonPreg
+        val slot = slot<HRPPregnantAssessCache>()
+        coEvery { hrpRepo.saveRecord(capture(slot)) } just Runs
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(true, slot.captured.isHighRisk)
+        assertEquals("No", slot.captured.noOfDeliveries)
+        assertEquals("Yes", slot.captured.timeLessThan18m)
+    }
+
+    @Test
+    fun `saveForm copies non-pregnant assess fields without high risk when all fields are No`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        val ben = mockBen()
+        val existing = buildTrackingRecord(isPregnant = "Yes")
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        val nonPreg = HRPNonPregnantAssessCache(
+            benId = 1L,
+            noOfDeliveries = "No",
+            timeLessThan18m = "No",
+            heightShort = "No",
+            age = "No"
+        )
+        coEvery { hrpRepo.getPregnantAssess(any()) } returns null
+        coEvery { hrpRepo.getNonPregnantAssess(any()) } returns nonPreg
+        val slot = slot<HRPPregnantAssessCache>()
+        coEvery { hrpRepo.saveRecord(capture(slot)) } just Runs
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(false, slot.captured.isHighRisk)
+        assertEquals("No", slot.captured.noOfDeliveries)
+    }
+
+    @Test
+    fun `saveForm saves an existing pregnant assess record directly without recreating it`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        val ben = mockBen()
+        val existing = buildTrackingRecord(isPregnant = "Yes")
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        val existingAssess = HRPPregnantAssessCache(benId = 1L, noOfDeliveries = "Yes", isHighRisk = true)
+        coEvery { hrpRepo.getPregnantAssess(any()) } returns existingAssess
+        coEvery { hrpRepo.getNonPregnantAssess(any()) } returns null
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { hrpRepo.saveRecord(existingAssess) }
+    }
+
+    @Test
+    fun `saveForm treats a positive pregnancy test result as pregnant even when isPregnant is No`() = runTest {
+        stubArray(R.array.yes_no, "Yes", "No")
+        stubArray(R.array.ectdset_po_neg, "Positive", "Negative")
+        val ben = mockBen()
+        val existing = buildTrackingRecord(
+            isPregnancyTestDone = "Yes",
+            pregnancyTestResult = "Positive",
+            isPregnant = "No"
+        )
+        viewModel = rebuildViewModelInEditMode(existing, ben)
+        advanceUntilIdle()
+
+        coEvery { hrpRepo.getPregnantAssess(any()) } returns null
+        coEvery { hrpRepo.getNonPregnantAssess(any()) } returns null
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(EligibleCoupleTrackingFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        assertEquals(true, viewModel.isPregnant)
+        io.mockk.unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 1) { benRepo.updateRecord(ben) }
+        coVerify(exactly = 1) { hrpRepo.saveRecord(any<HRPPregnantAssessCache>()) }
     }
 
     @Test

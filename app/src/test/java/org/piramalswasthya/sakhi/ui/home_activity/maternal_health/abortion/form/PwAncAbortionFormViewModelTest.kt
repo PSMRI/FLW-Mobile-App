@@ -11,6 +11,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -186,6 +187,7 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         every { ben.processed } returns "N"
         coEvery { benRepo.getBenFromId(any()) } returns ben
         coEvery { maternalHealthRepo.getBenFromId(any()) } returns ben
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
@@ -205,6 +207,7 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         every { ben.processed } returns "U"
         coEvery { benRepo.getBenFromId(any()) } returns ben
         coEvery { maternalHealthRepo.getBenFromId(any()) } returns ben
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
@@ -221,13 +224,15 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         val ben = mockk<BenRegCache>(relaxed = true)
         coEvery { benRepo.getBenFromId(any()) } returns ben
         coEvery { maternalHealthRepo.getBenFromId(any()) } returns ben
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
         advanceUntilIdle()
 
-        coVerify(exactly = 0) { ecrRepo.saveEct(any()) }
         assertEquals(PwAncAbortionFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { ecrRepo.saveEct(any()) }
     }
 
     @Test
@@ -236,14 +241,16 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         coEvery { maternalHealthRepo.getSavedRecordANC(any()) } returns savedAnc
         coEvery { benRepo.getBenFromId(any()) } returns null
         coEvery { maternalHealthRepo.getBenFromId(any()) } returns null
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
         advanceUntilIdle()
 
+        assertEquals(PwAncAbortionFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        unmockkStatic(Dispatchers::class)
         coVerify(exactly = 0) { benRepo.updateRecord(any()) }
         coVerify(exactly = 0) { ecrRepo.saveEct(any()) }
-        assertEquals(PwAncAbortionFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
     }
 
     @Test
@@ -256,6 +263,7 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         val inactiveRecord = mockk<PregnantWomanAncCache>(relaxed = true)
         every { inactiveRecord.processed } returns "N"
         coEvery { maternalHealthRepo.getAllInActiveAncRecords(any()) } returns listOf(inactiveRecord)
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
@@ -279,6 +287,7 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         val inactiveRecord = mockk<PregnantWomanAncCache>(relaxed = true)
         every { inactiveRecord.processed } returns "N"
         coEvery { maternalHealthRepo.getAllInActiveAncRecords(any()) } returns listOf(inactiveRecord)
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
@@ -296,13 +305,15 @@ class PwAncAbortionFormViewModelTest : BaseViewModelTest() {
         coEvery { maternalHealthRepo.getSavedRecordANC(any()) } returns savedAnc
         coEvery { maternalHealthRepo.getSavedRegistrationRecord(any()) } returns null
         coEvery { maternalHealthRepo.getAllInActiveAncRecords(any()) } returns emptyList()
+        viewModel = PwAncAbortionFormViewModel(savedStateHandle, preferenceDao, ecrRepo, context, maternalHealthRepo, benRepo)
         advanceUntilIdle()
 
         viewModel.saveForm()
         advanceUntilIdle()
 
-        coVerify(exactly = 0) { maternalHealthRepo.persistRegisterRecord(any()) }
         assertEquals(PwAncAbortionFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { maternalHealthRepo.persistRegisterRecord(any()) }
     }
 
     @Test

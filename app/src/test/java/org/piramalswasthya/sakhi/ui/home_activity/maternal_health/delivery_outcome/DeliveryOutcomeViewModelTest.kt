@@ -6,22 +6,27 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
@@ -132,6 +137,33 @@ class DeliveryOutcomeViewModelTest : BaseViewModelTest() {
     private fun buildViewModel(): DeliveryOutcomeViewModel =
         DeliveryOutcomeViewModel(savedStateHandle, preferenceDao, context, deliveryOutcomeRepo, ecrRepo, maternalHealthRepo, benRepo)
 
+    private fun baseSavedDeliveryOutcome(
+        complication: String? = null,
+        deliveryOutcomeCount: Int? = 0,
+        liveBirth: Int? = 0,
+        stillBirth: Int? = 0
+    ) = DeliveryOutcomeCache(
+        benId = 1L,
+        isActive = true,
+        complication = complication,
+        deliveryOutcome = deliveryOutcomeCount,
+        liveBirth = liveBirth,
+        stillBirth = stillBirth,
+        createdBy = "asha1",
+        updatedBy = "asha1",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun baseEcr(processed: String? = "N") = EligibleCoupleRegCache(
+        benId = 1L,
+        noOfChildren = 0,
+        noOfLiveChildren = 0,
+        processed = processed,
+        createdBy = "asha1",
+        updatedBy = "asha1",
+        syncState = SyncState.UNSYNCED
+    )
+
     @Test
     fun `getIndexOfMCP1 and getIndexOfMCP2 return ints without crashing`() {
         assertNotNull(viewModel.getIndexOfMCP1())
@@ -201,5 +233,103 @@ class DeliveryOutcomeViewModelTest : BaseViewModelTest() {
         val vm = buildViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(true, vm.recordExists.value)
+    }
+
+    @Test
+    fun `saveForm navigates to mdsr and marks ben as dead when complication is Death and ben processed was not N`() {
+        every { mockResources.getStringArray(R.array.do_complications_array) } returns arrayOf("Death", "Other Delivery Complication")
+        coEvery { benRepo.getBenFromId(any()) } returns baseBen()
+        coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns baseSavedDeliveryOutcome(complication = "Death")
+        coEvery { deliveryOutcomeRepo.saveDeliveryOutcome(any()) } returns Unit
+        coEvery { ecrRepo.getSavedRecord(any()) } returns null
+        val updatedBen = slot<BenRegCache>()
+        coEvery { benRepo.updateRecord(capture(updatedBen)) } returns Unit
+        val vm = buildViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.saveForm()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(DeliveryOutcomeViewModel.State.SAVE_SUCCESS(true), vm.state.value)
+        coVerify { benRepo.updateRecord(any()) }
+        assertEquals(true, updatedBen.captured.isDeath)
+        assertEquals("Death", updatedBen.captured.isDeathValue)
+        assertEquals(SyncState.UNSYNCED, updatedBen.captured.syncState)
+        assertEquals("U", updatedBen.captured.processed)
+    }
+
+    @Test
+    fun `saveForm keeps ben processed as N when complication is Death and processed already N`() {
+        every { mockResources.getStringArray(R.array.do_complications_array) } returns arrayOf("Death", "Other Delivery Complication")
+        coEvery { benRepo.getBenFromId(any()) } returns baseBen().copy(processed = "N")
+        coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns baseSavedDeliveryOutcome(complication = "Death")
+        coEvery { deliveryOutcomeRepo.saveDeliveryOutcome(any()) } returns Unit
+        coEvery { ecrRepo.getSavedRecord(any()) } returns null
+        val updatedBen = slot<BenRegCache>()
+        coEvery { benRepo.updateRecord(capture(updatedBen)) } returns Unit
+        val vm = buildViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.saveForm()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(DeliveryOutcomeViewModel.State.SAVE_SUCCESS(true), vm.state.value)
+        assertEquals("N", updatedBen.captured.processed)
+    }
+
+    @Test
+    fun `saveForm adds live and still birth counts to existing ecr record and marks it unsynced when processed was not N`() {
+        coEvery { benRepo.getBenFromId(any()) } returns baseBen()
+        coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns baseSavedDeliveryOutcome(
+            complication = null,
+            deliveryOutcomeCount = 2,
+            liveBirth = 1,
+            stillBirth = 1
+        )
+        coEvery { deliveryOutcomeRepo.saveDeliveryOutcome(any()) } returns Unit
+        val updatedEcr = slot<EligibleCoupleRegCache>()
+        coEvery { ecrRepo.getSavedRecord(any()) } returns baseEcr(processed = "P")
+        coEvery { ecrRepo.persistRecord(capture(updatedEcr)) } returns Unit
+        val vm = buildViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.saveForm()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(DeliveryOutcomeViewModel.State.SAVE_SUCCESS(false), vm.state.value)
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(1, updatedEcr.captured.noOfLiveChildren)
+        assertEquals(2, updatedEcr.captured.noOfChildren)
+        assertEquals(SyncState.UNSYNCED, updatedEcr.captured.syncState)
+        assertEquals("U", updatedEcr.captured.processed)
+    }
+
+    @Test
+    fun `saveForm keeps ecr processed as N when it was already N`() {
+        coEvery { benRepo.getBenFromId(any()) } returns baseBen()
+        coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns baseSavedDeliveryOutcome(
+            complication = null,
+            deliveryOutcomeCount = 3,
+            liveBirth = 2,
+            stillBirth = 1
+        )
+        coEvery { deliveryOutcomeRepo.saveDeliveryOutcome(any()) } returns Unit
+        val updatedEcr = slot<EligibleCoupleRegCache>()
+        coEvery { ecrRepo.getSavedRecord(any()) } returns baseEcr(processed = "N")
+        coEvery { ecrRepo.persistRecord(capture(updatedEcr)) } returns Unit
+        val vm = buildViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.saveForm()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(DeliveryOutcomeViewModel.State.SAVE_SUCCESS(false), vm.state.value)
+        assertEquals("N", updatedEcr.captured.processed)
+        assertEquals(2, updatedEcr.captured.noOfLiveChildren)
+        assertEquals(3, updatedEcr.captured.noOfChildren)
+    }
+
+    @Test
+    fun `saveForm fails when deliveryOutcomeRepo throws while saving`() {
+        coEvery { benRepo.getBenFromId(any()) } returns baseBen()
+        coEvery { deliveryOutcomeRepo.getDeliveryOutcome(any()) } returns null
+        coEvery { deliveryOutcomeRepo.saveDeliveryOutcome(any()) } throws RuntimeException("db error")
+        val vm = buildViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.saveForm()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(DeliveryOutcomeViewModel.State.SAVE_FAILED, vm.state.value)
     }
 }

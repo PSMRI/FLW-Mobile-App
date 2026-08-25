@@ -43,6 +43,9 @@ class SupervisorViewModelTest : BaseViewModelTest() {
         every { mockBlock.name } returns "TestBlock"
         val mockVillage = mockk<org.piramalswasthya.sakhi.model.LocationEntity>(relaxed = true)
         every { mockVillage.name } returns "TestVillage"
+        every { mockVillage.nameHindi } returns null
+        every { mockVillage.nameAssamese } returns null
+        every { mockVillage.nameBangla } returns null
         val mockUser = mockk<org.piramalswasthya.sakhi.model.User>(relaxed = true)
         every { mockUser.name } returns "TestUser"
         every { mockUser.state } returns mockState
@@ -155,5 +158,113 @@ class SupervisorViewModelTest : BaseViewModelTest() {
     fun `setRange does not throw`() = runTest {
         viewModel.setRange(1000L, 2000L)
         advanceUntilIdle()
+    }
+
+    // =====================================================
+    // init userFound / villageDropdownEntries language Tests
+    // =====================================================
+
+    @Test
+    fun `userName and villageList populated with ENGLISH names after init`() = runTest {
+        advanceUntilIdle()
+        assertEquals("TestUser", viewModel.userName)
+        assertEquals("TestVillage", viewModel.villageList[0])
+        assertEquals(org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel.State.SUCCESS, viewModel.state.value)
+    }
+
+    @Test
+    fun `villageList uses HINDI names when language is HINDI`() = runTest {
+        every { pref.getCurrentLanguage() } returns Languages.HINDI
+        val mockVillage = mockk<org.piramalswasthya.sakhi.model.LocationEntity>(relaxed = true)
+        every { mockVillage.name } returns "TestVillage"
+        every { mockVillage.nameHindi } returns "हिन्दीगाँव"
+        val mockUser = mockk<org.piramalswasthya.sakhi.model.User>(relaxed = true)
+        every { mockUser.name } returns "TestUser"
+        every { mockUser.villages } returns listOf(mockVillage)
+        every { pref.getLoggedInUser() } returns mockUser
+        val vm = SupervisorViewModel(database, pref, userRepo)
+        advanceUntilIdle()
+        assertEquals("हिन्दीगाँव", vm.villageList[0])
+    }
+
+    @Test
+    fun `villageList uses ASSAMESE names when language is ASSAMESE`() = runTest {
+        every { pref.getCurrentLanguage() } returns Languages.ASSAMESE
+        val mockVillage = mockk<org.piramalswasthya.sakhi.model.LocationEntity>(relaxed = true)
+        every { mockVillage.name } returns "TestVillage"
+        every { mockVillage.nameAssamese } returns "অসমীয়াগাঁও"
+        val mockUser = mockk<org.piramalswasthya.sakhi.model.User>(relaxed = true)
+        every { mockUser.name } returns "TestUser"
+        every { mockUser.villages } returns listOf(mockVillage)
+        every { pref.getLoggedInUser() } returns mockUser
+        val vm = SupervisorViewModel(database, pref, userRepo)
+        advanceUntilIdle()
+        assertEquals("অসমীয়াগাঁও", vm.villageList[0])
+    }
+
+    @Test
+    fun `villageList uses BANGLA names when language is BANGLA`() = runTest {
+        every { pref.getCurrentLanguage() } returns Languages.BANGLA
+        val mockVillage = mockk<org.piramalswasthya.sakhi.model.LocationEntity>(relaxed = true)
+        every { mockVillage.name } returns "TestVillage"
+        every { mockVillage.nameBangla } returns "বাংলাগ্রাম"
+        val mockUser = mockk<org.piramalswasthya.sakhi.model.User>(relaxed = true)
+        every { mockUser.name } returns "TestUser"
+        every { mockUser.villages } returns listOf(mockVillage)
+        every { pref.getLoggedInUser() } returns mockUser
+        val vm = SupervisorViewModel(database, pref, userRepo)
+        advanceUntilIdle()
+        assertEquals("বাংলাগ্রাম", vm.villageList[0])
+    }
+
+    @Test
+    fun `init navigates to login page when no logged in user found`() = runTest {
+        every { pref.getLoggedInUser() } returns null
+        val vm = SupervisorViewModel(database, pref, userRepo)
+        advanceUntilIdle()
+        assertEquals(true, vm.navigateToLoginPage.value)
+    }
+
+    // =====================================================
+    // setVillage() / selectedVillageName Tests
+    // =====================================================
+
+    @Test
+    fun `setVillage updates selectedVillage from user villages`() = runTest {
+        advanceUntilIdle()
+        viewModel.setVillage(0)
+        assertEquals("TestVillage", viewModel.selectedVillage?.name)
+    }
+
+    @Test
+    fun `selectedVillageName returns english name for ENGLISH language`() = runTest {
+        advanceUntilIdle()
+        viewModel.setVillage(0)
+        every { pref.getCurrentLanguage() } returns Languages.ENGLISH
+        assertEquals("TestVillage", viewModel.selectedVillageName)
+    }
+
+    @Test
+    fun `selectedVillageName falls back to name for HINDI when nameHindi is null`() = runTest {
+        advanceUntilIdle()
+        viewModel.setVillage(0)
+        every { pref.getCurrentLanguage() } returns Languages.HINDI
+        assertEquals("TestVillage", viewModel.selectedVillageName)
+    }
+
+    @Test
+    fun `selectedVillageName falls back to name for ASSAMESE when nameAssamese is null`() = runTest {
+        advanceUntilIdle()
+        viewModel.setVillage(0)
+        every { pref.getCurrentLanguage() } returns Languages.ASSAMESE
+        assertEquals("TestVillage", viewModel.selectedVillageName)
+    }
+
+    @Test
+    fun `selectedVillageName falls back to name for BANGLA when nameBangla is null`() = runTest {
+        advanceUntilIdle()
+        viewModel.setVillage(0)
+        every { pref.getCurrentLanguage() } returns Languages.BANGLA
+        assertEquals("TestVillage", viewModel.selectedVillageName)
     }
 }

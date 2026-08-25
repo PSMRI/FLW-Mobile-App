@@ -550,7 +550,7 @@ class BenGenRegFormDatasetTest : BaseViewModelTest() {
     @Test
     fun `setFirstPage adds family head contact field when saved mobile relation is family head`() = runTest {
         val d = ds()
-        val ben = benG(genderId = 2, maritalId = 1, mobileId = 4, relPos = 3, religionId = 1)
+        val ben = benG(genderId = 2, maritalId = 1, mobileId = 5, relPos = 3, religionId = 1)
         d.setFirstPage(ben, 9876543210L)
         assertTrue(d.getIndexById(114) >= 0)
         assertEquals(-1, d.getIndexById(18))

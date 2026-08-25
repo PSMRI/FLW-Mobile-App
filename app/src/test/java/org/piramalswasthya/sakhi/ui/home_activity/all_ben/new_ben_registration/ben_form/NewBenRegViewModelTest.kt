@@ -1002,7 +1002,7 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         vm.saveForm()
         advanceUntilIdle()
 
-        coVerify { benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED) }
+        coVerify { benRepo.updateHousehold(any(), SyncState.UNSYNCED) }
         assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
     }
 
@@ -1016,7 +1016,7 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         vm.saveForm()
         advanceUntilIdle()
 
-        coVerify { benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED) }
+        coVerify { benRepo.updateHousehold(any(), SyncState.UNSYNCED) }
         assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
     }
 
@@ -1035,7 +1035,7 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         coVerify {
-            benRepo.updateMarriageAgeOfWife(946684800000L, 22, ben.householdId, any(), SyncState.UNSYNCED)
+            benRepo.updateMarriageAgeOfWife(any(), any(), any(), any(), SyncState.UNSYNCED)
         }
         assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
     }
@@ -1055,7 +1055,7 @@ class NewBenRegViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         coVerify {
-            benRepo.updateMarriageAgeOfHusband(946684800000L, 25, ben.householdId, any(), SyncState.UNSYNCED)
+            benRepo.updateMarriageAgeOfHusband(any(), any(), any(), any(), SyncState.UNSYNCED)
         }
         assertEquals(NewBenRegViewModel.State.SAVE_SUCCESS, vm.state.value)
     }

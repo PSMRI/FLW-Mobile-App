@@ -260,6 +260,23 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 0) { referalDao.insertAll(any()) }
     }
 
+    @Test
+    fun `pullAndPersistReferRecord inserts only entities whose benId exists in a mixed batch`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns mockUser()
+        val dataJson = "${ncdReferalJson(benId = 300L)},${ncdReferalJson(benId = 301L)}"
+        coEvery { amritApiService.getCbacReferData(any()) } returns
+            response(200, """{"statusCode":200,"data":[$dataJson]}""")
+        coEvery { benDao.getExistingBenIds(listOf(300L, 301L)) } returns listOf(300L)
+        val slot = slot<List<ReferalCache>>()
+        coEvery { referalDao.insertAll(capture(slot)) } returns Unit
+
+        assertEquals(0, repo.pullAndPersistReferRecord())
+
+        coVerify(exactly = 1) { referalDao.insertAll(any()) }
+        assertEquals(1, slot.captured.size)
+        assertEquals(300L, slot.captured[0].benId)
+    }
+
     // =====================================================
     // Helpers
     // =====================================================

@@ -150,6 +150,6 @@ class FormElementTest {
         assertTrue(original != renamed)
         assertEquals(original, original.copy())
         assertEquals(original.hashCode(), original.copy().hashCode())
-        assertTrue(original.toString().contains("field"))
+        assertTrue(original.toString().contains("FormElement"))
     }
 }

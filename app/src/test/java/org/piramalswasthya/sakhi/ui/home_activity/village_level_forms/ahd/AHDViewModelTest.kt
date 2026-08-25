@@ -39,7 +39,7 @@ class AHDViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false
+        mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false; every { Log.w(any<String>(), any<String>()) } returns 0; every { Log.w(any<String>(), any<Throwable>()) } returns 0
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No"); every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH

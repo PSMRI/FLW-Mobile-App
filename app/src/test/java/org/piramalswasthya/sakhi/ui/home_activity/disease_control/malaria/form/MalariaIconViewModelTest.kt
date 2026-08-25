@@ -1,11 +1,10 @@
-package org.piramalswasthya.sakhi.ui.home_activity.disease_control
+package org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
-import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MalariaIconViewModelTest : BaseViewModelTest() {

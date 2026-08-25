@@ -10,8 +10,10 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -64,6 +66,9 @@ class TBConfirmedViewModelTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { benRepo.getBenFromId(any()) } returns null
+        coEvery { tbRepo.getTBConfirmed(any()) } returns null
+        coEvery { tbRepo.getTBSuspected(any()) } returns null
+        coEvery { tbRepo.getAllFollowUpsForBeneficiary(any()) } returns emptyList()
         viewModel = TBConfirmedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
     }
 
@@ -147,6 +152,28 @@ class TBConfirmedViewModelTest : BaseViewModelTest() {
         vm.formList.value.first { it.id == 4 }.value = followUpDateValue
     }
 
+    // TBConfirmedViewModel.saveForm() nests withContext(Dispatchers.Default) inside
+    // withContext(Dispatchers.IO). Combining two mocked-static dispatcher levels like that
+    // makes MockK's static Dispatchers mock throw ("no answer found for
+    // CoroutineDispatcher(child of static Dispatchers).fold(...)") while merging the nested
+    // coroutine contexts, regardless of what Dispatchers.Default is stubbed to return. The only
+    // reliable way around it (without touching production code) is to drop the static mock
+    // before saveForm() actually executes its nested dispatch, letting it run on the real IO/
+    // Default dispatchers, and then wait in real time for the terminal state to be posted
+    // (LiveData.postValue is synchronous here thanks to InstantTaskExecutorRule).
+    private fun TestScope.saveFormAndAwaitResult(vm: TBConfirmedViewModel, timeoutMs: Long = 5000) {
+        unmockkStatic(Dispatchers::class)
+        vm.saveForm()
+        advanceUntilIdle()
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (vm.state.value != TBConfirmedViewModel.State.SAVE_SUCCESS &&
+            vm.state.value != TBConfirmedViewModel.State.SAVE_FAILED &&
+            System.currentTimeMillis() < deadline
+        ) {
+            Thread.sleep(5)
+        }
+    }
+
     private fun existingDeathReadyRecord(): TBConfirmedTreatmentCache {
         val now = System.currentTimeMillis()
         val start = now - 200L * 24 * 60 * 60 * 1000
@@ -163,6 +190,10 @@ class TBConfirmedViewModelTest : BaseViewModelTest() {
     private fun todayDateString(): String =
         SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
 
+    private fun daysAgoDateString(days: Long): String =
+        SimpleDateFormat("dd-MM-yyyy", Locale.US)
+            .format(Date(System.currentTimeMillis() - days * 24 * 60 * 60 * 1000))
+
     @Test
     fun `saveForm posts SAVE_FAILED when the repository throws while saving`() = runTest {
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
@@ -174,9 +205,75 @@ class TBConfirmedViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
         fillMandatoryFields(vm)
 
-        vm.saveForm()
-        advanceUntilIdle()
+        saveFormAndAwaitResult(vm)
 
         assertEquals(TBConfirmedViewModel.State.SAVE_FAILED, vm.state.value)
+        coVerify { tbRepo.saveTBConfirmed(any()) }
+    }
+
+    @Test
+    fun `saveForm posts SAVE_SUCCESS and saves the record when validation passes`() = runTest {
+        advanceUntilIdle()
+        fillMandatoryFields(viewModel)
+
+        saveFormAndAwaitResult(viewModel)
+
+        assertEquals(TBConfirmedViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+        coVerify { tbRepo.saveTBConfirmed(any()) }
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
+    @Test
+    fun `saveForm updates beneficiary death fields and saves record when treatment outcome is Death`() =
+        runTest {
+            every { mockResources.getStringArray(R.array.tb_treatment_outcomes) } returns
+                    arrayOf("Cured", "Failed", "Lost to Follow-up (LFU)", "Death")
+            val ben = benRegCache()
+            coEvery { benRepo.getBenFromId(1L) } returns ben
+            coEvery { tbRepo.getTBConfirmed(any()) } returns existingDeathReadyRecord()
+            coEvery { tbRepo.getTBSuspected(any()) } returns null
+            coEvery { tbRepo.getAllFollowUpsForBeneficiary(any()) } returns emptyList()
+
+            val vm = TBConfirmedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+            advanceUntilIdle()
+
+            vm.formList.value.first { it.id == 4 }.value = daysAgoDateString(30)
+            vm.formList.value.first { it.id == 11 }.value = daysAgoDateString(5)
+            vm.formList.value.first { it.id == 12 }.value = "opt0"
+            vm.formList.value.first { it.id == 13 }.value = "TB complications"
+
+            saveFormAndAwaitResult(vm)
+
+            assertEquals(TBConfirmedViewModel.State.SAVE_SUCCESS, vm.state.value)
+            assertTrue(ben.isDeath)
+            assertEquals("Death", ben.isDeathValue)
+            assertEquals("TB complications", ben.reasonOfDeath)
+            assertEquals("opt0", ben.placeOfDeath)
+            assertEquals(daysAgoDateString(5), ben.dateOfDeath)
+            assertEquals("U", ben.processed)
+            assertEquals(SyncState.UNSYNCED, ben.syncState)
+            coVerify { benRepo.updateRecord(ben) }
+            coVerify { tbRepo.saveTBConfirmed(any()) }
+        }
+
+    @Test
+    fun `saveForm keeps processed as N when beneficiary record was already marked N`() = runTest {
+        every { mockResources.getStringArray(R.array.tb_treatment_outcomes) } returns
+                arrayOf("Cured", "Failed", "Lost to Follow-up (LFU)", "Death")
+        val ben = benRegCache().apply { processed = "N" }
+        coEvery { benRepo.getBenFromId(1L) } returns ben
+        coEvery { tbRepo.getTBConfirmed(any()) } returns existingDeathReadyRecord()
+        coEvery { tbRepo.getTBSuspected(any()) } returns null
+        coEvery { tbRepo.getAllFollowUpsForBeneficiary(any()) } returns emptyList()
+
+        val vm = TBConfirmedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        advanceUntilIdle()
+        vm.formList.value.first { it.id == 4 }.value = daysAgoDateString(30)
+
+        saveFormAndAwaitResult(vm)
+
+        assertEquals(TBConfirmedViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertEquals("N", ben.processed)
+        coVerify { benRepo.updateRecord(ben) }
     }
 }
