@@ -38,10 +38,10 @@
         android:gravity="center"
         android:textColor="#333333"
         android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintBottom_toBottomOf="@id/tvActivityDesc"
         app:layout_constraintEnd_toStartOf="@id/guideline10"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvActivityDesc"
         tools:text="1" />
 
     <!-- Activity Name bold -->
@@ -52,6 +52,7 @@
         android:textColor="#333333"
         android:textSize="13sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/guideline50"
         app:layout_constraintStart_toStartOf="@id/guideline10"
         app:layout_constraintTop_toTopOf="parent"

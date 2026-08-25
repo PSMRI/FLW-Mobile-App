@@ -17,8 +17,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.ActivityAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.GroupedActivityAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.toActivityGroups
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
@@ -40,7 +41,7 @@ class WorkerDetailFragment : Fragment() {
 
     private val viewModel: WorkerDetailViewModel by viewModels()
 
-    private lateinit var activityAdapter: ActivityAdapter
+    private lateinit var groupedActivityAdapter: GroupedActivityAdapter
     private lateinit var rejectionReasonAdapter: RejectionReasonAdapter
 
     private var rejectionReasons = mutableListOf<RejectionReason>()
@@ -131,12 +132,11 @@ class WorkerDetailFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        activityAdapter = ActivityAdapter { activity ->
+        groupedActivityAdapter = GroupedActivityAdapter { activity ->
             navigateToBeneficiaryDetail(activity)
-
         }
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvActivities.adapter = activityAdapter
+        binding.rvActivities.adapter = groupedActivityAdapter
 
         rejectionReasonAdapter = RejectionReasonAdapter { reason, isChecked ->
             onReasonCheckChanged(reason, isChecked)
@@ -201,7 +201,7 @@ class WorkerDetailFragment : Fragment() {
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
                         binding.rvActivities.visibility = View.VISIBLE
-                        activityAdapter.submitList(state.records)
+                        groupedActivityAdapter.submitList(state.records.toActivityGroups())
                         binding.cvMain.visibility = View.VISIBLE
                     }
 
