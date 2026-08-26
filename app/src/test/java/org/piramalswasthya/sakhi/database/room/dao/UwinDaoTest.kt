@@ -58,7 +58,9 @@ class UwinDaoTest {
         place = "Village Center",
         participantsCount = 12,
         createdBy = "asha1",
+        createdDate = 1_700_000_100_000L,
         updatedBy = "asha1",
+        updatedDate = 1_700_000_100_000L,
         syncState = syncState
     )
 

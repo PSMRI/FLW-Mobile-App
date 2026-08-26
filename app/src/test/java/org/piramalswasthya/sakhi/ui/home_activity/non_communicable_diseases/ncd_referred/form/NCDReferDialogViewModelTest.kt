@@ -161,6 +161,31 @@ class NCDReferDialogViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `constructor-injected vars and mutable fields are readable and writable`() {
+        viewModel.preferenceDao = preferenceDao
+        viewModel.cbacRepo = cbacRepo
+        viewModel.benDao = benDao
+        viewModel.referalRepo = referalRepo
+        viewModel.context = context
+        assertEquals(cbacRepo, viewModel.cbacRepo)
+        assertEquals(referalRepo, viewModel.referalRepo)
+        assertEquals(context, viewModel.context)
+
+        viewModel.benId = 5L
+        viewModel.referralReason = "reason"
+        viewModel.cbacId = 6L
+        viewModel.referralType = "type"
+
+        assertEquals(5L, viewModel.benId)
+        assertEquals("reason", viewModel.referralReason)
+        assertEquals(6L, viewModel.cbacId)
+        assertEquals("type", viewModel.referralType)
+
+        assertNotNull(viewModel.benAgeGender)
+        assertNotNull(viewModel.recordExists)
+    }
+
+    @Test
     fun `updateListOnValueChanged does not throw once initialised`() = runTest {
         coEvery { benDao.getBen(1L) } returns buildBen()
         every { preferenceDao.getLoggedInUser() } returns mockk<User>(relaxed = true)

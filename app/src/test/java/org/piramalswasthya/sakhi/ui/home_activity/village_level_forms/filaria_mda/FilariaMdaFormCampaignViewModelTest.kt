@@ -417,6 +417,22 @@ class FilariaMdaFormCampaignViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveFormResponses returns false when repository throws`() = runTest {
+        stubCampaign(
+            campaignSchema(campaignField("start_date")),
+            savedJson = """{"fields":{"start_date":"01-05-2024"}}"""
+        )
+        viewModel.loadFormSchema("MDAC_01", viewMode = false)
+        advanceUntilIdle()
+        coEvery { repository.insertFormResponse(any()) } throws RuntimeException("db error")
+
+        val result = viewModel.saveFormResponses(1L, 2L)
+        advanceUntilIdle()
+
+        assertFalse(result)
+    }
+
+    @Test
     fun `getVisibleFields maps the full validation block`() = runTest {
         stubCampaign(
             campaignSchema(

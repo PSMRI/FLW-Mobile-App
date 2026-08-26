@@ -248,4 +248,28 @@ class KalaAzarFormViewModelTest : BaseViewModelTest() {
 
         assertEquals(KalaAzarFormViewModel.State.SAVE_FAILED, vm.state.value)
     }
+
+    @Test
+    fun `saveForm on death record formats dateOfDeath when present`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death")
+        every { mockResources.getStringArray(R.array.death_place) } returns arrayOf("Home", "Hospital")
+        val screening = KalaAzarScreeningCache(
+            benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death",
+            dateOfDeath = 1700000000000L, placeOfDeath = "Home"
+        )
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache().copy(processed = "Y")
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(benRecord.dateOfDeath?.isNotEmpty() == true)
+        coVerify { benRepo.updateRecord(benRecord) }
+    }
 }

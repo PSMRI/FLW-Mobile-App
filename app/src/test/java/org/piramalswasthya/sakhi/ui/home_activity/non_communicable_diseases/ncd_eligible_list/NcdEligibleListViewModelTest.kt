@@ -7,9 +7,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -190,6 +192,7 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
         every { domain.benId } returns benId
         every { domain.ageInt } returns ageInt
         val ben = mockk<BenBasicCache>(relaxed = true)
+        every { ben.benId } returns benId
         every { ben.asBasicDomainModel() } returns domain
         val cbacRecords = if (screened) listOf(CbacCache(benId = benId, ashaId = 1, syncState = SyncState.SYNCED)) else emptyList()
         return BenWithCbacCache(ben = ben, savedCbacRecords = cbacRecords)
@@ -261,5 +264,40 @@ class NcdEligibleListViewModelTest : BaseViewModelTest() {
     fun `yearForPosition returns the expected age band start`() {
         assertEquals(35, viewModel.yearForPosition(1))
         assertEquals(80, viewModel.yearForPosition(10))
+    }
+
+    // =====================================================
+    // ncdDetails Tests
+    // =====================================================
+
+    @Test
+    fun `ncdDetails emits reversed cbac records for selected ben`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+        vm.setSelectedBenId(1L)
+        advanceUntilIdle()
+
+        val details = vm.ncdDetails.first()
+
+        assertTrue(details.isNotEmpty())
+    }
+
+    @Test
+    fun `ncdDetails does not emit when no ben selected`() = runTest {
+        every { recordsRepo.getNcdEligibleList } returns flowOf(
+            listOf(benCache(1L, 40, screened = true))
+        )
+        val vm = NcdEligibleListViewModel(recordsRepo, preferenceDao, context)
+
+        var emitted = false
+        val job = launch(Dispatchers.Unconfined) {
+            vm.ncdDetails.collect { emitted = true }
+        }
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(!emitted)
     }
 }

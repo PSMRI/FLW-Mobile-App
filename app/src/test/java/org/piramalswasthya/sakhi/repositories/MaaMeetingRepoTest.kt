@@ -522,6 +522,66 @@ class MaaMeetingRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `downSyncAndPersist decodes a base64 image and stores the resulting file uri`() = runTest {
+        loggedInUser()
+        every { pref.getLastSyncedTimeStamp() } returns 0L
+        val item = MaaMeetingServerItem(
+            id = 20,
+            meetingDate = "15-01-2026",
+            place = "Community Hall",
+            mitaninActivityCheckList = null,
+            noOfLactingMother = null,
+            noOfPragnentWoment = null,
+            villageName = "Village A",
+            participants = 10,
+            ashaId = 42,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { api.getMaaMeetings(any()) } returns successfulMeetingsResponse("{}")
+        stubParsedMeetingsResponse(
+            MaaMeetingGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
+        )
+
+        val cacheDir = createTempDir("maa_downsync_cache_")
+        every { appContext.cacheDir } returns cacheDir
+        every { appContext.packageName } returns "org.piramalswasthya.sakhi"
+
+        mockkStatic(android.util.Base64::class)
+        every { android.util.Base64.decode(any<String>(), any()) } returns byteArrayOf(1, 2, 3, 4)
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.detectExtAndMime(any()) } returns ("jpg" to "image/jpeg")
+
+        mockkStatic(androidx.core.content.FileProvider::class)
+        val resultUri = mockk<android.net.Uri>(relaxed = true)
+        every { resultUri.toString() } returns "content://org.piramalswasthya.sakhi.provider/meeting_image"
+        every {
+            androidx.core.content.FileProvider.getUriForFile(any(), any(), any())
+        } returns resultUri
+
+        val slot = io.mockk.slot<MaaMeetingEntity>()
+        every {
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = capture(slot),
+                serverId = any(),
+                meetingDate = any(),
+                place = any(),
+                participants = any(),
+                ashaId = any(),
+                villageName = any()
+            )
+        } returns Unit
+
+        repo.downSyncAndPersist()
+
+        assertEquals(
+            listOf("content://org.piramalswasthya.sakhi.provider/meeting_image"),
+            slot.captured.meetingImages
+        )
+        cacheDir.deleteRecursively()
+    }
+
+    @Test
     fun `tryUpsync attaches multipart image parts when local record has images`() = runTest {
         loggedInUser(userId = 9)
         mockkObject(HelperUtil)

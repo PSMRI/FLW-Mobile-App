@@ -171,4 +171,26 @@ class MalariaIRSViewModelTest : BaseViewModelTest() {
 
         assertEquals(MalariaIRSViewModel.State.SAVE_FAILED, viewModel.state.value)
     }
+
+    @Test
+    fun `updateListOnValueChanged does not throw`() = runTest {
+        advanceUntilIdle()
+        viewModel.updateListOnValueChanged(1, 0)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `setRecordExist updates recordExists LiveData`() {
+        viewModel.setRecordExist(true)
+        assertEquals(true, viewModel.recordExists.value)
+
+        viewModel.setRecordExist(false)
+        assertEquals(false, viewModel.recordExists.value)
+    }
+
+    @Test
+    fun `getIndexOfDate delegates to dataset`() {
+        val index = viewModel.getIndexOfDate()
+        assertNotNull(index)
+    }
 }

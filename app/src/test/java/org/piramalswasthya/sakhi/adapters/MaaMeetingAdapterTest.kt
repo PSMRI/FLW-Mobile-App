@@ -19,7 +19,9 @@ class MaaMeetingAdapterTest {
         meetingDate = "01-01-2024",
         place = place,
         participants = 10,
-        ashaId = 1
+        ashaId = 1,
+        createdAt = 0L,
+        updatedAt = 0L
     )
 
     @Suppress("UNCHECKED_CAST")

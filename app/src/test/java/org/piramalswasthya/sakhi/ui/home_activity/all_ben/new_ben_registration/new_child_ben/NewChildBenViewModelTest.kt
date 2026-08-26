@@ -412,4 +412,84 @@ class NewChildBenViewModelTest : BaseViewModelTest() {
         coVerify { ecrRepo.persistRecord(savedEcr) }
     }
 
+    // ----------------------------------------------------------------------------------------
+    // setUpPage success path / ben-derived helpers
+    // ----------------------------------------------------------------------------------------
+
+    private fun stubSuccessfulSetup(
+        selectedBenId: Long,
+        maritalStatusId: Int? = null,
+        gender: org.piramalswasthya.sakhi.model.Gender? = org.piramalswasthya.sakhi.model.Gender.MALE,
+        childListNonEmpty: Boolean = false
+    ) {
+        val household = mockk<HouseholdCache>(relaxed = true)
+        every { household.locationRecord } returns sampleLocationRecord()
+        every { household.benId } returns 0L
+        coEvery { benRepo.getHousehold(any()) } returns household
+
+        val genDetails = if (maritalStatusId != null)
+            mockk<org.piramalswasthya.sakhi.model.BenRegGen>(relaxed = true).also {
+                every { it.maritalStatusId } returns maritalStatusId
+            } else null
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns genDetails
+        every { ben.isConsent } returns false
+        every { ben.gender } returns gender
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns "LASTNAME"
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns ben
+
+        val selectedBen = mockk<BenRegCache>(relaxed = true)
+        every { selectedBen.beneficiaryId } returns selectedBenId
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns listOf(selectedBen)
+
+        if (childListNonEmpty) {
+            val child = mockk<BenRegCache>(relaxed = true)
+            coEvery { benRepo.getChildBenListFromHousehold(any(), any(), any()) } returns listOf(child)
+        }
+    }
+
+    @Test
+    fun `getBenGender and getBenName reflect the loaded beneficiary`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, gender = org.piramalswasthya.sakhi.model.Gender.MALE)
+
+        val vm = buildVm(selectedBenId = 33L)
+        advanceUntilIdle()
+
+        assertEquals(org.piramalswasthya.sakhi.model.Gender.MALE, vm.getBenGender())
+        assertEquals("KID LASTNAME", vm.getBenName())
+    }
+
+    @Test
+    fun `isHoFMarried is true when head of family and marital status id is 2`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, maritalStatusId = 2)
+
+        val vm = buildVm(selectedBenId = 33L, relToHeadId = 18)
+        advanceUntilIdle()
+
+        assertTrue(vm.isHoFMarried())
+    }
+
+    @Test
+    fun `isHoFMarried is false when not head of family`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, maritalStatusId = 2)
+
+        val vm = buildVm(selectedBenId = 33L, relToHeadId = 8)
+        advanceUntilIdle()
+
+        assertFalse(vm.isHoFMarried())
+    }
+
+    @Test
+    fun `setUpPage marks recordExists true when children already exist`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, childListNonEmpty = true)
+
+        val vm = buildVm(selectedBenId = 33L)
+        advanceUntilIdle()
+
+        assertEquals(true, vm.recordExists.value)
+        assertEquals(1, vm.oldChildCount)
+    }
 }

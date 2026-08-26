@@ -128,4 +128,16 @@ class FilariaFormViewModelTest : BaseViewModelTest() {
 
         assertEquals(FilariaFormViewModel.State.SAVE_FAILED, vm.state.value)
     }
+
+    @Test
+    fun `updateListOnValueChanged does not throw`() = runTest {
+        viewModel.updateListOnValueChanged(1, 0)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `getIndexOfDate returns a value without throwing`() {
+        val index = viewModel.getIndexOfDate()
+        assertNotNull(index)
+    }
 }

@@ -18,7 +18,14 @@ class VisitsListAdapterTest {
         benId = 1L,
         visitId = 1L,
         houseHoldDetailsId = 1L,
-        caseStatus = caseStatus
+        caseStatus = caseStatus,
+        caseDate = 0L,
+        screeningDate = 0L,
+        dateOfDeath = 0L,
+        dateOfRdt = 0L,
+        dateOfSlideTest = 0L,
+        dateOfVisitBySupervisor = 0L,
+        followUpDate = 0L
     )
 
     @Test

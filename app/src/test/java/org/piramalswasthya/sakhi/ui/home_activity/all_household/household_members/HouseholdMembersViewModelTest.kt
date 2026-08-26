@@ -114,6 +114,42 @@ class HouseholdMembersViewModelTest : BaseViewModelTest() {
         assertNull(viewModel.abha.value)
     }
 
+    @Test
+    fun `fetchAbha sets abha and updates record when health id found`() = runTest {
+        val cache = benRegCache()
+        coEvery { benRepo.getBenFromId(50L) } returns cache
+        coEvery { benRepo.getBeneficiaryWithId(cache.benRegId) } returns
+            org.piramalswasthya.sakhi.network.BenHealthDetails(
+                benHealthID = 1,
+                healthIdNumber = "12-3456-7890-1234",
+                beneficiaryRegID = cache.benRegId,
+                healthId = "test@sbx",
+                isNewAbha = true
+            )
+        coEvery { benRepo.updateRecord(any()) } returns Unit
+
+        viewModel.fetchAbha(50L)
+        advanceUntilIdle()
+
+        assertEquals("12-3456-7890-1234", viewModel.abha.value)
+        assertTrue(cache.isNewAbha)
+        coVerify { benRepo.updateRecord(cache) }
+    }
+
+    @Test
+    fun `fetchAbha sets benRegId when health id not found`() = runTest {
+        val cache = benRegCache()
+        coEvery { benRepo.getBenFromId(51L) } returns cache
+        coEvery { benRepo.getBeneficiaryWithId(cache.benRegId) } returns null
+
+        viewModel.fetchAbha(51L)
+        advanceUntilIdle()
+
+        assertEquals(cache.benRegId, viewModel.benRegId.value)
+        assertNull(viewModel.abha.value)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
     // =====================================================
     // resetBenRegId() Tests
     // =====================================================

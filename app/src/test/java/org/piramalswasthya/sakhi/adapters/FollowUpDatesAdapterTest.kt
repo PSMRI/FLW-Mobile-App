@@ -17,8 +17,14 @@ class FollowUpDatesAdapterTest {
         id = id,
         benId = benId,
         visitNumber = visitNumber,
+        followUpDate = 0L,
+        homeVisitDate = 0L,
+        treatmentEndDate = 0L,
+        treatmentStartDate = 0L,
         createdBy = "test",
-        modifiedBy = "test"
+        createdDate = 0L,
+        modifiedBy = "test",
+        lastModDate = 0L
     )
 
     @Test

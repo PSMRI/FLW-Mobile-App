@@ -5,6 +5,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -37,6 +39,8 @@ class AllHouseHoldDiseaseControlViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         every { recordsRepo.hhList } returns flowOf(emptyList())
         viewModel = AllHouseHoldDiseaseControlViewModel(savedStateHandle, householdRepo, recordsRepo)
     }

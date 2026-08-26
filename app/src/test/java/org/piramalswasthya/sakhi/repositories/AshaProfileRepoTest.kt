@@ -426,4 +426,44 @@ class AshaProfileRepoTest : BaseRepositoryTest() {
 
         assertFalse(repo.pullAndSaveAshaProfile(user))
     }
+
+    // ---------------- retryCount > 0 recursive retry branches ----------------
+
+    @Test
+    fun `postDataToAmritServer recursively retries after token refresh and succeeds`() = runTest {
+        val cache = mockk<ProfileActivityCache>(relaxed = true)
+        val refreshBody = JSONObject().apply { put("statusCode", 5002) }.toString()
+        val successBody = JSONObject().apply {
+            put("statusCode", 200)
+            put("data", profileNetworkJson())
+        }.toString()
+        coEvery { amritApiService.submitAshaProfileData(cache) } returnsMany listOf(
+            Response.success(jsonBody(refreshBody)),
+            Response.success(jsonBody(successBody))
+        )
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        coEvery { userRepo.refreshTokenTmc(user.userName, user.password) } returns true
+        coEvery { profileDao.getProfileActivityById(501L) } returns null
+
+        assertTrue(repo.postDataToAmritServer(cache))
+
+        coVerify(exactly = 2) { amritApiService.submitAshaProfileData(cache) }
+    }
+
+    @Test
+    fun `pullAndSaveAshaProfile recursively retries after token refresh and succeeds`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        val refreshBody = JSONObject().apply { put("statusCode", 5002) }.toString()
+        val successBody = JSONObject().apply { put("statusCode", 5000) }.toString()
+        coEvery { amritApiService.getAshaProfileData(any()) } returnsMany listOf(
+            Response.success(jsonBody(refreshBody)),
+            Response.success(jsonBody(successBody))
+        )
+        coEvery { userRepo.refreshTokenTmc(user.userName, user.password) } returns true
+
+        assertTrue(repo.pullAndSaveAshaProfile(user))
+
+        coVerify(exactly = 2) { amritApiService.getAshaProfileData(any()) }
+    }
 }

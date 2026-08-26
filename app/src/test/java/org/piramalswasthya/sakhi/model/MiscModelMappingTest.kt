@@ -8,6 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.ABHAGeneratedDTO
+import org.piramalswasthya.sakhi.network.ABHAProfile
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
 import org.piramalswasthya.sakhi.network.getLongFromDate
 
@@ -143,6 +144,42 @@ class MiscModelMappingTest {
         assertNull(cache.updatedDate)
     }
 
+    @Test fun `CDRCache copy and equality`() {
+        val a = CDRCache(
+            id = 1, benId = 10L, visitDate = 1_600_000_000_000L, cdr1File = "f1",
+            cdr2File = "f2", cdrDeathCertFile = "f3", motherName = "mom", fatherName = "dad",
+            address = "addr", houseNumber = "12", mohalla = "colonyX", landmarks = "lm",
+            pincode = 123456, landline = 111L, mobileNumber = 99L,
+            dateOfDeath = 1_600_000_001_000L, timeOfDeath = 1_600_000_002_000L,
+            placeOfDeath = "home", firstInformant = "info", ashaSign = "sign",
+            dateOfNotification = 1_600_000_003_000L, createdBy = "c",
+            createdDate = 1_600_000_004_000L, updatedBy = "u",
+            updatedDate = 1_600_000_005_000L, processed = "N", syncState = SyncState.UNSYNCED
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(benId = 999L))
+        assertTrue(a.toString().contains("CDRCache"))
+    }
+
+    @Test fun `CDRPost copy and equality`() {
+        val a = CDRPost(
+            id = 1, benId = 10L, visitDate = "2024-01-01", cdr1File = "f1", cdr2File = "f2",
+            cdrDeathCertFile = "f3", motherName = "mom", fatherName = "dad", address = "addr",
+            houseNumber = "12", colony = "colonyX", landmarks = "lm", pincode = 123456,
+            landline = 111L, mobileNumber = 99L, dateOfDeath = "2024-01-02",
+            timeOfDeath = "2024-01-03", placeOfDeath = "home", firstInformant = "info",
+            ashaSign = "sign", dateOfNotification = "2024-01-04", createdBy = "c",
+            createdDate = "2024-01-05", updatedBy = "u", updatedDate = "2024-01-06"
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(benId = 999L))
+        assertTrue(a.toString().contains("CDRPost"))
+    }
+
     // =====================================================
     // MDSRCache.asPostModel()  /  MdsrPost.asCacheModel()
     // =====================================================
@@ -166,6 +203,22 @@ class MiscModelMappingTest {
         assertEquals(true, post.actionTaken)
     }
 
+    @Test fun `MDSRCache copy and equality`() {
+        val a = MDSRCache(
+            id = 1, benId = 11L, mdsr1File = "f1", mdsr2File = "f2", mdsrDeathCertFile = "f3",
+            dateOfDeath = 1_600_000_000_000L, address = "addr", husbandName = "H",
+            causeOfDeath = "C", reasonOfDeath = "r", investigationDate = 1_600_000_001_000L,
+            actionTaken = true, blockMOSign = "sig", dateIc = 1_600_000_002_000L,
+            processed = "N", syncState = SyncState.UNSYNCED, createdBy = "c",
+            createdDate = 1_600_000_003_000L, updatedBy = "u", updatedDate = 1_600_000_004_000L
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(benId = 999L))
+        assertTrue(a.toString().contains("MDSRCache"))
+    }
+
     @Test fun `MdsrPost asCacheModel maps reason and signature back and forces synced`() {
         val cache = MdsrPost(benId = 21L, actionTaken = false, reasonDeath = "rr", signature = "s2").asCacheModel()
         assertEquals(21L, cache.benId)
@@ -173,6 +226,21 @@ class MiscModelMappingTest {
         assertEquals("s2", cache.blockMOSign)
         assertEquals("N", cache.processed)
         assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
+    @Test fun `MdsrPost copy and equality`() {
+        val a = MdsrPost(
+            id = 5, benId = 21L, mdsr1File = "f1", mdsr2File = "f2", mdsrDeathCertFile = "f3",
+            dateOfDeath = "2024-01-01", address = "addr", husbandName = "H", causeOfDeath = "C",
+            reasonDeath = "rr", investigationDate = "2024-01-02", actionTaken = true, signature = "s2",
+            dateIc = "2024-01-03", createdBy = "c", createdDate = "2024-01-01",
+            updatedBy = "u", updatedDate = "2024-01-04"
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(benId = 99L))
+        assertTrue(a.toString().contains("MdsrPost"))
     }
 
     // =====================================================
@@ -447,6 +515,28 @@ class MiscModelMappingTest {
         assertEquals(true, dto.isNewAbha)
     }
 
+    @Test fun `ABHAModel toMapHIDtoBeneficiaryRequest maps identity and profile fields`() {
+        val profile = ABHAProfile(firstName = "Asha", ABHANumber = "11-2222-3333-4444")
+        val request = abha().copy(healthId = "hid", healthIdNumber = "hidn", isNewAbha = true)
+            .toMapHIDtoBeneficiaryRequest(profile)
+        assertEquals(51L, request.beneficiaryRegID)
+        assertEquals(50L, request.beneficiaryID)
+        assertEquals("hid", request.healthId)
+        assertEquals("hidn", request.healthIdNumber)
+        assertEquals(9, request.providerServiceMapId)
+        assertEquals("creator", request.createdBy)
+        assertEquals("ok", request.message)
+        assertEquals("txn-1", request.txnId)
+        assertEquals(profile, request.ABHAProfile)
+        assertEquals(true, request.isNew)
+    }
+
+    @Test fun `ABHAModel toMapHIDtoBeneficiaryRequest carries isNew false through`() {
+        val profile = ABHAProfile()
+        val request = abha().copy(isNewAbha = false).toMapHIDtoBeneficiaryRequest(profile)
+        assertEquals(false, request.isNew)
+    }
+
     private fun abhaDto() = ABHAGeneratedDTO(
         beneficiaryID = 60L,
         beneficiaryRegID = 61L,
@@ -541,6 +631,42 @@ class MiscModelMappingTest {
         assertEquals("", cache.verifiedByUserName)
         assertEquals("", cache.reason)
         assertEquals("", cache.supervisorRole)
+    }
+
+    @Test fun `IncentiveRecordNetwork asCacheModel keeps non-null strings`() {
+        val net = recordNetwork().copy(
+            verifiedByUserName = "verifier",
+            reason = "some reason",
+            otherReason = "other reason",
+            approvalDate = "2024-01-05",
+            calimedDate = "2024-01-06",
+            supervisorRole = "SUPERVISOR"
+        )
+        val cache = net.asCacheModel()
+        assertEquals("verifier", cache.verifiedByUserName)
+        assertEquals("some reason", cache.reason)
+        assertEquals("other reason", cache.otherReason)
+        assertEquals("2024-01-05", cache.approvalDate)
+        assertEquals("2024-01-06", cache.calimedDate)
+        assertEquals("SUPERVISOR", cache.supervisorRole)
+    }
+
+    @Test fun `IncentiveRecordNetwork copy and equality`() {
+        val a = recordNetwork()
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(id = 999L))
+        assertTrue(a.toString().contains("IncentiveRecordNetwork"))
+    }
+
+    @Test fun `IncentiveActivityNetwork copy and equality`() {
+        val a = activityNetwork()
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertFalse(a == a.copy(id = 999L))
+        assertTrue(a.toString().contains("IncentiveActivityNetwork"))
     }
 
     private fun activityCache() = IncentiveActivityCache(

@@ -32,8 +32,11 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.SyncLogExporter
 import org.piramalswasthya.sakhi.helpers.SyncLogManager
+import android.content.Context
+import android.content.res.Resources
 import org.piramalswasthya.sakhi.model.SyncLogEntry
 import org.piramalswasthya.sakhi.model.SyncStatusCache
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import org.piramalswasthya.sakhi.work.BasePushWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 
@@ -250,6 +253,34 @@ class SyncDashboardViewModelTest : BaseViewModelTest() {
         viewModel.onExportEmptyHandled()
 
         assertEquals(false, viewModel.exportEmpty.value)
+    }
+
+    @Test
+    fun `getLocalNames uses the current language resources`() {
+        val context = mockk<Context>(relaxed = true)
+        val resources = mockk<Resources>(relaxed = true)
+        mockkObject(HelperUtil)
+        every { HelperUtil.getLocalizedResources(context, Languages.ENGLISH) } returns resources
+        every { resources.getStringArray(any()) } returns arrayOf("a", "b")
+
+        val names = viewModel.getLocalNames(context)
+
+        assertEquals(2, names.size)
+        unmockkObject(HelperUtil)
+    }
+
+    @Test
+    fun `getEnglishNames always uses English resources`() {
+        val context = mockk<Context>(relaxed = true)
+        val resources = mockk<Resources>(relaxed = true)
+        mockkObject(HelperUtil)
+        every { HelperUtil.getLocalizedResources(context, Languages.ENGLISH) } returns resources
+        every { resources.getStringArray(any()) } returns arrayOf("x", "y", "z")
+
+        val names = viewModel.getEnglishNames(context)
+
+        assertEquals(3, names.size)
+        unmockkObject(HelperUtil)
     }
 
     @Test

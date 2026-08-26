@@ -261,6 +261,18 @@ class NewBenRegG15ViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `init builds a fresh draft beneficiary when no existing record is found`() = runTest {
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns null
+        every { household.family } returns null
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        assertEquals(false, vm.recordExists.value)
+        assertNotNull(vm.formList)
+    }
+
+    @Test
     fun `saveForm allocates a beneficiary id for a new draft and marks the save successful`() = runTest {
         val draftBen = mockk<BenRegCache>(relaxed = true)
         every { draftBen.beneficiaryId } returns -1L

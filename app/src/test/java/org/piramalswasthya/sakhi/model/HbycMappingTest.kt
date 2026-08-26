@@ -1,7 +1,9 @@
 package org.piramalswasthya.sakhi.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 
@@ -263,5 +265,135 @@ class HbycMappingTest {
         assertEquals(0, cache.orsPacketDelivered)
         assertEquals("P", cache.processed)
         assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
+    @Test
+    fun `HbycPost copy toString and equality`() {
+        val post = HbycPost(
+            anmNameNumber = "anm", ashaWorkerNameNumber = "asha", beneficiaryid = 1L,
+            byHeightLenght = 1, childName = "child", childVaccinatedByAge = 2, childWasIll = 1,
+            createdBy = "c", createdDate = "2024-01-01", deadChildGender = 1,
+            deadNameChild = "dead", deathCause = "cause", delayConstraint = 1,
+            districtName = "district", gender = 1, hbycByAge = "hbyc", houseoldId = "hh1",
+            id = 1, ifYesReferHospital = 1, ifYesThenHealth = 1, ironicFolicAcidSyurp = 1,
+            loginId = 1, markAgeInMonth = 1, month = 1, numberOfChildrenWeiingLess = 1,
+            ors = 1, orsInLastMonth = 1, placeOfDeath = 1, primaryHealthCenter = "PHC",
+            qmAnmWasInformed = 1, subCenterName = "SC", supperVisionFromBlock = 1,
+            supplementStarted = 1, supplimentGiven = 1, totalNumberChildVillage = 1,
+            updatedBy = "u", updatedDate = "2024-01-02", villagePopulation = 1, villageid = 1,
+            vistDate = "2024-01-03", vitaminASupplements = 1, weightAccordingToChildAge = 1,
+            year = "2024"
+        )
+        val same = post.copy()
+        assertEquals(post, same)
+        assertEquals(post.hashCode(), same.hashCode())
+        assertNotEquals(post, post.copy(year = "2025"))
+        assertTrue(post.toString().contains("HbycPost"))
+
+        assertNotEquals(post, post.copy(anmNameNumber = "Other"))
+        assertNotEquals(post, post.copy(ashaWorkerNameNumber = "Other"))
+        assertNotEquals(post, post.copy(beneficiaryid = 999L))
+        assertNotEquals(post, post.copy(byHeightLenght = 999))
+        assertNotEquals(post, post.copy(childName = "Other"))
+        assertNotEquals(post, post.copy(childVaccinatedByAge = 999))
+        assertNotEquals(post, post.copy(childWasIll = 999))
+        assertNotEquals(post, post.copy(createdBy = "Other"))
+        assertNotEquals(post, post.copy(createdDate = "Other"))
+        assertNotEquals(post, post.copy(deadChildGender = 999))
+        assertNotEquals(post, post.copy(deadNameChild = "Other"))
+        assertNotEquals(post, post.copy(deathCause = "Other"))
+        assertNotEquals(post, post.copy(delayConstraint = 999))
+        assertNotEquals(post, post.copy(districtName = "Other"))
+        assertNotEquals(post, post.copy(gender = 999))
+        assertNotEquals(post, post.copy(hbycByAge = "Other"))
+        assertNotEquals(post, post.copy(houseoldId = "Other"))
+        assertNotEquals(post, post.copy(id = 999))
+        assertNotEquals(post, post.copy(ifYesReferHospital = 999))
+        assertNotEquals(post, post.copy(ifYesThenHealth = 999))
+        assertNotEquals(post, post.copy(ironicFolicAcidSyurp = 999))
+        assertNotEquals(post, post.copy(loginId = 999))
+        assertNotEquals(post, post.copy(markAgeInMonth = 999))
+        assertNotEquals(post, post.copy(month = 999))
+        assertNotEquals(post, post.copy(numberOfChildrenWeiingLess = 999))
+        assertNotEquals(post, post.copy(ors = 999))
+        assertNotEquals(post, post.copy(orsInLastMonth = 999))
+        assertNotEquals(post, post.copy(placeOfDeath = 999))
+        assertNotEquals(post, post.copy(primaryHealthCenter = "Other"))
+        assertNotEquals(post, post.copy(qmAnmWasInformed = 999))
+        assertNotEquals(post, post.copy(subCenterName = "Other"))
+        assertNotEquals(post, post.copy(supperVisionFromBlock = 999))
+        assertNotEquals(post, post.copy(supplementStarted = 999))
+        assertNotEquals(post, post.copy(supplimentGiven = 999))
+        assertNotEquals(post, post.copy(totalNumberChildVillage = 999))
+        assertNotEquals(post, post.copy(updatedBy = "Other"))
+        assertNotEquals(post, post.copy(updatedDate = "Other"))
+        assertNotEquals(post, post.copy(villagePopulation = 999))
+        assertNotEquals(post, post.copy(villageid = 999))
+        assertNotEquals(post, post.copy(vistDate = "Other"))
+        assertNotEquals(post, post.copy(vitaminASupplements = 999))
+        assertNotEquals(post, post.copy(weightAccordingToChildAge = 999))
+    }
+
+    @Test
+    fun `HbycPost getters read back all constructed field values`() {
+        val post = HbycPost(
+            anmNameNumber = "anm", ashaWorkerNameNumber = "asha", beneficiaryid = 1L,
+            byHeightLenght = 1, childName = "child", childVaccinatedByAge = 2, childWasIll = 1,
+            createdBy = "c", createdDate = "2024-01-01", deadChildGender = 1,
+            deadNameChild = "dead", deathCause = "cause", delayConstraint = 1,
+            districtName = "district", gender = 1, hbycByAge = "hbyc", houseoldId = "hh1",
+            id = 1, ifYesReferHospital = 1, ifYesThenHealth = 1, ironicFolicAcidSyurp = 1,
+            loginId = 1, markAgeInMonth = 1, month = 1, numberOfChildrenWeiingLess = 1,
+            ors = 1, orsInLastMonth = 1, placeOfDeath = 1, primaryHealthCenter = "PHC",
+            qmAnmWasInformed = 1, subCenterName = "SC", supperVisionFromBlock = 1,
+            supplementStarted = 1, supplimentGiven = 1, totalNumberChildVillage = 1,
+            updatedBy = "u", updatedDate = "2024-01-02", villagePopulation = 1, villageid = 1,
+            vistDate = "2024-01-03", vitaminASupplements = 1, weightAccordingToChildAge = 1,
+            year = "2024"
+        )
+
+        assertEquals("anm", post.anmNameNumber)
+        assertEquals("asha", post.ashaWorkerNameNumber)
+        assertEquals(1L, post.beneficiaryid)
+        assertEquals(1, post.byHeightLenght)
+        assertEquals("child", post.childName)
+        assertEquals(2, post.childVaccinatedByAge)
+        assertEquals(1, post.childWasIll)
+        assertEquals("c", post.createdBy)
+        assertEquals("2024-01-01", post.createdDate)
+        assertEquals(1, post.deadChildGender)
+        assertEquals("dead", post.deadNameChild)
+        assertEquals("cause", post.deathCause)
+        assertEquals(1, post.delayConstraint)
+        assertEquals("district", post.districtName)
+        assertEquals(1, post.gender)
+        assertEquals("hbyc", post.hbycByAge)
+        assertEquals("hh1", post.houseoldId)
+        assertEquals(1, post.id)
+        assertEquals(1, post.ifYesReferHospital)
+        assertEquals(1, post.ifYesThenHealth)
+        assertEquals(1, post.ironicFolicAcidSyurp)
+        assertEquals(1, post.loginId)
+        assertEquals(1, post.markAgeInMonth)
+        assertEquals(1, post.month)
+        assertEquals(1, post.numberOfChildrenWeiingLess)
+        assertEquals(1, post.ors)
+        assertEquals(1, post.orsInLastMonth)
+        assertEquals(1, post.placeOfDeath)
+        assertEquals("PHC", post.primaryHealthCenter)
+        assertEquals(1, post.qmAnmWasInformed)
+        assertEquals("SC", post.subCenterName)
+        assertEquals(1, post.supperVisionFromBlock)
+        assertEquals(1, post.supplementStarted)
+        assertEquals(1, post.supplimentGiven)
+        assertEquals(1, post.totalNumberChildVillage)
+        assertEquals("u", post.updatedBy)
+        assertEquals("2024-01-02", post.updatedDate)
+        assertEquals(1, post.villagePopulation)
+        assertEquals(1, post.villageid)
+        assertEquals("2024-01-03", post.vistDate)
+        assertEquals(1, post.vitaminASupplements)
+        assertEquals(1, post.weightAccordingToChildAge)
+        assertEquals("2024", post.year)
     }
 }

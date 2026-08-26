@@ -175,4 +175,25 @@ class ConfirmedCaseFollowUpViewModelTest : BaseViewModelTest() {
 
         assertEquals(ConfirmedCaseFollowUpViewModel.State.SAVE_FAILED, vm.state.value)
     }
+
+    @Test
+    fun `updateListOnValueChanged does not throw`() = runTest {
+        viewModel.updateListOnValueChanged(1, 0)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `getIndexOfDate returns a value without throwing`() {
+        val index = viewModel.getIndexOfDate()
+        assertNotNull(index)
+    }
+
+    @Test
+    fun `setRecordExist updates recordExists LiveData`() {
+        viewModel.setRecordExist(true)
+        assertEquals(true, viewModel.recordExists.value)
+
+        viewModel.setRecordExist(false)
+        assertEquals(false, viewModel.recordExists.value)
+    }
 }

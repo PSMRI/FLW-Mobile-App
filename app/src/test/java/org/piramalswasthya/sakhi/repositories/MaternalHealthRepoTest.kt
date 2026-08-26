@@ -569,6 +569,37 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `processNewPwr marks the record unsynced and continues when beneficiary is missing`() = runTest {
+        loggedIn()
+        val record = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { record.benId } returns 101L
+        coEvery { maternalHealthDao.getAllUnprocessedPWRs() } returns listOf(record)
+        coEvery { benDao.getBen(101L) } returns null
+        coEvery { maternalHealthDao.updatePwr(any()) } returns Unit
+
+        assertTrue(repo.processNewPwr())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(atLeast = 1) { maternalHealthDao.updatePwr(record) }
+    }
+
+    @Test
+    fun `processNewPwr marks the record unsynced when the upload fails`() = runTest {
+        loggedIn()
+        val record = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { record.benId } returns 102L
+        every { record.asPwrPost() } returns mockk<PwrPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedPWRs() } returns listOf(record)
+        coEvery { benDao.getBen(102L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updatePwr(any()) } returns Unit
+        coEvery { amritApiService.postPwrForm(any()) } returns jsonResponse("{}", code = 500)
+
+        assertTrue(repo.processNewPwr())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
     fun `ancDueCount flow val is built at construction`() {
         assertNotNull(repo.ancDueCount)
     }

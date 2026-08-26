@@ -37,6 +37,7 @@ class NcdReferListAdapterTest {
 
     private fun referalCache(benId: Long = 1L) = ReferalCache(
         benId = benId,
+        revisitDate = 0L,
         syncState = SyncState.UNSYNCED
     )
 

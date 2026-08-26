@@ -129,7 +129,21 @@ class EligibleCoupleTrackingListViewModelTest : BaseViewModelTest() {
         val item = mockk<BenWithEctListDomain>(relaxed = true)
         every { item.ben } returns benBasic
         every { item.savedECTRecords } returns records
+        every { item.ectDate } returns benId
         return item
+    }
+
+    @Test
+    fun `benList is sorted newest first by default`() = runTest {
+        every { recordsRepo.eligibleCoupleTrackingList } returns
+                flowOf(listOf(ectItem(1L, emptyList()), ectItem(2L, emptyList())))
+
+        val vm = EligibleCoupleTrackingListViewModel(savedStateHandle, recordsRepo)
+
+        val result = vm.benList.first()
+
+        assertEquals(2L, result[0].ben.benId)
+        assertEquals(1L, result[1].ben.benId)
     }
 
     private fun ectRecord(visited: Long): ECTDomain {

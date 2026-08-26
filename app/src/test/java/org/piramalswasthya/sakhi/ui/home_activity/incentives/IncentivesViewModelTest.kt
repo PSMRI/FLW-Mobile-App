@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -876,5 +877,47 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val state = vm.actionState.value
         assertTrue(state is ActionState.Error)
         assertEquals("Unknown error", (state as ActionState.Error).message)
+    }
+
+    // =====================================================
+    // FileUpdateState Tests
+    // =====================================================
+
+    @Test
+    fun `FileUpdateState Idle and Loading and Success are singletons`() {
+        assertEquals(
+            IncentivesViewModel.FileUpdateState.Idle,
+            IncentivesViewModel.FileUpdateState.Idle
+        )
+        assertEquals(
+            IncentivesViewModel.FileUpdateState.Loading,
+            IncentivesViewModel.FileUpdateState.Loading
+        )
+        assertEquals(
+            IncentivesViewModel.FileUpdateState.Success,
+            IncentivesViewModel.FileUpdateState.Success
+        )
+    }
+
+    @Test
+    fun `FileUpdateState Error exposes message and generated members`() {
+        val error = IncentivesViewModel.FileUpdateState.Error("download failed")
+        val same = error.copy()
+        assertEquals("download failed", error.message)
+        assertEquals(error, same)
+        assertEquals(error.hashCode(), same.hashCode())
+        assertTrue(error.toString().contains("download failed"))
+        assertNotEquals(error, error.copy(message = "other"))
+    }
+
+    @Test
+    fun `FileUpdateState variants are distinct instances`() {
+        val states: List<IncentivesViewModel.FileUpdateState> = listOf(
+            IncentivesViewModel.FileUpdateState.Idle,
+            IncentivesViewModel.FileUpdateState.Loading,
+            IncentivesViewModel.FileUpdateState.Success,
+            IncentivesViewModel.FileUpdateState.Error("oops")
+        )
+        assertEquals(4, states.distinct().size)
     }
 }
