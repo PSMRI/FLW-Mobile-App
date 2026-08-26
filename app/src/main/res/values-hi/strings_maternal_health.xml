@@ -394,7 +394,7 @@
     <string name="ir_infant_term">शिशु की गर्भावधि</string>
     <string name="ir_corticosteroid_given">क्या कॉर्टिकोस्टेरॉइड इंजेक्शन दिया गया था?</string>
     <string name="ir_gender">शिशु का लिंग</string>
-    <string name="ir_baby_cried_at_birth">शिशु प्रसव के समय तुरंत रोता था</string>
+    <string name="ir_baby_cried_at_birth">क्या प्रसव के समय शिशु रोया था?</string>
     <string name="ir_resuscitation">यदि नहीं, तो क्या पुनर्जीवन (रेससिटेशन) किया गया?</string>
     <string name="ir_referred">उच्च सुविधा के लिए और प्रबंधन के लिए संदर्भित किया गया?</string>
     <string name="ir_had_birth_defect">प्रसव के समय क्या कोई जन्मजात विकृति दिखा?</string>

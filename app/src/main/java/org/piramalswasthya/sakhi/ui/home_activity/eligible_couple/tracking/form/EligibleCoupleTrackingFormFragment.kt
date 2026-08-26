@@ -117,8 +117,10 @@ class EligibleCoupleTrackingFormFragment : Fragment() {
     private fun setupFormAdapter(recordExists: Boolean) {
         val adapter = FormInputAdapter(
             formValueListener = FormInputAdapter.FormValueListener { formId, index ->
-                viewModel.updateListOnValueChanged(formId, index)
-                hardCodedListUpdate(formId)
+                if (!recordExists) {
+                    viewModel.updateListOnValueChanged(formId, index)
+                    hardCodedListUpdate(formId)
+                }
             },
             selectImageClickListener = FormInputAdapter.SelectUploadImageClickListener { formId ->
                 if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
