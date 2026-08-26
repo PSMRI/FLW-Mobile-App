@@ -5,7 +5,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -17,6 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import io.mockk.mockk
+import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 
@@ -35,6 +39,8 @@ class AllHouseHoldDiseaseControlViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         every { recordsRepo.hhList } returns flowOf(emptyList())
         viewModel = AllHouseHoldDiseaseControlViewModel(savedStateHandle, householdRepo, recordsRepo)
     }
@@ -136,6 +142,38 @@ class AllHouseHoldDiseaseControlViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `filterText matches by hhId, name or contact number`() = runTest {
+        val households = listOf(
+            HouseHoldBasicDomain(hhId = 111L, headName = "Ravi", headSurname = "Kumar", contactNumber = "9998887771", numMembers = 3),
+            HouseHoldBasicDomain(hhId = 222L, headName = "Sita", headSurname = "Devi", contactNumber = "9998887772", numMembers = 4),
+            HouseHoldBasicDomain(hhId = 333L, headName = "Amit", headSurname = "Shah", contactNumber = "9998887773", numMembers = 2)
+        )
+        val filteredRecordsRepo = mockk<RecordsRepo>()
+        every { filteredRecordsRepo.hhList } returns flowOf(households)
+        val filteredViewModel = AllHouseHoldDiseaseControlViewModel(savedStateHandle, householdRepo, filteredRecordsRepo)
+
+        filteredViewModel.filterText("222")
+        advanceUntilIdle()
+        assertEquals(listOf(222L), filteredViewModel.householdList.first().map { it.hhId })
+
+        filteredViewModel.filterText("ravikumar")
+        advanceUntilIdle()
+        assertEquals(listOf(111L), filteredViewModel.householdList.first().map { it.hhId })
+
+        filteredViewModel.filterText("9998887773")
+        advanceUntilIdle()
+        assertEquals(listOf(333L), filteredViewModel.householdList.first().map { it.hhId })
+
+        filteredViewModel.filterText("nomatch")
+        advanceUntilIdle()
+        assertEquals(emptyList<Long>(), filteredViewModel.householdList.first().map { it.hhId })
+
+        filteredViewModel.filterText("")
+        advanceUntilIdle()
+        assertEquals(3, filteredViewModel.householdList.first().size)
     }
 
     // =====================================================

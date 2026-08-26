@@ -335,6 +335,53 @@ class SaasBahuSammelanRepoTest : BaseRepositoryTest() {
         assertTrue(slot.captured.sammelanImages.isNullOrEmpty())
     }
 
+    @Test
+    fun `SaasBahuSamelanGettDataFromServer decodes a base64 image and stores the resulting file uri`() = runTest {
+        loggedIn()
+        val item = SaasBahuSammelanServerItem(
+            id = 8,
+            meetingDate = 222L,
+            place = "Panchayat Bhawan",
+            participants = 15,
+            ashaId = 11,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { api.getSaasBahuSammelans(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            SaasBahuSammelanGetAllResponse(data = listOf(item), statusCode = 200, status = "OK")
+        )
+
+        val cacheDir = createTempDir("saas_bahu_downsync_cache_")
+        every { appContext.cacheDir } returns cacheDir
+        every { appContext.packageName } returns "org.piramalswasthya.sakhi"
+
+        mockkStatic(android.util.Base64::class)
+        every { android.util.Base64.decode(any<String>(), any()) } returns byteArrayOf(1, 2, 3, 4)
+
+        io.mockk.mockkObject(org.piramalswasthya.sakhi.utils.HelperUtil)
+        every {
+            org.piramalswasthya.sakhi.utils.HelperUtil.detectExtAndMime(any())
+        } returns ("jpg" to "image/jpeg")
+
+        mockkStatic(androidx.core.content.FileProvider::class)
+        val resultUri = mockk<android.net.Uri>(relaxed = true)
+        every { resultUri.toString() } returns "content://org.piramalswasthya.sakhi.provider/sammelan_image"
+        every {
+            androidx.core.content.FileProvider.getUriForFile(any(), any(), any())
+        } returns resultUri
+
+        val slot = slot<SaasBahuSammelanCache>()
+        coEvery { saasBahuDao.insertSammelan(capture(slot)) } just Runs
+
+        repo.SaasBahuSamelanGettDataFromServer()
+
+        assertEquals(
+            listOf("content://org.piramalswasthya.sakhi.provider/sammelan_image"),
+            slot.captured.sammelanImages
+        )
+        cacheDir.deleteRecursively()
+    }
+
     @Test(expected = NullPointerException::class)
     fun `SaasBahuSamelanGettDataFromServer throws when item id is null`() = runTest {
         loggedIn()
@@ -352,6 +399,41 @@ class SaasBahuSammelanRepoTest : BaseRepositoryTest() {
         )
 
         repo.SaasBahuSamelanGettDataFromServer()
+    }
+
+    @Test
+    fun `pushUnSyncedRecords attaches multipart image parts when local record has images`() = runTest {
+        loggedIn()
+        io.mockk.mockkObject(org.piramalswasthya.sakhi.utils.HelperUtil)
+        io.mockk.mockkStatic(android.net.Uri::class)
+        val parsedUri = mockk<android.net.Uri>(relaxed = true)
+        every { android.net.Uri.parse("content://provider/img1") } returns parsedUri
+        every {
+            org.piramalswasthya.sakhi.utils.HelperUtil.getFileName(parsedUri, appContext)
+        } returns "img1.jpg"
+        every { appContext.contentResolver.getType(parsedUri) } returns "image/jpeg"
+        val tempFile = java.io.File.createTempFile("saas_test_", ".jpg")
+        tempFile.writeBytes(byteArrayOf(1, 2, 3))
+        every {
+            org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(parsedUri, "img1.jpg", appContext)
+        } returns tempFile
+
+        val row = mockk<SaasBahuSammelanCache>(relaxed = true)
+        every { row.sammelanImages } returns listOf("content://provider/img1")
+        every { saasBahuDao.getBySyncState(SyncState.UNSYNCED) } returns listOf(row)
+        coEvery {
+            api.postSaasBahuSammelanMultipart(any(), any(), any(), any(), any())
+        } returns sammelanResponse("""{"statusCode":200}""")
+
+        val result = repo.pushUnSyncedRecordsSaasBahuSammelan()
+
+        assertTrue(result)
+        coVerify {
+            api.postSaasBahuSammelanMultipart(
+                any(), any(), any(), any(), match { it.isNotEmpty() }
+            )
+        }
+        tempFile.delete()
     }
 
     @Test(expected = NullPointerException::class)

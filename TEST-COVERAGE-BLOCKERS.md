@@ -486,7 +486,27 @@ single json object` in `VLFRepoTest.kt`) were adjusted to assert the actual obse
 (`saveRecord` NOT called) rather than the originally-intended one, so they still exercise the `is
 JSONObject` branch for coverage purposes without asserting incorrect behavior.
 
-## CbacViewModel.kt — `submitForm`'s HRP `when(reproductiveStatusId) { 5, 4 -> false; else -> true }` has dead match arms
+## BenRepo.kt — remaining ~377 missed instructions live in two giant field-mapping private methods, not attempted this session
+
+Re-reviewed `BenRepo.kt`/`BenRepoTest.kt` for the `unit-test-coverage-and-pr-checks3` push (target 94.9% -> higher).
+Cross-checked every public/private method name against `BenRepoTest.kt` (3800+ lines): every method
+short of the giant JSON-to-entity mappers already has deep, multi-branch coverage — `processNewBen`
+alone has ~30 dedicated tests covering create-ben-id success/failure/retry/token-refresh, batch
+upload success/413-split/failure/exception, and the kid-model conversion guard; `sendOtp`/`resendOtp`/
+`verifyOtp`/`getUserDetailsByAyushmanAbhaCardNo`/`parseAyushmanResponse`/`parseFamilyMembers` likewise
+have a test for essentially every `when`/`if` branch visible by inspection.
+
+The remaining gap is almost entirely inside `getBenCacheFromServerResponse` (~400 lines,
+`BenRepo.kt:1072-1478`) and `getHouseholdCacheFromServerResponse` (~130 lines, `BenRepo.kt:1479-1611`):
+each field of the resulting `BenRegCache`/`HouseholdCache` is populated via its own
+`if (jsonObj.has("x")) jsonObj.getString("x") else null`-style elvis/when fallback, so closing them
+fully means constructing a JSON fixture large enough to hit every one of ~80 per-field branches against
+a full `BenRegCache(...)`/`HouseholdCache(...)` constructor (100+ named parameters each). That is
+mechanically possible but high-risk to write blind in a write-only, no-build session: a single wrong
+field name or type on either data class fails the whole module's compilation for every other agent
+sharing this tree. Given the existing tests already exercise the happy path and the `benExists`/
+`hhExists`/`benId == -1`/`hhId == -1` skip branches for both methods, this was left alone rather than
+risk a build break; a follow-up session with build access should tackle these two methods directly.
 
 `app/src/main/java/org/piramalswasthya/sakhi/ui/home_activity/non_communicable_diseases/cbac/CbacViewModel.kt`,
 `submitForm()` (~lines 586-622). The `when` block that decides `flagForHrp` for `5, 4 -> false` is only
@@ -502,6 +522,48 @@ behavior rather than the seemingly-intended one, closing the reachable branches 
 (`reproductiveStatusId == 2`, `== 3`, and the `ben.genDetails == null` case) without pretending the dead
 `5, 4` arm is reachable.
 
+## HelperUtil.kt — `showMediaOptionsDialog` / `showImageDialog` left untested: real ViewBinding inflate
+
+`Context.showMediaOptionsDialog` and `Context.showImageDialog` both call a generated ViewBinding's
+static `inflate(LayoutInflater.from(this))` (`LayoutMediaOptionsBinding` / `LayoutViewMediaBinding`).
+Unlike the other dialog helpers in this file (`showReminderDialog`, `showPickerDialog`), which only
+chain `MaterialAlertDialogBuilder`/`AlertDialog.Builder` calls and are fully testable via
+`mockkConstructor`, these two additionally require a real `View` tree: the generated `inflate()` calls
+`LayoutInflater.inflate(layoutId, parent, false)` against a real XML layout resource, then does
+`ViewBindings.findChildViewById(root, id)` for every child view, throwing `NullPointerException` if any
+lookup returns null. None of `LayoutInflater`, the inflated `View` tree, or the per-field
+`findViewById` casts can be faked with `mockkConstructor`/`mockkStatic` without either Robolectric (out
+of scope) or hand-mocking every single child view id with the exact widget type the binding expects —
+judged not worth the fragility for two methods. Left untested; all other `HelperUtil` dialog/view
+helpers (`showReminderDialog` + `$default`, `showUploadReminderDialog`, `showPickerDialog`,
+`populateAntraTable`, `Canvas.drawMultilineText` + `$default`, `launchFilePicker`, `launchCamera`) were
+covered instead via `mockkConstructor` on the real Android view/dialog/layout-params classes they
+construct directly (no ViewBinding involved), following the same pattern already established for
+`AlertDialog.Builder`/`Configuration` elsewhere in `HelperUtilTest.kt`.
+
+## InAppUpdateHelper.kt — `showPlayStoreFallback()` and the two `IntentSender.SendIntentException` catches left untested
+
+`InAppUpdateHelper` has no `HandlerThread`/`Looper`/real-`Thread` dependency, so it was not
+automatically out of scope, and `AppUpdateManagerFactory.create(activity)` was swapped for Google's own
+`com.google.android.play.core.appupdate.testing.FakeAppUpdateManager` (ships in the `app-update`
+artifact already on the classpath, explicitly designed by Google to run in plain JVM unit tests without
+Robolectric). `InAppUpdateHelperTest.kt` drives `checkForUpdate`, `onActivityResult`, and
+`resumeUpdateIfNeeded` through it, covering the remote-config success/failure/invalid-value branches
+and the immediate/flexible/not-available update paths.
+
+Left uncovered: the private `showPlayStoreFallback()` (reached only from `startUpdate`'s
+`addOnFailureListener` or its/`resumeUpdateIfNeeded`'s `catch (e: IntentSender.SendIntentException)`)
+and `resumeUpdateIfNeeded`'s `UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS` branch.
+`FakeAppUpdateManager`'s public surface (`setUpdateAvailable`/`setUpdateNotAvailable`,
+`userAcceptsUpdate`, `downloadStarts`/`downloadCompletes`, `startUpdateFlowForResult`) has no
+documented way to force `getAppUpdateInfo()`'s `Task` to fail, force `startUpdateFlowForResult` to
+throw `SendIntentException`, or set `UpdateAvailability` to the developer-triggered value — all three
+are real Play Store failure/edge conditions the Fake doesn't simulate. Reaching them would need either
+reflection into `showPlayStoreFallback` (a `private fun`, ruled out) or replacing the Fake with a full
+MockK mock of the `AppUpdateManager` interface plus a hand-built failing `Task`, which trades the safer,
+Google-provided Fake for exactly the kind of brittle Task-listener mocking this session was trying to
+avoid. Documented rather than forced.
+
 Also noted, not a bug but a recurring structural pattern across most of this ViewModel's `set*`
 counter methods (`setCoughing`, `setFhTb`, `setUnsteady`, etc.): each does
 `if (i == 1) _ast1.value = _ast1.value?.plus(1) else if (i == 2 && ast1.value!! > 0) ...`. Every
@@ -511,3 +573,128 @@ taken through the public API. JaCoCo reports these as partially-missed branches 
 etc. on `ast1`/`ast2`/`astMoic` updates, `checkForReferral`-adjacent `referralList.value`/
 `_completedReferrals.value` elvis checks, etc.) but they are dead code from any real call path, not a
 coverage gap a test can close without reflection to force a null `LiveData` value.
+
+## HelperUtil.kt — showReminderDialog/showUploadReminderDialog cannot be unit tested
+
+`MaterialAlertDialogBuilder(context)`'s constructor internally builds a real `ContextThemeWrapper`.
+Even with `mockkConstructor(MaterialAlertDialogBuilder::class)` fully stubbing every post-construction
+method, the constructor body itself runs for real and calls `ContextThemeWrapper.getSystemService()`,
+which hits the throwing android.jar stub (`Method getSystemService in android.view.ContextThemeWrapper
+not mocked`). Same class of blocker as the documented `HandlerThread`/Robolectric-only findings —
+no fix without Robolectric, which this project does not use.
+
+## NewBenRegG15ViewModel.saveForm — needed non-zero dob/regDate stubs to avoid an NPE, no src/main change
+
+Extended `NewBenRegG15ViewModelTest.kt` with 3 new tests to exercise the real `saveForm()` body
+(previously 0% covered — every existing test either never called it or only checked pre-save state).
+`saveForm()` calls `dataset.mapValues(ben, 2)`, whose real (unconditional, ignores `pageNumber`) body
+does `getLongFromDate(dateOfReg.value!!)` and `getLongFromDate(dob.value!!)`. `dateOfReg.value`/
+`dob.value` are set during the `init` block's `setFirstPage(ben, ...)` call from
+`getDateFromLong(saved.regDate)` / `getDateFromLong(saved.dob)` — and `Dataset.getDateFromLong(0L)`
+returns `null` (`Dataset.kt:83-84`). A relaxed `mockk<BenRegCache>()`'s unstubbed `regDate`/`dob`
+default to `0L`, so without stubbing them non-zero, `dateOfReg.value`/`dob.value` end up `null` and
+`saveForm()`'s `mapValues` call NPEs immediately. This is why the pre-existing shared `ben` mock in
+this file's `setUp()` never stubs `dob`/`regDate` — no earlier test called `saveForm()`, so it was
+never hit. The 3 new tests use their own local `mockk<BenRegCache>(relaxed = true)` instances with
+`dob`/`regDate` stubbed to non-zero timestamps, covering: new-draft creation (`beneficiaryId == -1L`,
+calls `substituteBenIdForDraft`), existing-beneficiary update (`beneficiaryId != -1L`, skips
+`substituteBenIdForDraft`), and the `catch (e: IllegalAccessError)` failure path (via
+`benRepo.persistRecord` throwing). No `src/main` change was needed or made.
+
+## AbhaIdRepo.getAccessToken() / getAuthCert() — structurally untestable, same KeyUtils poisoning as UserRepo §4
+
+`AbhaIdRepo.getAccessToken()` calls `abhaApiService.getToken(id = ..., requestId = ..., timestamp = ...)`
+and `getAuthCert()` calls `abhaApiService.getAuthCert(requestId = ..., timestamp = ...)`. Both omit the
+`url`/`request` parameters, which carry default values (`AbhaApiService.kt:18,22,87`):
+`@Url url: String = KeyUtils.abhaTokenUrl()` / `@Body request: AbhaTokenRequest = AbhaTokenRequest()`
+(whose own defaults are `KeyUtils.abhaClientID()`/`KeyUtils.abhaClientSecret()`) and
+`@Url url: String = KeyUtils.abhaAuthUrl()`.
+
+Kotlin inlines default-argument expressions for interface methods at the **call site**, i.e. into
+`AbhaIdRepo.kt`'s own compiled bytecode — this happens unconditionally whenever `getAccessToken()`/
+`getAuthCert()` runs, regardless of whether `abhaApiService` itself is mocked, because the default value
+is evaluated by the caller before the (mocked) interface call ever happens. Every one of those defaults
+references the `KeyUtils` object, whose `init { }` block does `System.loadLibrary("sakhi")` — the same
+native-library poisoning documented in §4 for `UserRepo.getTokenAmrit()`. The first reference throws
+`UnsatisfiedLinkError` → wrapped `RuntimeException`, and poisons the class for the rest of that JVM test
+fork. This is not a mocking-skill gap: `abhaApiService` being a MockK mock doesn't help, because the
+poisoning expression runs in `AbhaIdRepo`'s own code before the mocked call is ever reached.
+
+No tests were written for these two methods in `AbhaIdRepoTest.kt` for this reason (confirmed by direct
+source inspection, consistent with the already-documented §4 finding — no need to re-derive the failure
+by trial and error). Note this is specific to calling the *real* `AbhaIdRepo` methods; view-models that
+merely hold `abhaIdRepo` as a **mocked** dependency (e.g. `AbhaIdViewModel.generateAccessToken()`) are
+unaffected and fully testable via `coEvery { abhaIdRepo.getAccessToken() } returns ...`, since the mock
+intercepts the call before `AbhaIdRepo`'s real method body (and its default-argument evaluation) ever runs.
+
+## BenRegFormDataset.kt — handleForAgeDob's `benIfDataExist == null` branch confirmed unreachable
+
+Re-checked for the `unit-test-coverage-and-pr-checks3` day-2 session (the JaCoCo report still shows
+~50 missed instructions at `BenRegFormDataset.kt:2760-2809`, the `if (benIfDataExist == null)` arm of
+`handleForAgeDob`). Grepped every call site: `handleForAgeDob` is invoked only twice, both from inside
+`setPageForFamilyMember` — once unconditionally inside `ben?.takeIf { !it.isDraft }?.let { saved -> ... }`
+(line ~1244, where `benIfDataExist` was just assigned that same non-null `ben` at the top of the
+function), and once behind an explicit `if (benIfDataExist != null)` guard (line ~1403). There is no
+call path left that reaches `handleForAgeDob` while `benIfDataExist` is still null. This matches (and
+confirms) the inline comment already in `BenRegFormDatasetTest.kt` above the "handleForAgeDob age/
+gender/marital-status sweep" tests. Not attempted again; would need a `src/main` call-site change to
+close.
+
+## BenRegFormDatasetTest.kt — `updateList tempraryContactNo length variants` may not be reaching its target lines
+
+Noted during the day-2 session, not fixed (write-only day — flagging for tomorrow's verification pass).
+`BenRegFormDatasetTest.kt`'s `updateList tempraryContactNo length variants` test (covers id 44 empty/
+short/full-length values) wraps every call in `runCatching { }`, and the corresponding `src/main` branch
+(`tempraryContactNo.id` case in `handleListOnValueChanged`, ~`BenRegFormDataset.kt:2527-2554`) still
+shows as 0% covered in today's JaCoCo report despite the test existing. Since `runCatching` swallows
+exceptions silently, it's possible the test throws before reaching the target branch (e.g. missing
+`resources`/`triggerforHide` stubbing) and the test still passes vacuously. Worth `println`/breakpoint
+verification tomorrow rather than assuming the test is effective just because it exists and is green.
+
+## UserRepo.kt — remaining 311 missed instructions re-confirmed as entirely within the §4/§6 blocker family
+
+Re-audited `UserRepo.kt` against `UserRepoTest.kt` this session (`unit-test-coverage-and-pr-checks3`) looking
+for any non-`encrypt()`-path branch still missing. Found none: `refreshTokenTmc` has a test for every branch
+(no stored token, unsuccessful response, missing response body, blank JWT, blank vs. non-blank new refresh
+token, the `SocketTimeoutException` self-retry, `HttpException`, and the generic-exception catch),
+`setFacilityData` has a test for its happy path (location/facility/supervisor/peer-list saves), null
+`facilityData`, missing sub-fields falling back to defaults, peer-role bucketing/normalisation, and both its
+`catch` blocks, and `saveFirebaseToken`/`clearFirebaseToken` each have success/unsuccessful/exception tests.
+The remaining ~311 missed instructions in the `UserRepo` class itself (plus 484 more counted separately under
+the `UserRepo$getTokenAmrit$2` continuation) are all inside `authenticateUser`, `saveToken`, the private
+`setUserRole`, and `getTokenAmrit` — every one of which calls `encrypt(password)` as its first or
+transitively-first statement, hitting the `KeyUtils`/`CryptoUtil` native-library poisoning documented in §4
+and re-confirmed in §6 — plus the private `offlineLogin`, which §6 already confirmed is dead code with zero
+callers anywhere in `src/main`. No new tests were added; nothing further is reachable here without a
+`src/main` change (injecting an `EncryptionProvider` interface, per §4's recommendation).
+
+## DatabaseKeyManager.kt — confirmed unmockable beyond the two `assertThrows` tests already in `DatabaseKeyManagerTest.kt`
+
+Investigated fresh whether `MasterKeys`/`EncryptedSharedPreferences` (from `androidx.security:security-crypto`)
+could be `mockkStatic`'d to unlock `DatabaseKeyManager.getDatabasePassphrase`'s success path (currently 3.3%
+covered, 118 missed). Both are plain Java `public final class`es with `public static` methods (confirmed by
+reading `security-crypto-1.0.0-sources.jar`), so they are *not* JDK-bootstrap classes and `mockkStatic` can in
+principle intercept them — but it doesn't help here: `MasterKeys.AES256_GCM_SPEC` is a `public static final
+KeyGenParameterSpec` field whose initializer runs `new KeyGenParameterSpec.Builder(...)` — a real
+`android.security.keystore` stub class — the moment `MasterKeys` is first referenced, i.e. *before* any
+mocked static method call is ever reached. Since `app/build.gradle`'s `testOptions.unitTests` block does not
+set `returnDefaultValues = true`, every unstubbed Android SDK stub method throws `RuntimeException("Method
+... not mocked")` immediately, so `MasterKeys`'s static initializer throws unconditionally on the JVM,
+class-poisoning it the same way `KeyUtils`'s native `init{}` does in §4 (different mechanism — stub-throw vs.
+`UnsatisfiedLinkError` — same practical effect: the real success path can never execute in this test JVM).
+`EncryptedSharedPreferences.create(...)` would fail the same way even if reached (it builds a real
+`AndroidKeysetManager` against the `"AndroidKeyStore"` provider, which plain JVMs don't register). The two
+existing tests in `DatabaseKeyManagerTest.kt` (`throwsWhenEncryptedPreferencesCannotBeCreated`,
+`throwsEvenWhenFilesDirIsUnavailable`) already exercise both of `clearCorruptedPrefs`'s internal catch
+branches (`KeyStore.getInstance("AndroidKeyStore")` failing, and the recovery-file-delete path with a null
+vs. non-null `filesDir`) — that is the full extent of what's reachable. No new tests added.
+
+## NewChildBenViewModel.saveForm — unset-gender failure path not unit testable
+
+A test for `saveForm` failing when a required child field is unset (unset `gender`/null
+`genDetails` combination on the mapped child) was attempted and removed. That specific failure
+path spawns a real (non-test) coroutine calling `Dispatchers.Default` from outside
+`viewModelScope`, which surfaces as an unrelated async MockK verification failure
+(`Dispatchers.getDefault()) should not be called`) with no reachable fix through the public
+test API. The equivalent early-setup-failure path is already covered by another test in the
+same file.

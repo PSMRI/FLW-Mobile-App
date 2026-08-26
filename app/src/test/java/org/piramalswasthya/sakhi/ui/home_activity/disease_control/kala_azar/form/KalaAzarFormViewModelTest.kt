@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -19,6 +20,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import io.mockk.coVerify
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -48,10 +51,13 @@ class KalaAzarFormViewModelTest : BaseViewModelTest() {
     override fun setUp() {
         super.setUp()
         mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false; every { Log.w(any(), any<String>()) } returns 0
+        val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class); every { Dispatchers.IO } returns testDispatcher
+        every { Dispatchers.Default } returns realDefaultDispatcher
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }; every { mockResources.getString(any()) } returns ""
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
+        every { context.resources } returns mockResources
         coEvery { benRepo.getBenFromId(any()) } returns null; coEvery { kalaAzarRepo.getKalaAzarScreening(any<Long>()) } returns null
         viewModel = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
     }
@@ -146,5 +152,124 @@ class KalaAzarFormViewModelTest : BaseViewModelTest() {
     fun `getIndexOfDate returns a value without throwing`() {
         val index = viewModel.getIndexOfDate()
         assertNotNull(index)
+    }
+
+    @Test
+    fun `saveForm on non death record saves screening and sets SAVE_SUCCESS`() = runTest {
+        val screening = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Alive")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        coVerify { kalaAzarRepo.saveKalaAzarScreening(any()) }
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
+    @Test
+    fun `saveForm on death record updates ben record and sets SAVE_SUCCESS`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death")
+        val screening = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache().copy(processed = "Y")
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(benRecord.isDeath)
+        assertEquals("U", benRecord.processed)
+        assertEquals(SyncState.UNSYNCED, benRecord.syncState)
+        coVerify { benRepo.updateRecord(benRecord) }
+        coVerify { kalaAzarRepo.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `saveForm on death record with processed N keeps processed as N`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death")
+        val screening = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache().copy(processed = "N")
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertEquals("N", benRecord.processed)
+    }
+
+    @Test
+    fun `saveForm on death record when maternal ben not found still saves screening`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death")
+        val screening = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns null
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+        coVerify { kalaAzarRepo.saveKalaAzarScreening(any()) }
+    }
+
+    @Test
+    fun `saveForm sets SAVE_FAILED when saving screening throws`() = runTest {
+        val screening = KalaAzarScreeningCache(benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Alive")
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        coEvery { kalaAzarRepo.saveKalaAzarScreening(any()) } throws RuntimeException("db error")
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_FAILED, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm on death record formats dateOfDeath when present`() = runTest {
+        every { mockResources.getStringArray(R.array.benificary_case_status_kalaazar) } returns arrayOf("Alive", "Death")
+        every { mockResources.getStringArray(R.array.death_place) } returns arrayOf("Home", "Hospital")
+        val screening = KalaAzarScreeningCache(
+            benId = 1L, houseHoldDetailsId = 10L, beneficiaryStatus = "Death",
+            dateOfDeath = 1700000000000L, placeOfDeath = "Home"
+        )
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
+        coEvery { kalaAzarRepo.getKalaAzarScreening(1L) } returns screening
+        val vm = KalaAzarFormViewModel(savedStateHandle, preferenceDao, context, kalaAzarRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        val benRecord = benRegCache().copy(processed = "Y")
+        coEvery { maternalHealthRepo.getBenFromId(1L) } returns benRecord
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(KalaAzarFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        assertTrue(benRecord.dateOfDeath?.isNotEmpty() == true)
+        coVerify { benRepo.updateRecord(benRecord) }
     }
 }

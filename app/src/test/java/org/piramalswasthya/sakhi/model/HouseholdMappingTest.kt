@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 class HouseholdMappingTest {
@@ -47,6 +48,95 @@ class HouseholdMappingTest {
 
     @Test fun `asNetworkModel maps householdId to string`() {
         assertEquals("9001", household().asNetworkModel(user()).householdId)
+    }
+
+    @Test fun `asNetworkModel maps populated details, family and amenities`() {
+        val details = HouseholdDetails(
+            residentialArea = "Urban",
+            residentialAreaId = 1,
+            otherResidentialArea = "Other",
+            houseType = "Pucca",
+            houseTypeId = 2,
+            otherHouseType = "OtherHouse",
+            isHouseOwned = "Yes",
+            isHouseOwnedId = 3,
+            isLandOwned = true,
+            isLandIrrigated = false,
+            isLivestockOwned = true,
+            street = "Main St",
+            colony = "Colony1",
+            pincode = 492001
+        )
+        val family = HouseholdFamily(
+            familyHeadName = "Head",
+            familyName = "Family1",
+            familyHeadPhoneNo = 9999999999L,
+            houseNo = "12",
+            wardNo = "W1",
+            wardName = "Ward1",
+            mohallaName = "Mohalla1",
+            rationCardDetails = "RC1",
+            povertyLine = "BPL",
+            povertyLineId = 1
+        )
+        val amenities = HouseholdAmenities(
+            separateKitchen = "Yes",
+            separateKitchenId = 1,
+            fuelUsed = "Wood",
+            fuelUsedId = 2,
+            otherFuelUsed = "OtherFuel",
+            sourceOfDrinkingWater = "Well",
+            sourceOfDrinkingWaterId = 3,
+            otherSourceOfDrinkingWater = "OtherSource",
+            availabilityOfElectricity = "Yes",
+            availabilityOfElectricityId = 1,
+            otherAvailabilityOfElectricity = "OtherElec",
+            availabilityOfToilet = "Yes",
+            availabilityOfToiletId = 1,
+            otherAvailabilityOfToilet = "OtherToilet",
+            motorizedVehicle = "Bike",
+            motorizedVehicleId = 1,
+            otherMotorizedVehicle = "OtherVehicle"
+        )
+        val network = household(family = family, details = details, amenities = amenities).asNetworkModel(user())
+
+        assertEquals("Urban", network.residentialArea)
+        assertEquals("Pucca", network.houseType)
+        assertEquals("Yes", network.isHouseOwned)
+        assertEquals("Wood", network.fuelUsed)
+        assertEquals("Head", network.familyHeadName)
+        assertEquals("Family1", network.familyName)
+        assertEquals("RC1", network.rationCardDetails)
+        assertEquals("Well", network.sourceOfDrinkingWater)
+        assertEquals("Yes", network.availabilityOfToilet)
+    }
+
+    @Test fun `HouseholdDetails copy toString and equality`() {
+        val a = HouseholdDetails(
+            residentialArea = "Urban", residentialAreaId = 1, otherResidentialArea = "other1",
+            houseType = "Pucca", houseTypeId = 2, otherHouseType = "other2",
+            isHouseOwned = "Yes", isHouseOwnedId = 3, isLandOwned = true, isLandIrrigated = true,
+            isLivestockOwned = true, street = "MainSt", colony = "ColonyA", pincode = 123456
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assert(a.toString().contains("HouseholdDetails"))
+
+        assertNotEquals(a, a.copy(residentialArea = "Other"))
+        assertNotEquals(a, a.copy(residentialAreaId = 999))
+        assertNotEquals(a, a.copy(otherResidentialArea = "Other"))
+        assertNotEquals(a, a.copy(houseType = "Other"))
+        assertNotEquals(a, a.copy(houseTypeId = 999))
+        assertNotEquals(a, a.copy(otherHouseType = "Other"))
+        assertNotEquals(a, a.copy(isHouseOwned = "No"))
+        assertNotEquals(a, a.copy(isHouseOwnedId = 999))
+        assertNotEquals(a, a.copy(isLandOwned = false))
+        assertNotEquals(a, a.copy(isLandIrrigated = false))
+        assertNotEquals(a, a.copy(isLivestockOwned = false))
+        assertNotEquals(a, a.copy(street = "Other"))
+        assertNotEquals(a, a.copy(colony = "Other"))
+        assertNotEquals(a, a.copy(pincode = 999))
     }
 
     @Test fun `asNetworkModel maps ashaId`() {

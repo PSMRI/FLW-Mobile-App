@@ -298,6 +298,17 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         return response
     }
 
+    /** An unsuccessful [Response] with the given http code and a parseable ABDM error body. */
+    private fun errorAbhaResponse(errorJson: String, code: Int = 400): Response<ResponseBody> {
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns false
+        every { response.code() } returns code
+        val body = mockk<ResponseBody>(relaxed = true)
+        every { body.string() } returns errorJson
+        every { response.errorBody() } returns body
+        return response
+    }
+
     private fun testUser(
         userName: String = "tester",
         password: String = "pwd",
@@ -706,6 +717,70 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         assertEquals(-4, (result as NetworkResult.Error).code)
     }
 
+    @Test
+    fun `generateAadhaarOtpV3 returns timeout error on SocketTimeoutException`() = runTest {
+        coEvery {
+            abhaApiService.generateAadhaarOtpV3(any(), any(), any())
+        } throws SocketTimeoutException("timeout")
+
+        val result = repo.generateAadhaarOtpV3(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateAadhaarOtpV3 returns multiple-otp error when error message contains UIDAI 953`() =
+        runTest {
+            val errorJson = """{"error":{"code":"ABDM-1000","message":"UIDAI Error code : 953 something"}}"""
+            coEvery {
+                abhaApiService.generateAadhaarOtpV3(any(), any(), any())
+            } returns errorAbhaResponse(errorJson)
+
+            val result = repo.generateAadhaarOtpV3(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals(-5, (result as NetworkResult.Error).code)
+        }
+
+    @Test
+    fun `generateAadhaarOtpV3 returns service unavailable error on 503`() = runTest {
+        coEvery {
+            abhaApiService.generateAadhaarOtpV3(any(), any(), any())
+        } returns serviceUnavailableResponse()
+
+        val result = repo.generateAadhaarOtpV3(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(503, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateAadhaarOtpV3 returns network error on IOException`() = runTest {
+        coEvery {
+            abhaApiService.generateAadhaarOtpV3(any(), any(), any())
+        } throws IOException("no net")
+
+        val result = repo.generateAadhaarOtpV3(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateAadhaarOtpV3 returns generic backend error when abdm message does not match uidai-953`() =
+        runTest {
+            val errorJson = """{"error":{"code":"ABDM-2000","message":"Some other abdm error"},"details":[{"message":"Some backend detail"}]}"""
+            coEvery {
+                abhaApiService.generateAadhaarOtpV3(any(), any(), any())
+            } returns errorAbhaResponse(errorJson)
+
+            val result = repo.generateAadhaarOtpV3(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals("Some backend detail", (result as NetworkResult.Error).message)
+        }
+
     // ---------------- searchAbha ----------------
 
     @Test
@@ -725,6 +800,107 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
 
         assertTrue(result is NetworkResult.Error)
         assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha returns json error on malformed success body`() = runTest {
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } returns successAbhaResponse("not-an-array")
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-2, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha returns timeout error on SocketTimeoutException`() = runTest {
+        coEvery { abhaApiService.searchAbha(any(), any(), any()) } throws SocketTimeoutException("timeout")
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha returns user-not-found error when abdm code matches`() = runTest {
+        val errorJson = """{"error":{"code":"ABDM-1114","message":"details not found"}}"""
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } returns errorAbhaResponse(errorJson)
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-5, (result as NetworkResult.Error).code)
+        assertEquals("User not found.", (result as NetworkResult.Error).message)
+    }
+
+    @Test
+    fun `searchAbha returns user-not-found error when message matches`() = runTest {
+        val errorJson = """{"error":{"code":"ABDM-9999","message":"User not found."}}"""
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } returns errorAbhaResponse(errorJson)
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-5, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha returns service unavailable error on 503`() = runTest {
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } returns serviceUnavailableResponse()
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(503, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha returns unknown error on generic exception`() = runTest {
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } throws IllegalStateException("weird failure")
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-4, (result as NetworkResult.Error).code)
+        assertEquals("weird failure", (result as NetworkResult.Error).message)
+    }
+
+    @Test
+    fun `searchAbha returns generic error when response body is null`() = runTest {
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns true
+        every { response.body() } returns null
+        coEvery { abhaApiService.searchAbha(any(), any(), any()) } returns response
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-4, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `searchAbha falls back to user-not-found when sendErrorResponse details are missing`() = runTest {
+        val errorJson = """{"error":{"code":"ABDM-2000","message":"Some other abdm error"}}"""
+        coEvery {
+            abhaApiService.searchAbha(any(), any(), any())
+        } returns errorAbhaResponse(errorJson)
+
+        val result = repo.searchAbha(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-2, (result as NetworkResult.Error).code)
+        assertEquals("Invalid response! Please try again!", (result as NetworkResult.Error).message)
     }
 
     // ---------------- generateAbhaOtp ----------------
@@ -821,6 +997,95 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         assertTrue(result is NetworkResult.Error)
         assertEquals(-4, (result as NetworkResult.Error).code)
     }
+
+    @Test
+    fun `verifyOtpForAadhaar returns network error on IOException`() = runTest {
+        coEvery {
+            abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+        } throws IOException("no net")
+
+        val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpForAadhaar returns timeout error on SocketTimeoutException`() = runTest {
+        coEvery {
+            abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+        } throws SocketTimeoutException("timeout")
+
+        val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpForAadhaar returns json error when error body cannot be parsed by sendErrorResponse`() =
+        runTest {
+            coEvery {
+                abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+            } returns errorAbhaResponse("not-json-at-all")
+
+            val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals(-2, (result as NetworkResult.Error).code)
+        }
+
+    @Test
+    fun `verifyOtpForAadhaar returns too-many-abha error when message matches`() = runTest {
+        val errorJson = """{"error":{"code":"ABDM-1000","message":"The mobile number provided by you is already linked to 6 ABHA numbers. Please provide a different mobile number."}}"""
+        coEvery {
+            abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+        } returns errorAbhaResponse(errorJson)
+
+        val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-5, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpForAadhaar returns incorrect-otp error when message matches`() = runTest {
+        val errorJson = """{"error":{"code":"ABDM-1000","message":"UIDAI Error code : 400 : OTP validation failed"}}"""
+        coEvery {
+            abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+        } returns errorAbhaResponse(errorJson)
+
+        val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-6, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpForAadhaar returns service unavailable error on 503`() = runTest {
+        coEvery {
+            abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+        } returns serviceUnavailableResponse()
+
+        val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(503, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpForAadhaar returns generic backend error when abdm message does not match known errors`() =
+        runTest {
+            val errorJson = """{"error":{"code":"ABDM-2000","message":"Some other abdm error"},"details":[{"message":"Some backend detail"}]}"""
+            coEvery {
+                abhaApiService.verifyAadhaarOtp3(any(), any(), any())
+            } returns errorAbhaResponse(errorJson)
+
+            val result = repo.verifyOtpForAadhaar(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals("Some backend detail", (result as NetworkResult.Error).message)
+        }
 
     // ---------------- printAbhaCard ----------------
 
@@ -1027,6 +1292,63 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         assertEquals(-4, (result as NetworkResult.Error).code)
     }
 
+    @Test
+    fun `generateOtpHid returns network error on IOException`() = runTest {
+        coEvery { amritApiService.generateOtpHealthId(any()) } throws IOException("no net")
+
+        val result = repo.generateOtpHid(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateOtpHid returns timeout error on SocketTimeoutException`() = runTest {
+        coEvery { amritApiService.generateOtpHealthId(any()) } throws SocketTimeoutException("timeout")
+
+        val result = repo.generateOtpHid(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateOtpHid returns json error for malformed response body`() = runTest {
+        coEvery { amritApiService.generateOtpHealthId(any()) } returns jsonResponse("not-json")
+
+        val result = repo.generateOtpHid(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-2, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `generateOtpHid returns error message for other 401-family codes`() = runTest {
+        val body = JSONObject().apply {
+            put("statusCode", 5002)
+            put("errorMessage", "Some backend error")
+        }.toString()
+        coEvery { amritApiService.generateOtpHealthId(any()) } returns jsonResponse(body)
+
+        val result = repo.generateOtpHid(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals("Some backend error", (result as NetworkResult.Error).message)
+        coVerify(exactly = 0) { userRepo.refreshTokenTmc(any(), any()) }
+    }
+
+    @Test
+    fun `generateOtpHid returns generic error for unrecognized statusCode`() = runTest {
+        val body = """{"statusCode":400,"message":"bad request"}"""
+        coEvery { amritApiService.generateOtpHealthId(any()) } returns jsonResponse(body)
+
+        val result = repo.generateOtpHid(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(0, (result as NetworkResult.Error).code)
+        assertEquals(body, result.message)
+    }
+
     // ---------------- verifyOtpAndGenerateHealthCard ----------------
 
     @Test
@@ -1081,4 +1403,88 @@ class AbhaIdRepoTest : BaseRepositoryTest() {
         assertTrue(result is NetworkResult.Error)
         assertEquals(-4, (result as NetworkResult.Error).code)
     }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard returns network error on IOException`() = runTest {
+        coEvery {
+            amritApiService.verifyOtpAndGenerateHealthCard(any())
+        } throws IOException("no net")
+
+        val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard returns json error for malformed response body`() = runTest {
+        coEvery {
+            amritApiService.verifyOtpAndGenerateHealthCard(any())
+        } returns jsonResponse("not-json")
+
+        val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-2, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard returns timeout error on SocketTimeoutException`() = runTest {
+        coEvery {
+            amritApiService.verifyOtpAndGenerateHealthCard(any())
+        } throws SocketTimeoutException("timeout")
+
+        val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(-1, (result as NetworkResult.Error).code)
+    }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard refreshes token and retries on session expired`() = runTest {
+        every { prefDao.getLoggedInUser() } returns testUser()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        val expiredBody = JSONObject().apply {
+            put("statusCode", 401)
+            put("errorMessage", "Invalid login key or session is expired")
+        }.toString()
+        val successBody = JSONObject().apply {
+            put("statusCode", 200)
+            put("data", JSONObject().put("data", "card-data-retry"))
+        }.toString()
+        coEvery { amritApiService.verifyOtpAndGenerateHealthCard(any()) } returnsMany listOf(
+            jsonResponse(expiredBody), jsonResponse(successBody)
+        )
+
+        val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Success)
+        assertEquals("card-data-retry", (result as NetworkResult.Success<*>).data)
+        coVerify(exactly = 1) { userRepo.refreshTokenTmc(any(), any()) }
+        coVerify(exactly = 2) { amritApiService.verifyOtpAndGenerateHealthCard(any()) }
+    }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard returns generic error for unrecognized statusCode`() = runTest {
+        val body = """{"statusCode":400,"message":"bad request"}"""
+        coEvery { amritApiService.verifyOtpAndGenerateHealthCard(any()) } returns jsonResponse(body)
+
+        val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+        assertTrue(result is NetworkResult.Error)
+        assertEquals(0, (result as NetworkResult.Error).code)
+        assertEquals(body, result.message)
+    }
+
+    @Test
+    fun `verifyOtpAndGenerateHealthCard returns json error when 401-family body has no errorMessage field`() =
+        runTest {
+            val body = """{"statusCode":401}"""
+            coEvery { amritApiService.verifyOtpAndGenerateHealthCard(any()) } returns jsonResponse(body)
+
+            val result = repo.verifyOtpAndGenerateHealthCard(mockk(relaxed = true))
+
+            assertTrue(result is NetworkResult.Error)
+            assertEquals(-2, (result as NetworkResult.Error).code)
+        }
 }

@@ -424,4 +424,32 @@ class FilariaRepoTest : BaseRepositoryTest() {
 
         assertEquals(0, repo.getFilariaScreeningDetailsFromServer())
     }
+
+    @Test
+    fun `pull aborts whole batch when mdaHomeVisitDate is unparseable in both formats`() = runTest {
+        loggedIn()
+        val badEntry =
+            """{"benId":1,"mdaHomeVisitDate":"not-a-date","houseHoldDetailsId":1,"createdDate":"2024-01-15","sufferingFromFilariasis":false}"""
+        val dataJson = "[$badEntry]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+
+        assertEquals(0, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull saves record when mdaHomeVisitDate uses fallback date format`() = runTest {
+        loggedIn()
+        val fallbackFormatEntry =
+            """{"benId":1,"mdaHomeVisitDate":"Jan 15, 2024 3:04:05 PM","houseHoldDetailsId":1,"createdDate":"2024-01-15","sufferingFromFilariasis":false}"""
+        val dataJson = "[$fallbackFormatEntry]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { filariaDao.saveFilariaScreening(any()) }
+    }
 }

@@ -232,4 +232,57 @@ class HouseholdMembersFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment_buildsDirections_withDefaultArguments() {
+        val d = HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionHouseholdMembersFragmentToNewBenRegG15Fragment_buildsDirections_withDefaultArguments() {
+        val d = HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegG15Fragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+    }
+
+    @Test
+    fun actionHouseholdMembersFragmentToNewBenRegFragment_buildsDirections_withDefaultArguments() {
+        val d = HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionHouseholdMembersFragmentToEyeSurgeryFormFragment_buildsDirections_withDefaultArguments() {
+        val d = HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("isViewMode=false"))
+        assertTrue(d.toString().contains("recordId=0"))
+    }
+
+    @Test
+    fun actionGlobalPwAncFormFragment_buildsDirections_withDefaultArguments() {
+        val d = HouseholdMembersFragmentDirections.actionGlobalPwAncFormFragment(benId = 10L, hhId = "v2", visitNumber = 31)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+    }
 }

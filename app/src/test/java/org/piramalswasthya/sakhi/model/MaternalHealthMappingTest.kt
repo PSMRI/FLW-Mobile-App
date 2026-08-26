@@ -165,6 +165,62 @@ class MaternalHealthMappingTest {
         assertEquals("u", cache.updatedBy)
     }
 
+    @Test
+    fun `PwrPost copy toString and equality`() {
+        val post = PwrPost(
+            id = 1L, benId = 33L, registrationDate = "2024-01-01", rchId = 555L, mcpCardId = 999L,
+            lmpDate = "2024-01-02", bloodGroup = "A+", weight = 60, height = 170,
+            rprTestResult = "Negative", dateOfRprTest = "2024-01-03", hivTestResult = "Negative",
+            hbsAgTestResult = "Negative", dateOfHivTest = "2024-01-04", dateOfHbsAgTest = "2024-01-05",
+            pastIllness = "None", otherPastIllness = "None2", isFirstPregnancyTest = true,
+            numPrevPregnancy = 1, pregComplication = "None3", otherComplication = "None4",
+            isRegistered = true, rhNegative = "No", homeDelivery = "No", badObstetric = "No",
+            isHrpCase = true, assignedAsHrpBy = "asha", tdDose1Date = "2024-01-06",
+            tdDose2Date = "2024-01-07", tdDoseBoosterDate = "2024-01-08", isActive = true,
+            createdDate = "2024-01-09", createdBy = "c", updatedDate = "2024-01-10", updatedBy = "u"
+        )
+        val same = post.copy()
+        assertEquals(post, same)
+        assertEquals(post.hashCode(), same.hashCode())
+        assertNotEquals(post, post.copy(rchId = 1L))
+        assertTrue(post.toString().contains("PwrPost"))
+
+        assertNotEquals(post, post.copy(id = 999L))
+        assertNotEquals(post, post.copy(benId = 999L))
+        assertNotEquals(post, post.copy(registrationDate = "Other"))
+        assertNotEquals(post, post.copy(mcpCardId = 111L))
+        assertNotEquals(post, post.copy(lmpDate = "Other"))
+        assertNotEquals(post, post.copy(bloodGroup = "Other"))
+        assertNotEquals(post, post.copy(weight = 999))
+        assertNotEquals(post, post.copy(height = 999))
+        assertNotEquals(post, post.copy(rprTestResult = "Other"))
+        assertNotEquals(post, post.copy(dateOfRprTest = "Other"))
+        assertNotEquals(post, post.copy(hivTestResult = "Other"))
+        assertNotEquals(post, post.copy(hbsAgTestResult = "Other"))
+        assertNotEquals(post, post.copy(dateOfHivTest = "Other"))
+        assertNotEquals(post, post.copy(dateOfHbsAgTest = "Other"))
+        assertNotEquals(post, post.copy(pastIllness = "Other"))
+        assertNotEquals(post, post.copy(otherPastIllness = "Other"))
+        assertNotEquals(post, post.copy(isFirstPregnancyTest = false))
+        assertNotEquals(post, post.copy(numPrevPregnancy = 999))
+        assertNotEquals(post, post.copy(pregComplication = "Other"))
+        assertNotEquals(post, post.copy(otherComplication = "Other"))
+        assertNotEquals(post, post.copy(isRegistered = false))
+        assertNotEquals(post, post.copy(rhNegative = "Other"))
+        assertNotEquals(post, post.copy(homeDelivery = "Other"))
+        assertNotEquals(post, post.copy(badObstetric = "Other"))
+        assertNotEquals(post, post.copy(isHrpCase = false))
+        assertNotEquals(post, post.copy(assignedAsHrpBy = "Other"))
+        assertNotEquals(post, post.copy(tdDose1Date = "Other"))
+        assertNotEquals(post, post.copy(tdDose2Date = "Other"))
+        assertNotEquals(post, post.copy(tdDoseBoosterDate = "Other"))
+        assertNotEquals(post, post.copy(isActive = false))
+        assertNotEquals(post, post.copy(createdDate = "Other"))
+        assertNotEquals(post, post.copy(createdBy = "Other"))
+        assertNotEquals(post, post.copy(updatedDate = "Other"))
+        assertNotEquals(post, post.copy(updatedBy = "Other"))
+    }
+
     // ---------------------------------------------------------------
     // PregnantWomanAncCache.asPostModel()
     // ---------------------------------------------------------------
@@ -836,6 +892,69 @@ class MaternalHealthMappingTest {
         val domain = ancListDomain()
 
         assertNull(domain.abortionDateString)
+    }
+
+    @Test
+    fun `PwrPost getters read all fields and setters mutate var fields`() {
+        val post = PwrPost(
+            id = 1L, benId = 33L, registrationDate = "2024-01-01", rchId = 555L, mcpCardId = 999L,
+            lmpDate = "2024-01-02", bloodGroup = "A+", weight = 60, height = 170,
+            rprTestResult = "Negative", dateOfRprTest = "2024-01-03", hivTestResult = "Negative",
+            hbsAgTestResult = "Negative", dateOfHivTest = "2024-01-04", dateOfHbsAgTest = "2024-01-05",
+            pastIllness = "None", otherPastIllness = "None2", isFirstPregnancyTest = true,
+            numPrevPregnancy = 1, pregComplication = "None3", otherComplication = "None4",
+            isRegistered = true, rhNegative = "No", homeDelivery = "No", badObstetric = "No",
+            isHrpCase = true, assignedAsHrpBy = "asha", tdDose1Date = "2024-01-06",
+            tdDose2Date = "2024-01-07", tdDoseBoosterDate = "2024-01-08", isActive = true,
+            createdDate = "2024-01-09", createdBy = "c", updatedDate = "2024-01-10", updatedBy = "u"
+        )
+
+        assertEquals(1L, post.id)
+        assertEquals(33L, post.benId)
+        assertEquals("2024-01-01", post.registrationDate)
+        assertEquals(555L, post.rchId)
+        assertEquals(999L, post.mcpCardId)
+        assertEquals("A+", post.bloodGroup)
+        assertEquals(60, post.weight)
+        assertEquals(170, post.height)
+        assertEquals("Negative", post.rprTestResult)
+        assertEquals("2024-01-03", post.dateOfRprTest)
+        assertEquals("Negative", post.hivTestResult)
+        assertEquals("Negative", post.hbsAgTestResult)
+        assertEquals("2024-01-04", post.dateOfHivTest)
+        assertEquals("2024-01-05", post.dateOfHbsAgTest)
+        assertEquals("None", post.pastIllness)
+        assertEquals("None2", post.otherPastIllness)
+        assertEquals(1, post.numPrevPregnancy)
+        assertEquals("None3", post.pregComplication)
+        assertEquals("None4", post.otherComplication)
+        assertEquals("2024-01-06", post.tdDose1Date)
+        assertEquals("2024-01-07", post.tdDose2Date)
+        assertEquals("2024-01-08", post.tdDoseBoosterDate)
+        assertTrue(post.isActive)
+        assertEquals("2024-01-09", post.createdDate)
+        assertEquals("c", post.createdBy)
+
+        post.lmpDate = "2025-01-01"
+        assertEquals("2025-01-01", post.lmpDate)
+        post.isFirstPregnancyTest = false
+        assertFalse(post.isFirstPregnancyTest)
+        post.isRegistered = false
+        assertFalse(post.isRegistered)
+        post.rhNegative = "Yes"
+        assertEquals("Yes", post.rhNegative)
+        post.homeDelivery = "Yes"
+        assertEquals("Yes", post.homeDelivery)
+        post.badObstetric = "Yes"
+        assertEquals("Yes", post.badObstetric)
+        post.isHrpCase = false
+        assertFalse(post.isHrpCase)
+        post.assignedAsHrpBy = "anm"
+        assertEquals("anm", post.assignedAsHrpBy)
+        post.updatedDate = "2025-02-02"
+        assertEquals("2025-02-02", post.updatedDate)
+        post.updatedBy = "u2"
+        assertEquals("u2", post.updatedBy)
     }
 
     @Test

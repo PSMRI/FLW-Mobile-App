@@ -462,6 +462,36 @@ class EcrRepoTest : BaseRepositoryTest() {
         coVerify(atLeast = 1) { ecrDao.update(record) }
     }
 
+    @Test
+    fun `pushAndUpdateEcrRecord merges non-pregnant assess cache into the post model when present`() = runTest {
+        loggedIn()
+        val record = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { record.benId } returns 100L
+        val postModel = mockk<EcrPost>(relaxed = true)
+        every { record.asPostModel(any()) } returns postModel
+        coEvery { ecrDao.getAllUnprocessedECR() } returns listOf(record)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.beneficiaryId } returns 100L
+        coEvery { benDao.getBen(100L) } returns ben
+        val assessCache = mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        every { assessCache.misCarriage } returns "yes"
+        every { assessCache.homeDelivery } returns "no"
+        every { assessCache.medicalIssues } returns "none"
+        every { assessCache.pastCSection } returns "no"
+        every { assessCache.isHighRisk } returns true
+        every { hrpDao.getNonPregnantAssess(100L) } returns assessCache
+        val json = """{"errorMessage":"","statusCode":200}"""
+        coEvery { amritApiService.postEcrForm(any()) } returns jsonResponse(json)
+
+        assertTrue(repo.pushAndUpdateEcrRecord())
+
+        verify { postModel.misCarriage = "yes" }
+        verify { postModel.homeDelivery = "no" }
+        verify { postModel.medicalIssues = "none" }
+        verify { postModel.pastCSection = "no" }
+        verify { postModel.isHighRisk = true }
+    }
+
     // ---------------- postECRDataToAmritServer statusCode-missing branch ----------------
 
     @Test

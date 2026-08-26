@@ -381,6 +381,38 @@ class FilariaMDAFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveFormResponses returns false when repository throws`() = runTest {
+        stubMda(
+            mdaSchema(mdaField("mda_distribution_date")),
+            savedJson = """{"fields":{"mda_distribution_date":"01-05-2024"}}"""
+        )
+        viewModel.loadFormSchema(2L, "MDA_01", viewMode = false)
+        advanceUntilIdle()
+        coEvery { repository.insertFormResponse(any()) } throws RuntimeException("db error")
+
+        val result = viewModel.saveFormResponses(1L, 2L)
+        advanceUntilIdle()
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `saveFormResponses falls back to an empty month key when the distribution date is missing`() = runTest {
+        stubMda(
+            mdaSchema(mdaField("symptom_detail")),
+            savedJson = """{"fields":{"symptom_detail":"none"}}"""
+        )
+        viewModel.loadFormSchema(2L, "MDA_01", viewMode = false)
+        advanceUntilIdle()
+        coEvery { repository.insertFormResponse(any()) } returns true
+
+        viewModel.saveFormResponses(1L, 2L)
+        advanceUntilIdle()
+
+        coVerify { repository.insertFormResponse(any()) }
+    }
+
+    @Test
     fun `getVisibleFields maps visible fields only`() = runTest {
         stubMda(
             mdaSchema(

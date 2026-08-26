@@ -292,6 +292,18 @@ class DeliveryOutcomeRepoTest : BaseRepositoryTest() {
         assertEquals(-2, repo.getDeliveryOutcomesFromServer())
     }
 
+    @Test
+    fun `getDeliveryOutcomesFromServer propagates exception on malformed json response`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.getDeliveryOutcomeData(any()) } returns jsonResponse("not a json body")
+
+        try {
+            repo.getDeliveryOutcomesFromServer()
+            assertFalse("Should have thrown an exception for malformed JSON", true)
+        } catch (e: org.json.JSONException) {
+        }
+    }
+
     // ---------------- companion getCurrentDate ----------------
 
     @Test

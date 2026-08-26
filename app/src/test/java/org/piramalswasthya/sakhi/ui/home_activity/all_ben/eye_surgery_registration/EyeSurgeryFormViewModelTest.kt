@@ -464,6 +464,21 @@ class EyeSurgeryFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveFormResponses falls back to an empty month key when visit date is unparseable`() = runTest {
+        stubEye(
+            eyeSchema(eyeField("symptoms_observed")),
+            savedJson = """{"fields":{"symptoms_observed":["Blurred"]}}"""
+        )
+        viewModel.loadFormSchema(1L, "EYE_01", viewMode = false)
+        advanceUntilIdle()
+
+        viewModel.saveFormResponses(1L, 2L, "LEFT")
+        advanceUntilIdle()
+
+        coVerify { repository.upsertByEye(any()) }
+    }
+
+    @Test
     fun `getVisibleFields maps visible fields only`() = runTest {
         stubEye(
             eyeSchema(

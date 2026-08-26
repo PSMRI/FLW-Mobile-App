@@ -44,6 +44,23 @@ class OtherCachesTest {
         assertEquals("N", a.processed)
     }
 
+    @Test fun `CDRCache equality and hashCode with all fields set`() {
+        val a = CDRCache(
+            id = 1, benId = 1L, visitDate = 1000L, cdr1File = "f1", cdr2File = "f2",
+            cdrDeathCertFile = "f3", motherName = "m", fatherName = "f", address = "addr",
+            houseNumber = "12", mohalla = "moh", landmarks = "lm", pincode = 492001,
+            landline = 111L, mobileNumber = 222L, dateOfDeath = 2000L, timeOfDeath = 3000L,
+            placeOfDeath = "pod", firstInformant = "fi", ashaSign = "sign",
+            dateOfNotification = 4000L, createdBy = "c", createdDate = 5000L,
+            updatedBy = "u", updatedDate = 6000L, processed = "N", syncState = SyncState.UNSYNCED
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertNotEquals(a, a.copy(motherName = "Other"))
+        assertTrue(a.toString().contains("CDRCache"))
+    }
+
     // =====================================================
     // MDSRCache Tests
     // =====================================================
@@ -283,6 +300,74 @@ class OtherCachesTest {
         assertEquals(100L, a.hhId)
     }
 
+    @Test fun `PMJAYCache equality and hashCode with all fields set`() {
+        val a = PMJAYCache(
+            id = 1, benId = 1L, hhId = 100L, registrationDate = 1000L, registeredHospital = "H",
+            contactNumber = 111L, communicationContactNumber = 222L, patientAddress = "PA",
+            communicationAddress = "CA", hospitalAddress = "HA", familyId = 5L,
+            isAadhaarBeneficiary = 1L, memberType = "m", patientType = "p", scheme = "s",
+            createdBy = "c", createdDate = 2000L, processed = "N"
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertNotEquals(a, a.copy(registeredHospital = "Other"))
+        assertTrue(a.toString().contains("PMJAYCache"))
+
+        assertNotEquals(a, a.copy(id = 999))
+        assertNotEquals(a, a.copy(benId = 999L))
+        assertNotEquals(a, a.copy(hhId = 999L))
+        assertNotEquals(a, a.copy(registrationDate = 9999L))
+        assertNotEquals(a, a.copy(contactNumber = 999L))
+        assertNotEquals(a, a.copy(communicationContactNumber = 999L))
+        assertNotEquals(a, a.copy(patientAddress = "Other"))
+        assertNotEquals(a, a.copy(communicationAddress = "Other"))
+        assertNotEquals(a, a.copy(hospitalAddress = "Other"))
+        assertNotEquals(a, a.copy(familyId = 999L))
+        assertNotEquals(a, a.copy(isAadhaarBeneficiary = 999L))
+        assertNotEquals(a, a.copy(memberType = "Other"))
+        assertNotEquals(a, a.copy(patientType = "Other"))
+        assertNotEquals(a, a.copy(scheme = "Other"))
+        assertNotEquals(a, a.copy(createdBy = "Other"))
+        assertNotEquals(a, a.copy(createdDate = 9999L))
+        assertNotEquals(a, a.copy(processed = "Y"))
+    }
+
+    @Test fun `PMJAYCache getters and setters mutate and read back`() {
+        val cache = PMJAYCache(benId = 1L, hhId = 100L)
+
+        cache.registrationDate = 5000L
+        assertEquals(5000L, cache.registrationDate)
+        cache.registeredHospital = "Hospital B"
+        assertEquals("Hospital B", cache.registeredHospital)
+        cache.contactNumber = 1234567890L
+        assertEquals(1234567890L, cache.contactNumber)
+        cache.communicationContactNumber = 9876543210L
+        assertEquals(9876543210L, cache.communicationContactNumber)
+        cache.patientAddress = "Patient Addr"
+        assertEquals("Patient Addr", cache.patientAddress)
+        cache.communicationAddress = "Comm Addr"
+        assertEquals("Comm Addr", cache.communicationAddress)
+        cache.hospitalAddress = "Hosp Addr"
+        assertEquals("Hosp Addr", cache.hospitalAddress)
+        cache.familyId = 42L
+        assertEquals(42L, cache.familyId)
+        cache.isAadhaarBeneficiary = 1L
+        assertEquals(1L, cache.isAadhaarBeneficiary)
+        cache.memberType = "Head"
+        assertEquals("Head", cache.memberType)
+        cache.patientType = "General"
+        assertEquals("General", cache.patientType)
+        cache.scheme = "PMJAY"
+        assertEquals("PMJAY", cache.scheme)
+        cache.createdBy = "asha"
+        assertEquals("asha", cache.createdBy)
+        cache.createdDate = 6000L
+        assertEquals(6000L, cache.createdDate)
+        cache.processed = "P"
+        assertEquals("P", cache.processed)
+    }
+
     // =====================================================
     // HBYCCache Tests
     // =====================================================
@@ -431,5 +516,85 @@ class OtherCachesTest {
 
     @Test fun `LogLevel has 4 values`() {
         assertEquals(4, LogLevel.values().size)
+    }
+
+    // =====================================================
+    // SendingRMNCHData Tests
+    // =====================================================
+
+    @Test fun `SendingRMNCHData defaults all lists to null`() {
+        val data = SendingRMNCHData()
+        assertNull(data.houseHoldRegistrationData)
+        assertNull(data.benficieryRegistrationData)
+        assertNull(data.cbacData)
+        assertNull(data.birthDetails)
+    }
+
+    @Test fun `SendingRMNCHData holds provided lists`() {
+        val household = emptyList<HouseholdNetwork>()
+        val beneficiary = emptyList<BenPost>()
+        val cbac = emptyList<CbacPost>()
+        val birth = emptyList<BenRegKidNetwork>()
+        val data = SendingRMNCHData(
+            houseHoldRegistrationData = household,
+            benficieryRegistrationData = beneficiary,
+            cbacData = cbac,
+            birthDetails = birth,
+        )
+        assertEquals(household, data.houseHoldRegistrationData)
+        assertEquals(beneficiary, data.benficieryRegistrationData)
+        assertEquals(cbac, data.cbacData)
+        assertEquals(birth, data.birthDetails)
+    }
+
+    @Test fun `SendingRMNCHData equality and hashCode`() {
+        val a = SendingRMNCHData(houseHoldRegistrationData = emptyList())
+        val b = SendingRMNCHData(houseHoldRegistrationData = emptyList())
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertNotEquals(a, SendingRMNCHData(houseHoldRegistrationData = null))
+        assertTrue(a.toString().contains("SendingRMNCHData"))
+    }
+
+    @Test fun `SendingRMNCHData fields are mutable`() {
+        val data = SendingRMNCHData()
+        val household = emptyList<HouseholdNetwork>()
+        data.houseHoldRegistrationData = household
+        assertEquals(household, data.houseHoldRegistrationData)
+    }
+
+    // =====================================================
+    // UwinGetAllRequest Tests
+    // =====================================================
+
+    private fun uwinGetAllRequest() = UwinGetAllRequest(
+        villageID = 1,
+        fromDate = "2024-01-01",
+        toDate = "2024-01-31",
+        pageNo = 0,
+        userId = 5,
+        userName = "asha",
+        ashaId = 9,
+    )
+
+    @Test fun `UwinGetAllRequest can be created`() {
+        val request = uwinGetAllRequest()
+        assertEquals(1, request.villageID)
+        assertEquals("2024-01-01", request.fromDate)
+        assertEquals("2024-01-31", request.toDate)
+        assertEquals(0, request.pageNo)
+        assertEquals(5, request.userId)
+        assertEquals("asha", request.userName)
+        assertEquals(9, request.ashaId)
+    }
+
+    @Test fun `UwinGetAllRequest equality and hashCode`() {
+        val a = uwinGetAllRequest()
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertNotEquals(a, a.copy(pageNo = 1))
+        assertNotEquals(a, a.copy(userName = "other"))
+        assertTrue(a.toString().contains("UwinGetAllRequest"))
     }
 }

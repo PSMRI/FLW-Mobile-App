@@ -9,6 +9,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -17,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
@@ -542,5 +544,162 @@ class PregnantWomanAncVisitDatasetTest : BaseViewModelTest() {
         runCatching { d.updateList(21, 1) }
         assertNotNull(d.listFlow.value)
         assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    // ---- coverage for previously dead branches: isAborted/maternalDeath/placeOfDeath "yes" ----
+    // These branches require the guarded FormElements (isAborted, placeOfDeath) to actually be
+    // present in the live list before setValueById can take effect (setValueById is a no-op if
+    // the element isn't in `list`), otherwise the "yes" branches silently never execute.
+
+    @Test
+    fun `updateList isAborted handler with isAbortedYes true adds abortion fields`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        val earlyDateStr = Dataset.getDateFromLong(lmp + 100L * 24 * 60 * 60 * 1000)
+        d.setValueById(1, earlyDateStr)
+        d.updateList(1, 0)
+        assertTrue("isAborted should be added to the list by the ancDate handler", d.getIndexById(4) != -1)
+        d.setValueById(4, "opt79")
+        d.updateList(4, 0)
+        assertTrue(d.getIndexById(5) != -1)
+        assertTrue(d.getIndexById(6) != -1)
+        assertTrue(d.getIndexById(7) != -1)
+    }
+
+    @Test
+    fun `updateList maternalDeath handler isAbortedYes branch removes common fields`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        val earlyDateStr = Dataset.getDateFromLong(lmp + 100L * 24 * 60 * 60 * 1000)
+        d.setValueById(1, earlyDateStr)
+        d.updateList(1, 0)
+        // Set isAborted to "yes" directly (via the ancDate-triggered list slot) without running
+        // the isAborted.id handler itself, so commonAddItems (bp etc.) are still in the list.
+        d.setValueById(4, "opt79")
+        assertTrue(d.getIndexById(9) != -1)
+        d.updateList(27, 0)
+        assertEquals(-1, d.getIndexById(9))
+    }
+
+    @Test
+    fun `updateList placeOfDeath handler adds otherPlaceOfDeath when index is other`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedPlain())
+        d.setValueById(27, "opt79")
+        d.updateList(27, 0)
+        assertTrue("maternalDeath handler should add placeOfDeath to the list", d.getIndexById(42) != -1)
+        d.setValueById(42, "opt8")
+        d.updateList(42, 8)
+        assertTrue(d.getIndexById(43) != -1)
+        val cache = mockk<PregnantWomanAncCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.placeOfDeathId = 8 }
+    }
+
+    @Test
+    fun `updateList isAborted else branch handles null week value`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, null)
+        val baseline = d.listFlow.value.count { it.id == 31 }
+        d.updateList(4, 0)
+        val after = d.listFlow.value.count { it.id == 31 }
+        assertEquals(baseline, after)
+    }
+
+    @Test
+    fun `updateList maternalDeath else branch handles null week value`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, null)
+        val baseline = d.listFlow.value.count { it.id == 31 }
+        d.updateList(27, 0)
+        val after = d.listFlow.value.count { it.id == 31 }
+        assertEquals(baseline, after)
+    }
+
+    // ---- coverage for updateRegistrationForTdX's early-return guards and the tail assignment
+    // block (previously fully dead: whenever a tt date's value was non-blank, setUpTdX also
+    // flipped its inputType to TEXT_VIEW, so the computed td1/td2/tdBooster were always null and
+    // the guard always returned early). ----
+
+    private fun regisTt1OnlyMutableProcessed(processedInitial: String?): PregnantWomanRegistrationCache {
+        val r = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { r.lmpDate } returns lmp
+        every { r.tt1 } returns lmp
+        every { r.tt2 } returns null
+        every { r.ttBooster } returns null
+        every { r.processed } returns processedInitial
+        return r
+    }
+
+    @Test
+    fun `mapValues updateRegistrationForTdX assigns regis fields and flips processed to U`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        val lastAnc = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { lastAnc.ancDate } returns lmp
+        val r = regisTt1OnlyMutableProcessed("P")
+        d.setUpPage(2, ben, r, lastAnc, false, null)
+        assertTrue(d.getIndexById(17) != -1)
+        d.setValueById(17, "01-01-2023")
+        d.mapValues(mockk<PregnantWomanAncCache>(relaxed = true), 0)
+        verify { r.processed = "U" }
+        verify { r.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `mapValues updateRegistrationForTdX leaves processed N unchanged`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        val lastAnc = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { lastAnc.ancDate } returns lmp
+        val r = regisTt1OnlyMutableProcessed("N")
+        d.setUpPage(2, ben, r, lastAnc, false, null)
+        d.setValueById(17, "01-01-2023")
+        d.mapValues(mockk<PregnantWomanAncCache>(relaxed = true), 0)
+        verify(exactly = 0) { r.processed = "U" }
+        verify { r.syncState = SyncState.UNSYNCED }
+    }
+
+    // ---- mapValues: empty-string branches for bp/pulseRate, and non-null placeOfAncId branch ----
+
+    private fun savedEmptyPulseRate(): PregnantWomanAncCache {
+        val s = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { s.isAborted } returns false
+        every { s.hrpConfirmed } returns false
+        every { s.pregnantWomanDelivered } returns false
+        every { s.anyHighRisk } returns false
+        every { s.pulseRate } returns ""
+        every { s.bpSystolic } returns null
+        every { s.bpDiastolic } returns null
+        every { s.visitNumber } returns 1
+        return s
+    }
+
+    @Test
+    fun `mapValues handles empty pulseRate and empty bp string branches`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, false, savedEmptyPulseRate())
+        d.setValueById(9, "")
+        val cache = mockk<PregnantWomanAncCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.bpSystolic = null }
+        verify { cache.bpDiastolic = null }
+        verify { cache.pulseRate = null }
+    }
+
+    @Test
+    fun `mapValues resolves placeOfAncId when isFromPmsma sets a matching entry`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        d.setUpPage(1, ben, regis2(), null, true, null)
+        val cache = mockk<PregnantWomanAncCache>(relaxed = true)
+        d.mapValues(cache, 0)
+        verify { cache.placeOfAncId = 3 }
     }
 }
