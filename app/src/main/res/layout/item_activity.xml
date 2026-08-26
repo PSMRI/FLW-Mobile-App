@@ -30,6 +30,13 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline85"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
     <!-- S.No -->
     <TextView
         android:id="@+id/tvSerialNo"
@@ -94,7 +101,7 @@
         android:textColor="#333333"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@id/statusBadge"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline85"
         app:layout_constraintStart_toStartOf="@id/guideline75"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="150" />
@@ -116,7 +123,7 @@
         android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline85"
         app:layout_constraintTop_toBottomOf="@id/tvActivityAmount"
         tools:text="Verified" />
 
@@ -131,5 +138,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvActivityDesc" />
+
+    <!-- Per-activity selection (Mitanin: checkbox-driven verify/reject) -->
+    <CheckBox
+        android:id="@+id/cbSelectActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/guideline85"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/divider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

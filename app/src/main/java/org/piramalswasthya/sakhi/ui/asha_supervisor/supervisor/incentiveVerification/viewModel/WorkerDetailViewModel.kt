@@ -13,11 +13,13 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.IncentiveRecordListRequest
 import org.piramalswasthya.sakhi.network.AmritApiService
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+import kotlin.concurrent.timer
 
 @HiltViewModel
 class WorkerDetailViewModel @Inject constructor(

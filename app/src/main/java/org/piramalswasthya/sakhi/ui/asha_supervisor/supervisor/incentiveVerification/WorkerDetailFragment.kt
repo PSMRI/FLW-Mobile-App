@@ -47,6 +47,7 @@ class WorkerDetailFragment : Fragment() {
     private var rejectionReasons = mutableListOf<RejectionReason>()
     private var otherReasonSelected = false
     private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
+    private val selectedActivityIds = mutableSetOf<Int>()
 
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
@@ -66,6 +67,12 @@ class WorkerDetailFragment : Fragment() {
     private val workerStatus by lazy {
         arguments?.getString("status") ?: ""
     }
+
+    private val showActivityCheckboxes: Boolean
+        get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
+                hasDefaultRecord &&
+                workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
+                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -112,6 +119,9 @@ class WorkerDetailFragment : Fragment() {
             }
             binding.tvSupervisorInfo.text =
                 getString(R.string.trainer_id_new, preferenceDao.getEmployeeId())
+            // Nothing selected yet — Verify/Reject stay disabled until a checkbox is ticked.
+            binding.btnVerify.isEnabled = false
+            binding.btnReject.isEnabled = false
 
         } else {
             binding.tvWorkerName.visibility = View.GONE
@@ -132,9 +142,16 @@ class WorkerDetailFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        groupedActivityAdapter = GroupedActivityAdapter { activity ->
-            navigateToBeneficiaryDetail(activity)
-        }
+        groupedActivityAdapter = GroupedActivityAdapter(
+            onActivityClick = { activity -> navigateToBeneficiaryDetail(activity) },
+            isSelected = { activity -> selectedActivityIds.contains(activity.activityId) },
+            onSelectionChanged = { activity, isChecked ->
+                if (isChecked) selectedActivityIds.add(activity.activityId)
+                else selectedActivityIds.remove(activity.activityId)
+                updateActionButtonsEnabled()
+            },
+            showCheckbox = { showActivityCheckboxes }
+        )
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = groupedActivityAdapter
 
@@ -155,6 +172,13 @@ class WorkerDetailFragment : Fragment() {
             putInt("selected_year", selectedYear)
         }
         findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
+    }
+
+    private fun updateActionButtonsEnabled() {
+        if (!showActivityCheckboxes) return
+        val hasSelection = selectedActivityIds.isNotEmpty()
+        binding.btnVerify.isEnabled = hasSelection
+        binding.btnReject.isEnabled = hasSelection
     }
 
     private fun setupRejectionReasons() {
@@ -203,6 +227,7 @@ class WorkerDetailFragment : Fragment() {
                         binding.rvActivities.visibility = View.VISIBLE
                         groupedActivityAdapter.submitList(state.records.toActivityGroups())
                         binding.cvMain.visibility = View.VISIBLE
+                        updateActionButtonsEnabled()
                     }
 
                     binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
@@ -266,9 +291,15 @@ class WorkerDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
             return
         }
+
+        if (showActivityCheckboxes && selectedActivityIds.isEmpty()) {
+            Toast.makeText(requireContext(), "Please select at least one activity to verify", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.verifyActivities(
             ashaId = workerId,
-            incentiveIds = emptyList()
+            incentiveIds = if (showActivityCheckboxes) selectedActivityIds.map { it.toLong() } else emptyList()
         )
     }
 
@@ -318,9 +349,14 @@ class WorkerDetailFragment : Fragment() {
             return
         }
 
+        if (showActivityCheckboxes && selectedActivityIds.isEmpty()) {
+            Toast.makeText(requireContext(), "Please select at least one activity to reject", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.rejectActivities(
             ashaId = workerId,
-            incentiveIds = emptyList(),
+            incentiveIds = if (showActivityCheckboxes) selectedActivityIds.map { it.toLong() } else emptyList(),
             reason = reason,
             otherReason = otherReason
         )

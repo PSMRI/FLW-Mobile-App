@@ -38,13 +38,16 @@ fun List<ClaimedIncentiveUI>.toActivityGroups(
 }
 
 class GroupedActivityAdapter(
-    private val onActivityClick: (ClaimedIncentiveUI) -> Unit
+    private val onActivityClick: (ClaimedIncentiveUI) -> Unit,
+    private val isSelected: (ClaimedIncentiveUI) -> Boolean = { false },
+    private val onSelectionChanged: (ClaimedIncentiveUI, Boolean) -> Unit = { _, _ -> },
+    private val showCheckbox: () -> Boolean = { false }
 ) : ListAdapter<ActivityGroupUI, GroupedActivityAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_activity_group, parent, false)
-        return GroupViewHolder(view, onActivityClick)
+        return GroupViewHolder(view, onActivityClick, isSelected, onSelectionChanged, showCheckbox)
     }
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
@@ -58,7 +61,10 @@ class GroupedActivityAdapter(
 
     class GroupViewHolder(
         itemView: View,
-        private val onActivityClick: (ClaimedIncentiveUI) -> Unit
+        private val onActivityClick: (ClaimedIncentiveUI) -> Unit,
+        isSelected: (ClaimedIncentiveUI) -> Boolean,
+        onSelectionChanged: (ClaimedIncentiveUI, Boolean) -> Unit,
+        showCheckbox: () -> Boolean
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val layoutGroupHeader: View = itemView.findViewById(R.id.layoutGroupHeader)
@@ -68,7 +74,7 @@ class GroupedActivityAdapter(
         private val imgGroupExpand: ImageView = itemView.findViewById(R.id.imgGroupExpand)
         private val rvGroupActivities: RecyclerView = itemView.findViewById(R.id.rvGroupActivities)
 
-        private val childAdapter = ActivityAdapter(onActivityClick)
+        private val childAdapter = ActivityAdapter(onActivityClick, isSelected, onSelectionChanged, showCheckbox)
 
         init {
             rvGroupActivities.layoutManager = LinearLayoutManager(itemView.context)
