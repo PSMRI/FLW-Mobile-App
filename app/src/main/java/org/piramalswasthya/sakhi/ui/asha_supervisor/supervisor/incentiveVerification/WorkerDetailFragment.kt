@@ -1,8 +1,6 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +15,14 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentWorkerDetailBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.ActivityAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.GroupedActivityAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.toActivityGroups
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
-import org.piramalswasthya.sakhi.utils.Log
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -40,12 +38,13 @@ class WorkerDetailFragment : Fragment() {
 
     private val viewModel: WorkerDetailViewModel by viewModels()
 
-    private lateinit var activityAdapter: ActivityAdapter
+    private lateinit var groupedActivityAdapter: GroupedActivityAdapter
     private lateinit var rejectionReasonAdapter: RejectionReasonAdapter
 
     private var rejectionReasons = mutableListOf<RejectionReason>()
     private var otherReasonSelected = false
     private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
+    private val selectedActivityIds = mutableSetOf<Int>()
 
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
@@ -65,6 +64,15 @@ class WorkerDetailFragment : Fragment() {
     private val workerStatus by lazy {
         arguments?.getString("status") ?: ""
     }
+    private val workerApprovalStatus by lazy {
+        arguments?.getInt("approval_status") ?: 0
+    }
+
+    private val showActivityCheckboxes: Boolean
+        get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
+                hasDefaultRecord &&
+                workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
+                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -111,6 +119,9 @@ class WorkerDetailFragment : Fragment() {
             }
             binding.tvSupervisorInfo.text =
                 getString(R.string.trainer_id_new, preferenceDao.getEmployeeId())
+            // Nothing selected yet — Verify/Reject stay disabled until a checkbox is ticked.
+            binding.btnVerify.isEnabled = false
+            binding.btnReject.isEnabled = false
 
         } else {
             binding.tvWorkerName.visibility = View.GONE
@@ -127,16 +138,22 @@ class WorkerDetailFragment : Fragment() {
 
         }
 
-        viewModel.init(workerId, selectedMonth, selectedYear)
+        viewModel.init(workerId, selectedMonth, selectedYear, workerApprovalStatus)
     }
 
     private fun setupRecyclerViews() {
-        activityAdapter = ActivityAdapter { activity ->
-            navigateToBeneficiaryDetail(activity)
-
-        }
+        groupedActivityAdapter = GroupedActivityAdapter(
+            onActivityClick = { activity -> navigateToBeneficiaryDetail(activity) },
+            isSelected = { activity -> selectedActivityIds.contains(activity.incentiveId) },
+            onSelectionChanged = { activity, isChecked ->
+                if (isChecked) selectedActivityIds.add(activity.incentiveId)
+                else selectedActivityIds.remove(activity.incentiveId)
+                updateActionButtonsEnabled()
+            },
+            showCheckbox = { showActivityCheckboxes }
+        )
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvActivities.adapter = activityAdapter
+        binding.rvActivities.adapter = groupedActivityAdapter
 
         rejectionReasonAdapter = RejectionReasonAdapter { reason, isChecked ->
             onReasonCheckChanged(reason, isChecked)
@@ -153,8 +170,17 @@ class WorkerDetailFragment : Fragment() {
             putString("group_name", activity.groupName)
             putInt("selected_month", selectedMonth)
             putInt("selected_year", selectedYear)
+            putString("status", workerStatus)
+            putInt("approval_status", workerApprovalStatus)
         }
         findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
+    }
+
+    private fun updateActionButtonsEnabled() {
+        if (!showActivityCheckboxes) return
+        val hasSelection = selectedActivityIds.isNotEmpty()
+        binding.btnVerify.isEnabled = hasSelection
+        binding.btnReject.isEnabled = hasSelection
     }
 
     private fun setupRejectionReasons() {
@@ -201,8 +227,9 @@ class WorkerDetailFragment : Fragment() {
                     } else {
                         binding.tvEmptyState.visibility = View.GONE
                         binding.rvActivities.visibility = View.VISIBLE
-                        activityAdapter.submitList(state.records)
+                        groupedActivityAdapter.submitList(state.records.toActivityGroups())
                         binding.cvMain.visibility = View.VISIBLE
+                        updateActionButtonsEnabled()
                     }
 
                     binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
@@ -266,9 +293,15 @@ class WorkerDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "No records to verify", Toast.LENGTH_SHORT).show()
             return
         }
+
+        if (showActivityCheckboxes && selectedActivityIds.isEmpty()) {
+            Toast.makeText(requireContext(), "Please select at least one activity to verify", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.verifyActivities(
             ashaId = workerId,
-            incentiveIds = emptyList()
+            incentiveIds = if (showActivityCheckboxes) selectedActivityIds.map { it.toLong() } else emptyList()
         )
     }
 
@@ -318,9 +351,14 @@ class WorkerDetailFragment : Fragment() {
             return
         }
 
+        if (showActivityCheckboxes && selectedActivityIds.isEmpty()) {
+            Toast.makeText(requireContext(), "Please select at least one activity to reject", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.rejectActivities(
             ashaId = workerId,
-            incentiveIds = emptyList(),
+            incentiveIds = if (showActivityCheckboxes) selectedActivityIds.map { it.toLong() } else emptyList(),
             reason = reason,
             otherReason = otherReason
         )

@@ -47,7 +47,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
+import org.piramalswasthya.sakhi.adapters.IncentiveGroupSectionAdapter
+import org.piramalswasthya.sakhi.adapters.toIncentiveGroupSections
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
 import org.piramalswasthya.sakhi.databinding.LayoutRejectedDialogBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -91,7 +92,7 @@ class IncentivesFragment : Fragment() {
 
     var selectedYear: String = ""
 
-    private lateinit var groupedAdapter: IncentiveGroupedAdapter
+    private lateinit var groupedAdapter: IncentiveGroupSectionAdapter
 
     private val PERMISSION_REQUEST_CODE = 792
 
@@ -238,7 +239,7 @@ class IncentivesFragment : Fragment() {
         toYear.setSelection(0)
 
 
-        groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
+        groupedAdapter = IncentiveGroupSectionAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
@@ -356,7 +357,7 @@ class IncentivesFragment : Fragment() {
         lifecycleScope.launch {
 
             viewModel.groupedIncentiveList.collect { groupedList ->
-                groupedAdapter.submitList(groupedList)
+                groupedAdapter.submitList(groupedList.toIncentiveGroupSections())
             }
         }
 

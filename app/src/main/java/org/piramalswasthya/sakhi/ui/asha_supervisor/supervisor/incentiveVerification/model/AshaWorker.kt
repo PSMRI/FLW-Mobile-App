@@ -60,14 +60,14 @@ data class AshaWorker(
     val status: VerificationStatus
 )
 
-enum class VerificationStatus {
-    VERIFIED,
-    PENDING,
-    REJECTED,
-    OVERDUE,
-    APPROVED,
-    UNCLAIMED,
-    ALL
+enum class VerificationStatus(val code: Int, val label: String) {
+    VERIFIED(101, "Verified"),
+    PENDING(102, "Pending"),
+    REJECTED(103, "Rejected"),
+    OVERDUE(104, "Overdue"),
+    APPROVED(105, "Approved"),
+    UNCLAIMED(106, "Unclaimed"),
+    ALL(0, "All")
 }
 
 data class MonthlyDetail(
