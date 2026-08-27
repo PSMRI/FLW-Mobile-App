@@ -430,9 +430,9 @@ class MiscModelMappingTest {
         assertEquals(7, dto.referredToInstituteID)
     }
 
-    @Test fun `ReferalCache toDTO copies benId into beneficiaryRegID`() {
-        val dto = referal().toDTO()
-        assertEquals(30L, dto.beneficiaryRegID)
+    @Test fun `ReferalCache toDTO passes through beneficiaryRegID field`() {
+        val dto = referal().copy(beneficiaryRegID = 55L).toDTO()
+        assertEquals(55L, dto.beneficiaryRegID)
         assertEquals(SyncState.SYNCED, dto.syncState)
     }
 

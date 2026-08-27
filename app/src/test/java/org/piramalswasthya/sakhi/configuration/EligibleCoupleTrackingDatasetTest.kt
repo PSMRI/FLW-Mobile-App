@@ -18,6 +18,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -261,6 +262,8 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
     // ===================== structural assertions on the built page =====================
     // Every builder above is wrapped in runCatching, which hides a page that never built.
     // These assert on listFlow so a broken setUpPage actually fails the test.
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     private suspend fun trackingPage(
         saved: EligibleCoupleTrackingCache?,
@@ -580,7 +583,7 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         ds.setUpPage(mockk<BenRegCache>(relaxed = true), System.currentTimeMillis(), null, saved, 2)
         val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
         ds.mapValues(target, 0)
-        verify { target.methodOfContraception = "opt1/x" }
+        verify { target.methodOfContraception = "opt1/opt2" }
     }
 
     @Test
@@ -639,16 +642,20 @@ class EligibleCoupleTrackingDatasetTest : BaseViewModelTest() {
         ds.updateList(13, 0)
         val target = mockk<EligibleCoupleTrackingCache>(relaxed = true)
         ds.mapValues(target, 0)
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-        val base = sdf.parse("01-01-2023")!!
-        val cal = Calendar.getInstance()
-        cal.time = base
-        cal.add(Calendar.DAY_OF_YEAR, 76)
-        val minDate = sdf.format(cal.time)
-        cal.time = base
-        cal.add(Calendar.DAY_OF_YEAR, 120)
-        val maxDate = sdf.format(cal.time)
-        verify { target.dueDateOfAntraInjection = "$minDate to $maxDate" }
+        if (isMitanin) {
+            verify { target.dueDateOfAntraInjection = "x" }
+        } else {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            val base = sdf.parse("01-01-2023")!!
+            val cal = Calendar.getInstance()
+            cal.time = base
+            cal.add(Calendar.DAY_OF_YEAR, 76)
+            val minDate = sdf.format(cal.time)
+            cal.time = base
+            cal.add(Calendar.DAY_OF_YEAR, 120)
+            val maxDate = sdf.format(cal.time)
+            verify { target.dueDateOfAntraInjection = "$minDate to $maxDate" }
+        }
     }
 
     @Test

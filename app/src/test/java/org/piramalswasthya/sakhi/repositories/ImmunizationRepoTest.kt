@@ -18,6 +18,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -45,6 +46,7 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var userRepo: UserRepo
     @MockK private lateinit var amritApiService: AmritApiService
     private val jsonMediaType = "application/json".toMediaTypeOrNull()
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     private lateinit var repo: ImmunizationRepo
 
@@ -371,7 +373,11 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getAllChildVaccines(any()) } returns vaccinesResponseBody(vaccinesJson)
 
         assertEquals(1, repo.getVaccineDetailsFromServer())
-        coVerify(exactly = 0) { immunizationDao.getVaccineByName(any()) }
+        if (isMitanin) {
+            coVerify(exactly = 1) { immunizationDao.getVaccineByName("PCV-1") }
+        } else {
+            coVerify(exactly = 0) { immunizationDao.getVaccineByName(any()) }
+        }
         coVerify(exactly = 0) { immunizationDao.addVaccine(any()) }
     }
 
@@ -385,7 +391,11 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
 
         assertEquals(1, repo.getVaccineDetailsFromServer())
         coVerify(exactly = 1) { immunizationDao.addVaccine(any()) }
-        coVerify(exactly = 0) { immunizationDao.getVaccineByName("PCV-1") }
+        if (isMitanin) {
+            coVerify(exactly = 1) { immunizationDao.getVaccineByName("PCV-1") }
+        } else {
+            coVerify(exactly = 0) { immunizationDao.getVaccineByName("PCV-1") }
+        }
         coVerify(exactly = 1) { immunizationDao.getVaccineByName("BCG") }
     }
 

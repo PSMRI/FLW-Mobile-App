@@ -1,0 +1,82 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache NDK
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/ndk
+          key: ubuntu-latest-ndk-r29
+
+      - name: Cache CMake
+        uses: actions/cache@v4
+        with:
+          path: ~/.cmake
+          key: ubuntu-latest-cmake-3.31.1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1.5.0
+        with:
+          ndk-version: r29
+          link-to-sdk: true
+
+      - name: Install CMake
+        uses: jwlawson/actions-setup-cmake@v1
+        with:
+          cmake-version: '3.31.1'
+
+      - name: Decode google-services.json
+        run: |
+          # Secrets are unavailable for pull_request workflows triggered from a fork
+          # (GitHub does not pass repo secrets to fork PRs). Fall back to a placeholder
+          # so the build can still compile and the coverage check still runs; these
+          # values never need to be real for a unit-test/coverage job.
+          SECRET='${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}'
+          if [ -n "$SECRET" ]; then
+            echo "$SECRET" | base64 --decode > app/google-services.json
+          else
+            # package_name must match this variant's actual applicationId (base id +
+            # applicationIdSuffix), or the Google Services plugin fails with
+            # "No matching client found for package name '...'" - verified locally.
+            printf '%s' '{"project_info":{"project_number":"000000000000","project_id":"flw-ci-placeholder","storage_bucket":"flw-ci-placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000000000","android_client_info":{"package_name":"org.piramalswasthya.sakhi.niramay"}},"oauth_client":[],"api_key":[{"current_key":"AIzaCiPlaceholderPlaceholderPlaceholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
+          fi
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Run unit tests and verify coverage
+        run: ./gradlew jacocoCoverageVerification --console=plain
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-report
+          path: app/build/reports/jacoco/jacocoTestReport/html
+          retention-days: 14

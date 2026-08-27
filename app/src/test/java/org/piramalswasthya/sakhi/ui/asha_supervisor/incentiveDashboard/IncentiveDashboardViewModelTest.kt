@@ -86,7 +86,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
     fun `fetchDashboard sets Error when no user is logged in`() = runTest {
         every { preferenceDao.getLoggedInUser() } returns null
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -106,7 +106,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         """.trimIndent()
         coEvery { apiService.getAshaSupervisorDashboard(any()) } returns responseWith(json)
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -120,7 +120,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         val json = """{"status":"Failed","statusCode":400,"errorMessage":"Bad request","data":null}"""
         coEvery { apiService.getAshaSupervisorDashboard(any()) } returns responseWith(json)
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -134,7 +134,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         val json = """{"status":"Failed","statusCode":400,"errorMessage":null,"data":null}"""
         coEvery { apiService.getAshaSupervisorDashboard(any()) } returns responseWith(json)
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -149,7 +149,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getAshaSupervisorDashboard(any()) } returns responseWith(json)
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -164,7 +164,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getAshaSupervisorDashboard(any()) } returns responseWith(json)
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -181,7 +181,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
             code = 500
         )
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -199,7 +199,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         )
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -217,7 +217,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         )
         coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -230,7 +230,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getLoggedInUser() } returns buildUser()
         coEvery { apiService.getAshaSupervisorDashboard(any()) } throws SocketTimeoutException("timeout")
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
@@ -243,7 +243,7 @@ class IncentiveDashboardViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getLoggedInUser() } returns buildUser()
         coEvery { apiService.getAshaSupervisorDashboard(any()) } throws IllegalStateException("boom")
 
-        viewModel.fetchDashboard(8, 2026)
+        viewModel.fetchDashboard(8, 2026, 1)
         advanceUntilIdle()
 
         val state = viewModel.dashboardData.value
