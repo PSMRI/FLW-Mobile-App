@@ -11,15 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.model.IncentiveRecordListRequest
 import org.piramalswasthya.sakhi.network.AmritApiService
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import java.util.TimeZone
 import javax.inject.Inject
-import kotlin.concurrent.timer
 
 @HiltViewModel
 class WorkerDetailViewModel @Inject constructor(
@@ -189,6 +182,7 @@ class WorkerDetailViewModel @Inject constructor(
 
 data class ClaimedIncentiveUI(
     @SerializedName("activityId") val activityId: Int,
+    @SerializedName("incentiveId") val incentiveId: Int,
     @SerializedName("activityDec") val activityDec: String?,
     @SerializedName("groupName") val groupName: String?,
     @SerializedName("amount") val amount: Int,

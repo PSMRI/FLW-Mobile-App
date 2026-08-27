@@ -1,8 +1,6 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +23,6 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
-import org.piramalswasthya.sakhi.utils.Log
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -144,10 +141,10 @@ class WorkerDetailFragment : Fragment() {
     private fun setupRecyclerViews() {
         groupedActivityAdapter = GroupedActivityAdapter(
             onActivityClick = { activity -> navigateToBeneficiaryDetail(activity) },
-            isSelected = { activity -> selectedActivityIds.contains(activity.activityId) },
+            isSelected = { activity -> selectedActivityIds.contains(activity.incentiveId) },
             onSelectionChanged = { activity, isChecked ->
-                if (isChecked) selectedActivityIds.add(activity.activityId)
-                else selectedActivityIds.remove(activity.activityId)
+                if (isChecked) selectedActivityIds.add(activity.incentiveId)
+                else selectedActivityIds.remove(activity.incentiveId)
                 updateActionButtonsEnabled()
             },
             showCheckbox = { showActivityCheckboxes }
