@@ -1,29 +1,40 @@
 package org.piramalswasthya.sakhi.utils
 
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.Base64
 import android.util.TypedValue
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
@@ -35,10 +46,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import java.io.File
@@ -2320,6 +2333,205 @@ class HelperUtilTest {
         val result = HelperUtil.base64ToTempFile("JVBERi0=", tempDir, ctx)
 
         assertEquals(expectedUri, result)
+    }
+
+    // =====================================================
+    // showReminderDialog() / showReminderDialog$default() / showUploadReminderDialog()
+    // Not testable: MaterialAlertDialogBuilder's constructor builds a real
+    // ContextThemeWrapper whose getSystemService() hits the throwing android.jar
+    // stub even with mockkConstructor(MaterialAlertDialogBuilder::class) in
+    // place. Same class of blocker as HandlerThread/Robolectric-only paths
+    // documented in TEST-COVERAGE-BLOCKERS.md.
+    // =====================================================
+
+    // =====================================================
+    // showPickerDialog()
+    // =====================================================
+
+    @Test
+    fun `showPickerDialog invokes onCameraSelected when the first option is chosen`() {
+        stubAlertDialogBuilder()
+        val itemsListener = slot<DialogInterface.OnClickListener>()
+        every {
+            anyConstructed<AlertDialog.Builder>().setItems(any<Array<CharSequence>>(), capture(itemsListener))
+        } answers { self as AlertDialog.Builder }
+        var cameraCalled = false
+        var fileCalled = false
+
+        HelperUtil.showPickerDialog(context, { cameraCalled = true }, { fileCalled = true })
+        itemsListener.captured.onClick(mockk(relaxed = true), 0)
+
+        assertTrue(cameraCalled)
+        assertFalse(fileCalled)
+    }
+
+    @Test
+    fun `showPickerDialog invokes onFileSelected when the second option is chosen`() {
+        stubAlertDialogBuilder()
+        val itemsListener = slot<DialogInterface.OnClickListener>()
+        every {
+            anyConstructed<AlertDialog.Builder>().setItems(any<Array<CharSequence>>(), capture(itemsListener))
+        } answers { self as AlertDialog.Builder }
+        var cameraCalled = false
+        var fileCalled = false
+
+        HelperUtil.showPickerDialog(context, { cameraCalled = true }, { fileCalled = true })
+        itemsListener.captured.onClick(mockk(relaxed = true), 1)
+
+        assertFalse(cameraCalled)
+        assertTrue(fileCalled)
+    }
+
+    // =====================================================
+    // launchFilePicker()
+    // =====================================================
+
+    @Test
+    fun `launchFilePicker builds a chooser intent from the mime types and launches it`() {
+        mockkConstructor(Intent::class)
+        every { anyConstructed<Intent>().setType(any()) } answers { self as Intent }
+        every { anyConstructed<Intent>().putExtra(any<String>(), any<Array<String>>()) } answers { self as Intent }
+        every { anyConstructed<Intent>().addCategory(any()) } answers { self as Intent }
+
+        mockkStatic(Intent::class)
+        val chooserIntent = mockk<Intent>(relaxed = true)
+        every { Intent.createChooser(any(), any()) } returns chooserIntent
+
+        val launcher = mockk<ActivityResultLauncher<Intent>>(relaxed = true)
+
+        HelperUtil.launchFilePicker(launcher)
+
+        verify { anyConstructed<Intent>().addCategory(Intent.CATEGORY_OPENABLE) }
+        verify { launcher.launch(chooserIntent) }
+    }
+
+    // =====================================================
+    // launchCamera()
+    // =====================================================
+
+    @Test
+    fun `launchCamera inserts the display name and mime type then returns the resolver uri`() {
+        mockkConstructor(ContentValues::class)
+        every { anyConstructed<ContentValues>().put(any<String>(), any<String>()) } just Runs
+        val resolver = mockk<android.content.ContentResolver>(relaxed = true)
+        val expectedUri = mockk<Uri>()
+        every { context.contentResolver } returns resolver
+        every {
+            resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, any())
+        } returns expectedUri
+
+        val result = HelperUtil.launchCamera(context)
+
+        assertEquals(expectedUri, result)
+        verify { anyConstructed<ContentValues>().put(MediaStore.Images.Media.DISPLAY_NAME, any<String>()) }
+        verify { anyConstructed<ContentValues>().put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg") }
+    }
+
+    // =====================================================
+    // populateAntraTable()
+    // =====================================================
+
+    private fun eligibleCoupleVisit(
+        antraDose: String? = "1",
+        dateOfAntraInjection: String? = "15-06-2026",
+        dueDateOfAntraInjection: String? = "15-09-2026"
+    ) = EligibleCoupleTrackingCache(
+        benId = 1L,
+        antraDose = antraDose,
+        dateOfAntraInjection = dateOfAntraInjection,
+        dueDateOfAntraInjection = dueDateOfAntraInjection,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.UNSYNCED
+    )
+
+    private fun stubTableViewConstruction() {
+        mockkConstructor(TextView::class, TableRow::class, TableRow.LayoutParams::class)
+        every { anyConstructed<TextView>().setText(any<CharSequence>()) } just Runs
+        every { anyConstructed<TextView>().setLayoutParams(any()) } just Runs
+        every { anyConstructed<TextView>().setGravity(any()) } just Runs
+        every { anyConstructed<TextView>().setPadding(any(), any(), any(), any()) } just Runs
+        every { anyConstructed<TextView>().setBackgroundResource(any()) } just Runs
+        every { anyConstructed<TableRow>().addView(any()) } just Runs
+        every { anyConstructed<TableRow.LayoutParams>().setMargins(any(), any(), any(), any()) } just Runs
+    }
+
+    @Test
+    fun `populateAntraTable removes stale rows and adds a row per visit`() {
+        stubTableViewConstruction()
+        val tableLayout = mockk<TableLayout>(relaxed = true)
+        every { tableLayout.childCount } returns 3
+
+        HelperUtil.populateAntraTable(
+            context,
+            tableLayout,
+            listOf(eligibleCoupleVisit(), eligibleCoupleVisit(antraDose = null, dateOfAntraInjection = null))
+        )
+
+        verify { tableLayout.removeViews(1, 2) }
+        verify(exactly = 2) { tableLayout.addView(any()) }
+        verify(atLeast = 1) { anyConstructed<TextView>().setText("-") }
+    }
+
+    @Test
+    fun `populateAntraTable skips removal when there is nothing beyond the header row`() {
+        stubTableViewConstruction()
+        val tableLayout = mockk<TableLayout>(relaxed = true)
+        every { tableLayout.childCount } returns 1
+
+        HelperUtil.populateAntraTable(context, tableLayout, emptyList())
+
+        verify(exactly = 0) { tableLayout.removeViews(any(), any()) }
+        verify(exactly = 0) { tableLayout.addView(any()) }
+    }
+
+    // =====================================================
+    // Canvas.drawMultilineText() / drawMultilineText$default() / draw()
+    // =====================================================
+
+    private fun stubStaticLayoutConstruction() {
+        mockkConstructor(StaticLayout::class)
+        every { anyConstructed<StaticLayout>().draw(any()) } just Runs
+    }
+
+    @Test
+    fun `drawMultilineText with only the required arguments draws through the default bridge`() {
+        stubStaticLayoutConstruction()
+        val canvas = mockk<Canvas>(relaxed = true)
+        val textPaint = mockk<TextPaint>(relaxed = true)
+
+        with(HelperUtil) {
+            canvas.drawMultilineText("hello world", textPaint, 200, 0f, 0f)
+        }
+
+        verify { anyConstructed<StaticLayout>().draw(canvas) }
+    }
+
+    @Test
+    fun `drawMultilineText draws with every optional parameter explicitly supplied`() {
+        stubStaticLayoutConstruction()
+        val canvas = mockk<Canvas>(relaxed = true)
+        val textPaint = mockk<TextPaint>(relaxed = true)
+
+        with(HelperUtil) {
+            canvas.drawMultilineText(
+                text = "hello world",
+                textPaint = textPaint,
+                width = 200,
+                x = 0f,
+                y = 0f,
+                start = 0,
+                end = 11,
+                alignment = Layout.Alignment.ALIGN_NORMAL,
+                spacingMult = 1f,
+                spacingAdd = 0f,
+                includePad = true,
+                ellipsizedWidth = 200,
+                ellipsize = null
+            )
+        }
+
+        verify(atLeast = 1) { anyConstructed<StaticLayout>().draw(canvas) }
     }
 
 }

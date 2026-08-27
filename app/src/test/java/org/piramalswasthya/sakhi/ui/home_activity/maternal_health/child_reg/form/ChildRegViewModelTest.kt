@@ -201,6 +201,128 @@ class ChildRegViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveForm fills slot 2 when only the first slot is taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fills slot 4 when the first three slots are taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fills slot 5 when the first four slots are taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fills slot 6 when the first five slots are taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fills slot 7 when the first six slots are taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns 6L
+        every { ecr.dob7 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `saveForm fills slot 8 when the first seven slots are taken`() = runTest {
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.dob1 } returns 1L
+        every { ecr.dob2 } returns 2L
+        every { ecr.dob3 } returns 3L
+        every { ecr.dob4 } returns 4L
+        every { ecr.dob5 } returns 5L
+        every { ecr.dob6 } returns 6L
+        every { ecr.dob7 } returns 7L
+        every { ecr.dob8 } returns null
+        coEvery { ecrRepo.getSavedRecord(any()) } returns ecr
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        coVerify { ecrRepo.persistRecord(any()) }
+        assertEquals(ChildRegViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
     fun `saveForm falls back to the last slot when every slot is taken`() = runTest {
         val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
         every { ecr.dob1 } returns 1L

@@ -131,6 +131,252 @@ class VerifyMobileOtpFragmentNavigationTest {
         assertNotNull(args().toBundle())
     }
 
+    @Test
+    fun fromBundle_throws_whenPhoneNumMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("phoneNum") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenPhoneNumIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAlternatePhoneNumberMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("alternatePhoneNumber") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAlternatePhoneNumberIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenNameMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("name") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenNameIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenPhrAddressMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("phrAddress") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenPhrAddressIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        every { bundle.getString("phrAddress") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaNumberMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("abhaNumber") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        every { bundle.getString("phrAddress") } returns "v5"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaNumberIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        every { bundle.getString("phrAddress") } returns "v5"
+        every { bundle.getString("abhaNumber") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaResponseMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("abhaResponse") } returns false
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        every { bundle.getString("phrAddress") } returns "v5"
+        every { bundle.getString("abhaNumber") } returns "v6"
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromBundle_throws_whenAbhaResponseIsNull() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getString("txnId") } returns "v1"
+        every { bundle.getString("phoneNum") } returns "v2"
+        every { bundle.getString("alternatePhoneNumber") } returns "v3"
+        every { bundle.getString("name") } returns "v4"
+        every { bundle.getString("phrAddress") } returns "v5"
+        every { bundle.getString("abhaNumber") } returns "v6"
+        every { bundle.getString("abhaResponse") } returns null
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromBundle(bundle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhoneNumMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhoneNumIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAlternatePhoneNumberMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAlternatePhoneNumberIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenNameMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenNameIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhrAddressMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenPhrAddressIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4", "phrAddress" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaNumberMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4", "phrAddress" to "v5"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaNumberIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4", "phrAddress" to "v5", "abhaNumber" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaResponseMissing() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4", "phrAddress" to "v5", "abhaNumber" to "v6"))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenAbhaResponseIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("txnId" to "v1", "phoneNum" to "v2", "alternatePhoneNumber" to "v3", "name" to "v4", "phrAddress" to "v5", "abhaNumber" to "v6", "abhaResponse" to null))
+        assertThrows(IllegalArgumentException::class.java) {
+            VerifyMobileOtpFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
     @Before
     fun setUpDirections() {
         mockkConstructor(Bundle::class)

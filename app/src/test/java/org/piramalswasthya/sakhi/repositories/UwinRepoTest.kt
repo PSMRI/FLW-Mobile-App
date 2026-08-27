@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -11,10 +13,16 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkObject
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -30,7 +38,9 @@ import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.UwinNetwork
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import retrofit2.Response
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -450,6 +460,163 @@ class UwinRepoTest : BaseRepositoryTest() {
         assertTrue(repo.tryUpsync())
 
         coVerify { uwinDao.updateSyncState(21, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `downSyncAndPersist swallows per-image decode failures and leaves uploaded files null`() = runTest {
+        loggedIn()
+        val item = UwinRepo.UwinServerItem(
+            id = 7,
+            ashaId = 42,
+            meetingDate = "2026-01-15",
+            place = "Hall",
+            participants = 4,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(
+                data = UwinRepo.UwinData(entries = listOf(item)),
+                statusCode = 200,
+                status = "OK"
+            )
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        val persisted = slot.captured.single()
+        assertNull(persisted.uploadedFiles1)
+        assertNull(persisted.uploadedFiles2)
+    }
+
+    @Test
+    fun `postUwinSession swallows multipart build failure and still calls api`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 15
+        every { network.uploadedFiles1 } returns "content://provider/1"
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify { uwinDao.updateSyncState(15, SyncState.SYNCED) }
+    }
+
+    // =====================================================
+    // buildMultipartFromUris branch coverage
+    // =====================================================
+
+    @After
+    fun releaseMultipartMocks() {
+        unmockkStatic(Uri::class)
+        unmockkObject(HelperUtil)
+    }
+
+    @Test
+    fun `postUwinSession builds a multipart part for an image uri via compressImageToTemp`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 16
+        every { network.uploadedFiles1 } returns "content://provider/photo"
+        every { network.uploadedFiles2 } returns null
+
+        val mockUri = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/photo") } returns mockUri
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri) } returns "image/png"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri, appContext) } returns "photo.png"
+        val tempFile = File.createTempFile("uwin_test_image_", ".png").apply { writeBytes(byteArrayOf(1, 2, 3)) }
+        tempFile.deleteOnExit()
+        every { HelperUtil.compressImageToTemp(mockUri, "photo.png", appContext) } returns tempFile
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertEquals(1, slot.captured.size)
+        coVerify { uwinDao.updateSyncState(16, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession builds multipart parts for non-image uris via copyToTemp`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 17
+        every { network.uploadedFiles1 } returns "content://provider/doc1"
+        every { network.uploadedFiles2 } returns "content://provider/doc2"
+
+        val mockUri1 = mockk<Uri>(relaxed = true)
+        val mockUri2 = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/doc1") } returns mockUri1
+        every { Uri.parse("content://provider/doc2") } returns mockUri2
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri1) } returns null
+        every { contentResolver.getType(mockUri2) } returns "application/pdf"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri1, appContext) } returns null
+        every { HelperUtil.getFileName(mockUri2, appContext) } returns "doc2.pdf"
+        val tempFile1 = File.createTempFile("uwin_test_doc1_", null).apply { writeBytes(byteArrayOf(4, 5)) }
+        val tempFile2 = File.createTempFile("uwin_test_doc2_", ".pdf").apply { writeBytes(byteArrayOf(6, 7)) }
+        tempFile1.deleteOnExit()
+        tempFile2.deleteOnExit()
+        every { HelperUtil.copyToTemp(mockUri1, "upload", appContext) } returns tempFile1
+        every { HelperUtil.copyToTemp(mockUri2, "doc2.pdf", appContext) } returns tempFile2
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertEquals(2, slot.captured.size)
+        coVerify { uwinDao.updateSyncState(17, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession skips a uri when copyToTemp returns null`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 18
+        every { network.uploadedFiles1 } returns "content://provider/missing"
+        every { network.uploadedFiles2 } returns null
+
+        val mockUri = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/missing") } returns mockUri
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri) } returns "application/octet-stream"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri, appContext) } returns "upload"
+        every { HelperUtil.copyToTemp(mockUri, "upload", appContext) } returns null
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertTrue(slot.captured.isEmpty())
     }
 
     @Test

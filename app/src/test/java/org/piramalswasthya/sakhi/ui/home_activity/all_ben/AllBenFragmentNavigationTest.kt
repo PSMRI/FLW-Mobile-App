@@ -182,4 +182,58 @@ class AllBenFragmentNavigationTest {
         assertFalse(d.equals(null))
         assertFalse(d.equals(Any()))
     }
+
+    @Test
+    fun actionAllBenFragmentToNewBenRegFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToNewChildAsBenRegistrationFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToEyeSurgeryFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("isViewMode=false"))
+        assertTrue(d.toString().contains("recordId=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToBenIfaFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("isViewMode=false"))
+    }
+
+    @Test
+    fun actionGlobalPwAncFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionGlobalPwAncFormFragment(benId = 10L, hhId = "v2", visitNumber = 31)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+    }
 }

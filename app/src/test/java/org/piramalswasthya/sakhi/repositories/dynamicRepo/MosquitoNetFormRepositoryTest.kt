@@ -222,6 +222,7 @@ class MosquitoNetFormRepositoryTest : BaseRepositoryTest() {
             addProperty("nets", 2)
             addProperty("distributed", true)
             add("nested", JsonObject())
+            add("skipped", com.google.gson.JsonNull.INSTANCE)
         }
         val item = HBNCVisitResponse(
             id = 5,
@@ -231,9 +232,95 @@ class MosquitoNetFormRepositoryTest : BaseRepositoryTest() {
             eyeSide = "L",
             fields = fields
         )
+        coEvery { jsonDao.insertWithLimit(any()) } returns true
 
         repo.saveDownloadedVisitList(listOf(item), "net")
 
         coVerify { jsonDao.insertWithLimit(any()) }
+    }
+
+    @Test
+    fun `saveDownloadedVisitList skips items with null visitDate`() = runTest {
+        val json = """{"id":6,"houseHoldId":21,"beneficiaryId":11,"eyeSide":"L"}"""
+        val item = com.google.gson.Gson().fromJson(json, HBNCVisitResponse::class.java)
+
+        repo.saveDownloadedVisitList(listOf(item), "net")
+
+        coVerify(exactly = 0) { jsonDao.insertWithLimit(any()) }
+    }
+
+    @Test
+    fun `syncFormToServer returns true when mapper succeeds and api call is successful`() = runTest {
+        val entity = mockk<MosquitoNetFormResponseJsonEntity>(relaxed = true)
+        every { entity.formDataJson } returns """{"formId":"F1","houseHoldId":1,"fields":{}}"""
+        val response = mockk<Response<Unit>>()
+        every { response.isSuccessful } returns true
+        coEvery { api.submitDiseaseMosquitoForm("net", any()) } returns response
+
+        assertTrue(repo.syncFormToServer("user1", "net", entity))
+    }
+
+    @Test
+    fun `syncFormToServer returns false when api call throws`() = runTest {
+        val entity = mockk<MosquitoNetFormResponseJsonEntity>(relaxed = true)
+        every { entity.formDataJson } returns """{"formId":"F1","houseHoldId":1,"fields":{}}"""
+        coEvery { api.submitDiseaseMosquitoForm("net", any()) } throws RuntimeException("network")
+
+        assertFalse(repo.syncFormToServer("user1", "net", entity))
+    }
+
+    @Test
+    fun `getFormSchema saves when local version is older than server version`() = runTest {
+        val schema = mockk<FormSchemaDto>(relaxed = true)
+        every { schema.formId } returns "F1"
+        every { schema.version } returns 2
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns true
+        every { apiResponse.data } returns schema
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema("F1", any()) } returns response
+        val localEntity = mockk<FormSchemaEntity>(relaxed = true)
+        every { localEntity.version } returns 1
+        coEvery { schemaDao.getSchema("F1") } returns localEntity
+
+        assertSame(schema, repo.getFormSchema("F1"))
+        coVerify { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `getFormSchema skips save when local version is up to date`() = runTest {
+        val schema = mockk<FormSchemaDto>(relaxed = true)
+        every { schema.formId } returns "F1"
+        every { schema.version } returns 1
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns true
+        every { apiResponse.data } returns schema
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema("F1", any()) } returns response
+        val localEntity = mockk<FormSchemaEntity>(relaxed = true)
+        every { localEntity.version } returns 1
+        coEvery { schemaDao.getSchema("F1") } returns localEntity
+
+        assertSame(schema, repo.getFormSchema("F1"))
+        coVerify(exactly = 0) { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `getFormSchema falls back to bundled asset schema when api and db both miss`() = runTest {
+        coEvery { api.fetchFormSchema(any(), any()) } throws RuntimeException("network")
+        coEvery { schemaDao.getSchema(any()) } returns null
+        val assetManager = mockk<android.content.res.AssetManager>()
+        every { context.assets } returns assetManager
+        val json = """{"formId":"asset-form","formName":"Asset Form","version":1}"""
+        every { assetManager.open("hbnc_form_1stday.json") } returns
+            java.io.ByteArrayInputStream(json.toByteArray())
+
+        val result = repo.getFormSchema("F1")
+
+        assertEquals("asset-form", result?.formId)
     }
 }

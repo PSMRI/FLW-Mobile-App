@@ -5,11 +5,14 @@ import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -19,6 +22,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -55,7 +59,9 @@ class LeprosyFormViewModelTest : BaseViewModelTest() {
     override fun setUp() {
         super.setUp()
         mockkStatic(Log::class); every { Log.d(any(), any()) } returns 0; every { Log.e(any(), any()) } returns 0; every { Log.isLoggable(any(), any()) } returns false
+        val realDefaultDispatcher = Dispatchers.Default
         mockkStatic(Dispatchers::class); every { Dispatchers.IO } returns testDispatcher
+        every { Dispatchers.Default } returns realDefaultDispatcher
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { context.resources } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }; every { mockResources.getString(any()) } returns ""
@@ -160,6 +166,76 @@ class LeprosyFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertEquals(LeprosyFormViewModel.State.SAVE_SUCCESS, viewModel.state.value)
+    }
+
+    @Test
+    fun `saveForm updates the beneficiary death fields when screening status is Death`() = runTest {
+        val screening = mockk<LeprosyScreeningCache>(relaxed = true)
+        every { screening.beneficiaryStatus } returns "Death"
+        every { screening.reasonForDeath } returns "opt2"
+        every { screening.dateOfDeath } returns 1_700_000_000_000L
+        every { screening.placeOfDeath } returns "opt3"
+        every { screening.otherPlaceOfDeath } returns "Other place"
+        coEvery { leprosyRepo.getLeprosyScreening(any()) } returns screening
+        val deadBen = mockk<BenRegCache>(relaxed = true)
+        every { deadBen.processed } returns "P"
+        coEvery { maternalHealthRepo.getBenFromId(any()) } returns deadBen
+
+        val vm = LeprosyFormViewModel(savedStateHandle, preferenceDao, context, leprosyRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(LeprosyFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        verify { deadBen.isDeath = true }
+        verify { deadBen.isDeathValue = "Death" }
+        verify { deadBen.reasonOfDeath = "opt2" }
+        verify { deadBen.placeOfDeath = "opt3" }
+        verify { deadBen.otherPlaceOfDeath = "Other place" }
+        verify { deadBen.processed = "U" }
+        verify { deadBen.syncState = SyncState.UNSYNCED }
+        coVerify { benRepo.updateRecord(deadBen) }
+    }
+
+    @Test
+    fun `saveForm keeps processed as N when beneficiary was already marked N`() = runTest {
+        val screening = mockk<LeprosyScreeningCache>(relaxed = true)
+        every { screening.beneficiaryStatus } returns "Death"
+        every { screening.dateOfDeath } returns 1_700_000_000_000L
+        coEvery { leprosyRepo.getLeprosyScreening(any()) } returns screening
+        val deadBen = mockk<BenRegCache>(relaxed = true)
+        every { deadBen.processed } returns "N"
+        coEvery { maternalHealthRepo.getBenFromId(any()) } returns deadBen
+
+        val vm = LeprosyFormViewModel(savedStateHandle, preferenceDao, context, leprosyRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(LeprosyFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        verify(exactly = 0) { deadBen.processed = "U" }
+        coVerify { benRepo.updateRecord(deadBen) }
+    }
+
+    @Test
+    fun `saveForm skips the death update block when maternalHealthRepo has no matching beneficiary`() = runTest {
+        val screening = mockk<LeprosyScreeningCache>(relaxed = true)
+        every { screening.beneficiaryStatus } returns "Death"
+        coEvery { leprosyRepo.getLeprosyScreening(any()) } returns screening
+        coEvery { maternalHealthRepo.getBenFromId(any()) } returns null
+
+        val vm = LeprosyFormViewModel(savedStateHandle, preferenceDao, context, leprosyRepo, benRepo, maternalHealthRepo)
+        advanceUntilIdle()
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(LeprosyFormViewModel.State.SAVE_SUCCESS, vm.state.value)
+        unmockkStatic(Dispatchers::class)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
     }
 
     @Test

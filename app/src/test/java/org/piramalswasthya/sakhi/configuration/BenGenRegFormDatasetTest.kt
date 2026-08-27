@@ -534,4 +534,25 @@ class BenGenRegFormDatasetTest : BaseViewModelTest() {
         d.setImageUriToFormElement(999, uri)
         assertEquals(stored, d.valueOf(1))
     }
+
+    @Test
+    fun `setFirstPage adds date of marriage when saved age at marriage matches the computed age`() = runTest {
+        val d = ds()
+        val dobMillis = java.util.Calendar.getInstance().apply { add(java.util.Calendar.YEAR, -25) }.timeInMillis
+        val computedAge = org.piramalswasthya.sakhi.model.BenBasicCache.getAgeFromDob(dobMillis)
+        val ben = benG(genderId = 2, maritalId = 2, mobileId = 1, relPos = 3, religionId = 1)
+        every { ben.dob } returns dobMillis
+        every { ben.genDetails!!.ageAtMarriage } returns computedAge
+        d.setFirstPage(ben, 9876543210L)
+        assertTrue(d.getIndexById(13) >= 0)
+    }
+
+    @Test
+    fun `setFirstPage adds family head contact field when saved mobile relation is family head`() = runTest {
+        val d = ds()
+        val ben = benG(genderId = 2, maritalId = 1, mobileId = 5, relPos = 3, religionId = 1)
+        d.setFirstPage(ben, 9876543210L)
+        assertTrue(d.getIndexById(114) >= 0)
+        assertEquals(-1, d.getIndexById(18))
+    }
 }

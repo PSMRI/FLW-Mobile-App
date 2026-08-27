@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -58,5 +60,19 @@ class BenWithCbacDomainsTest {
         assertEquals(SyncState.UNSYNCED, domain.allSynced)
         assertEquals(ben(), domain.ben)
         assertEquals(records, domain.savedCbacRecords)
+    }
+
+    @Test
+    fun `BenWithCbacCache asDomainModel delegates to ben and carries savedCbacRecords`() {
+        val benCache = mockk<BenBasicCache>(relaxed = true)
+        every { benCache.asBasicDomainModel() } returns ben()
+        val records = listOf(cbacCache(SyncState.SYNCED))
+
+        val wrapper = BenWithCbacCache(ben = benCache, savedCbacRecords = records)
+        val domain = wrapper.asDomainModel()
+
+        assertEquals(ben(), domain.ben)
+        assertEquals(records, domain.savedCbacRecords)
+        assertEquals(SyncState.SYNCED, domain.allSynced)
     }
 }

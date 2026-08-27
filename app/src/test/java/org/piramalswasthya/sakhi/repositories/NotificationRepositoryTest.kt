@@ -1,14 +1,18 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.os.SystemClock
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
@@ -393,4 +397,39 @@ class NotificationRepositoryTest : BaseRepositoryTest() {
 
         assertEquals(4, result)
     }
+
+    // ---------------- onPushReceived ----------------
+
+    @Test
+    fun `onPushReceived triggers immediate pull outside debounce window`() = runBlocking {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 10_000L
+        val user = loggedInUser()
+        every { preferenceDao.getLoggedInUser() } returns user
+        coEvery { amritApiService.getNotifications() } returns notificationsResponse(successEnvelope())
+        coEvery { notificationDao.upsert(any<List<NotificationEntity>>()) } returns Unit
+
+        repo.onPushReceived()
+
+        coVerify(timeout = 2000) { amritApiService.getNotifications() }
+    }
+
+    @Test
+    fun `onPushReceived debounces rapid calls and cancels pending trailing job on later immediate call`() =
+        runBlocking {
+            mockkStatic(SystemClock::class)
+            every { SystemClock.elapsedRealtime() } returns 500L
+            val user = loggedInUser()
+            every { preferenceDao.getLoggedInUser() } returns user
+            coEvery { amritApiService.getNotifications() } returns notificationsResponse(successEnvelope())
+            coEvery { notificationDao.upsert(any<List<NotificationEntity>>()) } returns Unit
+
+            repo.onPushReceived()
+            every { SystemClock.elapsedRealtime() } returns 5000L
+            repo.onPushReceived()
+
+            coVerify(timeout = 2000) { amritApiService.getNotifications() }
+            delay(2000)
+            coVerify(exactly = 1) { amritApiService.getNotifications() }
+        }
 }

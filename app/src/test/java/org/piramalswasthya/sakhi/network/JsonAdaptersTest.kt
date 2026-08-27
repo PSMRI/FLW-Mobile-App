@@ -984,4 +984,213 @@ class JsonAdaptersTest {
         assertEquals(account.hashCode(), same.hashCode())
         assertNotEquals(account, account.copy(mobileVerified = false))
     }
+
+    // ---------------- D2DAuthUserRequest ----------------
+
+    @Test fun `D2DAuthUserRequest exposes constructor values and generated members`() {
+        val request = D2DAuthUserRequest(username = "asha_user", password = "secret")
+        assertEquals("asha_user", request.username)
+        assertEquals("secret", request.password)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("D2DAuthUserRequest"))
+        assertNotEquals(request, request.copy(password = "other"))
+    }
+
+    // ---------------- D2DSaveUserRequest ----------------
+
+    @Test fun `D2DSaveUserRequest exposes constructor values and generated members`() {
+        val request = D2DSaveUserRequest(id = 1, username = "asha_user", password = "secret")
+        assertEquals(1, request.id)
+        assertEquals("asha_user", request.username)
+        assertEquals("secret", request.password)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("D2DSaveUserRequest"))
+        assertNotEquals(request, request.copy(id = 2))
+    }
+
+    // ---------------- D2DAuthUserResponse ----------------
+
+    @Test fun `D2DAuthUserResponse exposes constructor values and generated members`() {
+        val response = D2DAuthUserResponse(jwt = "jwt-token")
+        assertEquals("jwt-token", response.jwt)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("D2DAuthUserResponse"))
+        assertNotEquals(response, response.copy(jwt = "other"))
+    }
+
+    // ---------------- D2DSaveUserResponse ----------------
+
+    @Test fun `D2DSaveUserResponse exposes constructor values and generated members`() {
+        val response = D2DSaveUserResponse(jwt = "jwt-token-2")
+        assertEquals("jwt-token-2", response.jwt)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("D2DSaveUserResponse"))
+        assertNotEquals(response, response.copy(jwt = "other"))
+    }
+
+    // ---------------- TmcGenerateBenIdsRequest ----------------
+
+    @Test fun `TmcGenerateBenIdsRequest exposes constructor values and generated members`() {
+        val request = TmcGenerateBenIdsRequest(benIDRequired = 5, vanID = 10)
+        assertEquals(5, request.benIDRequired)
+        assertEquals(10, request.vanID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcGenerateBenIdsRequest"))
+        assertNotEquals(request, request.copy(vanID = 20))
+    }
+
+    // ---------------- TmcLocationDetailsRequest ----------------
+
+    @Test fun `TmcLocationDetailsRequest exposes constructor values and generated members`() {
+        val request = TmcLocationDetailsRequest(spID = 1, spPSMID = 2)
+        assertEquals(1, request.spID)
+        assertEquals(2, request.spPSMID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcLocationDetailsRequest"))
+        assertNotEquals(request, request.copy(spPSMID = 3))
+    }
+
+    // ---------------- TmcUserVanSpDetailsRequest ----------------
+
+    @Test fun `TmcUserVanSpDetailsRequest exposes constructor values and generated members`() {
+        val request = TmcUserVanSpDetailsRequest(userID = 7, providerServiceMapID = 8)
+        assertEquals(7, request.userID)
+        assertEquals(8, request.providerServiceMapID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcUserVanSpDetailsRequest"))
+        assertNotEquals(request, request.copy(userID = 9))
+    }
+
+    // ---------------- AyushmanCardRequest ----------------
+
+    @Test fun `AyushmanCardRequest exposes constructor values and generated members`() {
+        val request = AyushmanCardRequest(userId = "u1", password = "pwd", cardNo = "card-1")
+        assertEquals("u1", request.userId)
+        assertEquals("pwd", request.password)
+        assertEquals("card-1", request.cardNo)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("AyushmanCardRequest"))
+        assertNotEquals(request, request.copy(cardNo = "other"))
+    }
+
+    // ---------------- BenAbhaResponse / BenResponse ----------------
+
+    private fun benAbhaResponse() = BenAbhaResponse(
+        BeneficiaryRegID = 1L,
+        HealthID = "hid",
+        HealthIDNumber = "hidn",
+        AuthenticationMode = "AADHAAR_OTP",
+        CreatedDate = "2023-01-01"
+    )
+
+    @Test fun `BenAbhaResponse exposes constructor values and generated members`() {
+        val response = benAbhaResponse()
+        assertEquals(1L, response.BeneficiaryRegID)
+        assertEquals("hid", response.HealthID)
+        assertEquals("hidn", response.HealthIDNumber)
+        assertEquals("AADHAAR_OTP", response.AuthenticationMode)
+        assertEquals("2023-01-01", response.CreatedDate)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("BenAbhaResponse"))
+        assertNotEquals(response, response.copy(HealthID = "other"))
+    }
+
+    @Test fun `BenAbhaResponse tolerates null optional fields`() {
+        val response = benAbhaResponse().copy(AuthenticationMode = null, CreatedDate = null)
+        assertNull(response.AuthenticationMode)
+        assertNull(response.CreatedDate)
+    }
+
+    private fun benResponse() = BenResponse(
+        benId = "b1",
+        benRegId = 10L,
+        abhaDetails = listOf(benAbhaResponse()),
+        toDate = "2023-01-02"
+    )
+
+    @Test fun `BenResponse exposes constructor values and generated members`() {
+        val response = benResponse()
+        assertEquals("b1", response.benId)
+        assertEquals(10L, response.benRegId)
+        assertEquals(1, response.abhaDetails?.size)
+        assertEquals("2023-01-02", response.toDate)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("BenResponse"))
+        assertNotEquals(response, response.copy(benId = "other"))
+    }
+
+    @Test fun `BenResponse tolerates null abhaDetails`() {
+        val response = benResponse().copy(abhaDetails = null)
+        assertNull(response.abhaDetails)
+    }
+
+    // ---------------- ResponseOtp / SendOtpResponse / ValidateOtpResponse ----------------
+
+    private fun responseOtp() = ResponseOtp(userName = "asha_user", userId = "u1")
+
+    @Test fun `ResponseOtp exposes constructor values and generated members`() {
+        val otp = responseOtp()
+        assertEquals("asha_user", otp.userName)
+        assertEquals("u1", otp.userId)
+        val same = otp.copy()
+        assertEquals(otp, same)
+        assertEquals(otp.hashCode(), same.hashCode())
+        assertTrue(otp.toString().contains("ResponseOtp"))
+        assertNotEquals(otp, otp.copy(userId = "other"))
+    }
+
+    @Test fun `SendOtpResponse exposes constructor values and generated members`() {
+        val response = SendOtpResponse(
+            data = Data(response = "sent"),
+            statusCode = 200L,
+            errorMessage = "",
+            status = "OK"
+        )
+        assertEquals("sent", response.data.response)
+        assertEquals(200L, response.statusCode)
+        assertEquals("", response.errorMessage)
+        assertEquals("OK", response.status)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("SendOtpResponse"))
+        assertNotEquals(response, response.copy(statusCode = 500L))
+    }
+
+    @Test fun `ValidateOtpResponse exposes constructor values and generated members`() {
+        val response = ValidateOtpResponse(
+            data = responseOtp(),
+            statusCode = 200L,
+            errorMessage = "",
+            status = "OK"
+        )
+        assertEquals("asha_user", response.data.userName)
+        assertEquals(200L, response.statusCode)
+        assertEquals("OK", response.status)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("ValidateOtpResponse"))
+        assertNotEquals(response, response.copy(status = "FAIL"))
+    }
 }

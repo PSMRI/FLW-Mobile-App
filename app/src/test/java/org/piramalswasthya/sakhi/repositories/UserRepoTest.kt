@@ -7,6 +7,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -364,4 +365,62 @@ class UserRepoTest : BaseRepositoryTest() {
         assertFalse(result)
     }
 
+    // =====================================================
+    // setFacilityData() peer-role bucketing
+    // =====================================================
+
+    @Test
+    fun `setFacilityData normalises peer roles and drops peers without one`() = runTest {
+        val facilityData = FacilityData(
+            location = null,
+            facility = null,
+            supervisor = null,
+            peersAtFacility = listOf(
+                PeerAtFacility(role = "  cho ", fullName = "ChoLower", mobile = "1", userId = 1),
+                PeerAtFacility(role = "anm", fullName = "AnmLower", mobile = "2", userId = 2),
+                PeerAtFacility(role = null, fullName = "NoRole", mobile = "3", userId = 3)
+            )
+        )
+        coEvery { amritApiService.getUserDetailsById(any()) } returns
+            UserNetworkResponse(
+                success = true,
+                message = null,
+                data = userDetailsWithFacilityData(facilityData)
+            )
+
+        val choJson = slot<String>()
+        val anmJson = slot<String>()
+        every { preferenceDao.saveChoList(capture(choJson)) } returns Unit
+        every { preferenceDao.saveAnmList(capture(anmJson)) } returns Unit
+
+        userRepo.setFacilityData(7)
+
+        assertTrue(choJson.captured.contains("ChoLower"))
+        assertFalse(choJson.captured.contains("NoRole"))
+        assertTrue(anmJson.captured.contains("AnmLower"))
+        assertFalse(anmJson.captured.contains("NoRole"))
+    }
+
+    @Test
+    fun `setFacilityData stores empty peer lists when there are no peers`() = runTest {
+        val facilityData = FacilityData(
+            location = null,
+            facility = null,
+            supervisor = null,
+            peersAtFacility = emptyList()
+        )
+        coEvery { amritApiService.getUserDetailsById(any()) } returns
+            UserNetworkResponse(
+                success = true,
+                message = null,
+                data = userDetailsWithFacilityData(facilityData)
+            )
+
+        val choJson = slot<String>()
+        every { preferenceDao.saveChoList(capture(choJson)) } returns Unit
+
+        userRepo.setFacilityData(8)
+
+        assertEquals("[]", choJson.captured)
+    }
 }

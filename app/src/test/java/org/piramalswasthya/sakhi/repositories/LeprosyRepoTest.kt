@@ -752,4 +752,26 @@ class LeprosyRepoTest : BaseRepositoryTest() {
 
         assertEquals(0, repo.getLeprosyScreeningDetailsFromServer())
     }
+
+    private fun followUpEntryJson(benId: Long, visitNumber: Int = 1): String {
+        return """{"benId":$benId,"visitNumber":$visitNumber,"followUpDate":"2024-01-15","createdBy":"asha","createdDate":"2024-01-15","modifiedBy":"asha","lastModDate":"2024-01-15"}"""
+    }
+
+    @Test
+    fun `all followup pull returns -1 when data is a json array because the debug log reads it as a string first`() = runTest {
+        // Real (pre-existing) production quirk: getAllLeprosyFollowUpDataFromServer's debug
+        // Timber.d line calls jsonObj.getString("data") unconditionally before branching on
+        // statusCode, but the 200 success branch expects "data" to be a JSON array. org.json's
+        // getString() throws JSONException for a non-string value, so a well-formed array payload
+        // is caught by the outer catch(JSONException) and returns -1 before insertFollowUp is
+        // ever reached.
+        loggedIn()
+        val entry = followUpEntryJson(benId = 701L)
+        val responseJson = """{"statusCode":200,"data":[$entry]}"""
+        coEvery { tmcNetworkApiService.getAllLeprosyFollowUpData(any()) } returns response(200, responseJson)
+        coEvery { leprosyDao.insertFollowUp(any()) } returns Unit
+
+        assertEquals(-1, repo.getAllLeprosyFollowUpDataFromServer())
+        coVerify(exactly = 0) { leprosyDao.insertFollowUp(any()) }
+    }
 }

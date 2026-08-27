@@ -1,7 +1,9 @@
 package org.piramalswasthya.sakhi.work
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.media.MediaScannerConnection
 import android.os.Environment
 import androidx.core.app.NotificationCompat
@@ -9,6 +11,7 @@ import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import android.net.Uri
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
@@ -16,6 +19,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -114,6 +118,62 @@ class DownloadCardWorkerTest : BaseRepositoryTest() {
         val result = worker(fileName = "abha_card.pdf").doWork()
 
         assertTrue(result is ListenableWorker.Result.Failure)
+    }
+
+    @Test
+    fun doWork_showsDownloadNotification_whenMediaScanCompletes() = runTest {
+        val notificationManager = mockk<NotificationManager>(relaxed = true)
+        every { context.getSystemService(any<String>()) } returns notificationManager
+
+        val tempDir = File(System.getProperty("java.io.tmpdir"), "download_card_worker_test_notify")
+        tempDir.mkdirs()
+
+        mockkStatic(Environment::class)
+        every { Environment.getExternalStoragePublicDirectory(any()) } returns tempDir
+
+        val scannedUri = mockk<Uri>(relaxed = true)
+        mockkStatic(MediaScannerConnection::class)
+        every {
+            MediaScannerConnection.scanFile(any(), any(), any(), any())
+        } answers {
+            arg<MediaScannerConnection.OnScanCompletedListener>(3).onScanCompleted("path", scannedUri)
+        }
+
+        mockkStatic(PendingIntent::class)
+        every {
+            PendingIntent.getActivity(any(), any(), any(), any())
+        } returns mockk(relaxed = true)
+
+        mockkConstructor(Intent::class)
+        every { anyConstructed<Intent>().setDataAndType(any(), any()) } returns mockk(relaxed = true)
+        every { anyConstructed<Intent>().addFlags(any()) } returns mockk(relaxed = true)
+
+        mockkConstructor(NotificationCompat.Builder::class)
+        every { anyConstructed<NotificationCompat.Builder>().setContentTitle(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setContentText(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setSmallIcon(any<Int>()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setProgress(any(), any(), any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setChannelId(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setPriority(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setAutoCancel(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setOngoing(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().setContentIntent(any()) } answers { self as NotificationCompat.Builder }
+        every { anyConstructed<NotificationCompat.Builder>().build() } returns mockk(relaxed = true)
+
+        val content = "pdf-bytes".toByteArray()
+        val responseBody: ResponseBody = mockk()
+        every { responseBody.byteStream() } returns ByteArrayInputStream(content)
+        val response: Response<ResponseBody> = mockk()
+        every { response.body() } returns responseBody
+        coEvery { abhaIdRepo.downloadPdfCard() } returns response
+
+        val result = worker(fileName = "abha_card.pdf").doWork()
+
+        assertTrue(result is ListenableWorker.Result.Success)
+        verify { notificationManager.notify(1, any()) }
+
+        File(tempDir, "abha_card.pdf").delete()
+        tempDir.delete()
     }
 
     @Test

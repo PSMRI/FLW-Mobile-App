@@ -168,6 +168,23 @@ class AllHouseholdViewModelTest : BaseViewModelTest() {
         assertEquals(0, viewModel.householdBenList.size)
     }
 
+    @Test
+    fun `setSelectedHouseholdId loads household and ben list once coroutine completes`() = runTest {
+        io.mockk.mockkStatic(kotlinx.coroutines.Dispatchers::class)
+        every { kotlinx.coroutines.Dispatchers.IO } returns testDispatcher
+        val household = mockk<HouseholdCache>(relaxed = true)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { householdRepo.getRecord(42L) } returns household
+        coEvery { householdRepo.getAllBenOfHousehold(42L) } returns listOf(ben)
+
+        viewModel.setSelectedHouseholdId(42L)
+        advanceUntilIdle()
+        io.mockk.unmockkStatic(kotlinx.coroutines.Dispatchers::class)
+
+        assertEquals(household, viewModel.selectedHousehold)
+        assertEquals(1, viewModel.householdBenList.size)
+    }
+
     // =====================================================
     // Extended checkDraft() Tests
     // =====================================================

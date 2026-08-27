@@ -200,6 +200,117 @@ class IncentiveVerificationViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `init maps worker with missing optional fields and no activities to defaults`() = runTest {
+        val body = """
+            {
+              "approvalStatus": null,
+              "data": [
+                {
+                  "approvalStatus": 999,
+                  "facilityId": 10,
+                  "userId": 77,
+                  "activities": []
+                }
+              ],
+              "statusCode": 200
+            }
+        """.trimIndent()
+        coEvery { apiService.getAshaListByFacility(any()) } returns Response.success(jsonBody(body))
+
+        viewModel.init("pending", 10, 1, 2026)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertTrue(state is VerificationUiState.Success)
+        val worker = (state as VerificationUiState.Success).workers[0]
+        assertEquals("77", worker.id)
+        assertEquals("Unknown", worker.name)
+        assertEquals("77", worker.ashaId)
+        assertEquals("", worker.serviceCenter)
+        assertEquals(0, worker.amount)
+        assertEquals(0, worker.pending)
+        assertEquals(0, worker.verified)
+        assertEquals(0, worker.rejected)
+        assertEquals("", worker.role)
+        assertEquals("", worker.reason)
+        assertEquals("", worker.OtherReason)
+        assertEquals("", worker.verifiedByUserName)
+        assertEquals(VerificationStatus.PENDING, worker.status)
+        assertEquals(0, state.summary.rejected)
+        assertEquals(0, state.summary.pending)
+        assertEquals(0, state.summary.verified)
+    }
+
+    @Test
+    fun `init maps worker with all activities missing approvalDate to no latest activity`() = runTest {
+        val body = """
+            {
+              "approvalStatus": {"rejected": 0, "pending": 0, "verified": 0},
+              "data": [
+                {
+                  "approvalStatus": 103,
+                  "facilityId": 10,
+                  "userId": 88,
+                  "fullName": "Asha Two",
+                  "employeeId": "EMP2",
+                  "activities": [
+                    {"approvalStatus": 103, "approvalDate": null, "role": "ASHA"},
+                    {"approvalStatus": 103, "approvalDate": "", "role": "ASHA"}
+                  ]
+                }
+              ],
+              "statusCode": 200
+            }
+        """.trimIndent()
+        coEvery { apiService.getAshaListByFacility(any()) } returns Response.success(jsonBody(body))
+
+        viewModel.init("rejected", 10, 1, 2026)
+        advanceUntilIdle()
+
+        val worker = (viewModel.uiState.value as VerificationUiState.Success).workers[0]
+        assertEquals("EMP2", worker.ashaId)
+        assertEquals("", worker.role)
+        assertEquals(VerificationStatus.REJECTED, worker.status)
+    }
+
+    @Test
+    fun `init maps approval status codes 102 104 105 106 to their verification statuses`() = runTest {
+        val statuses = listOf(
+            102 to VerificationStatus.PENDING,
+            104 to VerificationStatus.OVERDUE,
+            105 to VerificationStatus.APPROVED,
+            106 to VerificationStatus.UNCLAIMED
+        )
+        for ((code, expected) in statuses) {
+            val body = """
+                {
+                  "approvalStatus": {"rejected": 0, "pending": 0, "verified": 0},
+                  "data": [{"approvalStatus": $code, "facilityId": 10, "userId": 1}],
+                  "statusCode": 200
+                }
+            """.trimIndent()
+            val vm = IncentiveVerificationViewModel(apiService)
+            coEvery { apiService.getAshaListByFacility(any()) } returns Response.success(jsonBody(body))
+
+            vm.init("all", 10, 1, 2026)
+            advanceUntilIdle()
+
+            val worker = (vm.uiState.value as VerificationUiState.Success).workers[0]
+            assertEquals(expected, worker.status)
+        }
+    }
+
+    @Test
+    fun `init with overdue status fetches with overdue approval status code`() = runTest {
+        coEvery { apiService.getAshaListByFacility(any()) } returns Response.success(jsonBody(successBody))
+
+        viewModel.init("overdue", 10, 1, 2026)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value is VerificationUiState.Success)
+    }
+
+    @Test
     fun `init with unclaimed status maps correctly and search filters results`() = runTest {
         coEvery { apiService.getAshaListByFacility(any()) } returns Response.success(jsonBody(successBody))
 
