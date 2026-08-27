@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -21,6 +22,9 @@ import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Deep coverage test for [TBConfirmedDataset]: exercises the 3-arg setUpPage
@@ -315,5 +319,93 @@ class TBConfirmedDatasetTest : BaseViewModelTest() {
         ds.validateAllFields()
         ds.validateCurrentFollowUpDate()
         assertTrue(ds.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `expected completion date computed for medium and long regimens`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(1, "opt1")
+        ds.updateList(1, 0)
+        var expected = ds.listFlow.value.first { it.id == 3 }
+        assertTrue(expected.value!!.contains("to"))
+
+        ds.setValueById(1, "opt2")
+        ds.updateList(1, 0)
+        expected = ds.listFlow.value.first { it.id == 3 }
+        assertTrue(expected.value!!.contains("to"))
+    }
+
+    @Test
+    fun `follow up date validation flags a future date`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(4, "01-01-2099")
+        val valid = ds.validateCurrentFollowUpDate()
+        assertFalse(valid)
+        val followUp = ds.listFlow.value.first { it.id == 4 }
+        assertTrue(followUp.errorText!!.contains("future"))
+    }
+
+    @Test
+    fun `follow up date validation flags duplicate month and accepts next month`() = runTest {
+        val ds = TBConfirmedDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        val cal = Calendar.getInstance()
+        cal.set(2021, Calendar.JANUARY, 10, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val treatmentStart = cal.timeInMillis
+        cal.set(2021, Calendar.FEBRUARY, 10, 0, 0, 0)
+        val lastFollowUp = cal.timeInMillis
+        val saved = mockk<TBConfirmedTreatmentCache>(relaxed = true)
+        every { saved.treatmentStartDate } returns treatmentStart
+        every { saved.followUpDate } returns lastFollowUp
+        every { saved.regimenType } returns null
+        every { saved.treatmentCompleted } returns null
+        ds.setUpPage(ben, saved, null)
+
+        ds.setValueById(4, "15-02-2021")
+        val sameMonthValid = ds.validateCurrentFollowUpDate()
+        assertFalse(sameMonthValid)
+        val followUpSameMonth = ds.listFlow.value.first { it.id == 4 }
+        assertTrue(followUpSameMonth.errorText!!.contains("Only one follow-up"))
+
+        ds.setValueById(4, "15-03-2021")
+        val nextMonthValid = ds.validateCurrentFollowUpDate()
+        assertTrue(nextMonthValid)
+    }
+
+    @Test
+    fun `validateAllFields fails when treatment start date is missing`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(1, "opt0")
+        ds.setValueById(2, null)
+        val result = ds.validateAllFields()
+        assertFalse(result)
+        val startDateEl = ds.listFlow.value.first { it.id == 2 }
+        assertTrue(startDateEl.errorText!!.contains("Treatment start date"))
+    }
+
+    @Test
+    fun `checkAndEnableTreatmentCompletion transitions across regimen thresholds`() = runTest {
+        val ds = freshCreatePage()
+        ds.setValueById(1, "opt0")
+        ds.updateList(1, 0)
+        ds.setValueById(2, "10-01-2021")
+        ds.updateList(2, 0)
+
+        ds.setValueById(4, "10-02-2021")
+        ds.updateList(4, 0)
+        assertTrue(
+            "below threshold should not add the completion element",
+            ds.listFlow.value.none { it.id == 8 })
+
+        ds.setValueById(4, "10-06-2021")
+        ds.updateList(4, 0)
+        var completed = ds.listFlow.value.first { it.id == 8 }
+        assertTrue("threshold reached should enable completion", completed.isEnabled)
+
+        ds.setValueById(1, "opt9")
+        ds.updateList(1, 0)
+        completed = ds.listFlow.value.first { it.id == 8 }
+        assertTrue("unknown regimen with existing follow ups treated as met threshold", completed.isEnabled)
     }
 }

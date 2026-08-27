@@ -94,6 +94,7 @@ class PMSMAFormDatasetTest : BaseViewModelTest() {
         every { p.bloodPressure } returns if (bool) "80" else null
         every { p.address } returns if (bool) "A".repeat(150) else null
         every { p.visitDate } returns if (bool) 1_600_000_000_000L else null
+        every { p.expectedDateOfDelivery } returns 1_650_000_000_000L
         return p
     }
 
@@ -327,5 +328,104 @@ class PMSMAFormDatasetTest : BaseViewModelTest() {
         }
         runCatching { d.setExistingValues(mockk<PMSMACache>(relaxed = true)) }
         assertNotNull(d.listFlow)
+    }
+
+    // ---- mapValues coverage (previously untested) ----
+
+    @Test
+    fun `mapValues after setExistingValues with true booleans and non-null bp`() = runTest {
+        val d = ds()
+        d.setUpFirstPage(
+            mockk<HouseholdCache>(relaxed = true), benMock(),
+            mockk<PregnantWomanRegistrationCache>(relaxed = true), null, null, 1, 1, null
+        )
+        d.setExistingValues(pmsmaMock(true, "opt79"))
+
+        val out = mockk<PMSMACache>(relaxed = true)
+        d.mapValues(out, 0)
+
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `mapValues after setExistingValues with false booleans and null bp`() = runTest {
+        val d = ds()
+        d.setUpFirstPage(
+            mockk<HouseholdCache>(relaxed = true), benMock(),
+            mockk<PregnantWomanRegistrationCache>(relaxed = true), null, null, 1, 1, null
+        )
+        val falseWithValidVisitDate = pmsmaMock(false, null)
+        every { falseWithValidVisitDate.visitDate } returns 1_600_000_000_000L
+        d.setExistingValues(falseWithValidVisitDate)
+
+        val out = mockk<PMSMACache>(relaxed = true)
+        d.mapValues(out, 0)
+
+        assertNotNull(d.listFlow.value)
+    }
+
+    // ---- handleListOnValueChanged coverage via updateList (previously untested) ----
+
+    @Test
+    fun `updateList exercises handleListOnValueChanged branches`() = runTest {
+        val d = ds()
+        d.setUpFirstPage(
+            mockk<HouseholdCache>(relaxed = true), benMock(),
+            mockk<PregnantWomanRegistrationCache>(relaxed = true),
+            null,
+            pmsmaMock(true, "opt79"),
+            1,
+            1,
+            null
+        )
+
+        d.setValueById(2, "opt0")
+        d.updateList(2, 1)
+        d.updateList(2, 0)
+
+        d.setValueById(35, "opt0")
+        d.updateList(35, 0)
+
+        d.setValueById(45, "opt79")
+        d.updateList(45, 0)
+
+        d.setValueById(45, "opt7")
+        d.updateList(45, 7)
+
+        d.setValueById(45, "unknownXYZ")
+        d.updateList(45, 0)
+
+        d.setValueById(35, "opt1")
+        d.updateList(35, 1)
+
+        d.setValueById(6, "9999999999")
+        d.updateList(6, 0)
+
+        d.setValueById(4, "somename")
+        d.updateList(4, 0)
+
+        d.setValueById(10, "120/80")
+        d.updateList(10, 0)
+
+        d.setValueById(9, "70")
+        d.updateList(9, 0)
+
+        d.updateList(999, 0)
+
+        assertNotNull(d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList husbandName hindi else branch`() = runTest {
+        val d = dsHindi()
+        d.setUpFirstPage(
+            mockk<HouseholdCache>(relaxed = true), benMock(),
+            mockk<PregnantWomanRegistrationCache>(relaxed = true), null, null, 1, 1, null
+        )
+
+        d.setValueById(4, "somename")
+        d.updateList(4, 0)
+
+        assertNotNull(d.listFlow.value)
     }
 }

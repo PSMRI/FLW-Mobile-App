@@ -206,7 +206,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 63, exportSchema = false
+    version = 64, exportSchema = false
 )
 
 @TypeConverters(
@@ -342,6 +342,16 @@ abstract class InAppDb : RoomDatabase() {
 //            }
 
 
+            val MIGRATION_63_64 = object : Migration(63, 64) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+              ALTER TABLE Adolescent_Health_Form_Data
+            ADD COLUMN isSanitaryNapkinUsed INTEGER
+            """.trimIndent()
+                    )
+                }
+            }
             val MIGRATION_62_63 = object : Migration(62, 63) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     try {
@@ -3465,7 +3475,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_59_60,
                         MIGRATION_60_61,
                         MIGRATION_61_62,
-                        MIGRATION_62_63
+                        MIGRATION_62_63,
+                        MIGRATION_63_64
 
 
                     ).build()

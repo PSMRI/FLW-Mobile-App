@@ -15,6 +15,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.CompositeDateValidator
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -181,17 +186,11 @@ class PwAncVisitsListFragment : Fragment() {
                 ),true, prefDao,false,true,
             onDeliveryStatusChanged = { item, isDelivered ->
 
+
                 if (isDelivered) {
 
-                    viewModel.updateDeliveryStatus(
-                        benId = item.ben.benId,
-                        visitNumber = if (item.anc.isEmpty()) {
-                            1
-                        } else {
-                            item.anc.maxOf { it.visitNumber } + 1
-                        },
-                        isDelivered = true
-                    )
+                    showDeliveryDatePicker(item)
+
 
                 }
             }
@@ -266,6 +265,56 @@ class PwAncVisitsListFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun showDeliveryDatePicker(item: BenWithAncListDomain) {
+
+        val constraints = CalendarConstraints.Builder()
+            .setStart(item.ancDate)
+            .setEnd(System.currentTimeMillis())
+            .setValidator(
+                CompositeDateValidator.allOf(
+                listOf(
+                    DateValidatorPointForward.from(item.ancDate),
+                    DateValidatorPointBackward.before(System.currentTimeMillis() + 1)
+                )
+            ))
+            .build()
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(getString(R.string.do_delivery_date))
+            .setCalendarConstraints(constraints)
+
+            .build()
+
+
+
+
+
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+
+            if (selectedDate >= item.ancDate) {
+
+                viewModel.updateDeliveryStatus(
+                    benId = item.ben.benId,
+                    visitNumber = if (item.anc.isEmpty()) {
+                        1
+                    } else {
+                        item.anc.maxOf { it.visitNumber } + 1
+                    },
+                    isDelivered = true,
+                    deliveryDate = selectedDate
+                )
+
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.delivery_date_cannot_be_before_last_anc_visit_date),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        datePicker.show(childFragmentManager, "delivery_date")
     }
 
     override fun onDestroy() {

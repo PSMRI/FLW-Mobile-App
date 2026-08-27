@@ -146,7 +146,8 @@ class PwAncVisitsListViewModel @Inject constructor(
     fun updateDeliveryStatus(
         benId: Long,
         visitNumber: Int,
-        isDelivered: Boolean
+        isDelivered: Boolean,
+        deliveryDate : Long
     ) {
 
         viewModelScope.launch {
@@ -158,7 +159,8 @@ class PwAncVisitsListViewModel @Inject constructor(
                 benId = benId,
                 visitNumber = visitNumber,
                 isDelivered = isDelivered,
-                userName = user?.userName ?: ""
+                userName = user?.userName ?: "",
+                delivaryDate = deliveryDate
             )
         }
     }

@@ -236,6 +236,10 @@ class AntenatalCounsellingFragment : Fragment() {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
 
+                    schema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+                        .find { it.fieldId == "visit_number" }
+                        ?.let { it.value = getString(R.string.visit, viewModel.visitCount.value + 1) }
+
                     val visibleFields = viewModel.getVisibleFields().toMutableList()
                     val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
                     val maxVisitDate = viewModel.getMaxVisitDate()

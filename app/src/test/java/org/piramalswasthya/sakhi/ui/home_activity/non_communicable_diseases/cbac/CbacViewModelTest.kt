@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cbac
 
 import android.app.Application
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -12,8 +14,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
+import org.piramalswasthya.sakhi.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -633,6 +638,32 @@ class CbacViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `a lone nipple discharge raises the referral dialog`() = runTest {
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setNipple(1)
+        vm.setBlI(2)
+
+        assertEquals(true, vm.showReferralDialog.value)
+        assertEquals(1, cache.cbac_blooddischage_pos)
+    }
+
+    @Test
+    fun `a lone bleeding after menopause raises the referral dialog`() = runTest {
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setBlM(1)
+        vm.setBlI(2)
+
+        assertEquals(true, vm.showReferralDialog.value)
+        assertEquals(1, cache.cbac_bleedingaftermenopause_pos)
+    }
+
+    @Test
     fun `checkLeprosySymptoms flags a fully symptomatic cache`() = runTest {
         val vm = editVm(fullCbac())
         advanceUntilIdle()
@@ -804,6 +835,50 @@ class CbacViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `submitForm treats reproductive status two as hrp eligible`() = runTest {
+        coEvery { benDao.getBen(any<Long>()) } returns benMock(reproductiveStatusId = 2)
+        val cache = fullCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.submitForm()
+        advanceUntilIdle()
+
+        assertEquals(true, cache.hrp_suspected)
+        assertEquals("Yes", cache.suspected_hrp)
+    }
+
+    @Test
+    fun `submitForm treats reproductive status three as hrp eligible`() = runTest {
+        coEvery { benDao.getBen(any<Long>()) } returns benMock(reproductiveStatusId = 3)
+        val cache = fullCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.submitForm()
+        advanceUntilIdle()
+
+        assertEquals(true, cache.hrp_suspected)
+        assertEquals("Yes", cache.suspected_hrp)
+    }
+
+    @Test
+    fun `submitForm skips the hrp block when reproductive details are absent`() = runTest {
+        val b = benMock()
+        every { b.genDetails } returns null
+        coEvery { benDao.getBen(any<Long>()) } returns b
+        val cache = fullCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.submitForm()
+        advanceUntilIdle()
+
+        assertEquals(false, cache.hrp_suspected)
+        assertEquals("No", cache.suspected_hrp)
+    }
+
+    @Test
     fun `submitForm reports no tb when no tb symptom was recorded`() = runTest {
         val cache = fullCbac().apply {
             cbac_coughing_pos = 2
@@ -836,6 +911,345 @@ class CbacViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertNotNull(vm.state.value)
+    }
+
+    @Test
+    fun `submitForm flags every mandatory field individually as the first missing field`() = runTest {
+        val fieldMutators = listOf<CbacCache.() -> Unit>(
+            { cbac_smoke_posi = 0 },
+            { cbac_alcohol_posi = 0 },
+            { cbac_waist_posi = 0 },
+            { cbac_pa_posi = 0 },
+            { cbac_familyhistory_posi = 0 },
+            { cbac_sufferingtb_pos = 0 },
+            { cbac_antitbdrugs_pos = 0 },
+            { cbac_tbhistory_pos = 0 },
+            { cbac_coughing_pos = 0 },
+            { cbac_bloodsputum_pos = 0 },
+            { cbac_fivermore_pos = 0 },
+            { cbac_loseofweight_pos = 0 },
+            { cbac_nightsweats_pos = 0 },
+            { cbac_uicers_pos = 0 },
+            { cbac_tingling_palm_posi = 0 },
+            { cbac_cloudy_posi = 0 },
+            { cbac_diffreading_posi = 0 },
+            { cbac_pain_ineyes_posi = 0 },
+            { cbac_redness_ineyes_posi = 0 },
+            { cbac_diff_inhearing_posi = 0 },
+            { cbac_sortnesofbirth_pos = 0 },
+            { cbac_historyoffits_pos = 0 },
+            { cbac_difficultyinmouth_pos = 0 },
+            { cbac_growth_in_mouth_posi = 0 },
+            { cbac_toneofvoice_pos = 0 },
+            { cbac_white_or_red_patch_posi = 0 },
+            { cbac_Pain_while_chewing_posi = 0 },
+            { cbac_hyper_pigmented_patch_posi = 0 },
+            { cbac_any_thickend_skin_posi = 0 },
+            { cbac_nodules_on_skin_posi = 0 },
+            { cbac_numbness_on_palm_posi = 0 },
+            { cbac_clawing_of_fingers_posi = 0 },
+            { cbac_tingling_or_numbness_posi = 0 },
+            { cbac_inability_close_eyelid_posi = 0 },
+            { cbac_diff_holding_obj_posi = 0 },
+            { cbac_weekness_in_feet_posi = 0 },
+            { cbac_lumpinbreast_pos = 0 },
+            { cbac_blooddischage_pos = 0 },
+            { cbac_changeinbreast_pos = 0 },
+            { cbac_bleedingbtwnperiods_pos = 0 },
+            { cbac_bleedingaftermenopause_pos = 0 },
+            { cbac_bleedingafterintercourse_pos = 0 },
+            { cbac_foulveginaldischarge_pos = 0 },
+            { cbac_feeling_unsteady_posi = 0 },
+            { cbac_suffer_physical_disability_posi = 0 },
+            { cbac_needing_help_posi = 0 },
+            { cbac_forgetting_names_posi = 0 }
+        )
+
+        for ((index, mutate) in fieldMutators.withIndex()) {
+            val cache = fullCbac().apply(mutate)
+            val vm = editVm(cache)
+            advanceUntilIdle()
+
+            runCatching { vm.submitForm() }
+            advanceUntilIdle()
+
+            assertNotNull("field index $index", vm.state.value)
+        }
+    }
+
+    @Test
+    fun `submitForm hrp check walks every clause of the female symptom or-chain`() = runTest {
+        val orderedFields = listOf<(CbacCache, Int) -> Unit>(
+            { c, v -> c.cbac_foulveginaldischarge_pos = v },
+            { c, v -> c.cbac_sufferingtb_pos = v },
+            { c, v -> c.cbac_bleedingafterintercourse_pos = v },
+            { c, v -> c.cbac_antitbdrugs_pos = v },
+            { c, v -> c.cbac_tbhistory_pos = v },
+            { c, v -> c.cbac_historyoffits_pos = v },
+            { c, v -> c.cbac_growth_in_mouth_posi = v },
+            { c, v -> c.cbac_numbness_on_palm_posi = v },
+            { c, v -> c.cbac_clawing_of_fingers_posi = v },
+            { c, v -> c.cbac_tingling_or_numbness_posi = v },
+            { c, v -> c.cbac_inability_close_eyelid_posi = v },
+            { c, v -> c.cbac_diff_holding_obj_posi = v },
+            { c, v -> c.cbac_blooddischage_pos = v },
+            { c, v -> c.cbac_weekness_in_feet_posi = v },
+            { c, v -> c.cbac_sortnesofbirth_pos = v },
+            { c, v -> c.cbac_coughing_pos = v },
+            { c, v -> c.cbac_bloodsputum_pos = v },
+            { c, v -> c.cbac_fivermore_pos = v },
+            { c, v -> c.cbac_loseofweight_pos = v },
+            { c, v -> c.cbac_nightsweats_pos = v }
+        )
+
+        for (triggerIndex in orderedFields.indices) {
+            val cache = fullCbac()
+            orderedFields.forEachIndexed { i, setter ->
+                setter(cache, if (i == triggerIndex) 1 else 2)
+            }
+            val vm = editVm(cache)
+            advanceUntilIdle()
+
+            vm.submitForm()
+            advanceUntilIdle()
+
+            assertEquals("trigger=$triggerIndex", true, cache.hrp_suspected)
+            assertEquals("trigger=$triggerIndex", CbacViewModel.State.SAVE_SUCCESS, vm.state.value)
+        }
+    }
+
+    @Test
+    fun `submitForm tb suspicion walks every remaining clause of the tb or-chain`() = runTest {
+        val orderedFields = listOf<(CbacCache, Int) -> Unit>(
+            { c, v -> c.cbac_coughing_pos = v },
+            { c, v -> c.cbac_familyhistory_posi = v },
+            { c, v -> c.cbac_tbhistory_pos = v },
+            { c, v -> c.cbac_bloodsputum_pos = v },
+            { c, v -> c.cbac_fivermore_pos = v },
+            { c, v -> c.cbac_loseofweight_pos = v },
+            { c, v -> c.cbac_nightsweats_pos = v },
+            { c, v -> c.cbac_antitbdrugs_pos = v },
+            { c, v -> c.cbac_growth_in_mouth_posi = v }
+        )
+
+        for (triggerIndex in 1 until orderedFields.size) {
+            val cache = fullCbac()
+            orderedFields.forEachIndexed { i, setter ->
+                setter(cache, if (i == triggerIndex) 1 else 2)
+            }
+            val vm = editVm(cache)
+            advanceUntilIdle()
+
+            vm.submitForm()
+            advanceUntilIdle()
+
+            assertEquals("trigger=$triggerIndex", "Yes", cache.suspected_tb)
+            assertEquals("trigger=$triggerIndex", CbacViewModel.State.SAVE_SUCCESS, vm.state.value)
+        }
+    }
+
+    @Test
+    fun `submitForm skips the geriatric validation block for a beneficiary under sixty`() = runTest {
+        coEvery { benDao.getBen(any<Long>()) } returns benMock(age = 45)
+        val cache = fullCbac().apply {
+            cbac_feeling_unsteady_posi = 0
+            cbac_suffer_physical_disability_posi = 0
+            cbac_needing_help_posi = 0
+            cbac_forgetting_names_posi = 0
+        }
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.submitForm()
+        advanceUntilIdle()
+
+        assertEquals(CbacViewModel.State.SAVE_SUCCESS, vm.state.value)
+    }
+
+    @Test
+    fun `submitForm marks an already processed beneficiary for update`() = runTest {
+        val b = benMock()
+        every { b.processed } returns "P"
+        coEvery { benDao.getBen(any<Long>()) } returns b
+        val cache = fullCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.submitForm()
+        advanceUntilIdle()
+
+        verify { b.processed = "U" }
+    }
+
+    @Test
+    fun `init leaves gender unset when the beneficiary has no recorded gender`() = runTest {
+        val b = benMock()
+        every { b.gender } returns null
+        coEvery { benDao.getBen(any<Long>()) } returns b
+
+        val vm = buildVm(cbacId = 0)
+        advanceUntilIdle()
+
+        assertNull(vm.gender.value)
+        assertEquals("65 YEARS | null", vm.benAgeGender.value)
+    }
+
+    @Test
+    fun `init maps age bucket boundaries and out-of-range ages`() = runTest {
+        val expectations = listOf(-5 to "4", 0 to "0", 29 to "0", 30 to "1", 39 to "1", 40 to "2", 49 to "2", 50 to "3", 59 to "3", 60 to "4")
+        for ((age, expected) in expectations) {
+            coEvery { benDao.getBen(any<Long>()) } returns benMock(age = age)
+            val vm = buildVm(cbacId = 0)
+            advanceUntilIdle()
+            assertEquals("age=$age", expected, vm.raAgeScore.latest())
+        }
+    }
+
+    @Test
+    fun `symptom counters ignore an unanswered response`() = runTest {
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setCoughing(0)
+        vm.setBloodSputum(0)
+        vm.setFeverWks(0)
+        vm.setLsWt(0)
+        vm.setNtSwets(0)
+        vm.setFhTb(0)
+        vm.setTakingTbDrug(0)
+        vm.setUnsteady(0)
+        vm.setPdRm(0)
+        vm.setNhop(0)
+        vm.setForgetNames(0)
+
+        assertEquals(0, vm.ast1.value)
+        assertEquals(0, vm.ast2.value)
+        assertEquals(0, vm.astMoic.value)
+        assertEquals(0, cache.cbac_coughing_pos)
+        assertEquals(0, cache.cbac_sufferingtb_pos)
+        assertEquals(0, cache.cbac_feeling_unsteady_posi)
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // localized resources (dataValid messages / score labels)
+    // ----------------------------------------------------------------------------------------
+
+    private fun mockLocalizedResources(): Resources {
+        val mockResources = mockk<Resources>(relaxed = true)
+        mockkConstructor(Configuration::class)
+        every { anyConstructed<Configuration>().setLocale(any()) } just Runs
+        every { context.resources } returns mockResources
+        every { context.createConfigurationContext(any()) } returns context
+        return mockResources
+    }
+
+    @Test
+    fun `raAgeText resolves the localized age bucket label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getStringArray(R.array.cbac_age) } returns
+            arrayOf("Below 30", "30-39", "40-49", "50-59", "60 and above")
+
+        val vm = buildVm()
+        advanceUntilIdle()
+
+        assertEquals("60 and above", vm.raAgeText.latest())
+    }
+
+    @Test
+    fun `raTotalScore renders the localized total score label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(R.string.total_score_wihout_semi_colon) } returns "Total Score"
+
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setSmoke(1)
+        assertEquals("Total Score: 1", vm.raTotalScore.latest())
+    }
+
+    @Test
+    fun `phq2TotalScore renders the localized total score label`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(R.string.total_score_wihout_semi_colon) } returns "Total Score"
+
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setLi(1)
+        vm.setFd(1)
+        assertEquals("Total Score: 2", vm.phq2TotalScore.latest())
+    }
+
+    @Test
+    fun `dataValid resolves a localized message for every mandatory field in turn`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getString(any<Int>()) } returns "required"
+
+        val fieldMutators = listOf<CbacCache.() -> Unit>(
+            { cbac_age_posi = 0 },
+            { cbac_smoke_posi = 0 },
+            { cbac_alcohol_posi = 0 },
+            { cbac_waist_posi = 0 },
+            { cbac_pa_posi = 0 },
+            { cbac_familyhistory_posi = 0 },
+            { cbac_sufferingtb_pos = 0 },
+            { cbac_antitbdrugs_pos = 0 },
+            { cbac_tbhistory_pos = 0 },
+            { cbac_coughing_pos = 0 },
+            { cbac_bloodsputum_pos = 0 },
+            { cbac_fivermore_pos = 0 },
+            { cbac_loseofweight_pos = 0 },
+            { cbac_nightsweats_pos = 0 },
+            { cbac_uicers_pos = 0 },
+            { cbac_tingling_palm_posi = 0 },
+            { cbac_cloudy_posi = 0 },
+            { cbac_diffreading_posi = 0 },
+            { cbac_pain_ineyes_posi = 0 },
+            { cbac_redness_ineyes_posi = 0 },
+            { cbac_diff_inhearing_posi = 0 },
+            { cbac_sortnesofbirth_pos = 0 },
+            { cbac_historyoffits_pos = 0 },
+            { cbac_difficultyinmouth_pos = 0 },
+            { cbac_growth_in_mouth_posi = 0 },
+            { cbac_toneofvoice_pos = 0 },
+            { cbac_white_or_red_patch_posi = 0 },
+            { cbac_Pain_while_chewing_posi = 0 },
+            { cbac_hyper_pigmented_patch_posi = 0 },
+            { cbac_any_thickend_skin_posi = 0 },
+            { cbac_nodules_on_skin_posi = 0 },
+            { cbac_numbness_on_palm_posi = 0 },
+            { cbac_clawing_of_fingers_posi = 0 },
+            { cbac_tingling_or_numbness_posi = 0 },
+            { cbac_inability_close_eyelid_posi = 0 },
+            { cbac_diff_holding_obj_posi = 0 },
+            { cbac_weekness_in_feet_posi = 0 },
+            { cbac_lumpinbreast_pos = 0 },
+            { cbac_blooddischage_pos = 0 },
+            { cbac_changeinbreast_pos = 0 },
+            { cbac_bleedingbtwnperiods_pos = 0 },
+            { cbac_bleedingaftermenopause_pos = 0 },
+            { cbac_bleedingafterintercourse_pos = 0 },
+            { cbac_foulveginaldischarge_pos = 0 },
+            { cbac_feeling_unsteady_posi = 0 },
+            { cbac_suffer_physical_disability_posi = 0 },
+            { cbac_needing_help_posi = 0 },
+            { cbac_forgetting_names_posi = 0 }
+        )
+
+        for ((index, mutate) in fieldMutators.withIndex()) {
+            val cache = fullCbac().apply(mutate)
+            val vm = editVm(cache)
+            advanceUntilIdle()
+
+            vm.submitForm()
+            advanceUntilIdle()
+
+            assertEquals("field index $index", CbacViewModel.State.MISSING_FIELD, vm.state.value)
+            assertEquals("field index $index", "required", vm.missingFieldString)
+        }
     }
 
     private companion object {

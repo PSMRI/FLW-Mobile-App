@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -20,6 +21,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.IncentiveActivityCache
 import org.piramalswasthya.sakhi.model.IncentiveCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -150,5 +152,29 @@ class AshaRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getAshaProfileData(any()) } returns response
 
         assertTrue(repo.pullAndSaveAllAshaActivities(user()))
+    }
+
+    @Test
+    fun `saveAshaMasterData inserts new activity and skips existing activity`() = runTest {
+        val data = """
+            [
+                {"id":1,"name":"A1","description":"d","paymentParam":"p","rate":10,"state":1,"district":1,"group":"g","groupName":"gn","fmrCode":null,"fmrCodeOld":null,"createdDate":"2024-01-01","createdBy":"u","updatedDate":"2024-01-01","updatedBy":"u"},
+                {"id":2,"name":"A2","description":"d","paymentParam":"p","rate":20,"state":1,"district":1,"group":"g","groupName":"gn","fmrCode":null,"fmrCodeOld":null,"createdDate":"2024-01-01","createdBy":"u","updatedDate":"2024-01-01","updatedBy":"u"}
+            ]
+        """.trimIndent()
+        val escapedData = data.replace("\n", "").replace("\"", "\\\"")
+        val json = """{"statusCode":200,"errorMessage":"","data":"$escapedData"}"""
+        coEvery { amritApiService.getAshaProfileData(any()) } returns jsonResponse(json)
+        every { incentiveDao.getActivityById(1L) } returns null
+        every { incentiveDao.getActivityById(2L) } returns mockk(relaxed = true)
+        var insertedIds = emptyList<Long>()
+        coEvery { incentiveDao.insert(*anyVararg<IncentiveActivityCache>()) } answers {
+            insertedIds = (it.invocation.args[0] as Array<*>).map { activity -> (activity as IncentiveActivityCache).id }
+        }
+
+        assertTrue(repo.pullAndSaveAllAshaActivities(user()))
+
+        coVerify(exactly = 1) { incentiveDao.insert(*anyVararg<IncentiveActivityCache>()) }
+        assertEquals(listOf(1L), insertedIds)
     }
 }

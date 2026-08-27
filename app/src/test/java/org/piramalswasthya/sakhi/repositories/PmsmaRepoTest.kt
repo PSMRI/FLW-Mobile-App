@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import java.net.SocketTimeoutException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -17,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.PmsmaDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -396,4 +398,115 @@ class PmsmaRepoTest : BaseRepositoryTest() {
         assertTrue(result.endsWith(".000Z"))
     }
 
+    // ---------------- postDataToAmritServer retry / dead-end branches ----------------
+
+    @Test
+    fun `processNewPmsma retries on socket timeout then exhausts retries`() = runTest {
+        loggedIn()
+        val record = mockk<PMSMACache>(relaxed = true)
+        coEvery { pmsmaDao.getAllUnprocessedPmsma() } returns listOf(record)
+        coEvery { amritApiService.postPmsmaForm(any()) } throws SocketTimeoutException("t")
+
+        assertTrue(repo.processNewPmsma())
+
+        coVerify(exactly = 4) { amritApiService.postPmsmaForm(any()) }
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewPmsma does not retry when 5002 refresh throws timeout inside body parsing`() = runTest {
+        // NOTE: SocketTimeoutException IS-A IOException, and the `throw SocketTimeoutException()`
+        // inside the 401/5002 branch is caught by this method's own inner `catch (e: IOException)`
+        // (which sits closer than the outer `catch (e: SocketTimeoutException)` retry handler), so
+        // the outer retry logic never actually fires for this path - see TEST-COVERAGE-BLOCKERS.md
+        // for the same class of bug elsewhere. This asserts the real (no-retry, single-call) outcome.
+        loggedIn()
+        val record = mockk<PMSMACache>(relaxed = true)
+        coEvery { pmsmaDao.getAllUnprocessedPmsma() } returns listOf(record)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { amritApiService.postPmsmaForm(any()) } returns
+            resp(200, """{"statusCode":5002,"errorMessage":""}""")
+
+        assertTrue(repo.processNewPmsma())
+
+        coVerify(exactly = 1) { amritApiService.postPmsmaForm(any()) }
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewPmsma marks record unsynced when response has no statusCode field`() = runTest {
+        loggedIn()
+        val record = mockk<PMSMACache>(relaxed = true)
+        coEvery { pmsmaDao.getAllUnprocessedPmsma() } returns listOf(record)
+        coEvery { amritApiService.postPmsmaForm(any()) } returns resp(200, """{"errorMessage":"weird"}""")
+
+        assertTrue(repo.processNewPmsma())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify { pmsmaDao.updatePmsmaRecord(record) }
+    }
+
+    @Test
+    fun `processNewPmsma marks record unsynced when user logged out mid push`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        coEvery { preferenceDao.getLoggedInUser() } returnsMany listOf(user, null)
+        val record = mockk<PMSMACache>(relaxed = true)
+        coEvery { pmsmaDao.getAllUnprocessedPmsma() } returns listOf(record)
+        coEvery { amritApiService.postPmsmaForm(any()) } returns
+            resp(200, """{"statusCode":401,"errorMessage":""}""")
+
+        assertTrue(repo.processNewPmsma())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify { pmsmaDao.updatePmsmaRecord(record) }
+    }
+
+    // ---------------- savePmsmaCacheFromResponse via getPmsmaDetailsFromServer ----------------
+
+    private fun pmsmaDataOuterJson(dataJson: String): String {
+        val outer = org.json.JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataJson)
+        return outer.toString()
+    }
+
+    @Test
+    fun `getPmsmaDetailsFromServer saves new record when ben exists and no cache yet`() = runTest {
+        loggedIn()
+        val dataJson = """[{"benId":1,"visitNumber":1,"isActive":true,"createdBy":"asha","updatedBy":"asha","createdDate":"2023-01-01"}]"""
+        coEvery { amritApiService.getPmsmaData(any()) } returns resp(200, pmsmaDataOuterJson(dataJson))
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { pmsmaDao.getPmsma(1L) } returns null
+
+        assertEquals(1, repo.getPmsmaDetailsFromServer())
+
+        coVerify(exactly = 1) { pmsmaDao.upsert(any()) }
+    }
+
+    @Test
+    fun `getPmsmaDetailsFromServer skips save when pmsma cache already exists`() = runTest {
+        loggedIn()
+        val dataJson = """[{"benId":1,"visitNumber":1,"isActive":true,"createdBy":"asha","updatedBy":"asha","createdDate":"2023-01-01"}]"""
+        coEvery { amritApiService.getPmsmaData(any()) } returns resp(200, pmsmaDataOuterJson(dataJson))
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { pmsmaDao.getPmsma(1L) } returns mockk<PMSMACache>(relaxed = true)
+
+        assertEquals(1, repo.getPmsmaDetailsFromServer())
+
+        coVerify(exactly = 0) { pmsmaDao.upsert(any()) }
+    }
+
+    @Test
+    fun `getPmsmaDetailsFromServer skips save when ben does not exist`() = runTest {
+        loggedIn()
+        val dataJson = """[{"benId":1,"visitNumber":1,"isActive":true,"createdBy":"asha","updatedBy":"asha","createdDate":"2023-01-01"}]"""
+        coEvery { amritApiService.getPmsmaData(any()) } returns resp(200, pmsmaDataOuterJson(dataJson))
+        coEvery { benDao.getBen(1L) } returns null
+        coEvery { pmsmaDao.getPmsma(1L) } returns null
+
+        assertEquals(1, repo.getPmsmaDetailsFromServer())
+
+        coVerify(exactly = 0) { pmsmaDao.upsert(any()) }
+    }
 }

@@ -68,4 +68,55 @@ class VHNCDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(null) }
         assertNotNull(ds.listFlow)
     }
+
+    private fun dateForMonthOffset(offset: Int): String {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.DAY_OF_MONTH, 15)
+        cal.add(java.util.Calendar.MONTH, offset)
+        val fmt = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
+        return fmt.format(cal.time)
+    }
+
+    @Test
+    fun `restrictFilledMonths with no meetings does not throw`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        ds.restrictFilledMonths(emptyList())
+    }
+
+    @Test
+    fun `restrictFilledMonths pushes min past latest eligible meeting month`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        val meeting = VHNCCache(id = 1, vhncDate = dateForMonthOffset(-1))
+        ds.restrictFilledMonths(listOf(meeting))
+    }
+
+    @Test
+    fun `restrictFilledMonths excludes the meeting being edited`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        val meeting = VHNCCache(id = 5, vhncDate = dateForMonthOffset(-1))
+        ds.restrictFilledMonths(listOf(meeting), editingId = 5)
+    }
+
+    @Test
+    fun `restrictFilledMonths ignores unparseable dates`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        val meeting = VHNCCache(id = 2, vhncDate = "not-a-date")
+        ds.restrictFilledMonths(listOf(meeting))
+    }
+
+    @Test
+    fun `restrictFilledMonths ignores months outside the eligible window`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        val tooOld = VHNCCache(id = 3, vhncDate = dateForMonthOffset(-6))
+        val tooNew = VHNCCache(id = 4, vhncDate = dateForMonthOffset(1))
+        ds.restrictFilledMonths(listOf(tooOld, tooNew))
+    }
+
+    @Test
+    fun `restrictFilledMonths picks the latest of multiple eligible meetings`() {
+        val ds = VHNCDataset(context, Languages.ENGLISH)
+        val older = VHNCCache(id = 6, vhncDate = dateForMonthOffset(-2))
+        val newer = VHNCCache(id = 7, vhncDate = dateForMonthOffset(-1))
+        ds.restrictFilledMonths(listOf(older, newer))
+    }
 }

@@ -1325,6 +1325,37 @@ class CommonUtilsTest {
         assertEquals(1L, sortHwcList(list, EcFilterType.OLDEST_FIRST).first().ben.benId)
     }
 
+    @Test fun `BenPncDomain real construction exposes delivery date`() {
+        val domain = BenPncDomain(
+            ben = mkBen(benName = "Asha"),
+            deliveryDate = "01-01-2024",
+            allowFill = true,
+            savedPncRecords = emptyList()
+        )
+        assertEquals("01-01-2024", domain.deliveryDate)
+    }
+
+    @Test fun `BenWithEctListDomain real construction exposes numChildren`() {
+        val domain = BenWithEctListDomain(
+            ben = mkBen(benName = "Asha"),
+            numChildren = "2",
+            allowFill = true,
+            savedECTRecords = emptyList()
+        )
+        assertEquals("2", domain.numChildren)
+    }
+
+    @Test fun `BenWithCbacReferDomain real construction exposes savedCbacRecords and referalCac`() {
+        val refer = mockk<ReferalCache>(relaxed = true)
+        val domain = BenWithCbacReferDomain(
+            ben = mkBen(benName = "Asha"),
+            savedCbacRecords = emptyList(),
+            referalCac = refer
+        )
+        assertTrue(domain.savedCbacRecords.isEmpty())
+        assertEquals(refer, domain.referalCac)
+    }
+
     // ===============================================================
     // Pure date / age helpers
     // ===============================================================

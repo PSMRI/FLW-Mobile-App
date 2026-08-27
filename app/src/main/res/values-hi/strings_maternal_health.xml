@@ -57,7 +57,7 @@
         <item>अन्य निजी अस्पताल</item>
     </string-array>
     <string-array name="anc_confirmed_by_array">
-        <item>एएनएम (सहायक नर्स दाई)</item>
+        <item>एएनएम</item>
         <item>सीएचओ (सामुदायिक स्वास्थ्य अधिकारी)</item>
         <item>पीएचसी – चिकित्सा अधिकारी</item>
         <item>उच्च सुविधा में विशेषज्ञ</item>
@@ -115,6 +115,7 @@
     <item>यौन संचारित संक्रमण / प्रजनन तंत्र संक्रमण</item>
     <item>हेपेटाइटिस-बी</item>
     <item>दमा</item>
+    <item>सिकल सेल</item>
     <item>अन्य कोई भी</item>
     </string-array>
 
@@ -238,7 +239,7 @@
         <item>घर</item>
         <item>उप जिला अस्पताल</item>
         <item>मेडिकल कॉलेज अस्पताल</item>
-        <item>परिवहन में</item>
+        <item>परिवहन में(108/112)</item>
     </string-array>
     <string-array name="do_type_of_delivery_array">
         <item>सामान्य</item>
@@ -334,8 +335,8 @@
     <string-array name="pnc_contraception_method_array">
         <item>पोस्ट पार्टम आईयूसीडी (पीपीआईयूसीडी) / गर्भनिरोधक यंत्र प्रसव के 48 घंटों के भीतर</item>
         <item>कंडोम</item>
-        <item>पुरुष निषेकरण</item>
-        <item>महिला निषेकरण</item>
+        <item>पुरुष नसबंदी</item>
+        <item>महिला नसबंदी</item>
         <item>पोस्ट पार्टम स्टेरिलाइजेशन (PPS प्रसव के 7 दिनों के भीतर)</item>
         <item>मिनीलैप / स्थायी परिवार नियोजन</item>
         <item>कोई अन्य (स्पष्ट करें)</item>
@@ -385,7 +386,7 @@
     <string-array name="pnc_death_place_array">
         <item>घर</item>
         <item>अस्पताल</item>
-        <item>परिवहन में</item>
+        <item>परिवहन में (108/112)</item>
     </string-array>
 
     <!--  Infant Registration  -->
@@ -393,7 +394,7 @@
     <string name="ir_infant_term">शिशु की गर्भावधि</string>
     <string name="ir_corticosteroid_given">क्या कॉर्टिकोस्टेरॉइड इंजेक्शन दिया गया था?</string>
     <string name="ir_gender">शिशु का लिंग</string>
-    <string name="ir_baby_cried_at_birth">शिशु प्रसव के समय तुरंत रोता था</string>
+    <string name="ir_baby_cried_at_birth">क्या प्रसव के समय शिशु रोया था?</string>
     <string name="ir_resuscitation">यदि नहीं, तो क्या पुनर्जीवन (रेससिटेशन) किया गया?</string>
     <string name="ir_referred">उच्च सुविधा के लिए और प्रबंधन के लिए संदर्भित किया गया?</string>
     <string name="ir_had_birth_defect">प्रसव के समय क्या कोई जन्मजात विकृति दिखा?</string>
@@ -424,16 +425,16 @@
         <item>मालूम नहीं</item>
     </string-array>
     <string-array name="ir_birth_defect_array">
-        <item>क्लेफ्ट लिप / क्लेफ्ट पैलेट</item>
-        <item>क्लब पैर</item>
+        <item>कटा हुआ होंठ / कटा हुआ पैलेट</item>
+        <item>क्लब फुट</item>
         <item>डाउन सिंड्रोम</item>
-        <item>हाइड्रोसेफालस</item>
+        <item>सिर में पानी भरना</item>
         <item>अंक नलिका दोष (स्पाइनल बिफिडा)</item>
         <item>अन्य</item>
     </string-array>
 
     <string-array name="maternal_health_reg_hrp_confirm_by">
-        <item>एएनएम (सहायक नर्स दाई)</item>
+        <item>एएनएम</item>
         <item>सीएचओ (सामुदायिक स्वास्थ्य अधिकारी)</item>
         <item>पीएचसी – चिकित्सा अधिकारी</item>
         <item>उच्च स्वास्थ्य संस्थान में विशेषज्ञ डॉक्टर</item>

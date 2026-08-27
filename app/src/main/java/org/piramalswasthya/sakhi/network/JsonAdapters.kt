@@ -195,7 +195,7 @@ data class BenAbhaResponse(
 data class AbhaTokenRequest(
     val clientId: String = KeyUtils.abhaClientID(),
     val clientSecret: String = KeyUtils.abhaClientSecret(),
-    val grantType: String = "Piramal12Piramal"
+    val grantType: String = "client_credentials"
 )
 
 @JsonClass(generateAdapter = true)
@@ -1149,6 +1149,7 @@ data class AdolscentHealthDTO(
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
     var sanitaryNapkinDistributed: Boolean? = null,
+    var isSanitaryNapkinUsed: Boolean? = null,
     var noOfPacketsDistributed: Int? = null,
     var place: String? = null,
     var distributionDate: String? = null,

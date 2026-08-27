@@ -113,7 +113,7 @@ class ActivityAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            TYPE_MITANIN
+            TYPE_DEFAULT// TYPE_MITANIN
         } else {
             TYPE_DEFAULT
         }

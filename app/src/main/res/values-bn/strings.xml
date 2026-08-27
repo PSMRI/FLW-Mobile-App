@@ -30,6 +30,8 @@
     <string name="date_of_referal">রেফারেলের তারিখ</string>
     <string name="death_date">মৃত্যুর তারিখ</string>
     <string name="home_visit_date">বাড়ি পরিদর্শনের তারিখ</string>
+    <string name="sanitary_napkin_used">স্যানিটারি প্যাড ব্যবহার করা হয় কি?</string>
+
     <string name="home_visit_date_screening">বাড়ি পরিদর্শনের তারিখ (স্ক্রিনিংয়ের তারিখ)</string>
     <string name="visit_date">পরিদর্শনের তারিখ</string>
     <string name="home_visit_date_mda_program">বাড়ি পরিদর্শনের তারিখ (MDA প্রোগ্রাম)</string>
@@ -1467,4 +1469,7 @@
     <string name="notification_action_clear">সাফ করুন</string>
     <string name="notification_action_cancel">বাতিল করুন</string>
     <string name="notification_close">বন্ধ করুন</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    প্রসবের তারিখ শেষ ANC ভিজিটের তারিখের আগে হতে পারে না।
+</string>
 </resources>

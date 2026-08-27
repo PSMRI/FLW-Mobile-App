@@ -642,6 +642,7 @@
     <string name="ahd_ifa_tablet_quantity">Quantity of IFA Tablets</string>
     <string name="ahd_menstrual_hygiene_awareness">Menstrual Hygiene Awareness</string>
     <string name="ahd_sanitary_napkin_distributed">Sanitary Napkin Distributed</string>
+    <string name="sanitary_napkin_used">Is sanitary pad used</string>
     <string name="ahd_no_of_packets_distributed">No. of Packets Distributed</string>
     <string name="ahd_referred_to_health_facility">Referred to Health Facility</string>
     <string name="ahd_counseling_provided">Counseling Provided</string>
@@ -941,7 +942,7 @@
     <string name="newAbha">New</string>
     <string name="oldAbha">Old</string>
     <string name="home_visit_number">Home Visit %d</string>
-    <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="hwc_referred_list">Referral List</string>
     <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
     <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
     <string name="village_name">Village Name</string>
@@ -1574,5 +1575,6 @@
     <string name="rejected_date_txt">Rejected Date: %1$s</string>
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
 </resources>
 

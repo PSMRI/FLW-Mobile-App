@@ -50,13 +50,26 @@ def coverageExclusions = [
         '**/di/**',
         // Android view layer (not unit-tested; ViewModels are kept)
         '**/*Fragment.*', '**/*Fragment$*.*',
+        '**/*Fragement.*', '**/*Fragement$*.*',
         '**/*Activity.*', '**/*Activity$*.*',
         '**/*Adapter.*', '**/*Adapter$*.*',
         '**/*Dialog.*', '**/*Dialog$*.*',
         '**/*BottomSheet.*', '**/*BottomSheet$*.*',
         '**/*ViewHolder.*', '**/*ViewHolder$*.*',
         // Kotlin synthetic / generated
-        '**/*$*Lambda$*.*', '**/*$inlined$*.*'
+        '**/*$*Lambda$*.*', '**/*$inlined$*.*',
+        // Fragment/BottomSheetDialogFragment subclasses whose class name doesn't end in
+        // Fragment/BottomSheet, so they slip past the patterns above (same root cause as the
+        // Fragement typo case) — verified by inspection to extend Fragment/BottomSheetDialogFragment.
+        '**/HRPMicroBirthPlanTable.*', '**/HRPMicroBirthPlanTable$*.*',
+        '**/NCDReferTypeFilter.*', '**/NCDReferTypeFilter$*.*',
+        '**/NcdRefferedList.*', '**/NcdRefferedList$*.*',
+        '**/FilariaMdaCampaignHistory.*', '**/FilariaMdaCampaignHistory$*.*',
+        // ListAdapter subclasses whose name doesn't end in "Adapter" — same root cause as above,
+        // verified by inspection to extend androidx.recyclerview.widget.ListAdapter.
+        '**/FormInputAdapterWithBgIcon.*', '**/FormInputAdapterWithBgIcon$*.*',
+        '**/FormInputAdapterOld.*', '**/FormInputAdapterOld$*.*',
+        '**/BenListAdapterForForm.*', '**/BenListAdapterForForm$*.*'
 ]
 
 def coverageClassDirs = {

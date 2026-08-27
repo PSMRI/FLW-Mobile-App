@@ -25,7 +25,7 @@
     <string name="icon_title_hrp">एचआरपी मामले</string>
     <string name="icon_title_gop">सामान्य वाह्य रोगी सूची</string>
     <string name="icon_title_msl">रजोनिवृत्ति स्टेज सूची</string>
-    <string name="icon_title_dr"> मौत की रिपोर्ट </string>
+    <string name="icon_title_dr"> मृत्यु रिपोर्ट </string>
     <string name="icon_title_vlf">ग्राम स्तरीय प्रपत्र</string>
 
     <string name="icon_title_icc">नवजात शिशु सूची</string>
@@ -43,7 +43,7 @@
     <string name="icon_title_ncd_priority_list">गैर संक्रामक रोग प्राथमिकता सूची</string>
     <string name="icon_title_cd">संचारी (संक्रामक) रोग</string>
     <string name="icon_title_vhnd">वीएचएनडी फॉर्म</string>
-    <string name="icon_title_ahd">एएचडी फॉर्म</string>
+    <string name="icon_title_ahd">किशोरी बैठक फॉर्म</string>
     <string name="icon_title_vhnc">वीएचएसएनसी बैठक</string>
     <string name="icon_title_phc">पीएचसी समीक्षा बैठक फॉर्म</string>
     <string name="icon_title_vhnd_list">वीएचएनडी फॉर्म सूची</string>
@@ -84,7 +84,7 @@
     <string name="icon_title_hrp_non_pregnant_assess">गैर-गर्भवती महिलाओं में खतरे के लक्षण का आकलन</string>
     <string name="icon_title_hrp_non_pregnant_track">गैर-गर्भवती महिलाओं का अनुवर्ती कार्रवाई</string>
     <string name="icon_title_sr">सर्वेक्षण रजिस्टर</string>
-    <string name="icon_title_ahd_list">एएचडी फॉर्म सूची</string>
+    <string name="icon_title_ahd_list">किशोरी बैठक फॉर्म सूची</string>
 
     <string name="home_fragment_percent_download_text">%1$d%% डाउनलोड हुआ</string>
     <string name="error_sign_in_invalid_u_p">गलत यूजरनेम / पासवर्ड</string>
@@ -103,14 +103,14 @@
     <string name="vhnd">वीएचएनडी / वीएचएसएनडी</string>
     <string name="vnhc">वीएचसएनसी</string>
     <string name="phc_review">पीएचसी समीक्षा बैठक</string>
-    <string name="ahd">एएचडी</string>
+    <string name="ahd">किशोरी बैठक</string>
     <string name="national_deworming_day">राष्ट्रीय कृमि मुक्ति दिवस</string>
     <string name="saas_bahu_reg">सास बहू सम्मेलन रजिस्ट्रेशन</string>
     <string name="saas_bahu_list">सास बहू सम्मेलन</string>
     <string name="maa_meeting_list">माँ मीटिंग फॉर्म सूची</string>
     <string name="maa_meeting">माँ बैठक</string>
-    <string name="icon_cluster_phc_list">क्लस्टर बैठकें फॉर्म सूची</string>
-    <string name="icon_cluster_phc">क्लस्टर बैठकें फॉर्म</string>
+    <string name="icon_cluster_phc_list">संकुल बैठक फॉर्म सूची</string>
+    <string name="icon_cluster_phc">संकुल बैठक फॉर्म</string>
     <string name="place_of_meeting">बैठक का स्थान</string>
     <string name="mitanin">Mitanins</string>
     <string name="mt">मितानिन गतिविधि जांच सूची</string>
@@ -131,7 +131,7 @@
     <string name="hygiene_title">स्वच्छता एवं साफ-सफाई</string>
     <string name="com_feeding_title">अनुपूरक आहार</string>
     <string name="imp_brestfeeding_title">स्तनपान का महत्व</string>
-    <string name="cluster_review">क्लस्टर बैठकें</string>
+    <string name="cluster_review">संकुल बैठक</string>
     <string name="image_uploaded">छवि सफलतापूर्वक अपलोड की गई</string>
     <string name="file_uploaded">फ़ाइल सफलतापूर्वक अपलोड की गई</string>
 

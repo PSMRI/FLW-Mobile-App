@@ -17,9 +17,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -32,6 +34,9 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Unit tests for [EligibleCoupleRegistrationDataset]. Consolidated into a single class from the
@@ -75,6 +80,8 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any(), any()) } returns "x"
         every { preferenceDao.getLoggedInUser() } returns null
     }
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     // ---------- shared factories ----------
 
@@ -658,7 +665,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setUpPage(benMockBr(), null, kitSaved(true), emptyList())
         val page = d.listFlow.value
         assertTrue(page.any { it.id == 78 })
-        assertTrue(page.any { it.id == 77 })
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 77 })
+        } else {
+            assertTrue(page.any { it.id == 77 })
+        }
     }
 
     @Test
@@ -701,7 +712,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         assertFalse(d.isHighRisk())
 
         d.setValueById(65, "opt0")
-        assertTrue(d.isHighRisk())
+        if (isMitanin) {
+            assertFalse(d.isHighRisk())
+        } else {
+            assertTrue(d.isHighRisk())
+        }
     }
 
     @Test
@@ -712,7 +727,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         val ben = mockk<BenRegCache>(relaxed = true)
         every { ben.rchId } returns null
         assertFalse(d.mapValueToBen(ben))
-        verify { ben.isHrpStatus = true }
+        if (isMitanin) {
+            verify(exactly = 0) { ben.isHrpStatus = true }
+        } else {
+            verify { ben.isHrpStatus = true }
+        }
     }
 
     @Test
@@ -733,8 +752,13 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         listOf(61, 62, 63, 64, 65, 66, 67, 68).forEach { d.setValueById(it, "opt0") }
         val assess = mockk<HRPNonPregnantAssessCache>(relaxed = true)
         d.mapValuesToAssess(assess, 0)
-        verify { assess.noOfDeliveries = "opt0" }
-        verify { assess.isHighRisk = true }
+        if (isMitanin) {
+            verify { assess.noOfDeliveries = null }
+            verify { assess.isHighRisk = false }
+        } else {
+            verify { assess.noOfDeliveries = "opt0" }
+            verify { assess.isHighRisk = true }
+        }
     }
 
     @Test
@@ -757,8 +781,13 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setImageUriToFormElement(75, uri)
         d.setImageUriToFormElement(76, uri)
         val page = d.listFlow.value
-        assertEquals("content://photo/1", page.first { it.id == 75 }.value)
-        assertEquals("content://photo/1", page.first { it.id == 76 }.value)
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 75 })
+            assertTrue(page.none { it.id == 76 })
+        } else {
+            assertEquals("content://photo/1", page.first { it.id == 75 }.value)
+            assertEquals("content://photo/1", page.first { it.id == 76 }.value)
+        }
     }
 
     @Test
@@ -852,10 +881,152 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setUpPage(benMockBr(), null, null, emptyList())
         d.setValueById(78, "opt0")
         d.updateList(78, 0)
-        assertTrue(d.listFlow.value.any { it.id == 77 })
+        if (isMitanin) {
+            assertTrue(d.listFlow.value.none { it.id == 77 })
+        } else {
+            assertTrue(d.listFlow.value.any { it.id == 77 })
+        }
 
         d.setValueById(78, "opt1")
         d.updateList(78, 1)
         assertTrue(d.listFlow.value.none { it.id == 77 })
+    }
+
+    @Test
+    fun `reqContext context and showDialogEvent properties are readable and writable`() = runTest {
+        val d = ds()
+        assertNotNull(d.reqContext)
+        assertNotNull(d.context)
+        val otherContext = mockk<Context>(relaxed = true)
+        d.reqContext = otherContext
+        d.context = otherContext
+        assertEquals(otherContext, d.reqContext)
+        assertEquals(otherContext, d.context)
+        val event = MutableLiveData<String>()
+        d.showDialogEvent = event
+        assertEquals(event, d.showDialogEvent)
+    }
+
+    @Test
+    fun `setUpPage with a blank aadhar number does not blow up the takeIf chain`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns ""
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a null aadhar number does not blow up the takeIf chain`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns null
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a populated aadhar number marks it read only`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.aadharNum } returns "123456789012"
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage with a null last name does not blow up the name concatenation`() = runTest {
+        val d = ds()
+        val ben = benMockBr()
+        every { ben.lastName } returns null
+        runCatching { d.setUpPage(ben, null, null, emptyList()) }
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    private fun dateDaysAgo(days: Int): String {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DAY_OF_YEAR, -days)
+        return SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(cal.time)
+    }
+
+    private fun kitSavedNoHandoverDate(): EligibleCoupleRegCache {
+        val s = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { s.isKitHandedOver } returns true
+        every { s.kitHandedOverDate } returns null
+        return s
+    }
+
+    @Test
+    fun `isHighRisk also matches when the current age string equals the yes value`() = runTest {
+        every { mockResources.getStringArray(R.array.yes_no) } returns arrayOf("25", "no")
+        val ben = benMockBr()
+        every { ben.dob } returns System.currentTimeMillis() - (25L * 365 + 100) * 24 * 3600 * 1000
+        val d = ds()
+        d.setUpPage(ben, null, null, emptyList())
+        assertTrue(d.isHighRisk())
+    }
+
+    @Test
+    fun `setUpPage with a null genDetails computes the marriage gap from the epoch`() = runTest {
+        val ben = benMockBr()
+        every { ben.genDetails } returns null
+        val d = ds()
+        d.setUpPage(ben, null, null, listOf(benMockBr(Gender.MALE)))
+        val page = d.listFlow.value
+        assertEquals("31 years", page.first { it.id == 20 }.value)
+    }
+
+    @Test
+    fun `updateList on child dob fields without a prior sibling skips gap computation`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        val before = d.listFlow.value
+        listOf(22, 27, 32, 37, 42, 47, 52, 57).forEach { id -> d.updateList(id, 0) }
+        assertSame(before, d.listFlow.value)
+    }
+
+    @Test
+    fun `updateList child dob within 548 days marks timeLessThan18m as yes`() = runTest {
+        val d = ds()
+        val kids = listOf(benMockBr(Gender.MALE), benMockBr(Gender.FEMALE))
+        d.setUpPage(benMockBr(), null, null, kids)
+        d.setValueById(17, "01-01-2010")
+        d.updateList(17, 0)
+        d.setValueById(22, dateDaysAgo(100))
+        d.updateList(22, 0)
+        val page = d.listFlow.value
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 62 })
+        } else {
+            assertEquals("opt0", page.first { it.id == 62 }.value)
+        }
+    }
+
+    @Test
+    fun `setUpPage with kit handed over but no handover date leaves the date field blank`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, kitSavedNoHandoverDate(), emptyList())
+        val page = d.listFlow.value
+        assertNull(page.first { it.id == 74 }.value)
+    }
+
+    @Test
+    fun `mapValueToBen reports no update when the rch id is unchanged`() = runTest {
+        val d = ds()
+        d.setUpPage(benMockBr(), null, null, emptyList())
+        d.setValueById(1, "123456789012")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.rchId } returns "123456789012"
+        assertFalse(d.mapValueToBen(ben))
+        verify(exactly = 0) { ben.rchId = any() }
+    }
+
+    @Test
+    fun `mapValuesToAssess maps a null age when no beneficiary was loaded`() = runTest {
+        val d = ds()
+        d.setUpPage(null, null, null, emptyList())
+        val assess = mockk<HRPNonPregnantAssessCache>(relaxed = true)
+        d.mapValuesToAssess(assess, 0)
+        verify { assess.age = null }
     }
 }

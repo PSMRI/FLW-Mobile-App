@@ -137,6 +137,15 @@ class VHNCFormFragement:Fragment() {
                     ).show()
                 }
 
+                VHNCViewModel.State.DATE_ALREADY_FILLED -> {
+                    Toast.makeText(
+                        context,
+                        "A VHNC meeting already exists for the selected month",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    viewModel.resetState()
+                }
+
                 else -> {}
             }
         }

@@ -198,6 +198,7 @@
         <item>নাতনি</item>
         <item>জামাই</item>
         <item>পুত্রবধূ</item>
+        <item>শালা/দেবর</item>
         <item>অন্যান্য</item>
     </string-array>
 
@@ -212,6 +213,7 @@
         <item>নাতনি</item>
         <item>জামাই</item>
         <item>পুত্রবধূ</item>
+        <item>শালা/দেবর</item>
     </string-array>
 
     <string-array name="nbr_relationship_to_head_male">
@@ -224,6 +226,7 @@
         <item>শ্বশুর</item>
         <item>নাতি</item>
         <item>জামাই</item>
+        <item>শালা/দেবর</item>
         <item>অন্যান্য</item>
     </string-array>
 
