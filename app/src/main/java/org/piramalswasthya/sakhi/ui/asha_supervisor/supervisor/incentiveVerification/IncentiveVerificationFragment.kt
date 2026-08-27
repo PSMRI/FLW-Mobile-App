@@ -121,6 +121,7 @@ class IncentiveVerificationFragment : Fragment() {
                 putInt("selected_month", selectedMonth)
                 putInt("selected_year", selectedYear)
                 putString("status", worker.status.name)
+                putInt("approval_status", worker.status.code)
                 putInt("amount", worker.amount)
             }
             if (worker.status != VerificationStatus.UNCLAIMED) {

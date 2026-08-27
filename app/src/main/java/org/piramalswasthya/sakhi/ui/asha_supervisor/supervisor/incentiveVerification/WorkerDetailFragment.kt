@@ -64,6 +64,9 @@ class WorkerDetailFragment : Fragment() {
     private val workerStatus by lazy {
         arguments?.getString("status") ?: ""
     }
+    private val workerApprovalStatus by lazy {
+        arguments?.getInt("approval_status") ?: 0
+    }
 
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
@@ -135,7 +138,7 @@ class WorkerDetailFragment : Fragment() {
 
         }
 
-        viewModel.init(workerId, selectedMonth, selectedYear)
+        viewModel.init(workerId, selectedMonth, selectedYear, workerApprovalStatus)
     }
 
     private fun setupRecyclerViews() {
@@ -168,6 +171,7 @@ class WorkerDetailFragment : Fragment() {
             putInt("selected_month", selectedMonth)
             putInt("selected_year", selectedYear)
             putString("status", workerStatus)
+            putInt("approval_status", workerApprovalStatus)
         }
         findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
     }

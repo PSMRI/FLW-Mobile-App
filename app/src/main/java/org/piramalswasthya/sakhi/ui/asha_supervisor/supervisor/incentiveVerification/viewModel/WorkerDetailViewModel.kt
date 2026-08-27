@@ -28,10 +28,12 @@ class WorkerDetailViewModel @Inject constructor(
 
     private var filterMonth: Int = 0
     private var filterYear: Int = 0
+    private var filterApprovalStatus: Int = 0
 
-    fun init(userId: Int, month: Int, year: Int) {
+    fun init(userId: Int, month: Int, year: Int, approvalStatus: Int) {
         filterMonth = month
         filterYear = year
+        filterApprovalStatus = approvalStatus
         fetchClaimedIncentives(userId)
     }
 
@@ -58,7 +60,8 @@ class WorkerDetailViewModel @Inject constructor(
                     "userId" to userId,
                     "month" to filterMonth,
                     "year" to filterYear,
-                    "villageID" to userStateId
+                    "villageID" to userStateId,
+                    "approvalStatus" to filterApprovalStatus
                 )
 
                 val response = apiService.getClaimedIncentiveByUser(requestBody = requestBody)

@@ -54,6 +54,9 @@ class BeneficiaryDetailFragment : Fragment() {
     private val workerStatus by lazy {
         arguments?.getString("status") ?: ""
     }
+    private val workerApprovalStatus by lazy {
+        arguments?.getInt("approval_status") ?: 0
+    }
 
     private val showBeneficiaryCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
@@ -100,7 +103,8 @@ class BeneficiaryDetailFragment : Fragment() {
             userId = userId,
             month = selectedMonth,
             year = selectedYear,
-            activityId = activityId
+            activityId = activityId,
+            filterApprovalStatus = workerApprovalStatus
         )
     }
 
@@ -258,7 +262,8 @@ class BeneficiaryDetailFragment : Fragment() {
                         userId = userId,
                         month = selectedMonth,
                         year = selectedYear,
-                        activityId = activityId
+                        activityId = activityId,
+                        filterApprovalStatus = workerApprovalStatus
                     )
                 }
                 is ActionState.Error -> {

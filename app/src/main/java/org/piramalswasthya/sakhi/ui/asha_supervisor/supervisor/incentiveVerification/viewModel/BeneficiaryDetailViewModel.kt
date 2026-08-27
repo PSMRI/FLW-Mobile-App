@@ -29,7 +29,7 @@ class BeneficiaryDetailViewModel @Inject constructor(
     private var filterMonth: Int = 0
     private var filterYear: Int = 0
 
-    fun fetchBeneficiaries(userId: Int, month: Int, year: Int, activityId: Int) {
+    fun fetchBeneficiaries(userId: Int, month: Int, year: Int, activityId: Int,filterApprovalStatus: Int) {
         filterMonth = month
         filterYear = year
         viewModelScope.launch {
@@ -47,7 +47,8 @@ class BeneficiaryDetailViewModel @Inject constructor(
                         "month"      to month,
                         "year"       to year,
                         "villageID"  to user.state.id,
-                        "activityId" to activityId
+                        "activityId" to activityId,
+                        "approvalStatus" to filterApprovalStatus
                     )
                 )
 
