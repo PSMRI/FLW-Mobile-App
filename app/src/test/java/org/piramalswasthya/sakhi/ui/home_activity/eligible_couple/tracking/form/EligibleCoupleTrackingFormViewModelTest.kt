@@ -257,7 +257,7 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
     fun `saveForm creates a default pregnant assess record when isPregnant is Yes and no assess exists`() = runTest {
         stubArray(R.array.yes_no, "Yes", "No")
         val ben = mockBen()
-        val existing = buildTrackingRecord(isPregnant = "Yes")
+        val existing = buildTrackingRecord(isPregnancyTestDone = "Yes", isPregnant = "Yes")
         viewModel = rebuildViewModelInEditMode(existing, ben)
         advanceUntilIdle()
 
@@ -282,7 +282,7 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
     fun `saveForm copies non-pregnant assess fields and flags high risk when any field is Yes`() = runTest {
         stubArray(R.array.yes_no, "Yes", "No")
         val ben = mockBen()
-        val existing = buildTrackingRecord(isPregnant = "Yes")
+        val existing = buildTrackingRecord(isPregnancyTestDone = "Yes", isPregnant = "Yes")
         viewModel = rebuildViewModelInEditMode(existing, ben)
         advanceUntilIdle()
 
@@ -311,7 +311,7 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
     fun `saveForm copies non-pregnant assess fields without high risk when all fields are No`() = runTest {
         stubArray(R.array.yes_no, "Yes", "No")
         val ben = mockBen()
-        val existing = buildTrackingRecord(isPregnant = "Yes")
+        val existing = buildTrackingRecord(isPregnancyTestDone = "Yes", isPregnant = "Yes")
         viewModel = rebuildViewModelInEditMode(existing, ben)
         advanceUntilIdle()
 
@@ -339,7 +339,7 @@ class EligibleCoupleTrackingFormViewModelTest : BaseViewModelTest() {
     fun `saveForm saves an existing pregnant assess record directly without recreating it`() = runTest {
         stubArray(R.array.yes_no, "Yes", "No")
         val ben = mockBen()
-        val existing = buildTrackingRecord(isPregnant = "Yes")
+        val existing = buildTrackingRecord(isPregnancyTestDone = "Yes", isPregnant = "Yes")
         viewModel = rebuildViewModelInEditMode(existing, ben)
         advanceUntilIdle()
 

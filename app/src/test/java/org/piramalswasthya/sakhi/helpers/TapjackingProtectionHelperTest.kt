@@ -14,6 +14,7 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 
 class TapjackingProtectionHelperTest {
 
@@ -23,12 +24,16 @@ class TapjackingProtectionHelperTest {
     }
 
     @Test
-    fun `applyWindowSecurity does not touch the window in a debug build`() {
+    fun `applyWindowSecurity touches the window only in a release build`() {
         val activity: Activity = mockk(relaxed = true)
 
         TapjackingProtectionHelper.applyWindowSecurity(activity)
 
-        verify(exactly = 0) { activity.window }
+        if (BuildConfig.DEBUG) {
+            verify(exactly = 0) { activity.window }
+        } else {
+            verify(exactly = 1) { activity.window }
+        }
     }
 
     @Test

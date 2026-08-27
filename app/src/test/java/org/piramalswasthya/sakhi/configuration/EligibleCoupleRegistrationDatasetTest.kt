@@ -21,6 +21,7 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -79,6 +80,8 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any(), any()) } returns "x"
         every { preferenceDao.getLoggedInUser() } returns null
     }
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     // ---------- shared factories ----------
 
@@ -662,7 +665,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setUpPage(benMockBr(), null, kitSaved(true), emptyList())
         val page = d.listFlow.value
         assertTrue(page.any { it.id == 78 })
-        assertTrue(page.any { it.id == 77 })
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 77 })
+        } else {
+            assertTrue(page.any { it.id == 77 })
+        }
     }
 
     @Test
@@ -705,7 +712,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         assertFalse(d.isHighRisk())
 
         d.setValueById(65, "opt0")
-        assertTrue(d.isHighRisk())
+        if (isMitanin) {
+            assertFalse(d.isHighRisk())
+        } else {
+            assertTrue(d.isHighRisk())
+        }
     }
 
     @Test
@@ -716,7 +727,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         val ben = mockk<BenRegCache>(relaxed = true)
         every { ben.rchId } returns null
         assertFalse(d.mapValueToBen(ben))
-        verify { ben.isHrpStatus = true }
+        if (isMitanin) {
+            verify(exactly = 0) { ben.isHrpStatus = true }
+        } else {
+            verify { ben.isHrpStatus = true }
+        }
     }
 
     @Test
@@ -737,8 +752,13 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         listOf(61, 62, 63, 64, 65, 66, 67, 68).forEach { d.setValueById(it, "opt0") }
         val assess = mockk<HRPNonPregnantAssessCache>(relaxed = true)
         d.mapValuesToAssess(assess, 0)
-        verify { assess.noOfDeliveries = "opt0" }
-        verify { assess.isHighRisk = true }
+        if (isMitanin) {
+            verify { assess.noOfDeliveries = null }
+            verify { assess.isHighRisk = false }
+        } else {
+            verify { assess.noOfDeliveries = "opt0" }
+            verify { assess.isHighRisk = true }
+        }
     }
 
     @Test
@@ -761,8 +781,13 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setImageUriToFormElement(75, uri)
         d.setImageUriToFormElement(76, uri)
         val page = d.listFlow.value
-        assertEquals("content://photo/1", page.first { it.id == 75 }.value)
-        assertEquals("content://photo/1", page.first { it.id == 76 }.value)
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 75 })
+            assertTrue(page.none { it.id == 76 })
+        } else {
+            assertEquals("content://photo/1", page.first { it.id == 75 }.value)
+            assertEquals("content://photo/1", page.first { it.id == 76 }.value)
+        }
     }
 
     @Test
@@ -856,7 +881,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setUpPage(benMockBr(), null, null, emptyList())
         d.setValueById(78, "opt0")
         d.updateList(78, 0)
-        assertTrue(d.listFlow.value.any { it.id == 77 })
+        if (isMitanin) {
+            assertTrue(d.listFlow.value.none { it.id == 77 })
+        } else {
+            assertTrue(d.listFlow.value.any { it.id == 77 })
+        }
 
         d.setValueById(78, "opt1")
         d.updateList(78, 1)
@@ -966,7 +995,11 @@ class EligibleCoupleRegistrationDatasetTest : BaseViewModelTest() {
         d.setValueById(22, dateDaysAgo(100))
         d.updateList(22, 0)
         val page = d.listFlow.value
-        assertEquals("opt0", page.first { it.id == 62 }.value)
+        if (isMitanin) {
+            assertTrue(page.none { it.id == 62 })
+        } else {
+            assertEquals("opt0", page.first { it.id == 62 }.value)
+        }
     }
 
     @Test

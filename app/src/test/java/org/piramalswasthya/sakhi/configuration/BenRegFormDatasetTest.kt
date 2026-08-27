@@ -18,6 +18,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -81,6 +82,8 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
     // ---------- shared factories ----------
 
     private fun householdMock(): HouseholdCache = mockk(relaxed = true)
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     private fun ds() = BenRegFormDataset(context, Languages.ENGLISH)
 
@@ -1426,7 +1429,11 @@ class BenRegFormDatasetTest : BaseViewModelTest() {
         runCatching { d.mapValues(ben, 0) }
         verify { ben.familyHeadRelationPosition = 19 }
         verify { ben.mobileNoOfRelationId = 1 }
-        verify { ben.tempMobileNoOfRelationId = 1 }
+        if (isMitanin) {
+            verify { ben.tempMobileNoOfRelationId = 0 }
+        } else {
+            verify { ben.tempMobileNoOfRelationId = 1 }
+        }
     }
 
     // mapValues: `ben.isSpouseAdded = if (isAddSppouse == 1) true else when(ben.familyHeadRelationPosition) {...}`.
