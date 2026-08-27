@@ -170,6 +170,7 @@ class WorkerDetailFragment : Fragment() {
             putString("group_name", activity.groupName)
             putInt("selected_month", selectedMonth)
             putInt("selected_year", selectedYear)
+            putString("status", workerStatus)
         }
         findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
     }

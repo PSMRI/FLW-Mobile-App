@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +12,12 @@ import org.piramalswasthya.sakhi.databinding.ItemBeneficiaryBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMtInnerBinding
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.BeneficiaryRecordUI
 
-class BeneficiaryAdapter(var activityName: String) : ListAdapter<BeneficiaryRecordUI, BeneficiaryAdapter.ViewHolder>(DiffCallback()) {
+class BeneficiaryAdapter(
+    var activityName: String,
+    private val isSelected: (BeneficiaryRecordUI) -> Boolean = { false },
+    private val onSelectionChanged: (BeneficiaryRecordUI, Boolean) -> Unit = { _, _ -> },
+    private val showCheckbox: () -> Boolean = { false }
+) : ListAdapter<BeneficiaryRecordUI, BeneficiaryAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(private val binding: ViewBinding
     ) :
@@ -38,6 +44,17 @@ class BeneficiaryAdapter(var activityName: String) : ListAdapter<BeneficiaryReco
                     binding.tvRchId.text = "RCH ID: ${item.rchId ?: "N/A"}"
                     binding.tvAbhaNumber.text = "ABHA Number: ${item.abhaNumber ?: "N/A"}"
                     binding.tvAmount.text = "₹ ${item.amount}"
+
+                    binding.cbSelectBeneficiary.setOnCheckedChangeListener(null)
+                    if (showCheckbox()) {
+                        binding.cbSelectBeneficiary.visibility = View.VISIBLE
+                        binding.cbSelectBeneficiary.isChecked = isSelected(item)
+                        binding.cbSelectBeneficiary.setOnCheckedChangeListener { _, isChecked ->
+                            onSelectionChanged(item, isChecked)
+                        }
+                    } else {
+                        binding.cbSelectBeneficiary.visibility = View.GONE
+                    }
                 }
             }
         }

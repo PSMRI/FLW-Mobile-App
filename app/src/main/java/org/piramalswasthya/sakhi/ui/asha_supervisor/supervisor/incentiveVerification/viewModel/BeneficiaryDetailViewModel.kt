@@ -23,7 +23,15 @@ class BeneficiaryDetailViewModel @Inject constructor(
     private val _uiState = MutableLiveData<BeneficiaryUiState>()
     val uiState: LiveData<BeneficiaryUiState> = _uiState
 
+    private val _actionState = MutableLiveData<ActionState>()
+    val actionState: LiveData<ActionState> = _actionState
+
+    private var filterMonth: Int = 0
+    private var filterYear: Int = 0
+
     fun fetchBeneficiaries(userId: Int, month: Int, year: Int, activityId: Int) {
+        filterMonth = month
+        filterYear = year
         viewModelScope.launch {
             _uiState.value = BeneficiaryUiState.Loading
             try {
@@ -69,6 +77,72 @@ class BeneficiaryDetailViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _uiState.value = BeneficiaryUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun verifyBeneficiaries(ashaId: Int, incentiveIds: List<Long>) {
+        viewModelScope.launch {
+            _actionState.value = ActionState.Loading
+            try {
+                val response = apiService.updateApprovalStatus(
+                    mapOf(
+                        "ashaId" to ashaId,
+                        "month" to filterMonth,
+                        "year" to filterYear,
+                        "approvalStatus" to 101,
+                        "incentiveIds" to incentiveIds.joinToString(","),
+                        "reason" to "",
+                        "otherReason" to ""
+                    )
+                )
+                if (response.isSuccessful) {
+                    val json = response.body()?.string()
+                    val jsonObj = JSONObject(json ?: "{}")
+                    if (jsonObj.optInt("statusCode", 0) == 200) {
+                        val updated = jsonObj.optInt("updatedRecords", 0)
+                        _actionState.value = ActionState.Success("Successfully verified $updated records")
+                    } else {
+                        _actionState.value = ActionState.Error("Verification failed")
+                    }
+                } else {
+                    _actionState.value = ActionState.Error("Server error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _actionState.value = ActionState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun rejectBeneficiaries(ashaId: Int, incentiveIds: List<Long>, reason: String, otherReason: String) {
+        viewModelScope.launch {
+            _actionState.value = ActionState.Loading
+            try {
+                val response = apiService.updateApprovalStatus(
+                    mapOf(
+                        "ashaId" to ashaId,
+                        "month" to filterMonth,
+                        "year" to filterYear,
+                        "approvalStatus" to 103,
+                        "incentiveIds" to incentiveIds.joinToString(","),
+                        "reason" to reason,
+                        "otherReason" to otherReason
+                    )
+                )
+                if (response.isSuccessful) {
+                    val json = response.body()?.string()
+                    val jsonObj = JSONObject(json ?: "{}")
+                    if (jsonObj.optInt("statusCode", 0) == 200) {
+                        val updated = jsonObj.optInt("updatedRecords", 0)
+                        _actionState.value = ActionState.Success("Successfully rejected $updated records")
+                    } else {
+                        _actionState.value = ActionState.Error("Rejection failed")
+                    }
+                } else {
+                    _actionState.value = ActionState.Error("Server error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _actionState.value = ActionState.Error(e.message ?: "Unknown error")
             }
         }
     }

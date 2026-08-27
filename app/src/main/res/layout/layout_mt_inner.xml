@@ -139,6 +139,15 @@
 
             </LinearLayout>
 
+            <CheckBox
+                android:id="@+id/cbSelectBeneficiary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/gl_82"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/tvAmount"
                 android:layout_width="0dp"
@@ -149,7 +158,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/gl_82"
-                app:layout_constraintTop_toTopOf="@id/llInfo"
+                app:layout_constraintTop_toBottomOf="@id/cbSelectBeneficiary"
                 tools:text="₹100" />
 
 
