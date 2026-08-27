@@ -19,6 +19,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -68,6 +69,8 @@ class PregnantWomanAncAbortionDatasetTest : BaseViewModelTest() {
 
     private fun PregnantWomanAncAbortionDataset.valueOf(id: Int): String? =
         listFlow.value.firstOrNull { it.id == id }?.value
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     private fun regisMock(
         lmpDate: Long?,
@@ -206,8 +209,13 @@ class PregnantWomanAncAbortionDatasetTest : BaseViewModelTest() {
         assertEquals("opt3", ds.valueOf(7))
         assertEquals("opt4", ds.valueOf(8))
         assertEquals("note", ds.valueOf(10))
-        assertEquals("img1", ds.valueOf(21))
-        assertEquals("img2", ds.valueOf(22))
+        if (isMitanin) {
+            assertNull(ds.valueOf(21))
+            assertNull(ds.valueOf(22))
+        } else {
+            assertEquals("img1", ds.valueOf(21))
+            assertEquals("img2", ds.valueOf(22))
+        }
     }
 
     @Test
@@ -310,7 +318,11 @@ class PregnantWomanAncAbortionDatasetTest : BaseViewModelTest() {
         val uri = mockk<Uri>(relaxed = true)
         every { uri.toString() } returns "content://img1"
         ds.setImageUriToFormElement(21, uri)
-        assertEquals("content://img1", ds.valueOf(21))
+        if (isMitanin) {
+            assertNull(ds.valueOf(21))
+        } else {
+            assertEquals("content://img1", ds.valueOf(21))
+        }
     }
 
     @Test
@@ -322,7 +334,11 @@ class PregnantWomanAncAbortionDatasetTest : BaseViewModelTest() {
         val uri = mockk<Uri>(relaxed = true)
         every { uri.toString() } returns "content://img2"
         ds.setImageUriToFormElement(22, uri)
-        assertEquals("content://img2", ds.valueOf(22))
+        if (isMitanin) {
+            assertNull(ds.valueOf(22))
+        } else {
+            assertEquals("content://img2", ds.valueOf(22))
+        }
     }
 
     @Test
@@ -352,7 +368,12 @@ class PregnantWomanAncAbortionDatasetTest : BaseViewModelTest() {
         val lastAnc = regisMock(lmpDate = 1_500_000_000_000L)
         ds.setUpPage(ben, lastAnc, null)
         assertEquals(1, ds.getWeeksOfPregnancy())
-        assertNotEquals(-1, ds.getIndexOfAbortionDischarge1())
-        assertNotEquals(-1, ds.getIndexOfAbortionDischarge2())
+        if (isMitanin) {
+            assertEquals(-1, ds.getIndexOfAbortionDischarge1())
+            assertEquals(-1, ds.getIndexOfAbortionDischarge2())
+        } else {
+            assertNotEquals(-1, ds.getIndexOfAbortionDischarge1())
+            assertNotEquals(-1, ds.getIndexOfAbortionDischarge2())
+        }
     }
 }
