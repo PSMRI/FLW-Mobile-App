@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemIncentiveGroupedBinding
 import org.piramalswasthya.sakhi.model.IncentiveGrouped
 
@@ -38,6 +39,16 @@ class IncentiveGroupedAdapter(
             if (isMitanin) {
 //                binding.guideline75.setGuidelinePercent(0.9f)
             }
+
+            val (statusText, statusBg) = when (item.approvalStatus) {
+                101 -> R.string.verified to R.drawable.bg_status_verified
+                103 -> R.string.rejected to R.drawable.bg_status_rejected
+                104 -> R.string.overdue to R.drawable.bg_status_rejected
+                else -> R.string.pending to R.drawable.bg_status_pending
+            }
+            binding.tvApprovalStatus.text = itemView.context.getString(statusText)
+            binding.tvApprovalStatus.setBackgroundResource(statusBg)
+
             binding.executePendingBindings()
 
         }
