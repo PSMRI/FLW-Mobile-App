@@ -665,20 +665,24 @@ class PregnantWomanRegistrationDataset(
         }
 
         ecr?.let {
-            if (saved == null) {
-                if (ecr.noOfChildren > 0) {
-                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[1]
-                    isFirstPregnancy.isEnabled = false
-                    totalNumberOfPreviousPregnancy.min = ecr.noOfChildren.toLong()
+            // if no of children in ec registration is
+            // > 0 => setting is first pregnancy false and no of pregnancies value
+            // else => setting is first pregnancy true
+            if (ecr.noOfChildren > 0) {
+                isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[1]
+                isFirstPregnancy.isEnabled = false
+                totalNumberOfPreviousPregnancy.min = ecr.noOfChildren.toLong()
+                if (saved == null) {
                     list.addAll(
                         list.indexOf(isFirstPregnancy) + 1,
                         listOf(totalNumberOfPreviousPregnancy, complicationsDuringLastPregnancy)
                     )
                     totalNumberOfPreviousPregnancy.value = ecr.noOfChildren.toString()
-                } else {
-                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[0]
                 }
+            } else {
+                isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[0]
             }
+            // if no of children greater than 3 setting no of deliveries greater than 3 as true
             if (ecr.noOfChildren > 3) {
                 noOfDeliveries.value = resources.getStringArray(R.array.yes_no)[0]
                 noOfDeliveries.isEnabled = false
