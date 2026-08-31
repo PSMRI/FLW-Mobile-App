@@ -32,7 +32,7 @@ class HouseholdMembersFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = HouseholdMembersFragmentArgs(hhId = 10L, fromDisease = 0, diseaseType = "v3")
+    private fun args() = HouseholdMembersFragmentArgs(hhId = 10L)
 
     @Test
     fun constructor_exposesEveryArgument() {
@@ -86,8 +86,6 @@ class HouseholdMembersFragmentNavigationTest {
     fun fromBundle_readsEveryArgument() {
         every { bundle.containsKey(any()) } returns true
         every { bundle.getLong("hhId") } returns 10L
-        every { bundle.getInt("fromDisease") } returns 0
-        every { bundle.getString("diseaseType") } returns "v3"
         assertEquals(args(), HouseholdMembersFragmentArgs.fromBundle(bundle))
     }
 
