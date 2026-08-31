@@ -301,7 +301,7 @@ IncentivesViewModel @Inject constructor(
         _uploadState.value = UploadState.Idle
     }
 
-    fun claimIncentive(selectedMonth: String, selectedYear: String) {
+    fun claimIncentive(selectedMonth: String, selectedYear: String,incentiveIds: List<Long>) {
 
         getMonthNumber(selectedMonth)
 
@@ -309,12 +309,12 @@ IncentivesViewModel @Inject constructor(
             _actionState.value = ActionState.Loading
 
             try {
-
                 val response = apiService.claimAshaIncentive(
                     mapOf(
                         "month" to getMonthNumber(selectedMonth),
                         "year" to selectedYear.toInt(),
-                        "claimed" to true
+                        "claimed" to true,
+                         "incentiveId" to incentiveIds.joinToString(","),
 
                     )
                 )
