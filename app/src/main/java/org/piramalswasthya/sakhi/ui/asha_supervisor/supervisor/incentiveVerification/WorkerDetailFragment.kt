@@ -29,7 +29,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WorkerDetailFragment : Fragment() {
 
-    private var hasDefaultRecord: Boolean = false
+   // private var hasDefaultRecord: Boolean = false
     private var _binding: FragmentWorkerDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -70,7 +70,7 @@ class WorkerDetailFragment : Fragment() {
 
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
-                hasDefaultRecord &&
+            //    hasDefaultRecord &&
                 workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
                 workerStatus != "REJECTED" && workerStatus != "OVERDUE"
 
@@ -210,8 +210,8 @@ class WorkerDetailFragment : Fragment() {
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
                     binding.tvClaimsCount.text = currentRecords.size.toString()
-                     hasDefaultRecord = currentRecords.any { it.isDefault }
-                    binding.btnVerify.visibility = if (hasDefaultRecord && BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                  //   hasDefaultRecord = currentRecords.any { it.isDefault }
+                    binding.btnVerify.visibility = if (/*hasDefaultRecord &&*/ BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         View.VISIBLE
                     } else {
                         View.GONE
