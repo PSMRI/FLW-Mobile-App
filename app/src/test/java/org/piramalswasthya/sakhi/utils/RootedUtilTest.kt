@@ -138,6 +138,15 @@ class RootedUtilTest {
         }
     }
 
+    private fun isRealBusyBoxOnPath(): Boolean {
+        return try {
+            Runtime.getRuntime().exec("busybox").destroy()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun isPosix() = File.separatorChar == '/'
 
     private fun findWritablePathDir(): File? {
@@ -203,6 +212,10 @@ class RootedUtilTest {
 
     @Test
     fun isDeviceRooted_returnsFalse_whenGetpropStreamIsEmptyAndBusyBoxIsMissing() {
+        assumeTrue(
+            "A real busybox binary is present on PATH on this machine; skipping",
+            !isRealBusyBoxOnPath()
+        )
         val context = contextWithNoRootManagerAndNoSuFile()
 
         assertFalse(rootedUtil.isDeviceRooted(context))
@@ -210,6 +223,10 @@ class RootedUtilTest {
 
     @Test
     fun isDeviceRooted_returnsFalse_whenGetpropExecThrowsAndBusyBoxIsMissing() {
+        assumeTrue(
+            "A real busybox binary is present on PATH on this machine; skipping",
+            !isRealBusyBoxOnPath()
+        )
         val context = contextWithNoRootManagerAndNoSuFile()
 
         assertFalse(rootedUtil.isDeviceRooted(context))
