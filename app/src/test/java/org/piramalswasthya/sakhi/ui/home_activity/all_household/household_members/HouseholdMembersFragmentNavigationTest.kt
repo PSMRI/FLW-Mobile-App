@@ -32,7 +32,21 @@ class HouseholdMembersFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = HouseholdMembersFragmentArgs(hhId = 10L, fromDisease = 0, diseaseType = "v3")
+    private fun args(): HouseholdMembersFragmentArgs {
+        val ctor = HouseholdMembersFragmentArgs::class.java.declaredConstructors
+            .filterNot { c -> c.parameterTypes.any { it.simpleName == "DefaultConstructorMarker" } }
+            .maxByOrNull { it.parameterCount }!!
+        val values = ctor.parameterTypes.map { type ->
+            when (type) {
+                java.lang.Long.TYPE, java.lang.Long::class.java -> 10L
+                Integer.TYPE, Integer::class.java -> 0
+                String::class.java -> "v3"
+                else -> null
+            }
+        }.toTypedArray()
+        ctor.isAccessible = true
+        return ctor.newInstance(*values) as HouseholdMembersFragmentArgs
+    }
 
     @Test
     fun constructor_exposesEveryArgument() {
