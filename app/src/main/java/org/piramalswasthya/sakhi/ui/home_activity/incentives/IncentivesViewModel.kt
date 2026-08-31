@@ -39,6 +39,11 @@ IncentivesViewModel @Inject constructor(
     var apiService: AmritApiService
 ) : ViewModel() {
 
+    companion object {
+        // Worst-first: a single rejected/overdue claim inside a grouped activity
+        // should surface over other verified/pending claims in the same group.
+        private val APPROVAL_STATUS_PRIORITY = listOf(103, 104, 102, 101)
+    }
 
     sealed class UploadState {
         object Idle : UploadState()
@@ -187,6 +192,10 @@ IncentivesViewModel @Inject constructor(
         return incentiveDomainList
             .groupBy { it.activity.id }
             .map { (activityId, incentives) ->
+                val statuses = incentives.map { it.record.approvalStatus }
+                val approvalStatus = APPROVAL_STATUS_PRIORITY.firstOrNull { it in statuses }
+                    ?: statuses.firstOrNull()
+                    ?: 102
                 IncentiveGrouped(
                     activityName = incentives.first().activity.name,
                     totalAmount = incentives.sumOf { it.record.amount },
@@ -196,7 +205,8 @@ IncentivesViewModel @Inject constructor(
                     activity = incentives.first().activity,
                     hasZeroBen = incentives.any { it.record.benId == 0L },
                     defaultIncentive = incentives.any { it.activity.fmrCodeOld =="PER_MONTH" },
-                    isEligible = incentives.all {it.record.isEligible}
+                    isEligible = incentives.all {it.record.isEligible},
+                    approvalStatus = approvalStatus
                 )
             }
             .sortedWith(
@@ -290,16 +300,6 @@ IncentivesViewModel @Inject constructor(
     fun resetUploadState() {
         _uploadState.value = UploadState.Idle
     }
-
-
-
-
-
-
-
-
-
-
 
     fun claimIncentive(selectedMonth: String, selectedYear: String) {
 
