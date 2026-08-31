@@ -34,6 +34,7 @@ class HouseholdMembersFragmentNavigationTest {
 
     private fun args(): HouseholdMembersFragmentArgs {
         val ctor = HouseholdMembersFragmentArgs::class.java.declaredConstructors
+            .filterNot { c -> c.parameterTypes.any { it.simpleName == "DefaultConstructorMarker" } }
             .maxByOrNull { it.parameterCount }!!
         val values = ctor.parameterTypes.map { type ->
             when (type) {
