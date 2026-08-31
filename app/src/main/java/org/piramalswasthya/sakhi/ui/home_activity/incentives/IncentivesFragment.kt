@@ -397,13 +397,15 @@ class IncentivesFragment : Fragment() {
             val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
                     (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
-            val isRejectedClaim = try {
-                incentiveRecordList.isNotEmpty() &&
-                        incentiveRecordList[0].record.isClaimed &&
-                        incentiveRecordList[0].record.approvalStatus == 103
+            val rejectedRecords = try {
+                incentiveRecordList.filter {
+                    it.record.approvalStatus == 103
+                }
             } catch (e: Exception) {
-                false
+                emptyList()
             }
+
+            val isRejectedClaim = rejectedRecords.isNotEmpty()
 
 
             val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
@@ -424,7 +426,7 @@ class IncentivesFragment : Fragment() {
                     Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
                    return@setOnClickListener
                      }
-                viewModel.claimIncentive(selectedMonth, selectedYear)
+                viewModel.claimIncentive(selectedMonth, selectedYear, emptyList())
             }
 
             if (incentiveRecordList.isNotEmpty()) {
@@ -478,6 +480,23 @@ class IncentivesFragment : Fragment() {
             } else {
                 binding.claimStatus.visibility = View.GONE
 
+            }
+
+            // If any claim in the fetched list was rejected, switch the claim button into
+            // "Reclaim" mode so only the rejected activity's incentive id(s) are resubmitted,
+            // instead of the blanket whole-month claim above. Mitanin-only.
+            if (isMitaninVariant && isRejectedClaim) {
+                binding.claimbtn.text = "Reclaim"
+                binding.claimbtn.isEnabled = true
+                binding.claimbtn.isClickable = true
+                binding.claimbtn.setOnClickListener reclaimClick@{
+                    if (!isPreviousMonth) {
+                        Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                        return@reclaimClick
+                    }
+                    val rejectedIncentiveIds = rejectedRecords.map { it.record.id }
+                    viewModel.claimIncentive(selectedMonth, selectedYear, rejectedIncentiveIds)
+                }
             }
         }
 

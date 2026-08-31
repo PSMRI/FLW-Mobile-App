@@ -793,13 +793,13 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("March", "2026")
+        vm.claimIncentive("March", "2026", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
         assertTrue(state is ActionState.Success)
         assertEquals("Successfully claimed", (state as ActionState.Success).message)
-        coVerify { apiService.claimAshaIncentive(mapOf("month" to 3, "year" to 2026, "claimed" to true)) }
+        coVerify { apiService.claimAshaIncentive(mapOf("month" to 3, "year" to 2026, "claimed" to true, "incentiveId" to "")) }
     }
 
     @Test
@@ -811,7 +811,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("December", "2025")
+        vm.claimIncentive("December", "2025", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
@@ -826,7 +826,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("June", "2025")
+        vm.claimIncentive("June", "2025", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
@@ -841,7 +841,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("July", "2025")
+        vm.claimIncentive("July", "2025", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
@@ -856,7 +856,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("August", "2025")
+        vm.claimIncentive("August", "2025", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
@@ -871,7 +871,7 @@ class IncentivesViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         advanceUntilIdle()
 
-        vm.claimIncentive("May", "2025")
+        vm.claimIncentive("May", "2025", emptyList())
         advanceUntilIdle()
 
         val state = vm.actionState.value
