@@ -75,9 +75,12 @@ jobs:
 
       # --build-cache and the fork settings are passed here rather than in
       # gradle.properties / build.gradle so local and release builds keep their
-      # current behaviour exactly. forkEvery stays at its default of 80.
+      # current behaviour exactly (defaults stay 80 / 2).
+      # forkEvery=300 cuts ~10 test-JVM restarts per worker. It also means more
+      # test classes share a JVM, so if a test that leaks static state starts
+      # failing here but passes locally, this is the first thing to revert.
       - name: Run unit tests and verify coverage
-        run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4
+        run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4 -PtestForkEvery=300
 
       - name: Upload JaCoCo report
         if: always()
