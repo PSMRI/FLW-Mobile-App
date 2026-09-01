@@ -36,27 +36,32 @@ jobs:
       contents: read
 
     steps:
-      # Resolved at runtime so new release branches (2.13, 2.14, ...) are picked
-      # up automatically. sort -V is a version sort, so release-2.10 correctly
-      # ranks above release-2.9 where a plain sort would not.
-      - name: Resolve branch to warm
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Picks the most recently updated release-* branch, so new ones (2.13,
+      # 2.14, ...) are used automatically with nothing to edit here.
+      # Deliberately NOT a version sort: this repo has a stale release-3.6.2
+      # branch that any version sort ranks above release-2.12, which warmed the
+      # cache from long-dead code (Gradle 8.0 / compileSdk 34) and failed.
+      # Last-commit-date tracks the branch actually being developed.
+      - name: Resolve and check out the branch to warm
         id: target
         run: |
           BRANCH="${{ inputs.branch }}"
           if [ -z "$BRANCH" ]; then
-            BRANCH=$(git ls-remote --heads "https://github.com/${{ github.repository }}.git" 'refs/heads/release-*' \
-              | sed 's#.*refs/heads/##' | sort -V | tail -n1)
+            git fetch -q --depth=1 origin 'refs/heads/release-*:refs/remotes/origin/release-*'
+            BRANCH=$(git for-each-ref --sort=-committerdate \
+              --format='%(refname:short)' refs/remotes/origin/release-* \
+              | head -n1 | sed 's#^origin/##')
           fi
           if [ -z "$BRANCH" ]; then
             BRANCH="${{ github.event.repository.default_branch }}"
           fi
           echo "Warming cache for: $BRANCH"
+          git fetch -q --depth=1 origin "$BRANCH"
+          git checkout -q -B "$BRANCH" FETCH_HEAD
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.target.outputs.name }}
 
       # Must stay identical to the JDK in pr-checks.yml. A different JDK here
       # produces build state that pr-checks cannot reuse, which silently costs
