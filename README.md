@@ -183,6 +183,14 @@ To run this project, Follow these steps:
         + Once the APK is generated android studio will notify with the location of APK, 
              generally in release folder 
 
+## Code Coverage
+
+```bash
+./gradlew jacocoTestReport
+```
+
+Prints coverage to the console and writes HTML to `app/build/reports/jacoco/jacocoTestReport/html/index.html`.
+
 ## Filing Issues
 
 If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.  
