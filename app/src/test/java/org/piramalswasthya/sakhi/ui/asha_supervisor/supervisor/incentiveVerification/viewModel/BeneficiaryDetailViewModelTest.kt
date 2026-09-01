@@ -65,7 +65,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
     fun `fetchBeneficiaries emits error when user not logged in`() = runTest {
         every { preferenceDao.getLoggedInUser() } returns null
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -81,7 +81,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         """.trimIndent()
         coEvery { apiService.getActivityDetailRecords(any()) } returns Response.success(jsonBody(body))
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -97,7 +97,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getActivityDetailRecords(any()) } returns
             Response.success(jsonBody("""{"statusCode":5000}"""))
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -111,7 +111,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getActivityDetailRecords(any()) } returns
             Response.success(jsonBody("""{"statusCode":400,"errorMessage":"bad request"}"""))
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -125,7 +125,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getActivityDetailRecords(any()) } returns
             Response.success(jsonBody(""))
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -139,7 +139,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getActivityDetailRecords(any()) } returns
             Response.error(500, jsonBody(""))
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -152,7 +152,7 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getLoggedInUser() } returns user
         coEvery { apiService.getActivityDetailRecords(any()) } throws RuntimeException("network down")
 
-        viewModel.fetchBeneficiaries(1, 1, 2026, 1)
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value

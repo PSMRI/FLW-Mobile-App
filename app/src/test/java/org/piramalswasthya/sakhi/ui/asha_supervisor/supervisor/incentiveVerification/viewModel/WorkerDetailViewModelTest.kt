@@ -98,7 +98,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getLoggedInUser() } returns null
         every { preferenceDao.getStateId() } returns 1
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -112,7 +112,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getStateId() } returns 5
         coEvery { apiService.getClaimedIncentiveByUser(any()) } returns Response.success(jsonBody(successBody))
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -129,7 +129,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getClaimedIncentiveByUser(any()) } returns
             Response.success(jsonBody("""{"statusCode":5000}"""))
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -144,7 +144,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         coEvery { apiService.getClaimedIncentiveByUser(any()) } returns
             Response.success(jsonBody("""{"statusCode":400,"errorMessage":"bad"}"""))
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -158,7 +158,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getStateId() } returns 5
         coEvery { apiService.getClaimedIncentiveByUser(any()) } returns Response.success(jsonBody(""))
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -172,7 +172,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getStateId() } returns 5
         coEvery { apiService.getClaimedIncentiveByUser(any()) } returns Response.error(500, jsonBody(""))
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -186,7 +186,7 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getStateId() } returns 5
         coEvery { apiService.getClaimedIncentiveByUser(any()) } throws RuntimeException("network fail")
 
-        viewModel.init(1, 1, 2026)
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value

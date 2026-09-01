@@ -1567,6 +1567,7 @@
     <string name="all_sub_centre">All Sub centre</string>
     <string name="activity_claimed">Activity claimed\n</string>
     <string name="total_claimed_amount">Total claimed amount.</string>
+    <string name="claims_count_placeholder">%1$d claims</string>
     <string name="monthly_summary">Monthly Summary</string>
     <string name="verified_text">Verified</string>
     <string name="verified_date_txt">Verified Date: %1$s</string>

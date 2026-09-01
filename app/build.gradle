@@ -177,8 +177,8 @@ android {
         unitTests.all {
             it.maxHeapSize = "2560m"
             it.jvmArgs "-XX:MaxMetaspaceSize=1024m"
-            it.forkEvery = 80
-            it.maxParallelForks = 2
+            it.forkEvery = (project.findProperty("testForkEvery") ?: 80).toString().toInteger()
+            it.maxParallelForks = (project.findProperty("testMaxParallelForks") ?: 2).toString().toInteger()
             it.testLogging {
                 events "failed", "standardError"
                 exceptionFormat = "full"

@@ -70,7 +70,7 @@ class InfantRegistrationDataset(
         title = resources.getString(R.string.ir_resuscitation),
         entries = resources.getStringArray(R.array.ir_confirmation_array1),
         required = true,
-        hasDependants = false
+        hasDependants = true
     )
 
     private var referred = FormElement(
@@ -80,7 +80,7 @@ class InfantRegistrationDataset(
         arrayId = R.array.ir_confirmation_array2,
         entries = resources.getStringArray(R.array.ir_confirmation_array2),
         required = false,
-        hasDependants = false
+        hasDependants = true
     )
 
     private var hadBirthDefect = FormElement(
@@ -335,6 +335,15 @@ class InfantRegistrationDataset(
                     passedIndex = index,
                     triggerIndex = 1,
                     target = resuscitation
+                )
+            }
+
+            resuscitation.id -> {
+                triggerDependants(
+                    source = resuscitation,
+                    passedIndex = index,
+                    triggerIndex = 1,
+                    target = referred
                 )
             }
 

@@ -47,7 +47,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
+import org.piramalswasthya.sakhi.adapters.IncentiveGroupSectionAdapter
+import org.piramalswasthya.sakhi.adapters.toIncentiveGroupSections
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
 import org.piramalswasthya.sakhi.databinding.LayoutRejectedDialogBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -91,7 +92,7 @@ class IncentivesFragment : Fragment() {
 
     var selectedYear: String = ""
 
-    private lateinit var groupedAdapter: IncentiveGroupedAdapter
+    private lateinit var groupedAdapter: IncentiveGroupSectionAdapter
 
     private val PERMISSION_REQUEST_CODE = 792
 
@@ -238,7 +239,7 @@ class IncentivesFragment : Fragment() {
         toYear.setSelection(0)
 
 
-        groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
+        groupedAdapter = IncentiveGroupSectionAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
@@ -356,7 +357,7 @@ class IncentivesFragment : Fragment() {
         lifecycleScope.launch {
 
             viewModel.groupedIncentiveList.collect { groupedList ->
-                groupedAdapter.submitList(groupedList)
+                groupedAdapter.submitList(groupedList.toIncentiveGroupSections())
             }
         }
 
@@ -396,13 +397,15 @@ class IncentivesFragment : Fragment() {
             val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
                     (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
-            val isRejectedClaim = try {
-                incentiveRecordList.isNotEmpty() &&
-                        incentiveRecordList[0].record.isClaimed &&
-                        incentiveRecordList[0].record.approvalStatus == 103
+            val rejectedRecords = try {
+                incentiveRecordList.filter {
+                    it.record.approvalStatus == 103
+                }
             } catch (e: Exception) {
-                false
+                emptyList()
             }
+
+            val isRejectedClaim = rejectedRecords.isNotEmpty()
 
 
             val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
@@ -423,7 +426,7 @@ class IncentivesFragment : Fragment() {
                     Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
                    return@setOnClickListener
                      }
-                viewModel.claimIncentive(selectedMonth, selectedYear)
+                viewModel.claimIncentive(selectedMonth, selectedYear, emptyList())
             }
 
             if (incentiveRecordList.isNotEmpty()) {
@@ -477,6 +480,23 @@ class IncentivesFragment : Fragment() {
             } else {
                 binding.claimStatus.visibility = View.GONE
 
+            }
+
+            // If any claim in the fetched list was rejected, switch the claim button into
+            // "Reclaim" mode so only the rejected activity's incentive id(s) are resubmitted,
+            // instead of the blanket whole-month claim above. Mitanin-only.
+            if (isMitaninVariant && isRejectedClaim) {
+                binding.claimbtn.text = "Reclaim"
+                binding.claimbtn.isEnabled = true
+                binding.claimbtn.isClickable = true
+                binding.claimbtn.setOnClickListener reclaimClick@{
+                    if (!isPreviousMonth) {
+                        Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                        return@reclaimClick
+                    }
+                    val rejectedIncentiveIds = rejectedRecords.map { it.record.id }
+                    viewModel.claimIncentive(selectedMonth, selectedYear, rejectedIncentiveIds)
+                }
             }
         }
 

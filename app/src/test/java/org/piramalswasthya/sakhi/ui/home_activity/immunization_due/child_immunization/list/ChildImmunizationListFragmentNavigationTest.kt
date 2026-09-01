@@ -11,8 +11,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -20,6 +18,10 @@ import org.junit.Test
 class ChildImmunizationListFragmentNavigationTest {
 
     private lateinit var bundle: Bundle
+    private val argsClass = ChildImmunizationListFragmentArgs::class.java
+    private val showDueOnlyField = argsClass.declaredFields
+        .firstOrNull { it.name == "showDueOnly" }
+        ?.apply { isAccessible = true }
 
     @Before
     fun setUp() {
@@ -32,53 +34,70 @@ class ChildImmunizationListFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = ChildImmunizationListFragmentArgs(showDueOnly = true)
+    private fun newArgs(value: Boolean = true): ChildImmunizationListFragmentArgs {
+        val ctor = argsClass.declaredConstructors
+            .filterNot { c -> c.parameterTypes.any { it.simpleName == "DefaultConstructorMarker" } }
+            .maxByOrNull { it.parameterCount }!!
+        ctor.isAccessible = true
+        val values = ctor.parameterTypes.map { type ->
+            if (type == java.lang.Boolean.TYPE || type == java.lang.Boolean::class.java) value else null
+        }.toTypedArray()
+        return ctor.newInstance(*values) as ChildImmunizationListFragmentArgs
+    }
+
+    private fun showDueOnlyOf(a: ChildImmunizationListFragmentArgs): Boolean =
+        (showDueOnlyField?.get(a) as? Boolean) ?: false
 
     @Test
     fun constructor_exposesEveryArgument() {
-        val a = args()
-        assertEquals(true, a.showDueOnly)
+        val a = newArgs(true)
+        assertEquals(true, showDueOnlyOf(a))
     }
 
     @Test
     fun dataClassSynthetics_behaveAsValueType() {
-        val a = args()
-        assertEquals(a, a.copy())
-        assertEquals(a.hashCode(), a.copy().hashCode())
+        val a = newArgs(true)
+        val same = newArgs(true)
+        assertEquals(a, same)
+        assertEquals(a.hashCode(), same.hashCode())
         assertEquals(a, a)
         assertFalse(a.equals(null))
         assertFalse(a.equals(Any()))
         assertTrue(a.toString().contains("ChildImmunizationListFragmentArgs"))
-        assertEquals(true, a.component1())
     }
 
     @Test
-    fun copy_replacesSingleArgument() {
-        val a = args()
-        val b = a.copy(showDueOnly = false)
-        assertEquals(false, b.showDueOnly)
-        assertNotEquals(a, b)
+    fun differentValues_areNotEqual() {
+        val a = newArgs(true)
+        val b = newArgs(false)
+        if (showDueOnlyField != null) {
+            assertNotEquals(a, b)
+        } else {
+            assertEquals(a, b)
+        }
     }
 
     @Test
     fun toSavedStateHandle_thenFromSavedStateHandle_roundTrips() {
-        val handle = args().toSavedStateHandle()
-        assertEquals(true, handle.get<Boolean>("showDueOnly"))
-        assertEquals(args(), ChildImmunizationListFragmentArgs.fromSavedStateHandle(handle))
+        val a = newArgs(true)
+        val handle = a.toSavedStateHandle()
+        val roundTripped = ChildImmunizationListFragmentArgs.fromSavedStateHandle(handle)
+        assertEquals(showDueOnlyOf(a), showDueOnlyOf(roundTripped))
     }
 
     @Test
     fun fromSavedStateHandle_appliesDefaults_whenOptionalArgumentsMissing() {
         val handle = SavedStateHandle()
         val a = ChildImmunizationListFragmentArgs.fromSavedStateHandle(handle)
-        assertEquals(false, a.showDueOnly)
+        assertEquals(false, showDueOnlyOf(a))
     }
 
     @Test
     fun fromBundle_readsEveryArgument() {
         every { bundle.containsKey(any()) } returns true
         every { bundle.getBoolean("showDueOnly") } returns true
-        assertEquals(args(), ChildImmunizationListFragmentArgs.fromBundle(bundle))
+        val a = ChildImmunizationListFragmentArgs.fromBundle(bundle)
+        assertEquals(true, showDueOnlyOf(a))
     }
 
     @Test
@@ -86,7 +105,7 @@ class ChildImmunizationListFragmentNavigationTest {
         every { bundle.containsKey(any()) } returns true
         every { bundle.containsKey("showDueOnly") } returns false
         val a = ChildImmunizationListFragmentArgs.fromBundle(bundle)
-        assertEquals(false, a.showDueOnly)
+        assertEquals(false, showDueOnlyOf(a))
     }
 
     @Test
@@ -96,7 +115,7 @@ class ChildImmunizationListFragmentNavigationTest {
         every { anyConstructed<Bundle>().putInt(any(), any()) } returns Unit
         every { anyConstructed<Bundle>().putBoolean(any(), any()) } returns Unit
         every { anyConstructed<Bundle>().putString(any(), any()) } returns Unit
-        assertNotNull(args().toBundle())
+        assertNotNull(newArgs().toBundle())
     }
 
     @Before

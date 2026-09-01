@@ -3,10 +3,13 @@
 // (default: niramayDebug) so we don't run all 8 flavors' unit tests.
 //
 // Usage:
-//   ./gradlew jacocoTestReport             -> report at app/build/reports/jacoco/jacocoTestReport/html/index.html
+//   ./gradlew jacocoTestReport             -> runs the full unit test suite, then prints
+//                                              per-class + overall coverage to the console
+//                                              (also writes HTML at app/build/reports/jacoco/jacocoTestReport/html/index.html)
 //   ./gradlew jacocoCoverageVerification   -> fails the build if coverage < minimum
 //   override flavor:    -PcoverageVariant=sakshamDebug
 //   override threshold: -PminimumCoverage=0.90
+//   limit console table to worst N classes: -PcoverageTopN=30
 
 apply plugin: 'jacoco'
 
@@ -96,12 +99,76 @@ tasks.register("jacocoTestReport", JacocoReport) {
     reports {
         html.required = true
         xml.required = true
-        csv.required = false
+        csv.required = true
     }
 
     classDirectories.setFrom(coverageClassDirs())
     sourceDirectories.setFrom(coverageSourceDirs)
     executionData.setFrom(coverageExecData())
+}
+
+// Prints per-class and overall coverage numbers straight to the console, so anyone
+// running the plain `./gradlew jacocoTestReport` command sees the numbers immediately
+// without opening the HTML report or needing any other tool.
+// Resolved at configuration time (not inside doLast) since reading project properties
+// during task execution is unsupported with the configuration cache enabled.
+def coverageTopN = project.hasProperty("coverageTopN") ? project.coverageTopN.toInteger() : null
+
+tasks.register("jacocoConsoleReport") {
+    dependsOn "jacocoTestReport"
+    group = "verification"
+    description = "Prints per-class and overall coverage for ${coverageVariant} unit tests to the console."
+
+    def csvFile = layout.buildDirectory.file("reports/jacoco/jacocoTestReport/jacocoTestReport.csv")
+    inputs.file(csvFile).withPathSensitivity(PathSensitivity.NONE)
+
+    doLast {
+        def csv = csvFile.get().asFile
+        def lines = csv.readLines()
+        def header = lines[0].split(",")
+        def rows = lines.drop(1).findAll { !it.isBlank() }.collect { it.split(",", -1) }
+
+        def colIndex = { String name -> header.toList().indexOf(name) }
+        int iPackage = colIndex("PACKAGE")
+        int iClass = colIndex("CLASS")
+        int iInsMissed = colIndex("INSTRUCTION_MISSED")
+        int iInsCovered = colIndex("INSTRUCTION_COVERED")
+
+        def classStats = rows.collect { r ->
+            long insMissed = r[iInsMissed] as long
+            long insCovered = r[iInsCovered] as long
+            long total = insMissed + insCovered
+            double pct = total == 0 ? 100.0d : (insCovered * 100.0d / total)
+            [pkg: r[iPackage], cls: r[iClass], covered: insCovered, total: total, pct: pct]
+        }.sort { it.pct }
+
+        def topN = coverageTopN ?: classStats.size()
+        def shown = classStats.take(topN)
+
+        println ""
+        println "=".multiply(100)
+        println "Per-class INSTRUCTION coverage - ${coverageVariant} - worst first" +
+                (topN < classStats.size() ? " (showing worst ${topN} of ${classStats.size()})" : " (${classStats.size()} classes)")
+        println "=".multiply(100)
+        shown.each { s ->
+            printf("%6.1f%%  %8d/%-8d  %s.%s%n", s.pct, s.covered, s.total, s.pkg.replace('/', '.'), s.cls)
+        }
+
+        long totalInsMissed = rows.sum { it[iInsMissed] as long } as long
+        long totalInsCovered = rows.sum { it[iInsCovered] as long } as long
+
+        println ""
+        println "=".multiply(100)
+        println "TOTAL - ${coverageVariant} - full unit test suite (${rows.size()} classes)"
+        printf("  INSTRUCTION coverage (PR-check metric, min %s): %d/%d (%.1f%%)%n",
+                minimumCoverage, totalInsCovered, totalInsCovered + totalInsMissed,
+                100.0d * totalInsCovered / (totalInsCovered + totalInsMissed))
+        println "=".multiply(100)
+    }
+}
+
+tasks.named("jacocoTestReport") {
+    finalizedBy "jacocoConsoleReport"
 }
 
 tasks.register("jacocoCoverageVerification", JacocoCoverageVerification) {

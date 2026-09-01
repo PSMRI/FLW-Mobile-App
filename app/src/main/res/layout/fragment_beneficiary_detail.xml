@@ -1,114 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F5F5F5">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Header -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/llHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_08"
-                android:layout_width="wrap_content"
+            <!-- Header -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/llHeader"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.10" />
+                android:background="@android:color/holo_orange_light"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_85"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.8" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gl_08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.10" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gl_85"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.8" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="S.No"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/gl_08"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvActivityHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:layout_constraintStart_toStartOf="@id/gl_08"
+                    app:layout_constraintEnd_toStartOf="@id/gl_85"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Amount\nclaimed\n(Rs.)"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:layout_constraintStart_toStartOf="@id/gl_85"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/tvEmptyState"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="S.No"
-                android:textStyle="bold"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginTop="32dp"
+                android:text="No beneficiaries found"
+                android:textColor="#999999"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/llHeader"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/gl_08"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:id="@+id/tvActivityHeader"
-                android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBeneficiaries"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:layout_constraintStart_toStartOf="@id/gl_08"
-                app:layout_constraintEnd_toStartOf="@id/gl_85"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                tools:itemCount="20"
+                tools:listitem="@layout/layout_list_item"
+                app:layout_constraintTop_toBottomOf="@id/llHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:layout_width="0dp"
+            <!-- Beneficiary-level verify/reject (Mitanin) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvMain"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Amount\nclaimed\n(Rs.)"
-                android:textStyle="bold"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:layout_constraintStart_toStartOf="@id/gl_85"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:layout_constraintTop_toBottomOf="@id/rvBeneficiaries"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnVerify"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_verify"
+                        android:text="@string/verify"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnReject"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_reject"
+                        android:text="@string/reject"
+                        android:textColor="#E57373"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <TextView
-            android:id="@+id/tvEmptyState"
+    <FrameLayout
+        android:id="@+id/bottomSheetContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="32dp"
-            android:text="No beneficiaries found"
-            android:textColor="#999999"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/llHeader"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_gravity="bottom"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvBeneficiaries"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            tools:itemCount="20"
-            tools:listitem="@layout/layout_list_item"
-            app:layout_constraintTop_toBottomOf="@id/llHeader"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-</androidx.core.widget.NestedScrollView>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reason_for_rejection"
+                        android:textColor="#333333"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgCancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_rejected" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRejectionReasons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    tools:itemCount="7"
+                    tools:listitem="@layout/item_rejection_reason" />
+
+                <LinearLayout
+                    android:id="@+id/otherReasonContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/etOtherReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_edit_text"
+                        android:hint="Please provide the reason"
+                        android:minHeight="48dp"
+                        android:maxLength="250"
+                        android:padding="12dp"
+                        android:textColor="#333333"
+                        android:textColorHint="#999999"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnConfirmRejection"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_button_confirm"
+                    android:text="@string/confirm_rejection"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,18 +19,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache NDK
-        uses: actions/cache@v4
-        with:
-          path: /usr/local/lib/android/sdk/ndk
-          key: ubuntu-latest-ndk-r29
-
-      - name: Cache CMake
-        uses: actions/cache@v4
-        with:
-          path: ~/.cmake
-          key: ubuntu-latest-cmake-3.31.1
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -40,16 +28,31 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1.5.0
+      # Caches ~/.gradle (dependency jars, wrapper dist, build cache).
+      # cache-read-only is off so each PR seeds its own cache scope: the first
+      # run of a PR is no slower than today, every later push to it restores.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          ndk-version: r29
-          link-to-sdk: true
+          cache-read-only: false
 
-      - name: Install CMake
-        uses: jwlawson/actions-setup-cmake@v1
+      # Restores the previous compile so Kotlin recompiles incrementally instead
+      # of from scratch - the ~12-15 min that dominates this job. Only compile
+      # outputs and Kotlin's incremental state are cached; test results, reports
+      # and JaCoCo .exec files are deliberately excluded so every run still
+      # executes the full suite and computes coverage fresh.
+      - name: Cache Gradle build state
+        uses: actions/cache@v4
         with:
-          cmake-version: '3.31.1'
+          path: |
+            app/build/intermediates
+            app/build/generated
+            app/build/kotlin
+            app/build/tmp
+            .gradle
+          key: build-state-${{ runner.os }}-${{ hashFiles('**/*.gradle', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}-${{ github.sha }}
+          restore-keys: |
+            build-state-${{ runner.os }}-${{ hashFiles('**/*.gradle', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}-
 
       - name: Decode google-services.json
         run: |
@@ -70,8 +73,11 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
+      # --build-cache and the fork settings are passed here rather than in
+      # gradle.properties / build.gradle so local and release builds keep their
+      # current behaviour exactly. forkEvery stays at its default of 80.
       - name: Run unit tests and verify coverage
-        run: ./gradlew jacocoCoverageVerification --console=plain
+        run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4
 
       - name: Upload JaCoCo report
         if: always()

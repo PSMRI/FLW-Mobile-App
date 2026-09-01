@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerific
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -14,7 +15,10 @@ import java.text.NumberFormat
 import java.util.*
 
 class ActivityAdapter(
-    private val onClick: ((ClaimedIncentiveUI) -> Unit)? = null
+    private val onClick: ((ClaimedIncentiveUI) -> Unit)? = null,
+    private val isSelected: (ClaimedIncentiveUI) -> Boolean = { false },
+    private val onSelectionChanged: (ClaimedIncentiveUI, Boolean) -> Unit = { _, _ -> },
+    private val showCheckbox: () -> Boolean = { false }
 ) : ListAdapter<ClaimedIncentiveUI, ActivityAdapter.ActivityViewHolder>(ActivityDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityViewHolder {
@@ -30,7 +34,8 @@ class ActivityAdapter(
     }
 
     override fun onBindViewHolder(holder: ActivityViewHolder, position: Int) {
-        holder.bind(getItem(position), position + 1, onClick)
+        val item = getItem(position)
+        holder.bind(item, position + 1, onClick, isSelected(item), showCheckbox(), onSelectionChanged)
     }
 
     companion object {
@@ -49,8 +54,26 @@ class ActivityAdapter(
         private val tvAmount: TextView? = itemView.findViewById(R.id.tvAmount)
         private val layoutContent: View? = itemView.findViewById(R.id.layoutContent)
         private val layoutApproval: View? = itemView.findViewById(R.id.layoutApproval)
+        private val cbSelectActivity: CheckBox? = itemView.findViewById(R.id.cbSelectActivity)
 
-        fun bind(item: ClaimedIncentiveUI, serialNo: Int, onClick: ((ClaimedIncentiveUI) -> Unit)?) {
+        fun bind(
+            item: ClaimedIncentiveUI,
+            serialNo: Int,
+            onClick: ((ClaimedIncentiveUI) -> Unit)?,
+            selected: Boolean,
+            showCheckbox: Boolean,
+            onSelectionChanged: (ClaimedIncentiveUI, Boolean) -> Unit
+        ) {
+            cbSelectActivity?.setOnCheckedChangeListener(null)
+            if (showCheckbox) {
+                cbSelectActivity?.visibility = View.VISIBLE
+                cbSelectActivity?.isChecked = selected
+                cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
+                    onSelectionChanged(item, isChecked)
+                }
+            } else {
+                cbSelectActivity?.visibility = View.GONE
+            }
             tvSerialNo.text = serialNo.toString()
             tvActivityName.text = item.groupName ?: "Activity : ${item.activityId}"
             tvActivityDesc.text = item.activityDec ?: ""
