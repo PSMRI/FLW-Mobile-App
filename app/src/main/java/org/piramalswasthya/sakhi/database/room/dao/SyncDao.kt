@@ -141,6 +141,14 @@ interface SyncDao {
                 "   WHEN ncd.isSynced = 1 THEN 2 ELSE ncd.isSynced  END AS syncState " +
                 "    FROM ncd_referal_all_visit ncd " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = ncd.benId " +
+                "    UNION ALL " +
+                "    SELECT 27 as id, 'Malaria Screening' as name, masn.syncState as syncState " +
+                "    FROM MALARIA_SCREENING masn " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = masn.benId " +
+                "    UNION ALL " +
+                "    SELECT 28 as id, 'Malaria Confirmed' as name, macf.syncState as syncState " +
+                "    FROM MALARIA_CONFIRMED macf " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = macf.benId " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +
                 "ORDER BY id; "

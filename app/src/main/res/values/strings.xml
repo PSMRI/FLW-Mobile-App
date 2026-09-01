@@ -781,6 +781,8 @@
         <item>AHD</item>
         <item>Deworming</item>
         <item>NCD Follow Up</item>
+        <item>Malaria Screening</item>
+        <item>Malaria Confirmed</item>
     </string-array>
 
     <string-array name="place_array">

@@ -1283,6 +1283,8 @@
         <item>एएचडी</item>
         <item>कीड़ा मुक्ति</item>
         <item>एनसीडी फॉलो-अप</item>
+        <item>मलेरिया जांच</item>
+        <item>मलेरिया पुष्टि</item>
     </string-array>
 
     <string name="btn_cancel">रद्द करें</string>
