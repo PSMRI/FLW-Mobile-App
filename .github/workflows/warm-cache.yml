@@ -1,0 +1,109 @@
+name: Warm CI Cache
+
+# Seeds the Gradle caches that pr-checks.yml restores.
+#
+# A pull_request run can only restore caches from its own ref or from the
+# default branch, and nothing else runs on the default branch - so without this
+# the first run of every new PR compiles from scratch (~20 min instead of ~10).
+#
+# The schedule fires on the default branch (the only branch GitHub runs it on,
+# and what puts the cache in a scope every PR can read), but we check out the
+# newest release-* branch so the cached build state - and the hashFiles key
+# below - match the branch PRs are actually opened against.
+#
+# This workflow only populates a cache. It posts no checks, blocks no PR, and
+# if it fails the only consequence is that PRs stay as slow as they are today.
+
+on:
+  schedule:
+    - cron: '30 18 * * *'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to warm (defaults to the newest release-* branch)"
+        required: false
+        type: string
+
+concurrency:
+  group: warm-cache
+  cancel-in-progress: true
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      # Resolved at runtime so new release branches (2.13, 2.14, ...) are picked
+      # up automatically. sort -V is a version sort, so release-2.10 correctly
+      # ranks above release-2.9 where a plain sort would not.
+      - name: Resolve branch to warm
+        id: target
+        run: |
+          BRANCH="${{ inputs.branch }}"
+          if [ -z "$BRANCH" ]; then
+            BRANCH=$(git ls-remote --heads "https://github.com/${{ github.repository }}.git" 'refs/heads/release-*' \
+              | sed 's#.*refs/heads/##' | sort -V | tail -n1)
+          fi
+          if [ -z "$BRANCH" ]; then
+            BRANCH="${{ github.event.repository.default_branch }}"
+          fi
+          echo "Warming cache for: $BRANCH"
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target.outputs.name }}
+
+      # Must stay identical to the JDK in pr-checks.yml. A different JDK here
+      # produces build state that pr-checks cannot reuse, which silently costs
+      # the speedup rather than failing loudly.
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      # Key must use the same prefix as pr-checks.yml so its restore-keys match.
+      # run_id (not sha) keeps the key unique per night, otherwise the entry
+      # already exists and the refreshed state is never saved.
+      - name: Cache Gradle build state
+        uses: actions/cache@v4
+        with:
+          path: |
+            app/build/intermediates
+            app/build/generated
+            app/build/kotlin
+            app/build/tmp
+            .gradle
+          key: build-state-${{ runner.os }}-${{ hashFiles('**/*.gradle', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}-${{ github.run_id }}
+          restore-keys: |
+            build-state-${{ runner.os }}-${{ hashFiles('**/*.gradle', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}-
+
+      - name: Decode google-services.json
+        run: |
+          SECRET='${{ secrets.GOOGLE_SERVICES_JSON_GENERIC }}'
+          if [ -n "$SECRET" ]; then
+            echo "$SECRET" | base64 --decode > app/google-services.json
+          else
+            printf '%s' '{"project_info":{"project_number":"000000000000","project_id":"flw-ci-placeholder","storage_bucket":"flw-ci-placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000000000","android_client_info":{"package_name":"org.piramalswasthya.sakhi.niramay"}},"oauth_client":[],"api_key":[{"current_key":"AIzaCiPlaceholderPlaceholderPlaceholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
+          fi
+
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      # Compile only - no tests. This warms the expensive part (kapt + Kotlin
+      # compile of main and unit-test sources) in ~13 min rather than ~27.
+      - name: Compile main and unit test sources
+        run: ./gradlew compileNiramayDebugUnitTestJavaWithJavac hiltJavaCompileNiramayDebugUnitTest transformNiramayDebugUnitTestClassesWithAsm --console=plain --build-cache
