@@ -230,6 +230,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
      */
     fun navigateToIncentivesFromNotification() {
         try {
+            Timber.d(
+                "NAVTRACE 4/4 navigating to incentives; current=" +
+                        "${navController.currentDestination?.label}"
+            )
             if (navController.currentDestination?.id == R.id.incentivesFragment) return
             navController.navigate(
                 R.id.incentivesFragment,
@@ -442,10 +446,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         val goToIncentives = target == NotificationNavTarget.INCENTIVE_SCREEN ||
                 target == NotificationNavTarget.INCENTIVE_APPROVAL ||
                 isIncentiveNavTarget(deeplink.navTarget, deeplink.eventType)
-        if (!goToIncentives) {
-            Timber.d("Notification tap has no ASHA route: $deeplink")
-            return
-        }
+        Timber.d("NAVTRACE 3/4 resolved deeplink=$deeplink route=$goToIncentives")
+        if (!goToIncentives) return
 
         // Post so the NavHostFragment has committed its start destination on a cold start.
         binding.root.post { navigateToIncentivesFromNotification() }

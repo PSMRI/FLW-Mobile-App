@@ -46,7 +46,7 @@ class FBMessaging : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val data = remoteMessage.data
-        Timber.d("FCM message received: notification=${remoteMessage.notification}, data=$data")
+        Timber.d("NAVTRACE 0/4 FCM message received: notification=${remoteMessage.notification}, data=$data")
 
         // Prefer the notification block; fall back to data payload keys.
         val title = remoteMessage.notification?.title ?: data["title"].orEmpty()
@@ -132,6 +132,11 @@ class FBMessaging : FirebaseMessagingService() {
                 data[NotificationKeys.NOTIFICATION_ID]?.toLongOrNull() ?: -1L
             )
         }
+
+        Timber.d(
+            "NAVTRACE 1/4 posting tray notification id=$uniqueId target=${targetActivity.simpleName} " +
+                    "navId=${intent.getStringExtra(NotificationKeys.EXTRA_NAV_ID)} type=$type"
+        )
 
         val pendingIntent = PendingIntent.getActivity(
             this,

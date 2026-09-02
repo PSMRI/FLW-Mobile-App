@@ -56,7 +56,7 @@ fun notificationDeeplinkFrom(intent: Intent?): NotificationDeeplink? {
     ).forEach { intent.removeExtra(it) }
 
     return NotificationDeeplink(navTarget, eventType, notificationId)
-        .also { Timber.d("Notification tap deeplink: $it") }
+        .also { Timber.d("NAVTRACE 2/4 extracted from tap intent: $it") }
 }
 
 /**
