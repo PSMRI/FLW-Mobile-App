@@ -222,7 +222,7 @@ class VLFRepo @Inject constructor(
                     MultipartBody.Part.createFormData("formDataJson", null, formDataJsonBody)
                 )
 
-                val imageParts = photoUris.mapNotNull { photoData ->
+                val imageParts = withContext(Dispatchers.IO) {photoUris.mapNotNull { photoData ->
                     try {
                         val file: File? = when {
                             photoData.startsWith("data:image/") || photoData.contains(",") -> {
@@ -256,6 +256,7 @@ class VLFRepo @Inject constructor(
                         Timber.e(e, "Error processing image: $photoData")
                         null
                     }
+                }
                 }
                 multipartParts.addAll(imageParts)
 

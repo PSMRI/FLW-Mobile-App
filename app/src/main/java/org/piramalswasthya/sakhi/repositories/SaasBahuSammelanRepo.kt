@@ -169,7 +169,7 @@ class SaasBahuSammelanRepo @Inject constructor(
         saasBahuDao.clearAll()
         parsed.data?.forEach { item ->
             val imageBase64List = item.meetingImages ?: emptyList()
-            val imageUriList = imageBase64List.mapNotNull { base64 ->
+            val imageUriList = withContext(Dispatchers.IO) {imageBase64List.mapNotNull { base64 ->
                 try {
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
@@ -186,6 +186,7 @@ class SaasBahuSammelanRepo @Inject constructor(
                     Log.e("AHJAHA",e.toString())
                     null
                 }
+            }
             }
 
             val entity = SaasBahuSammelanCache(
