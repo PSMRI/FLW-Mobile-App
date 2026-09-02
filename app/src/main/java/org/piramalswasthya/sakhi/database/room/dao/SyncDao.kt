@@ -149,6 +149,100 @@ interface SyncDao {
                 "    SELECT 28 as id, 'Malaria Confirmed' as name, macf.syncState as syncState " +
                 "    FROM MALARIA_CONFIRMED macf " +
                 "    INNER JOIN beneficiary b ON b.beneficiaryId = macf.benId " +
+
+
+
+                "    UNION ALL " +
+                "    SELECT 29 as id, 'CDR' as name, cdr.syncState as syncState " +
+                "    FROM CDR cdr " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = cdr.benId " +
+                "    UNION ALL " +
+                "    SELECT 30 as id, 'MDSR' as name, mdsr.syncState as syncState " +
+                "    FROM MDSR mdsr " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = mdsr.benId " +
+                "    UNION ALL " +
+                "    SELECT 31 as id, 'Child Reg' as name, chr.syncState as syncState " +
+                "    FROM CHILD_REG chr " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = chr.motherBenId " +
+                "    UNION ALL " +
+                "    SELECT 32 as id, 'AES Screening' as name, aes.syncState as syncState " +
+                "    FROM AES_SCREENING aes " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = aes.benId " +
+                "    UNION ALL " +
+                "    SELECT 33 as id, 'Kala Azar Screening' as name, kzs.syncState as syncState " +
+                "    FROM KALAZAR_SCREENING kzs " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = kzs.benId " +
+                "    UNION ALL " +
+                "    SELECT 34 as id, 'Filaria Screening' as name, fls.syncState as syncState " +
+                "    FROM FILARIA_SCREENING fls " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = fls.benId " +
+                "    UNION ALL " +
+                "    SELECT 35 as id, 'Leprosy Screening' as name, lps.syncState as syncState " +
+                "    FROM LEPROSY_SCREENING lps " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = lps.benId " +
+                "    UNION ALL " +
+                "    SELECT 36 as id, 'Leprosy Follow Up' as name, lpf.syncState as syncState " +
+                "    FROM LEPROSY_FOLLOW_UP lpf " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = lpf.benId " +
+                "    UNION ALL " +
+                "    SELECT 37 as id, 'Adolescent Health' as name, adh.syncState as syncState " +
+                "    FROM Adolescent_Health_Form_Data adh " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = adh.benId " +
+                "    UNION ALL " +
+                "    SELECT 38 as id, 'NCD Refer' as name, ncdr.syncState as syncState " +
+                "    FROM NCD_REFER ncdr " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = ncdr.benId " +
+                "    UNION ALL " +
+                "    SELECT 39 as id, 'TB Confirmed Treatment' as name, tbct.syncState as syncState " +
+                "    FROM TB_CONFIRMED_TREATMENT tbct " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = tbct.benId " +
+                "    UNION ALL " +
+                "    SELECT 40 as id, 'Pulse Polio Campaign' as name, ppc.syncState as syncState " +
+                "    FROM PulsePolioCampaign ppc " +
+                "    UNION ALL " +
+                "    SELECT 41 as id, 'ORS Campaign' as name, orsc.syncState as syncState " +
+                "    FROM ORSCampaign orsc " +
+                "    UNION ALL " +
+                "    SELECT 42 as id, 'Saas Bahu Sammelan' as name, sbs.syncState as syncState " +
+                "    FROM SAAS_BAHU_ACTIVITY sbs " +
+                "    UNION ALL " +
+                "    SELECT 43 as id, 'MAA Meeting' as name, maam.syncState as syncState " +
+                "    FROM MAA_MEETING maam " +
+                "    UNION ALL " +
+                "    SELECT 44 as id, 'UWIN Session' as name, uwin.syncState as syncState " +
+                "    FROM UWIN_SESSION uwin " +
+                "    UNION ALL " +
+                "    SELECT 45 as id, 'Children Under Five' as name, CASE \n" +
+                "   WHEN cufy.isSynced = 1 THEN 2 ELSE cufy.isSynced  END AS syncState " +
+                "    FROM children_under_five_all_visit cufy " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = cufy.benId " +
+                "    UNION ALL " +
+                "    SELECT 46 as id, 'ANC Visit History' as name, CASE \n" +
+                "   WHEN ancv.isSynced = 1 THEN 2 ELSE ancv.isSynced  END AS syncState " +
+                "    FROM ALL_VISIT_HISTORY_ANC ancv " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = ancv.benId " +
+                "    UNION ALL " +
+                "    SELECT 47 as id, 'Eye Surgery' as name, CASE \n" +
+                "   WHEN eys.isSynced = 1 THEN 2 ELSE eys.isSynced  END AS syncState " +
+                "    FROM ALL_EYE_SURGERY_VISIT_HISTORY eys " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = eys.benId " +
+                "    UNION ALL " +
+                "    SELECT 48 as id, 'Ben IFA' as name, CASE \n" +
+                "   WHEN bif.isSynced = 1 THEN 2 ELSE bif.isSynced  END AS syncState " +
+                "    FROM ALL_BEN_IFA_VISIT_HISTORY bif " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = bif.benId " +
+                "    UNION ALL " +
+                "    SELECT 49 as id, 'Mosquito Net' as name, CASE \n" +
+                "   WHEN mnv.isSynced = 1 THEN 2 ELSE mnv.isSynced  END AS syncState " +
+                "    FROM mosquito_net_visit mnv " +
+                "    UNION ALL " +
+                "    SELECT 50 as id, 'Filaria MDA' as name, CASE \n" +
+                "   WHEN fmv.isSynced = 1 THEN 2 ELSE fmv.isSynced  END AS syncState " +
+                "    FROM FILARIA_MDA_VISIT_HISTORY fmv " +
+                "    UNION ALL " +
+                "    SELECT 51 as id, 'Filaria MDA Campaign' as name, CASE \n" +
+                "   WHEN fmc.isSynced = 1 THEN 2 ELSE fmc.isSynced  END AS syncState " +
+                "    FROM FILARIA_MDA_CAMPAIGN_HISTORY fmc " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +
                 "ORDER BY id; "

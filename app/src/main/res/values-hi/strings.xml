@@ -1285,6 +1285,29 @@
         <item>एनसीडी फॉलो-अप</item>
         <item>मलेरिया जांच</item>
         <item>मलेरिया पुष्टि</item>
+        <item>सीडीआर</item>
+        <item>एमडीएसआर</item>
+        <item>बाल पंजीकरण</item>
+        <item>एईएस जांच</item>
+        <item>कालाजार जांच</item>
+        <item>फाइलेरिया जांच</item>
+        <item>कुष्ठ जांच</item>
+        <item>कुष्ठ फॉलो-अप</item>
+        <item>किशोर स्वास्थ्य</item>
+        <item>एनसीडी रेफर</item>
+        <item>टीबी पुष्टि उपचार</item>
+        <item>पल्स पोलियो अभियान</item>
+        <item>ओआरएस अभियान</item>
+        <item>सास बहू सम्मेलन</item>
+        <item>एमएए बैठक</item>
+        <item>यूविन सत्र</item>
+        <item>पांच वर्ष तक के बच्चे</item>
+        <item>एएनसी विजिट इतिहास</item>
+        <item>नेत्र शल्य चिकित्सा</item>
+        <item>बेन आईएफए</item>
+        <item>मच्छरदानी</item>
+        <item>फाइलेरिया एमडीए</item>
+        <item>फाइलेरिया एमडीए अभियान</item>
     </string-array>
 
     <string name="btn_cancel">रद्द करें</string>

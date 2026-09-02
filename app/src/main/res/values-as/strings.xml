@@ -220,6 +220,29 @@
         <item>NCD ফ\'ল আপ</item>
         <item>মেলেৰিয়া স্ক্ৰীনিং</item>
         <item>মেলেৰিয়া নিশ্চিত</item>
+        <item>CDR</item>
+        <item>MDSR</item>
+        <item>চাইল্ড ৰেজিষ্ট্ৰেচন</item>
+        <item>AES স্ক্ৰীনিং</item>
+        <item>কালাজ্বৰ স্ক্ৰীনিং</item>
+        <item>ফাইলেৰিয়া স্ক্ৰীনিং</item>
+        <item>কুষ্ঠ স্ক্ৰীনিং</item>
+        <item>কুষ্ঠ ফ\'ল আপ</item>
+        <item>কিশোৰ স্বাস্থ্য</item>
+        <item>NCD ৰেফাৰ</item>
+        <item>টি বি নিশ্চিত চিকিৎসা</item>
+        <item>পলচ পলিঅ\' অভিযান</item>
+        <item>ORS অভিযান</item>
+        <item>শাহু-বোৱাৰী সন্মিলন</item>
+        <item>MAA বৈঠক</item>
+        <item>UWIN ছেচন</item>
+        <item>পাঁচ বছৰৰ তলৰ শিশু</item>
+        <item>ANC ভ্ৰমণ ইতিহাস</item>
+        <item>চকু অস্ত্ৰোপচাৰ</item>
+        <item>বেন IFA</item>
+        <item>মহাজাল</item>
+        <item>ফাইলেৰিয়া MDA</item>
+        <item>ফাইলেৰিয়া MDA অভিযান</item>
     </string-array>
 
     <string-array name="temp_array">
