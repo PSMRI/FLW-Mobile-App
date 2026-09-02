@@ -781,6 +781,31 @@
         <item>AHD</item>
         <item>Deworming</item>
         <item>NCD Follow Up</item>
+        <item>Malaria Screening</item>
+        <item>Malaria Confirmed</item>
+        <item>CDR</item>
+        <item>MDSR</item>
+        <item>Child Reg</item>
+        <item>AES Screening</item>
+        <item>Kala Azar Screening</item>
+        <item>Filaria Screening</item>
+        <item>Leprosy Screening</item>
+        <item>Leprosy Follow Up</item>
+        <item>Adolescent Health</item>
+        <item>NCD Refer</item>
+        <item>TB Confirmed Treatment</item>
+        <item>Pulse Polio Campaign</item>
+        <item>ORS Campaign</item>
+        <item>Saas Bahu Sammelan</item>
+        <item>MAA Meeting</item>
+        <item>UWIN Session</item>
+        <item>Children Under Five</item>
+        <item>ANC Visit History</item>
+        <item>Eye Surgery</item>
+        <item>Ben IFA</item>
+        <item>Mosquito Net</item>
+        <item>Filaria MDA</item>
+        <item>Filaria MDA Campaign</item>
     </string-array>
 
     <string-array name="place_array">

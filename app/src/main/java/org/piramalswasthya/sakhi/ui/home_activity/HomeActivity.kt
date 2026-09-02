@@ -77,6 +77,10 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.model.NotificationNavTarget
+import org.piramalswasthya.sakhi.model.isIncentiveNavTarget
+import org.piramalswasthya.sakhi.utils.PendingNotificationDeeplink
+import org.piramalswasthya.sakhi.utils.notificationDeeplinkFrom
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
 import org.piramalswasthya.sakhi.utils.BellBadgeHelper
@@ -226,6 +230,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
      */
     fun navigateToIncentivesFromNotification() {
         try {
+            Timber.d(
+                "NAVTRACE 4/4 navigating to incentives; current=" +
+                        "${navController.currentDestination?.label}"
+            )
             if (navController.currentDestination?.id == R.id.incentivesFragment) return
             navController.navigate(
                 R.id.incentivesFragment,
@@ -400,6 +408,49 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         observeAccountDeactivation()
         observeTokenExpiry()
 
+        // Cold start from a notification tap, either straight from our tray PendingIntent or
+        // parked by LoginActivity when the Firebase SDK displayed the notification itself.
+        handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Warm start from a tray tap: the notification Intent uses CLEAR_TOP|SINGLE_TOP, so an existing
+     * instance receives it here rather than being recreated.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Routes a system-tray notification tap. Mirrors the in-app panel's routing
+     * ([org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment]): any
+     * incentive/claim notification lands on ASHA's IncentivesFragment, anything else just opens the
+     * app as before.
+     *
+     * The extras are consumed so a configuration change (which re-delivers the same Intent) can't
+     * navigate a second time.
+     */
+    private fun handleNotificationDeeplink(intent: Intent?) {
+        // Our own tray PendingIntent delivers the context on the Intent; an SDK-displayed
+        // notification tap goes through LoginActivity, which parks it for us.
+        val deeplink = notificationDeeplinkFrom(intent)
+            ?.also { PendingNotificationDeeplink.clear() }
+            ?: PendingNotificationDeeplink.consume()
+            ?: return
+
+        if (deeplink.notificationId > 0L) notificationViewModel.markRead(deeplink.notificationId)
+
+        val target = NotificationNavTarget.fromNavId(deeplink.navTarget)
+        val goToIncentives = target == NotificationNavTarget.INCENTIVE_SCREEN ||
+                target == NotificationNavTarget.INCENTIVE_APPROVAL ||
+                isIncentiveNavTarget(deeplink.navTarget, deeplink.eventType)
+        Timber.d("NAVTRACE 3/4 resolved deeplink=$deeplink route=$goToIncentives")
+        if (!goToIncentives) return
+
+        // Post so the NavHostFragment has committed its start destination on a cold start.
+        binding.root.post { navigateToIncentivesFromNotification() }
     }
 
     private var deactivationDialog: AlertDialog? = null

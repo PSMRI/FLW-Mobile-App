@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
@@ -25,6 +24,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirect
 import org.piramalswasthya.sakhi.ui.asha_supervisor.dialog.NoInternetDialog
 import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.Facility
 import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -352,7 +352,7 @@ class IncentiveDashboardFragment : Fragment() {
                 selectedMonth = selectedMonth + 1,
                 selectedYear  = selectedYear
             )
-        findNavController().navigate(action)
+        safeNavigate(action)
     }
 
     override fun onDestroyView() {
