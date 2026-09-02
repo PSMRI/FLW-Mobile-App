@@ -77,9 +77,10 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
-import org.piramalswasthya.sakhi.model.NotificationKeys
 import org.piramalswasthya.sakhi.model.NotificationNavTarget
 import org.piramalswasthya.sakhi.model.isIncentiveNavTarget
+import org.piramalswasthya.sakhi.utils.PendingNotificationDeeplink
+import org.piramalswasthya.sakhi.utils.notificationDeeplinkFrom
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
 import org.piramalswasthya.sakhi.utils.BellBadgeHelper
@@ -403,9 +404,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         observeAccountDeactivation()
         observeTokenExpiry()
 
-        // Cold start from a system-tray notification tap. Skipped on a recreation (rotation or
-        // process-death restore re-delivers the original Intent, which must not navigate again).
-        if (savedInstanceState == null) handleNotificationDeeplink(intent)
+        // Cold start from a notification tap, either straight from our tray PendingIntent or
+        // parked by LoginActivity when the Firebase SDK displayed the notification itself.
+        handleNotificationDeeplink(intent)
     }
 
     /**
@@ -428,22 +429,23 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
      * navigate a second time.
      */
     private fun handleNotificationDeeplink(intent: Intent?) {
-        if (intent == null) return
-        if (!intent.getBooleanExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION, false)) return
-        intent.removeExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION)
+        // Our own tray PendingIntent delivers the context on the Intent; an SDK-displayed
+        // notification tap goes through LoginActivity, which parks it for us.
+        val deeplink = notificationDeeplinkFrom(intent)
+            ?.also { PendingNotificationDeeplink.clear() }
+            ?: PendingNotificationDeeplink.consume()
+            ?: return
 
-        val navTarget = intent.getStringExtra(NotificationKeys.EXTRA_NAV_ID)
-        val eventType = intent.getStringExtra(NotificationKeys.EXTRA_EVENT_TYPE)
-        val notificationId = intent.getLongExtra(NotificationKeys.EXTRA_NOTIFICATION_ID, -1L)
-        Timber.d("Notification tap: navId=$navTarget eventType=$eventType id=$notificationId")
+        if (deeplink.notificationId > 0L) notificationViewModel.markRead(deeplink.notificationId)
 
-        if (notificationId > 0L) notificationViewModel.markRead(notificationId)
-
-        val target = NotificationNavTarget.fromNavId(navTarget)
+        val target = NotificationNavTarget.fromNavId(deeplink.navTarget)
         val goToIncentives = target == NotificationNavTarget.INCENTIVE_SCREEN ||
                 target == NotificationNavTarget.INCENTIVE_APPROVAL ||
-                isIncentiveNavTarget(navTarget, eventType)
-        if (!goToIncentives) return
+                isIncentiveNavTarget(deeplink.navTarget, deeplink.eventType)
+        if (!goToIncentives) {
+            Timber.d("Notification tap has no ASHA route: $deeplink")
+            return
+        }
 
         // Post so the NavHostFragment has committed its start destination on a cold start.
         binding.root.post { navigateToIncentivesFromNotification() }

@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
+import org.piramalswasthya.sakhi.utils.PendingNotificationDeeplink
 import androidx.core.view.WindowCompat
 import javax.inject.Inject
 
@@ -74,6 +75,9 @@ class LoginActivity : AppCompatActivity() {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        // A `notification`-type push displayed by the Firebase SDK lands here (LAUNCHER activity)
+        // with the payload as Intent extras. Park it so HomeActivity can route once it exists.
+        PendingNotificationDeeplink.capture(intent)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
