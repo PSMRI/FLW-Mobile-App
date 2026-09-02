@@ -77,6 +77,9 @@ import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.model.NotificationKeys
+import org.piramalswasthya.sakhi.model.NotificationNavTarget
+import org.piramalswasthya.sakhi.model.isIncentiveNavTarget
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
 import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
 import org.piramalswasthya.sakhi.utils.BellBadgeHelper
@@ -400,6 +403,50 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         observeAccountDeactivation()
         observeTokenExpiry()
 
+        // Cold start from a system-tray notification tap. Skipped on a recreation (rotation or
+        // process-death restore re-delivers the original Intent, which must not navigate again).
+        if (savedInstanceState == null) handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Warm start from a tray tap: the notification Intent uses CLEAR_TOP|SINGLE_TOP, so an existing
+     * instance receives it here rather than being recreated.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Routes a system-tray notification tap. Mirrors the in-app panel's routing
+     * ([org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment]): any
+     * incentive/claim notification lands on ASHA's IncentivesFragment, anything else just opens the
+     * app as before.
+     *
+     * The extras are consumed so a configuration change (which re-delivers the same Intent) can't
+     * navigate a second time.
+     */
+    private fun handleNotificationDeeplink(intent: Intent?) {
+        if (intent == null) return
+        if (!intent.getBooleanExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION, false)) return
+        intent.removeExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION)
+
+        val navTarget = intent.getStringExtra(NotificationKeys.EXTRA_NAV_ID)
+        val eventType = intent.getStringExtra(NotificationKeys.EXTRA_EVENT_TYPE)
+        val notificationId = intent.getLongExtra(NotificationKeys.EXTRA_NOTIFICATION_ID, -1L)
+        Timber.d("Notification tap: navId=$navTarget eventType=$eventType id=$notificationId")
+
+        if (notificationId > 0L) notificationViewModel.markRead(notificationId)
+
+        val target = NotificationNavTarget.fromNavId(navTarget)
+        val goToIncentives = target == NotificationNavTarget.INCENTIVE_SCREEN ||
+                target == NotificationNavTarget.INCENTIVE_APPROVAL ||
+                isIncentiveNavTarget(navTarget, eventType)
+        if (!goToIncentives) return
+
+        // Post so the NavHostFragment has committed its start destination on a cold start.
+        binding.root.post { navigateToIncentivesFromNotification() }
     }
 
     private var deactivationDialog: AlertDialog? = null

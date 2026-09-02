@@ -52,8 +52,7 @@ class FBMessaging : FirebaseMessagingService() {
         val title = remoteMessage.notification?.title ?: data["title"].orEmpty()
         val body = remoteMessage.notification?.body ?: data["body"].orEmpty()
 
-        val type = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty()
-        showNotification(title, body, type)
+        showNotification(title, body, data)
         EntryPointAccessors.fromApplication(applicationContext, FbmEntryPoint::class.java)
             .notificationRepository().onPushReceived()
     }
@@ -93,7 +92,14 @@ class FBMessaging : FirebaseMessagingService() {
         var messageUpdate: MessageUpdate? = null
     }
 
-    private fun showNotification(title: String, body: String, type: String) {
+    /**
+     * Posts the system-tray notification. The Intent carries the routing context
+     * ([NotificationKeys.EXTRA_NAV_ID] / [NotificationKeys.EXTRA_EVENT_TYPE] /
+     * [NotificationKeys.EXTRA_NOTIFICATION_ID]) so the host activity can deeplink on tap —
+     * see `HomeActivity.handleNotificationDeeplink`.
+     */
+    private fun showNotification(title: String, body: String, data: Map<String, String>) {
+        val type = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty()
         val role = EntryPointAccessors.fromApplication(
             applicationContext, FbmEntryPoint::class.java
         ).preferenceDao().getLoggedInUser()?.role
@@ -103,17 +109,35 @@ class FBMessaging : FirebaseMessagingService() {
             role.equals(RoleConstants.ROLE_CHO, true)
         ) SupervisorActivity::class.java else HomeActivity::class.java
 
+        // Unique id so notifications stack instead of overwriting each other. Also used as the
+        // PendingIntent request code: with a shared code every notification would reuse the first
+        // one's extras and every tap would route to whatever arrived first.
+        val uniqueId = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
+
         val intent = Intent(applicationContext, targetActivity).apply {
-            putExtra("FBM", true)
+            // Reuse the task's existing activity instead of stacking a second copy on top of it.
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION, true)
             putExtra("NotificationTypeId", type)
             putExtra("mTitle", title)
+            putExtra(
+                NotificationKeys.EXTRA_NAV_ID,
+                data[NotificationKeys.NAV_ID] ?: data[NotificationKeys.REDIRECT]
+            )
+            putExtra(NotificationKeys.EXTRA_EVENT_TYPE, type)
+            putExtra(
+                NotificationKeys.EXTRA_NOTIFICATION_ID,
+                data[NotificationKeys.NOTIFICATION_ID]?.toLongOrNull() ?: -1L
+            )
         }
 
         val pendingIntent = PendingIntent.getActivity(
             this,
-            0,
+            uniqueId,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = NotificationCompat.Builder(this, SakhiApplication.NOTIFICATION_CHANNEL_ID)
@@ -127,8 +151,6 @@ class FBMessaging : FirebaseMessagingService() {
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // Unique id so notifications stack instead of overwriting each other.
-        val uniqueId = (System.currentTimeMillis() and 0xFFFFFFF).toInt()
         notificationManager.notify(uniqueId, notification)
     }
 }

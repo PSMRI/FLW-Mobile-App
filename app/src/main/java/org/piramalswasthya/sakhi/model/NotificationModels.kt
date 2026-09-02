@@ -115,7 +115,26 @@ object NotificationKeys {
     const val ACTIVITY_ID = "activity_id"
     const val REFERENCE_ID = "reference_id"
     const val PRIORITY = "priority"
+
+    /** List API's alternative spelling of [NAV_ID]; the backend doesn't always populate both. */
+    const val REDIRECT = "redirect"
+
+    // --- Intent extras carrying the routing context from a system-tray tap into the host activity.
+    /** Marks an Intent as originating from a notification tap (legacy key, kept for compatibility). */
+    const val EXTRA_FROM_NOTIFICATION = "FBM"
+    const val EXTRA_NAV_ID = "notification_nav_id"
+    const val EXTRA_NOTIFICATION_ID = "notification_row_id"
+    const val EXTRA_EVENT_TYPE = "notification_event_type"
 }
+
+/**
+ * True when any of [keys] (a nav target or an event type) identifies the incentive/claim flow.
+ * Shared by the in-app panel and the tray-tap handler so both route the same way, and deliberately
+ * loose: the backend's exact key names are not contract-confirmed, and an ASHA device has exactly
+ * one incentive screen to land on.
+ */
+fun isIncentiveNavTarget(vararg keys: String?): Boolean =
+    keys.filterNotNull().any { it.contains("INCENTIVE", true) || it.contains("CLAIM", true) }
 
 // ============================================================
 // Room entity (persistent store — single source of truth)
@@ -168,13 +187,30 @@ data class NotificationDomain(
     val createdTs: Long,
     val read: Boolean,
     val navId: String? = null,      // == data.nav_id — deeplink target
+    val redirect: String? = null,   // list API's alternative spelling of the same target
     val priority: String? = null,
     val senderUserId: Long? = null,
     val receiverUserId: Long? = null,
     val beneficiaryId: Long? = null,
     val activityId: Long? = null,
     val referenceId: Long? = null
-)
+) {
+    /**
+     * Deeplink target to route on. The FCM push carries it as `nav_id`; the list API response
+     * carries both `navId` and `redirect` and the backend does not always populate the same one,
+     * so fall back rather than silently failing to navigate.
+     */
+    val navTarget: String?
+        get() = navId?.takeIf { it.isNotBlank() } ?: redirect?.takeIf { it.isNotBlank() }
+
+    /**
+     * True when this notification is about the incentive/claim flow, judged from the routing
+     * target or the event type. Used as a last-resort fallback so an ASHA tap still lands on the
+     * incentives screen when the backend sends an unrecognised target key.
+     */
+    val isIncentiveRelated: Boolean
+        get() = isIncentiveNavTarget(navTarget, eventType)
+}
 
 /**
  * Maps a backend `notification_type` to its display icon. `serverKey`s follow the backend's
@@ -212,8 +248,11 @@ enum class NotificationNavTarget(val navId: String) {
     NONE("");
 
     companion object {
-        fun fromNavId(navId: String?): NotificationNavTarget =
-            values().firstOrNull { it.navId.equals(navId, ignoreCase = true) } ?: NONE
+        fun fromNavId(navId: String?): NotificationNavTarget {
+            val key = navId?.trim().orEmpty()
+            if (key.isEmpty()) return NONE
+            return values().firstOrNull { it.navId.equals(key, ignoreCase = true) } ?: NONE
+        }
     }
 }
 
@@ -265,6 +304,7 @@ fun NotificationEntity.toDomain(): NotificationDomain = NotificationDomain(
     createdTs = createdTs,
     read = read,
     navId = navId,
+    redirect = redirect,
     priority = priority,
     senderUserId = senderUserId,
     receiverUserId = receiverUserId,
@@ -324,6 +364,7 @@ fun notificationEntityFromFcm(
         userId = userId,
         eventType = data[NotificationKeys.NOTIFICATION_TYPE].orEmpty(),
         navId = data[NotificationKeys.NAV_ID],
+        redirect = data[NotificationKeys.REDIRECT],
         title = title.orEmpty(),
         body = body.orEmpty(),
         priority = data[NotificationKeys.PRIORITY],
