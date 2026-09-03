@@ -31,4 +31,8 @@
     <string name="badge_vulnerable_baby_desc">Complete all 7 HBNC visits for an SNCU/LBW baby</string>
     <string name="badge_critical_referral_title">Critical Referral Made</string>
     <string name="badge_critical_referral_desc">Refer a SAM child to the NRC</string>
+    <string name="badge_celebration_title">Congratulations!</string>
+    <string name="badge_celebration_body">You have earned a new badge!</string>
+    <string name="badge_almost_there">Almost there!</string>
+    <string name="badge_earned_chip">🏅 Earned!</string>
 </resources>

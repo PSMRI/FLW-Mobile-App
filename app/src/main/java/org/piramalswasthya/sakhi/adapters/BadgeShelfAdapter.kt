@@ -44,7 +44,7 @@ class BadgeShelfAdapter :
             val (iconRes, earnedLook) = BadgeDefinitions.displayIcon(def, state)
             binding.ivBadgeIcon.setImageResource(iconRes)
             // locked tiers render dimmed until the level is actually earned
-            binding.ivBadgeIcon.alpha = if (earnedLook) 1f else 0.4f
+            binding.ivBadgeIcon.alpha = if (earnedLook) 1f else 0.85f
             binding.tvBadgeTitle.text = res.getString(def.titleRes)
             binding.tvBadgeDesc.text = res.getString(def.descRes)
 
@@ -64,9 +64,14 @@ class BadgeShelfAdapter :
             }
 
             // never-zero rule: 0 progress shows an invitation, not "0 of N"
-            binding.tvBadgeProgress.text =
-                if (progress <= 0L) res.getString(R.string.badge_not_started)
-                else res.getString(R.string.badge_progress_of, progress, target)
+            val almostThere = progress in 1 until target &&
+                    progress.toDouble() / target >= 0.6
+            binding.tvBadgeProgress.text = when {
+                progress <= 0L -> res.getString(R.string.badge_not_started)
+                almostThere -> res.getString(R.string.badge_progress_of, progress, target) +
+                        " · " + res.getString(R.string.badge_almost_there)
+                else -> res.getString(R.string.badge_progress_of, progress, target)
+            }
 
             binding.pbBadgeProgress.max = target.toInt()
             binding.pbBadgeProgress.progress = progress.coerceAtMost(target).toInt()

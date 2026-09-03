@@ -159,11 +159,13 @@ object AppModule {
     fun provideHttpLoggingInterceptor(@ApplicationContext context: Context): HttpLoggingInterceptor {
         val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
+            // BODY logging stringifies every sync payload — a serious CPU/memory
+            // cost on low-end devices. Debug builds only.
             level =
-               // if (isDebuggable)
+                if (isDebuggable)
                     HttpLoggingInterceptor.Level.BODY
-//                else
-//                    HttpLoggingInterceptor.Level.NONE
+                else
+                    HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }

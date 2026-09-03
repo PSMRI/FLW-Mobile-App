@@ -91,7 +91,7 @@ class HomeIconsFragment : Fragment() {
                         val (iconRes, earnedLook) =
                             BadgeDefinitions.displayIcon(top.definition, top.state)
                         b.ivBadgeWidgetIcon.setImageResource(iconRes)
-                        b.ivBadgeWidgetIcon.alpha = if (earnedLook) 1f else 0.4f
+                        b.ivBadgeWidgetIcon.alpha = if (earnedLook) 1f else 0.85f
                         b.tvBadgeWidgetText.text = getString(
                             R.string.badge_widget_progress,
                             getString(top.definition.titleRes), progress, target

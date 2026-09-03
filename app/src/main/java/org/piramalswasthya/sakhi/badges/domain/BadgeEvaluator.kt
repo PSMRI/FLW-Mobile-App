@@ -36,18 +36,30 @@ class BadgeEvaluator @Inject constructor(
     private val facts: BadgeFactsReader,
     private val streakEngine: StreakEngine,
     private val pref: PreferenceDao,
+    private val celebrations: BadgeCelebrations,
     @ApplicationContext private val context: Context
 ) {
 
     private val mutex = Mutex()
 
+    @Volatile
+    private var lastRunAt = 0L
+
     suspend fun evaluateAll() = withContext(Dispatchers.IO) {
         mutex.withLock {
+            // collapse the burst of triggers at app launch (bus + workers)
+            // into one pass — full table scans are costly on low-end devices
+            if (System.currentTimeMillis() - lastRunAt < RUN_THROTTLE_MS) return@withLock
+            lastRunAt = System.currentTimeMillis()
             val userId = try {
                 pref.getLoggedInUser()?.userId
             } catch (e: Exception) {
                 null
-            } ?: return@withLock
+            }
+            if (userId == null) {
+                Timber.w("Badges: evaluation skipped — no logged-in user")
+                return@withLock
+            }
 
             val config = try {
                 badgeDao.getConfig().associate { it.key to it.value }
@@ -82,9 +94,13 @@ class BadgeEvaluator @Inject constructor(
                 val hadEarnedBefore = badgeDao.getEarned(userId).isNotEmpty()
                 val insertedIds = badgeDao.insertEarned(earned)
                 if (hadEarnedBefore) {
-                    insertedIds.zip(earned)
-                        .firstOrNull { it.first != -1L }
-                        ?.let { celebrate(it.second) }
+                    val newRows = insertedIds.zip(earned)
+                        .filter { it.first != -1L }
+                        .filter { BadgeDefinitions.byId(it.second.badgeId)?.celebrate == true }
+                    // system notification for the first new award (works backgrounded)
+                    newRows.firstOrNull()?.let { celebrate(it.second) }
+                    // in-app game-style overlay for each new award
+                    newRows.forEach { celebrations.publish(it.second.badgeId, it.second.level) }
                 }
             }
             Timber.d("Badges: evaluated ${states.size} badges, ${earned.size} candidate awards")
@@ -142,6 +158,7 @@ class BadgeEvaluator @Inject constructor(
     companion object {
         private const val CELEBRATION_CHANNEL_ID = "badge_celebration"
         private const val CELEBRATION_ID = 20003
+        private const val RUN_THROTTLE_MS = 10_000L
     }
 
     private suspend fun evaluate(

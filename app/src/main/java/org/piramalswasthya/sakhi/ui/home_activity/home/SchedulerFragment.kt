@@ -9,9 +9,23 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import android.view.HapticFeedbackConstants
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import kotlin.math.abs
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.BadgeCarouselAdapter
+import org.piramalswasthya.sakhi.badges.BadgeRepository
 import org.piramalswasthya.sakhi.databinding.FragmentSchedulerBinding
+import timber.log.Timber
+import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADED
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 import java.util.Calendar
@@ -32,6 +46,9 @@ class SchedulerFragment : Fragment() {
 
     private val viewModel: SchedulerViewModel by viewModels({ requireActivity() })
 
+    @Inject
+    lateinit var badgeRepository: BadgeRepository
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,6 +59,7 @@ class SchedulerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpImpactDashboard()
         viewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 LOADING -> {
@@ -176,6 +194,92 @@ class SchedulerFragment : Fragment() {
             }.timeInMillis
             viewModel.setDate(calLong)
         }
+    }
+
+    /** Impact Dashboard: auto-moving carousel of badge progress. */
+    private fun setUpImpactDashboard() {
+        val carouselAdapter = BadgeCarouselAdapter()
+        binding.vpImpactBadges.adapter = carouselAdapter
+
+        fun step(direction: Int) {
+            val count = carouselAdapter.itemCount
+            if (count > 0) binding.vpImpactBadges.setCurrentItem(
+                (binding.vpImpactBadges.currentItem + direction + count) % count, true
+            )
+        }
+        binding.btnCarouselPrev.setOnClickListener { step(-1) }
+        binding.btnCarouselNext.setOnClickListener { step(+1) }
+
+        // card-deck feel: neighbours peek in, scale and fade with the swipe
+        binding.vpImpactBadges.apply {
+            offscreenPageLimit = 1 // one neighbour each side — enough for peek, lighter on low-RAM devices
+            (getChildAt(0) as? RecyclerView)?.apply {
+                val peek = (36 * resources.displayMetrics.density).toInt()
+                setPadding(peek, 0, peek, 0)
+                clipToPadding = false
+            }
+            setPageTransformer(CompositePageTransformer().apply {
+                addTransformer(MarginPageTransformer((12 * resources.displayMetrics.density).toInt()))
+                addTransformer { page, position ->
+                    val scale = 1f - 0.1f * abs(position)
+                    page.scaleX = scale
+                    page.scaleY = scale
+                    page.alpha = 1f - 0.3f * abs(position)
+                }
+            })
+            // gentle tactile tick as pages settle + "3 / 8" position counter
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                    _binding?.tvCarouselCounter?.text =
+                        "${position + 1} / ${carouselAdapter.itemCount}"
+                }
+            })
+        }
+        binding.cvImpactDashboard.setOnClickListener {
+            try {
+                findNavController().navigate(R.id.badgeShelfFragment)
+            } catch (e: Exception) {
+                Timber.e(e, "Badge shelf navigation from dashboard failed")
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                badgeRepository.shelf.collect { cards ->
+                    val b = _binding ?: return@collect
+                    // empty ⇔ badge feature killed remotely — hide cleanly
+                    b.cvImpactDashboard.visibility =
+                        if (cards.isEmpty()) View.GONE else View.VISIBLE
+                    carouselAdapter.submitList(cards.sortedByDescending { card ->
+                        val target = (card.state?.nextTarget ?: 1L).coerceAtLeast(1L)
+                        (card.state?.progress ?: 0L).toDouble() / target
+                    }) {
+                        val vp = _binding?.vpImpactBadges ?: return@submitList
+                        _binding?.tvCarouselCounter?.text =
+                            "${vp.currentItem + 1} / ${carouselAdapter.itemCount}"
+                    }
+                }
+            }
+        }
+        // gentle auto-advance; pauses while the worker is swiping or tab hidden
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    delay(CAROUSEL_INTERVAL_MS)
+                    val b = _binding ?: continue
+                    val count = carouselAdapter.itemCount
+                    if (count > 1 && b.vpImpactBadges.scrollState == ViewPager2.SCROLL_STATE_IDLE) {
+                        b.vpImpactBadges.setCurrentItem(
+                            (b.vpImpactBadges.currentItem + 1) % count, true
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val CAROUSEL_INTERVAL_MS = 4_000L
     }
 
     override fun onDestroy() {

@@ -39,7 +39,13 @@ data class BadgeDefinition(
      * Per-level artwork, index 0..3: milestone tiers for streak/cumulative
      * badges, Q1..Q4 for quarterly badges. Empty → iconRes for every level.
      */
-    val tierIcons: List<Int> = emptyList()
+    val tierIcons: List<Int> = emptyList(),
+    /**
+     * Whether earning this badge triggers the celebration overlay and
+     * notification. Off for badges earned by automatic behaviour (syncing),
+     * where a surprise popup feels unearned.
+     */
+    val celebrate: Boolean = true
 )
 
 object BadgeIds {
@@ -69,8 +75,9 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.STEADY_SYNCER,
             kind = BadgeKind.STREAK_WEEKLY,
-            milestones = listOf(4, 8, 16, 26),
+            milestones = listOf(2, 6, 12, 26), // first win at 2 weeks (rebalanced from LLD's 4,8,16,26)
             defaultGraceTokens = 1, // 1-week grace period (LLD §1.1)
+            celebrate = false, // sync is automatic — no surprise popups for it
             titleRes = R.string.badge_steady_syncer_title,
             descRes = R.string.badge_steady_syncer_desc,
             iconRes = R.drawable.badge_steady_syncer_t1,
@@ -84,7 +91,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.TIMELY_REPORTER,
             kind = BadgeKind.STREAK_MONTHLY,
-            milestones = listOf(2, 4, 6, 12),
+            milestones = listOf(1, 3, 6, 12), // first on-time month = instant bronze (from 2,4,6,12)
             titleRes = R.string.badge_timely_reporter_title,
             descRes = R.string.badge_timely_reporter_desc,
             iconRes = R.drawable.badge_timely_reporter_t1,
@@ -98,7 +105,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.COMPLETE_WORKER,
             kind = BadgeKind.QUARTERLY,
-            milestones = listOf(4), // active in 4+ health domains, rolling 90 days
+            milestones = listOf(3), // 3+ health domains, rolling 90 days (from 4)
             titleRes = R.string.badge_complete_worker_title,
             descRes = R.string.badge_complete_worker_desc,
             iconRes = R.drawable.badge_complete_worker_t1,
@@ -112,7 +119,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.COMMUNITY_VOICE,
             kind = BadgeKind.QUARTERLY,
-            milestones = listOf(4), // 4 meeting types (MAA, NDD, AHD, U-WIN)
+            milestones = listOf(2), // 2 of 4 meeting types per quarter (from 4)
             titleRes = R.string.badge_community_voice_title,
             descRes = R.string.badge_community_voice_desc,
             iconRes = R.drawable.badge_community_voice_t1,
@@ -126,7 +133,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.MATERNAL_JOURNEY,
             kind = BadgeKind.CUMULATIVE,
-            milestones = listOf(5, 15, 30, 50),
+            milestones = listOf(1, 5, 15, 30), // the very first completed journey is celebrated (from 5,15,30,50)
             titleRes = R.string.badge_maternal_journey_title,
             descRes = R.string.badge_maternal_journey_desc,
             iconRes = R.drawable.badge_maternal_journey_t1,
@@ -140,7 +147,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.CHILD_FULLY_PROTECTED,
             kind = BadgeKind.CUMULATIVE,
-            milestones = listOf(10, 25, 60, 100),
+            milestones = listOf(3, 10, 25, 60), // from 10,25,60,100
             titleRes = R.string.badge_child_fully_protected_title,
             descRes = R.string.badge_child_fully_protected_desc,
             iconRes = R.drawable.badge_child_fully_protected_t1,
@@ -154,7 +161,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.DIGITAL_IDENTITY,
             kind = BadgeKind.CUMULATIVE,
-            milestones = listOf(25, 75, 150, 300),
+            milestones = listOf(10, 25, 75, 150), // from 25,75,150,300
             titleRes = R.string.badge_digital_identity_title,
             descRes = R.string.badge_digital_identity_desc,
             iconRes = R.drawable.badge_digital_identity_t1,

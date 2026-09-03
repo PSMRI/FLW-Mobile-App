@@ -30,8 +30,11 @@ class TaskCompletionBus @Inject constructor(
 
     private val started = AtomicBoolean(false)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    // replay = 1: the startup publish() must survive until the collector
+    // subscribes — without it, launch-time evaluation silently never runs
+    // unless a sync happens to invalidate a table afterwards
     private val events = MutableSharedFlow<Unit>(
-        extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
+        replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
     /** Manual publish for callers outside Room (e.g. sync completion). */

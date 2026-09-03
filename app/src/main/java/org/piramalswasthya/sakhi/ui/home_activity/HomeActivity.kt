@@ -14,8 +14,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
+import android.view.animation.OvershootInterpolator
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -56,10 +60,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.badges.domain.BadgeCelebrations
+import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
 import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
+import org.piramalswasthya.sakhi.databinding.DialogBadgeCelebrationBinding
 import org.piramalswasthya.sakhi.notifications.NotificationEngine
 import org.piramalswasthya.sakhi.notifications.NotificationScheduler
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -91,6 +99,8 @@ import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
 
+
+private const val CELEBRATION_MS = 3_500L
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity(), MessageUpdate {
@@ -133,6 +143,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var eveningNotificationScheduler: NotificationScheduler
+
+    @Inject
+    lateinit var badgeCelebrations: BadgeCelebrations
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -327,6 +340,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         eveningNotificationScheduler.schedule()
         routeToJourneyIfRequested(intent)
+        observeBadgeCelebrations()
 
         if (isChatSupportEnabled)
         {
@@ -671,6 +685,54 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         routeToJourneyIfRequested(intent)
+    }
+
+    /** Game-style centre-screen celebration when a badge milestone is earned. */
+    private fun observeBadgeCelebrations() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                badgeCelebrations.awards.collect { (badgeId, level) ->
+                    showBadgeCelebration(badgeId, level)
+                }
+            }
+        }
+    }
+
+    private suspend fun showBadgeCelebration(badgeId: String, level: Int) {
+        val def = BadgeDefinitions.byId(badgeId) ?: return
+        val cb = DialogBadgeCelebrationBinding.inflate(layoutInflater)
+        cb.ivCelebrationBadge.setImageResource(
+            def.tierIcons.getOrNull(level - 1) ?: def.iconRes
+        )
+        cb.tvCelebrationBadgeName.text = getString(def.titleRes)
+        if (level > 1) {
+            cb.tvCelebrationLevel.visibility = View.VISIBLE
+            cb.tvCelebrationLevel.text = getString(R.string.badge_level, level)
+        }
+        val dialog = Dialog(this).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(cb.root)
+            window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+            window?.setDimAmount(0.6f)
+            setCancelable(true)
+        }
+        try {
+            dialog.show()
+            // pop-in with overshoot, like a game reward
+            cb.cvCelebration.scaleX = 0.5f
+            cb.cvCelebration.scaleY = 0.5f
+            cb.cvCelebration.alpha = 0f
+            cb.cvCelebration.animate().scaleX(1f).scaleY(1f).alpha(1f)
+                .setDuration(400)
+                .setInterpolator(OvershootInterpolator())
+                .start()
+            cb.confettiCelebration.burst()
+            delay(CELEBRATION_MS)
+        } catch (e: Exception) {
+            Timber.w(e, "Badge celebration overlay failed")
+        } finally {
+            if (dialog.isShowing) dialog.dismiss()
+        }
     }
 
     /** Evening notification tap → Journey screen (Notification LLD §1). */
