@@ -263,9 +263,12 @@
     <string name="adolescent_health_form">কিশোৰ স্বাস্থ্য ফৰ্ম</string>
     <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
     <string name="beneficiaries_due_for_immunization">টিকাকৰণৰ বাবে বঁটা পাবলগীয়া লাভান্বিত</string>
+    <string name="women_due_for_anc">ANC ৰ বাবে নিৰ্ধাৰিত মহিলা</string>
+    <string name="children_due_for_immunization">টিকাকৰণৰ বাবে নিৰ্ধাৰিত শিশু</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকিপূৰ্ণ কেচ</string>
-    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
-    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ অগৰ্ভৱতী মহিলা</string>
+    <string name="suspected_high_risk_pregnant_women">সন্দেহজনক উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
+    <string name="suspected_high_risk_non_pregnant_women">সন্দেহজনক উচ্চ ঝুঁকিপূৰ্ণ অগৰ্ভৱতী মহিলা</string>
+    <string name="confirmed_high_risk_pregnant_women">নিশ্চিত উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
     <string name="low_birth_weight_babies">কম ওজনৰ নবজাত শিশুসকল</string>
     <string name="str_add_member">সদস্য যোগ কৰক</string>
     <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>

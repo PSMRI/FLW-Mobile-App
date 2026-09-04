@@ -86,6 +86,9 @@ class SchedulerFragment : Fragment() {
         binding.cvHrp.setOnClickListener {
             safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
+        binding.cvConfirmedHrp.setOnClickListener {
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 3))
+        }
         binding.cvNonHrp.setOnClickListener {
             safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
         }
@@ -114,6 +117,11 @@ class SchedulerFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.hrpCountEC.collect {
                 binding.tvHrEcCount.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.hrpConfirmedCount.collect {
+                binding.tvConfirmedHrp.text = it.toString()
             }
         }
         lifecycleScope.launch {
