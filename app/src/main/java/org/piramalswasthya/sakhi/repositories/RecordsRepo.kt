@@ -424,6 +424,8 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
     val hrpTrackingPregListCount = benDao.getAllHRPTrackingPregListCount(selectedVillage)
 
+    val hrpConfirmedPregListCount = benDao.getAllHRPConfirmedPregListCount(selectedVillage)
+
     var hrpNonPregnantWomenList = benDao.getAllNonPregnancyWomenList(selectedVillage)
         .map { list -> list.map { it.asDomainModel() } }
     val hrpNonPregnantWomenListCount = benDao.getAllNonPregnancyWomenListCount(selectedVillage)
@@ -465,6 +467,18 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
             }
+    fun getHrpConfirmedPregnantWomanList() =
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+            .map { list ->
+                list.filter { !it.savedAncRecords.any { anc -> anc.maternalDeath == true } }
+                    .filter {
+                        it.savedAncRecords.any { anc ->
+                            anc.isActive && anc.hrpConfirmed == true && !anc.hrpConfirmedBy.isNullOrBlank()
+                        }
+                    }
+                    .map { it.asDomainModel() }
+            }
+
     fun getHighRiskPregnantWomanList() =
         benDao.getAllHighRiskPregnancyWomenList(selectedVillage)
             .map { list ->
