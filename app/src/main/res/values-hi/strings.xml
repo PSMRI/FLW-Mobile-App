@@ -1440,4 +1440,15 @@
     प्रसव की तिथि अंतिम एएनसी विज़िट की तिथि से पहले नहीं हो सकती।
 </string>
 
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">इस महीने देय</string>
+    <string name="imm_scheduled_next_month">अगले महीने निर्धारित</string>
+    <string name="imm_dose_stage">खुराक चरण</string>
+    <string name="imm_select_dose_stage">खुराक चरण चुनें</string>
+    <string name="imm_no_match_for_filters">चयनित फ़िल्टर से कोई लाभार्थी मेल नहीं खाता।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d लाभार्थी</item>
+        <item quantity="other">%d लाभार्थी</item>
+    </plurals>
 </resources>

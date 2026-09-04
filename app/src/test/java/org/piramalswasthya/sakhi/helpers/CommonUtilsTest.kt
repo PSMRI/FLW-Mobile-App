@@ -1107,40 +1107,25 @@ class CommonUtilsTest {
         assertEquals(1, filterImmunList(list, "98765").size)
     }
 
-    @Test fun `filterImmunList 5-6 branch matches 5 years`() {
-        val list = listOf(mkImm(age = "5 years"), mkImm(age = "3 years"))
-        assertEquals(1, filterImmunList(list, "5-6").size)
+    @Test fun `filterImmunList matches by age text`() {
+        // filterForImm strips spaces from the query but not from the age, so the stored age
+        // has to be space-free for a multi-word query to hit.
+        val list = listOf(mkImm(age = "5years"), mkImm(age = "3years"))
+        assertEquals(1, filterImmunList(list, "5 years").size)
     }
 
-    @Test fun `filterImmunList 16-24 branch matches 1 year`() {
-        val list = listOf(mkImm(age = "1 year 6 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "16-24").size)
-    }
-
-    @Test fun `filterImmunList 9-12 branch matches 10 months`() {
-        val list = listOf(mkImm(age = "10 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "9-12").size)
-    }
-
-    @Test fun `filterImmunList 6 weeks branch matches 1 month`() {
+    // FLW-1144: filterImmunList no longer rewrites a Dose Stage label into an age string.
+    // A stage typed as free text is now just a search term - it must not silently return
+    // children selected by age. Dose Stage filtering moved to the ViewModel, where it
+    // matches on VaccineDomain.vaccineCategory.
+    @Test fun `filterImmunList does not treat a dose stage label as an age filter`() {
         val list = listOf(mkImm(age = "1 month"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "6 weeks").size)
+        assertEquals(0, filterImmunList(list, "6 weeks").size)
     }
 
-    @Test fun `filterImmunList birth dose branch matches day age`() {
+    @Test fun `filterImmunList does not map birth dose onto day-aged children`() {
         val list = listOf(mkImm(age = "5 days"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "birth dose").size)
-    }
-
-    @Test fun `filterImmunList 10 weeks branch matches 3 months`() {
-        // filterForImm strips spaces from the token, so age must match "3months"
-        val list = listOf(mkImm(age = "3months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "10 weeks").size)
-    }
-
-    @Test fun `filterImmunList 14 weeks branch matches 4 months`() {
-        val list = listOf(mkImm(age = "4months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "14 weeks").size)
+        assertEquals(0, filterImmunList(list, "birth dose").size)
     }
 
     // ===============================================================
@@ -1763,16 +1748,16 @@ class CommonUtilsTest {
         assertTrue(filterForImm(imm, "12 months", "9 months", "10 months", "11 months"))
     }
 
-    @Test fun `filterImmunList 9-12 branch matches the third alternate 11 months`() {
+    // FLW-1144: "9-12" and "birth dose" used to be rewritten into age queries here. They are
+    // now plain search terms and match nothing on age alone.
+    @Test fun `filterImmunList treats a stage range as a literal search term`() {
         val list = listOf(mkImm(age = "11 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "9-12").size)
+        assertEquals(0, filterImmunList(list, "9-12").size)
     }
 
-    @Test fun `filterImmunList birth dose branch matches the one month fallback`() {
-        // "birth dose" rewrites the query to "1 month" with "1 day" as an alternate,
-        // and additionally lets through anyone whose age mentions days.
-        val list = listOf(mkImm(age = "1month"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "birth dose").size)
+    @Test fun `filterImmunList still matches a name that contains the query`() {
+        val list = listOf(mkImm(age = "1month", benName = "Rani"), mkImm(age = "5 years"))
+        assertEquals(1, filterImmunList(list, "rani").size)
     }
 
     // ===============================================================

@@ -1472,4 +1472,15 @@
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">
     প্রসবের তারিখ শেষ ANC ভিজিটের তারিখের আগে হতে পারে না।
 </string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">এই মাসে দেয়</string>
+    <string name="imm_scheduled_next_month">আগামী মাসেৰ জন্য নিৰ্ধাৰিত</string>
+    <string name="imm_dose_stage">ডোজ পৰ্যায়</string>
+    <string name="imm_select_dose_stage">ডোজ পৰ্যায় নিৰ্বাচন কৰুন</string>
+    <string name="imm_no_match_for_filters">নিৰ্বাচিত ফিল্টাৰেৰ সঙ্গে কোনো সুবিধাভোগী মেলেনি।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d সুবিধাভোগী</item>
+        <item quantity="other">%d সুবিধাভোগী</item>
+    </plurals>
 </resources>

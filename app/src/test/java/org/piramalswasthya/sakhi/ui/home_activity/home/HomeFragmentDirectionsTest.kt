@@ -143,13 +143,13 @@ class HomeFragmentDirectionsTest {
     }
 
     @Test
-    fun actionNavHomeToImmunizationDueFragment_buildsDirections() {
-        val d = HomeFragmentDirections.actionNavHomeToImmunizationDueFragment()
+    fun actionNavHomeToChildImmunizationListFragment_buildsDirections() {
+        val d = HomeFragmentDirections.actionNavHomeToChildImmunizationListFragment()
         assertNotNull(d)
         assertTrue(d.actionId != 0)
         assertNotNull(d.arguments)
         assertTrue(d.toString().isNotEmpty())
-        val same = HomeFragmentDirections.actionNavHomeToImmunizationDueFragment()
+        val same = HomeFragmentDirections.actionNavHomeToChildImmunizationListFragment()
         assertEquals(d, same)
         assertEquals(d.hashCode(), same.hashCode())
         assertFalse(d.equals(null))

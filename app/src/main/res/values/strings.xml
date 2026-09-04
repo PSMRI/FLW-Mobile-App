@@ -1602,5 +1602,16 @@
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
 </resources>
 
