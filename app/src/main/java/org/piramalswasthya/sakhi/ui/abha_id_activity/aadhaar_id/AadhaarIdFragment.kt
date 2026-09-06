@@ -1,9 +1,15 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id
 
+
+import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -12,10 +18,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarIdBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel.State
+import timber.log.Timber
+import androidx.core.net.toUri
+import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentDirections
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -28,11 +40,43 @@ class AadhaarIdFragment : Fragment() {
     private lateinit var abhaMode: AadhaarIdViewModel.Abha
     val viewModel: AadhaarIdViewModel by viewModels({ requireActivity() })
 
+    @Inject lateinit var analyticsHelper: AnalyticsHelper
+
     private lateinit var navController: NavController
     private val aadhaarNavController by lazy {
         val navHostFragment: NavHostFragment =
             childFragmentManager.findFragmentById(R.id.nav_host_fragment_find_abha) as NavHostFragment
         navHostFragment.navController
+    }
+
+    private var ABHA_URI = "https://phrsbx.abdm.gov.in/face-auth?txnId="
+
+    private var ABHA_PACKAGE =
+        if(BuildConfig.FLAVOR.contains("stag", ignoreCase = true) ||
+            BuildConfig.FLAVOR.contains("uat", ignoreCase = true)) {
+            ABHA_URI = "https://phrsbx.abdm.gov.in/face-auth?txnId="
+            "in.ndhm.phr.debug"
+        } else {
+            ABHA_URI = "https://phr.abdm.gov.in/face-auth?txnId="
+            "in.ndhm.phr"
+        }
+
+    private val pleaseWaitDialog by lazy {
+        AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.please_wait))
+            .setCancelable(false)
+            .create()
+    }
+
+    private val alertDialog by lazy {
+        AlertDialog.Builder(requireContext())
+            .setTitle(resources.getString(R.string.message))
+            .setMessage("")
+            .setCancelable(false)
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
     }
 
     private val onBackPressedCallback by lazy {
@@ -59,6 +103,14 @@ class AadhaarIdFragment : Fragment() {
             viewLifecycleOwner,
             onBackPressedCallback
         )
+
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            viewModel.aadhaarVerificationTypeValues
+        )
+
+        binding.actvAadharVerificationDropdown.setAdapter(adapter)
 
         binding.createToggle.setOnClickListener {
             binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
@@ -112,10 +164,8 @@ class AadhaarIdFragment : Fragment() {
                 0 -> {
                     viewModel.setVerificationType("OTP")
                 }
-
                 1 -> {
-                    viewModel.setVerificationType("FP")
-                    binding.rgGovAsha.visibility = View.INVISIBLE
+                    viewModel.setVerificationType("FA")
                 }
             }
         }
@@ -142,13 +192,28 @@ class AadhaarIdFragment : Fragment() {
                                     viewModel.txnId, viewModel.mobileNumber
                                 )
                             )
-                        } else if (viewModel.verificationType.value == "FP") {
-                            findNavController().navigate(
-                                AadhaarIdFragmentDirections.actionAadhaarIdFragmentToGenerateMobileOtpFragment(
-                                    viewModel.txnId, viewModel.mobileNumber
-                                )
-                            )
+                        } else if (viewModel.verificationType.value == "FA") {
+                            binding.clContentAadharId.visibility = View.VISIBLE
+                            binding.pbLoadingAadharId.visibility = View.INVISIBLE
+                            binding.clError.visibility = View.INVISIBLE
+                            pleaseWaitDialog.setMessage(resources.getString(R.string.initializing))
+                            pleaseWaitDialog.show()
+                            Timber.d("FACE_TXN_GENERATED reached, txnId=${viewModel.txnId}")
+
+                            val uri = (ABHA_URI + viewModel.txnId).toUri()
+                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                setPackage(ABHA_PACKAGE)
+                            }
+
+                            try {
+                                startActivity(intent)
+                                viewModel.submitCapturedPid()
+                            } catch (e: ActivityNotFoundException) {
+                                pleaseWaitDialog.dismiss()
+                                e.printStackTrace()
+                            }
                         }
+
                     }
                 }
 
@@ -175,6 +240,69 @@ class AadhaarIdFragment : Fragment() {
                             viewModel.txnId, "", "", "",""
                         )
                     )
+                }
+
+                State.FACE_AUTH_PENDING -> {
+                    pleaseWaitDialog.dismiss()
+                    pleaseWaitDialog.setMessage(resources.getString(R.string.face_pending))
+                    pleaseWaitDialog.show()
+                }
+
+                State.FACE_AUTH_VERIFIED -> {
+                    pleaseWaitDialog.dismiss()
+                    pleaseWaitDialog.setMessage(resources.getString(R.string.face_verified))
+                    pleaseWaitDialog.show()
+                }
+
+                State.FACE_AUTH_SUCCESS -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    alertDialog.setTitle(resources.getString(R.string.message))
+                    alertDialog.setMessage(resources.getString(R.string.face_success))
+                    alertDialog.show()
+                    viewModel.completeFaceEnrollment()
+                }
+
+                State.FACE_AUTH_FAILURE -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    alertDialog.setTitle(resources.getString(R.string.message))
+                    alertDialog.setMessage(resources.getString(R.string.face_failed))
+                    alertDialog.show()
+                }
+
+                State.ABHA_GENERATION_PENDING -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    pleaseWaitDialog.setTitle(resources.getString(R.string.message))
+                    pleaseWaitDialog.setMessage(resources.getString(R.string.processing))
+                    pleaseWaitDialog.show()
+                }
+
+                State.ABHA_GENERATION_FAILED -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    alertDialog.setTitle(resources.getString(R.string.message))
+                    alertDialog.setMessage(viewModel.errorMessage.value.toString())
+                    alertDialog.show()
+                }
+
+                State.ABHA_GENERATION_SUCCESS -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    val timestamp = System.currentTimeMillis()
+                    analyticsHelper.logCustomTimestampEvent("create_abha_response",timestamp)
+                    findNavController().navigate(
+                        AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
+                            viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
+                        )
+                    )
+                }
+
+                else -> {
+                    pleaseWaitDialog.dismiss()
+                    alertDialog.dismiss()
+                    Toast.makeText(requireContext(), "Face Enrollment Failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }
