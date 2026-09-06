@@ -75,6 +75,14 @@ object BadgeDates {
         return start until cal.timeInMillis
     }
 
+    fun quarterIntervalAt(offsetQuarters: Int, now: Long): LongRange {
+        val cal = isoCalendar(quarterStart(now))
+        cal.add(Calendar.MONTH, offsetQuarters * 3)
+        val start = cal.timeInMillis
+        cal.add(Calendar.MONTH, 3)
+        return start until cal.timeInMillis
+    }
+
     fun quarterStart(now: Long): Long {
         val cal = isoCalendar(now)
         cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) / 3 * 3)

@@ -77,11 +77,19 @@ class BadgeEvaluator @Inject constructor(
             val now = System.currentTimeMillis()
             val states = mutableListOf<BadgeStateCache>()
             val earned = mutableListOf<BadgeEarnedCache>()
+            val priorEarned = try {
+                badgeDao.getEarned(userId)
+            } catch (e: Exception) {
+                emptyList()
+            }
 
             for (def in BadgeDefinitions.ALL) {
                 if (!BadgeDefinitions.isEnabled(def, config)) continue
                 try {
-                    evaluate(def, config, freezes, userId, now, states, earned)
+                    evaluate(
+                        def, config, freezes, userId, now, states, earned,
+                        hasHistory = priorEarned.any { it.badgeId == def.id }
+                    )
                 } catch (e: Exception) {
                     // One badge family failing must not stop the others (LLD §5.2)
                     Timber.w(e, "Badges: evaluation failed for ${def.id}")
@@ -91,7 +99,7 @@ class BadgeEvaluator @Inject constructor(
             badgeDao.upsertStates(states)
             if (earned.isNotEmpty()) {
                 // skip celebration on the first-ever evaluation (historical backfill)
-                val hadEarnedBefore = badgeDao.getEarned(userId).isNotEmpty()
+                val hadEarnedBefore = priorEarned.isNotEmpty()
                 val insertedIds = badgeDao.insertEarned(earned)
                 if (hadEarnedBefore) {
                     val newRows = insertedIds.zip(earned)
@@ -159,6 +167,9 @@ class BadgeEvaluator @Inject constructor(
         private const val CELEBRATION_CHANNEL_ID = "badge_celebration"
         private const val CELEBRATION_ID = 20003
         private const val RUN_THROTTLE_MS = 10_000L
+
+        // ponytail: 2-year quarterly backfill; raise if older history matters
+        private const val PAST_QUARTERS_LOOKBACK = 8
     }
 
     private suspend fun evaluate(
@@ -168,30 +179,37 @@ class BadgeEvaluator @Inject constructor(
         userId: Int,
         now: Long,
         states: MutableList<BadgeStateCache>,
-        earned: MutableList<BadgeEarnedCache>
+        earned: MutableList<BadgeEarnedCache>,
+        hasHistory: Boolean
     ) {
         val milestones = BadgeDefinitions.effectiveMilestones(def, config)
 
         when (def.kind) {
             BadgeKind.STREAK_WEEKLY, BadgeKind.STREAK_MONTHLY -> {
                 val weekly = def.kind == BadgeKind.STREAK_WEEKLY
+                // sync log ∪ activity weeks: activity is recomputable from
+                // re-synced records, so streak history survives a reinstall
                 val completed =
-                    if (weekly) badgeDao.getAllSyncWeeks().toSet()
+                    if (weekly) badgeDao.getAllSyncWeeks().toSet() + facts.activityWeeks()
                     else facts.onTimeIncentiveMonths()
+                val periodKeyAt = { off: Int ->
+                    if (weekly) BadgeDates.weekKeyAt(off, now) else BadgeDates.monthKeyAt(off, now)
+                }
                 val streak = streakEngine.compute(
                     completedPeriods = completed,
                     graceTokens = BadgeDefinitions.effectiveGrace(def, config),
                     freezes = freezes,
                     badgeId = def.id,
-                    periodKeyAt = { off ->
-                        if (weekly) BadgeDates.weekKeyAt(off, now) else BadgeDates.monthKeyAt(off, now)
-                    },
+                    periodKeyAt = periodKeyAt,
                     periodIntervalAt = { off ->
                         if (weekly) BadgeDates.weekIntervalAt(off, now)
                         else BadgeDates.monthIntervalAt(off, now)
                     }
                 )
-                val level = milestones.count { streak.length >= it }
+                // once earned, never revoked: award on the best run ever, so a
+                // broken streak or a reinstall keeps previously earned tiers
+                val bestRun = maxOf(streak.length, streakEngine.longestRun(completed, periodKeyAt))
+                val level = milestones.count { bestRun >= it }
                 states += BadgeStateCache(
                     badgeId = def.id,
                     currentLevel = level,
@@ -233,6 +251,26 @@ class BadgeEvaluator @Inject constructor(
                         userId = userId, badgeId = def.id, level = 1,
                         caseRef = BadgeDates.quarterKey(now), earnedAt = now
                     )
+                }
+                // reinstall restore: while this badge has no earned history,
+                // recompute past quarters from re-synced record dates
+                // (calendar quarters approximate Complete Worker's rolling 90d)
+                if (!hasHistory) {
+                    for (q in 1..PAST_QUARTERS_LOOKBACK) {
+                        val window = BadgeDates.quarterIntervalAt(-q, now)
+                        val past = when (def.id) {
+                            BadgeIds.COMPLETE_WORKER ->
+                                facts.activeDomainsSince(window.first, window.last + 1)
+
+                            else -> facts.meetingTypesSince(window.first, window.last + 1)
+                        }
+                        if (past >= threshold) {
+                            earned += BadgeEarnedCache(
+                                userId = userId, badgeId = def.id, level = 1,
+                                caseRef = BadgeDates.quarterKey(window.first), earnedAt = now
+                            )
+                        }
+                    }
                 }
             }
 

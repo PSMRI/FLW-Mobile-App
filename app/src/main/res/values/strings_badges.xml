@@ -18,9 +18,9 @@
     <string name="badge_timely_reporter_title">Timely Reporter</string>
     <string name="badge_timely_reporter_desc">Submit your monthly incentive form on time</string>
     <string name="badge_complete_worker_title">Complete Worker</string>
-    <string name="badge_complete_worker_desc">Stay active in 4+ health domains every quarter</string>
+    <string name="badge_complete_worker_desc">Stay active in 3+ health domains every quarter</string>
     <string name="badge_community_voice_title">Community Voice</string>
-    <string name="badge_community_voice_desc">Organize all 4 meeting types (MAA, NDD, AHD, U-WIN)</string>
+    <string name="badge_community_voice_desc">Organize 2+ meeting types (MAA, NDD, AHD, U-WIN) each quarter</string>
     <string name="badge_maternal_journey_title">Maternal Journey</string>
     <string name="badge_maternal_journey_desc">Complete maternal care journeys through institutional delivery</string>
     <string name="badge_child_fully_protected_title">Child Fully Protected</string>

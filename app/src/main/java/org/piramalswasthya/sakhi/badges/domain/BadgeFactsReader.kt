@@ -84,13 +84,13 @@ class BadgeFactsReader @Inject constructor(
     private fun queryLong(query: String): Long =
         sql.query(query).use { c -> if (c.moveToFirst()) c.getLong(0) else 0L }
 
-    /** Count of non-draft records in [table] created since [since]; 0 when unresolvable. */
-    private fun countNewRecordsSince(table: String, since: Long): Long =
+    /** Count of non-draft records in [table] created in [since, until); 0 when unresolvable. */
+    private fun countNewRecordsSince(table: String, since: Long, until: Long = Long.MAX_VALUE): Long =
         safely("count $table", 0L) {
             if (!tableExists(table)) return@safely 0L
             val dateCol = integerDateColumn(table) ?: return@safely 0L
             queryLong(
-                "SELECT COUNT(*) FROM `$table` WHERE `$dateCol` >= $since${draftFilter(table)}"
+                "SELECT COUNT(*) FROM `$table` WHERE `$dateCol` >= $since AND `$dateCol` < $until${draftFilter(table)}"
             )
         }
 
@@ -109,16 +109,43 @@ class BadgeFactsReader @Inject constructor(
         out
     }
 
-    /** Complete Worker: distinct health domains with at least one new record since [since]. */
-    fun activeDomainsSince(since: Long): Long = safely("activeDomains", 0L) {
-        DOMAIN_TABLES.count { (_, tables) ->
-            tables.any { countNewRecordsSince(it, since) > 0 }
-        }.toLong()
-    }
+    /** Complete Worker: distinct health domains with at least one new record in [since, until). */
+    fun activeDomainsSince(since: Long, until: Long = Long.MAX_VALUE): Long =
+        safely("activeDomains", 0L) {
+            DOMAIN_TABLES.count { (_, tables) ->
+                tables.any { countNewRecordsSince(it, since, until) > 0 }
+            }.toLong()
+        }
 
-    /** Community Voice: distinct meeting types with at least one record since quarter start. */
-    fun meetingTypesSince(since: Long): Long = safely("meetingTypes", 0L) {
-        MEETING_TABLES.count { countNewRecordsSince(it, since) > 0 }.toLong()
+    /** Community Voice: distinct meeting types with at least one record in [since, until). */
+    fun meetingTypesSince(since: Long, until: Long = Long.MAX_VALUE): Long =
+        safely("meetingTypes", 0L) {
+            MEETING_TABLES.count { countNewRecordsSince(it, since, until) > 0 }.toLong()
+        }
+
+    /**
+     * Weeks with any recorded work, derived from record timestamps across all
+     * badge-mapped tables. Auto-sync fires on every save, so an activity week
+     * is a sync week in practice — and because re-downloaded records keep
+     * their original dates, this restores Steady Syncer history after a
+     * reinstall without any backend (union with the local BADGE_SYNC_LOG).
+     */
+    fun activityWeeks(): Set<String> = safely("activityWeeks", emptySet()) {
+        val out = mutableSetOf<String>()
+        val dayMs = TimeUnit.DAYS.toMillis(1)
+        for (table in MAPPED_TABLES) {
+            if (!tableExists(table)) continue
+            val dateCol = integerDateColumn(table) ?: continue
+            safely("activityWeeks:$table", Unit) {
+                sql.query(
+                    "SELECT DISTINCT `$dateCol` / $dayMs FROM `$table` " +
+                            "WHERE `$dateCol` > 0${draftFilter(table)}"
+                ).use { c ->
+                    while (c.moveToNext()) out.add(BadgeDates.weekKey(c.getLong(0) * dayMs))
+                }
+            }
+        }
+        out
     }
 
     /**

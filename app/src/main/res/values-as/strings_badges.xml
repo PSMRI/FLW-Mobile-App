@@ -17,9 +17,9 @@
     <string name="badge_timely_reporter_title">টাইমলী ৰিপৰ্টাৰ</string>
     <string name="badge_timely_reporter_desc">মাহেকীয়া প্ৰোৎসাহন ফৰ্ম সময়মতে জমা দিয়ক</string>
     <string name="badge_complete_worker_title">কমপ্লিট ৱৰ্কাৰ</string>
-    <string name="badge_complete_worker_desc">প্ৰতি ত্ৰৈমাসিকত ৪+ স্বাস্থ্য ক্ষেত্ৰত সক্ৰিয় থাকক</string>
+    <string name="badge_complete_worker_desc">প্ৰতি ত্ৰৈমাসিকত ৩+ স্বাস্থ্য ক্ষেত্ৰত সক্ৰিয় থাকক</string>
     <string name="badge_community_voice_title">কমিউনিটি ভইচ</string>
-    <string name="badge_community_voice_desc">চাৰিওটা ধৰণৰ সভা (MAA, NDD, AHD, U-WIN) আয়োজন কৰক</string>
+    <string name="badge_community_voice_desc">প্ৰতি ত্ৰৈমাসিকত ২+ ধৰণৰ সভা (MAA, NDD, AHD, U-WIN) আয়োজন কৰক</string>
     <string name="badge_maternal_journey_title">মাতৃত্বৰ যাত্ৰা</string>
     <string name="badge_maternal_journey_desc">প্ৰাতিষ্ঠানিক প্ৰসৱলৈকে মাতৃ যত্নৰ যাত্ৰা সম্পূৰ্ণ কৰক</string>
     <string name="badge_child_fully_protected_title">সম্পূৰ্ণ সুৰক্ষিত শিশু</string>

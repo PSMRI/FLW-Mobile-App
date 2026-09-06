@@ -17,9 +17,9 @@
     <string name="badge_timely_reporter_title">টাইমলি রিপোর্টার</string>
     <string name="badge_timely_reporter_desc">মাসিক প্রণোদনা ফর্ম সময়মতো জমা দিন</string>
     <string name="badge_complete_worker_title">কমপ্লিট ওয়ার্কার</string>
-    <string name="badge_complete_worker_desc">প্রতি ত্রৈমাসিকে ৪+ স্বাস্থ্য ক্ষেত্রে সক্রিয় থাকুন</string>
+    <string name="badge_complete_worker_desc">প্রতি ত্রৈমাসিকে ৩+ স্বাস্থ্য ক্ষেত্রে সক্রিয় থাকুন</string>
     <string name="badge_community_voice_title">কমিউনিটি ভয়েস</string>
-    <string name="badge_community_voice_desc">চার ধরনের সভা (MAA, NDD, AHD, U-WIN) আয়োজন করুন</string>
+    <string name="badge_community_voice_desc">প্রতি ত্রৈমাসিকে ২+ ধরনের সভা (MAA, NDD, AHD, U-WIN) আয়োজন করুন</string>
     <string name="badge_maternal_journey_title">মাতৃত্বের যাত্রা</string>
     <string name="badge_maternal_journey_desc">প্রাতিষ্ঠানিক প্রসব পর্যন্ত মাতৃ যত্নের যাত্রা সম্পূর্ণ করুন</string>
     <string name="badge_child_fully_protected_title">সম্পূর্ণ সুরক্ষিত শিশু</string>

@@ -75,7 +75,7 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.STEADY_SYNCER,
             kind = BadgeKind.STREAK_WEEKLY,
-            milestones = listOf(2, 6, 12, 26), // first win at 2 weeks (rebalanced from LLD's 4,8,16,26)
+            milestones = listOf(2, 4, 6, 8), // reviewer: fortnightly cadence — 2/4/6/8 weeks
             defaultGraceTokens = 1, // 1-week grace period (LLD §1.1)
             celebrate = false, // sync is automatic — no surprise popups for it
             titleRes = R.string.badge_steady_syncer_title,

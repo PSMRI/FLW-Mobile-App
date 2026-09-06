@@ -57,6 +57,33 @@ class StreakEngine @Inject constructor() {
         return Streak(length, grace)
     }
 
+    /**
+     * Longest consecutive run anywhere in history ("once earned, never
+     * revoked" across streak breaks and reinstalls). Conservative: no grace
+     * or freeze bridging for past runs — those only protect the live streak.
+     */
+    fun longestRun(
+        completedPeriods: Set<String>,
+        periodKeyAt: (Int) -> String,
+        maxLookback: Int = MAX_LOOKBACK
+    ): Long {
+        if (completedPeriods.isEmpty()) return 0
+        val remaining = completedPeriods.toMutableSet()
+        var best = 0L
+        var run = 0L
+        var offset = 0
+        while (remaining.isNotEmpty() && offset >= -maxLookback) {
+            if (remaining.remove(periodKeyAt(offset))) {
+                run++
+                if (run > best) best = run
+            } else {
+                run = 0
+            }
+            offset--
+        }
+        return best
+    }
+
     private fun inFreezeWindow(period: LongRange, freezes: List<BadgeStreakFreezeCache>): Boolean =
         freezes.any { it.startDate <= period.last && it.endDate >= period.first }
 

@@ -17,9 +17,9 @@
     <string name="badge_timely_reporter_title">टाइमली रिपोर्टर</string>
     <string name="badge_timely_reporter_desc">मासिक प्रोत्साहन फ़ॉर्म समय पर जमा करें</string>
     <string name="badge_complete_worker_title">कंप्लीट वर्कर</string>
-    <string name="badge_complete_worker_desc">हर तिमाही 4+ स्वास्थ्य क्षेत्रों में सक्रिय रहें</string>
+    <string name="badge_complete_worker_desc">हर तिमाही 3+ स्वास्थ्य क्षेत्रों में सक्रिय रहें</string>
     <string name="badge_community_voice_title">कम्युनिटी वॉइस</string>
-    <string name="badge_community_voice_desc">सभी 4 प्रकार की बैठकें (MAA, NDD, AHD, U-WIN) आयोजित करें</string>
+    <string name="badge_community_voice_desc">हर तिमाही 2+ प्रकार की बैठकें (MAA, NDD, AHD, U-WIN) आयोजित करें</string>
     <string name="badge_maternal_journey_title">मातृत्व यात्रा</string>
     <string name="badge_maternal_journey_desc">संस्थागत प्रसव तक मातृ देखभाल यात्राएँ पूरी करें</string>
     <string name="badge_child_fully_protected_title">पूर्ण सुरक्षित शिशु</string>

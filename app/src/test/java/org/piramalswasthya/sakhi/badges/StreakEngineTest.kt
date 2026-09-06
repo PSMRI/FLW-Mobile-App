@@ -83,6 +83,33 @@ class StreakEngineTest {
         assertEquals(0, result.graceRemaining)
     }
 
+    private fun longestRun(completed: Set<String>) =
+        engine.longestRun(completed, periodKeyAt = { off -> BadgeDates.weekKeyAt(off, now) })
+
+    @Test
+    fun `longest run finds best historical streak past a break`() {
+        // current streak is 1, but weeks -3..-6 once formed a 4-week run
+        assertEquals(4L, longestRun(weeks(0, -3, -4, -5, -6)))
+    }
+
+    @Test
+    fun `longest run equals current streak when unbroken`() {
+        assertEquals(3L, longestRun(weeks(0, -1, -2)))
+    }
+
+    @Test
+    fun `longest run is zero for empty history`() {
+        assertEquals(0L, longestRun(emptySet()))
+    }
+
+    @Test
+    fun `quarter interval covers exactly one past quarter`() {
+        val window = BadgeDates.quarterIntervalAt(-1, now)
+        assertEquals(BadgeDates.quarterStart(now) - 1, window.last)
+        assert(BadgeDates.quarterKey(window.first) != BadgeDates.quarterKey(now))
+        assertEquals(BadgeDates.quarterKey(window.first), BadgeDates.quarterKey(window.last))
+    }
+
     @Test
     fun `period keys are stable and iso formatted`() {
         assertEquals(BadgeDates.weekKey(now), BadgeDates.weekKeyAt(0, now))
