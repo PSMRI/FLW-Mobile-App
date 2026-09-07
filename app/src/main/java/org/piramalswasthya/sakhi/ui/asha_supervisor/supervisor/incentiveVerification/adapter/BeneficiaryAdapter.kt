@@ -48,9 +48,17 @@ class BeneficiaryAdapter(
                     binding.cbSelectBeneficiary.setOnCheckedChangeListener(null)
                     if (showCheckbox()) {
                         binding.cbSelectBeneficiary.visibility = View.VISIBLE
-                        binding.cbSelectBeneficiary.isChecked = isSelected(item)
-                        binding.cbSelectBeneficiary.setOnCheckedChangeListener { _, isChecked ->
-                            onSelectionChanged(item, isChecked)
+                        if (item.isApproved == true) {
+                            // Backend-approved beneficiary: ticked and not unselectable. No
+                            // listener, so the fragment seeds it into the selection set itself.
+                            binding.cbSelectBeneficiary.isChecked = true
+                            binding.cbSelectBeneficiary.isEnabled = false
+                        } else {
+                            binding.cbSelectBeneficiary.isEnabled = true
+                            binding.cbSelectBeneficiary.isChecked = isSelected(item)
+                            binding.cbSelectBeneficiary.setOnCheckedChangeListener { _, isChecked ->
+                                onSelectionChanged(item, isChecked)
+                            }
                         }
                     } else {
                         binding.cbSelectBeneficiary.visibility = View.GONE

@@ -71,8 +71,9 @@ class WorkerDetailFragment : Fragment() {
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
             //    hasDefaultRecord &&
+                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
                 workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
+                workerStatus != "REJECTED"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -209,6 +210,14 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
+                    // Backend-approved rows render ticked and locked, so their checkbox has no
+                    // listener to register them — seed them here or they would be left out of
+                    // the Verify/Reject payload.
+                    if (showActivityCheckboxes) {
+                        selectedActivityIds.addAll(
+                            state.records.filter { it.isApproved }.map { it.incentiveId }
+                        )
+                    }
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                   //   hasDefaultRecord = currentRecords.any { it.isDefault }
                     binding.btnVerify.visibility = if (/*hasDefaultRecord &&*/ BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -232,7 +241,7 @@ class WorkerDetailFragment : Fragment() {
                         updateActionButtonsEnabled()
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -315,6 +324,9 @@ class WorkerDetailFragment : Fragment() {
         rejectionReasonAdapter.notifyDataSetChanged()
         binding.otherReasonContainer.visibility = View.GONE
         binding.etOtherReason.text?.clear()
+        // Must be cleared with the rest of the sheet state: left true, every later rejection is
+        // blocked by the "provide the reason for Other" guard with the input box already hidden.
+        otherReasonSelected = false
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {

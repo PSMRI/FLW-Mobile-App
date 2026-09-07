@@ -60,8 +60,9 @@ class BeneficiaryDetailFragment : Fragment() {
 
     private val showBeneficiaryCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
+                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
                 workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
+                workerStatus != "REJECTED"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -168,6 +169,9 @@ class BeneficiaryDetailFragment : Fragment() {
         rejectionReasonAdapter.notifyDataSetChanged()
         binding.otherReasonContainer.visibility = View.GONE
         binding.etOtherReason.text?.clear()
+        // Must be cleared with the rest of the sheet state: left true, every later rejection is
+        // blocked by the "provide the reason for Other" guard with the input box already hidden.
+        otherReasonSelected = false
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {
@@ -213,6 +217,14 @@ class BeneficiaryDetailFragment : Fragment() {
                     binding.rvBeneficiaries.visibility = View.VISIBLE
                     currentRecords = state.records
                     selectedBeneficiaryIds.retainAll(currentRecords.map { it.id }.toSet())
+                    // Backend-approved rows render ticked and locked, so their checkbox has no
+                    // listener to register them — seed them here or they would be left out of
+                    // the Verify/Reject payload.
+                    if (showBeneficiaryCheckboxes) {
+                        selectedBeneficiaryIds.addAll(
+                            currentRecords.filter { it.isApproved == true }.map { it.id }
+                        )
+                    }
                     adapter.submitList(state.records)
                     updateActionButtonsEnabled()
 

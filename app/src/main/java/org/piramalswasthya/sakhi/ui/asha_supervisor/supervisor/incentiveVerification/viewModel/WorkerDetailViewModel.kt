@@ -194,6 +194,8 @@ data class ClaimedIncentiveUI(
     @SerializedName("totalAmount") val totalAmount: Int,
     @SerializedName("isDefault") val isDefault: Boolean,
     @SerializedName("approvalStatus") val approvalStatus: Int,
+    /** Server-side flag on claimedIncentiveByUser; false when the field is absent. */
+    @SerializedName("isApproved") val isApproved: Boolean = false,
 
 )
 
