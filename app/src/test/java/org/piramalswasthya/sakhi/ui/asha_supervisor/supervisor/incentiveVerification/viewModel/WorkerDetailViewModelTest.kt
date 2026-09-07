@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -120,6 +121,53 @@ class WorkerDetailViewModelTest : BaseViewModelTest() {
         val records = (state as WorkerDetailUiState.Success).records
         assertEquals(1, records.size)
         assertEquals("Home visit", records[0].activityDec)
+    }
+
+    /**
+     * Verbatim claimedIncentiveByUser payload (10-Sep-2026) after the backend added `isApproved`:
+     * the Monthly honorarium comes back pre-approved, the two register-filling activities do not.
+     * Note it also no longer carries `isDefaultActivity`.
+     */
+    private val isApprovedBody = """
+        {"data":[
+          {"activityDec":"Filling 5 prescribed types of information in the Mitanin register","approvalStatus":102,"activityId":128,"incentiveId":99516,"totalAmount":1000,"groupName":"Administrative and Fixed Payments","isDefault":true,"amount":1000,"claimCount":1,"isApproved":false},
+          {"activityDec":"Filling prescribed information in the Mitanin register","approvalStatus":102,"activityId":113,"incentiveId":99517,"totalAmount":500,"groupName":"Administrative and Fixed Payments","isDefault":true,"amount":500,"claimCount":1,"isApproved":false},
+          {"activityDec":"Monthly honorarium","approvalStatus":102,"activityId":140,"incentiveId":99515,"totalAmount":2200,"groupName":"Administrative and Fixed Payments","isDefault":true,"amount":2200,"claimCount":1,"isApproved":true}
+        ],"statusCode":200,"errorMessage":"Success","status":"Success"}
+    """.trimIndent()
+
+    @Test
+    fun `init parses isApproved per row`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns user
+        every { preferenceDao.getStateId() } returns 5
+        coEvery { apiService.getClaimedIncentiveByUser(any()) } returns Response.success(jsonBody(isApprovedBody))
+
+        viewModel.init(1, 8, 2026, approvalStatus = 102)
+        advanceUntilIdle()
+
+        val records = (viewModel.uiState.value as WorkerDetailUiState.Success).records
+        assertEquals(3, records.size)
+
+        val honorarium = records.first { it.activityId == 140 }
+        assertTrue(honorarium.isApproved)
+        assertEquals(2200, honorarium.totalAmount)
+        assertEquals(99515, honorarium.incentiveId)
+
+        assertFalse(records.first { it.activityId == 128 }.isApproved)
+        assertFalse(records.first { it.activityId == 113 }.isApproved)
+    }
+
+    @Test
+    fun `isApproved defaults to false when the field is absent`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns user
+        every { preferenceDao.getStateId() } returns 5
+        coEvery { apiService.getClaimedIncentiveByUser(any()) } returns Response.success(jsonBody(successBody))
+
+        viewModel.init(1, 1, 2026, approvalStatus = 102)
+        advanceUntilIdle()
+
+        val records = (viewModel.uiState.value as WorkerDetailUiState.Success).records
+        assertFalse(records[0].isApproved)
     }
 
     @Test

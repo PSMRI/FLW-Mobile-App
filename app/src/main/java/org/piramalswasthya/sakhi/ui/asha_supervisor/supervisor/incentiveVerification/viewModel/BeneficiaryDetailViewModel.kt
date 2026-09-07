@@ -163,7 +163,9 @@ data class BeneficiaryRecordUI(
     @SerializedName("rchId") val rchId: String?,
     @SerializedName("abhaNumber") val abhaNumber: String?,
     @SerializedName("isClaimed") val isClaimed: Boolean?,
-    @SerializedName("verifiedByUserName") val verifiedByUserName: String?
+    @SerializedName("verifiedByUserName") val verifiedByUserName: String?,
+    /** Server-side flag on AllIncentiveByActivityId; null when the field is absent. */
+    @SerializedName("isApproved") val isApproved: Boolean? = null
 )
 
 sealed class BeneficiaryUiState {

@@ -1,169 +1,144 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--
+  One claimed record on the Mitanin Trainer / ANM single-activity screen.
+
+  BRD 164692128 §19.3/§19.4: every row is approved or rejected on the spot with its own tick and
+  cross — there is no checkbox and no bulk footer at this level. A beneficiary-linked claim shows
+  the beneficiary block; a meeting/register claim shows the date it happened instead, so the
+  reviewer is checking something real rather than ticking a blank box.
+
+  Flat by design: the rows live inside a single card owned by fragment_beneficiary_detail.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginTop="12dp"
-    app:cardBackgroundColor="@android:color/white"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="2dp">
+    android:background="@android:color/white"
+    android:paddingStart="12dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+    <!-- Approve: immediate, no confirmation sheet -->
+    <ImageView
+        android:id="@+id/btnApprove"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/approve"
+        android:src="@drawable/ic_check_circle_green"
+        app:layout_constraintBottom_toBottomOf="@id/llInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/llInfo" />
+
+    <!-- Reject: opens the reason sheet for this row only -->
+    <ImageView
+        android:id="@+id/btnReject"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/reject"
+        android:src="@drawable/ic_crossed_circle"
+        app:layout_constraintBottom_toBottomOf="@id/btnApprove"
+        app:layout_constraintStart_toEndOf="@id/btnApprove"
+        app:layout_constraintTop_toTopOf="@id/btnApprove" />
+
+    <TextView
+        android:id="@+id/tvSerialNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:minWidth="16dp"
+        android:gravity="center"
+        android:textColor="#111827"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btnApprove"
+        app:layout_constraintStart_toEndOf="@id/btnReject"
+        app:layout_constraintTop_toTopOf="@id/btnApprove"
+        tools:text="1" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/llInfo"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/tvAmount"
+        app:layout_constraintStart_toEndOf="@id/tvSerialNo"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Header -->
-
-        <!-- Table Header -->
-        <LinearLayout
-            android:id="@+id/tableHeader"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="#F5F7FA"
-            android:padding="10dp"
-            android:visibility="gone"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="S.NO"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="DETAILS"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="AMOUNT"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Row -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <!-- Shown for claims with no beneficiary behind them (meetings, registers) -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:textColor="#6B7280"
+            android:textSize="15sp"
+            android:visibility="gone"
+            tools:text="Date: 06 Jul 2026"
+            tools:visibility="visible" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_08"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.10" />
+        <TextView
+            android:id="@+id/tvBenId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#001B44"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Ben ID: 664547959811" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_82"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.82" />
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#111827"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="RAJA SING" />
 
-            <TextView
-                android:id="@+id/tvSerialNo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="#64748B"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@id/llInfo"
-                app:layout_constraintEnd_toStartOf="@id/gl_08"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/llInfo"
-                tools:text="1" />
+        <TextView
+            android:id="@+id/tvRchId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            tools:text="RCH ID: 123456789" />
 
-            <LinearLayout
-                android:id="@+id/llInfo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toStartOf="@id/gl_82"
-                app:layout_constraintStart_toStartOf="@id/gl_08"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/tvBenId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#001B44"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    tools:text="Ben ID : 664547959811" />
-
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="#111827"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="RAJA SING" />
-
-                <TextView
-                    android:id="@+id/tvRchId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="#6B7280"
-                    android:textSize="13sp"
-                    tools:text="RCH ID : 123456789" />
-
-                <TextView
-                    android:id="@+id/tvAbhaNumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textColor="#6B7280"
-                    android:textSize="13sp"
-                    tools:text="ABHA Number : 12-3456-7890-1234" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/cbSelectBeneficiary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/gl_82"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvAmount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:textColor="#111827"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/gl_82"
-                app:layout_constraintTop_toBottomOf="@id/cbSelectBeneficiary"
-                tools:text="₹100" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvAbhaNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            tools:text="ABHA Number: 12-3456-7890-1234" />
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/tvAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textColor="#111827"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/llInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/llInfo"
+        tools:text="₹150" />
+
+    <View
+        android:id="@+id/rowDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#EEF0F3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llInfo" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

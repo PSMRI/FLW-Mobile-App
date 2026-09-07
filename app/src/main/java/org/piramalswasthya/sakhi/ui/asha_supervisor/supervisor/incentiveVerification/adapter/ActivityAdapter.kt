@@ -67,9 +67,18 @@ class ActivityAdapter(
             cbSelectActivity?.setOnCheckedChangeListener(null)
             if (showCheckbox) {
                 cbSelectActivity?.visibility = View.VISIBLE
-                cbSelectActivity?.isChecked = selected
-                cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
-                    onSelectionChanged(item, isChecked)
+                if (item.isApproved) {
+                    // Rows the backend marks isApproved (e.g. monthly honorarium) come ticked and
+                    // cannot be unticked. No listener is attached, so the fragment seeds these
+                    // into the selection set itself.
+                    cbSelectActivity?.isChecked = true
+                    cbSelectActivity?.isEnabled = false
+                } else {
+                    cbSelectActivity?.isEnabled = true
+                    cbSelectActivity?.isChecked = selected
+                    cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
+                        onSelectionChanged(item, isChecked)
+                    }
                 }
             } else {
                 cbSelectActivity?.visibility = View.GONE
@@ -86,7 +95,12 @@ class ActivityAdapter(
                 layoutApproval?.visibility = View.GONE
 
             }
-            if (item.isDefault) {
+            // A fixed/monthly payment has no beneficiaries behind it, so the row must not open the
+            // beneficiary screen. Both flags mean the same thing and either one is enough — they
+            // used to be two consecutive if/else blocks, where the second silently undid the
+            // first whenever only one flag was set (and the payload stopped sending
+            // isDefaultActivity entirely, so every isDefault row stayed clickable).
+            if (item.isDefault || item.isDefaultActivity) {
                 clMain?.setBackgroundColor(
                     itemView.context.getColor(R.color.default_incentive_no_ben_background)
                 )
@@ -95,26 +109,17 @@ class ActivityAdapter(
                 )
                 clMain?.setOnClickListener(null)
                 ClmainTwo?.setOnClickListener(null)
+                // setOnClickListener(null) leaves isClickable set from a previous bind, which
+                // would keep the recycled row swallowing touches.
+                clMain?.isClickable = false
+                ClmainTwo?.isClickable = false
             } else {
                 clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
                 layoutContent?.setBackgroundColor(
                     itemView.context.getColor(android.R.color.white)
                 )
                 clMain?.setOnClickListener { onClick?.invoke(item) }
-                ClmainTwo?.setOnClickListener{onClick?.invoke(item)}
-            }
-
-            if (item.isDefaultActivity) {
-                clMain?.setBackgroundColor(
-                    itemView.context.getColor(R.color.default_incentive_no_ben_background)
-                )
-                clMain?.setOnClickListener(null)
-                ClmainTwo?.setOnClickListener(null)
-            } else {
-                clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
-                clMain?.setOnClickListener { onClick?.invoke(item) }
-                ClmainTwo?.setOnClickListener{onClick?.invoke(item)}
-
+                ClmainTwo?.setOnClickListener { onClick?.invoke(item) }
             }
 
         }
@@ -127,8 +132,12 @@ class ActivityAdapter(
     }
 
     class ActivityDiffCallback : DiffUtil.ItemCallback<ClaimedIncentiveUI>() {
+        // incentiveId, not activityId: one activity can yield several claimed rows in a month,
+        // and incentiveId is what the selection set and the Verify/Reject payload key on. Keying
+        // on activityId would let DiffUtil merge two distinct rows and bind the wrong
+        // checked/locked state onto one of them.
         override fun areItemsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
-            oldItem.activityId == newItem.activityId
+            oldItem.incentiveId == newItem.incentiveId
 
         override fun areContentsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
             oldItem == newItem
