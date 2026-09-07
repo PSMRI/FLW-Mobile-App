@@ -96,7 +96,16 @@ class BadgeEvaluator @Inject constructor(
                 }
             }
 
-            badgeDao.upsertStates(states)
+            // never revoked: a state can't show a lower tier than one permanently
+            // earned (reinstall backfill, lowered milestones, demo history)
+            val maxEarned = priorEarned.groupBy { it.badgeId }.mapValues { e -> e.value.maxOf { it.level } }
+            badgeDao.upsertStates(states.map { s ->
+                val kind = BadgeDefinitions.byId(s.badgeId)?.kind
+                val floor = maxEarned[s.badgeId] ?: 0
+                val tiered = kind == BadgeKind.STREAK_WEEKLY || kind == BadgeKind.STREAK_MONTHLY ||
+                        kind == BadgeKind.CUMULATIVE
+                if (tiered && s.currentLevel < floor) s.copy(currentLevel = floor) else s
+            })
             if (earned.isNotEmpty()) {
                 // skip celebration on the first-ever evaluation (historical backfill)
                 val hadEarnedBefore = priorEarned.isNotEmpty()

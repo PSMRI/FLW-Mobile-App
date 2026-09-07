@@ -1,6 +1,9 @@
 package org.piramalswasthya.sakhi.ui.home_activity.home
 
 import android.os.Bundle
+import android.widget.Toast
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.badges.BadgeDemoSeeder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +51,9 @@ class SchedulerFragment : Fragment() {
 
     @Inject
     lateinit var badgeRepository: BadgeRepository
+
+    @Inject
+    lateinit var demoSeeder: BadgeDemoSeeder
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -235,6 +241,18 @@ class SchedulerFragment : Fragment() {
                         "${position + 1} / ${carouselAdapter.itemCount}"
                 }
             })
+        }
+        // debug-only presentation helper: long-press the title to stage demo progress
+        if (BuildConfig.DEBUG) binding.tvImpactTitle.setOnLongClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val msg = try {
+                    demoSeeder.stage()
+                } catch (e: Exception) {
+                    "Demo staging failed: ${e.message}"
+                }
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            }
+            true
         }
         binding.cvImpactDashboard.setOnClickListener {
             try {

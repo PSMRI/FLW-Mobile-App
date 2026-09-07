@@ -44,6 +44,9 @@ interface BadgeDao {
     @Query("SELECT weekKey FROM BADGE_SYNC_LOG")
     suspend fun getAllSyncWeeks(): List<String>
 
+    @Query("DELETE FROM BADGE_SYNC_LOG WHERE weekKey = :weekKey")
+    suspend fun deleteSyncWeek(weekKey: String)
+
     // ─── BADGE_STREAK_FREEZE (replaced wholesale on every config pull) ───
     @Query("DELETE FROM BADGE_STREAK_FREEZE")
     suspend fun clearFreezes()

@@ -67,7 +67,8 @@ class BadgeShelfAdapter :
             val almostThere = progress in 1 until target &&
                     progress.toDouble() / target >= 0.6
             binding.tvBadgeProgress.text = when {
-                progress <= 0L -> res.getString(R.string.badge_not_started)
+                progress <= 0L && (state?.currentLevel ?: 0) == 0 ->
+                    res.getString(R.string.badge_not_started)
                 almostThere -> res.getString(R.string.badge_progress_of, progress, target) +
                         " · " + res.getString(R.string.badge_almost_there)
                 else -> res.getString(R.string.badge_progress_of, progress, target)

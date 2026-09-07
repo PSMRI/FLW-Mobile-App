@@ -56,7 +56,7 @@ class BadgeCarouselAdapter :
                 else -> "🏅 " + res.getString(R.string.badge_level, level)
             }
             val progressText =
-                if (progress <= 0L) res.getString(R.string.badge_not_started)
+                if (progress <= 0L && level == 0) res.getString(R.string.badge_not_started)
                 else res.getString(R.string.badge_progress_of, progress, target)
             val streakText = when {
                 state == null || state.streakCount <= 0L -> null
