@@ -560,6 +560,10 @@
     <string name="pending_0">लंबित: 0</string>
     <string name="rejected_0">अस्वीकृत: 0</string>
     <string name="overdue_0">बकाया: 0</string>
+    <string name="approve">स्वीकृत करें</string>
+    <string name="no_beneficiaries_found">कोई रिकॉर्ड नहीं मिला</string>
+    <string name="approve_or_reject_row_hint">इस गतिविधि को सीधे ✓ / ✕ से स्वीकृत या अस्वीकृत करें।</string>
+    <string name="claim_date">दिनांक: %1$s</string>
     <string name="total_ashas">कुल आशाएँ</string>
     <string name="select_month">माह चुनें</string>
     <string name="overdue">अवधि से अधिक लंबित</string>
