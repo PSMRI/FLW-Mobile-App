@@ -1,21 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  One claimed-activity row on the Mitanin Trainer / ANM month verification screen.
+
+  FLW-1171 (Ritam's UX input): the selection checkbox sits in its own column at the row start,
+  so the amount column keeps the full width it had before checkboxes existed — squeezing it
+  between 75% and 85% made "₹1,000" wrap and pushed it out from under its header.
+  Columns: [checkbox] [S.No] [activity] | 55% | [no of claims] | 75% | [amount claimed]
+  The two guidelines are mirrored by ll_header in fragment_worker_detail so the columns line up.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/clMain"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.08" />
-
+    <!-- Activity column right edge -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline50"
         android:layout_width="wrap_content"
@@ -23,6 +25,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.55" />
 
+    <!-- No-of-claims column right edge -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline75"
         android:layout_width="wrap_content"
@@ -30,24 +33,32 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline85"
-        android:layout_width="wrap_content"
+    <!-- Per-activity selection (Mitanin: checkbox-driven verify/reject). Fixed width so the
+         header spacer can reserve exactly the same column. -->
+    <CheckBox
+        android:id="@+id/cbSelectActivity"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        android:minWidth="0dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tvActivityDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvActivityDesc"
+        tools:visibility="visible" />
 
     <!-- S.No -->
     <TextView
         android:id="@+id/tvSerialNo"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:minWidth="24dp"
         android:textColor="#333333"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@id/tvActivityDesc"
-        app:layout_constraintEnd_toStartOf="@id/guideline10"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cbSelectActivity"
         app:layout_constraintTop_toTopOf="@id/tvActivityDesc"
         tools:text="1" />
 
@@ -56,12 +67,13 @@
         android:id="@+id/tvActivityName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:textColor="#333333"
         android:textSize="13sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/guideline50"
-        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintStart_toEndOf="@id/tvSerialNo"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="IMMUNIZATION" />
 
@@ -70,11 +82,12 @@
         android:id="@+id/tvActivityDesc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:textColor="#666666"
         android:textSize="11sp"
         app:layout_constraintBottom_toTopOf="@id/divider"
         app:layout_constraintEnd_toStartOf="@id/guideline50"
-        app:layout_constraintStart_toStartOf="@id/guideline10"
+        app:layout_constraintStart_toEndOf="@id/tvSerialNo"
         app:layout_constraintTop_toBottomOf="@id/tvActivityName"
         tools:text="ASHA incentive Rs.150 per meeting for mobilizing" />
 
@@ -98,10 +111,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:paddingEnd="@dimen/_5sdp"
         android:textColor="#333333"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@id/statusBadge"
-        app:layout_constraintEnd_toStartOf="@id/guideline85"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/guideline75"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="150" />
@@ -110,20 +124,20 @@
     <TextView
         android:id="@+id/statusBadge"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         android:paddingTop="2dp"
+        android:paddingEnd="10dp"
         android:paddingBottom="2dp"
         android:textColor="@android:color/white"
         android:textSize="11sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintEnd_toStartOf="@id/guideline85"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvActivityAmount"
         tools:text="Verified" />
 
@@ -138,16 +152,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvActivityDesc" />
-
-    <!-- Per-activity selection (Mitanin: checkbox-driven verify/reject) -->
-    <CheckBox
-        android:id="@+id/cbSelectActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/guideline85"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/divider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

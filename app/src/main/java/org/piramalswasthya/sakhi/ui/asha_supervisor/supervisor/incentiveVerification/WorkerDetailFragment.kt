@@ -153,6 +153,10 @@ class WorkerDetailFragment : Fragment() {
             },
             showCheckbox = { showActivityCheckboxes }
         )
+        // FLW-1171: the rows carry a checkbox column at their start, so the header reserves the
+        // same width — otherwise S.No and Activity stop sitting above their own values.
+        binding.spaceHeaderSelection.visibility =
+            if (showActivityCheckboxes) View.VISIBLE else View.GONE
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = groupedActivityAdapter
 

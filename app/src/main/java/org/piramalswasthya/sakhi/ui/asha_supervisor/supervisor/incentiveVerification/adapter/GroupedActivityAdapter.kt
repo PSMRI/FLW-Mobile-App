@@ -31,10 +31,16 @@ fun List<ClaimedIncentiveUI>.toActivityGroups(
                 groupName = groupName,
                 totalAmount = activities.sumOf { it.totalAmount },
                 totalClaims = activities.sumOf { it.claimCount },
-                activities = activities,
+                // FLW-1171: the auto-selected rows (monthly honorarium) lead their group, with
+                // the reviewer's unticked rows below. Both sorts are stable, so anything not
+                // pre-ticked keeps the order the payload sent it in.
+                activities = activities.sortedByDescending { it.isApproved },
                 isExpanded = previouslyExpanded[groupName] ?: true
             )
         }
+        // ...and the group holding them leads the screen, so an auto-selected row is the first
+        // one the reviewer sees even when several groups are listed.
+        .sortedByDescending { group -> group.activities.any { it.isApproved } }
 }
 
 class GroupedActivityAdapter(

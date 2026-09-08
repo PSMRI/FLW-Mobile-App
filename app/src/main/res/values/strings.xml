@@ -1607,5 +1607,10 @@
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
+    <!-- FLW-1171: month verification table headers (were hardcoded in the layout) -->
+    <string name="incentive_header_serial_no">S.No</string>
+    <string name="incentive_header_activity">Activity</string>
+    <string name="incentive_header_no_of_claims">No of Claims</string>
+    <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
 </resources>
 

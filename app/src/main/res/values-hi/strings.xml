@@ -1444,4 +1444,8 @@
     प्रसव की तिथि अंतिम एएनसी विज़िट की तिथि से पहले नहीं हो सकती।
 </string>
 
+    <string name="incentive_header_serial_no">क्र.सं.</string>
+    <string name="incentive_header_activity">गतिविधि</string>
+    <string name="incentive_header_no_of_claims">दावों की संख्या</string>
+    <string name="incentive_header_amount_claimed">दावा राशि (रु.)</string>
 </resources>
