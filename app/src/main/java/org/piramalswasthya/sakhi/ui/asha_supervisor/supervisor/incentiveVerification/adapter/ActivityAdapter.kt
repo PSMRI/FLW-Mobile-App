@@ -66,19 +66,16 @@ class ActivityAdapter(
         ) {
             cbSelectActivity?.setOnCheckedChangeListener(null)
             if (showCheckbox) {
+                // FLW-1171 §20.3: every row binds the same way — the tick reflects nothing but the
+                // selection set. Rows the backend marks isApproved (monthly honorarium) start
+                // ticked because the fragment seeds them into that set, but "pre-ticked" is only a
+                // default: the reviewer unticks and rejects one exactly like any other row. Binding
+                // them disabled instead locked the honorarium into every Verify.
                 cbSelectActivity?.visibility = View.VISIBLE
-                if (item.isApproved) {
-                    // Rows the backend marks isApproved (e.g. monthly honorarium) come ticked and
-                    // cannot be unticked. No listener is attached, so the fragment seeds these
-                    // into the selection set itself.
-                    cbSelectActivity?.isChecked = true
-                    cbSelectActivity?.isEnabled = false
-                } else {
-                    cbSelectActivity?.isEnabled = true
-                    cbSelectActivity?.isChecked = selected
-                    cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
-                        onSelectionChanged(item, isChecked)
-                    }
+                cbSelectActivity?.isEnabled = true
+                cbSelectActivity?.isChecked = selected
+                cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
+                    onSelectionChanged(item, isChecked)
                 }
             } else {
                 cbSelectActivity?.visibility = View.GONE
