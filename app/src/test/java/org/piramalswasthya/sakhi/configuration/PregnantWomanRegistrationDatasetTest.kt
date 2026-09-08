@@ -782,4 +782,18 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         assertEquals("No", d.listFlow.value[d.getIndexById(21)].value)
         assertEquals("2", d.listFlow.value[d.getIndexById(22)].value)
     }
+
+    @Test
+    fun `mapValues does not blow up when the previous pregnancy count is cleared`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+        d.setValueById(22, "")
+        val cache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        d.mapValues(cache, 1)
+
+        verify { cache.numPrevPregnancy = null }
+    }
 }

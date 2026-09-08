@@ -1062,7 +1062,8 @@ class PregnantWomanRegistrationDataset(
                 getEnglishCheckboxValues(R.array.maternal_health_past_illness, pastIllness.value)
             form.otherPastIllness = otherPastIllness.value
             form.is1st = isFirstPregnancy.value == isFirstPregnancy.entries!!.first()
-            form.numPrevPregnancy = totalNumberOfPreviousPregnancy.value?.toInt()
+            form.numPrevPregnancy =
+                totalNumberOfPreviousPregnancy.value?.takeIf { it.isNotBlank() }?.toIntOrNull()
             form.complicationPrevPregnancy = getEnglishValueInArray(
                 R.array.maternal_health_past_del_complications,
                 complicationsDuringLastPregnancy.value
