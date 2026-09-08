@@ -731,9 +731,10 @@ class FormInputAdapter(
                             set(Calendar.MONTH, month)
                             set(Calendar.DAY_OF_MONTH, day)
                         }.timeInMillis
-                        if (item.min != null && millis < item.min!!) {
+                        val ignoreBounds = item.hasInvertedDateRange()
+                        if (!ignoreBounds && item.min != null && millis < item.min!!) {
                             item.value = getDateString(item.min)
-                        } else if (item.max != null && millis > item.max!!)
+                        } else if (!ignoreBounds && item.max != null && millis > item.max!!)
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
@@ -743,8 +744,10 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                if (!item.hasInvertedDateRange()) {
+                    item.min?.let { datePickerDialog.datePicker.minDate = it }
+                    item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -935,9 +938,10 @@ class FormInputAdapter(
                             set(Calendar.DAY_OF_MONTH, day)
                         }
                         val millis = millisCal.timeInMillis
-                        if (item.min != null && millis < item.min!!) {
+                        val ignoreBounds = item.hasInvertedDateRange()
+                        if (!ignoreBounds && item.min != null && millis < item.min!!) {
                             item.value = getDateString(item.min)
-                        } else if (item.max != null && millis > item.max!!)
+                        } else if (!ignoreBounds && item.max != null && millis > item.max!!)
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
@@ -950,8 +954,10 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                if (!item.hasInvertedDateRange()) {
+                    item.min?.let { datePickerDialog.datePicker.minDate = it }
+                    item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -1391,4 +1397,10 @@ class FormInputAdapter(
 
 
 
+}
+
+private fun FormElement.hasInvertedDateRange(): Boolean {
+    val lowerBound = min
+    val upperBound = max
+    return lowerBound != null && upperBound != null && lowerBound > upperBound
 }
