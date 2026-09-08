@@ -52,6 +52,7 @@ class HouseholdMembersFragment : Fragment() {
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
+    private var householdMembersLoaded = false
 
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
     private var connectivityManager: ConnectivityManager? = null
@@ -88,6 +89,13 @@ class HouseholdMembersFragment : Fragment() {
 
             val selectedGender = genderFromCheckedId(binding, checkedId)
             if (selectedGender == null) {
+                binding.linearLayout4.visibility = View.GONE
+                binding.actvRth.setAdapter(null)
+                binding.actvRth.text = null
+                return@setOnCheckedChangeListener
+            }
+
+            if (!householdMembersLoaded) {
                 binding.linearLayout4.visibility = View.GONE
                 binding.actvRth.setAdapter(null)
                 binding.actvRth.text = null
@@ -218,6 +226,7 @@ class HouseholdMembersFragment : Fragment() {
         baseList: List<String>,
         ctx: HofContextForMembers
     ): List<String> {
+        if (!householdMembersLoaded) return emptyList()
         if (ctx.hof == null) return baseList
 
         val list = baseList.toMutableList()
@@ -328,9 +337,12 @@ class HouseholdMembersFragment : Fragment() {
         } else {
             View.GONE
         }
+        binding.fabAddMember.isEnabled = false
 
         binding.fabAddMember.setOnClickListener {
-            addBenAlert?.show()
+            if (householdMembersLoaded) {
+                addBenAlert?.show()
+            }
         }
 
         if (isMitaninFlavor && binding.fabAddMember.visibility == View.VISIBLE) {
@@ -467,6 +479,8 @@ class HouseholdMembersFragment : Fragment() {
                 launch {
                     viewModel.benList.collect {
                         householdMembers = it
+                        householdMembersLoaded = true
+                        binding.fabAddMember.isEnabled = true
                     }
                 }
 
@@ -586,6 +600,8 @@ class HouseholdMembersFragment : Fragment() {
         connectivityManager = null
         addBenAlert?.dismiss()
         addBenAlert = null
+        householdMembersLoaded = false
+        householdMembers = emptyList()
         _binding = null
     }
     private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {
