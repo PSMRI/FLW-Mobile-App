@@ -199,6 +199,14 @@ data class ClaimedIncentiveUI(
 
 )
 
+/**
+ * FLW-1171 / BRD §20.3: rows the backend marks `isApproved` (the Monthly Honorarium, S.No 52) are
+ * ticked by default. A default, not a lock — the reviewer can untick one and reject it — so the
+ * screen seeds these once and never overrides what they have chosen since.
+ */
+fun List<ClaimedIncentiveUI>.defaultSelectedIncentiveIds(): List<Int> =
+    filter { it.isApproved }.map { it.incentiveId }
+
 sealed class WorkerDetailUiState {
     object Loading : WorkerDetailUiState()
     data class Success(val records: List<ClaimedIncentiveUI>) : WorkerDetailUiState()

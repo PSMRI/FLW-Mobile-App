@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.defaultSelectedIncentiveIds
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
 import org.piramalswasthya.sakhi.utils.safeNavigate
@@ -45,6 +46,12 @@ class WorkerDetailFragment : Fragment() {
     private var otherReasonSelected = false
     private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
     private val selectedActivityIds = mutableSetOf<Int>()
+
+    /**
+     * FLW-1171: the pre-ticked rows are seeded once per visit to this screen. Re-seeding on a
+     * later emission would silently re-tick a row the reviewer has deliberately unticked.
+     */
+    private var defaultSelectionSeeded = false
 
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
@@ -153,6 +160,11 @@ class WorkerDetailFragment : Fragment() {
             },
             showCheckbox = { showActivityCheckboxes }
         )
+        // Popping back from the beneficiary screen recreates this view, so a visit starts clean:
+        // selections carried over from the previous visit would otherwise stay in the
+        // Verify/Reject payload, including rows the refreshed list no longer shows.
+        selectedActivityIds.clear()
+        defaultSelectionSeeded = false
         // FLW-1171: the rows carry a checkbox column at their start, so the header reserves the
         // same width — otherwise S.No and Activity stop sitting above their own values.
         binding.spaceHeaderSelection.visibility =
@@ -214,13 +226,12 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
-                    // Backend-approved rows render ticked and locked, so their checkbox has no
-                    // listener to register them — seed them here or they would be left out of
-                    // the Verify/Reject payload.
-                    if (showActivityCheckboxes) {
-                        selectedActivityIds.addAll(
-                            state.records.filter { it.isApproved }.map { it.incentiveId }
-                        )
+                    // FLW-1171: pre-ticked rows (Monthly Honorarium) are seeded into the
+                    // selection set so they ride along in Verify/Reject by default. First
+                    // emission only — re-seeding would re-tick a row the reviewer just unticked.
+                    if (showActivityCheckboxes && !defaultSelectionSeeded) {
+                        defaultSelectionSeeded = true
+                        selectedActivityIds.addAll(state.records.defaultSelectedIncentiveIds())
                     }
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                   //   hasDefaultRecord = currentRecords.any { it.isDefault }
