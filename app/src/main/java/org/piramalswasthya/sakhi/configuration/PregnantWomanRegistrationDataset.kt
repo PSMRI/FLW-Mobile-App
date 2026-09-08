@@ -407,12 +407,21 @@ class PregnantWomanRegistrationDataset(
 
     private var homeDeliverydbVal: String? = null
 
+    private var derivedPreviousPregnancies = 0
+
+    private var derivedComplication: String? = null
+
+    private var derivedOtherComplication: String? = null
+
     suspend fun setUpPage(
         ben: BenRegCache?,
         assess: HRPPregnantAssessCache?,
         saved: PregnantWomanRegistrationCache?,
         ecr: EligibleCoupleRegCache?,
-        lastTrackTimestamp: Long? = null
+        lastTrackTimestamp: Long? = null,
+        childCount: Int = 0,
+        completedPregnancyCount: Int = 0,
+        lastCompletedPregnancy: PregnantWomanRegistrationCache? = null
     ) {
         val list = mutableListOf(
             dateOfReg,
@@ -664,25 +673,41 @@ class PregnantWomanRegistrationDataset(
             }
         }
 
-        ecr?.let {
-            if (saved == null) {
-                if (ecr.noOfChildren > 0) {
-                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[1]
-                    isFirstPregnancy.isEnabled = false
-                    totalNumberOfPreviousPregnancy.min = ecr.noOfChildren.toLong()
-                    list.addAll(
-                        list.indexOf(isFirstPregnancy) + 1,
-                        listOf(totalNumberOfPreviousPregnancy, complicationsDuringLastPregnancy)
+        val deliveredChildCount = maxOf(
+            childCount,
+            ecr?.noOfChildren ?: 0,
+            ecr?.noOfLiveChildren ?: 0
+        )
+        derivedPreviousPregnancies = maxOf(deliveredChildCount, completedPregnancyCount)
+            .coerceAtMost(totalNumberOfPreviousPregnancy.max?.toInt() ?: Int.MAX_VALUE)
+        derivePreviousComplication(lastCompletedPregnancy)
+
+        if (saved == null) {
+            if (derivedPreviousPregnancies > 0) {
+                isFirstPregnancy.value = isFirstPregnancy.entries!![1]
+                isFirstPregnancy.isEnabled = false
+                totalNumberOfPreviousPregnancy.min = derivedPreviousPregnancies.toLong()
+                totalNumberOfPreviousPregnancy.value = derivedPreviousPregnancies.toString()
+                complicationsDuringLastPregnancy.value = derivedComplication
+                list.addAll(
+                    list.indexOf(isFirstPregnancy) + 1,
+                    listOf(totalNumberOfPreviousPregnancy, complicationsDuringLastPregnancy)
+                )
+                if (derivedComplication == complicationsDuringLastPregnancy.entries!!.last()) {
+                    otherComplicationsDuringLastPregnancy.value = derivedOtherComplication
+                    list.add(
+                        list.indexOf(complicationsDuringLastPregnancy) + 1,
+                        otherComplicationsDuringLastPregnancy
                     )
-                    totalNumberOfPreviousPregnancy.value = ecr.noOfChildren.toString()
-                } else {
-                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[0]
                 }
+            } else {
+                isFirstPregnancy.value = isFirstPregnancy.entries!!.first()
             }
-            if (ecr.noOfChildren > 3) {
-                noOfDeliveries.value = resources.getStringArray(R.array.yes_no)[0]
-                noOfDeliveries.isEnabled = false
-            }
+        }
+
+        if (deliveredChildCount > 3) {
+            noOfDeliveries.value = resources.getStringArray(R.array.yes_no)[0]
+            noOfDeliveries.isEnabled = false
         }
 //        ben?.isHrpStatus?.let {
 //            if (it || isHighRisk()) {
@@ -873,10 +898,10 @@ class PregnantWomanRegistrationDataset(
             }
 
             isFirstPregnancy.id -> {
-                complicationsDuringLastPregnancy.apply {
-                    value = entries!!.first()
-                }
-                if (isFirstPregnancy.value == resources.getStringArray(R.array.yes_no)[0]) {
+                if (isFirstPregnancy.value == isFirstPregnancy.entries!!.first()) {
+                    complicationsDuringLastPregnancy.value =
+                        complicationsDuringLastPregnancy.entries!!.first()
+                    otherComplicationsDuringLastPregnancy.value = null
 //                    multiplePregnancy.value = resources.getStringArray(R.array.yes_no)[1]
 //                    multiplePregnancy.isEnabled = false
                     homeDelivery.value = resources.getStringArray(R.array.yes_no)[1]
@@ -888,6 +913,14 @@ class PregnantWomanRegistrationDataset(
                     badObstetric.value = resources.getStringArray(R.array.yes_no)[1]
                     badObstetric.isEnabled = false
                 } else {
+                    if (derivedPreviousPregnancies > 0) {
+                        totalNumberOfPreviousPregnancy.min = derivedPreviousPregnancies.toLong()
+                        totalNumberOfPreviousPregnancy.value =
+                            derivedPreviousPregnancies.toString()
+                    }
+                    complicationsDuringLastPregnancy.value = derivedComplication
+                        ?: complicationsDuringLastPregnancy.entries!!.first()
+                    otherComplicationsDuringLastPregnancy.value = derivedOtherComplication
 //                    multiplePregnancy.value = resources.getStringArray(R.array.yes_no)[0]
 //                    multiplePregnancy.isEnabled = false
                     homeDelivery.value = homeDeliverydbVal
@@ -904,7 +937,7 @@ class PregnantWomanRegistrationDataset(
                 handleListOnValueChanged(noOfDeliveries.id, 0)
                 handleListOnValueChanged(timeLessThan18m.id, 0)
                 handleListOnValueChanged(badObstetric.id, 0)
-                triggerDependants(
+                val updateIndex = triggerDependants(
                     source = isFirstPregnancy,
                     passedIndex = index,
                     triggerIndex = 1,
@@ -913,6 +946,15 @@ class PregnantWomanRegistrationDataset(
                     ),
                     targetSideEffect = listOf(otherComplicationsDuringLastPregnancy)
                 )
+                if (index == 1) {
+                    handleListOnValueChanged(
+                        complicationsDuringLastPregnancy.id,
+                        complicationsDuringLastPregnancy.entries!!.indexOf(
+                            complicationsDuringLastPregnancy.value
+                        )
+                    )
+                }
+                updateIndex
             }
 
             totalNumberOfPreviousPregnancy.id -> validateIntMinMax(totalNumberOfPreviousPregnancy)
@@ -1094,6 +1136,19 @@ class PregnantWomanRegistrationDataset(
                 homeDelivery.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
                 badObstetric.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
                 multiplePregnancy.value.contentEquals(resources.getStringArray(R.array.yes_no)[0])
+    }
+
+    private fun derivePreviousComplication(lastCompletedPregnancy: PregnantWomanRegistrationCache?) {
+        val none = complicationsDuringLastPregnancy.entries!!.first()
+        val recorded = lastCompletedPregnancy?.let {
+            getLocalValueInArray(
+                complicationsDuringLastPregnancy.arrayId,
+                it.complicationPrevPregnancy
+            )?.to(it.otherComplication)
+        }
+        derivedComplication = recorded?.first ?: none
+        derivedOtherComplication = recorded?.second
+            ?.takeIf { derivedComplication == complicationsDuringLastPregnancy.entries!!.last() }
     }
 
     private suspend fun updateAgeCheck(dob: Long, current: Long) {
