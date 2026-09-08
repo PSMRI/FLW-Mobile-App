@@ -97,16 +97,13 @@ class HouseholdMembersFragment : Fragment() {
             binding.linearLayout4.visibility = View.VISIBLE
             binding.actvRth.text = null
 
-            val relations = when (selectedGender) {
-                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                else -> emptyArray()
-            }
-
-            binding.actvRth.setAdapter(
-                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, relations)
+            val relations = filterRelationsForMembers(
+                selectedGender,
+                baseRelationDropdownForMembers(selectedGender),
+                computeHofContextForMembers()
             )
+
+            applyRelationAdapterForMembers(binding, relations)
         }
     }
     private fun setupRelationClickListener(binding: AlertNewBenBinding) {
@@ -179,6 +176,78 @@ class HouseholdMembersFragment : Fragment() {
             binding.rbTrans.id -> 3
             else -> 0
         }
+    }
+
+    private data class HofContextForMembers(
+        val hof: BenBasicDomain?,
+        val fatherRegistered: Boolean,
+        val motherRegistered: Boolean,
+        val unmarried: Boolean,
+        val married: Boolean
+    )
+
+    private fun baseRelationDropdownForMembers(selectedGender: Gender?): List<String> {
+        val arrayRes = when (selectedGender) {
+            Gender.MALE -> R.array.nbr_relationship_to_head_male
+            Gender.FEMALE -> R.array.nbr_relationship_to_head_female
+            Gender.TRANSGENDER -> R.array.nbr_relationship_to_head_male
+            else -> null
+        }
+        return arrayRes?.let { resources.getStringArray(it).toList() }.orEmpty()
+    }
+
+    private fun computeHofContextForMembers(): HofContextForMembers {
+        val hof = householdMembers.firstOrNull { it.relToHeadId == 19 }
+        return HofContextForMembers(
+            hof = hof,
+            fatherRegistered = householdMembers.any { it.relToHeadId == 2 },
+            motherRegistered = householdMembers.any { it.relToHeadId == 1 },
+            unmarried = hof?.isMarried == false,
+            married = hof?.isMarried == true
+        )
+    }
+
+    private fun filterRelationsForMembers(
+        selectedGender: Gender?,
+        baseList: List<String>,
+        ctx: HofContextForMembers
+    ): List<String> {
+        if (ctx.hof == null) return baseList
+
+        val list = baseList.toMutableList()
+        val common = resources.getStringArray(R.array.nbr_relationship_to_head)
+        val unmarriedFilter =
+            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
+
+        if (ctx.fatherRegistered) list.remove(common[1])
+        if (ctx.motherRegistered) list.remove(common[0])
+
+        if (ctx.unmarried) {
+            list.removeAll(unmarriedFilter)
+        } else if (!ctx.married) {
+            list.remove(common[5])
+            list.remove(common[4])
+        }
+
+        if (ctx.hof.gender == Gender.MALE.name && selectedGender == Gender.MALE) {
+            list.remove(common[5])
+        }
+
+        if (ctx.hof.gender == Gender.FEMALE.name && selectedGender == Gender.FEMALE) {
+            list.remove(common[4])
+            list.remove(common[18])
+        }
+
+        return list
+    }
+
+    private fun applyRelationAdapterForMembers(
+        binding: AlertNewBenBinding,
+        items: List<String>
+    ) {
+        binding.actvRth.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+        )
     }
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
