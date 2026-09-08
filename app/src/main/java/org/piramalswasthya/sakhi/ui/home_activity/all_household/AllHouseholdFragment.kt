@@ -233,8 +233,10 @@ class AllHouseholdFragment : Fragment() {
                         )
                 } else {
                   if(!it.isDeactivate) {
-                      viewModel.setSelectedHouseholdId(it.hhId)
-                      addBenAlert?.show()
+                      viewLifecycleOwner.lifecycleScope.launch {
+                          viewModel.setSelectedHouseholdId(it.hhId)
+                          addBenAlert?.show()
+                      }
                   }
                 }
             }
@@ -377,6 +379,9 @@ class AllHouseholdFragment : Fragment() {
         val hof: BenRegCache?,
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
+        val wifeRegistered: Boolean,
+        val husbandRegistered: Boolean,
+        val spouseRegistered: Boolean,
         val unmarried: Boolean,
         val married: Boolean
     )
@@ -385,10 +390,21 @@ class AllHouseholdFragment : Fragment() {
         val hof = viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
         val fatherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
         val motherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
+        val wifeRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 5 }
+        val husbandRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 6 }
         val unmarried = hof?.genDetails?.maritalStatusId == 1
         val married = hof?.genDetails?.maritalStatusId == 2
 
-        return HofContext(hof, fatherRegistered, motherRegistered, unmarried, married)
+        return HofContext(
+            hof,
+            fatherRegistered,
+            motherRegistered,
+            wifeRegistered,
+            husbandRegistered,
+            hof?.isSpouseAdded == true,
+            unmarried,
+            married
+        )
     }
 
     private fun filterRelations(selectedGender: Gender?, baseList: List<String>, ctx: HofContext): List<String> {
@@ -401,6 +417,16 @@ class AllHouseholdFragment : Fragment() {
 
         if (ctx.fatherRegistered) list.remove(common[1])
         if (ctx.motherRegistered) list.remove(common[0])
+        if (ctx.wifeRegistered) list.remove(common[4])
+        if (ctx.husbandRegistered) list.remove(common[5])
+
+        if (ctx.spouseRegistered) {
+            when (ctx.hof.gender) {
+                Gender.MALE -> list.remove(common[4])
+                Gender.FEMALE -> list.remove(common[5])
+                else -> Unit
+            }
+        }
 
         if (ctx.unmarried) {
             list.removeAll(unmarriedFilter)

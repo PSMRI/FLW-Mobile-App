@@ -182,6 +182,9 @@ class HouseholdMembersFragment : Fragment() {
         val hof: BenBasicDomain?,
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
+        val wifeRegistered: Boolean,
+        val husbandRegistered: Boolean,
+        val spouseRegistered: Boolean,
         val unmarried: Boolean,
         val married: Boolean
     )
@@ -202,6 +205,9 @@ class HouseholdMembersFragment : Fragment() {
             hof = hof,
             fatherRegistered = householdMembers.any { it.relToHeadId == 2 },
             motherRegistered = householdMembers.any { it.relToHeadId == 1 },
+            wifeRegistered = householdMembers.any { it.relToHeadId == 5 },
+            husbandRegistered = householdMembers.any { it.relToHeadId == 6 },
+            spouseRegistered = hof?.isSpouseAdded == true,
             unmarried = hof?.isMarried == false,
             married = hof?.isMarried == true
         )
@@ -221,6 +227,16 @@ class HouseholdMembersFragment : Fragment() {
 
         if (ctx.fatherRegistered) list.remove(common[1])
         if (ctx.motherRegistered) list.remove(common[0])
+        if (ctx.wifeRegistered) list.remove(common[4])
+        if (ctx.husbandRegistered) list.remove(common[5])
+
+        if (ctx.spouseRegistered) {
+            when (ctx.hof.gender) {
+                Gender.MALE.name -> list.remove(common[4])
+                Gender.FEMALE.name -> list.remove(common[5])
+                else -> Unit
+            }
+        }
 
         if (ctx.unmarried) {
             list.removeAll(unmarriedFilter)
