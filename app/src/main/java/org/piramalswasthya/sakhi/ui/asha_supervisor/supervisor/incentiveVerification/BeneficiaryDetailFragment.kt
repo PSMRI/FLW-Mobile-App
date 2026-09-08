@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.BuildConfig
@@ -38,6 +39,13 @@ class BeneficiaryDetailFragment : Fragment() {
 
     /** The single row the open rejection sheet belongs to (§19.3: reject acts on one row). */
     private var pendingRejection: BeneficiaryRecordUI? = null
+
+    /**
+     * One row action at a time. The tick and cross stay live while the request runs, and success
+     * now pops the screen — so a second tap would both send a duplicate decision and navigate up
+     * twice, dropping the reviewer two screens back.
+     */
+    private var actionInFlight = false
 
     private val userId by lazy { arguments?.getInt("worker_id") ?: 0 }
     private val activityId by lazy { arguments?.getInt("activity_id") ?: 0 }
@@ -85,6 +93,7 @@ class BeneficiaryDetailFragment : Fragment() {
         binding.rvBeneficiaries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBeneficiaries.adapter = adapter
 
+        binding.spaceHeaderActions.visibility = visibleIf(showRowActions)
         binding.tvActivityHeader.text = activityName
 
         if (showRowActions) {
@@ -131,11 +140,14 @@ class BeneficiaryDetailFragment : Fragment() {
 
     /** Tick: approves that one record straight away, no confirmation step (§19.3). */
     private fun onApproveRow(record: BeneficiaryRecordUI) {
+        if (actionInFlight) return
+        actionInFlight = true
         viewModel.verifyBeneficiaries(ashaId = userId, incentiveIds = listOf(record.id))
     }
 
     /** Cross: the reason is mandatory, so the sheet opens scoped to this one record. */
     private fun onRejectRow(record: BeneficiaryRecordUI) {
+        if (actionInFlight) return
         pendingRejection = record
         binding.bottomSheetContainer.visibility = View.VISIBLE
     }
@@ -161,6 +173,7 @@ class BeneficiaryDetailFragment : Fragment() {
     }
 
     private fun onConfirmRejectionClicked() {
+        if (actionInFlight) return
         val record = pendingRejection
         if (record == null) {
             hideRejectionBottomSheet()
@@ -179,6 +192,7 @@ class BeneficiaryDetailFragment : Fragment() {
         val reason = selectedReasons.filter { it.id != "other" }.joinToString(", ") { it.reason }
         val otherReason = if (otherReasonSelected) binding.etOtherReason.text.toString().trim() else ""
 
+        actionInFlight = true
         viewModel.rejectBeneficiaries(
             ashaId = userId,
             incentiveIds = listOf(record.id),
@@ -230,16 +244,15 @@ class BeneficiaryDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     hideRejectionBottomSheet()
-                    viewModel.fetchBeneficiaries(
-                        userId = userId,
-                        month = selectedMonth,
-                        year = selectedYear,
-                        activityId = activityId,
-                        filterApprovalStatus = workerApprovalStatus
-                    )
+                    // The decision is committed, so hand the reviewer back to the activity list
+                    // instead of re-fetching into a screen that has no way to show a row's new
+                    // state. Popping also re-runs WorkerDetailFragment's init, so the counts and
+                    // statuses behind us refresh with the change.
+                    findNavController().navigateUp()
                 }
                 is ActionState.Error -> {
                     binding.progressBar.visibility = View.GONE
+                    actionInFlight = false
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                 }
             }

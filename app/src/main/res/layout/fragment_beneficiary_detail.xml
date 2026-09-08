@@ -83,7 +83,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Header -->
+                    <!-- Header. Not part of the RecyclerView, so it mirrors layout_mt_inner's
+                         columns by hand: the same actions spacer, the same fixed S.No width and
+                         the same margins, all from @dimen/mt_row_*. Guidelines were used before
+                         and put "S. No" over the tick/cross icons with the title 50dp left of the
+                         name it labels. -->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/llHeader"
                         android:layout_width="match_parent"
@@ -94,49 +98,47 @@
                         android:paddingEnd="16dp"
                         android:paddingBottom="12dp">
 
-                        <androidx.constraintlayout.widget.Guideline
-                            android:id="@+id/gl_08"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            app:layout_constraintGuide_percent="0.18" />
-
-                        <androidx.constraintlayout.widget.Guideline
-                            android:id="@+id/gl_85"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            app:layout_constraintGuide_percent="0.78" />
+                        <!-- Reserves the row's tick/cross column; hidden with them on read-only rows -->
+                        <Space
+                            android:id="@+id/spaceHeaderActions"
+                            android:layout_width="@dimen/mt_row_action_column"
+                            android:layout_height="1dp"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:visibility="visible" />
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:id="@+id/tvHeaderSerialNo"
+                            android:layout_width="@dimen/mt_row_serial_width"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/mt_row_serial_margin"
                             android:gravity="center"
                             android:text="@string/s_no"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="#111827"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/gl_08"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintStart_toEndOf="@id/spaceHeaderActions"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_goneMarginStart="@dimen/mt_row_serial_margin" />
 
                         <TextView
                             android:id="@+id/tvActivityHeader"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
+                            android:layout_marginStart="@dimen/mt_row_info_margin"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="#111827"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/gl_85"
-                            app:layout_constraintStart_toStartOf="@id/gl_08"
+                            app:layout_constraintEnd_toStartOf="@id/tvHeaderAmount"
+                            app:layout_constraintStart_toEndOf="@id/tvHeaderSerialNo"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="Attending monthly cluster meetings of Mitanins" />
 
                         <TextView
                             android:id="@+id/tvHeaderAmount"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="end"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
@@ -144,7 +146,6 @@
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@id/gl_85"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="₹150" />
 

@@ -34,8 +34,8 @@
     <!-- Reject: opens the reason sheet for this row only -->
     <ImageView
         android:id="@+id/btnReject"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginStart="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/reject"
@@ -44,12 +44,13 @@
         app:layout_constraintStart_toEndOf="@id/btnApprove"
         app:layout_constraintTop_toTopOf="@id/btnApprove" />
 
+    <!-- Fixed width, and the same gone-margin as the header spacer: read-only rows hide the two
+         action icons, and the S.No column must land in the same place either way. -->
     <TextView
         android:id="@+id/tvSerialNo"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/mt_row_serial_width"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:minWidth="16dp"
+        android:layout_marginStart="@dimen/mt_row_serial_margin"
         android:gravity="center"
         android:textColor="#111827"
         android:textSize="16sp"
@@ -57,13 +58,14 @@
         app:layout_constraintBottom_toBottomOf="@id/btnApprove"
         app:layout_constraintStart_toEndOf="@id/btnReject"
         app:layout_constraintTop_toTopOf="@id/btnApprove"
+        app:layout_goneMarginStart="@dimen/mt_row_serial_margin"
         tools:text="1" />
 
     <LinearLayout
         android:id="@+id/llInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/mt_row_info_margin"
         android:orientation="vertical"
         app:layout_constraintEnd_toStartOf="@id/tvAmount"
         app:layout_constraintStart_toEndOf="@id/tvSerialNo"
