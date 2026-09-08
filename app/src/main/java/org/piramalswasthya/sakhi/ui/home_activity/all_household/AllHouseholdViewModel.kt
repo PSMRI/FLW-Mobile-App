@@ -109,6 +109,7 @@ class AllHouseholdViewModel @Inject constructor(
     }
 
     fun setSelectedHouseholdId(id: Long) {
+        _selectedHouseholdId = id
         viewModelScope.launch {
             loadSelectedHousehold(id)
         }
