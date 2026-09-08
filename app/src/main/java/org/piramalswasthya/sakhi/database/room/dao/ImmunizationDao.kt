@@ -42,7 +42,7 @@ interface ImmunizationDao {
 
     @Transaction
     @Query(
-        "SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN IMMUNIZATION imm WHERE ben.dob BETWEEN :minDob AND :maxDob group by ben.benId"
+        "SELECT ben.* FROM BEN_BASIC_CACHE ben LEFT OUTER JOIN IMMUNIZATION imm WHERE ben.dob BETWEEN :minDob AND :maxDob group by ben.benId" + BenListOrder.LIFO_BEN
     )
     fun getBenWithImmunizationRecords(
         minDob: Long,
@@ -52,7 +52,7 @@ interface ImmunizationDao {
 
     @Transaction
     @Query(
-        "SELECT ben.*, reg.lmpDate as lmp, imm.* FROM BEN_BASIC_CACHE ben inner join pregnancy_register reg on ben.benId = reg.benId LEFT OUTER JOIN IMMUNIZATION imm WHERE ben.reproductiveStatusId = :reproductiveStatusId "
+        "SELECT ben.*, reg.lmpDate as lmp, imm.* FROM BEN_BASIC_CACHE ben inner join pregnancy_register reg on ben.benId = reg.benId LEFT OUTER JOIN IMMUNIZATION imm WHERE ben.reproductiveStatusId = :reproductiveStatusId " + BenListOrder.LIFO_BEN
     )
     fun getBenWithImmunizationRecords(
         reproductiveStatusId: Int = 2

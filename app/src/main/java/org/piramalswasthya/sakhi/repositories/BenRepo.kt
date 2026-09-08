@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.sortedByLifo
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
@@ -195,7 +196,7 @@ class BenRepo @Inject constructor(
 
 
     fun getBenBasicListFromHousehold(hhId: Long): Flow<List<BenBasicDomain>> {
-        return benDao.getAllBasicBenForHousehold(hhId).map { it.map { it.asBasicDomainModel() } }
+        return benDao.getAllBasicBenForHousehold(hhId).map { it.sortedByLifo().map { it.asBasicDomainModel() } }
 
     }
 
@@ -934,6 +935,18 @@ class BenRepo @Inject constructor(
                                             isChildrenAdded = false,
                                             isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
+                                            createdDate = try {
+                                                if (benDataObj.has("createdDate") && !benDataObj.isNull("createdDate"))
+                                                    getLongFromDate(benDataObj.getString("createdDate")) else null
+                                            } catch (_: Exception) { null },
+                                            updatedDate = try {
+                                                if (benDataObj.has("updatedDate") && !benDataObj.isNull("updatedDate"))
+                                                    getLongFromDate(benDataObj.getString("updatedDate")) else null
+                                            } catch (_: Exception) { null },
+                                            regDateMillis = try {
+                                                if (benDataObj.has("registrationDate") && !benDataObj.isNull("registrationDate"))
+                                                    getLongFromDate(benDataObj.getString("registrationDate")) else 0L
+                                            } catch (_: Exception) { 0L },
                                         )
                                     )
                                 }
@@ -950,6 +963,7 @@ class BenRepo @Inject constructor(
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
                                 benDao.upsert(*benCacheList.toTypedArray())
 
+                                benDataList.sortByDescending { it.lifoMillis() }
                                 Timber.d("GeTBenDataList: $pageSize $benDataList")
                                 return@withContext Pair(pageSize, benDataList)
                             }

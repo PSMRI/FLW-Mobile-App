@@ -98,7 +98,7 @@ class AllHouseholdViewModel @Inject constructor(
 
         return filteredList.sortedWith(
             compareBy<HouseHoldBasicDomain> { it.isDeactivate }
-                .thenByDescending { it.createdTimeStamp }
+                .thenByDescending { maxOf(it.updatedTimeStamp ?: 0L, it.createdTimeStamp ?: 0L) }
         )
     }
 
