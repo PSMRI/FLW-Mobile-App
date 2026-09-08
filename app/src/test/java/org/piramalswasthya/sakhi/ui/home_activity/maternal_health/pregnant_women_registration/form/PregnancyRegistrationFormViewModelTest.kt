@@ -68,6 +68,9 @@ class PregnancyRegistrationFormViewModelTest : BaseViewModelTest() {
         coEvery { hrpRepo.getPregnantAssess(any()) } returns null
         coEvery { ecrRepo.getSavedRecord(any()) } returns null
         coEvery { ecrRepo.getLatestEctByBenId(any()) } returns null
+        coEvery { benRepo.getChildCountForBen(any()) } returns 0
+        coEvery { maternalHealthRepo.getCompletedPregnancyCount(any()) } returns 0
+        coEvery { maternalHealthRepo.getLastCompletedRegistrationRecord(any()) } returns null
         viewModel = PregnancyRegistrationFormViewModel(savedStateHandle, preferenceDao, context, maternalHealthRepo, ecrRepo, hrpRepo, benRepo)
     }
 
