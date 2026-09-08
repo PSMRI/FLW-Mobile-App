@@ -111,12 +111,17 @@ class AllHouseholdViewModel @Inject constructor(
     fun setSelectedHouseholdId(id: Long) {
         _selectedHouseholdId = id
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _selectedHousehold = householdRepo.getRecord(id)
-            }
-            _householdBenList.clear()
-            _householdBenList.addAll(householdRepo.getAllBenOfHousehold(id))
+            loadSelectedHousehold(id)
         }
+    }
+
+    suspend fun loadSelectedHousehold(id: Long) {
+        _selectedHouseholdId = id
+        _selectedHousehold = withContext(Dispatchers.IO) {
+            householdRepo.getRecord(id)
+        }
+        _householdBenList.clear()
+        _householdBenList.addAll(householdRepo.getAllBenOfHousehold(id))
     }
 
 
