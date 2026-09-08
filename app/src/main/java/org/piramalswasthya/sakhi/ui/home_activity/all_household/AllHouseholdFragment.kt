@@ -234,7 +234,7 @@ class AllHouseholdFragment : Fragment() {
                 } else {
                   if(!it.isDeactivate) {
                       viewLifecycleOwner.lifecycleScope.launch {
-                          viewModel.setSelectedHouseholdId(it.hhId)
+                          viewModel.loadSelectedHousehold(it.hhId)
                           addBenAlert?.show()
                       }
                   }

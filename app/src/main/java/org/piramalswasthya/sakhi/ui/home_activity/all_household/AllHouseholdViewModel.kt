@@ -108,7 +108,13 @@ class AllHouseholdViewModel @Inject constructor(
         _householdBenList.clear()
     }
 
-    suspend fun setSelectedHouseholdId(id: Long) {
+    fun setSelectedHouseholdId(id: Long) {
+        viewModelScope.launch {
+            loadSelectedHousehold(id)
+        }
+    }
+
+    suspend fun loadSelectedHousehold(id: Long) {
         _selectedHouseholdId = id
         _selectedHousehold = withContext(Dispatchers.IO) {
             householdRepo.getRecord(id)
