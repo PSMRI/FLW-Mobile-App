@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
 import org.piramalswasthya.sakhi.databinding.FragmentHouseholdMembersBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
@@ -52,6 +53,7 @@ class HouseholdMembersFragment : Fragment() {
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
+    private var relationMembers: List<BenRegCache> = emptyList()
     private var householdMembersLoaded = false
 
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -187,7 +189,7 @@ class HouseholdMembersFragment : Fragment() {
     }
 
     private data class HofContextForMembers(
-        val hof: BenBasicDomain?,
+        val hof: BenRegCache?,
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
         val wifeRegistered: Boolean,
@@ -208,16 +210,16 @@ class HouseholdMembersFragment : Fragment() {
     }
 
     private fun computeHofContextForMembers(): HofContextForMembers {
-        val hof = householdMembers.firstOrNull { it.relToHeadId == 19 }
+        val hof = relationMembers.firstOrNull { it.familyHeadRelationPosition == 19 }
         return HofContextForMembers(
             hof = hof,
-            fatherRegistered = householdMembers.any { it.relToHeadId == 2 },
-            motherRegistered = householdMembers.any { it.relToHeadId == 1 },
-            wifeRegistered = householdMembers.any { it.relToHeadId == 5 },
-            husbandRegistered = householdMembers.any { it.relToHeadId == 6 },
+            fatherRegistered = relationMembers.any { it.familyHeadRelationPosition == 2 },
+            motherRegistered = relationMembers.any { it.familyHeadRelationPosition == 1 },
+            wifeRegistered = relationMembers.any { it.familyHeadRelationPosition == 5 },
+            husbandRegistered = relationMembers.any { it.familyHeadRelationPosition == 6 },
             spouseRegistered = hof?.isSpouseAdded == true,
-            unmarried = hof?.isMarried == false,
-            married = hof?.isMarried == true
+            unmarried = hof?.genDetails?.maritalStatusId == 1,
+            married = hof?.genDetails?.maritalStatusId == 2
         )
     }
 
@@ -241,8 +243,8 @@ class HouseholdMembersFragment : Fragment() {
 
         if (ctx.spouseRegistered) {
             when (ctx.hof.gender) {
-                Gender.MALE.name -> list.remove(common[4])
-                Gender.FEMALE.name -> list.remove(common[5])
+                Gender.MALE -> list.remove(common[4])
+                Gender.FEMALE -> list.remove(common[5])
                 else -> Unit
             }
         }
@@ -254,11 +256,11 @@ class HouseholdMembersFragment : Fragment() {
             list.remove(common[4])
         }
 
-        if (ctx.hof.gender == Gender.MALE.name && selectedGender == Gender.MALE) {
+        if (ctx.hof.gender == Gender.MALE && selectedGender == Gender.MALE) {
             list.remove(common[5])
         }
 
-        if (ctx.hof.gender == Gender.FEMALE.name && selectedGender == Gender.FEMALE) {
+        if (ctx.hof.gender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
             list.remove(common[4])
             list.remove(common[18])
         }
@@ -476,11 +478,15 @@ class HouseholdMembersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
+            launch {
+                    relationMembers = viewModel.getMembersForRelationFilter()
+                    householdMembersLoaded = true
+                    binding.fabAddMember.isEnabled = true
+                }
+
                 launch {
                     viewModel.benList.collect {
                         householdMembers = it
-                        householdMembersLoaded = true
-                        binding.fabAddMember.isEnabled = true
                     }
                 }
 
@@ -602,6 +608,7 @@ class HouseholdMembersFragment : Fragment() {
         addBenAlert = null
         householdMembersLoaded = false
         householdMembers = emptyList()
+        relationMembers = emptyList()
         _binding = null
     }
     private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {

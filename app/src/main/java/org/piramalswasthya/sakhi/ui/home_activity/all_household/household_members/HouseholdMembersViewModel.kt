@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenHealthIdDetails
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import javax.inject.Inject
 
@@ -25,6 +26,9 @@ class HouseholdMembersViewModel @Inject constructor(
 
     val isFromDisease = 0
     val diseaseType = "No"
+
+    suspend fun getMembersForRelationFilter(): List<BenRegCache> =
+        benRepo.getBenListFromHousehold(hhId)
 
    /* val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
         list.sortedBy { ben ->
