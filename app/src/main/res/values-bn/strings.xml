@@ -1218,6 +1218,23 @@
         <item>দিন ৪</item>
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+        <item>দিন ৫</item>
+        <item>দিন ৬</item>
+        <item>দিন ৭</item>
+        <item>দিন ৮</item>
+        <item>দিন ৯</item>
+        <item>দিন ১০</item>
+        <item>দিন ১১</item>
+        <item>দিন ১২</item>
+        <item>দিন ১৩</item>
+        <item>দিন ১৪</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>দিন ১</item>
         <item>দিন ২</item>

@@ -1139,6 +1139,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>दिन 1</item>
+        <item>दिन 2</item>
+        <item>दिन 3</item>
+        <item>दिन 4</item>
+        <item>दिन 5</item>
+        <item>दिन 6</item>
+        <item>दिन 7</item>
+        <item>दिन 8</item>
+        <item>दिन 9</item>
+        <item>दिन 10</item>
+        <item>दिन 11</item>
+        <item>दिन 12</item>
+        <item>दिन 13</item>
+        <item>दिन 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>दिन 1</item>
         <item>दिन 2</item>
