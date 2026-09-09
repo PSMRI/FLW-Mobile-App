@@ -36,7 +36,7 @@ class HouseholdMembersViewModel @Inject constructor(
         }
     }*/
     val benList = benRepo.getBenBasicListFromHousehold(hhId).map { list ->
-        list.sortedWith(
+                list.sortedWith(
             compareBy<BenBasicDomain> {
 
                 when {
@@ -51,6 +51,7 @@ class HouseholdMembersViewModel @Inject constructor(
                     else -> 4
                 }
             }
+                .thenByDescending { it.lifoMillis() }
                 .thenByDescending { it.benId }
         )
     }
@@ -76,6 +77,7 @@ class HouseholdMembersViewModel @Inject constructor(
                             else -> 4
                         }
                     }
+                        .thenByDescending { it.lifoMillis() }
                         .thenByDescending { it.benId }
                 )
             }
