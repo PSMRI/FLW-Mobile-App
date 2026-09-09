@@ -204,6 +204,13 @@ class IncentivesFragment : Fragment() {
         }
 
 //        fromMonth.setSelection(0)
+        // FLW-1177: et1 above already displays the current month, but the spinner was left on
+        // its default index 0 (January), so the first Submit fetched January instead of the month
+        // on screen — the list came back empty and the claim button stayed hidden. It only
+        // corrected itself once the picker dialog called setSelection (see et1 click listener).
+        // Sync the spinner to what is displayed. No OnItemSelectedListener is attached to these
+        // spinners, so this cannot re-trigger a fetch.
+        fromMonth.setSelection(currentMonth)
 
         val myArrayList = ArrayList<Int>()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -220,6 +227,10 @@ class IncentivesFragment : Fragment() {
             )
         fromYear.adapter = fromYearsAdapter
         //  fromYear.setSelection(0)
+        // FLW-1177: index 0 is the current year only because the list is built currentYear
+        // downTo 2020. Pin it explicitly so a change to that range cannot silently desync the
+        // year from et1 the same way the month was.
+        fromYear.setSelection(myArrayList.indexOf(currentYears).coerceAtLeast(0))
 
         val toMonth: Spinner = binding.toMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -391,11 +402,13 @@ class IncentivesFragment : Fragment() {
                 .indexOf(fromMonth.selectedItem)
             val selectedYearInt = fromYear.selectedItem.toString().toInt()
 
-            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
-                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
-
-            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
-                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
+            // FLW-1177: both predicates moved into IncentiveClaimWindow so the rule is unit
+            // testable. Kept here, commented, because they read as the definition of the window.
+//            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
+//                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
+//
+//            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
+//                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
             val rejectedRecords = try {
                 incentiveRecordList.filter {
@@ -408,17 +421,35 @@ class IncentivesFragment : Fragment() {
             val isRejectedClaim = rejectedRecords.isNotEmpty()
 
 
-            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+            // ── FLW-1177: kept for reuse once the pilot ends and permanent cut-offs are decided ──
+            // Pre-FLW-1177 Mitanin rule: month M was claimed on days 1-3 of M+1, extended to
+            // day 5 only when something in M had been rejected. Restore this block (and delete
+            // the one below) when the state confirms the permanent cut-off dates.
+//            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+//
+//            val isPreviousMonth = if (isMitaninVariant) {
+//                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
+//            } else {
+//                when {
+//                    isExactlyLastMonth -> currentDay <= 12
+//                    isSelectedPreviousMonth -> true
+//                    else -> false
+//                }
+//            }
 
-            val isPreviousMonth = if (isMitaninVariant) {
-                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
-            } else {
-                when {
-                    isExactlyLastMonth -> currentDay <= 12
-                    isSelectedPreviousMonth -> true
-                    else -> false
-                }
-            }
+            // FLW-1177: rule now lives in IncentiveClaimWindow (unit tested in
+            // IncentiveClaimWindowTest). Mitanin still claims the PREVIOUS month — only the
+            // days 1-3 / 1-5 cut-off is gone, so Claim and Reclaim are offered on every day of
+            // the current month. Every other flavor keeps the legacy window unchanged.
+            // Name kept as-is: it is read again by the claim and reclaim click handlers below.
+            val isPreviousMonth = IncentiveClaimWindow.isClaimAllowed(
+                isMitaninVariant = isMitaninVariant,
+                selectedMonthIndex = selectedMonthIndex,
+                selectedYear = selectedYearInt,
+                currentMonthIndex = currentMonth,
+                currentYear = currentYear,
+                currentDayOfMonth = currentDay
+            )
             binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
 
             binding.claimbtn.setOnClickListener {
