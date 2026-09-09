@@ -292,11 +292,11 @@ AadhaarIdViewModel @Inject constructor(
                         }
                         _abhaNumber = result.data.ABHAProfile.ABHANumber
                         _phrAddress = result.data.ABHAProfile.phrAddress?.get(0) ?: ""
+                        _state.value = State.ABHA_GENERATION_SUCCESS
                     } else {
                         _errorMessage.value = result.data.message
                         _state.value = State.ABHA_GENERATION_FAILED
                     }
-                    _state.value = State.ABHA_GENERATION_SUCCESS
                 }
                 is NetworkResult.Error -> {
                     _errorMessage.value = result.message
