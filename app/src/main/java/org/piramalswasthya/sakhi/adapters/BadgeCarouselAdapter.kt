@@ -39,8 +39,8 @@ class BadgeCarouselAdapter :
             binding.ivCarouselIcon.alpha = if (earnedLook) 1f else 0.85f
             binding.tvCarouselTitle.text = res.getString(def.titleRes)
 
-            val progress = state?.progress ?: 0L
             val target = (state?.nextTarget ?: def.milestones.first()).coerceAtLeast(1L)
+            val progress = (state?.progress ?: 0L).coerceAtMost(target) // maxed badges never show "9 of 8"
             binding.pbCarouselProgress.max = target.toInt()
             // animated fill: the bar grows as the badge slides in
             ObjectAnimator.ofInt(

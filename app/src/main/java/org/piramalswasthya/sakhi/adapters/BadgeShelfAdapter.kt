@@ -48,8 +48,8 @@ class BadgeShelfAdapter :
             binding.tvBadgeTitle.text = res.getString(def.titleRes)
             binding.tvBadgeDesc.text = res.getString(def.descRes)
 
-            val progress = state?.progress ?: 0L
             val target = (state?.nextTarget ?: def.milestones.first()).coerceAtLeast(1L)
+            val progress = (state?.progress ?: 0L).coerceAtMost(target) // maxed badges never show "9 of 8"
 
             binding.tvBadgeLevel.text = when {
                 def.kind == BadgeKind.QUARTERLY || def.kind == BadgeKind.PER_CASE ->

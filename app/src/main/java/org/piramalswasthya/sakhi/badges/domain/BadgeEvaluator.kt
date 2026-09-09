@@ -111,13 +111,18 @@ class BadgeEvaluator @Inject constructor(
                 val hadEarnedBefore = priorEarned.isNotEmpty()
                 val insertedIds = badgeDao.insertEarned(earned)
                 if (hadEarnedBefore) {
+                    // several tiers can land in one run (backfill, first pull) —
+                    // celebrate only the top tier reached per badge, not each one
                     val newRows = insertedIds.zip(earned)
                         .filter { it.first != -1L }
-                        .filter { BadgeDefinitions.byId(it.second.badgeId)?.celebrate == true }
+                        .map { it.second }
+                        .filter { BadgeDefinitions.byId(it.badgeId)?.celebrate == true }
+                        .groupBy { it.badgeId }
+                        .map { (_, rows) -> rows.maxBy { it.level } }
                     // system notification for the first new award (works backgrounded)
-                    newRows.firstOrNull()?.let { celebrate(it.second) }
-                    // in-app game-style overlay for each new award
-                    newRows.forEach { celebrations.publish(it.second.badgeId, it.second.level) }
+                    newRows.firstOrNull()?.let { celebrate(it) }
+                    // in-app game-style overlay for each newly earned badge
+                    newRows.forEach { celebrations.publish(it.badgeId, it.level) }
                 }
             }
             Timber.d("Badges: evaluated ${states.size} badges, ${earned.size} candidate awards")

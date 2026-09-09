@@ -79,8 +79,9 @@ class HomeIconsFragment : Fragment() {
                         val target = card.state?.nextTarget?.coerceAtLeast(1) ?: 1
                         (card.state?.progress ?: 0).toDouble() / target
                     }
-                    val progress = top?.state?.progress ?: 0
                     val target = top?.state?.nextTarget?.coerceAtLeast(1) ?: 1
+                    // maxed badges keep counting (streak weeks, cases) — never show "9 of 8"
+                    val progress = (top?.state?.progress ?: 0).coerceAtMost(target)
                     if (top == null || progress <= 0) {
                         b.ivBadgeWidgetIcon.setImageResource(R.drawable.badge_steady_syncer_t1)
                         b.tvBadgeWidgetText.text =
