@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 import org.piramalswasthya.sakhi.repositories.IncentiveRepo
 import java.util.Calendar
+import timber.log.Timber
 
 @HiltWorker
 class PullIncentiveWorker @AssistedInject constructor(
@@ -53,7 +54,8 @@ class PullIncentiveWorker @AssistedInject constructor(
             val now = System.currentTimeMillis()
             badgeDao.insertSyncLog(BadgeSyncLogCache(BadgeDates.weekKey(now), now))
             WorkerUtils.triggerAdHocBadgeEvaluation(appContext)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.w(e, "Badges: sync-week log after push failed")
         }
         return Result.success()
     }

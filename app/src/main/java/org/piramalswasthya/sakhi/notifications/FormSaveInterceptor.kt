@@ -45,7 +45,10 @@ class FormSaveInterceptor @Inject constructor(
         }
 
     private fun resolve(cols: Map<String, String>, candidates: List<String>, intOnly: Boolean) =
-        candidates.firstOrNull { cols[it] != null && (!intOnly || cols[it]!!.contains("INT")) }
+        candidates.firstOrNull { name ->
+            val type = cols[name]
+            type != null && (!intOnly || type.contains("INT"))
+        }
 
     /** Scans included tables and logs today's new records. Safe on any schema. */
     suspend fun captureToday() = withContext(Dispatchers.IO) {

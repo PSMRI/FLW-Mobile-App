@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.badges.domain.BadgeDates
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
+import timber.log.Timber
 
 @HiltWorker
 class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
@@ -38,7 +39,8 @@ class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
             val now = System.currentTimeMillis()
             badgeDao.insertSyncLog(BadgeSyncLogCache(BadgeDates.weekKey(now), now))
             WorkerUtils.triggerAdHocBadgeEvaluation(appContext)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.w(e, "Badges: sync-week log after full pull failed")
         }
         return Result.success()
     }
