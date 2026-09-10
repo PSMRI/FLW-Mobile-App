@@ -92,5 +92,29 @@
     <color name="unclaimed_pink">#FCFAF8</color>
     <color name="unclaimed_green">#037E62</color>
 
+    <color name="dashboard_title">#0F172A</color>
+    <color name="dashboard_card_title">#1E293B</color>
+    <color name="dashboard_card_count">#0F172A</color>
+    <color name="dashboard_muted">#64748B</color>
+    <color name="dashboard_todo_anc">#3B82F6</color>
+    <color name="dashboard_todo_imm">#7C6FF0</color>
+    <color name="dashboard_hrp_bg">#FCE4E6</color>
+    <color name="dashboard_hrnpw_bg">#FDE9C8</color>
+    <color name="dashboard_confirmed_hrp_bg">#D4F5E9</color>
+    <color name="dashboard_lbw_bg">#EDE4F8</color>
+    <color name="dashboard_abha_bg">#E6F3FB</color>
+    <color name="dashboard_rch_bg">#E4F6F0</color>
+    <color name="dashboard_novisit_bg">#EEE6F8</color>
+    <color name="dashboard_missed_bg">#EEF0F4</color>
+    <color name="dashboard_icon_red">#EF4444</color>
+    <color name="dashboard_icon_orange">#F59E0B</color>
+    <color name="dashboard_icon_green">#10B981</color>
+    <color name="dashboard_icon_purple">#8B5CF6</color>
+    <color name="dashboard_icon_blue">#3B82F6</color>
+    <color name="dashboard_icon_teal">#14B8A6</color>
+    <color name="dashboard_icon_slate">#64748B</color>
+    <color name="dashboard_section_todo_bg">#DBEAFE</color>
+    <color name="dashboard_section_alert_bg">#FDE8E8</color>
+    <color name="dashboard_abha_new">#2563EB</color>
 
 </resources>
