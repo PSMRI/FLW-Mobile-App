@@ -3,9 +3,25 @@ package org.piramalswasthya.sakhi.helpers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import java.util.concurrent.TimeUnit
 
 class KonstantsTest {
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    @Test
+    fun `other sources sits at position 4 of the exposure dropdown`() {
+        assertEquals(4, Konstants.cbacOtherSourcesPosi)
+    }
+
+    @Test
+    fun `occupational exposure array follows the build flavor`() {
+        val expected = if (isMitanin) R.array.cbac_type_occupational_exposure_mitanin
+        else R.array.cbac_type_occupational_exposure
+        assertEquals(expected, Konstants.cbacOccupationalExposureArrayId)
+    }
 
     // =====================================================
     // Age Range Constants Tests

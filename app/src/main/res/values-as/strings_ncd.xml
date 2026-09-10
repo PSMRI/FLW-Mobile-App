@@ -58,6 +58,12 @@
         <item>স্বাচ্ছিকৰ বাকহৰি উত্পাদন – পাতলি</item>
         <item>ধুয়িৱালী, গেছ আৰু ধূলিৰ ব্যাবসাৰত কাম কৰা – শাৰীৰিক অক্ষমতা, গেছ, ধূমশালা উদ্যোগ যেনহে ইত্যাদি</item>
     </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>ফসলৰ বাকহৰি উত্পাদন</item>
+        <item>স্বাচ্ছিকৰ বাকহৰি উত্পাদন – পাতলি</item>
+        <item>ধুয়িৱালী, গেছ আৰু ধূলিৰ ব্যাবসাৰত কাম কৰা – শাৰীৰিক অক্ষমতা, গেছ, ধূমশালা উদ্যোগ যেনহে ইত্যাদি</item>
+        <item>অন্য উৎস</item>
+    </string-array>
     <string-array name="cbac_li">
         <item>সম্পূৰ্ণ নহয়</item>
         <item>চাবা দিন</item>

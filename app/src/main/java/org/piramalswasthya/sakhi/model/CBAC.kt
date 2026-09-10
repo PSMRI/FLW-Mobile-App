@@ -12,6 +12,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.helpers.Konstants
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -85,6 +86,7 @@ data class CbacCache(
     var cbac_weekness_in_feet_posi: Int = 0,
     var cbac_fuel_used_posi: Int = 0,
     var cbac_occupational_exposure_posi: Int = 0,
+    var cbac_occupational_exposure_other: String? = null,
 
     var cbac_feeling_unsteady_posi: Int = 0,
     var cbac_suffer_physical_disability_posi: Int = 0,
@@ -211,9 +213,10 @@ data class CbacCache(
             CbacCookingOil = if (cbac_fuel_used_posi > 0) resources.getStringArray(R.array.cbac_type_Cooking_fuel)[cbac_fuel_used_posi - 1] else "",
             CbacCookingOilScore = cbac_fuel_used_posi,
             CbacOccupationalExposure = if (cbac_occupational_exposure_posi > 0) resources.getStringArray(
-                R.array.cbac_type_occupational_exposure
-            )[cbac_occupational_exposure_posi - 1] else "",
+                Konstants.cbacOccupationalExposureArrayId
+            ).getOrNull(cbac_occupational_exposure_posi - 1) ?: "" else "",
             CbacOccupationalExposureScore = cbac_occupational_exposure_posi,
+            CbacOccupationalExposureOther = cbac_occupational_exposure_other,
             CbacLittleInterestPleasure = if (cbac_little_interest_posi > 0) resources.getStringArray(R.array.cbac_li)[cbac_little_interest_posi - 1] else "",
             CbacLittleInterestPleasureScore = cbac_little_interest_posi,
             CbacDepressedhopeless = if (cbac_feeling_down_posi > 0) resources.getStringArray(R.array.cbac_fd)[cbac_feeling_down_posi - 1] else "",
@@ -619,6 +622,7 @@ data class CbacPostNew(
     val cbacNeedhelpEverydayActivities: String?,
     val cbacForgetnearones: String?,
     val CbacOccupationalExposure: String?,
+    val CbacOccupationalExposureOther: String? = null,
     val CbacBotheredProblemLast2weeks: String? ="",
     val CbacLittleInterestPleasure: String?,
     val CbacDepressedhopeless: String?,
@@ -756,6 +760,7 @@ data class CbacResponseDto(
     val cbacRednessPain: String?,
     val cbacDifficultyreading: String?,
     val CbacOccupationalExposure: String?,
+    val CbacOccupationalExposureOther: String? = null,
     val CbacBotheredProblemLast2weeks: String?,
     val CbacLittleInterestPleasure: String?,
     val CbacDepressedhopeless: String?,
@@ -838,6 +843,7 @@ fun CbacResponseDto.toEntity():CbacCache {
         cbac_little_interest_score = CbacLittleInterestPleasureScore,
         cbac_fuel_used_posi = CbacCookingOilScore,
         cbac_occupational_exposure_posi = CbacOccupationalExposureScore,
+        cbac_occupational_exposure_other = CbacOccupationalExposureOther,
         createdBy = createdBy,
         cbac_diffreading_posi = if (cbacDifficultyreading.equals("yes", true)) 1 else 2,
         VanID = vanId!!,

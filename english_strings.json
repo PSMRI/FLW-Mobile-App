@@ -3711,6 +3711,12 @@
           "Burning of garbage – leaves",
           "Working in industries with smoke, gas and dust exposure such as brick kilns and glass factories etc."
         ],
+        "cbac_type_occupational_exposure_mitanin": [
+          "Crop residue burning",
+          "Burning of garbage – leaves",
+          "Working in industries with smoke, gas and dust exposure such as brick kilns and glass factories etc.",
+          "Other sources"
+        ],
         "cbac_li": [
           "Not at all",
           "Several Days",
