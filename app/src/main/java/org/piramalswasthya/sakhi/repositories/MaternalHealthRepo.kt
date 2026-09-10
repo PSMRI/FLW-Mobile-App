@@ -50,7 +50,7 @@ class MaternalHealthRepo @Inject constructor(
 
         benDao.moveExpiredPregnantWomenToECT(
             currentTime = System.currentTimeMillis(),
-            expiryMillis = TimeUnit.DAYS.toMillis(340)
+            expiryMillis = Konstants.pregnancyExpiryMillis
         )
     }
     suspend fun getSavedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
@@ -168,7 +168,7 @@ class MaternalHealthRepo @Inject constructor(
     private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
 
     val ancDueCount =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.count { isAncDue(it) }
             }
