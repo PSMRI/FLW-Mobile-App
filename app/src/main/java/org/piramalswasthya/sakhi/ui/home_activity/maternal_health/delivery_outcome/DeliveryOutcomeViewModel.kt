@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,9 +86,15 @@ class DeliveryOutcomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val asha = preferenceDao.getLoggedInUser()!!
-            val pwr = pwrRepo.getLatestActiveRegistrationRecord(benId)!!
-            val anc = pwrRepo.getLatestAncRecord(benId)!!
+            val asha = preferenceDao.getLoggedInUser() ?: run {
+                Timber.e("DeliveryOutcomeViewModel: no logged in user for benId: $benId")
+                return@launch
+            }
+            val pwr = pwrRepo.getLatestActiveRegistrationRecord(benId) ?: run {
+                Timber.e("DeliveryOutcomeViewModel: no active pregnancy record for benId: $benId")
+                return@launch
+            }
+            val anc = pwrRepo.getLatestAncRecord(benId)
             benRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"

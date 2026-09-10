@@ -434,10 +434,10 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
 
 
-    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
+    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
         .map { list -> list.map { it.asPwrDomainModel() } }
 
-    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage)
+    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage, Konstants.pregnancyExpiryMillis)
         .map { list -> list.map { it.asPwrDomainModel() } }
 
     fun getRegisteredInfants() = childRegistrationDao.getAllRegisteredInfants(selectedVillage)
@@ -447,7 +447,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         childRegistrationDao.getAllRegisteredInfantsCount(selectedVillage)
 
     //        .map { list -> list.map { it.ben } }
-    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
+    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
     fun getMaternalDeathCount() = benDao.getAllMDSRCount(selectedVillage)
@@ -460,7 +460,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                 list.map { it.asDomainModel() }
             }
     fun getRegisteredPregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
@@ -491,10 +491,10 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
 
     fun getRegisteredPregnantWomanListCount() =
-        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
 
     fun getRegisteredPregnantWomanNonFollowUpList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter {
                     if (!it.savedAncRecords.isNullOrEmpty()) {
@@ -521,7 +521,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         getRegisteredPregnantWomanNonFollowUpList().map { it.size }
 
     fun getDuePregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { isAncDue(it) }
                     .map { it.asDomainModel() }
