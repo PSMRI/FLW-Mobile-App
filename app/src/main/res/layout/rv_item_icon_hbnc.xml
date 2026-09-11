@@ -57,7 +57,8 @@
                     android:layout_margin="@dimen/margin_normal"
                     android:background="?attr/selectableItemBackground"
                     android:layout_gravity="top|end"
-                    app:srcCompat="@drawable/ic_synced" />
+                    tools:src="@drawable/cloud_upload"
+                    app:iconTint="@android:color/holo_green_dark" />
 
 
                 <TextView

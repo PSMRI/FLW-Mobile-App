@@ -263,7 +263,7 @@
                                 android:layout_height="match_parent"
                                 android:contentDescription="@string/suspected_high_risk_pregnant_women"
                                 android:scaleType="fitCenter"
-                                android:src="@drawable/ic__pregnancy" />
+                                android:src="@drawable/ic__high_risk_preg" />
                         </FrameLayout>
 
                         <TextView

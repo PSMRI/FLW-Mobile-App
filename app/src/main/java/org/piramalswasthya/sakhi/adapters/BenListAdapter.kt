@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
@@ -155,11 +156,19 @@ class BenListAdapter(
                     "adult" -> {
                         when (gender) {
                             Gender.MALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                                if (item.age >= "60"){
+                                    binding.ivHhLogo.setImageResource(R.drawable.elderly_man)
+                                }else{
+                                    binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                                }
                             }
 
                             Gender.FEMALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
+                                if (item.age >= "60"){
+                                    binding.ivHhLogo.setImageResource(R.drawable.elderly_woman)
+                                }else{
+                                    binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
+                                }
                             }
 
                             else -> {

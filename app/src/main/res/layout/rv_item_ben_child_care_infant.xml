@@ -53,7 +53,7 @@
                     android:text="@{ben.benFullName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="?attr/colorPrimaryVariant"
-                    app:drawableLeftCompat="@drawable/ic__infant"
+                    app:drawableLeftCompat="@drawable/new_born_baby_icon"
                     app:drawableTint="?attr/colorPrimary"
                     tools:text="Hello Meister" />
 
@@ -98,7 +98,8 @@
                     android:layout_marginHorizontal="@dimen/padding_small"
                     android:contentDescription="@string/iv_sync_state_tv"
                     app:syncState="@{ben.syncState}"
-                    tools:src="@drawable/ic_synced" />
+                    tools:src="@drawable/cloud_upload"
+                    app:iconTint="@android:color/holo_green_dark" />
 
 
             </LinearLayout>

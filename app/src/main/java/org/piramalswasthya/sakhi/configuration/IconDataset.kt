@@ -92,7 +92,7 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionNavHomeToChildCareFragment()
                 ),
                 Icon(
-                    R.drawable.ic__ncd,
+                    R.drawable.disease_control_icon,
                     resources.getString(R.string.icon_title_disease),
                     null,
                     HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
@@ -442,7 +442,7 @@ class IconDataset @Inject constructor(
 
     fun getChildCareDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__infant,
+            R.drawable.new_born_baby_icon,
             resources.getString(R.string.icon_title_icc),
             recordsRepo.infantListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToInfantListFragment()
@@ -458,7 +458,7 @@ class IconDataset @Inject constructor(
             ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()
         ),
         Icon(
-            R.drawable.ic__adolescent,
+            R.drawable.children_under_five,
             resources.getString(R.string.children_under_five_years),
             recordsRepo.childFilteredListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToChildrenUnderFiveYearListFragment()
@@ -533,7 +533,7 @@ class IconDataset @Inject constructor(
 
     fun getDiseaseControlDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__ncd,
+            R.drawable.ncd_icon,
             resources.getString(R.string.icon_title_ncd),
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
@@ -577,7 +577,7 @@ class IconDataset @Inject constructor(
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
         ),
         Icon(
-            R.drawable.ic__ncd,
+            R.drawable.tb_icon,
             resources.getString(R.string.tb),
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDisease()

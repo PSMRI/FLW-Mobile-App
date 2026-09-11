@@ -78,7 +78,7 @@
         android:contentDescription="@string/add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_circle"
+        app:srcCompat="@drawable/person_add"
         app:backgroundTint="?attr/colorPrimary"
         app:tint="@android:color/white" />
 

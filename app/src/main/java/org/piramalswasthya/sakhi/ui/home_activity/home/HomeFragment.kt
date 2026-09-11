@@ -183,7 +183,7 @@ class HomeFragment : Fragment() {
             homeActivity.addClickListenerToHomepageActionBarTitle()
             viewModel.locationRecord?.village?.let {
                 homeActivity.updateActionBar(
-                    R.drawable.ic_home, when (viewModel.currentLanguage) {
+                    R.drawable.healthicons__village_24px, when (viewModel.currentLanguage) {
                         ENGLISH -> it.name
                         Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
