@@ -54,7 +54,15 @@ data class BadgeEarnedResponse(
 data class BadgeEarnedDTO(
     val badgeId: String,
     val level: Int,
-    val earnedAt: Long
+    val earnedAt: Long,
+    /**
+     * What separates two awards of the same badge at the same level: a quarter key, or an
+     * opaque digest for per-case awards, and empty for streak and cumulative badges. Never a
+     * beneficiary identifier — see [org.piramalswasthya.sakhi.badges.domain.AwardKeys].
+     *
+     * Defaulted so a server that predates the field still deserialises.
+     */
+    val awardKey: String = ""
 )
 
 @JsonClass(generateAdapter = true)

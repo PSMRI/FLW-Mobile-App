@@ -8,8 +8,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
-import org.piramalswasthya.sakhi.badges.domain.BadgeKind
 import org.piramalswasthya.sakhi.model.BadgeConfigCache
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
 import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
@@ -73,32 +71,20 @@ class BadgeSyncWorker @AssistedInject constructor(
 
         // Restore milestones on reinstall (insert-IGNORE keeps local awards intact).
         //
-        // Only badges whose awards carry no caseRef are restored from the server. The push
-        // deliberately omits caseRef, because for per-case badges it is a beneficiary id and
-        // that never leaves the device (LLD §4) — so a restored row would come back with an
-        // empty caseRef and miss the local uniqueness key (userId, badgeId, level, caseRef).
-        // Quarterly awards for two different quarters would collapse into one row on the way
-        // out and duplicate against the locally derived ones on the way back in.
+        // awardKey comes back into caseRef, which is what makes a restored row identical to
+        // the one an evaluation would derive: both sides of the local uniqueness key
+        // (userId, badgeId, level, caseRef) agree, so re-deriving after the restore is a
+        // no-op rather than a duplicate. Restoring with an empty caseRef instead would
+        // collapse two quarters of a re-earnable badge into one row on the way out and
+        // duplicate it against the derived rows on the way back in.
         //
-        // Nothing is lost by skipping them: quarterly and per-case awards are rederived from
-        // the ASHA's own re-synced records by BadgeFactsReader, which is how reinstall
-        // restore works with no backend at all. Carrying a stable non-PII award key through
-        // the API would let the server hold them too, and needs the field on both sides.
+        // The key is a quarter key or a digest, never a beneficiary id (AwardKeys).
         try {
             api.getEarned().body()?.earned?.let { restored ->
-                val restorable = restored.filter { dto ->
-                    when (BadgeDefinitions.byId(dto.badgeId)?.kind) {
-                        BadgeKind.STREAK_WEEKLY,
-                        BadgeKind.STREAK_MONTHLY,
-                        BadgeKind.CUMULATIVE -> true
-                        // QUARTERLY and PER_CASE carry a caseRef the payload cannot express.
-                        else -> false
-                    }
-                }
-                badgeDao.insertEarned(restorable.map {
+                badgeDao.insertEarned(restored.map {
                     BadgeEarnedCache(
                         userId = userId, badgeId = it.badgeId, level = it.level,
-                        earnedAt = it.earnedAt, synced = true
+                        caseRef = it.awardKey, earnedAt = it.earnedAt, synced = true
                     )
                 })
             }
@@ -113,9 +99,9 @@ class BadgeSyncWorker @AssistedInject constructor(
                     BadgeEarnedPush(
                         userId = userId,
                         badges = unsynced.map {
-                            // caseRef deliberately omitted: beneficiary-level
-                            // data never leaves the device (LLD §4)
-                            BadgeEarnedDTO(it.badgeId, it.level, it.earnedAt)
+                            // caseRef travels as awardKey. It is a quarter key or a
+                            // digest by this point, never a beneficiary id (LLD §4).
+                            BadgeEarnedDTO(it.badgeId, it.level, it.earnedAt, it.caseRef)
                         }
                     )
                 )

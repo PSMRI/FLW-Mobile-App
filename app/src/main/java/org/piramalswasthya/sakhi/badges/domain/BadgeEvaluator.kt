@@ -332,10 +332,14 @@ class BadgeEvaluator @Inject constructor(
                     lastEvaluatedAt = now
                 )
                 for (case in cases) {
-                    // one recognition per beneficiary; caseRef never leaves the device
+                    // One recognition per beneficiary. The beneficiary id is hashed here, at
+                    // the point the award is made, rather than on the way to the server: the
+                    // digest is then the only form of the key that exists, so the local
+                    // uniqueness constraint and the server's agree and a restored award is
+                    // the same row as the one evaluation would derive (AwardKeys).
                     earned += BadgeEarnedCache(
                         userId = userId, badgeId = def.id, level = 1,
-                        caseRef = case, earnedAt = now
+                        caseRef = AwardKeys.forCase(case), earnedAt = now
                     )
                 }
             }
