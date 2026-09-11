@@ -358,10 +358,13 @@
     <string name="to_do_list">করণীয় তালিকা</string>
     <string name="beneficiaries_due_for_anc">ANC-এর জন্য প্রাপ্য সুবিধাভোগী</string>
     <string name="beneficiaries_due_for_immunization">টিকার জন্য প্রাপ্য সুবিধাভোগী</string>
+    <string name="women_due_for_anc">ANC-এর জন্য প্রাপ্য মহিলা</string>
+    <string name="children_due_for_immunization">টিকার জন্য প্রাপ্য শিশু</string>
     <string name="_0">০</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকির কেস</string>
-    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
-    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকির অ-গর্ভবতী মহিলা</string>
+    <string name="suspected_high_risk_pregnant_women">সন্দেহভাজন উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
+    <string name="suspected_high_risk_non_pregnant_women">সন্দেহভাজন উচ্চ ঝুঁকির অ-গর্ভবতী মহিলা</string>
+    <string name="confirmed_high_risk_pregnant_women">নিশ্চিত উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
     <string name="high_risk_babies">উচ্চ ঝুঁকির শিশু</string>
     <string name="low_birth_weight_babies">কম জন্ম ওজনের শিশু</string>
     <string name="registration_date">নিবন্ধনের তারিখ</string>

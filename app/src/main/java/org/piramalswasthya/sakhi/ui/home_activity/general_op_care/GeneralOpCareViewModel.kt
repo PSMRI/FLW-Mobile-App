@@ -30,7 +30,9 @@ class GeneralOpCareViewModel @Inject constructor(
     }*/
 
     val benList = allBenList.combine(filter) { list, filter ->
-        filterOPDBenList(list, filter)
+        filterOPDBenList(list, filter).sortedByDescending { item ->
+            item.modified_date ?: item.visitDate ?: item.registrationDate ?: item.benVisitDate ?: ""
+        }
     }
 
     private val _abha = MutableLiveData<String?>()
