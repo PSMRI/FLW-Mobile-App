@@ -96,7 +96,11 @@ class FormSaveInterceptor @Inject constructor(
     companion object {
         private val ID_CANDIDATES =
             listOf("benid", "beneficiaryid", "childbenid", "householdid", "hhid", "id")
+        // Creation and activity dates only. An "updated" column is when a row was last
+        // touched, so correcting a typo on a month-old form would land in today's bucket and
+        // tell the ASHA she had recorded a visit she did not. A table with no creation date
+        // is skipped instead, which undercounts rather than inventing work.
         private val DATE_CANDIDATES =
-            listOf("createddate", "createdat", "visitdate", "date", "updateddate", "updatedat")
+            listOf("createddate", "createdat", "visitdate", "date")
     }
 }

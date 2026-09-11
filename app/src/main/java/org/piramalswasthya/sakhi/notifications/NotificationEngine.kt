@@ -57,7 +57,14 @@ class NotificationEngine @Inject constructor(
             }
             val body = filler.fill(template.bodyTemplate, name)
 
-            notify(body)
+            // Only record it if it actually went out. The history row is what makes delivery
+            // once-a-day, so writing it after a post that was refused (no POST_NOTIFICATIONS,
+            // or a throwing NotificationManager) burns the day: nothing appeared, and nothing
+            // will try again until tomorrow.
+            if (!notify(body)) {
+                Timber.w("EveningNotif: not delivered, leaving the day open to retry")
+                return@withContext
+            }
             dao.logShown(NotifHistoryCache(templateId = template.templateId, shownDate = today, bucket = bucket))
             Timber.d("EveningNotif: delivered bucket=$bucket template=${template.templateId}")
         } catch (e: Exception) {
@@ -65,13 +72,14 @@ class NotificationEngine @Inject constructor(
         }
     }
 
-    private fun notify(body: String) {
+    /** @return true when the notification was handed to the system. */
+    private fun notify(body: String): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED
         ) {
             Timber.w("EveningNotif: POST_NOTIFICATIONS not granted — skipping")
-            return
+            return false
         }
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -100,7 +108,15 @@ class NotificationEngine @Inject constructor(
             .setContentIntent(pending)
             .setAutoCancel(true)
             .build()
-        manager.notify(NOTIFICATION_ID, notification)
+        return try {
+            manager.notify(NOTIFICATION_ID, notification)
+            true
+        } catch (e: Exception) {
+            // A refused post (quota, a disabled channel, an OEM restriction) throws here
+            // rather than returning, and swallowing it silently would mark the day delivered.
+            Timber.w(e, "EveningNotif: notification manager refused the post")
+            false
+        }
     }
 
     companion object {

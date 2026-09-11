@@ -6,6 +6,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import timber.log.Timber
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -133,15 +134,26 @@ class BadgeFactsReader @Inject constructor(
     fun activityWeeks(): Set<String> = safely("activityWeeks", emptySet()) {
         val out = mutableSetOf<String>()
         val dayMs = TimeUnit.DAYS.toMillis(1)
+        // Bucket by LOCAL day, not UTC. Dividing an epoch millisecond by a day gives the UTC
+        // day, so in IST every record saved between 00:00 and 05:30 falls into the previous
+        // one; when that local day is a Monday the reconstructed instant lands in the
+        // previous ISO week and Steady Syncer silently loses an activity week after a
+        // reinstall. India does not observe DST, so one current offset is exact here rather
+        // than merely close.
+        val offset = TimeZone.getDefault().getOffset(System.currentTimeMillis()).toLong()
         for (table in MAPPED_TABLES) {
             if (!tableExists(table)) continue
             val dateCol = integerDateColumn(table) ?: continue
             safely("activityWeeks:$table", Unit) {
                 sql.query(
-                    "SELECT DISTINCT `$dateCol` / $dayMs FROM `$table` " +
+                    "SELECT DISTINCT (`$dateCol` + $offset) / $dayMs FROM `$table` " +
                             "WHERE `$dateCol` > 0${draftFilter(table)}"
                 ).use { c ->
-                    while (c.moveToNext()) out.add(BadgeDates.weekKey(c.getLong(0) * dayMs))
+                    while (c.moveToNext()) {
+                        // Midday of that local day: far enough from either boundary that
+                        // rounding cannot push the key into a neighbouring week.
+                        out.add(BadgeDates.weekKey(c.getLong(0) * dayMs - offset + dayMs / 2))
+                    }
                 }
             }
         }

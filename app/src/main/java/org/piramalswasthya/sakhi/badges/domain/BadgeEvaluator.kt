@@ -106,11 +106,14 @@ class BadgeEvaluator @Inject constructor(
                         kind == BadgeKind.CUMULATIVE
                 if (tiered && s.currentLevel < floor) s.copy(currentLevel = floor) else s
             })
+            // The first evaluation on an install awards whatever the existing records
+            // already earned, which is history rather than achievement, so it stays silent.
+            // Read before the insert and cleared after, so a crash mid-run repeats the
+            // silent pass instead of firing a backlog of notifications on the next launch.
+            val isBackfillRun = !pref.isBadgeBackfillDone
             if (earned.isNotEmpty()) {
-                // skip celebration on the first-ever evaluation (historical backfill)
-                val hadEarnedBefore = priorEarned.isNotEmpty()
                 val insertedIds = badgeDao.insertEarned(earned)
-                if (hadEarnedBefore) {
+                if (!isBackfillRun) {
                     // several tiers can land in one run (backfill, first pull) —
                     // celebrate only the top tier reached per badge, not each one
                     val newRows = insertedIds.zip(earned)
@@ -125,6 +128,7 @@ class BadgeEvaluator @Inject constructor(
                     newRows.forEach { celebrations.publish(it.badgeId, it.level) }
                 }
             }
+            if (isBackfillRun) pref.isBadgeBackfillDone = true
             Timber.d("Badges: evaluated ${states.size} badges, ${earned.size} candidate awards")
         }
     }
@@ -225,6 +229,7 @@ class BadgeEvaluator @Inject constructor(
                 val bestRun = maxOf(streak.length, streakEngine.longestRun(completed, periodKeyAt))
                 val level = milestones.count { bestRun >= it }
                 states += BadgeStateCache(
+                    userId = userId,
                     badgeId = def.id,
                     currentLevel = level,
                     progress = streak.length,
@@ -253,6 +258,7 @@ class BadgeEvaluator @Inject constructor(
                 val threshold = milestones.first()
                 val met = measure >= threshold
                 states += BadgeStateCache(
+                    userId = userId,
                     badgeId = def.id,
                     currentLevel = if (met) 1 else 0,
                     progress = measure,
@@ -297,6 +303,7 @@ class BadgeEvaluator @Inject constructor(
                 }.toLong()
                 val level = milestones.count { count >= it }
                 states += BadgeStateCache(
+                    userId = userId,
                     badgeId = def.id,
                     currentLevel = level,
                     progress = count,
@@ -317,6 +324,7 @@ class BadgeEvaluator @Inject constructor(
                     else -> emptyList()
                 }
                 states += BadgeStateCache(
+                    userId = userId,
                     badgeId = def.id,
                     currentLevel = if (cases.isEmpty()) 0 else 1,
                     progress = cases.size.toLong(),

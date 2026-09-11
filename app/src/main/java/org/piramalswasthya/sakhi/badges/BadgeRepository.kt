@@ -1,10 +1,15 @@
 package org.piramalswasthya.sakhi.badges
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import org.piramalswasthya.sakhi.badges.domain.BadgeDefinition
 import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BadgeStateCache
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +20,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class BadgeRepository @Inject constructor(
-    private val badgeDao: BadgeDao
+    private val badgeDao: BadgeDao,
+    private val pref: PreferenceDao
 ) {
 
     data class BadgeCard(
@@ -27,10 +33,23 @@ class BadgeRepository @Inject constructor(
         val timesEarned: Int
     )
 
-    /** Empty list ⇔ feature killed remotely — UI hides cleanly (LLD §5.2). */
-    val shelf: Flow<List<BadgeCard>> = combine(
-        badgeDao.getAllStatesFlow(),
-        badgeDao.getAllEarnedFlow(),
+    /**
+     * Empty list ⇔ feature killed remotely, or nobody logged in — UI hides cleanly
+     * (LLD §5.2).
+     *
+     * Scoped to the signed-in ASHA. The badge tables survive a drawer logout, by design, so
+     * that unsynced awards are not lost; reading them unscoped would show the next ASHA to
+     * use the device the previous one's shelf.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val shelf: Flow<List<BadgeCard>> = flow { emit(pref.getLoggedInUser()?.userId) }
+        .flatMapLatest { userId ->
+            if (userId == null) flowOf(emptyList()) else shelfFor(userId)
+        }
+
+    private fun shelfFor(userId: Int): Flow<List<BadgeCard>> = combine(
+        badgeDao.getStatesFlow(userId),
+        badgeDao.getEarnedFlow(userId),
         badgeDao.getConfigFlow()
     ) { states, earned, configRows ->
         val config = configRows.associate { it.key to it.value }

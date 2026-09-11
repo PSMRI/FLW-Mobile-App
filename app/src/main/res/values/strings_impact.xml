@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="impact_dashboard_title">My Impact</string>
+    <string name="impact_carousel_prev">Previous badge</string>
+    <string name="impact_carousel_next">Next badge</string>
 </resources>

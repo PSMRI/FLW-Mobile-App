@@ -224,6 +224,21 @@ class PreferenceDao @Inject constructor(@ApplicationContext private val context:
         }
 
     /**
+     * Badges: whether the first evaluation on this install has finished.
+     *
+     * That first run awards everything the ASHA's existing records already earned — a
+     * backfill of history, not a series of achievements — so it is the one run that must
+     * stay silent. Recorded explicitly rather than inferred from an empty BADGE_EARNED
+     * table, because those two are only the same thing until somebody's genuine first badge
+     * arrives on an empty table and gets swallowed as history.
+     */
+    var isBadgeBackfillDone: Boolean
+        get() = pref.getBoolean("BADGES FIRST EVALUATION DONE", false)
+        set(value) {
+            pref.edit().putBoolean("BADGES FIRST EVALUATION DONE", value).apply()
+        }
+
+    /**
      * Monthly Recap: earliest moment THIS INSTALL can be considered to have been
      * accumulating the ASHA's records locally. The recap counts rows in the local
      * database, so a snapshot may only be frozen for a month this install was

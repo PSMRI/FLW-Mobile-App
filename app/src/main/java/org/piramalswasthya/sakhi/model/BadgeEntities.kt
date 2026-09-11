@@ -27,10 +27,17 @@ data class BadgeEarnedCache(
     val synced: Boolean = false
 )
 
-/** Latest progress and streak snapshot, overwritten on every evaluation. */
-@Entity(tableName = "BADGE_STATE")
+/**
+ * Latest progress and streak snapshot, overwritten on every evaluation.
+ *
+ * Keyed by (userId, badgeId), not badgeId alone. One device is shared between ASHAs often
+ * enough that a global key would show the previous user's progress on the shelf: the drawer
+ * logout deliberately keeps the database so unsynced records survive, so rows outlive the
+ * session that wrote them.
+ */
+@Entity(tableName = "BADGE_STATE", primaryKeys = ["userId", "badgeId"])
 data class BadgeStateCache(
-    @PrimaryKey
+    val userId: Int,
     val badgeId: String,
     val currentLevel: Int,
     val progress: Long,

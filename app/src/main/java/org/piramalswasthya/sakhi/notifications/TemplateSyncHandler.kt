@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.notifications
 
 import org.json.JSONArray
 import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
+import org.piramalswasthya.sakhi.model.NotifTemplateCache
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,20 +35,35 @@ class TemplateSyncHandler @Inject constructor(
             if (libraryVersion <= localVersion) return
 
             val array = JSONArray(libraryDataJson)
-            val templates = (0 until array.length()).mapNotNull { i ->
-                val o = array.optJSONObject(i) ?: return@mapNotNull null
-                org.piramalswasthya.sakhi.model.NotifTemplateCache(
-                    templateId = o.optString("template_id").ifEmpty { return@mapNotNull null },
-                    bucket = o.optString("bucket").ifEmpty { return@mapNotNull null },
-                    language = o.optString("language", "en"),
-                    bodyTemplate = o.optString("body_template").ifEmpty { return@mapNotNull null },
+            // All or nothing. Dropping the malformed entries and keeping the rest installs a
+            // partial library under a version number that claims to be complete - and since
+            // sync only applies a strictly higher version, whichever buckets went missing
+            // stay missing until the next bump, showing the ASHA nothing on those evenings.
+            val templates = ArrayList<NotifTemplateCache>(array.length())
+            for (i in 0 until array.length()) {
+                val o = array.optJSONObject(i)
+                val templateId = o?.optString("template_id").orEmpty()
+                val bucket = o?.optString("bucket").orEmpty()
+                val body = o?.optString("body_template").orEmpty()
+                if (templateId.isEmpty() || bucket.isEmpty() || body.isEmpty()) {
+                    Timber.w(
+                        "EveningNotif: template library v%d rejected - entry %d is incomplete",
+                        libraryVersion, i
+                    )
+                    return
+                }
+                templates += NotifTemplateCache(
+                    templateId = templateId,
+                    bucket = bucket,
+                    language = o.optString("language", "en").ifEmpty { "en" },
+                    bodyTemplate = body,
                     libraryVersion = libraryVersion
                 )
             }
             if (templates.isEmpty()) return
-            // server is the authoritative source of truth: complete overwrite
-            dao.clearTemplates()
-            dao.insertTemplates(templates)
+            // server is the authoritative source of truth: complete overwrite, in one
+            // transaction so the alarm can never read a half-empty library
+            dao.replaceTemplates(templates)
             Timber.d("EveningNotif: template library updated to v$libraryVersion (${templates.size} templates)")
         } catch (e: Exception) {
             Timber.w(e, "EveningNotif: template sync skipped")

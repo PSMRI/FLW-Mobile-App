@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="impact_dashboard_title">মোৰ প্ৰভাৱ</string>
+    <string name="impact_carousel_prev">পূৰ্বৱৰ্তী বেজ</string>
+    <string name="impact_carousel_next">পৰৱৰ্তী বেজ</string>
 </resources>

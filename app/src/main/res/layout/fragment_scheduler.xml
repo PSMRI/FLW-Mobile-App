@@ -71,7 +71,7 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/badge_shelf_title"
+                            android:contentDescription="@string/impact_carousel_prev"
                             android:rotation="180"
                             android:src="@drawable/ic_chevron_right"
                             app:tint="?attr/colorPrimary" />
@@ -91,7 +91,7 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/badge_shelf_title"
+                            android:contentDescription="@string/impact_carousel_next"
                             android:src="@drawable/ic_chevron_right"
                             app:tint="?attr/colorPrimary" />
                     </LinearLayout>

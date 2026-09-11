@@ -454,6 +454,7 @@ abstract class InAppDb : RoomDatabase() {
                         database.execSQL(
                             """
                             CREATE TABLE IF NOT EXISTS `BADGE_STATE` (
+                                `userId` INTEGER NOT NULL,
                                 `badgeId` TEXT NOT NULL,
                                 `currentLevel` INTEGER NOT NULL,
                                 `progress` INTEGER NOT NULL,
@@ -461,7 +462,7 @@ abstract class InAppDb : RoomDatabase() {
                                 `streakCount` INTEGER NOT NULL,
                                 `graceRemaining` INTEGER NOT NULL,
                                 `lastEvaluatedAt` INTEGER NOT NULL,
-                                PRIMARY KEY(`badgeId`)
+                                PRIMARY KEY(`userId`, `badgeId`)
                             )
                             """.trimIndent()
                         )

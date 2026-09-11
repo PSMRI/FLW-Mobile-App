@@ -202,14 +202,22 @@ class SchedulerFragment : Fragment() {
         }
     }
 
+    /** Set by a drag or an arrow tap, consumed by the next page change — see [setUpImpactDashboard]. */
+    private var carouselMovedByUser = false
+
     /** Impact Dashboard: auto-moving carousel of badge progress. */
     private fun setUpImpactDashboard() {
         val carouselAdapter = BadgeCarouselAdapter()
         binding.vpImpactBadges.adapter = carouselAdapter
 
+        // The carousel also advances on its own every few seconds. A tick on those is the
+        // phone buzzing in her pocket unprompted, which reads as a notification rather than
+        // as feedback, so haptics are armed only by a drag or a tap on the arrows.
         fun step(direction: Int) {
             val count = carouselAdapter.itemCount
-            if (count > 0) binding.vpImpactBadges.setCurrentItem(
+            if (count == 0) return
+            carouselMovedByUser = true
+            binding.vpImpactBadges.setCurrentItem(
                 (binding.vpImpactBadges.currentItem + direction + count) % count, true
             )
         }
@@ -235,8 +243,15 @@ class SchedulerFragment : Fragment() {
             })
             // gentle tactile tick as pages settle + "3 / 8" position counter
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageScrollStateChanged(state: Int) {
+                    if (state == ViewPager2.SCROLL_STATE_DRAGGING) carouselMovedByUser = true
+                }
+
                 override fun onPageSelected(position: Int) {
-                    performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                    if (carouselMovedByUser) {
+                        performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                        carouselMovedByUser = false
+                    }
                     _binding?.tvCarouselCounter?.text =
                         "${position + 1} / ${carouselAdapter.itemCount}"
                 }

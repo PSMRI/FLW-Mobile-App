@@ -8,6 +8,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
+import org.piramalswasthya.sakhi.badges.domain.BadgeKind
 import org.piramalswasthya.sakhi.model.BadgeConfigCache
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
 import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
@@ -51,8 +53,7 @@ class BadgeSyncWorker @AssistedInject constructor(
 
         try {
             api.getFreezes().body()?.freezes?.let { freezes ->
-                badgeDao.clearFreezes()
-                badgeDao.insertFreezes(freezes.map {
+                badgeDao.replaceFreezes(freezes.map {
                     BadgeStreakFreezeCache(
                         badgeId = it.badgeId ?: "",
                         startDate = it.startDate,
@@ -70,10 +71,31 @@ class BadgeSyncWorker @AssistedInject constructor(
             null
         } ?: return Result.success()
 
-        // Restore milestones on reinstall (insert-IGNORE keeps local awards intact)
+        // Restore milestones on reinstall (insert-IGNORE keeps local awards intact).
+        //
+        // Only badges whose awards carry no caseRef are restored from the server. The push
+        // deliberately omits caseRef, because for per-case badges it is a beneficiary id and
+        // that never leaves the device (LLD §4) — so a restored row would come back with an
+        // empty caseRef and miss the local uniqueness key (userId, badgeId, level, caseRef).
+        // Quarterly awards for two different quarters would collapse into one row on the way
+        // out and duplicate against the locally derived ones on the way back in.
+        //
+        // Nothing is lost by skipping them: quarterly and per-case awards are rederived from
+        // the ASHA's own re-synced records by BadgeFactsReader, which is how reinstall
+        // restore works with no backend at all. Carrying a stable non-PII award key through
+        // the API would let the server hold them too, and needs the field on both sides.
         try {
             api.getEarned().body()?.earned?.let { restored ->
-                badgeDao.insertEarned(restored.map {
+                val restorable = restored.filter { dto ->
+                    when (BadgeDefinitions.byId(dto.badgeId)?.kind) {
+                        BadgeKind.STREAK_WEEKLY,
+                        BadgeKind.STREAK_MONTHLY,
+                        BadgeKind.CUMULATIVE -> true
+                        // QUARTERLY and PER_CASE carry a caseRef the payload cannot express.
+                        else -> false
+                    }
+                }
+                badgeDao.insertEarned(restorable.map {
                     BadgeEarnedCache(
                         userId = userId, badgeId = it.badgeId, level = it.level,
                         earnedAt = it.earnedAt, synced = true
@@ -85,7 +107,7 @@ class BadgeSyncWorker @AssistedInject constructor(
         }
 
         try {
-            val unsynced = badgeDao.getUnsyncedEarned()
+            val unsynced = badgeDao.getUnsyncedEarned(userId)
             if (unsynced.isNotEmpty()) {
                 val response = api.postEarned(
                     BadgeEarnedPush(

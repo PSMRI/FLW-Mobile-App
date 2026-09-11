@@ -24,13 +24,30 @@ class NotificationScheduler @Inject constructor(
 
     private val prefs get() = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-    /** "HH:mm", e.g. "21:00". Called by TemplateSyncHandler on timing change. */
+    /**
+     * "HH:mm", e.g. "21:00". Called by TemplateSyncHandler on timing change.
+     *
+     * The shape of the string is not enough: "99:99" matches it, and Calendar is lenient, so
+     * setting hour 99 rolls the alarm four days forward rather than failing. The evening
+     * notification then simply never arrives, with nothing on screen to say why - so the
+     * range is checked here, where a bad value can still be refused, not at the alarm.
+     */
     fun updateEveningTime(time: String) {
-        if (time.matches(Regex("""\d{1,2}:\d{2}""")) && time != eveningTime()) {
+        val parts = time.split(":")
+        val hour = parts.getOrNull(0)?.toIntOrNull()
+        val minute = parts.getOrNull(1)?.toIntOrNull()
+        if (parts.size != 2 || hour == null || minute == null ||
+            hour !in 0..23 || minute !in 0..59
+        ) {
+            Timber.w("EveningNotif: ignoring out-of-range evening time '%s'", time)
+            return
+        }
+        if (time != eveningTime()) {
             prefs.edit().putString(KEY_TIME, time).apply()
             schedule() // cancel pending schedule and re-schedule with latest timing (LLD §6)
         }
     }
+
 
     fun eveningTime(): String = prefs.getString(KEY_TIME, DEFAULT_TIME) ?: DEFAULT_TIME
 
