@@ -401,10 +401,13 @@
     <string name="to_do_list">To Do List</string>
     <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
     <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="women_due_for_anc">Women due for ANC</string>
+    <string name="children_due_for_immunization">Children due for Immunization</string>
     <string name="_0">0</string>
     <string name="high_risk_cases">High Risk Cases</string>
-    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
-    <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
+    <string name="suspected_high_risk_pregnant_women">Suspected High Risk Pregnant Woman</string>
+    <string name="suspected_high_risk_non_pregnant_women">Suspected High Risk Non Pregnant Woman</string>
+    <string name="confirmed_high_risk_pregnant_women">Confirmed High Risk Pregnant Woman</string>
     <string name="high_risk_babies">High Risk Babies</string>
     <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
     <string name="registration_date">Registration Date</string>

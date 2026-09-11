@@ -342,9 +342,12 @@
     <string name="to_do_list">कार्य सूची</string>
     <string name="beneficiaries_due_for_anc">एएनसी के लिए लाभार्थी बकाया</string>
     <string name="beneficiaries_due_for_immunization">टीकाकरण के लिए देय लाभार्थी</string>
+    <string name="women_due_for_anc">एएनसी के लिए देय महिलाएं</string>
+    <string name="children_due_for_immunization">टीकाकरण के लिए देय बच्चे</string>
     <string name="high_risk_cases">खतरे के लक्षण वाले मामले</string>
-    <string name="high_risk_pregnant_women">खतरे के लक्षण वाली गर्भवती महिलाएं</string>
-    <string name="high_risk_non_pregnant_women">खतरे के लक्षण वाली गैर-गर्भवती महिलाएं</string>
+    <string name="suspected_high_risk_pregnant_women">संदिग्ध खतरे के लक्षण वाली गर्भवती महिला</string>
+    <string name="suspected_high_risk_non_pregnant_women">संदिग्ध खतरे के लक्षण वाली गैर-गर्भवती महिला</string>
+    <string name="confirmed_high_risk_pregnant_women">पुष्ट खतरे के लक्षण वाली गर्भवती महिला</string>
     <string name="high_risk_babies">खतरे के लक्षण वाले शिशु</string>
     <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
     <string name="registration_date">पंजीकरण तिथि</string>

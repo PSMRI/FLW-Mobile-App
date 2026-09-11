@@ -134,7 +134,7 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
                 )
             }
         )
-    }
+    }.sortedByDescending { it.ben.lifoMillis() }
 }
     // init: populate vaccinesFlow
     init {
