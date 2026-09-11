@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        ┌──────────────────────────────────────────────────────────────────────┐
+        │  DEBUG-ONLY Monthly Recap strip preview switch.                        │
+        │                                                                        │
+        │  auto    -> derive the strip state from real local recap persistence   │
+        │             (availability gate + Room snapshot status). Default.       │
+        │  hidden | ready | resume | replay                                      │
+        │          -> force that state visually, ignoring local data.            │
+        │                                                                        │
+        │  This file exists ONLY in debug builds, so it can never affect release │
+        │  output (release stays fail-closed HIDDEN until rollout integration).  │
+        └──────────────────────────────────────────────────────────────────────┘
+        No user id, no API involved — forced tokens are pure UI preview.
+    -->
+    <string name="monthly_recap_preview_state" translatable="false">auto</string>
+</resources>

@@ -8,4 +8,28 @@
         <key>force_update</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>gamification_master_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>gamification_pilot_user_ids</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>badges_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>monthly_recap_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>notifications_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>consistency_dashboard_enabled</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

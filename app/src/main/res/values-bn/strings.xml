@@ -16,6 +16,7 @@
     <string name="PREF_user_entry" translatable="false">logged-in-user</string>
     <string name="PREF_full_load_pull_progress" translatable="false">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page" translatable="false">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language" translatable="false">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri" translatable="false">DP_URI_cat</string>
 
@@ -1467,4 +1468,8 @@
     <string name="notification_action_clear">সাফ করুন</string>
     <string name="notification_action_cancel">বাতিল করুন</string>
     <string name="notification_close">বন্ধ করুন</string>
+    <string name="notification_recap_channel_name">মাসিক রিক্যাপ</string>
+    <string name="notification_recap_channel_description">আপনার মাসিক রিক্যাপ দেখার একটি মাসিক অনুস্মারক</string>
+    <string name="notification_recap_title">আপনার মাস, ৭৫ সেকেন্ডে</string>
+    <string name="notification_recap_body">গত মাসের আপনার রিক্যাপ প্রস্তুত। দেখতে ট্যাপ করুন।</string>
 </resources>

@@ -73,4 +73,26 @@ interface ImmunizationDao {
 
     @Query("UPDATE IMMUNIZATION SET syncState = 0 WHERE syncState = 1")
     suspend fun resetSyncingToUnsynced()
+
+    /**
+     * Monthly Recap (read-only): count of vaccine DOSES the current ASHA administered
+     * in the window `[startInclusive, endExclusive)`. Each `IMMUNIZATION` row is one
+     * `(beneficiaryId, vaccineId)` dose — child and mother doses alike (no category
+     * filter, by design).
+     *
+     * Ownership is the ASHA's own `createdBy` (this table has no `ashaId`); combined
+     * with the `ashaId`-scoped server pull this counts only doses this ASHA personally
+     * recorded. The composite primary key `(beneficiaryId, vaccineId)` means a
+     * re-downloaded dose replaces its row rather than adding one, so `COUNT(*)` can
+     * never be inflated by re-sync. Windowed on the user-entered vaccination `date`
+     * (rows with a NULL `date` fall outside any window and are excluded).
+     */
+    @Query(
+        "SELECT COUNT(*) FROM IMMUNIZATION WHERE createdBy = :userName AND date >= :startInclusive AND date < :endExclusive"
+    )
+    suspend fun countCurrentAshaDosesAdministered(
+        userName: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
 }

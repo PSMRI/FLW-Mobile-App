@@ -62,7 +62,9 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
@@ -223,10 +225,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         //Evening Notification (Notification LLD §4)
         NotifTemplateCache::class,
         NotifHistoryCache::class,
-        FormSaveLogCache::class
+        FormSaveLogCache::class,
+        //Monthly Recap (Recap LLD §3)
+        MonthlyRecapCache::class
     ],
     views = [BenBasicCache::class],
-    version = 65, exportSchema = false
+    version = 66, exportSchema = false
 )
 
 @TypeConverters(
@@ -271,6 +275,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val saasBahuSammelanDao: SaasBahuSammelanDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
+    abstract val monthlyRecapDao: MonthlyRecapDao
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
@@ -563,6 +568,48 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     } catch (_: Exception) {
                     }
+                }
+            }
+
+            // Monthly Recap foundation: one snapshot per (userId, recapYearMonth).
+            // Additive only — no existing table, data or encryption behaviour changes.
+            //
+            // Renumbered twice. First from 60->61 to 63->64, when release 2.11 merged
+            // into main and upstream had already taken 60->61 (isDeath normalisation),
+            // 61->62 and 62->63 (the NOTIFICATION table). Then from 63->64 to 65->66,
+            // when the badges and evening-notification modules landed on this branch
+            // ahead of it and took 63->64 and 64->65.
+            //
+            // Both times for the same reason: a version number is a promise about what a
+            // phone already sitting on it contains. Reusing one would leave a device that
+            // had migrated to the other module's 64 believing MONTHLY_RECAP exists, and
+            // it would crash on the first recap query rather than fail at upgrade time.
+            val MIGRATION_65_66 = object : Migration(65, 66) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MONTHLY_RECAP` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`userId` INTEGER NOT NULL, " +
+                                "`recapYearMonth` INTEGER NOT NULL, " +
+                                "`windowStartMillis` INTEGER NOT NULL, " +
+                                "`windowEndMillis` INTEGER NOT NULL, " +
+                                "`status` TEXT NOT NULL, " +
+                                "`language` TEXT, " +
+                                "`variantSeed` INTEGER NOT NULL, " +
+                                "`snapshotVersion` INTEGER NOT NULL, " +
+                                "`metricsJson` TEXT, " +
+                                "`progressScene` INTEGER NOT NULL, " +
+                                "`totalScenes` INTEGER, " +
+                                "`createdAt` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL, " +
+                                "`startedAt` INTEGER, " +
+                                "`completedAt` INTEGER)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                                "`index_MONTHLY_RECAP_userId_recapYearMonth` " +
+                                "ON `MONTHLY_RECAP` (`userId`, `recapYearMonth`)"
+                    )
                 }
             }
 
@@ -3623,7 +3670,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_61_62,
                         MIGRATION_62_63,
                         MIGRATION_63_64,
-                        MIGRATION_64_65
+                        MIGRATION_64_65,
+                        MIGRATION_65_66
 
 
                     ).build()

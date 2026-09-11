@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Monthly Recap dashboard card surface.
+
+    Deliberately NOT a block of brand colour: it reuses the recap PLAYBACK palette
+    (ivory -> blush -> lilac) so the dashboard card and the recap screen read as one
+    experience, and the ASHA-didi is the only saturated thing on it. Depth comes from
+    two very low-opacity washes rather than a strong fill, which keeps the dark text
+    legible and lets the card sit calmly among the dashboard icons.
+
+    Corners are clipped by the parent MaterialCardView. Base colours are the shared
+    recap tokens from colors.xml.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- base: the recap playback wash, angled so the light falls toward the didi -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:startColor="@color/recap_playback_bg_top"
+                android:centerColor="@color/recap_playback_bg_mid"
+                android:endColor="@color/recap_playback_bg_bottom"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- soft violet halo low behind the character, so she is lit rather than boxed.
+         Sized against the SHORT card - a large oval here would read as a second
+         background rather than a glow. -->
+    <item
+        android:width="150dp"
+        android:height="150dp"
+        android:bottom="-72dp"
+        android:gravity="bottom|start"
+        android:left="-52dp">
+        <shape android:shape="oval">
+            <solid android:color="#1A7B6CD9" />
+        </shape>
+    </item>
+
+    <!-- warm highlight top-end for gentle depth -->
+    <item
+        android:width="110dp"
+        android:height="110dp"
+        android:gravity="top|end"
+        android:right="-40dp"
+        android:top="-46dp">
+        <shape android:shape="oval">
+            <solid android:color="#2EFFFFFF" />
+        </shape>
+    </item>
+</layer-list>
