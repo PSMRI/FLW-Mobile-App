@@ -19,6 +19,31 @@ interface EcrDao {
     @Query("select count(*) from ELIGIBLE_COUPLE_REG")
     suspend fun ecrCount(): Int
 
+    /**
+     * Monthly Recap (READ-ONLY): counts DISTINCT couples the current ASHA either
+     * registered OR tracked for family planning in the window [startInclusive,
+     * endExclusive). Ownership is `createdBy = :userName` (local saves set the
+     * logged-in userName; downloaded rows preserve the original owner's createdBy).
+     * The UNION de-duplicates `benId` across the two tables and within each, and
+     * `benId` is stable across sync (FK onUpdate=CASCADE), so a local row and its
+     * re-downloaded copy — and a couple that is BOTH registered and tracked — each
+     * count exactly once. Returns an aggregate only.
+     */
+    @Query(
+        "SELECT COUNT(*) FROM (" +
+                "SELECT benId FROM ELIGIBLE_COUPLE_REG " +
+                "WHERE createdBy = :userName AND dateOfReg >= :startInclusive AND dateOfReg < :endExclusive " +
+                "UNION " +
+                "SELECT benId FROM ELIGIBLE_COUPLE_TRACKING " +
+                "WHERE createdBy = :userName AND visitDate >= :startInclusive AND visitDate < :endExclusive" +
+                ")"
+    )
+    suspend fun countCurrentAshaEligibleCouples(
+        userName: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
+
     @Query("SELECT * FROM ELIGIBLE_COUPLE_REG WHERE benId =:benId limit 1")
     suspend fun getSavedECR(benId: Long): EligibleCoupleRegCache?
 

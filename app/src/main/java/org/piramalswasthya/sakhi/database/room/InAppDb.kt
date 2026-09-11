@@ -16,7 +16,9 @@ import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
@@ -60,7 +62,9 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.model.ABHAModel
+import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
@@ -113,6 +117,14 @@ import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
+import org.piramalswasthya.sakhi.model.BadgeConfigCache
+import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.model.FormSaveLogCache
+import org.piramalswasthya.sakhi.model.NotifHistoryCache
+import org.piramalswasthya.sakhi.model.NotifTemplateCache
+import org.piramalswasthya.sakhi.model.BadgeStateCache
+import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 import org.piramalswasthya.sakhi.model.NotificationEntity
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -203,10 +215,22 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
         TBConfirmedTreatmentCache::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        //Badges (LLD §4.1)
+        BadgeEarnedCache::class,
+        BadgeStateCache::class,
+        BadgeSyncLogCache::class,
+        BadgeStreakFreezeCache::class,
+        BadgeConfigCache::class,
+        //Evening Notification (Notification LLD §4)
+        NotifTemplateCache::class,
+        NotifHistoryCache::class,
+        FormSaveLogCache::class,
+        //Monthly Recap (Recap LLD §3)
+        MonthlyRecapCache::class
     ],
     views = [BenBasicCache::class],
-    version = 63, exportSchema = false
+    version = 66, exportSchema = false
 )
 
 @TypeConverters(
@@ -251,6 +275,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val saasBahuSammelanDao: SaasBahuSammelanDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
+    abstract val monthlyRecapDao: MonthlyRecapDao
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
@@ -272,6 +297,10 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun formResponseFilariaMDACampaignJsonDao(): FilariaMdaCampaignJsonDao
 
     abstract val syncDao: SyncDao
+
+    abstract val badgeDao: BadgeDao
+
+    abstract val eveningNotifDao: EveningNotifDao
 
     companion object {
         @Volatile
@@ -342,6 +371,139 @@ abstract class InAppDb : RoomDatabase() {
 //            }
 
 
+            // Evening Notification module (Notification LLD §4) — additive only.
+            val MIGRATION_64_65 = object : Migration(64, 65) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_templates` (
+                                `templateId` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL,
+                                `language` TEXT NOT NULL,
+                                `bodyTemplate` TEXT NOT NULL,
+                                `libraryVersion` INTEGER NOT NULL,
+                                PRIMARY KEY(`templateId`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_templates_bucket_language` " +
+                                    "ON `notification_templates` (`bucket`, `language`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_history` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `templateId` TEXT NOT NULL,
+                                `shownDate` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_history_bucket` " +
+                                    "ON `notification_history` (`bucket`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `form_save_log` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `formType` TEXT NOT NULL,
+                                `beneficiaryId` INTEGER NOT NULL,
+                                `ashaWorkerId` INTEGER NOT NULL,
+                                `savedAt` INTEGER NOT NULL,
+                                `dateKey` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_form_save_log_beneficiaryId_formType_dateKey` " +
+                                    "ON `form_save_log` (`beneficiaryId`, `formType`, `dateKey`)"
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_form_save_log_dateKey` " +
+                                    "ON `form_save_log` (`dateKey`)"
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+
+            // Badges module (LLD §4.1) — additive only, no health-table changes.
+            val MIGRATION_63_64 = object : Migration(63, 64) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    try {
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_EARNED` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `userId` INTEGER NOT NULL,
+                                `badgeId` TEXT NOT NULL,
+                                `level` INTEGER NOT NULL,
+                                `caseRef` TEXT NOT NULL,
+                                `earnedAt` INTEGER NOT NULL,
+                                `synced` INTEGER NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_BADGE_EARNED_userId_badgeId_level_caseRef` " +
+                                    "ON `BADGE_EARNED` (`userId`, `badgeId`, `level`, `caseRef`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_STATE` (
+                                `userId` INTEGER NOT NULL,
+                                `badgeId` TEXT NOT NULL,
+                                `currentLevel` INTEGER NOT NULL,
+                                `progress` INTEGER NOT NULL,
+                                `nextTarget` INTEGER NOT NULL,
+                                `streakCount` INTEGER NOT NULL,
+                                `graceRemaining` INTEGER NOT NULL,
+                                `lastEvaluatedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`userId`, `badgeId`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_SYNC_LOG` (
+                                `weekKey` TEXT NOT NULL,
+                                `syncCompletedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`weekKey`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_STREAK_FREEZE` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `badgeId` TEXT NOT NULL,
+                                `startDate` INTEGER NOT NULL,
+                                `endDate` INTEGER NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_BADGE_STREAK_FREEZE_badgeId_startDate_endDate` " +
+                                    "ON `BADGE_STREAK_FREEZE` (`badgeId`, `startDate`, `endDate`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `BADGE_CONFIG` (
+                                `key` TEXT NOT NULL,
+                                `value` TEXT NOT NULL,
+                                `updatedAt` INTEGER NOT NULL,
+                                PRIMARY KEY(`key`)
+                            )
+                            """.trimIndent()
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+
             val MIGRATION_62_63 = object : Migration(62, 63) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     try {
@@ -407,6 +569,48 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     } catch (_: Exception) {
                     }
+                }
+            }
+
+            // Monthly Recap foundation: one snapshot per (userId, recapYearMonth).
+            // Additive only — no existing table, data or encryption behaviour changes.
+            //
+            // Renumbered twice. First from 60->61 to 63->64, when release 2.11 merged
+            // into main and upstream had already taken 60->61 (isDeath normalisation),
+            // 61->62 and 62->63 (the NOTIFICATION table). Then from 63->64 to 65->66,
+            // when the badges and evening-notification modules landed on this branch
+            // ahead of it and took 63->64 and 64->65.
+            //
+            // Both times for the same reason: a version number is a promise about what a
+            // phone already sitting on it contains. Reusing one would leave a device that
+            // had migrated to the other module's 64 believing MONTHLY_RECAP exists, and
+            // it would crash on the first recap query rather than fail at upgrade time.
+            val MIGRATION_65_66 = object : Migration(65, 66) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MONTHLY_RECAP` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`userId` INTEGER NOT NULL, " +
+                                "`recapYearMonth` INTEGER NOT NULL, " +
+                                "`windowStartMillis` INTEGER NOT NULL, " +
+                                "`windowEndMillis` INTEGER NOT NULL, " +
+                                "`status` TEXT NOT NULL, " +
+                                "`language` TEXT, " +
+                                "`variantSeed` INTEGER NOT NULL, " +
+                                "`snapshotVersion` INTEGER NOT NULL, " +
+                                "`metricsJson` TEXT, " +
+                                "`progressScene` INTEGER NOT NULL, " +
+                                "`totalScenes` INTEGER, " +
+                                "`createdAt` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL, " +
+                                "`startedAt` INTEGER, " +
+                                "`completedAt` INTEGER)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                                "`index_MONTHLY_RECAP_userId_recapYearMonth` " +
+                                "ON `MONTHLY_RECAP` (`userId`, `recapYearMonth`)"
+                    )
                 }
             }
 
@@ -3465,7 +3669,10 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_59_60,
                         MIGRATION_60_61,
                         MIGRATION_61_62,
-                        MIGRATION_62_63
+                        MIGRATION_62_63,
+                        MIGRATION_63_64,
+                        MIGRATION_64_65,
+                        MIGRATION_65_66
 
 
                     ).build()

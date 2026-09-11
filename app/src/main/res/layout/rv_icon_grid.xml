@@ -1,13 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Home module grid. Two additive elements sit ABOVE the module RecyclerView:
+    the badges progress widget and the Monthly Recap strip. The RecyclerView keeps
+    its id (rv_icon_grid) and its original attributes so existing binding and
+    adapter behaviour is preserved. Both additions support View.GONE without
+    leaving a gap.
 
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    The RecyclerView takes the remaining height (0dp + weight) rather than
+    match_parent: with siblings above it in a vertical LinearLayout, match_parent
+    measures against the full parent and pushes the last rows of the grid off the
+    bottom of the screen on shorter devices.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rv_icon_grid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:splitMotionEvents="false"
     android:background="?attr/colorOnSecondary"
-    android:padding="@dimen/padding_small"
-    android:clipToPadding="false"
-    tools:itemCount="1"
-    tools:listitem="@layout/rv_item_icon_grid" />
+    android:orientation="vertical">
+
+    <!-- Badges live progress widget (LLD: never reads zero; hidden by kill switch) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_badge_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_small"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:cardCornerRadius="@dimen/padding_normal"
+        app:cardElevation="8dp"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_normal">
+
+            <ImageView
+                android:id="@+id/iv_badge_widget_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/badge_widget_title"
+                android:scaleType="centerInside"
+                tools:src="@drawable/badge_steady_syncer" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_normal"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_badge_widget_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Steady Syncer — 3 of 4" />
+
+                <ProgressBar
+                    android:id="@+id/pb_badge_widget"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    tools:progress="75" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/badge_widget_title"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="?attr/colorPrimary" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- GONE by default: this layout is shared by many icon-grid screens (Eligible
+         Couple, Child Care, NCD, etc.). Only HomeIconsFragment makes the strip
+         visible, so it can never appear on any other screen. -->
+    <include
+        android:id="@+id/monthly_recap_strip"
+        layout="@layout/monthly_recap_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_icon_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?attr/colorOnSecondary"
+        android:clipToPadding="false"
+        android:padding="@dimen/padding_small"
+        android:splitMotionEvents="false"
+        tools:itemCount="1"
+        tools:listitem="@layout/rv_item_icon_grid" />
+
+</LinearLayout>

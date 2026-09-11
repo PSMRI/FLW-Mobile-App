@@ -88,4 +88,34 @@ interface MaternalHealthDao {
 
     @Query("UPDATE pregnancy_anc SET syncState = 0 WHERE syncState = 1")
     suspend fun resetAncSyncingToUnsynced()
+
+    /**
+     * Monthly Recap (read-only): count of DISTINCT pregnant women / mothers the current
+     * ASHA supported in the window `[startInclusive, endExclusive)` via ANY maternal
+     * activity — pregnancy registration, ANC, PMSMA, delivery outcome or PNC.
+     *
+     * Ownership is the ASHA's own `createdBy` (these tables have no `ashaId`); combined
+     * with the `ashaId`-scoped server pull this counts only records this ASHA personally
+     * created. The `active`/`isActive` flag is intentionally NOT filtered, so an activity
+     * genuinely performed in the window still counts even if its record was later
+     * closed/superseded (e.g. the pregnancy progressed). `UNION` + `COUNT(DISTINCT benId)`
+     * means a woman seen across several forms — or across multiple visits — counts once,
+     * and PNC's download duplicate-row quirk collapses harmlessly.
+     */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT benId) FROM (
+            SELECT benId FROM PREGNANCY_REGISTER WHERE createdBy = :userName AND dateOfRegistration >= :startInclusive AND dateOfRegistration < :endExclusive
+            UNION SELECT benId FROM PREGNANCY_ANC    WHERE createdBy = :userName AND ancDate        >= :startInclusive AND ancDate        < :endExclusive
+            UNION SELECT benId FROM PMSMA            WHERE createdBy = :userName AND visitDate      >= :startInclusive AND visitDate      < :endExclusive
+            UNION SELECT benId FROM DELIVERY_OUTCOME WHERE createdBy = :userName AND dateOfDelivery >= :startInclusive AND dateOfDelivery < :endExclusive
+            UNION SELECT benId FROM PNC_VISIT        WHERE createdBy = :userName AND pncDate        >= :startInclusive AND pncDate        < :endExclusive
+        )
+        """
+    )
+    suspend fun countCurrentAshaMothersSupported(
+        userName: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
 }
