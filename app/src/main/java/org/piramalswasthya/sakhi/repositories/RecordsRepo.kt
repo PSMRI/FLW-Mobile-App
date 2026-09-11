@@ -185,11 +185,6 @@ class RecordsRepo @Inject constructor(
 
     val tbScreeningListCount = allScreeningList.map { it.size }
 
-    
-    val tbScreeningListCount = tbScreeningList.map { it.size }
-
-
-
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbSuspectedDomainModel() } }
     val tbSuspectedListCount = tbSuspectedList.map { it.size }
