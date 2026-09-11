@@ -92,5 +92,13 @@
     <color name="unclaimed_pink">#FCFAF8</color>
     <color name="unclaimed_green">#037E62</color>
 
+    <color name="dashboard_red_bg">#FCE4E6</color>
+    <color name="dashboard_yellow_bg">#FDE9C8</color>
+    <color name="dashboard_green_bg">#D4F5E9</color>
+    <color name="dashboard_gray_bg">#EEF0F4</color>
+    <color name="dashboard_red_icon">#EF4444</color>
+    <color name="dashboard_yellow_icon">#F59E0B</color>
+    <color name="dashboard_green_icon">#10B981</color>
+    <color name="dashboard_gray_icon">#64748B</color>
 
 </resources>

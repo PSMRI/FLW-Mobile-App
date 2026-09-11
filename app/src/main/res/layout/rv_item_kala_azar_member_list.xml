@@ -84,7 +84,8 @@
                         android:layout_marginHorizontal="@dimen/padding_small"
                         android:contentDescription="@string/iv_sync_state_tv"
                         app:syncState="@{benWithKalaAzar.kala.syncState}"
-                        tools:src="@drawable/ic_synced" />
+                        tools:src="@drawable/cloud_upload"
+                        app:iconTint="@android:color/holo_green_dark" />
 
                 </LinearLayout>
 

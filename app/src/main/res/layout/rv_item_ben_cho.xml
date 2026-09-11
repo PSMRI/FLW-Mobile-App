@@ -67,7 +67,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
                     app:syncState="@{ben.syncState}"
-                    tools:src="@drawable/ic_synced" />
+                    tools:src="@drawable/cloud_upload"
+                    app:iconTint="@android:color/holo_green_dark" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
