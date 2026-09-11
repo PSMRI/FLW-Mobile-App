@@ -340,8 +340,13 @@ interface BenDao {
     fun getAllBenGenderCount(selectedVillage: Int, gender: String): Flow<Int>
 
     @Transaction
-    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and isDeactivate=0 and isDeath=0")
-    fun getAllTbScreeningBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
+    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId  and isDeactivate=0 and isDeath=0")
+    fun getAllTbScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithTbScreeningCache>>
+
+    @Transaction
+    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage   and isDeactivate=0 and isDeath=0")
+    fun getAllScreeningBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
+
 
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId  and isDeactivate=0")

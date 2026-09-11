@@ -56,7 +56,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, false,HouseHoldListAdapter.HouseholdClickListener({
+        val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, true,HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
             if (findNavController().currentDestination?.id == R.id.allHouseHoldDiseaseControlFragment) {
@@ -103,6 +103,14 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                             AllHouseHoldDiseaseControlFragmentDirections
                                 .actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
                                     it.hhId, 5, viewModel.diseaseType
+                                )
+                        )
+                    }
+                    requireContext().getString(R.string.tb) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToTbScreeningListFragment(
+                                    it.hhId, 6, viewModel.diseaseType
                                 )
                         )
                     }

@@ -153,9 +153,15 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asFilariaScreeningDomainModel() } }
 
 
-    val tbScreeningList = benDao.getAllTbScreeningBen(selectedVillage)
+    fun tbScreeningList(hhId:Long) = benDao.getAllTbScreeningBen(selectedVillage, hhId = hhId)
         .map { list -> list.map { it.asTbScreeningDomainModel() } }
-    val tbScreeningListCount = tbScreeningList.map { it.size }
+
+
+    var allScreeningList = benDao.getAllScreeningBen(selectedVillage)
+        .map { list -> list.map { it.asTbScreeningDomainModel() } }
+
+
+    val tbScreeningListCount = allScreeningList.map { it.size }
 
 
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
