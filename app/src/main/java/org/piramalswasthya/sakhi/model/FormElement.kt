@@ -41,6 +41,7 @@ data class FormElement(
     var maxFileSizeMB: Int? = null,
     var selectedFiles: MutableList<String>? = null,
     val showDrawable: Boolean? = false,
+    val isTwelveHourTime: Boolean = false,
     var secondaryTitle: String? = null,
     var secondaryValue: String? = null,
 )

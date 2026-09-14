@@ -6,6 +6,8 @@ import java.util.Locale
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.toTwelveHourTime
+import org.piramalswasthya.sakhi.helpers.toTwentyFourHourTime
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
@@ -53,7 +55,8 @@ open class DeliveryOutcomeDataset(
         arrayId = -1,
         required = false,
         max = System.currentTimeMillis(),
-        hasDependants = true
+        hasDependants = true,
+        isTwelveHourTime = true
     )
 
     private var placeOfDelivery = FormElement(
@@ -200,7 +203,8 @@ open class DeliveryOutcomeDataset(
         arrayId = -1,
         required = false,
         max = System.currentTimeMillis(),
-        hasDependants = true
+        hasDependants = true,
+        isTwelveHourTime = true
     )
 
     private var isJSYBenificiary = FormElement(
@@ -327,7 +331,7 @@ open class DeliveryOutcomeDataset(
 
 
             dateOfDelivery.value = saved.dateOfDelivery?.let { getDateFromLong(it) }
-            timeOfDelivery.value = saved.timeOfDelivery
+            timeOfDelivery.value = toTwelveHourTime(saved.timeOfDelivery) ?: saved.timeOfDelivery
             placeOfDelivery.value =
                 getLocalValueInArray(R.array.do_place_of_delivery_array, saved.placeOfDelivery)
             typeOfDelivery.value =
@@ -343,7 +347,7 @@ open class DeliveryOutcomeDataset(
             liveBirth.value = saved.liveBirth.toString()
             stillBirth.value = saved.stillBirth.toString()
             dateOfDischarge.value = saved.dateOfDischarge?.let { getDateFromLong(it) }
-            timeOfDischarge.value = saved.timeOfDischarge
+            timeOfDischarge.value = toTwelveHourTime(saved.timeOfDischarge) ?: saved.timeOfDischarge
             if (saved.isJSYBenificiary == true) {
                 list.add(list.indexOf(isJSYBenificiary) + 1 ,jsyFileUpload)
                 isJSYBenificiary.value = isJSYBenificiary.entries!![0]
@@ -539,7 +543,7 @@ open class DeliveryOutcomeDataset(
             form.placeOfDeathId = placeOfDeath.entries?.indexOf(placeOfDeath.value ?: "")
                 ?.takeIf { it != -1 }
 
-            form.timeOfDelivery = timeOfDelivery.value
+            form.timeOfDelivery = toTwentyFourHourTime(timeOfDelivery.value) ?: timeOfDelivery.value
             form.placeOfDelivery = getEnglishValueInArray(R.array.do_place_of_delivery_array, placeOfDelivery.value)
             form.typeOfDelivery = getEnglishValueInArray(R.array.do_type_of_delivery_array, typeOfDelivery.value)
             form.hadComplications = hadComplications.value == hadComplications.entries!![0]
@@ -553,7 +557,7 @@ open class DeliveryOutcomeDataset(
             form.dateOfDischarge = dateOfDischarge.value?.takeIf { it.isNotBlank() }?.let {
                 getLongFromDate(it)
             }
-            form.timeOfDischarge = timeOfDischarge.value
+            form.timeOfDischarge = toTwentyFourHourTime(timeOfDischarge.value) ?: timeOfDischarge.value
             form.isJSYBenificiary = isJSYBenificiary.value == isJSYBenificiary.entries!![0]
         }
     }

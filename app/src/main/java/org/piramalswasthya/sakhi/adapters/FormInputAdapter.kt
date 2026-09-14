@@ -52,7 +52,9 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormRadioV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerV2Binding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.formatTwelveHourTime
 import org.piramalswasthya.sakhi.helpers.getDateString
+import org.piramalswasthya.sakhi.helpers.parseHourAndMinute
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
@@ -773,19 +775,17 @@ class FormInputAdapter(
             binding.form = item
             binding.et.isEnabled = isEnabled
             binding.et.setOnClickListener {
-                val hour: Int
-                val minute: Int
-                if (item.value == null) {
-                    val currentTime = Calendar.getInstance()
-                    hour = currentTime.get(Calendar.HOUR_OF_DAY)
-                    minute = currentTime.get(Calendar.MINUTE)
-                } else {
-                    hour = item.value!!.substringBefore(":").toInt()
-                    minute = item.value!!.substringAfter(":").toInt()
-                    Timber.d("Time picker hour min : $hour $minute")
-                }
+                val currentTime = Calendar.getInstance()
+                val saved = parseHourAndMinute(item.value)
+                val hour = saved?.first ?: currentTime.get(Calendar.HOUR_OF_DAY)
+                val minute = saved?.second ?: currentTime.get(Calendar.MINUTE)
+                Timber.d("Time picker hour min : $hour $minute")
                 val mTimePicker = TimePickerDialog(it.context, { _, hourOfDay, minuteOfHour ->
-                    item.value = "$hourOfDay:$minuteOfHour"
+                    item.value = if (item.isTwelveHourTime) {
+                        formatTwelveHourTime(hourOfDay, minuteOfHour)
+                    } else {
+                        "$hourOfDay:$minuteOfHour"
+                    }
                     binding.invalidateAll()
 
                 }, hour, minute, false)
