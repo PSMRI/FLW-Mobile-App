@@ -1,0 +1,21 @@
+<!--<vector xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:width="24dp"-->
+<!--    android:height="24dp"-->
+<!--    android:viewportWidth="24"-->
+<!--    android:viewportHeight="24">-->
+<!--  <path-->
+<!--      android:pathData="M4.793,4.293a1,1 0,0 1,1.414 0L9.414,7.5L8,8.914l-0.5,-0.5L7.5,10h-4L3.5,8.414l-0.5,0.5L1.586,7.5zM12.707,9.293a1,1 0,0 0,-1.414 0L5.086,15.5L6.5,16.914l1,-1L7.5,20h3v-2.5a1.5,1.5 0,0 1,3 0L13.5,20h3v-4.086l1,1l1.414,-1.414zM20,8.414l1,1L22.414,8l-3.707,-3.707a1,1 0,0 0,-1.414 0L13.586,8L15,9.414l1,-1L16,11h4z"-->
+<!--      android:fillColor="@android:color/white"/>-->
+<!--</vector>-->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path
+        android:pathData="m109.9,35.87l-71.14,59.28h142.28zM397.9,67.87l-71.14,59.28h142.28l-71.14,-59.28zM228.73,84.4l-108.9,90.75h217.8zM54.9,113.15v62h36.81l73.19,-60.99v-1.01zM77.9,127.15h16v18h-16zM342.9,145.15v10.96l23,19.17v-16.13h16v18h-13.76l0.1,0.09l19.1,15.91h-44.45v14h78v-39h18v39h14v-62zM148.56,193.15v20.08l24.09,-20.08zM176.71,193.15l105.1,87.58l27.09,-22.57v-65.01zM251.4,207.15h35.74v34h-35.74zM174.68,214.89L30.37,335.15L319,335.15l-144.31,-120.26zM372.73,228.4l-76.86,64.05l32.04,26.7L481.63,319.15l-108.9,-90.75zM349.52,337.15l0.1,0.09l19.09,15.91h-72.25v77.47h60.44v-63.47h50v63.47h46v-93.47L349.52,337.16zM70.9,353.15L70.9,476.13h126v-76.98h50v76.98h31.57L278.47,353.15L70.9,353.15zM100.9,383.15h50v50h-50z"
+        android:fillColor="@android:color/white"
+        />
+</vector>
+

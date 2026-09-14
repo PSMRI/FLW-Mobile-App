@@ -171,15 +171,15 @@
                             android:background="?selectableItemBackgroundBorderless"
                             android:layout_marginEnd="4dp" />
 
-                        <ImageView
-                            android:id="@+id/ivSoftDelete"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_delete"
-                            android:layout_gravity="center_vertical|end"
-                            android:contentDescription="@string/str_duplicate_record"
-                            android:layout_marginHorizontal="@dimen/padding_small"
-                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/ivSoftDelete"-->
+<!--                            android:layout_width="24dp"-->
+<!--                            android:layout_height="24dp"-->
+<!--                            android:src="@drawable/ic_delete"-->
+<!--                            android:layout_gravity="center_vertical|end"-->
+<!--                            android:contentDescription="@string/str_duplicate_record"-->
+<!--                            android:layout_marginHorizontal="@dimen/padding_small"-->
+<!--                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}" />-->
 
                         <ImageView
                             android:id="@+id/iv_sync_state"
@@ -189,7 +189,8 @@
                             android:layout_marginHorizontal="@dimen/padding_small"
                             android:contentDescription="@string/iv_sync_state_tv"
                             app:syncState="@{ben.syncState}"
-                            tools:src="@drawable/ic_synced" />
+                            tools:src="@drawable/cloud_upload"
+                            app:iconTint="@android:color/holo_green_dark" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -348,6 +349,32 @@
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?attr/colorOnPrimary" />
                         </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/delete_ben"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_small">
+
+                        <ImageView
+                            android:id="@+id/ivSoftDelete"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_delete"
+                            android:layout_gravity="center_vertical|end"
+                            android:contentDescription="@string/str_duplicate_record"
+                            android:layout_marginHorizontal="@dimen/padding_small"
+                            android:onClick="@{()->clickListener.onClickSoftDeleteBen(ben)}" />
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/hof"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
+<!--                            android:textColor="?attr/colorOnPrimary" />-->
+                    </LinearLayout>
 
                     </LinearLayout>
 
