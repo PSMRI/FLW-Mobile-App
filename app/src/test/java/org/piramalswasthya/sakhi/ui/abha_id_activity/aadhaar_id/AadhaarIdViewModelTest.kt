@@ -330,7 +330,7 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     @Test
     fun `State enum has all expected values`() {
         val values = AadhaarIdViewModel.State.values()
-        assertEquals(7, values.size)
+        assertEquals(14, values.size)
     }
 
     @Test
