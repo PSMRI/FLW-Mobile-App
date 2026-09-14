@@ -1547,6 +1547,8 @@
     <string name="str_dose">Dose</string>
     <string name="str_no_more_dose">No More Doses</string>
 
+    <string name="head_of_family">Head of Family: </string>
+
     <string name="str_delete_household_msg">Are you sure you want to delete</string>
     <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
     <string name="str_pls_allow_permissions">Please allow permissions first</string>

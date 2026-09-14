@@ -119,9 +119,12 @@ class BenListAdapter(
             var gender = item.gender.toString()
 
             if (item.relToHeadId == 19) {
+                binding.llHof.visibility = View.GONE
                 binding.HOF.visibility = View.VISIBLE
             } else {
                 binding.HOF.visibility = View.GONE
+                binding.llHof.visibility = View.VISIBLE
+                binding.tvHofName.text = item.familyHeadName
             }
 
             if (item.dob != null) {

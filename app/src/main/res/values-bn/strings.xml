@@ -135,6 +135,7 @@
     <string name="tv_gender_ph">লিঙ্গ</string>
     <string name="tv_father_name_ph">পিতার নাম</string>
     <string name="tv_husband_name_ph">স্বামীর নাম</string>
+    <string name="head_of_family">পরিবারের প্রধান: </string>
     <string name="tv_spouse_name_ph">স্ত্রী/স্বামীর নাম</string>
     <string name="tv_family_head_name_ph">পরিবারের প্রধানের নাম</string>
     <string name="tv_date_of_death">মৃত্যুর তারিখ</string>
