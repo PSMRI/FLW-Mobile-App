@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -124,13 +125,16 @@ class PregnantWomanRegistrationDataset(
         arrayId = -1,
         required = false,
     )
+    private val isMitaninVariant = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
     private val bloodGroup = FormElement(
         id = 10,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.pwrdst_bld_grp),
         arrayId = R.array.maternal_health_blood_group,
         entries = resources.getStringArray(R.array.maternal_health_blood_group),
-        required = false
+        required = false,
+        hasDependants = isMitaninVariant
     )
     private val weight = FormElement(
         id = 11,
@@ -1001,6 +1005,15 @@ class PregnantWomanRegistrationDataset(
                 )
             }
 
+            bloodGroup.id -> {
+                if (isMitaninVariant) {
+                    val rhIndex = if (Konstants.isNegativeBloodGroup(index)) 0 else -1
+                    rhNegative.value =
+                        if (rhIndex == 0) resources.getStringArray(R.array.yes_no)[0] else null
+                    handleListOnValueChanged(rhNegative.id, rhIndex)
+                } else -1
+            }
+
             rhNegative.id, homeDelivery.id, badObstetric.id, multiplePregnancy.id -> {
                 obstetricHistoryLabel.showHighRisk =
                     rhNegative.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||
@@ -1127,6 +1140,8 @@ class PregnantWomanRegistrationDataset(
     fun getIndexOfPhysicalObservationLabel() = getIndexById(physicalObservationLabel.id)
 
     fun getIndexOfObstetricHistoryLabel() = getIndexById(obstetricHistoryLabel.id)
+
+    fun getIndexOfRhNegative() = getIndexById(rhNegative.id)
 
     fun isHighRisk(): Boolean {
         return noOfDeliveries.value.contentEquals(resources.getStringArray(R.array.yes_no)[0]) ||

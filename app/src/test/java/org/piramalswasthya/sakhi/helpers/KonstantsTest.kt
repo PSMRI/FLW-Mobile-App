@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.helpers
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.concurrent.TimeUnit
@@ -285,5 +286,20 @@ class KonstantsTest {
 
     @Test fun `pnc ec gap is between 30 and 60 days`() {
         assertTrue(Konstants.pncEcGap in 30..60)
+    }
+
+    @Test fun `negative blood group positions are the odd entries of the blood group array`() {
+        assertEquals(setOf(1, 3, 5, 7), Konstants.negativeBloodGroupPositions)
+    }
+
+    @Test fun `isNegativeBloodGroup is true only for negative positions`() {
+        (0..7).forEach { position ->
+            assertEquals(position % 2 == 1, Konstants.isNegativeBloodGroup(position))
+        }
+    }
+
+    @Test fun `isNegativeBloodGroup is false for out of range positions`() {
+        assertFalse(Konstants.isNegativeBloodGroup(-1))
+        assertFalse(Konstants.isNegativeBloodGroup(8))
     }
 }

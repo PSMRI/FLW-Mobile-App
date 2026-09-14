@@ -58,6 +58,11 @@ object Konstants {
     const val english = "ENGLISH"
     const val minWeekToShowDelivered = 23
 
+    //PW-Registration
+    val negativeBloodGroupPositions = setOf(1, 3, 5, 7)
+
+    fun isNegativeBloodGroup(position: Int) = position in negativeBloodGroupPositions
+
 
     const val babyLowWeight: Double = 2500.0
 
