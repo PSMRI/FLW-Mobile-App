@@ -195,6 +195,40 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
+            <LinearLayout
+                android:id="@+id/ll_hof"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:layout_marginHorizontal="@dimen/padding_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/ll_title_bar">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/head_of_family"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:textColor="?attr/colorOnPrimary" />
+
+                <TextView
+                    android:id="@+id/tv_hof_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{ben.familyHeadName}"
+                    android:textAllCaps="true"
+                    android:layout_marginStart="4dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="?attr/colorOnPrimary"
+                    tools:text="Surendra" />
+            </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/ll_ben_details"
                     android:layout_width="match_parent"
@@ -203,7 +237,7 @@
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="@dimen/padding_normal"
                     android:layout_marginTop="@dimen/margin_normal"
-                    app:layout_constraintTop_toBottomOf="@+id/ll_title_bar">
+                    app:layout_constraintTop_toBottomOf="@+id/ll_hof">
 
                         <LinearLayout
                             android:id="@+id/ncd_husband_name"

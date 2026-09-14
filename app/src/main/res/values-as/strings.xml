@@ -275,6 +275,8 @@
     <string name="str_not_available">উপলব্ধ নহয়</string>
     <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
 
+    <string name="head_of_family">পৰিয়ালৰ মুৰব্বী: </string>
+
     <string name="male">পুৰুষ</string>
     <string name="female">মহিলা</string>
     <string name="transgender">ৰূপান্তৰিত লিংগ</string>

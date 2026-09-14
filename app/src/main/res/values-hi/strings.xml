@@ -226,6 +226,7 @@
     <string name="irs_on">मलेरिया रोकथाम छिड़काव चालू</string>
     <string name="ben_pending_sync">सिंक लंबित</string>
     <string name="tv_husband_name_ph">पति का नाम</string>
+    <string name="head_of_family">परिवार का मुखिया: </string>
     <string name="tv_spouse_name_ph">पति/पत्नी का नाम</string>
     <string name="tv_spouse">जीवनसाथी</string>
     <string name="chat_error">आपके चैट बॉट को लोड करने में कुछ त्रुटि हुई है</string>
