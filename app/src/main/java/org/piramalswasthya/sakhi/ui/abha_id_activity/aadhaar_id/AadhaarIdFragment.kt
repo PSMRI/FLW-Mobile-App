@@ -26,7 +26,6 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewMod
 import timber.log.Timber
 import androidx.core.net.toUri
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
-import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpFragmentDirections
 import javax.inject.Inject
 
 
@@ -293,7 +292,7 @@ class AadhaarIdFragment : Fragment() {
                     val timestamp = System.currentTimeMillis()
                     analyticsHelper.logCustomTimestampEvent("create_abha_response",timestamp)
                     findNavController().navigate(
-                        AadhaarOtpFragmentDirections.actionAadhaarOtpFragmentToCreateAbhaFragment(
+                        AadhaarIdFragmentDirections.actionAadhaarIdFragmentToCreateAbhaFragment(
                             viewModel.txnId, viewModel.name, viewModel.phrAddress, viewModel.abhaNumber,viewModel.abhaResponse
                         )
                     )
