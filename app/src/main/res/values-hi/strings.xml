@@ -939,6 +939,9 @@
     <string name="str_date_of_mother_referral">माता के रेफरल की तारीख</string>
     <string name="str_place_of_mother_referral">माता के रेफरल का स्थान</string>
     <string name="str_other_place_of_mother_referral">अन्य - माता के रेफरल का स्थान</string>
+    <string name="no_records_found_hh">कोई घरेलू रिकॉर्ड नहीं मिला। कृपया नीचे दिए गए बटन पर क्लिक करके घरेलू पंजीकरण शुरू करें।</string>
+    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">कुछ गलत हो गया!\nसर्वर से कनेक्ट करने में असमर्थ!\nबाद में पुनः प्रयास करें!</string>
+    <string name="try_again">पुनः प्रयास करें!</string>
     <string name="no_of_childrens">बच्चों की संख्या</string>
     <string name="marriage_date">विवाह की तिथि</string>
     <string name="children_details">बच्चों का विवरण</string>
