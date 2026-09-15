@@ -55,7 +55,9 @@ jobs:
           java-version: '17'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
       - name: Set up Android NDK
         uses: nttld/setup-ndk@v1.5.0
