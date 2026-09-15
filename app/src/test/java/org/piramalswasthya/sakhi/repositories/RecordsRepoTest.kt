@@ -28,11 +28,13 @@ import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenBasicCache
+import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.BenWithECRCache
 import org.piramalswasthya.sakhi.model.BenWithEcTrackingCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -182,7 +184,77 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.getRegisteredPmsmaWomenList())
         assertNotNull(repo.getRegisteredPregnantWomanList())
         assertNotNull(repo.getHighRiskPregnantWomanList())
+        assertNotNull(repo.getHrpConfirmedPregnantWomanList())
         assertNotNull(repo.getAbortionPregnantWomanList())
+    }
+
+    private fun benWithAncVisit(
+        hrpConfirmed: Boolean?,
+        hrpConfirmedBy: String?,
+        isActive: Boolean = true,
+        maternalDeath: Boolean? = null
+    ): BenWithAncVisitCache {
+        val anc = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { anc.hrpConfirmed } returns hrpConfirmed
+        every { anc.hrpConfirmedBy } returns hrpConfirmedBy
+        every { anc.isActive } returns isActive
+        every { anc.maternalDeath } returns maternalDeath
+        val cache = mockk<BenWithAncVisitCache>(relaxed = true)
+        every { cache.savedAncRecords } returns listOf(anc)
+        every { cache.asDomainModel() } returns mockk(relaxed = true)
+        return cache
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList includes woman with confirmed hrp and identifier`() =
+        runTest {
+            every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+                    flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = "MO")))
+            assertEquals(1, repo.getHrpConfirmedPregnantWomanList().first().size)
+        }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes woman without identifier`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+                flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = " ")))
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes woman when hrp not confirmed`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+                flowOf(listOf(benWithAncVisit(hrpConfirmed = false, hrpConfirmedBy = "MO")))
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes inactive anc record`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+                flowOf(
+                    listOf(
+                        benWithAncVisit(
+                            hrpConfirmed = true,
+                            hrpConfirmedBy = "MO",
+                            isActive = false
+                        )
+                    )
+                )
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes maternal death`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+                flowOf(
+                    listOf(
+                        benWithAncVisit(
+                            hrpConfirmed = true,
+                            hrpConfirmedBy = "MO",
+                            maternalDeath = true
+                        )
+                    )
+                )
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
     }
 
     @Test
@@ -337,6 +409,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.hrpNonPregnantWomenListCount)
         assertNotNull(repo.hrpTrackingNonPregList)
         assertNotNull(repo.hrpTrackingNonPregListCount)
+        assertNotNull(repo.hrpConfirmedPregListCount)
         assertNotNull(repo.lowWeightBabiesCount)
         assertNotNull(repo.hrpCases)
         assertNotNull(repo.hrpCount)

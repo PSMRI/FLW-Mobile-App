@@ -61,7 +61,7 @@ class DiseaseControlFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__village_level_form,
+                R.drawable.disease_control_icon,
                 getString(R.string.icon_title_disease)
             )
         }

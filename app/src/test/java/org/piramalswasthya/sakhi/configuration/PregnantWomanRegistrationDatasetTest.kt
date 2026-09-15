@@ -572,4 +572,228 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         assertTrue(updated)
         verify { benCache.processed = "U" }
     }
+
+    // ---- FLW-824: previous pregnancy details auto-populated from existing family records ----
+    //
+    // Regression guard for the ECR clobber: EligibleCoupleRegistrationDataset.mapValues used to
+    // reset ELIGIBLE_COUPLE_REG.noOfChildren to 0 (the form element is commented out of the
+    // active page), so completing Eligible Couple Registration wiped the child count the
+    // add-children flow had stored, and PWR then defaulted "Is this your 1st pregnancy?" to Yes.
+    // setUpPage now derives the count from the live beneficiary child count / completed
+    // pregnancy records as well, so a zeroed ecr row can no longer force a false "Yes".
+    //
+    // Note on the mocked resources: R.array.maternal_health_past_del_columns is stubbed as the
+    // generic 80-entry array, so entries.first() ("None") is "opt0" and entries.last()
+    // ("Any Other") is "opt79". R.array.pwrdst_yes_no is stubbed as the real ["Yes", "No"].
+
+    private fun completedPregnancy(
+        complication: String?,
+        other: String? = null
+    ): PregnantWomanRegistrationCache {
+        val p = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { p.complicationPrevPregnancy } returns complication
+        every { p.otherComplication } returns other
+        return p
+    }
+
+    @Test
+    fun `no children and no completed pregnancies marks it as the first pregnancy`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 0, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        assertEquals("Yes", d.listFlow.value[d.getIndexById(21)].value)
+        // the previous-pregnancy count and complication dropdown stay off the page
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+    }
+
+    @Test
+    fun `existing children mark it as not the first pregnancy and lock the answer`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val isFirstIdx = d.getIndexById(21)
+        assertEquals("No", d.listFlow.value[isFirstIdx].value)
+        assertFalse(d.listFlow.value[isFirstIdx].isEnabled)
+    }
+
+    @Test
+    fun `two children populate the total number of previous pregnancies as 2`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val prevPregIdx = d.getIndexById(22)
+        assertTrue(prevPregIdx >= 0)
+        assertEquals("2", d.listFlow.value[prevPregIdx].value)
+    }
+
+    @Test
+    fun `a recorded complication on the last completed pregnancy is shown in the dropdown`() =
+        runTest {
+            val d = ds()
+            d.setUpPage(
+                ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+                childCount = 2,
+                completedPregnancyCount = 1,
+                lastCompletedPregnancy = completedPregnancy(complication = "opt5")
+            )
+
+            val complicationIdx = d.getIndexById(23)
+            assertTrue(complicationIdx >= 0)
+            assertEquals("opt5", d.listFlow.value[complicationIdx].value)
+        }
+
+    @Test
+    fun `the last complication option also surfaces the other complication text`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2,
+            completedPregnancyCount = 1,
+            lastCompletedPregnancy = completedPregnancy(
+                complication = "opt79",
+                other = "PREVIOUS OTHER COMPLICATION"
+            )
+        )
+
+        assertEquals("opt79", d.listFlow.value[d.getIndexById(23)].value)
+        val otherIdx = d.getIndexById(24)
+        assertTrue(otherIdx >= 0)
+        assertEquals("PREVIOUS OTHER COMPLICATION", d.listFlow.value[otherIdx].value)
+    }
+
+    @Test
+    fun `no recorded complication falls back to the None option`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val complicationIdx = d.getIndexById(23)
+        assertTrue(complicationIdx >= 0)
+        assertEquals("opt0", d.listFlow.value[complicationIdx].value)
+        // "Any Other" was not selected, so its free-text field stays off the page
+        assertEquals(-1, d.getIndexById(24))
+    }
+
+    @Test
+    fun `a completed pregnancy with no surviving child still counts as a previous pregnancy`() =
+        runTest {
+            val d = ds()
+            d.setUpPage(
+                ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+                childCount = 0, completedPregnancyCount = 1, lastCompletedPregnancy = null
+            )
+
+            assertEquals("No", d.listFlow.value[d.getIndexById(21)].value)
+            assertEquals("1", d.listFlow.value[d.getIndexById(22)].value)
+        }
+
+    // Pratiksha's comment on FLW-824: switching the answer to "No" by hand used to leave the
+    // previous-pregnancy count blank because handleListOnValueChanged only reset the
+    // complication dropdown. A saved record leaves the radio enabled, so this is the path an
+    // ASHA can actually reach.
+    @Test
+    fun `manually switching to not-first pregnancy prefills the derived history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false),
+            null,
+            saved(lmp = 0L, first = true, hrp = false),
+            ecr(children = 0),
+            null,
+            childCount = 2,
+            completedPregnancyCount = 0,
+            lastCompletedPregnancy = null
+        )
+        // saved + is1st = true, so the count and dropdown start off the page
+        assertEquals(-1, d.getIndexById(22))
+
+        d.setValueById(21, "No")
+        d.updateList(21, 1)
+
+        val prevPregIdx = d.getIndexById(22)
+        assertTrue(prevPregIdx >= 0)
+        assertEquals("2", d.listFlow.value[prevPregIdx].value)
+        assertEquals("opt0", d.listFlow.value[d.getIndexById(23)].value)
+    }
+
+    @Test
+    fun `manually switching back to first pregnancy clears the derived history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false),
+            null,
+            saved(lmp = 0L, first = true, hrp = false),
+            ecr(children = 0),
+            null,
+            childCount = 2,
+            completedPregnancyCount = 0,
+            lastCompletedPregnancy = null
+        )
+        d.setValueById(21, "No")
+        d.updateList(21, 1)
+        assertTrue(d.getIndexById(22) >= 0)
+
+        d.setValueById(21, "Yes")
+        d.updateList(21, 0)
+
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+    }
+
+    @Test
+    fun `mapValues writes the auto-derived previous pregnancy history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+        val cache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        d.mapValues(cache, 1)
+
+        verify { cache.is1st = false }
+        verify { cache.numPrevPregnancy = 2 }
+    }
+
+    @Test
+    fun `a zeroed ecr row no longer forces a false first pregnancy`() = runTest {
+        val d = ds()
+        // reproduces the post-ECR-completion state: the row exists but noOfChildren was wiped
+        val wipedEcr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { wipedEcr.noOfChildren } returns 0
+        every { wipedEcr.noOfLiveChildren } returns 2
+
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, wipedEcr, null,
+            childCount = 0, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        assertEquals("No", d.listFlow.value[d.getIndexById(21)].value)
+        assertEquals("2", d.listFlow.value[d.getIndexById(22)].value)
+    }
+
+    @Test
+    fun `mapValues does not blow up when the previous pregnancy count is cleared`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+        d.setValueById(22, "")
+        val cache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        d.mapValues(cache, 1)
+
+        verify { cache.numPrevPregnancy = null }
+    }
 }

@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.core.text.isDigitsOnly
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
 import org.piramalswasthya.sakhi.model.ChildRegDomain
@@ -181,25 +182,47 @@ enum class EcFilterType {
     NEWEST_FIRST, OLDEST_FIRST, AGE_WISE, SYNCING_FIRST, UNSYNCED_FIRST
 }
 
+fun lifoMillis(vararg timestamps: Long?): Long =
+    timestamps.maxOf { it ?: 0L }
+
+@JvmName("sortedByLifoCache")
+fun List<BenBasicCache>.sortedByLifo(): List<BenBasicCache> =
+    sortedWith(
+        compareByDescending<BenBasicCache> { it.lifoMillis() }
+            .thenByDescending { it.benId }
+    )
+
+@JvmName("sortedByLifoDomain")
+fun List<BenBasicDomain>.sortedByLifo(): List<BenBasicDomain> =
+    sortedWith(
+        compareByDescending<BenBasicDomain> { it.lifoMillis() }
+            .thenByDescending { it.benId }
+    )
+
+fun <T> List<T>.sortedByLifo(selector: (T) -> Long): List<T> =
+    sortedByDescending(selector)
+
 fun sortEcRegistrationList(list: List<BenWithEcrDomain>, sort: EcFilterType): List<BenWithEcrDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithEcrDomain> { it.ecr?.createdDate ?: 0L }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithEcrDomain> {
+                lifoMillis(it.ecr?.updatedDate, it.ecr?.createdDate, it.ben.lifoMillis())
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithEcrDomain> { it.ecr?.createdDate ?: 0L }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithEcrDomain> {
+                lifoMillis(it.ecr?.updatedDate, it.ecr?.createdDate, it.ben.lifoMillis())
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithEcrDomain> { if (it.ecr?.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.ecr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.ecr?.updatedDate, it.ecr?.createdDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithEcrDomain> { if (it.ecr?.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.ecr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.ecr?.updatedDate, it.ecr?.createdDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -207,22 +230,46 @@ fun sortEcRegistrationList(list: List<BenWithEcrDomain>, sort: EcFilterType): Li
 fun sortEcTrackingList(list: List<BenWithEctListDomain>, sort: EcFilterType): List<BenWithEctListDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithEctListDomain> { it.ectDate }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithEctListDomain> {
+                lifoMillis(
+                    it.savedECTRecords.maxOfOrNull { r -> r.created },
+                    it.savedECTRecords.maxOfOrNull { r -> r.visited },
+                    it.ectDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithEctListDomain> { it.ectDate }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithEctListDomain> {
+                lifoMillis(
+                    it.savedECTRecords.maxOfOrNull { r -> r.created },
+                    it.savedECTRecords.maxOfOrNull { r -> r.visited },
+                    it.ectDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithEctListDomain> { if (it.savedECTRecords.any { r -> r.syncState == SyncState.SYNCING }) 0 else 1 }
-                .thenByDescending { it.ectDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedECTRecords.maxOfOrNull { r -> r.created },
+                        it.ectDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithEctListDomain> { if (it.allSynced == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.ectDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedECTRecords.maxOfOrNull { r -> r.created },
+                        it.ectDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -230,22 +277,48 @@ fun sortEcTrackingList(list: List<BenWithEctListDomain>, sort: EcFilterType): Li
 fun sortPncList(list: List<BenPncDomain>, sort: EcFilterType): List<BenPncDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenPncDomain> { it.pncDate }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenPncDomain> {
+                lifoMillis(
+                    it.savedPncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedPncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.pncDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenPncDomain> { it.pncDate }
-                .thenBy { it.ben.benId }
+            compareBy<BenPncDomain> {
+                lifoMillis(
+                    it.savedPncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedPncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.pncDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenPncDomain> { if (it.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.pncDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedPncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedPncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.pncDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenPncDomain> { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.pncDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedPncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedPncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.pncDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -253,22 +326,24 @@ fun sortPncList(list: List<BenPncDomain>, sort: EcFilterType): List<BenPncDomain
 fun sortPwrList(list: List<BenWithPwrDomain>, sort: EcFilterType): List<BenWithPwrDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithPwrDomain> { it.pwr?.createdDate ?: 0L }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithPwrDomain> {
+                lifoMillis(it.pwr?.updatedDate, it.pwr?.createdDate, it.ben.lifoMillis())
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithPwrDomain> { it.pwr?.createdDate ?: 0L }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithPwrDomain> {
+                lifoMillis(it.pwr?.updatedDate, it.pwr?.createdDate, it.ben.lifoMillis())
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithPwrDomain> { if (it.pwr?.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.pwr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.pwr?.updatedDate, it.pwr?.createdDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithPwrDomain> { if (it.pwr?.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.pwr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.pwr?.updatedDate, it.pwr?.createdDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -276,22 +351,52 @@ fun sortPwrList(list: List<BenWithPwrDomain>, sort: EcFilterType): List<BenWithP
 fun sortAncList(list: List<BenWithAncListDomain>, sort: EcFilterType): List<BenWithAncListDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithAncListDomain> { it.ancDate }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithAncListDomain> {
+                lifoMillis(
+                    it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.pwr?.updatedDate,
+                    it.pwr?.createdDate,
+                    it.ancDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithAncListDomain> { it.ancDate }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithAncListDomain> {
+                lifoMillis(
+                    it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.pwr?.updatedDate,
+                    it.pwr?.createdDate,
+                    it.ancDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithAncListDomain> { if (it.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.ancDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.ancDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithAncListDomain> { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.ancDate }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.ancDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -299,22 +404,48 @@ fun sortAncList(list: List<BenWithAncListDomain>, sort: EcFilterType): List<BenW
 fun sortAbortionList(list: List<BenWithAncListDomain>, sort: EcFilterType): List<BenWithAncListDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithAncListDomain> { it.abortionDate ?: 0L }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithAncListDomain> {
+                lifoMillis(
+                    it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.abortionDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithAncListDomain> { it.abortionDate ?: 0L }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithAncListDomain> {
+                lifoMillis(
+                    it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                    it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                    it.abortionDate,
+                    it.ben.lifoMillis()
+                )
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithAncListDomain> { if (it.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.abortionDate ?: 0L }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.abortionDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithAncListDomain> { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.abortionDate ?: 0L }
+                .thenByDescending {
+                    lifoMillis(
+                        it.savedAncRecords.maxOfOrNull { r -> r.updatedDate },
+                        it.savedAncRecords.maxOfOrNull { r -> r.createdDate },
+                        it.abortionDate,
+                        it.ben.lifoMillis()
+                    )
+                }
                 .thenByDescending { it.ben.benId }
         )
     }
@@ -322,22 +453,24 @@ fun sortAbortionList(list: List<BenWithAncListDomain>, sort: EcFilterType): List
 fun sortChildRegList(list: List<ChildRegDomain>, sort: EcFilterType): List<ChildRegDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<ChildRegDomain> { it.infant.createdDate }
-                .thenByDescending { it.motherBen.benId }
+            compareByDescending<ChildRegDomain> {
+                lifoMillis(it.infant.updatedDate, it.infant.createdDate, it.motherBen.lifoMillis())
+            }.thenByDescending { it.motherBen.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<ChildRegDomain> { it.infant.createdDate }
-                .thenBy { it.motherBen.benId }
+            compareBy<ChildRegDomain> {
+                lifoMillis(it.infant.updatedDate, it.infant.createdDate, it.motherBen.lifoMillis())
+            }.thenBy { it.motherBen.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.motherBen.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<ChildRegDomain> { if (it.infant.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.infant.createdDate }
+                .thenByDescending { lifoMillis(it.infant.updatedDate, it.infant.createdDate, it.motherBen.lifoMillis()) }
                 .thenByDescending { it.motherBen.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<ChildRegDomain> { if (it.infant.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.infant.createdDate }
+                .thenByDescending { lifoMillis(it.infant.updatedDate, it.infant.createdDate, it.motherBen.lifoMillis()) }
                 .thenByDescending { it.motherBen.benId }
         )
     }
@@ -345,22 +478,24 @@ fun sortChildRegList(list: List<ChildRegDomain>, sort: EcFilterType): List<Child
 fun sortInfantRegList(list: List<InfantRegDomain>, sort: EcFilterType): List<InfantRegDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<InfantRegDomain> { it.savedIr?.createdDate ?: 0L }
-                .thenByDescending { it.motherBen.benId }
+            compareByDescending<InfantRegDomain> {
+                lifoMillis(it.savedIr?.updatedDate, it.savedIr?.createdDate, it.motherBen.lifoMillis())
+            }.thenByDescending { it.motherBen.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<InfantRegDomain> { it.savedIr?.createdDate ?: 0L }
-                .thenBy { it.motherBen.benId }
+            compareBy<InfantRegDomain> {
+                lifoMillis(it.savedIr?.updatedDate, it.savedIr?.createdDate, it.motherBen.lifoMillis())
+            }.thenBy { it.motherBen.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.motherBen.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<InfantRegDomain> { if (it.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.savedIr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.savedIr?.updatedDate, it.savedIr?.createdDate, it.motherBen.lifoMillis()) }
                 .thenByDescending { it.motherBen.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<InfantRegDomain> { if (it.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.savedIr?.createdDate ?: 0L }
+                .thenByDescending { lifoMillis(it.savedIr?.updatedDate, it.savedIr?.createdDate, it.motherBen.lifoMillis()) }
                 .thenByDescending { it.motherBen.benId }
         )
     }
@@ -368,22 +503,24 @@ fun sortInfantRegList(list: List<InfantRegDomain>, sort: EcFilterType): List<Inf
 fun sortHwcList(list: List<BenWithCbacReferDomain>, sort: EcFilterType): List<BenWithCbacReferDomain> =
     when (sort) {
         EcFilterType.NEWEST_FIRST   -> list.sortedWith(
-            compareByDescending<BenWithCbacReferDomain> { it.referalCac.revisitDate }
-                .thenByDescending { it.ben.benId }
+            compareByDescending<BenWithCbacReferDomain> {
+                lifoMillis(it.referalCac.revisitDate, it.ben.lifoMillis())
+            }.thenByDescending { it.ben.benId }
         )
         EcFilterType.OLDEST_FIRST   -> list.sortedWith(
-            compareBy<BenWithCbacReferDomain> { it.referalCac.revisitDate }
-                .thenBy { it.ben.benId }
+            compareBy<BenWithCbacReferDomain> {
+                lifoMillis(it.referalCac.revisitDate, it.ben.lifoMillis())
+            }.thenBy { it.ben.benId }
         )
         EcFilterType.AGE_WISE       -> list.sortedBy { it.ben.dob }
         EcFilterType.SYNCING_FIRST  -> list.sortedWith(
             compareBy<BenWithCbacReferDomain> { if (it.referalCac.syncState == SyncState.SYNCING) 0 else 1 }
-                .thenByDescending { it.referalCac.revisitDate }
+                .thenByDescending { lifoMillis(it.referalCac.revisitDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
         EcFilterType.UNSYNCED_FIRST -> list.sortedWith(
             compareBy<BenWithCbacReferDomain> { if (it.referalCac.syncState == SyncState.UNSYNCED) 0 else 1 }
-                .thenByDescending { it.referalCac.revisitDate }
+                .thenByDescending { lifoMillis(it.referalCac.revisitDate, it.ben.lifoMillis()) }
                 .thenByDescending { it.ben.benId }
         )
     }

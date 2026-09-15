@@ -59,6 +59,18 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
+    suspend fun getCompletedPregnancyCount(benId: Long): Int {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getCompletedPregnancyCount(benId)
+        }
+    }
+
+    suspend fun getLastCompletedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getLastCompletedRecord(benId)
+        }
+    }
+
     suspend fun getLatestActiveRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
         return withContext(Dispatchers.IO) {
             maternalHealthDao.getSavedActiveRecord(benId)

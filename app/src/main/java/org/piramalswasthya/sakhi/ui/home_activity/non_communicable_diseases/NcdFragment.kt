@@ -63,7 +63,7 @@ class NcdFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.ncd_icon,
                 getString(R.string.icon_title_ncd)
             )
         }
