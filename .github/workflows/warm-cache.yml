@@ -67,8 +67,17 @@ jobs:
           distribution: zulu
           java-version: '17'
 
+      # packages: the action's default is "tools platform-tools", but Google removed
+      # the legacy `tools` package from the SDK repository on 2026-09-14, so sdkmanager
+      # exits 1 on it and the step fails. Request platform-tools only; the action still
+      # installs cmdline-tools and accepts the licences, and AGP pulls the platform and
+      # build-tools it needs. v2 is not an option here - it declares no inputs at all,
+      # so `packages` would be silently ignored (and it still runs on the deprecated
+      # node16 runtime).
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
