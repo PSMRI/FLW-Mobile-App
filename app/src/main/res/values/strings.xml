@@ -1458,6 +1458,11 @@
     <string name="pending_0">Pending: 0</string>
     <string name="rejected_0">Rejected: 0</string>
     <string name="overdue_0">Overdue: 0</string>
+    <string name="approve">Approve</string>
+    <string name="no_beneficiaries_found">No records found</string>
+    <string name="approve_or_reject_row_hint">Approve or reject this activity directly using ✓ / ✕.</string>
+    <string name="claim_summary">%1$d · ₹%2$d</string>
+    <string name="claim_date">Date: %1$s</string>
     <string name="total_ashas">Total ASHAs</string>
     <string name="total_mitanins">Total Mitanins</string>
     <string name="select_month">Select Month</string>
@@ -1607,6 +1612,11 @@
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
+    <!-- FLW-1171: month verification table headers (were hardcoded in the layout) -->
+    <string name="incentive_header_serial_no">S.No</string>
+    <string name="incentive_header_activity">Activity</string>
+    <string name="incentive_header_no_of_claims">No of Claims</string>
+    <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
     <string name="imm_due_this_month">Due for this month</string>

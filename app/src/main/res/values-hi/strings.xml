@@ -564,6 +564,10 @@
     <string name="pending_0">लंबित: 0</string>
     <string name="rejected_0">अस्वीकृत: 0</string>
     <string name="overdue_0">बकाया: 0</string>
+    <string name="approve">स्वीकृत करें</string>
+    <string name="no_beneficiaries_found">कोई रिकॉर्ड नहीं मिला</string>
+    <string name="approve_or_reject_row_hint">इस गतिविधि को सीधे ✓ / ✕ से स्वीकृत या अस्वीकृत करें।</string>
+    <string name="claim_date">दिनांक: %1$s</string>
     <string name="total_ashas">कुल आशाएँ</string>
     <string name="select_month">माह चुनें</string>
     <string name="overdue">अवधि से अधिक लंबित</string>
@@ -1444,6 +1448,10 @@
     प्रसव की तिथि अंतिम एएनसी विज़िट की तिथि से पहले नहीं हो सकती।
 </string>
 
+    <string name="incentive_header_serial_no">क्र.सं.</string>
+    <string name="incentive_header_activity">गतिविधि</string>
+    <string name="incentive_header_no_of_claims">दावों की संख्या</string>
+    <string name="incentive_header_amount_claimed">दावा राशि (रु.)</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
     <string name="imm_due_this_month">इस महीने देय</string>

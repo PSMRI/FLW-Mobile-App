@@ -456,13 +456,11 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         .map { list -> list.sortedByBenLifo { it.ben }.map { it.asDomainModel(localizedResources) } }
     val hrpTrackingNonPregListCount = benDao.getAllHRPTrackingNonPregListCount(selectedVillage)
 
+    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
+        .map { list -> list.map { it.asPwrDomainModel() } }
 
-
-    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
-        .map { list -> list.sortedByBenLifo { it.ben }.map { it.asPwrDomainModel() } }
-
-    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage)
-        .map { list -> list.sortedByBenLifo { it.ben }.map { it.asPwrDomainModel() } }
+    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage, Konstants.pregnancyExpiryMillis)
+        .map { list -> list.map { it.asPwrDomainModel() } }
 
     fun getRegisteredInfants() = childRegistrationDao.getAllRegisteredInfants(selectedVillage)
         .map { it.sortedByDescending { infant -> infant.infant.updatedDate.takeIf { d -> d != 0L } ?: infant.infant.createdDate }.map { it.asBasicDomainModel() } }
@@ -471,7 +469,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         childRegistrationDao.getAllRegisteredInfantsCount(selectedVillage)
 
     //        .map { list -> list.map { it.ben } }
-    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
+    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
     fun getMaternalDeathCount() = benDao.getAllMDSRCount(selectedVillage)
@@ -484,13 +482,13 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                 list.map { it.asDomainModel() }
             }
     fun getRegisteredPregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
             }
     fun getHrpConfirmedPregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { anc -> anc.maternalDeath == true } }
                     .filter {
@@ -527,10 +525,10 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
 
 
     fun getRegisteredPregnantWomanListCount() =
-        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
 
     fun getRegisteredPregnantWomanNonFollowUpList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter {
                     if (!it.savedAncRecords.isNullOrEmpty()) {
@@ -557,7 +555,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         getRegisteredPregnantWomanNonFollowUpList().map { it.size }
 
     fun getDuePregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { isAncDue(it) }
                     .map { it.asDomainModel() }

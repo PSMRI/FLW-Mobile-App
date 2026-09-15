@@ -234,7 +234,7 @@ open class DeliveryOutcomeDataset(
 
     suspend fun setUpPage(
         pwr: PregnantWomanRegistrationCache,
-        anc: PregnantWomanAncCache,
+        anc: PregnantWomanAncCache?,
         saved: DeliveryOutcomeCache?
     ) {
         var list = mutableListOf(
@@ -353,13 +353,21 @@ open class DeliveryOutcomeDataset(
         }
         //dateOfDeath.min=pwr.lmpDate
         dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
-        dateOfDelivery.min = maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate)
-        dateOfDelivery.value = getDateFromLong(maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate))
+
+        val earliestByGestation = pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7)
+        val lastAncVisitDate = anc?.takeIf { it.pregnantWomanDelivered != true }?.ancDate ?: 0L
+        dateOfDelivery.min = maxOf(earliestByGestation, lastAncVisitDate)
         dateOfDelivery.max =
             minOf(
                 System.currentTimeMillis(),
                 getEddFromLmp(pwr.lmpDate) + TimeUnit.DAYS.toMillis(25)
             )
+
+        if (saved == null) {
+            anc?.takeIf { it.pregnantWomanDelivered == true }?.let {
+                dateOfDelivery.value = getDateFromLong(it.ancDate)
+            }
+        }
 
         setUpPage(list)
 
