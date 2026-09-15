@@ -222,6 +222,22 @@ class PwAncVisitsListViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `benList uses confirmed hrp list when source is 3`() = runTest {
+        every { recordsRepo.getHrpConfirmedPregnantWomanList() } returns
+                flowOf(listOf(benWithAnc(5L)))
+        val vm = PwAncVisitsListViewModel(
+            SavedStateHandle(mapOf("source" to 3)),
+            recordsRepo,
+            maternalHealthRepo,
+            preferenceDao
+        )
+        advanceUntilIdle()
+        val list = vm.benList.first()
+        assertEquals(1, list.size)
+        assertEquals(5L, list.first().ben.benId)
+    }
+
+    @Test
     fun `bottomSheetList returns anc list for selected ben in NORMAL mode`() = runTest {
         every { recordsRepo.getRegisteredPregnantWomanList() } returns flowOf(listOf(benWithAnc(1L)))
         val vm = PwAncVisitsListViewModel(savedStateHandle, recordsRepo, maternalHealthRepo, preferenceDao)

@@ -66,7 +66,9 @@ class BeneficiaryDetailViewModel @Inject constructor(
                             val records: List<BeneficiaryRecordUI> = Gson().fromJson(
                                 jsonObj.getJSONArray("data").toString(), type
                             )
-                            _uiState.value = BeneficiaryUiState.Success(records)
+                            _uiState.value = BeneficiaryUiState.Success(
+                                records.sortedByDescending { it.id }
+                            )
                         }
                         5000 -> _uiState.value = BeneficiaryUiState.Success(emptyList())
                         else -> _uiState.value = BeneficiaryUiState.Error(

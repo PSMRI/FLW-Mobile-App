@@ -42,6 +42,7 @@ class PwAncVisitsListViewModel @Inject constructor(
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
         2 -> recordsRepo.getDuePregnantWomanList()
+        3 -> recordsRepo.getHrpConfirmedPregnantWomanList()
         else -> recordsRepo.getRegisteredPregnantWomanList()
     }
     private val _homeVisitState = MutableLiveData<Map<Long, HomeVisitUiState>>()

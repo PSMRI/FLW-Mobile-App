@@ -341,7 +341,7 @@ class HBNCFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__infant,
+                R.drawable.new_born_baby_icon,
                 getString(R.string.hbnc_form)
             )
         }

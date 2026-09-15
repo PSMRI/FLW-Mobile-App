@@ -81,7 +81,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
                     binding.flEmpty.visibility = View.GONE
                     binding.rvList.visibility = View.VISIBLE
                     binding.rvList.apply {
-                        (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { it.ben.regDate })
+                        (adapter as BenChildImmunizationListAdapter).submitList(it.sortedByDescending { item -> item.ben.lifoMillis() })
                     }
                 }
 

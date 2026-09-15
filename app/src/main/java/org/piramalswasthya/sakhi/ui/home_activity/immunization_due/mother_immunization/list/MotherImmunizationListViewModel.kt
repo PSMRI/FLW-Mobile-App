@@ -54,7 +54,7 @@ class MotherImmunizationListViewModel @Inject constructor(
                     )
 
                 })
-        }
+        }.sortedByDescending { it.ben.lifoMillis() }
     }
 
     private val clickedBenId = MutableStateFlow(0L)

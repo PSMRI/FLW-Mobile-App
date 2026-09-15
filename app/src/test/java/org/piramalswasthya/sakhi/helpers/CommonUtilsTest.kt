@@ -394,6 +394,7 @@ class CommonUtilsTest {
         every { b.hhId } returns hhId
         every { b.abhaId } returns abhaId
         every { b.dob } returns dob
+        every { b.lifoMillis() } returns 0L
         return b
     }
 
@@ -1151,6 +1152,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
         every { ecr.createdDate } returns created
+        every { ecr.updatedDate } returns created
         every { ecr.syncState } returns sync
         val item = mockk<BenWithEcrDomain>(relaxed = true)
         every { item.ben } returns ben
@@ -1174,6 +1176,8 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val rec = mockk<ECTDomain>(relaxed = true)
         every { rec.syncState } returns sync
+        every { rec.created } returns ectDate
+        every { rec.visited } returns ectDate
         val item = mockk<BenWithEctListDomain>(relaxed = true)
         every { item.ben } returns ben
         every { item.ectDate } returns ectDate
@@ -1199,6 +1203,7 @@ class CommonUtilsTest {
         every { item.ben } returns ben
         every { item.pncDate } returns pncDate
         every { item.syncState } returns sync
+        every { item.savedPncRecords } returns emptyList()
         return item
     }
 
@@ -1215,6 +1220,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val pwr = mockk<PregnantWomanRegistrationCache>(relaxed = true)
         every { pwr.createdDate } returns created
+        every { pwr.updatedDate } returns created
         every { pwr.syncState } returns sync
         val item = mockk<BenWithPwrDomain>(relaxed = true)
         every { item.ben } returns ben
@@ -1244,6 +1250,8 @@ class CommonUtilsTest {
         every { item.ancDate } returns ancDate
         every { item.abortionDate } returns abortionDate
         every { item.syncState } returns sync
+        every { item.savedAncRecords } returns emptyList()
+        every { item.pwr } returns null
         return item
     }
 
@@ -1269,6 +1277,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val infant = mockk<InfantRegCache>(relaxed = true)
         every { infant.createdDate } returns created
+        every { infant.updatedDate } returns created
         every { infant.syncState } returns sync
         val item = mockk<ChildRegDomain>(relaxed = true)
         every { item.motherBen } returns ben
@@ -1289,6 +1298,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val ir = mockk<InfantRegCache>(relaxed = true)
         every { ir.createdDate } returns created
+        every { ir.updatedDate } returns created
         val item = mockk<InfantRegDomain>(relaxed = true)
         every { item.motherBen } returns ben
         every { item.savedIr } returns ir
