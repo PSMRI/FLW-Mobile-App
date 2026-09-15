@@ -70,6 +70,29 @@ enum class VerificationStatus(val code: Int, val label: String) {
     ALL(0, "All")
 }
 
+/** Statuses whose month is already decided: the reviewer can open it and look, but not act. */
+private val TERMINAL_VERIFICATION_STATUSES = setOf(
+    VerificationStatus.VERIFIED,
+    VerificationStatus.APPROVED,
+    VerificationStatus.REJECTED
+)
+
+/**
+ * Whether a claim month still accepts a Verify / Reject decision.
+ *
+ * The ASHA list hands the worker's status down in two forms — the enum name and the server
+ * approvalStatus code (102 PENDING, 104 OVERDUE, ...) — and either one settles it, so the rule
+ * holds even where only one of the pair is available.
+ *
+ * Negative by construction: anything not already decided stays actionable. That is what keeps
+ * OVERDUE live (FLW-1169: the tag marks lateness, it never removes the action), and it means a
+ * status later added to [VerificationStatus] cannot silently disable the buttons.
+ */
+fun isClaimActionable(statusName: String, approvalStatusCode: Int): Boolean =
+    TERMINAL_VERIFICATION_STATUSES.none {
+        it.name == statusName || it.code == approvalStatusCode
+    }
+
 data class MonthlyDetail(
     val month: String,
     val year: Int,
