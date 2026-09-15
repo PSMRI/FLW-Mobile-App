@@ -41,7 +41,7 @@ class IconDataset @Inject constructor(
     }
 
     enum class Disease {
-        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING
+        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING ,TB
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
@@ -510,7 +510,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.leprocy,
             resources.getString(R.string.leprosy_screening),
-            recordsRepo.tbScreeningListCount,
+            recordsRepo.hhListCount,
             LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.LEPROSY.getTitleRes())
             )
@@ -754,7 +754,10 @@ class IconDataset @Inject constructor(
             R.drawable.ic__ncd_eligibility,
             resources.getString(R.string.icon_title_ncd_tb_screening),
             recordsRepo.tbScreeningListCount,
-            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
+            CdFragmentDirections.actionCdFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.TB.getTitleRes())
+            )
+//            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
         ), Icon(
             R.drawable.ic__death,
             resources.getString(R.string.icon_title_ncd_tb_suspected),
@@ -777,7 +780,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
-            recordsRepo.tbScreeningListCount,
+            recordsRepo.hhListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.MALARIA.getTitleRes())
             ),
