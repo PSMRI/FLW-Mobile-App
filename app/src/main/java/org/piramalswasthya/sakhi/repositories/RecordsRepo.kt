@@ -488,7 +488,7 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
                     .map { it.asDomainModel() }
             }
     fun getHrpConfirmedPregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { anc -> anc.maternalDeath == true } }
                     .filter {
