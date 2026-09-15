@@ -208,28 +208,28 @@ class RecordsRepoTest : BaseRepositoryTest() {
     @Test
     fun `getHrpConfirmedPregnantWomanList includes woman with confirmed hrp and identifier`() =
         runTest {
-            every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+            every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
                     flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = "MO")))
             assertEquals(1, repo.getHrpConfirmedPregnantWomanList().first().size)
         }
 
     @Test
     fun `getHrpConfirmedPregnantWomanList excludes woman without identifier`() = runTest {
-        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
                 flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = " ")))
         assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
     }
 
     @Test
     fun `getHrpConfirmedPregnantWomanList excludes woman when hrp not confirmed`() = runTest {
-        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
                 flowOf(listOf(benWithAncVisit(hrpConfirmed = false, hrpConfirmedBy = "MO")))
         assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
     }
 
     @Test
     fun `getHrpConfirmedPregnantWomanList excludes inactive anc record`() = runTest {
-        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
                 flowOf(
                     listOf(
                         benWithAncVisit(
@@ -244,7 +244,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `getHrpConfirmedPregnantWomanList excludes maternal death`() = runTest {
-        every { benDao.getAllRegisteredPregnancyWomenList(any()) } returns
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
                 flowOf(
                     listOf(
                         benWithAncVisit(

@@ -87,8 +87,9 @@ class IncentiveDashboardFragment : Fragment() {
             if (viewModel.getSuperVisorSubname().equals("ASHA Supervisor")){
                 isApproved = true
                 binding.tvVerifiedLabel.text = resources.getString(R.string.verified)
-            binding.cardOverdue.visibility = View.GONE
-                params.marginEnd = 20.dpToPx(requireContext())
+                // FLW-1169: the Mitanin Trainer gets the Overdue tile too.
+                binding.cardOverdue.visibility = View.VISIBLE
+                params.marginEnd = 0.dpToPx(requireContext())
 
 
 

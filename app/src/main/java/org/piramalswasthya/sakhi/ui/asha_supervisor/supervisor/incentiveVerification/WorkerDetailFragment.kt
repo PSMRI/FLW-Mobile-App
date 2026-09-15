@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.defaultSelectedIncentiveIds
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
 import org.piramalswasthya.sakhi.utils.safeNavigate
@@ -46,6 +47,12 @@ class WorkerDetailFragment : Fragment() {
     private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
     private val selectedActivityIds = mutableSetOf<Int>()
 
+    /**
+     * FLW-1171: the pre-ticked rows are seeded once per visit to this screen. Re-seeding on a
+     * later emission would silently re-tick a row the reviewer has deliberately unticked.
+     */
+    private var defaultSelectionSeeded = false
+
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
     }
@@ -71,8 +78,9 @@ class WorkerDetailFragment : Fragment() {
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
             //    hasDefaultRecord &&
+                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
                 workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
+                workerStatus != "REJECTED"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -152,6 +160,15 @@ class WorkerDetailFragment : Fragment() {
             },
             showCheckbox = { showActivityCheckboxes }
         )
+        // Popping back from the beneficiary screen recreates this view, so a visit starts clean:
+        // selections carried over from the previous visit would otherwise stay in the
+        // Verify/Reject payload, including rows the refreshed list no longer shows.
+        selectedActivityIds.clear()
+        defaultSelectionSeeded = false
+        // FLW-1171: the rows carry a checkbox column at their start, so the header reserves the
+        // same width — otherwise S.No and Activity stop sitting above their own values.
+        binding.spaceHeaderSelection.visibility =
+            if (showActivityCheckboxes) View.VISIBLE else View.GONE
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = groupedActivityAdapter
 
@@ -209,6 +226,13 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
+                    // FLW-1171: pre-ticked rows (Monthly Honorarium) are seeded into the
+                    // selection set so they ride along in Verify/Reject by default. First
+                    // emission only — re-seeding would re-tick a row the reviewer just unticked.
+                    if (showActivityCheckboxes && !defaultSelectionSeeded) {
+                        defaultSelectionSeeded = true
+                        selectedActivityIds.addAll(state.records.defaultSelectedIncentiveIds())
+                    }
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                   //   hasDefaultRecord = currentRecords.any { it.isDefault }
                     binding.btnVerify.visibility = if (/*hasDefaultRecord &&*/ BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -232,7 +256,7 @@ class WorkerDetailFragment : Fragment() {
                         updateActionButtonsEnabled()
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED") View.GONE else View.VISIBLE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -315,6 +339,9 @@ class WorkerDetailFragment : Fragment() {
         rejectionReasonAdapter.notifyDataSetChanged()
         binding.otherReasonContainer.visibility = View.GONE
         binding.etOtherReason.text?.clear()
+        // Must be cleared with the rest of the sheet state: left true, every later rejection is
+        // blocked by the "provide the reason for Other" guard with the input box already hidden.
+        otherReasonSelected = false
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {

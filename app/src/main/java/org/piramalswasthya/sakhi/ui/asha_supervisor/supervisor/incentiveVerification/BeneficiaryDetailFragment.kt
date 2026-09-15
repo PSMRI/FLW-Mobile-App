@@ -1,14 +1,13 @@
 package org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.BuildConfig
@@ -35,9 +34,18 @@ class BeneficiaryDetailFragment : Fragment() {
     private lateinit var rejectionReasonAdapter: RejectionReasonAdapter
 
     private var currentRecords: List<BeneficiaryRecordUI> = emptyList()
-    private val selectedBeneficiaryIds = mutableSetOf<Long>()
     private var rejectionReasons = mutableListOf<RejectionReason>()
     private var otherReasonSelected = false
+
+    /** The single row the open rejection sheet belongs to (§19.3: reject acts on one row). */
+    private var pendingRejection: BeneficiaryRecordUI? = null
+
+    /**
+     * One row action at a time. The tick and cross stay live while the request runs, and success
+     * now pops the screen — so a second tap would both send a duplicate decision and navigate up
+     * twice, dropping the reviewer two screens back.
+     */
+    private var actionInFlight = false
 
     private val userId by lazy { arguments?.getInt("worker_id") ?: 0 }
     private val activityId by lazy { arguments?.getInt("activity_id") ?: 0 }
@@ -58,10 +66,11 @@ class BeneficiaryDetailFragment : Fragment() {
         arguments?.getInt("approval_status") ?: 0
     }
 
-    private val showBeneficiaryCheckboxes: Boolean
+    private val showRowActions: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
+                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
                 workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
+                workerStatus != "REJECTED"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,24 +86,19 @@ class BeneficiaryDetailFragment : Fragment() {
 
         adapter = BeneficiaryAdapter(
             activityName = activityName,
-            isSelected = { record -> selectedBeneficiaryIds.contains(record.id) },
-            onSelectionChanged = { record, isChecked ->
-                if (isChecked) selectedBeneficiaryIds.add(record.id)
-                else selectedBeneficiaryIds.remove(record.id)
-                updateActionButtonsEnabled()
-            },
-            showCheckbox = { showBeneficiaryCheckboxes }
+            onApprove = { record -> onApproveRow(record) },
+            onReject = { record -> onRejectRow(record) },
+            showActions = { showRowActions }
         )
         binding.rvBeneficiaries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvBeneficiaries.adapter = adapter
 
+        binding.spaceHeaderActions.visibility = visibleIf(showRowActions)
         binding.tvActivityHeader.text = activityName
 
-        if (showBeneficiaryCheckboxes) {
+        if (showRowActions) {
             setupRejectionReasons()
             setupClickListeners()
-            binding.btnVerify.isEnabled = false
-            binding.btnReject.isEnabled = false
         }
 
         observeViewModel()
@@ -129,36 +133,22 @@ class BeneficiaryDetailFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.btnVerify.setOnClickListener { onVerifyClicked() }
-        binding.btnReject.setOnClickListener { showRejectionBottomSheet() }
         binding.bottomSheetContainer.setOnClickListener { hideRejectionBottomSheet() }
         binding.imgCancel.setOnClickListener { hideRejectionBottomSheet() }
         binding.btnConfirmRejection.setOnClickListener { onConfirmRejectionClicked() }
     }
 
-    private fun updateActionButtonsEnabled() {
-        if (!showBeneficiaryCheckboxes) return
-        val hasSelection = selectedBeneficiaryIds.isNotEmpty()
-        binding.btnVerify.isEnabled = hasSelection
-        binding.btnReject.isEnabled = hasSelection
+    /** Tick: approves that one record straight away, no confirmation step (§19.3). */
+    private fun onApproveRow(record: BeneficiaryRecordUI) {
+        if (actionInFlight) return
+        actionInFlight = true
+        viewModel.verifyBeneficiaries(ashaId = userId, incentiveIds = listOf(record.id))
     }
 
-    private fun onVerifyClicked() {
-        if (selectedBeneficiaryIds.isEmpty()) {
-            Toast.makeText(requireContext(), "Please select at least one beneficiary to verify", Toast.LENGTH_SHORT).show()
-            return
-        }
-        viewModel.verifyBeneficiaries(
-            ashaId = userId,
-            incentiveIds = selectedBeneficiaryIds.toList()
-        )
-    }
-
-    private fun showRejectionBottomSheet() {
-        if (selectedBeneficiaryIds.isEmpty()) {
-            Toast.makeText(requireContext(), "Please select at least one beneficiary to reject", Toast.LENGTH_SHORT).show()
-            return
-        }
+    /** Cross: the reason is mandatory, so the sheet opens scoped to this one record. */
+    private fun onRejectRow(record: BeneficiaryRecordUI) {
+        if (actionInFlight) return
+        pendingRejection = record
         binding.bottomSheetContainer.visibility = View.VISIBLE
     }
 
@@ -168,6 +158,10 @@ class BeneficiaryDetailFragment : Fragment() {
         rejectionReasonAdapter.notifyDataSetChanged()
         binding.otherReasonContainer.visibility = View.GONE
         binding.etOtherReason.text?.clear()
+        // Must be cleared with the rest of the sheet state: left true, every later rejection is
+        // blocked by the "provide the reason for Other" guard with the input box already hidden.
+        otherReasonSelected = false
+        pendingRejection = null
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {
@@ -179,6 +173,12 @@ class BeneficiaryDetailFragment : Fragment() {
     }
 
     private fun onConfirmRejectionClicked() {
+        if (actionInFlight) return
+        val record = pendingRejection
+        if (record == null) {
+            hideRejectionBottomSheet()
+            return
+        }
         val selectedReasons = rejectionReasons.filter { it.isSelected }
         if (selectedReasons.isEmpty()) {
             Toast.makeText(requireContext(), "Please select at least one rejection reason", Toast.LENGTH_SHORT).show()
@@ -192,9 +192,10 @@ class BeneficiaryDetailFragment : Fragment() {
         val reason = selectedReasons.filter { it.id != "other" }.joinToString(", ") { it.reason }
         val otherReason = if (otherReasonSelected) binding.etOtherReason.text.toString().trim() else ""
 
+        actionInFlight = true
         viewModel.rejectBeneficiaries(
             ashaId = userId,
-            incentiveIds = selectedBeneficiaryIds.toList(),
+            incentiveIds = listOf(record.id),
             reason = reason,
             otherReason = otherReason
         )
@@ -210,32 +211,20 @@ class BeneficiaryDetailFragment : Fragment() {
                 }
                 is BeneficiaryUiState.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    binding.rvBeneficiaries.visibility = View.VISIBLE
                     currentRecords = state.records
-                    selectedBeneficiaryIds.retainAll(currentRecords.map { it.id }.toSet())
                     adapter.submitList(state.records)
-                    updateActionButtonsEnabled()
 
-                    if (state.records.isEmpty()) {
-                        binding.tvEmptyState.visibility = View.VISIBLE
-                        binding.llHeader.visibility = View.GONE
-                        binding.cvMain.visibility = View.GONE
-                    } else {
-                        binding.tvEmptyState.visibility = View.GONE
-                        val params = binding.llHeader.layoutParams as ConstraintLayout.LayoutParams
+                    val hasRecords = state.records.isNotEmpty()
+                    val total = state.records.sumOf { it.amount }
 
-                        if (showBeneficiaryCheckboxes) {
-                            params.topMargin = 10.dpToPx()
-                            params.marginStart = 17.dpToPx()
-                            params.marginEnd = 17.dpToPx()
-                            binding.cvMain.visibility = View.VISIBLE
-                        } else {
-                            params.topMargin = 0
-                            params.marginStart = 0
-                            params.marginEnd = 0
-                            binding.cvMain.visibility = View.GONE
-                        }
-                    }
+                    binding.rvBeneficiaries.visibility = visibleIf(hasRecords)
+                    binding.cardClaims.visibility = visibleIf(hasRecords)
+                    binding.infoBanner.visibility = visibleIf(hasRecords && showRowActions)
+                    binding.tvEmptyState.visibility = visibleIf(!hasRecords)
+
+                    binding.tvHeaderAmount.text = "₹$total"
+                    binding.tvSummary.text = "${state.records.size} · ₹$total"
+                    binding.tvSummary.visibility = visibleIf(hasRecords)
                 }
                 is BeneficiaryUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -249,26 +238,21 @@ class BeneficiaryDetailFragment : Fragment() {
             if (_binding == null) return@observe
             when (state) {
                 is ActionState.Loading -> {
-                    binding.btnVerify.isEnabled = false
-                    binding.btnReject.isEnabled = false
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is ActionState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     hideRejectionBottomSheet()
-                    selectedBeneficiaryIds.clear()
-                    viewModel.fetchBeneficiaries(
-                        userId = userId,
-                        month = selectedMonth,
-                        year = selectedYear,
-                        activityId = activityId,
-                        filterApprovalStatus = workerApprovalStatus
-                    )
+                    // The decision is committed, so hand the reviewer back to the activity list
+                    // instead of re-fetching into a screen that has no way to show a row's new
+                    // state. Popping also re-runs WorkerDetailFragment's init, so the counts and
+                    // statuses behind us refresh with the change.
+                    findNavController().navigateUp()
                 }
                 is ActionState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    updateActionButtonsEnabled()
+                    actionInFlight = false
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -289,7 +273,6 @@ class BeneficiaryDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    fun Int.dpToPx(): Int =
-        (this * Resources.getSystem().displayMetrics.density).toInt()
+    private fun visibleIf(condition: Boolean) = if (condition) View.VISIBLE else View.GONE
 
 }

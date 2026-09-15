@@ -194,8 +194,18 @@ data class ClaimedIncentiveUI(
     @SerializedName("totalAmount") val totalAmount: Int,
     @SerializedName("isDefault") val isDefault: Boolean,
     @SerializedName("approvalStatus") val approvalStatus: Int,
+    /** Server-side flag on claimedIncentiveByUser; false when the field is absent. */
+    @SerializedName("isApproved") val isApproved: Boolean = false,
 
 )
+
+/**
+ * FLW-1171 / BRD §20.3: rows the backend marks `isApproved` (the Monthly Honorarium, S.No 52) are
+ * ticked by default. A default, not a lock — the reviewer can untick one and reject it — so the
+ * screen seeds these once and never overrides what they have chosen since.
+ */
+fun List<ClaimedIncentiveUI>.defaultSelectedIncentiveIds(): List<Int> =
+    filter { it.isApproved }.map { it.incentiveId }
 
 sealed class WorkerDetailUiState {
     object Loading : WorkerDetailUiState()
