@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.BuildConfig
@@ -19,10 +18,13 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.toActivityGroups
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.isClaimActionable
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.defaultSelectedIncentiveIds
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailUiState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.WorkerDetailViewModel
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -46,6 +48,12 @@ class WorkerDetailFragment : Fragment() {
     private var currentRecords: List<ClaimedIncentiveUI> = emptyList()
     private val selectedActivityIds = mutableSetOf<Int>()
 
+    /**
+     * FLW-1171: the pre-ticked rows are seeded once per visit to this screen. Re-seeding on a
+     * later emission would silently re-tick a row the reviewer has deliberately unticked.
+     */
+    private var defaultSelectionSeeded = false
+
     private val workerId by lazy {
         arguments?.getString("worker_id")?.toIntOrNull() ?: 0
     }
@@ -68,11 +76,17 @@ class WorkerDetailFragment : Fragment() {
         arguments?.getInt("approval_status") ?: 0
     }
 
+    /**
+     * The month is still open for a Verify / Reject decision. One rule, shared with the action
+     * card and the Mitanin checkbox column, so the three cannot drift apart.
+     */
+    private val isMonthActionable: Boolean
+        get() = isClaimActionable(workerStatus, workerApprovalStatus)
+
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
             //    hasDefaultRecord &&
-                workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED" && workerStatus != "OVERDUE"
+                isMonthActionable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -152,6 +166,15 @@ class WorkerDetailFragment : Fragment() {
             },
             showCheckbox = { showActivityCheckboxes }
         )
+        // Popping back from the beneficiary screen recreates this view, so a visit starts clean:
+        // selections carried over from the previous visit would otherwise stay in the
+        // Verify/Reject payload, including rows the refreshed list no longer shows.
+        selectedActivityIds.clear()
+        defaultSelectionSeeded = false
+        // FLW-1171: the rows carry a checkbox column at their start, so the header reserves the
+        // same width — otherwise S.No and Activity stop sitting above their own values.
+        binding.spaceHeaderSelection.visibility =
+            if (showActivityCheckboxes) View.VISIBLE else View.GONE
         binding.rvActivities.layoutManager = LinearLayoutManager(requireContext())
         binding.rvActivities.adapter = groupedActivityAdapter
 
@@ -173,7 +196,7 @@ class WorkerDetailFragment : Fragment() {
             putString("status", workerStatus)
             putInt("approval_status", workerApprovalStatus)
         }
-        findNavController().navigate(R.id.beneficiaryDetailFragment, bundle)
+        safeNavigate(R.id.beneficiaryDetailFragment, bundle)
     }
 
     private fun updateActionButtonsEnabled() {
@@ -209,9 +232,22 @@ class WorkerDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                     currentRecords = state.records
+                    // FLW-1171: pre-ticked rows (Monthly Honorarium) are seeded into the
+                    // selection set so they ride along in Verify/Reject by default. First
+                    // emission only — re-seeding would re-tick a row the reviewer just unticked.
+                    if (showActivityCheckboxes && !defaultSelectionSeeded) {
+                        defaultSelectionSeeded = true
+                        selectedActivityIds.addAll(state.records.defaultSelectedIncentiveIds())
+                    }
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                   //   hasDefaultRecord = currentRecords.any { it.isDefault }
-                    binding.btnVerify.visibility = if (/*hasDefaultRecord &&*/ BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    // Mitanin keeps its own flavour rule (FLW-1145). Every other flavour shows
+                    // Verify whenever the month is still actionable: the flavour check on its own
+                    // left saksham / utprerona / niramay / xushrukha with a lone Reject button on
+                    // a PENDING (102) claim, while Reject was never flavour-gated at all.
+                    binding.btnVerify.visibility = if (
+                        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) || isMonthActionable
+                    ) {
                         View.VISIBLE
                     } else {
                         View.GONE
@@ -232,7 +268,8 @@ class WorkerDetailFragment : Fragment() {
                         updateActionButtonsEnabled()
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED" || workerStatus=="OVERDUE") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility =
+                        if (isMonthActionable) View.VISIBLE else View.GONE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -315,6 +352,9 @@ class WorkerDetailFragment : Fragment() {
         rejectionReasonAdapter.notifyDataSetChanged()
         binding.otherReasonContainer.visibility = View.GONE
         binding.etOtherReason.text?.clear()
+        // Must be cleared with the rest of the sheet state: left true, every later rejection is
+        // blocked by the "provide the reason for Other" guard with the input box already hidden.
+        otherReasonSelected = false
     }
 
     private fun onReasonCheckChanged(reason: RejectionReason, isChecked: Boolean) {

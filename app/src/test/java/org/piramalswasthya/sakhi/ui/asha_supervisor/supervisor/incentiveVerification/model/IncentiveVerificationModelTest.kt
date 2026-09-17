@@ -172,7 +172,8 @@ class IncentiveVerificationModelTest {
         totalAmount = 200,
         isDefault = false,
         approvalStatus = 1,
-        incentiveId = 1
+        incentiveId = 1,
+        isApproved = true
     )
 
     @Test fun `ClaimedIncentiveUI copy and equality`() {

@@ -21,7 +21,8 @@ class BeneficiaryRecordUITest {
         rchId = "rch1",
         abhaNumber = "abha1",
         isClaimed = true,
-        verifiedByUserName = "sup"
+        verifiedByUserName = "sup",
+        isApproved = true
     )
 
     @Test
@@ -42,6 +43,7 @@ class BeneficiaryRecordUITest {
         assertEquals("abha1", record.abhaNumber)
         assertEquals(true, record.isClaimed)
         assertEquals("sup", record.verifiedByUserName)
+        assertEquals(true, record.isApproved)
     }
 
     @Test
@@ -66,6 +68,8 @@ class BeneficiaryRecordUITest {
         assertEquals(null, record.name)
         assertEquals(null, record.approvalStatus)
         assertEquals(null, record.isClaimed)
+        // Omitted from the constructor entirely — must default to null, not false.
+        assertEquals(null, record.isApproved)
     }
 
     @Test

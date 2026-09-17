@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.debug
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,7 +17,9 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.SakhiApplication
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.NotificationEntity
+import org.piramalswasthya.sakhi.model.NotificationKeys
 import org.piramalswasthya.sakhi.repositories.NotificationRepository
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import timber.log.Timber
 
@@ -70,15 +73,38 @@ class NotificationTestReceiver : BroadcastReceiver() {
         FcmTokenUploader.uploadToken(context)
     }
 
+    /**
+     * Posts tray notifications carrying the same content intent the real [FBMessaging] builds, so
+     * the tap → deeplink path (`HomeActivity.handleNotificationDeeplink`) can be verified without a
+     * live push. The second sample deliberately carries an unknown `nav_id` to exercise the
+     * event-type fallback.
+     */
     private fun postNotifications(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val samples = listOf(
-            "Your monthly claim was rejected" to
+            Triple(
+                "Your monthly claim was rejected",
                 "October 2026 · Reason: Incomplete documentation. Please correct and resubmit.",
-            "Pending verifications for October 2026" to
-                "3 ASHAs (12 activities) are pending your verification."
+                "INCENTIVE_SCREEN" to "ASHA_CLAIM_REJECTED"
+            ),
+            Triple(
+                "Pending verifications for October 2026",
+                "3 ASHAs (12 activities) are pending your verification.",
+                "SOME_UNKNOWN_TARGET" to "INCENTIVE_CLAIMED"
+            )
         )
-        samples.forEachIndexed { i, (title, body) ->
+        samples.forEachIndexed { i, (title, body, routing) ->
+            val (navId, eventType) = routing
+            val id = (System.currentTimeMillis() + i).toInt()
+            val tapIntent = Intent(context, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra(NotificationKeys.EXTRA_FROM_NOTIFICATION, true)
+                putExtra(NotificationKeys.EXTRA_NAV_ID, navId)
+                putExtra(NotificationKeys.EXTRA_EVENT_TYPE, eventType)
+                putExtra(NotificationKeys.EXTRA_NOTIFICATION_ID, 1001L + i)
+            }
             val notification =
                 NotificationCompat.Builder(context, SakhiApplication.NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
@@ -86,10 +112,18 @@ class NotificationTestReceiver : BroadcastReceiver() {
                     .setStyle(NotificationCompat.BigTextStyle().bigText(body))
                     .setSmallIcon(R.drawable.ic_notifications)
                     .setAutoCancel(true)
+                    .setContentIntent(
+                        PendingIntent.getActivity(
+                            context,
+                            id,
+                            tapIntent,
+                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    )
                     .build()
-            nm.notify((System.currentTimeMillis() + i).toInt(), notification)
+            nm.notify(id, notification)
         }
-        Timber.d("[TEST] Posted ${samples.size} test notifications on the shared channel")
+        Timber.d("[TEST] Posted ${samples.size} tappable test notifications on the shared channel")
     }
 
     /** Inserts sample rows into Room for the logged-in user so the in-app panel is demonstrable. */

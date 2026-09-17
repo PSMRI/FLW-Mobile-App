@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -89,6 +90,28 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
         val records = (state as BeneficiaryUiState.Success).records
         assertEquals(1, records.size)
         assertEquals("Ben1", records[0].name)
+        // Not sent by this endpoint yet, so it must stay null rather than defaulting to false.
+        assertNull(records[0].isApproved)
+    }
+
+    @Test
+    fun `fetchBeneficiaries parses isApproved when the endpoint sends it`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns user
+        val body = """
+            {"statusCode":200,"data":[
+              {"id":1,"activityId":1,"ashaId":1,"benId":100,"amount":50,"name":"Ben1","isApproved":true},
+              {"id":2,"activityId":1,"ashaId":1,"benId":101,"amount":50,"name":"Ben2","isApproved":false}
+            ]}
+        """.trimIndent()
+        coEvery { apiService.getActivityDetailRecords(any()) } returns Response.success(jsonBody(body))
+
+        viewModel.fetchBeneficiaries(1, 1, 2026, 1, filterApprovalStatus = 102)
+        advanceUntilIdle()
+
+        val records = (viewModel.uiState.value as BeneficiaryUiState.Success).records
+        assertEquals(2, records.size)
+        assertEquals(true, records[0].isApproved)
+        assertEquals(false, records[1].isApproved)
     }
 
     @Test

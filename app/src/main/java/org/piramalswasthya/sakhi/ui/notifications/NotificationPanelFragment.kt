@@ -95,22 +95,40 @@ class NotificationPanelFragment : Fragment() {
         ViewCompat.requestApplyInsets(root)
     }
 
+    /**
+     * Pops this panel by name rather than blindly popping the top entry: a second tap (or a back
+     * press landing on an already-closing panel) would otherwise pop whatever else sits on the
+     * activity's back stack.
+     */
     private fun close() {
-        parentFragmentManager.popBackStack()
+        parentFragmentManager.popBackStack(TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     /**
-     * Tap always marks-as-read regardless of nav_id. If the resolved [NotificationNavTarget] has a
-     * handler for the current host, the panel is closed and the host navigates; otherwise this is a
-     * no-op beyond mark-read (unknown nav_id, or a role/host that doesn't support this target — e.g.
-     * a Supervisor/CHO/ANM notification carrying an ASHA-only nav_id).
+     * Tap always marks-as-read regardless of the routing target. If the target has a handler for the
+     * current host, the panel is closed and the host navigates; otherwise this is a no-op beyond
+     * mark-read (unknown target, or a role/host that doesn't support it).
+     *
+     * ASHA (HomeActivity) has exactly one incentive screen, so any incentive/claim notification
+     * routes there — including `INCENTIVE_APPROVAL`, which the backend also sends to ASHAs, and
+     * unrecognised target keys on an otherwise incentive-related notification
+     * ([NotificationDomain.isIncentiveRelated]). Without that fallback a naming mismatch between
+     * `navId`, `redirect` and the mobile enum silently does nothing on tap.
      */
     private fun onNotificationTapped(item: NotificationDomain) {
         viewModel.markRead(item.notificationId)
-        when (NotificationNavTarget.fromNavId(item.navId)) {
+        val isAshaHost = activity is HomeActivity
+        when (NotificationNavTarget.fromNavId(item.navTarget)) {
             NotificationNavTarget.INCENTIVE_SCREEN -> navigateToIncentivesScreen()
-            NotificationNavTarget.INCENTIVE_APPROVAL -> Unit // not wired yet (Supervisor side)
-            NotificationNavTarget.NONE -> Unit
+            // Supervisor-side verification screen isn't wired yet; on an ASHA device the same
+            // notification means "your claim was acted on" → the ASHA incentives screen.
+            NotificationNavTarget.INCENTIVE_APPROVAL -> if (isAshaHost) navigateToIncentivesScreen()
+            NotificationNavTarget.NONE -> {
+                if (isAshaHost && item.isIncentiveRelated) {
+                    Timber.d("Unrecognised nav target '${item.navTarget}'; routing incentive notification to IncentivesFragment")
+                    navigateToIncentivesScreen()
+                }
+            }
         }
     }
 

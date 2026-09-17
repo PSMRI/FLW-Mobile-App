@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import org.piramalswasthya.sakhi.work.PullFromAmritWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -252,7 +253,7 @@ class SupervisorFragment : Fragment() {
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener {
-            findNavController().navigate(it)
+            safeNavigate(it)
         }, viewModel.scope)
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {

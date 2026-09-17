@@ -25,8 +25,17 @@ jobs:
           distribution: zulu
           java-version: '17'
 
+      # packages: the action's default is "tools platform-tools", but Google removed
+      # the legacy `tools` package from the SDK repository on 2026-09-14, so sdkmanager
+      # exits 1 on it and the step fails. Request platform-tools only; the action still
+      # installs cmdline-tools and accepts the licences, and AGP pulls the platform and
+      # build-tools it needs. v2 is not an option here - it declares no inputs at all,
+      # so `packages` would be silently ignored (and it still runs on the deprecated
+      # node16 runtime).
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       # Caches ~/.gradle (dependency jars, wrapper dist, build cache).
       # cache-read-only is off so each PR seeds its own cache scope: the first
@@ -75,9 +84,12 @@ jobs:
 
       # --build-cache and the fork settings are passed here rather than in
       # gradle.properties / build.gradle so local and release builds keep their
-      # current behaviour exactly. forkEvery stays at its default of 80.
+      # current behaviour exactly (defaults stay 80 / 2).
+      # forkEvery=300 cuts ~10 test-JVM restarts per worker. It also means more
+      # test classes share a JVM, so if a test that leaks static state starts
+      # failing here but passes locally, this is the first thing to revert.
       - name: Run unit tests and verify coverage
-        run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4
+        run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4 -PtestForkEvery=300
 
       - name: Upload JaCoCo report
         if: always()

@@ -611,12 +611,18 @@ GROUP BY b.benId
     ): Flow<Int>
 
     @Transaction
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0 and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage")
-    fun getAllPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithPwrCache>>
+    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0 and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage and not exists (select 1 from PREGNANCY_REGISTER expired where expired.benId = ben.benId and expired.active = 1 and (strftime('%s','now') * 1000) > (expired.lmpDate + :pregnancyExpiryMillis))")
+    fun getAllPregnancyWomenList(
+        selectedVillage: Int,
+        pregnancyExpiryMillis: Long
+    ): Flow<List<BenWithPwrCache>>
 
     @Transaction
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0  and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage and ben.rchId is not null and ben.rchId != ''")
-    fun getAllPregnancyWomenWithRchList(selectedVillage: Int): Flow<List<BenWithPwrCache>>
+    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0  and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage and ben.rchId is not null and ben.rchId != '' and not exists (select 1 from PREGNANCY_REGISTER expired where expired.benId = ben.benId and expired.active = 1 and (strftime('%s','now') * 1000) > (expired.lmpDate + :pregnancyExpiryMillis))")
+    fun getAllPregnancyWomenWithRchList(
+        selectedVillage: Int,
+        pregnancyExpiryMillis: Long
+    ): Flow<List<BenWithPwrCache>>
 
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and villageId=:selectedVillage")
@@ -627,13 +633,45 @@ GROUP BY b.benId
     fun getAllPregnancyWomenForHRListCount(selectedVillage: Int): Flow<Int>
 
 
-    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and villageId=:selectedVillage")
-    fun getAllPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
+    @Query("""
+        SELECT COUNT(*) FROM BEN_BASIC_CACHE ben
+        WHERE reproductiveStatusId = 2 and isDeactivate = 0 and villageId = :selectedVillage
+        and not exists (
+            select 1 from PREGNANCY_REGISTER expired
+            where expired.benId = ben.benId and expired.active = 1
+            and (strftime('%s','now') * 1000) > (expired.lmpDate + :pregnancyExpiryMillis)
+        )
+    """)
+    fun getAllPregnancyWomenListCount(
+        selectedVillage: Int,
+        pregnancyExpiryMillis: Long
+    ): Flow<Int>
 
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben  inner join pregnancy_register pwr on pwr.benId = ben.benId inner join pregnancy_anc anc on ben.benId = anc.benId WHERE ben.reproductiveStatusId =3 and ben.isDeactivate =0 and anc.pregnantWomanDelivered =1 and anc.isActive = 1 and pwr.active = 1 and villageId=:selectedVillage group by ben.benId order by anc.updatedDate desc ")
+    @Query("""
+        SELECT ben.* FROM BEN_BASIC_CACHE ben
+        inner join pregnancy_register pwr on pwr.benId = ben.benId
+        left outer join pregnancy_anc anc on ben.benId = anc.benId
+            and anc.pregnantWomanDelivered = 1 and anc.isActive = 1
+        left outer join DELIVERY_OUTCOME delout on delout.benId = ben.benId
+            and delout.isActive = 1 and delout.dateOfDelivery is not null
+            and delout.dateOfDelivery >= pwr.lmpDate
+        WHERE ben.isDeactivate = 0 and pwr.active = 1 and villageId = :selectedVillage
+        and ((ben.reproductiveStatusId = 3 and anc.benId is not null) or delout.benId is not null)
+        group by ben.benId order by max(anc.updatedDate) desc
+    """)
     fun getAllDeliveredWomenList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-    @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben  inner join pregnancy_register pwr on pwr.benId = ben.benId inner join pregnancy_anc anc on ben.benId = anc.benId WHERE ben.reproductiveStatusId =3 and ben.isDeactivate=0 and anc.pregnantWomanDelivered =1 and anc.isActive = 1 and pwr.active = 1 and villageId=:selectedVillage")
+    @Query("""
+        SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE ben
+        inner join pregnancy_register pwr on pwr.benId = ben.benId
+        left outer join pregnancy_anc anc on ben.benId = anc.benId
+            and anc.pregnantWomanDelivered = 1 and anc.isActive = 1
+        left outer join DELIVERY_OUTCOME delout on delout.benId = ben.benId
+            and delout.isActive = 1 and delout.dateOfDelivery is not null
+            and delout.dateOfDelivery >= pwr.lmpDate
+        WHERE ben.isDeactivate = 0 and pwr.active = 1 and villageId = :selectedVillage
+        and ((ben.reproductiveStatusId = 3 and anc.benId is not null) or delout.benId is not null)
+    """)
     fun getAllDeliveredWomenListCount(selectedVillage: Int): Flow<Int>
 
     @Transaction
@@ -660,8 +698,11 @@ GROUP BY b.benId
     fun getAllWomenListForPmsmaCount(selectedVillage: Int): Flow<Int>
 
     @Transaction
-    @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.isDeactivate=0 and isDeath =0 and ben.villageId=:selectedVillage group by ben.benId")
-    fun getAllRegisteredPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithAncVisitCache>>
+    @Query("SELECT ben.*  from BEN_BASIC_CACHE  ben inner join pregnancy_register pwr on pwr.benId = ben.benId where pwr.active = 1 and ben.reproductiveStatusId=2 and ben.isDeactivate=0 and isDeath =0 and (strftime('%s','now') * 1000) <= (pwr.lmpDate + :pregnancyExpiryMillis) and not exists (select 1 from DELIVERY_OUTCOME delout where delout.benId = ben.benId and delout.isActive = 1 and delout.dateOfDelivery is not null and delout.dateOfDelivery >= pwr.lmpDate) and ben.villageId=:selectedVillage group by ben.benId")
+    fun getAllRegisteredPregnancyWomenList(
+        selectedVillage: Int,
+        pregnancyExpiryMillis: Long
+    ): Flow<List<BenWithAncVisitCache>>
 
     @Query("""
     UPDATE BENEFICIARY
@@ -766,9 +807,19 @@ GROUP BY b.benId
         inner join pregnancy_register pwr on pwr.benId = ben.benId
         where pwr.active = 1 and ben.reproductiveStatusId=2
         and isDeactivate=0 and isDeath = 0 and  ben.villageId=:selectedVillage
+        and (strftime('%s','now') * 1000) <= (pwr.lmpDate + :pregnancyExpiryMillis)
+        and not exists (
+            SELECT 1 FROM DELIVERY_OUTCOME delout
+            WHERE delout.benId = ben.benId AND delout.isActive = 1
+            AND delout.dateOfDelivery IS NOT NULL
+            AND delout.dateOfDelivery >= pwr.lmpDate
+        )
         AND ben.benId NOT IN (SELECT benId FROM PREGNANCY_ANC WHERE maternalDeath = 1)
     """)
-    fun getAllRegisteredPregnancyWomenListCount(selectedVillage: Int): Flow<Int>
+    fun getAllRegisteredPregnancyWomenListCount(
+        selectedVillage: Int,
+        pregnancyExpiryMillis: Long
+    ): Flow<Int>
 
     @Query("SELECT count(distinct(ben.benId)) FROM BEN_BASIC_CACHE  ben inner join pregnancy_anc pwr on pwr.benId = ben.benId where pwr.isAborted = 1 and pwr.abortionDate is not null and ben.villageId=:selectedVillage and isDeactivate=0")
     fun getAllAbortionWomenListCount(selectedVillage: Int): Flow<Int>

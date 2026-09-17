@@ -66,7 +66,13 @@ class ActivityAdapter(
         ) {
             cbSelectActivity?.setOnCheckedChangeListener(null)
             if (showCheckbox) {
+                // FLW-1171 §20.3: every row binds the same way — the tick reflects nothing but the
+                // selection set. Rows the backend marks isApproved (monthly honorarium) start
+                // ticked because the fragment seeds them into that set, but "pre-ticked" is only a
+                // default: the reviewer unticks and rejects one exactly like any other row. Binding
+                // them disabled instead locked the honorarium into every Verify.
                 cbSelectActivity?.visibility = View.VISIBLE
+                cbSelectActivity?.isEnabled = true
                 cbSelectActivity?.isChecked = selected
                 cbSelectActivity?.setOnCheckedChangeListener { _, isChecked ->
                     onSelectionChanged(item, isChecked)
@@ -86,7 +92,12 @@ class ActivityAdapter(
                 layoutApproval?.visibility = View.GONE
 
             }
-            if (item.isDefault) {
+            // A fixed/monthly payment has no beneficiaries behind it, so the row must not open the
+            // beneficiary screen. Both flags mean the same thing and either one is enough — they
+            // used to be two consecutive if/else blocks, where the second silently undid the
+            // first whenever only one flag was set (and the payload stopped sending
+            // isDefaultActivity entirely, so every isDefault row stayed clickable).
+            if (item.isDefault || item.isDefaultActivity) {
                 clMain?.setBackgroundColor(
                     itemView.context.getColor(R.color.default_incentive_no_ben_background)
                 )
@@ -95,26 +106,17 @@ class ActivityAdapter(
                 )
                 clMain?.setOnClickListener(null)
                 ClmainTwo?.setOnClickListener(null)
+                // setOnClickListener(null) leaves isClickable set from a previous bind, which
+                // would keep the recycled row swallowing touches.
+                clMain?.isClickable = false
+                ClmainTwo?.isClickable = false
             } else {
                 clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
                 layoutContent?.setBackgroundColor(
                     itemView.context.getColor(android.R.color.white)
                 )
                 clMain?.setOnClickListener { onClick?.invoke(item) }
-                ClmainTwo?.setOnClickListener{onClick?.invoke(item)}
-            }
-
-            if (item.isDefaultActivity) {
-                clMain?.setBackgroundColor(
-                    itemView.context.getColor(R.color.default_incentive_no_ben_background)
-                )
-                clMain?.setOnClickListener(null)
-                ClmainTwo?.setOnClickListener(null)
-            } else {
-                clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
-                clMain?.setOnClickListener { onClick?.invoke(item) }
-                ClmainTwo?.setOnClickListener{onClick?.invoke(item)}
-
+                ClmainTwo?.setOnClickListener { onClick?.invoke(item) }
             }
 
         }
@@ -127,8 +129,12 @@ class ActivityAdapter(
     }
 
     class ActivityDiffCallback : DiffUtil.ItemCallback<ClaimedIncentiveUI>() {
+        // incentiveId, not activityId: one activity can yield several claimed rows in a month,
+        // and incentiveId is what the selection set and the Verify/Reject payload key on. Keying
+        // on activityId would let DiffUtil merge two distinct rows and bind the wrong
+        // checked/locked state onto one of them.
         override fun areItemsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
-            oldItem.activityId == newItem.activityId
+            oldItem.incentiveId == newItem.incentiveId
 
         override fun areContentsTheSame(oldItem: ClaimedIncentiveUI, newItem: ClaimedIncentiveUI) =
             oldItem == newItem
