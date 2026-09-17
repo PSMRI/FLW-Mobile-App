@@ -110,7 +110,20 @@ class MaaMeetingRepo @Inject constructor(
                 meetingImages = imagesParts
             )
             if (response.isSuccessful) {
-                dao.updateSyncState(row.id, SyncState.SYNCED)
+                val responseString = response.body()?.string()
+                if (!responseString.isNullOrBlank()) {
+                    try {
+                        val jsonObj = org.json.JSONObject(responseString)
+                        val responseStatusCode = jsonObj.optInt("statusCode", -1)
+                        if (responseStatusCode == 200) {
+                            dao.updateSyncState(row.id, SyncState.SYNCED)
+                        } else {
+                            timber.log.Timber.e("MaaMeeting server rejected payload with status: $responseStatusCode")
+                        }
+                    } catch (e: Exception) {
+                        timber.log.Timber.e("Failed to parse MaaMeeting response: $e")
+                    }
+                }
             }
         }
     }
