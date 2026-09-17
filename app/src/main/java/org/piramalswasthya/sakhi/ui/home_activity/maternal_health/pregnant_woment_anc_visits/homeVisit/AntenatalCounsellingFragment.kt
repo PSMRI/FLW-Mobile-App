@@ -43,6 +43,7 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -377,16 +378,29 @@ class AntenatalCounsellingFragment : Fragment() {
 
     private fun calculateAndSetMotherAge() {
         try {
-            val ageText = binding.tvAgeValue.text.toString()
-            val ageStr = ageText.replace(" years", "").replace(" yrs", "").replace(" year", "").trim()
-            val age = ageStr.toIntOrNull()
-
-            if (age != null) {
-                viewModel.setMotherAge(age)
-                Timber.d("Mother's age set to: $age")
-            } else {
-                Timber.e("Could not parse age from: $ageText")
+            val dobMillis = benList.ben.dob
+            if (dobMillis <= 0L) {
+                Timber.e("No dob available for benId=$benId")
+                return
             }
+
+            val calDob = Calendar.getInstance().apply { timeInMillis = dobMillis }
+            val calNow = Calendar.getInstance()
+
+            var age = calNow.get(Calendar.YEAR) - calDob.get(Calendar.YEAR)
+            val months = calNow.get(Calendar.MONTH) - calDob.get(Calendar.MONTH)
+            val days = calNow.get(Calendar.DAY_OF_MONTH) - calDob.get(Calendar.DAY_OF_MONTH)
+            if (months < 0 || (months == 0 && days < 0)) {
+                age--
+            }
+
+            if (age < 0) {
+                Timber.e("Invalid age computed from dob=$dobMillis")
+                return
+            }
+
+            viewModel.setMotherAge(age)
+            Timber.d("Mother's age set to: $age")
         } catch (e: Exception) {
             Timber.e(e, "Error calculating mother's age")
         }
