@@ -49,4 +49,32 @@ interface CbacDao {
 
     @Query("UPDATE CBAC SET syncState = 0 WHERE syncState = 1")
     suspend fun resetSyncingToUnsynced()
+
+    /**
+     * Monthly Recap (READ-ONLY): counts distinct beneficiaries with a completed
+     * CBAC screening in the window [startInclusive, endExclusive), owned by the
+     * current ASHA.
+     *
+     * Ownership predicate:
+     *   ashaId = :userId                                  (locally authored rows)
+     *   OR (ashaId = 0 AND createdBy = :userName)         (server-downloaded rows;
+     *       the pull is scoped to this username, and a NULL/blank/different
+     *       createdBy fails the equality, so foreign or unproven rows are excluded)
+     *
+     * Sync state is intentionally NOT filtered, so completed UNSYNCED/SYNCING/
+     * SYNCED work all counts (offline-first). COUNT(DISTINCT benId) collapses a
+     * local row and its re-downloaded copy (same benId) into one screening event.
+     * Returns only an aggregate — no beneficiary id leaves the DAO.
+     */
+    @Query(
+        "SELECT COUNT(DISTINCT benId) FROM CBAC " +
+                "WHERE fillDate >= :startInclusive AND fillDate < :endExclusive " +
+                "AND (ashaId = :userId OR (ashaId = 0 AND createdBy = :userName))"
+    )
+    suspend fun countCurrentAshaScreenings(
+        userId: Int,
+        userName: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
 }

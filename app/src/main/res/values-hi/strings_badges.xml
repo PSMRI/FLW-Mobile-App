@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="badge_shelf_title">मेरे बैज</string>
+    <string name="badge_widget_title">बैज</string>
+    <string name="badge_widget_get_started">कमाई शुरू करें — इस सप्ताह ऐप सिंक करें!</string>
+    <string name="badge_widget_progress">%1$s — %3$d में से %2$d</string>
+    <string name="badge_progress_of">%2$d में से %1$d</string>
+    <string name="badge_level">स्तर %1$d</string>
+    <string name="badge_not_started">अभी शुरुआत नहीं हुई</string>
+    <string name="badge_earned_times">%1$d बार अर्जित</string>
+    <string name="badge_streak_weeks">लगातार %1$d सप्ताह</string>
+    <string name="badge_streak_months">लगातार %1$d माह</string>
+    <string name="badge_grace_remaining">%1$d छूट शेष</string>
+
+    <string name="badge_steady_syncer_title">स्टेडी सिंकर</string>
+    <string name="badge_steady_syncer_desc">हर सप्ताह कम से कम एक बार ऐप सिंक करें</string>
+    <string name="badge_timely_reporter_title">टाइमली रिपोर्टर</string>
+    <string name="badge_timely_reporter_desc">मासिक प्रोत्साहन फ़ॉर्म समय पर जमा करें</string>
+    <string name="badge_complete_worker_title">कंप्लीट वर्कर</string>
+    <string name="badge_complete_worker_desc">हर तिमाही 3+ स्वास्थ्य क्षेत्रों में सक्रिय रहें</string>
+    <string name="badge_community_voice_title">कम्युनिटी वॉइस</string>
+    <string name="badge_community_voice_desc">हर तिमाही 2+ प्रकार की बैठकें (MAA, NDD, AHD, U-WIN) आयोजित करें</string>
+    <string name="badge_maternal_journey_title">मातृत्व यात्रा</string>
+    <string name="badge_maternal_journey_desc">संस्थागत प्रसव तक मातृ देखभाल यात्राएँ पूरी करें</string>
+    <string name="badge_child_fully_protected_title">पूर्ण सुरक्षित शिशु</string>
+    <string name="badge_child_fully_protected_desc">बच्चों का पूरा टीकाकरण कार्यक्रम पूर्ण करें</string>
+    <string name="badge_digital_identity_title">डिजिटल पहचान</string>
+    <string name="badge_digital_identity_desc">परिवार पंजीकरण के बाद ABHA आईडी बनाएँ</string>
+    <string name="badge_vulnerable_baby_title">नाज़ुक शिशु की देखभाल</string>
+    <string name="badge_vulnerable_baby_desc">SNCU/LBW शिशु की सभी 7 HBNC भेंटें पूरी करें</string>
+    <string name="badge_critical_referral_title">महत्वपूर्ण रेफ़रल</string>
+    <string name="badge_critical_referral_desc">SAM बच्चे को NRC रेफ़र करें</string>
+    <string name="badge_celebration_title">बधाई हो!</string>
+    <string name="badge_celebration_body">आपने नया बैज हासिल किया!</string>
+    <string name="badge_almost_there">बस थोड़ा और!</string>
+    <string name="badge_earned_chip">🏅 अर्जित!</string>
+</resources>

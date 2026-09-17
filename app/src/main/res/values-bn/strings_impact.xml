@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="impact_dashboard_title">আমার প্রভাব</string>
+    <string name="impact_carousel_prev">আগের ব্যাজ</string>
+    <string name="impact_carousel_next">পরের ব্যাজ</string>
+</resources>

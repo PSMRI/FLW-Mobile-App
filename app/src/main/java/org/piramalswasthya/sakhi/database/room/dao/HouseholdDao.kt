@@ -19,6 +19,26 @@ interface HouseholdDao {
     @Update
     suspend fun update(household: HouseholdCache)
 
+    /**
+     * Monthly Recap (READ-ONLY): counts households the current ASHA registered in
+     * the window [startInclusive, endExclusive). Ownership is `ashaId = :userId`
+     * (local saves set the logged-in userId; downloaded rows preserve the original
+     * owner's ashaId). Drafts excluded. `householdId` is the PRIMARY KEY, so each
+     * registration is one row (COUNT counts it once); rows with a null/0
+     * createdTimeStamp fall outside the range and are excluded. Returns an
+     * aggregate only.
+     */
+    @Query(
+        "SELECT COUNT(*) FROM HOUSEHOLD " +
+                "WHERE ashaId = :userId AND isDraft = 0 " +
+                "AND createdTimeStamp >= :startInclusive AND createdTimeStamp < :endExclusive"
+    )
+    suspend fun countCurrentAshaRegistrations(
+        userId: Int,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Int
+
     @Query("UPDATE HOUSEHOLD SET processed = :proccess , serverUpdatedStatus =:updateStatus WHERE householdId = :householdId")
     suspend fun updateHouseholdToSync(
         householdId: Long,

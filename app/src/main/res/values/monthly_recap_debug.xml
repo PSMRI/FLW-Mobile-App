@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Monthly Recap strip preview state (main = release-safe default).
+
+        Release builds use THIS value and therefore always render the strip HIDDEN
+        until the real eligibility source is implemented in a later Phase. Debug builds
+        override this via app/src/debug/res/values/monthly_recap_debug.xml.
+
+        Valid tokens: hidden | ready | resume | replay
+        (see MonthlyRecapStripState.fromToken — anything unknown is treated as hidden).
+    -->
+    <string name="monthly_recap_preview_state" translatable="false">hidden</string>
+</resources>

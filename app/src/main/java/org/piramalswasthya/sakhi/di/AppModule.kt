@@ -16,17 +16,21 @@ import org.piramalswasthya.sakhi.database.room.NcdReferalDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
+import org.piramalswasthya.sakhi.database.room.dao.EcrDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
@@ -57,9 +61,15 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
 import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
+import org.piramalswasthya.sakhi.helpers.LocalMonthlyRecapAvailability
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
+import org.piramalswasthya.sakhi.helpers.MonthlyRecapAvailabilityProvider
+import org.piramalswasthya.sakhi.helpers.RecapClock
+import org.piramalswasthya.sakhi.helpers.SystemRecapClock
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.BadgeApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
@@ -156,11 +166,13 @@ object AppModule {
     fun provideHttpLoggingInterceptor(@ApplicationContext context: Context): HttpLoggingInterceptor {
         val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
+            // BODY logging stringifies every sync payload — a serious CPU/memory
+            // cost on low-end devices. Debug builds only.
             level =
-               // if (isDebuggable)
+                if (isDebuggable)
                     HttpLoggingInterceptor.Level.BODY
-//                else
-//                    HttpLoggingInterceptor.Level.NONE
+                else
+                    HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
@@ -267,6 +279,23 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideMonthlyRecapDao(database: InAppDb): MonthlyRecapDao = database.monthlyRecapDao
+
+    @Singleton
+    @Provides
+    fun provideRecapClock(): RecapClock = SystemRecapClock()
+
+    @Singleton
+    @Provides
+    fun provideMonthlyRecapAvailability(
+        clock: RecapClock,
+        configProvider: GamificationConfigProvider,
+        pref: PreferenceDao,
+    ): MonthlyRecapAvailabilityProvider =
+        LocalMonthlyRecapAvailability(clock, configProvider, pref)
+
+    @Singleton
+    @Provides
     fun provideBenDao(database: InAppDb): BenDao = database.benDao
 
     @Singleton
@@ -281,6 +310,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCbacDao(database: InAppDb): CbacDao = database.cbacDao
+
+    @Provides
+    fun provideEcrDao(database: InAppDb): EcrDao = database.ecrDao
 
     @Singleton
     @Provides
@@ -434,5 +466,29 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
+
+    @Singleton
+    @Provides
+    fun provideBadgeDao(database: InAppDb): BadgeDao = database.badgeDao
+
+    @Singleton
+    @Provides
+    fun provideEveningNotifDao(database: InAppDb): EveningNotifDao = database.eveningNotifDao
+
+    // Badges module (LLD §4.2): rides the existing authenticated client with
+    // its token insert + 401 refresh behaviour.
+    @Singleton
+    @Provides
+    fun provideBadgeApiService(
+        moshi: Moshi,
+        @Named(UAT_CLIENT) httpClient: OkHttpClient
+    ): BadgeApiService {
+        return Retrofit.Builder()
+            .baseUrl(KeyUtils.baseTMCUrl())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(httpClient)
+            .build()
+            .create(BadgeApiService::class.java)
+    }
 
 }

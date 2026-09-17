@@ -16,10 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.helpers.CrashHandler
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.SyncLogFileWriter
 import org.piramalswasthya.sakhi.helpers.SyncLogManager
 import org.piramalswasthya.sakhi.helpers.SyncLogTree
 import org.piramalswasthya.sakhi.utils.KeyUtils
+import org.piramalswasthya.sakhi.work.MonthlyRecapReminderWorker
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -38,6 +40,9 @@ class SakhiApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var syncLogFileWriter: SyncLogFileWriter
+
+    @Inject
+    lateinit var gamificationConfigProvider: GamificationConfigProvider
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -63,6 +68,13 @@ class SakhiApplication : Application(), Configuration.Provider {
         KeyUtils.abhaTokenUrl()
         FirebaseApp.initializeApp(this)
         createNotificationChannels()
+
+        // Gamification (Monthly Recap, Badges, ...): prime the shared Remote
+        // Config gate and schedule the recap's own trigger. Both are inert
+        // until a user is logged in and the mechanic is enabled server-side —
+        // see GamificationConfigProvider's own doc for the full design.
+        gamificationConfigProvider.primeAsync()
+        MonthlyRecapReminderWorker.schedule(this)
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext))
 
@@ -115,6 +127,18 @@ class SakhiApplication : Application(), Configuration.Provider {
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = "General app notifications"
+                }
+            )
+
+            // Monthly Recap's own channel, separate from sync noise, so she can
+            // manage it independently in system settings.
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    getString(R.string.notification_recap_channel_id),
+                    getString(R.string.notification_recap_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = getString(R.string.notification_recap_channel_description)
                 }
             )
         }

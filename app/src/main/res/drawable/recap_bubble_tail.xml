@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Upward-pointing tail that visually attaches the speech bubble to the girl. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="26dp"
+    android:height="14dp"
+    android:viewportWidth="26"
+    android:viewportHeight="14">
+    <path
+        android:fillColor="@color/recap_playback_bubble"
+        android:pathData="M13,0 L26,14 L0,14 Z" />
+</vector>

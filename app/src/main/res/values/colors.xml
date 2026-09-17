@@ -92,5 +92,21 @@
     <color name="unclaimed_pink">#FCFAF8</color>
     <color name="unclaimed_green">#037E62</color>
 
+    <!-- Monthly Recap playback (Phase 7) — premium light palette -->
+    <color name="recap_playback_bg_top">#FFFAF2</color>
+    <color name="recap_playback_bg_mid">#FBF2F7</color>
+    <color name="recap_playback_bg_bottom">#EEEAFB</color>
+    <color name="recap_playback_progress_active">#7B6CD9</color>
+    <color name="recap_playback_progress_track">#E5DFF6</color>
+    <color name="recap_playback_text">#2E2A3B</color>
+    <color name="recap_playback_count_accent">#6A4FC3</color>
+    <color name="recap_playback_bubble">#FFFFFF</color>
 
+    <!-- Dashboard recap card — same light palette as playback, so the card reads as
+         a window into the recap rather than a separate coloured banner. -->
+    <!-- Secondary ink. Darker than a typical muted grey on purpose: the card text is
+         small, sits on a tinted (not white) wash, and is read outdoors on low-end
+         screens. ~6:1 on the lilac end of the gradient. -->
+    <color name="recap_card_text_muted">#57516E</color>
+    <color name="recap_playback_close_tint">#8A84A0</color>
 </resources>

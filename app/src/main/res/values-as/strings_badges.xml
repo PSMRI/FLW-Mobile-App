@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="badge_shelf_title">মোৰ বেজসমূহ</string>
+    <string name="badge_widget_title">বেজ</string>
+    <string name="badge_widget_get_started">উপাৰ্জন আৰম্ভ কৰক — এই সপ্তাহত এপ ছিংক কৰক!</string>
+    <string name="badge_widget_progress">%1$s — %3$dৰ ভিতৰত %2$d</string>
+    <string name="badge_progress_of">%2$dৰ ভিতৰত %1$d</string>
+    <string name="badge_level">স্তৰ %1$d</string>
+    <string name="badge_not_started">এতিয়াও আৰম্ভ হোৱা নাই</string>
+    <string name="badge_earned_times">%1$d বাৰ লাভ কৰা হৈছে</string>
+    <string name="badge_streak_weeks">একেৰাহে %1$d সপ্তাহ</string>
+    <string name="badge_streak_months">একেৰাহে %1$d মাহ</string>
+    <string name="badge_grace_remaining">%1$d ৰেহাই বাকী</string>
+
+    <string name="badge_steady_syncer_title">ষ্টেডী ছিংকাৰ</string>
+    <string name="badge_steady_syncer_desc">প্ৰতি সপ্তাহে অন্ততঃ এবাৰ এপ ছিংক কৰক</string>
+    <string name="badge_timely_reporter_title">টাইমলী ৰিপৰ্টাৰ</string>
+    <string name="badge_timely_reporter_desc">মাহেকীয়া প্ৰোৎসাহন ফৰ্ম সময়মতে জমা দিয়ক</string>
+    <string name="badge_complete_worker_title">কমপ্লিট ৱৰ্কাৰ</string>
+    <string name="badge_complete_worker_desc">প্ৰতি ত্ৰৈমাসিকত ৩+ স্বাস্থ্য ক্ষেত্ৰত সক্ৰিয় থাকক</string>
+    <string name="badge_community_voice_title">কমিউনিটি ভইচ</string>
+    <string name="badge_community_voice_desc">প্ৰতি ত্ৰৈমাসিকত ২+ ধৰণৰ সভা (MAA, NDD, AHD, U-WIN) আয়োজন কৰক</string>
+    <string name="badge_maternal_journey_title">মাতৃত্বৰ যাত্ৰা</string>
+    <string name="badge_maternal_journey_desc">প্ৰাতিষ্ঠানিক প্ৰসৱলৈকে মাতৃ যত্নৰ যাত্ৰা সম্পূৰ্ণ কৰক</string>
+    <string name="badge_child_fully_protected_title">সম্পূৰ্ণ সুৰক্ষিত শিশু</string>
+    <string name="badge_child_fully_protected_desc">শিশুৰ সম্পূৰ্ণ টিকাকৰণ সূচী সম্পূৰ্ণ কৰক</string>
+    <string name="badge_digital_identity_title">ডিজিটেল পৰিচয়</string>
+    <string name="badge_digital_identity_desc">পৰিয়াল পঞ্জীয়নৰ পিছত ABHA আইডি বনাওক</string>
+    <string name="badge_vulnerable_baby_title">নাজুক কেঁচুৱাৰ যত্ন</string>
+    <string name="badge_vulnerable_baby_desc">SNCU/LBW কেঁচুৱাৰ সাতোটা HBNC ভ্ৰমণ সম্পূৰ্ণ কৰক</string>
+    <string name="badge_critical_referral_title">গুৰুত্বপূৰ্ণ ৰেফাৰেল</string>
+    <string name="badge_critical_referral_desc">SAM শিশুক NRCলৈ প্ৰেৰণ কৰক</string>
+    <string name="badge_celebration_title">অভিনন্দন!</string>
+    <string name="badge_celebration_body">আপুনি নতুন বেজ লাভ কৰিলে!</string>
+    <string name="badge_almost_there">আৰু অলপ বাকী!</string>
+    <string name="badge_earned_chip">🏅 লাভ কৰা হ’ল!</string>
+</resources>

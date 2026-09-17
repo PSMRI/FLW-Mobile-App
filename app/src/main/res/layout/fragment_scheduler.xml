@@ -23,6 +23,82 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
+
+            <!-- Impact Dashboard: top badge progress (tap opens the badge shelf) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_impact_dashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_normal"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="@dimen/padding_normal"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    android:paddingVertical="@dimen/padding_small">
+
+                    <TextView
+                        android:id="@+id/tv_impact_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/padding_small"
+                        android:text="@string/impact_dashboard_title"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- auto-moving badge carousel: one badge at a time, swipeable -->
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/vp_impact_badges"
+                        android:layout_width="match_parent"
+                        android:layout_height="185dp"
+                        android:layout_marginTop="@dimen/padding_small" />
+
+                    <!-- explicit prev/next controls + position counter -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/btn_carousel_prev"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/impact_carousel_prev"
+                            android:rotation="180"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary" />
+
+                        <TextView
+                            android:id="@+id/tv_carousel_counter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="48dp"
+                            android:gravity="center"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="3 / 8" />
+
+                        <ImageButton
+                            android:id="@+id/btn_carousel_next"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/impact_carousel_next"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

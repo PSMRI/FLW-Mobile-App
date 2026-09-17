@@ -609,6 +609,7 @@
     <string name="PREF_user_entry">logged-in-user</string>
     <string name="PREF_full_load_pull_progress">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri">DP_URI_cat</string>
     <string name="_0">0</string>
@@ -1411,4 +1412,31 @@
     <string name="unclaimed_txt">दावा नहीं किया गया</string>
 
 
+    <!-- Monthly Recap dashboard strip (Phase 1) -->
+    <string name="monthly_recap_title">मासिक रिकैप</string>
+    <string name="monthly_recap_ready_message">आपका रिकैप तैयार है — अपना प्रभाव देखें।</string>
+    <string name="monthly_recap_resume_message">जहाँ छोड़ा था वहीं से जारी रखें।</string>
+    <string name="monthly_recap_replay_message">अपने महीने को कभी भी दोबारा देखें।</string>
+    <string name="monthly_recap_view_recap">रिकैप देखें</string>
+    <string name="monthly_recap_continue_recap">जारी रखें</string>
+    <string name="monthly_recap_watch_again">फिर से देखें</string>
+    <string name="monthly_recap_badge_new">नया</string>
+    <string name="monthly_recap_badge_done">पूर्ण</string>
+    <string name="monthly_recap_cd_ready">नया मासिक रिकैप उपलब्ध है। आपका रिकैप देखने के लिए तैयार है।</string>
+    <string name="monthly_recap_cd_resume">मासिक रिकैप जारी है। जहाँ छोड़ा था वहीं से जारी रखें।</string>
+    <string name="monthly_recap_cd_replay">मासिक रिकैप पूरा हुआ। इसे फिर से देखें।</string>
+    <string name="monthly_recap_lang_screen_cd">अपने मासिक रिकैप के लिए भाषा चुनें</string>
+    <string name="monthly_recap_playback_close_cd">अपना मासिक रिकैप बंद करें</string>
+    <string name="monthly_recap_playback_replay">फिर से देखें</string>
+    <string name="monthly_recap_playback_girl_cd">आपकी आशा दीदी आपके काम का जश्न मना रही हैं</string>
+    <string name="monthly_recap_playback_prev_cd">पिछला संदेश</string>
+    <string name="monthly_recap_playback_next_cd">अगला संदेश</string>
+    <string name="monthly_recap_playback_pause_cd">रोकें</string>
+    <string name="monthly_recap_playback_play_cd">चलाएँ</string>
+    <string name="monthly_recap_music_on_cd">पृष्ठभूमि संगीत बंद करें</string>
+    <string name="monthly_recap_music_off_cd">पृष्ठभूमि संगीत चालू करें</string>
+    <string name="notification_recap_channel_name">मासिक रीकैप</string>
+    <string name="notification_recap_channel_description">आपके मासिक रीकैप को देखने की मासिक याद दिलाना</string>
+    <string name="notification_recap_title">आपका महीना, 75 सेकंड में</string>
+    <string name="notification_recap_body">पिछले महीने का आपका रीकैप तैयार है। देखने के लिए टैप करें।</string>
 </resources>

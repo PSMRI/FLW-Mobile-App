@@ -971,6 +971,7 @@
     <string name="PREF_user_entry">logged-in-user</string>
     <string name="PREF_full_load_pull_progress">full_load_sync_pull_amrit</string>
     <string name="PREF_first_pull_amrit_last_synced_page">full_load_sync_pull_amrit_first_sync_last_saved_page</string>
+
     <string name="PREF_current_saved_language">Locale.Helper.Selected.Language</string>
     <string name="PREF_current_dp_uri">DP_URI_cat</string>
     <string name="app_name">Sakhi</string>
@@ -1457,4 +1458,32 @@
     <string name="notification_action_clear">পৰিষ্কাৰ কৰক</string>
     <string name="notification_action_cancel">বাতিল কৰক</string>
     <string name="notification_close">বন্ধ কৰক</string>
+
+    <!-- Monthly Recap dashboard strip (Phase 1) -->
+    <string name="monthly_recap_title">মাহেকীয়া ৰিকেপ</string>
+    <string name="monthly_recap_ready_message">আপোনাৰ ৰিকেপ সাজু — আপুনি সৃষ্টি কৰা প্ৰভাৱ চাওক।</string>
+    <string name="monthly_recap_resume_message">য\'ত এৰিছিল, তাৰ পৰাই আগবাঢ়ক।</string>
+    <string name="monthly_recap_replay_message">আপোনাৰ মাহটো যিকোনো সময়তে পুনৰ চাওক।</string>
+    <string name="monthly_recap_view_recap">ৰিকেপ চাওক</string>
+    <string name="monthly_recap_continue_recap">আগবাঢ়ক</string>
+    <string name="monthly_recap_watch_again">পুনৰ চাওক</string>
+    <string name="monthly_recap_badge_new">নতুন</string>
+    <string name="monthly_recap_badge_done">সম্পূৰ্ণ</string>
+    <string name="monthly_recap_cd_ready">নতুন মাহেকীয়া ৰিকেপ উপলব্ধ। আপোনাৰ ৰিকেপ চাবলৈ সাজু।</string>
+    <string name="monthly_recap_cd_resume">মাহেকীয়া ৰিকেপ চলি আছে। য\'ত এৰিছিল তাৰ পৰাই আগবাঢ়ক।</string>
+    <string name="monthly_recap_cd_replay">মাহেকীয়া ৰিকেপ সম্পূৰ্ণ হ\'ল। পুনৰ চাওক।</string>
+    <string name="monthly_recap_lang_screen_cd">আপোনাৰ মাহেকীয়া ৰিকেপৰ বাবে ভাষা বাছনি কৰক</string>
+    <string name="monthly_recap_playback_close_cd">আপোনাৰ মাহেকীয়া ৰিকেপ বন্ধ কৰক</string>
+    <string name="monthly_recap_playback_replay">আকৌ চাওক</string>
+    <string name="monthly_recap_playback_girl_cd">আপোনাৰ আশা দিদীয়ে আপোনাৰ কামৰ উদযাপন কৰি আছে</string>
+    <string name="monthly_recap_playback_prev_cd">পূৰ্বৰ বাৰ্তা</string>
+    <string name="monthly_recap_playback_next_cd">পৰৱৰ্তী বাৰ্তা</string>
+    <string name="monthly_recap_playback_pause_cd">বন্ধ কৰক</string>
+    <string name="monthly_recap_playback_play_cd">চলাওক</string>
+    <string name="monthly_recap_music_on_cd">নেপথ্য সংগীত বন্ধ কৰক</string>
+    <string name="monthly_recap_music_off_cd">নেপথ্য সংগীত চলাওক</string>
+    <string name="notification_recap_channel_name">মাহেকীয়া ৰিকেপ</string>
+    <string name="notification_recap_channel_description">আপোনাৰ মাহেকীয়া ৰিকেপ চাবলৈ মনত পেলোৱা</string>
+    <string name="notification_recap_title">আপোনাৰ মাহ, ৭৫ ছেকেণ্ডত</string>
+    <string name="notification_recap_body">যোৱা মাহৰ আপোনাৰ ৰিকেপ সাজু। চাবলৈ টিপক।</string>
 </resources>

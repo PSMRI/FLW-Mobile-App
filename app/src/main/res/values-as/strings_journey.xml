@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="evening_notif_channel_name">দৈনিক প্ৰতিফলন</string>
+    <string name="journey_title">মোৰ যাত্ৰা</string>
+    <string name="journey_greeting">শুভ সন্ধিয়া, %1$s</string>
+    <string name="journey_narrative_zero">সমাজলৈ আপোনাৰ নিৰন্তৰ সেৱাৰ বাবে ধন্যবাদ।</string>
+    <string name="journey_narrative_one">আজি আপুনি আপোনাৰ সমাজত ইতিবাচক পৰিৱৰ্তন আনিলে।</string>
+    <string name="journey_narrative_busy">আজি আপুনি বহু পৰিয়ালক সহায় কৰি ব্যস্ত দিন কটালে। ধন্যবাদ!</string>
+    <string name="journey_today_count">আজি লিপিবদ্ধ সেৱা: %1$d</string>
+    <string name="journey_lifetime_count">মুঠ লিপিবদ্ধ সেৱা: %1$d</string>
+    <string name="journey_badge_header">আপোনাৰ বেজসমূহ</string>
+    <string name="journey_view_all_badges">সকলো বেজ চাওক</string>
+    <string name="badge_unlock_notification">অভিনন্দন, %1$s! আপুনি নতুন বেজ লাভ কৰিলে: %2$s</string>
+</resources>
