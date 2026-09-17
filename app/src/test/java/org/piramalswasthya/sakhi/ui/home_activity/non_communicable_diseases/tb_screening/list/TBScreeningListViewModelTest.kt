@@ -26,7 +26,16 @@ class TBScreeningListViewModelTest : BaseViewModelTest() {
     override fun setUp() {
         super.setUp()
         every { recordsRepo.tbScreeningList(hhId = 10L) } returns flowOf(emptyList())
-        viewModel = TBScreeningListViewModel(recordsRepo, SavedStateHandle())
+        viewModel = TBScreeningListViewModel(
+            recordsRepo,
+            SavedStateHandle(
+                mapOf(
+                    "hhId" to 10L,
+                    "fromDisease" to 0,
+                    "diseaseType" to "TB"
+                )
+            )
+        )
     }
 
     // =====================================================
