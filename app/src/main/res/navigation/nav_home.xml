@@ -1094,6 +1094,15 @@
         android:id="@+id/TBScreeningListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list.TBScreeningListFragment"
         android:label="@string/tb_screening_list">
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="fromDisease"
+            app:argType="integer" />
+        <argument
+            android:name="diseaseType"
+            app:argType="string" />
         <action
             android:id="@+id/action_TBScreeningListFragment_to_TBScreeningFormFragment"
             app:destination="@id/TBScreeningFormFragment" />
@@ -1228,6 +1237,9 @@
         android:id="@+id/cdFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragment"
         android:label="@string/communicable_diseases">
+        <action
+            android:id="@+id/action_cdFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
         <action
             android:id="@+id/action_cdFragment_to_TBScreeningListFragment"
             app:destination="@id/TBScreeningListFragment" />
@@ -1906,6 +1918,10 @@
         <action
             android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_filariaMDAFormFragment"
             app:destination="@id/filariaMDAFormFragment" />
+
+        <action
+            android:id="@+id/action_allHouseHoldDiseaseControlFragment_to_tbScreeningListFragment"
+            app:destination="@id/TBScreeningListFragment" />
 
     </fragment>
     <fragment

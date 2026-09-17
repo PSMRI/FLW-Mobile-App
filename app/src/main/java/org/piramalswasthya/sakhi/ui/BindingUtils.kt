@@ -65,6 +65,7 @@ fun IconDataset.Disease.getTitleRes(): Int {
         IconDataset.Disease.FILARIA  -> R.string.icon_title_filaria
         IconDataset.Disease.LEPROSY  -> R.string.icon_title_leprosy
         IconDataset.Disease.DEWARMING -> R.string.deworming_title
+        IconDataset.Disease.TB -> R.string.tb
     }
 }
 @BindingAdapter("vaccineState")

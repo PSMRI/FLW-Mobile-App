@@ -85,16 +85,24 @@ data class BenWithTbScreeningCache(
     )
     val tb: TBScreeningCache?,
 
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbSuspected: TBSuspectedCache?
+
     ) {
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
         return BenWithTbScreeningDomain(
             ben = ben.asBasicDomainModel(),
-            tb = tb
+            tb = tb,
+            tbSuspected = tbSuspected
         )
     }
 }
 
 data class BenWithTbScreeningDomain(
     val ben: BenBasicDomain,
-    val tb: TBScreeningCache?
+    val tb: TBScreeningCache?,
+    val tbSuspected: TBSuspectedCache?
 )

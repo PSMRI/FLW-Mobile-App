@@ -335,7 +335,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `tb and malaria and leprosy count vals are built`() {
-        assertNotNull(repo.tbScreeningList)
+        assertNotNull(repo.tbScreeningList(10L))
         assertNotNull(repo.tbScreeningListCount)
         assertNotNull(repo.tbSuspectedList)
         assertNotNull(repo.tbSuspectedListCount)

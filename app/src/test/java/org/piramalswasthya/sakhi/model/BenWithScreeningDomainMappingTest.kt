@@ -178,7 +178,8 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `tbScreening domain with cache`() {
         val cache = TBScreeningCache(benId = 1L)
-        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache)
+        val Suspectedcache = TBSuspectedCache(benId = 1L)
+        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache,Suspectedcache)
         assertEquals(1L, benWithTbScreening.ben.benId)
         assertEquals(cache, benWithTbScreening.tb)
         val d = benWithTbScreening.asTbScreeningDomainModel()
@@ -187,7 +188,7 @@ class BenWithScreeningDomainMappingTest {
     }
 
     @Test fun `tbScreening domain with null`() {
-        assertNull(BenWithTbScreeningCache(ben(), null).asTbScreeningDomainModel().tb)
+        assertNull(BenWithTbScreeningCache(ben(), null,null).asTbScreeningDomainModel().tb)
     }
 
     // ===================== TB suspected =====================

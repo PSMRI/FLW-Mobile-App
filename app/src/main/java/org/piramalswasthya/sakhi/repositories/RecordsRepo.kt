@@ -174,10 +174,16 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.sortedByBenLifo { it.ben }.map { it.asFilariaScreeningDomainModel() } }
 
 
-    val tbScreeningList = benDao.getAllTbScreeningBen(selectedVillage)
-        .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbScreeningDomainModel() } }
-    val tbScreeningListCount = tbScreeningList.map { it.size }
 
+    fun tbScreeningList(hhId:Long) = benDao.getAllTbScreeningBen(selectedVillage, hhId = hhId)
+        .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbScreeningDomainModel() } }
+
+
+    var allScreeningList = benDao.getAllScreeningBen(selectedVillage)
+        .map { list -> list.map { it.asTbScreeningDomainModel() } }
+
+
+    val tbScreeningListCount = allScreeningList.map { it.size }
 
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbSuspectedDomainModel() } }
