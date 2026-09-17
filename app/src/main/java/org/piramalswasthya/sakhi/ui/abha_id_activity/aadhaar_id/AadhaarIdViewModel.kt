@@ -2,10 +2,12 @@ package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.network.CapturePIDRequest
@@ -22,7 +24,15 @@ import javax.inject.Inject
 @HiltViewModel
 class
 AadhaarIdViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    companion object {
+        private const val KEY_TXN_ID = "abha_face_txn_id"
+        private const val KEY_AADHAAR_NUMBER = "abha_face_aadhaar_number"
+        private const val KEY_MOBILE_NUMBER = "abha_face_mobile_number"
+        private const val KEY_FACE_AUTH_IN_PROGRESS = "abha_face_auth_in_progress"
+    }
     enum class State {
         IDLE,
         LOADING,
@@ -92,7 +102,7 @@ AadhaarIdViewModel @Inject constructor(
     val phrAddress: String
         get() = _phrAddress
 
-    private var _txnId: String? = null
+    private var _txnId: String? = savedStateHandle[KEY_TXN_ID]
     val txnId: String
         get() = _txnId ?: ""
 
@@ -100,7 +110,7 @@ AadhaarIdViewModel @Inject constructor(
     val otpTxnId: String
         get() = _otpTxnId ?: ""
 
-    private var _mobileNumber: String? = null
+    private var _mobileNumber: String? = savedStateHandle[KEY_MOBILE_NUMBER]
     val mobileNumber: String
         get() = _mobileNumber ?: ""
 
@@ -108,7 +118,7 @@ AadhaarIdViewModel @Inject constructor(
     val selectedAbhaIndex: String
         get() = _selectedAbhaIndex ?: ""
 
-    private var _aadhaarNumber: String? = null
+    private var _aadhaarNumber: String? = savedStateHandle[KEY_AADHAAR_NUMBER]
     val aadhaarNumber: String
         get() = _aadhaarNumber ?: ""
 
@@ -134,6 +144,11 @@ AadhaarIdViewModel @Inject constructor(
         get() = _otpMobileNumberMessage?:""
 
     var selectedNavToggle:String = "navHostFragmentAadhaarId"
+
+    private var faceAuthPollingJob: Job? = null
+
+    val isFaceAuthInProgress: Boolean
+        get() = savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] ?: false
 
     fun resetState() {
         _state.value = State.IDLE
@@ -169,10 +184,12 @@ AadhaarIdViewModel @Inject constructor(
 
     fun setMobileNumber(mobileNumber: String) {
         _mobileNumber = mobileNumber
+        savedStateHandle[KEY_MOBILE_NUMBER] = mobileNumber
     }
 
     fun setAadhaarNumber(aadhaarNumber: String) {
         _aadhaarNumber = aadhaarNumber
+        savedStateHandle[KEY_AADHAAR_NUMBER] = aadhaarNumber
     }
 
     fun setSelectedAbhaIndex(abhaIndex: String) {
@@ -185,6 +202,17 @@ AadhaarIdViewModel @Inject constructor(
 
     fun setTxnId(txnId: String) {
         _txnId = txnId
+        savedStateHandle[KEY_TXN_ID] = txnId
+    }
+
+    fun markFaceAuthInProgress() {
+        savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] = true
+    }
+
+    fun resumeFaceAuthPolling() {
+        if (isFaceAuthInProgress) {
+            submitCapturedPid()
+        }
     }
     fun setOTPMsg(msg: String) {
         _otpMobileNumberMessage = msg
@@ -206,7 +234,7 @@ AadhaarIdViewModel @Inject constructor(
             _state.value = State.LOADING
             when (val result = abhaIdRepo.generateFaceAuthTxn()) {
                 is NetworkResult.Success -> {
-                    _txnId = result.data.txnId
+                    setTxnId(result.data.txnId)
                     _state.value = State.SUCCESS
                 }
                 is NetworkResult.Error -> {
@@ -219,7 +247,9 @@ AadhaarIdViewModel @Inject constructor(
     }
 
     fun submitCapturedPid() {
-        viewModelScope.launch {
+        if (faceAuthPollingJob?.isActive == true) return
+
+        faceAuthPollingJob = viewModelScope.launch {
             while(isActive) {
                 _state.value = State.FACE_AUTH_PENDING
                 val request = CapturePIDRequest(txnId = txnId)
@@ -235,6 +265,7 @@ AadhaarIdViewModel @Inject constructor(
                             }
 
                             "COMPLETE" -> {
+                                savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] = false
                                 _state.value = State.FACE_AUTH_SUCCESS
                                 break
                             }
@@ -242,6 +273,7 @@ AadhaarIdViewModel @Inject constructor(
                             "FAILED" -> {
                                 _errorMessage.value =
                                     "Face authentication failed. Please try again."
+                                savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] = false
                                 _state.value = State.FACE_AUTH_FAILURE
                                 break
                             }
@@ -251,11 +283,13 @@ AadhaarIdViewModel @Inject constructor(
 
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
+                        savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] = false
                         _state.value = State.FACE_AUTH_FAILURE
                         break
                     }
 
                     NetworkResult.NetworkError -> {
+                        savedStateHandle[KEY_FACE_AUTH_IN_PROGRESS] = false
                         _state.value = State.FACE_AUTH_FAILURE
                         break
                     }
@@ -281,7 +315,7 @@ AadhaarIdViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     if (result.data.tokens.token.isNullOrEmpty() == false){
                         TokenInsertAbhaInterceptor.setXToken(result.data.tokens.token)
-                        _txnId = result.data.txnId
+                        setTxnId(result.data.txnId)
                         _abhaResponse = com.google.gson.Gson().toJson(result.data)
                         if (result.data.ABHAProfile.middleName.isNotEmpty()) {
                             _name =

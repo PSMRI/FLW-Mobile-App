@@ -205,6 +205,7 @@ class AadhaarIdFragment : Fragment() {
                             }
 
                             try {
+                                viewModel.markFaceAuthInProgress()
                                 startActivity(intent)
                                 viewModel.submitCapturedPid()
                             } catch (e: ActivityNotFoundException) {
@@ -334,6 +335,10 @@ class AadhaarIdFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        if ((activity as? AbhaIdActivity)?.isAbhaTokenReady == true) {
+            viewModel.resumeFaceAuthPolling()
+        }
+
 
         if (viewModel.selectedNavToggle == "navHostFragmentAadhaarId"){
             binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
@@ -365,6 +370,10 @@ class AadhaarIdFragment : Fragment() {
 
 
         }
+    }
+
+    fun resumePendingFaceAuth() {
+        viewModel.resumeFaceAuthPolling()
     }
 
 }
