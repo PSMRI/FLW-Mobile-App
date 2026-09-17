@@ -39,7 +39,9 @@ class InfantRegistrationAdapterTest {
         benId = benId,
         isActive = true,
         createdBy = "test",
+        createdDate = 0L,
         updatedBy = "test",
+        updatedDate = 0L,
         syncState = SyncState.SYNCED
     )
 

@@ -38,6 +38,9 @@ import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -97,7 +100,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `getHomeVisitUiState blocks add and allows view at nine visits`() = runTest {
-        val visits = List(9) { mockk<ANCFormResponseJsonEntity>(relaxed = true) }
+        val visits = List(9) { homeVisitMock(visitDate = "01-01-2020") }
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(5L) } returns visits
 
         val state = repo.getHomeVisitUiState(5L)
@@ -107,9 +110,8 @@ class RecordsRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getHomeVisitUiState allows add when last visit older than thirty days`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns "01-01-2020"
+    fun `getHomeVisitUiState allows add when last visit is in an earlier calendar month`() = runTest {
+        val visit = homeVisitMock(visitDate = "01-01-2020")
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(5L) } returns listOf(visit)
 
         val state = repo.getHomeVisitUiState(5L)
@@ -117,6 +119,43 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertTrue(state.canAddHomeVisit)
         assertTrue(state.canViewHomeVisit)
     }
+
+    @Test
+    fun `getHomeVisitUiState blocks add when the last visit was under thirty days ago`() =
+        runTest {
+            val visit = homeVisitMock(visitDate = dateString(lastDayOfPreviousMonth()))
+            coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(12L) } returns listOf(visit)
+
+            val state = repo.getHomeVisitUiState(12L)
+
+            assertFalse(state.canAddHomeVisit)
+        }
+
+    @Test
+    fun `getHomeVisitUiState counts every anc form row`() = runTest {
+        val otherForm = homeVisitMock(visitDate = dateString(System.currentTimeMillis()))
+        every { otherForm.formId } returns "anc_form_002"
+        coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(9L) } returns listOf(otherForm)
+
+        val state = repo.getHomeVisitUiState(9L)
+
+        assertFalse(state.canAddHomeVisit)
+        assertTrue(state.canViewHomeVisit)
+    }
+
+    private fun homeVisitMock(visitDate: String): ANCFormResponseJsonEntity =
+        mockk<ANCFormResponseJsonEntity>(relaxed = true).also {
+            every { it.formId } returns "anc_form_001"
+            every { it.visitDate } returns visitDate
+        }
+
+    private fun dateString(millis: Long): String =
+        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(java.util.Date(millis))
+
+    private fun lastDayOfPreviousMonth(): Long = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_MONTH, 1)
+        add(Calendar.DAY_OF_MONTH, -1)
+    }.timeInMillis
 
     // ---------------- search delegations ----------------
 
@@ -282,8 +321,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `getHomeVisitUiState allows add when last visit date is null`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns ""
+        val visit = homeVisitMock(visitDate = "")
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(7L) } returns listOf(visit)
 
         val state = repo.getHomeVisitUiState(7L)
@@ -596,19 +634,30 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertEquals(1, result)
     }
 
-    // ---------------- getHomeVisitUiState within-thirty-days branch ----------------
+    // ---------------- getHomeVisitUiState same-calendar-month branch ----------------
 
     @Test
-    fun `getHomeVisitUiState blocks add when last visit is within thirty days`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns "10-07-2026"
+    fun `getHomeVisitUiState blocks add when a visit already exists this calendar month`() = runTest {
+        val visit = homeVisitMock(visitDate = dateString(System.currentTimeMillis()))
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(11L) } returns listOf(visit)
-        every { HelperUtil.parseDateToMillis(any()) } returns System.currentTimeMillis()
 
         val state = repo.getHomeVisitUiState(11L)
 
         assertFalse(state.canAddHomeVisit)
         assertTrue(state.canViewHomeVisit)
+    }
+
+    @Test
+    fun `getHomeVisitUiState blocks add for any day within the current calendar month`() = runTest {
+        val firstOfThisMonth = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }.timeInMillis
+        val visit = homeVisitMock(visitDate = dateString(firstOfThisMonth))
+        coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(13L) } returns listOf(visit)
+
+        val state = repo.getHomeVisitUiState(13L)
+
+        assertFalse(state.canAddHomeVisit)
     }
 
 }

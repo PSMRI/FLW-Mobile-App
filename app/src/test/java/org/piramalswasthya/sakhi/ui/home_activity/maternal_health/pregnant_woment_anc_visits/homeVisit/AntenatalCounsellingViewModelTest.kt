@@ -5,7 +5,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.Runs
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -801,6 +804,60 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveFormResponses stores the home visit date field`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("home_visit_date")),
+            savedJson = """{"fields":{"home_visit_date":"10-05-2024"}}"""
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { repository.insertFormResponseANC(capture(saved)) } just Runs
+        loadAncSchema()
+        advanceUntilIdle()
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        assertEquals("10-05-2024", saved.captured.visitDate)
+        assertEquals("", saved.captured.visitDay)
+    }
+
+    @Test
+    fun `saveFormResponses ignores the visit_date field id`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("visit_date")),
+            savedJson = """{"fields":{"visit_date":"11-06-2024"}}"""
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { repository.insertFormResponseANC(capture(saved)) } just Runs
+        loadAncSchema()
+        advanceUntilIdle()
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        assertEquals("N/A", saved.captured.visitDate)
+        assertEquals("", saved.captured.visitDay)
+    }
+
+    @Test
+    fun `saveFormResponses stores the placeholder when no visit date field`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("weight")),
+            savedJson = """{"fields":{"weight":"52"}}"""
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { repository.insertFormResponseANC(capture(saved)) } just Runs
+        loadAncSchema()
+        advanceUntilIdle()
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        assertEquals("N/A", saved.captured.visitDate)
+        assertEquals("", saved.captured.visitDay)
+    }
+
+    @Test
     fun `saveFormResponses posts FAIL when insert throws`() = runTest {
         stubAncSchema(
             ancSchema(ancField("home_visit_date")),
@@ -996,5 +1053,201 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
 
         assertEquals("5 Months", viewModel.lastVisitDay)
         assertNotNull(viewModel.previousVisitDate)
+    }
+
+    // =====================================================
+    // Home Visit edit mode Tests
+    // =====================================================
+
+    @Test
+    fun `isEditing is false before edit mode is enabled`() {
+        assertFalse(viewModel.isEditing())
+    }
+
+    @Test
+    fun `enableEditMode loads the record by id and turns editing on`() = runTest {
+        coEvery { repository.getFormResponseANCById(7) } returns ancVisit().copy(id = 7)
+
+        assertTrue(viewModel.enableEditMode(10L, 7, "01-01-2024"))
+        assertTrue(viewModel.isEditing())
+    }
+
+    @Test
+    fun `enableEditMode falls back to the visit date lookup when no id is given`() = runTest {
+        coEvery { repository.getFormResponseANC(10L, "01-01-2024") } returns ancVisit()
+
+        assertTrue(viewModel.enableEditMode(10L, -1, "01-01-2024"))
+        assertTrue(viewModel.isEditing())
+    }
+
+    @Test
+    fun `enableEditMode falls back to the visit date lookup when the id is unknown`() = runTest {
+        coEvery { repository.getFormResponseANCById(99) } returns null
+        coEvery { repository.getFormResponseANC(10L, "01-01-2024") } returns ancVisit()
+
+        assertTrue(viewModel.enableEditMode(10L, 99, "01-01-2024"))
+    }
+
+    @Test
+    fun `enableEditMode returns false when no record matches`() = runTest {
+        coEvery { repository.getFormResponseANCById(any()) } returns null
+        coEvery { repository.getFormResponseANC(any(), any()) } returns null
+
+        assertFalse(viewModel.enableEditMode(10L, 7, "01-01-2024"))
+        assertFalse(viewModel.isEditing())
+    }
+
+    @Test
+    fun `enableEditMode refuses a record belonging to another beneficiary`() = runTest {
+        coEvery { repository.getFormResponseANCById(7) } returns ancVisit().copy(id = 7, benId = 55L)
+
+        assertFalse(viewModel.enableEditMode(10L, 7, "01-01-2024"))
+        assertFalse(viewModel.isEditing())
+    }
+
+    @Test
+    fun `saveFormResponses updates the edited row instead of inserting a duplicate`() = runTest {
+        stubAncSchema(ancSchema(ancField("weight")))
+        loadAncSchema()
+        advanceUntilIdle()
+
+        coEvery { repository.getFormResponseANCById(7) } returns
+                ancVisit(visitDate = "05-02-2024").copy(id = 7, isSynced = true)
+        viewModel.enableEditMode(10L, 7, "05-02-2024")
+        viewModel.updateFieldValue("weight", "52")
+
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { repository.updateFormResponseANC(capture(saved)) } returns Unit
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { repository.insertFormResponseANC(any()) }
+        assertEquals(7, saved.captured.id)
+        assertEquals("05-02-2024", saved.captured.visitDate)
+        assertFalse(saved.captured.isSynced)
+        assertNull(saved.captured.syncedAt)
+        assertTrue(saved.captured.formDataJson.contains("\"weight\":\"52\""))
+    }
+
+    @Test
+    fun `two home visits are stored with their own visit dates`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("home_visit_date")),
+            savedJson = """{"fields":{"home_visit_date":"10-05-2024"}}"""
+        )
+        loadAncSchema()
+        advanceUntilIdle()
+
+        val inserted = mutableListOf<ANCFormResponseJsonEntity>()
+        coEvery { repository.insertFormResponseANC(capture(inserted)) } just Runs
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        viewModel.updateFieldValue("home_visit_date", "12-06-2024")
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        assertEquals(2, inserted.size)
+        assertEquals("" to "10-05-2024", inserted[0].visitDay to inserted[0].visitDate)
+        assertEquals("" to "12-06-2024", inserted[1].visitDay to inserted[1].visitDate)
+    }
+
+    @Test
+    fun `editing the latest visit leaves its unique key untouched`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("home_visit_date"), ancField("weight")),
+            savedJson = """{"fields":{"home_visit_date":"05-02-2024","weight":"50"}}"""
+        )
+        loadAncSchema()
+        advanceUntilIdle()
+
+        coEvery { repository.getFormResponseANCById(7) } returns
+                ancVisit(visitDay = "02-2024", visitDate = "05-02-2024")
+                    .copy(id = 7, isSynced = true, syncedAt = 111L)
+        viewModel.enableEditMode(10L, 7, "05-02-2024")
+        viewModel.updateFieldValue("home_visit_date", "28-02-2024")
+        viewModel.updateFieldValue("weight", "55")
+
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { repository.updateFormResponseANC(capture(saved)) } just Runs
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        assertEquals(7, saved.captured.id)
+        assertEquals("02-2024", saved.captured.visitDay)
+        assertEquals("05-02-2024", saved.captured.visitDate)
+        assertTrue(saved.captured.formDataJson.contains("\"weight\":\"55\""))
+        coVerify(exactly = 0) { repository.insertFormResponseANC(any()) }
+    }
+
+    @Test
+    fun `saveFormResponses inserts a new row when not editing`() = runTest {
+        stubAncSchema(ancSchema(ancField("weight")))
+        loadAncSchema()
+        advanceUntilIdle()
+
+        coEvery { repository.insertFormResponseANC(any()) } returns Unit
+
+        viewModel.saveFormResponses(10L)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repository.insertFormResponseANC(any()) }
+        coVerify(exactly = 0) { repository.updateFormResponseANC(any()) }
+    }
+
+    @Test
+    fun `getVisibleFields locks only the requested field ids`() = runTest {
+        stubAncSchema(ancSchema(ancField("home_visit_date"), ancField("weight")))
+        loadAncSchema()
+        advanceUntilIdle()
+
+        val fields = viewModel.getVisibleFields(setOf("home_visit_date"))
+
+        assertFalse(fields.first { it.fieldId == "home_visit_date" }.isEditable)
+        assertTrue(fields.first { it.fieldId == "weight" }.isEditable)
+    }
+
+    @Test
+    fun `getVisibleFields leaves every field editable when nothing is locked`() = runTest {
+        stubAncSchema(ancSchema(ancField("home_visit_date"), ancField("weight")))
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.getVisibleFields().all { it.isEditable })
+    }
+
+    @Test
+    fun `loadFormSchema prefers the record matching the given visit id`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("weight")),
+            savedJson = """{"fields":{"weight":"wrong-row"}}"""
+        )
+        coEvery { repository.getFormResponseANCById(7) } returns ancVisit(
+            formDataJson = """{"fields":{"weight":"right-row"}}"""
+        ).copy(id = 7)
+
+        viewModel.loadFormSchema(10L, "ANC_01", "01-01-2024", true, "en", 1, "Visit 1", 7)
+        advanceUntilIdle()
+
+        assertEquals("right-row", ancFieldOf("weight").value)
+    }
+
+    @Test
+    fun `loadFormSchema ignores a visit id owned by another beneficiary`() = runTest {
+        stubAncSchema(
+            ancSchema(ancField("weight")),
+            savedJson = """{"fields":{"weight":"date-row"}}"""
+        )
+        coEvery { repository.getFormResponseANCById(7) } returns ancVisit(
+            formDataJson = """{"fields":{"weight":"other-ben"}}"""
+        ).copy(id = 7, benId = 55L)
+
+        viewModel.loadFormSchema(10L, "ANC_01", "01-01-2024", true, "en", 1, "Visit 1", 7)
+        advanceUntilIdle()
+
+        assertEquals("date-row", ancFieldOf("weight").value)
     }
 }

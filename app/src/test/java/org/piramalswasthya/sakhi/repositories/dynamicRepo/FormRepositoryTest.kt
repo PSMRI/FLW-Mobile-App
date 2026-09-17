@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -668,7 +669,7 @@ class FormRepositoryTest : BaseRepositoryTest() {
         val request = mockk<FormSubmitRequest>(relaxed = true)
         mockkObject(FormSubmitRequestMapper)
         every { FormSubmitRequestMapper.formEntity(entity, "asha3") } returns request
-        val response = mockk<Response<Unit>>()
+        val response = mockk<Response<JsonElement>>()
         every { response.isSuccessful } returns true
         coEvery { api.submitFromANC(listOf(request)) } returns response
 
@@ -794,7 +795,7 @@ class FormRepositoryTest : BaseRepositoryTest() {
     // ---------------- saveDownloadedVisitListANC item-level branches ----------------
 
     @Test
-    fun `saveDownloadedVisitListANC inserts entity built from index-based visitDay`() = runTest {
+    fun `saveDownloadedVisitListANC inserts entity built from positional visitDay`() = runTest {
         val fields = JsonObject().apply { addProperty("someField", "value") }
         val item = HBNCVisitResponse(
             id = 1, houseHoldId = 100L, beneficiaryId = 200L,
@@ -807,6 +808,97 @@ class FormRepositoryTest : BaseRepositoryTest() {
 
         assertEquals("Visit-1", saved.captured.visitDay)
         assertEquals(200L, saved.captured.benId)
+    }
+
+    @Test
+    fun `saveDownloadedVisitListANC numbers visitDay by list position`() = runTest {
+        val fields = JsonObject().apply { addProperty("someField", "value") }
+        val first = HBNCVisitResponse(
+            id = 1, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "01-01-2024", eyeSide = "", fields = fields
+        )
+        val second = HBNCVisitResponse(
+            id = 2, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "01-02-2024", eyeSide = "", fields = fields
+        )
+        val saved = mutableListOf<ANCFormResponseJsonEntity>()
+        coEvery { ancDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitListANC(listOf(first, second))
+
+        assertEquals(listOf("Visit-1", "Visit-2"), saved.map { it.visitDay })
+    }
+
+    @Test
+    fun `saveDownloadedVisitListANC stores the server date as received`() = runTest {
+        val fields = JsonObject().apply { addProperty("someField", "value") }
+        val item = HBNCVisitResponse(
+            id = 1, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "2024-01-20", eyeSide = "", fields = fields
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { ancDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitListANC(listOf(item))
+
+        assertEquals("2024-01-20", saved.captured.visitDate)
+        assertTrue(saved.captured.formDataJson.contains("\"visitDate\":\"2024-01-20\""))
+    }
+
+    @Test
+    fun `saveDownloadedVisitListANC keeps an unparseable server date as received`() = runTest {
+        val fields = JsonObject().apply { addProperty("someField", "value") }
+        val item = HBNCVisitResponse(
+            id = 1, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "N/A", eyeSide = "", fields = fields
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { ancDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitListANC(listOf(item))
+
+        assertEquals("N/A", saved.captured.visitDate)
+    }
+
+    @Test
+    fun `saveDownloadedVisitListANC inserts even when a synced local visit exists`() = runTest {
+        val fields = JsonObject().apply { addProperty("someField", "value") }
+        val item = HBNCVisitResponse(
+            id = 1, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "20-01-2024", eyeSide = "", fields = fields
+        )
+        val existing = ANCFormResponseJsonEntity(
+            id = 42, benId = 200L, visitDay = "Visit-1", visitDate = "05-01-2024",
+            formId = "anc_form_001", version = 1, formDataJson = "{}", isSynced = true
+        )
+        val saved = slot<ANCFormResponseJsonEntity>()
+        coEvery { ancDao.getVisitsForBen(200L) } returns listOf(existing)
+        coEvery { ancDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitListANC(listOf(item))
+
+        assertEquals("Visit-1", saved.captured.visitDay)
+        coVerify(exactly = 0) { ancDao.updateFormResponse(any()) }
+    }
+
+    @Test
+    fun `saveDownloadedVisitListANC inserts even when an unsynced local visit exists`() = runTest {
+        val fields = JsonObject().apply { addProperty("someField", "value") }
+        val item = HBNCVisitResponse(
+            id = 1, houseHoldId = 100L, beneficiaryId = 200L,
+            visitDate = "20-01-2024", eyeSide = "", fields = fields
+        )
+        val existing = ANCFormResponseJsonEntity(
+            id = 42, benId = 200L, visitDay = "Visit-1", visitDate = "05-01-2024",
+            formId = "anc_form_001", version = 1, formDataJson = "{}", isSynced = false
+        )
+        coEvery { ancDao.getVisitsForBen(200L) } returns listOf(existing)
+        coEvery { ancDao.insertFormResponse(any()) } just Runs
+
+        repo.saveDownloadedVisitListANC(listOf(item))
+
+        coVerify(exactly = 1) { ancDao.insertFormResponse(any()) }
+        coVerify(exactly = 0) { ancDao.updateFormResponse(any()) }
     }
 
     @Test

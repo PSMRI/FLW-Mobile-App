@@ -62,6 +62,10 @@ class AntenatalCounsellingViewModel @Inject constructor(
         IDLE, LOADING, SUCCESS, FAIL
     }
 
+    companion object {
+        val VISIT_DATE_FIELD_IDS = setOf("home_visit_date", "visit_date")
+    }
+
     private var _visitCount = MutableStateFlow(0)
     val visitCount: StateFlow<Int> = _visitCount
     private val _state = MutableLiveData(State.IDLE)
@@ -157,6 +161,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     var visitDay: String = ""
     private var isViewMode: Boolean = false
+    private var editingEntity: ANCFormResponseJsonEntity? = null
 
     private val _isBenDead = MutableStateFlow(false)
     val isBenDead: StateFlow<Boolean> = _isBenDead
@@ -202,6 +207,18 @@ class AntenatalCounsellingViewModel @Inject constructor(
         loadExistingReferralStatus()
     }
 
+    fun isEditing(): Boolean = editingEntity != null
+
+    suspend fun enableEditMode(benId: Long, visitId: Int, visitDate: String): Boolean {
+        val existing = (if (visitId > 0) repository.getFormResponseANCById(visitId) else null)
+            ?: repository.getFormResponseANC(benId, visitDate)
+            ?: return false
+        if (existing.benId != benId) return false
+        editingEntity = existing
+        isViewMode = false
+        return true
+    }
+
     fun loadSyncedVisitList(benId: Long, onComplete: (() -> Unit)? = null) {
         viewModelScope.launch {
             _syncedVisitList.value = repository.getSyncedVisitsByRchIdANC(benId)
@@ -220,7 +237,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
         viewMode: Boolean,
         lang: String,
         visitNumber: Int,
-        visitNumberString: String
+        visitNumberString: String,
+        visitId: Int = -1
 
     ) {
         this.visitDay = visitDay
@@ -229,7 +247,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         this.visitNumberString = visitNumberString
 
         viewModelScope.launch {
-            initializeVisitData(benId, formId, lang, visitDay, viewMode, visitNumber)
+            initializeVisitData(benId, formId, lang, visitDay, viewMode, visitNumber, visitId)
         }
     }
 
@@ -242,11 +260,12 @@ class AntenatalCounsellingViewModel @Inject constructor(
         lang: String,
         visitDay: String,
         viewMode: Boolean,
-        visitNumber: Int
+        visitNumber: Int,
+        visitId: Int
     ) {
         loadVisitCount(benId)
         val schema = loadSchema(formId, lang) ?: return
-        val savedFieldValues = loadSavedFieldValues(benId, visitDay)
+        val savedFieldValues = loadSavedFieldValues(benId, visitDay, visitId)
 
         if (!viewMode) {
             loadLastVisitData(benId)
@@ -267,8 +286,18 @@ class AntenatalCounsellingViewModel @Inject constructor(
             ?: repository.getFormSchema(formId, lang)
     }
 
-    private suspend fun loadSavedFieldValues(benId: Long, visitDay: String): Map<String, Any?> {
-        val savedJson = repository.loadFormResponseJsonANC(benId, visitDay)
+    private suspend fun loadSavedFieldValues(
+        benId: Long,
+        visitDay: String,
+        visitId: Int = -1
+    ): Map<String, Any?> {
+        val savedJson = (if (visitId > 0) {
+            repository.getFormResponseANCById(visitId)
+                ?.takeIf { it.benId == benId }
+                ?.formDataJson
+        } else {
+            null
+        }) ?: repository.loadFormResponseJsonANC(benId, visitDay)
         return if (!savedJson.isNullOrBlank()) {
             try {
                 val root = JSONObject(savedJson)
@@ -433,7 +462,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
             .filter { it.visible && it.value != null }
             .associate { it.fieldId to it.value }
 
-        val visitDate = fieldMap["home_visit_date"]?.toString() ?: "N/A"
+        val existing = editingEntity
+        val visitDate = existing?.visitDate ?: fieldMap["home_visit_date"]?.toString() ?: "N/A"
 
         val wrappedJson = JSONObject().apply {
             put("formId", formId)
@@ -442,7 +472,12 @@ class AntenatalCounsellingViewModel @Inject constructor(
             put("fields", JSONObject(fieldMap))
         }
 
-        val entity = ANCFormResponseJsonEntity(
+        val entity = existing?.copy(
+            version = version,
+            formDataJson = wrappedJson.toString(),
+            isSynced = false,
+            syncedAt = null
+        ) ?: ANCFormResponseJsonEntity(
             benId = benId,
             visitDay = visitMonth,
             visitDate = visitDate,
@@ -456,7 +491,11 @@ class AntenatalCounsellingViewModel @Inject constructor(
         try {
             _state.postValue ( State.LOADING)
 
-            repository.insertFormResponseANC(entity)
+            if (existing != null) {
+                repository.updateFormResponseANC(entity)
+            } else {
+                repository.insertFormResponseANC(entity)
+            }
             referralList.value?.forEach {
                 referalRepo.saveReferedNCD(it)
             }
@@ -492,7 +531,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         return sdf.format(Date(epochMillis))
     }
 
-    fun getVisibleFields(): List<FormField> {
+    fun getVisibleFields(lockedFieldIds: Set<String> = emptySet()): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
             section.fields.filter { it.visible }.map { field ->
                 FormField(
@@ -521,7 +560,8 @@ class AntenatalCounsellingViewModel @Inject constructor(
                             ConditionalLogic(dependsOn = it.dependsOn, expectedValue = it.expectedValue)
                         else null
                     },
-                    value = field.value
+                    value = field.value,
+                    isEditable = field.fieldId !in lockedFieldIds
                 )
             }
         } ?: emptyList()
