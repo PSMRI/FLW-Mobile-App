@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1439539386",
+    "project_id": "flw-dummy",
+    "storage_bucket": "flw-dummy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1439539386:android:b6ede54eb9c8ad3584a283",
+        "android_client_info": {
+          "package_name": "org.piramalswasthya.sakhi.saksham.uat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0amkkC6rTBQCkOOF1hmF5R8GRdcEkTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
