@@ -276,11 +276,7 @@ class InfantRegistrationDataset(
                 corticosteroidGiven,
                 gender,
                 babyCriedAtBirth,
-                resuscitation,
-                referred,
                 hadBirthDefect,
-                birthDefect,
-                otherDefect,
                 weight,
                 breastFeedingStarted,
                 isSncu
@@ -293,15 +289,33 @@ class InfantRegistrationDataset(
             infantTerm.value = getLocalValueInArray(R.array.ir_infant_term, saved.infantTerm)
             corticosteroidGiven.value = getLocalValueInArray(R.array.ir_confirmation_array3, saved.corticosteroidGiven)
             gender.value = saved.gender?.let { gender.entries?.get(it.ordinal) }
-            babyCriedAtBirth.value = if (saved.babyCriedAtBirth == true) babyCriedAtBirth.entries!![0] else babyCriedAtBirth.entries!![1]
-            resuscitation.value = if (saved.resuscitation == true) resuscitation.entries!![0] else resuscitation.entries!![1]
+            babyCriedAtBirth.value = saved.babyCriedAtBirth?.let {
+                if (it) babyCriedAtBirth.entries!![0] else babyCriedAtBirth.entries!![1]
+            }
+            resuscitation.value = saved.resuscitation?.let {
+                if (it) resuscitation.entries!![0] else resuscitation.entries!![1]
+            }
             referred.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.referred)
             hadBirthDefect.value = getLocalValueInArray(R.array.ir_confirmation_array2, saved.hadBirthDefect)
             birthDefect.value = getLocalValueInArray(R.array.ir_birth_defect_array, saved.birthDefect)
             otherDefect.value = saved.otherDefect
             weight.value = saved.weight.toString()
-            breastFeedingStarted.value = if (saved.breastFeedingStarted == true) breastFeedingStarted.entries!![0] else breastFeedingStarted.entries!![1]
+            breastFeedingStarted.value = saved.breastFeedingStarted?.let {
+                if (it) breastFeedingStarted.entries!![0] else breastFeedingStarted.entries!![1]
+            }
             isSncu.value = getLocalValueInArray(R.array.do_is_jsy_beneficiary_array, saved.isSNCU)
+//            if (saved.babyCriedAtBirth == false && saved.resuscitation != null) {
+//                list.add(list.indexOf(babyCriedAtBirth) + 1, resuscitation)
+//                if (saved.resuscitation == false && saved.referred != null) {
+//                    list.add(list.indexOf(resuscitation) + 1, referred)
+//                }
+//            }
+            if (saved.hadBirthDefect == "Yes" && saved.birthDefect != null) {
+                list.add(list.indexOf(hadBirthDefect) + 1, birthDefect)
+                if (saved.birthDefect == "Other" && saved.otherDefect != null) {
+                    list.add(list.indexOf(birthDefect) + 1, otherDefect)
+                }
+            }
             if (saved.isSNCU=="Yes")
             {
                 deliveryDischargeSummary1.value = saved.deliveryDischargeSummary1
@@ -406,8 +420,8 @@ class InfantRegistrationDataset(
             form.gender = gender.value?.let {
                 Gender.values()[gender.getPosition() - 1]
             }
-            form.babyCriedAtBirth = babyCriedAtBirth.value == babyCriedAtBirth.entries!![0]
-            form.resuscitation = resuscitation.value == resuscitation.entries!![0]
+            form.babyCriedAtBirth = babyCriedAtBirth.value?.let { it == babyCriedAtBirth.entries!![0] }
+            form.resuscitation = resuscitation.value?.let { it == resuscitation.entries!![0] }
             form.referred = getEnglishValueInArray(R.array.ir_confirmation_array2, referred.value)
 
             form.isSNCU = getEnglishValueInArray(R.array.do_is_jsy_beneficiary_array, isSncu.value) ?: "No"
@@ -421,7 +435,7 @@ class InfantRegistrationDataset(
             form.birthDefect = getEnglishValueInArray(R.array.ir_birth_defect_array, birthDefect.value)
             form.otherDefect = otherDefect.value
             form.weight = weight.value?.toDouble()
-            form.breastFeedingStarted = breastFeedingStarted.value == breastFeedingStarted.entries!![0]
+            form.breastFeedingStarted = breastFeedingStarted.value?.let { it == breastFeedingStarted.entries!![0] }
            /* form.opv0Dose = getLongFromDate(opv0Dose.value)
             form.bcgDose = getLongFromDate(bcgDose.value)
             form.hepBDose = getLongFromDate(hepBDose.value)

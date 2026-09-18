@@ -35,8 +35,8 @@
             android:id="@+id/action_nav_home_to_hrpCasesFragment"
             app:destination="@id/hrpCasesFragment" />
         <action
-            android:id="@+id/action_nav_home_to_immunizationDueFragment"
-            app:destination="@id/immunizationDueTypeFragment" />
+            android:id="@+id/action_nav_home_to_childImmunizationListFragment"
+            app:destination="@id/childImmunizationListFragment" />
         <action
             android:id="@+id/action_nav_home_to_ncdFragment"
             app:destination="@id/ncdFragment" />

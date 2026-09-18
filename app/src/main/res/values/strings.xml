@@ -1617,5 +1617,16 @@
     <string name="incentive_header_activity">Activity</string>
     <string name="incentive_header_no_of_claims">No of Claims</string>
     <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
 </resources>
 
