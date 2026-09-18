@@ -39,7 +39,6 @@ class TBConfirmedDataset(
         title = resources.getString(R.string.treatment_start_date),
         arrayId = -1,
         required = true,
-        max = System.currentTimeMillis(),
         hasDependants = true,
         isEnabled = true
 
