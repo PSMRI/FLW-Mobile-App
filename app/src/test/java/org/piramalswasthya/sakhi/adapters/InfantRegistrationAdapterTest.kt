@@ -35,11 +35,17 @@ class InfantRegistrationAdapterTest {
         isMarried = false
     )
 
+    // createdDate/updatedDate default to System.currentTimeMillis(), and InfantRegDomain is a
+    // data class that embeds this whole object. Two separate builds of the "same" item are only
+    // equal when both land in the same millisecond, which made areContentsTheSame_usesFullEquality
+    // fail intermittently. Pin them so equality depends on the fields under test.
     private fun deliveryOutcome(benId: Long = 1L) = DeliveryOutcomeCache(
         benId = benId,
         isActive = true,
         createdBy = "test",
+        createdDate = 0L,
         updatedBy = "test",
+        updatedDate = 0L,
         syncState = SyncState.SYNCED
     )
 
