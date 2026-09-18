@@ -190,7 +190,13 @@ data class VaccineDomain(
     val vaccineCategory: ChildImmunizationCategory,
     val state: VaccineState,
     var isSwitchChecked:Boolean = false,
-    val dueDate: String = ""
+    val dueDate: String = "",
+    /**
+     * FLW-1144 "Due Work Plan Date" as epoch millis - `ben.dob + vaccine.minAllowedAgeInMillis`.
+     * [dueDate] holds the same instant formatted dd-MM-yyyy for display; compare on this field
+     * instead, since month-boundary comparison on the formatted string is not viable.
+     */
+    val dueDateMillis: Long = 0L
 )
 
 class VaccineClickListener(private val clickListener: (benId: Long, vaccineId: Int) -> Unit) {

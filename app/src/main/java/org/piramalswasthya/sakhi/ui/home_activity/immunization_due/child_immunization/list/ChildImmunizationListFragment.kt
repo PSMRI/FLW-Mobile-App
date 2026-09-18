@@ -9,11 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -39,7 +43,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
+        viewModel.setSearchText(value)
     }
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
@@ -98,7 +102,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                viewModel.filterText(p0?.toString() ?: "")
+                viewModel.setSearchText(p0?.toString() ?: "")
             }
 
         }
@@ -127,6 +131,73 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
                 binding.tvSelectedFilter.text = it
             }
         }
+
+        binding.cardDueThisMonth.setOnClickListener {
+            viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH)
+        }
+        binding.cardNextMonth.setOnClickListener {
+            viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH)
+        }
+
+        lifecycleScope.launch {
+            viewModel.dueThisMonthCount.collect { binding.tvDueThisMonthCount.text = "$it" }
+        }
+        lifecycleScope.launch {
+            viewModel.nextMonthCount.collect { binding.tvNextMonthCount.text = "$it" }
+        }
+        lifecycleScope.launch {
+            viewModel.resultMeta.collect { binding.tvResultMeta.text = it }
+        }
+        lifecycleScope.launch {
+            viewModel.isFiltered.collect { filtered ->
+                binding.tvEmptyContent.setText(
+                    if (filtered) R.string.imm_no_match_for_filters
+                    else R.string.no_records_found
+                )
+                renderQuickFilterCards()
+            }
+        }
+
+        renderQuickFilterCards()
+    }
+
+    /**
+     * Active card is filled with its accent, idle card is outlined in it - the styling the
+     * FLW-1144 prototype specifies. Done in code because both states share one view.
+     */
+    private fun renderQuickFilterCards() {
+        val selected = viewModel.selectedQuickFilter
+        paintQuickFilterCard(
+            card = binding.cardDueThisMonth,
+            label = binding.tvDueThisMonthLabel,
+            count = binding.tvDueThisMonthCount,
+            accent = ContextCompat.getColor(requireContext(), R.color.imm_due_this_month_accent),
+            active = selected == ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH,
+        )
+        paintQuickFilterCard(
+            card = binding.cardNextMonth,
+            label = binding.tvNextMonthLabel,
+            count = binding.tvNextMonthCount,
+            accent = ContextCompat.getColor(requireContext(), R.color.imm_next_month_accent),
+            active = selected == ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH,
+        )
+    }
+
+    private fun paintQuickFilterCard(
+        card: MaterialCardView,
+        label: TextView,
+        count: TextView,
+        @ColorInt accent: Int,
+        active: Boolean,
+    ) {
+        val idleBg = ContextCompat.getColor(requireContext(), R.color.imm_filter_card_idle_bg)
+        val onAccent = ContextCompat.getColor(requireContext(), android.R.color.white)
+        card.setCardBackgroundColor(if (active) accent else idleBg)
+        card.strokeColor = accent
+        card.isChecked = active
+        val textColor = if (active) onAccent else accent
+        label.setTextColor(textColor)
+        count.setTextColor(textColor)
     }
 
     override fun onStart() {
@@ -140,8 +211,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     }
 
     override fun onClicked(catDataList: String) {
-        val englishKey = viewModel.toEnglishCategory(catDataList)
-        viewModel.filterText(englishKey)
+        viewModel.setDoseStage(viewModel.toCategory(catDataList))
     }
 
 
