@@ -23,7 +23,6 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.from.TBConfirmedViewModel
-import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list.TBScreeningListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_suspected.list.TBSuspectedListViewModel
 import javax.inject.Inject
 import kotlin.getValue
@@ -62,15 +61,29 @@ class TBConfirmedListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbConfirmedListAdapter(
-            TbConfirmedListAdapter.ClickListener { hhId, benId ->
-                if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
-                    findNavController().navigate(
-                        TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
-                            benId
+            TbConfirmedListAdapter.ClickListener(
+                { _, benId ->
+                    if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
+                        findNavController().navigate(
+                            TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
+                                benId
+                            )
                         )
-                    )
+                    }
+                },
+                { hhId, _ ->
+                    if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
+                        findNavController().navigate(
+                            TBConfirmedListFragmentDirections
+                                .actionTBConfirmedListFragmentToTBScreeningListFragment(
+                                    hhId = hhId,
+                                    fromDisease = 6,
+                                    diseaseType = getString(R.string.tb)
+                                )
+                        )
+                    }
                 }
-            },
+            ),
             pref = prefDao
         )
         binding.rvAny.adapter = benAdapter
