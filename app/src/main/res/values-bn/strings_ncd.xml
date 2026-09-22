@@ -271,6 +271,12 @@
         <item>আবর্জনা – পাতা পোড়ানো</item>
         <item>ইটভাটা ও কাচের কারখানার মতো ধোঁয়া, গ্যাস এবং ধুলোর সংস্পর্শে থাকা শিল্পে কাজ করা</item>
     </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>ফসলের অবশিষ্টাংশ পোড়ানো</item>
+        <item>আবর্জনা – পাতা পোড়ানো</item>
+        <item>ইটভাটা ও কাচের কারখানার মতো ধোঁয়া, গ্যাস এবং ধুলোর সংস্পর্শে থাকা শিল্পে কাজ করা</item>
+        <item>অন্যান্য উৎস</item>
+    </string-array>
     <string-array name="cbac_li">
         <item>একদমই না</item>
         <item>কয়েক দিন</item>

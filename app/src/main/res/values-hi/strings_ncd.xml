@@ -60,6 +60,7 @@
     <string name="cbac_no">नहीं</string>
     <string name="cbac_risk_Factors_COPD">भाग C: दीर्घकालिक अवरोधक फेफड़ों की बीमारी (COPD) का जोखिम कारक</string>
     <string name="cbac_occupational_exposure">व्यावसायिक जोखिम</string>
+    <string name="cbac_other_sources_detail">कृपया बताएं (वैकल्पिक)</string>
     <string name="cbac_PHQ2">भाग D: PHQ2 (मानसिक स्वास्थ्य)</string>
     <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
     <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
@@ -262,6 +263,12 @@
         <item>फसल अवशेष जलाना</item>
         <item>कूड़ा-कचरा-पत्तियाँ जलाना</item>
         <item>धुएं, गैस और धूल के संपर्क वाले उद्योगों में काम करना जैसे ईंट भट्टे और कांच के कारखाने।</item>
+    </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>फसल अवशेष जलाना</item>
+        <item>कूड़ा-कचरा-पत्तियाँ जलाना</item>
+        <item>धुएं, गैस और धूल के संपर्क वाले उद्योगों में काम करना जैसे ईंट भट्टे और कांच के कारखाने।</item>
+        <item>अन्य स्रोत</item>
     </string-array>
 
     <string-array name="tb_test_result">

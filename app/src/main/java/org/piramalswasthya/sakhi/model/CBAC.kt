@@ -12,6 +12,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.helpers.Konstants
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -85,6 +86,7 @@ data class CbacCache(
     var cbac_weekness_in_feet_posi: Int = 0,
     var cbac_fuel_used_posi: Int = 0,
     var cbac_occupational_exposure_posi: Int = 0,
+    var cbac_occupational_exposure_other: String? = null,
 
     var cbac_feeling_unsteady_posi: Int = 0,
     var cbac_suffer_physical_disability_posi: Int = 0,
@@ -211,9 +213,10 @@ data class CbacCache(
             CbacCookingOil = if (cbac_fuel_used_posi > 0) resources.getStringArray(R.array.cbac_type_Cooking_fuel)[cbac_fuel_used_posi - 1] else "",
             CbacCookingOilScore = cbac_fuel_used_posi,
             CbacOccupationalExposure = if (cbac_occupational_exposure_posi > 0) resources.getStringArray(
-                R.array.cbac_type_occupational_exposure
-            )[cbac_occupational_exposure_posi - 1] else "",
+                Konstants.cbacOccupationalExposureArrayId
+            ).getOrNull(cbac_occupational_exposure_posi - 1) ?: "" else "",
             CbacOccupationalExposureScore = cbac_occupational_exposure_posi,
+            CbacOccupationalExposureOther = cbac_occupational_exposure_other,
             CbacLittleInterestPleasure = if (cbac_little_interest_posi > 0) resources.getStringArray(R.array.cbac_li)[cbac_little_interest_posi - 1] else "",
             CbacLittleInterestPleasureScore = cbac_little_interest_posi,
             CbacDepressedhopeless = if (cbac_feeling_down_posi > 0) resources.getStringArray(R.array.cbac_fd)[cbac_feeling_down_posi - 1] else "",
@@ -619,6 +622,7 @@ data class CbacPostNew(
     val cbacNeedhelpEverydayActivities: String?,
     val cbacForgetnearones: String?,
     val CbacOccupationalExposure: String?,
+    val CbacOccupationalExposureOther: String? = null,
     val CbacBotheredProblemLast2weeks: String? ="",
     val CbacLittleInterestPleasure: String?,
     val CbacDepressedhopeless: String?,
@@ -696,6 +700,7 @@ data class BenWithCbacDomain(
 data class CbacResponseDto(
     val id: Int,
     val beneficiaryRegId: Long,
+    val beneficiaryId: Long? = null,
     val visitCode: Long,
 
     val cbacAge: String?,
@@ -750,12 +755,17 @@ data class CbacResponseDto(
     val cbacBleedingMenopause: String?,
     val cbacBleedingIntercourse: String?,
     val cbacVaginalDischarge: String?,
+    val cbacFeelingUnsteady: String? = null,
+    val cbacPhysicalDisabilitySuffering: String? = null,
+    val cbacNeedhelpEverydayActivities: String? = null,
+    val cbacForgetnearones: String? = null,
     val cbacHandTingling: String?,
     val cbacClawingfingers: String?,
     val cbacDifficultyHearing: String?,
     val cbacRednessPain: String?,
     val cbacDifficultyreading: String?,
     val CbacOccupationalExposure: String?,
+    val CbacOccupationalExposureOther: String? = null,
     val CbacBotheredProblemLast2weeks: String?,
     val CbacLittleInterestPleasure: String?,
     val CbacDepressedhopeless: String?,
@@ -784,7 +794,7 @@ fun CbacResponseDto.toEntity():CbacCache {
     return CbacCache(
         id = id,
         fillDate = createdDate.toMillisOrNull() ?: 0L,
-        benId = beneficiaryRegId,
+        benId = beneficiaryId ?: beneficiaryRegId,
         ashaId = 0,
         cbac_age_posi = cbacAgeScore ?: 0,
         cbac_smoke_posi = cbacConsumeGutkaScore ?: 0,
@@ -802,13 +812,13 @@ fun CbacResponseDto.toEntity():CbacCache {
         cbac_antitbdrugs_pos = if (cbacAntiTBDrugs.equals("yes", true)) 1 else 2,
         cbac_tbhistory_pos = if (cbacTBHistory.equals("yes", true)) 1 else 2,
         cbac_uicers_pos = if (cbacUlceration.equals("yes", true)) 1 else 2,
-        cbac_tingling_or_numbness_posi = if (cbacRecurrentTingling.equals("yes", true)) 1 else 2,
+        cbac_tingling_or_numbness_posi = if (cbacHandTingling.equals("yes", true)) 1 else 2,
         cbac_historyoffits_pos = if (cbacFitsHistory.equals("yes", true)) 1 else 2,
         cbac_difficultyinmouth_pos = if (cbacMouthopeningDifficulty.equals("yes", true)) 1 else 2,
         cbac_growth_in_mouth_posi = if (cbacMouthUlcersGrowth.equals("yes", true)) 1 else 2,
         cbac_white_or_red_patch_posi = if (cbacMouthredpatch.equals("yes", true)) 1 else 2,
         cbac_Pain_while_chewing_posi = if (cbacPainchewing.equals("yes", true)) 1 else 2,
-        cbac_toneofvoice_pos = if (cbacTonechange.equals("yes", true)) 1 else 0,
+        cbac_toneofvoice_pos = if (cbacTonechange.equals("yes", true)) 1 else if (cbacTonechange == null) 0 else 2,
         cbac_hyper_pigmented_patch_posi = if (cbacHypopigmentedpatches.equals("yes", true)) 1 else 2,
         cbac_any_thickend_skin_posi = if (cbacThickenedskin.equals("yes", true)) 1 else 2,
         cbac_nodules_on_skin_posi = if (cbacNodulesonskin.equals("yes", true)) 1 else 2,
@@ -816,7 +826,7 @@ fun CbacResponseDto.toEntity():CbacCache {
         cbac_cloudy_posi = if (cbacBlurredVision.equals("yes", true)) 1 else 2,
         cbac_diff_holding_obj_posi = if (cbacDifficultHoldingObjects.equals("yes", true)) 1 else 2,
         cbac_weekness_in_feet_posi = if (cbacFeetweakness.equals("yes", true)) 1 else 2,
-        cbac_tingling_palm_posi = if (cbacHandTingling.equals("yes", true)) 1 else 2,
+        cbac_tingling_palm_posi = if (cbacRecurrentTingling.equals("yes", true)) 1 else 2,
         cbac_clawing_of_fingers_posi = if (cbacClawingfingers.equals("yes", true)) 1 else 2,
         cbac_diff_inhearing_posi = if (cbacDifficultyHearing.equals("yes", true)) 1 else 2,
         cbac_redness_ineyes_posi = if (cbacRednessPain.equals("yes", true)) 1 else 2,
@@ -831,13 +841,19 @@ fun CbacResponseDto.toEntity():CbacCache {
         cbac_bleedingafterintercourse_pos = if (cbacBleedingIntercourse.equals("yes", true)) 1 else 2,
         cbac_foulveginaldischarge_pos = if (cbacVaginalDischarge.equals("yes", true)) 1 else 2,
 
+        cbac_feeling_unsteady_posi = if (cbacFeelingUnsteady.equals("yes", true)) 1 else if (cbacFeelingUnsteady == null) 0 else 2,
+        cbac_suffer_physical_disability_posi = if (cbacPhysicalDisabilitySuffering.equals("yes", true)) 1 else if (cbacPhysicalDisabilitySuffering == null) 0 else 2,
+        cbac_needing_help_posi = if (cbacNeedhelpEverydayActivities.equals("yes", true)) 1 else if (cbacNeedhelpEverydayActivities == null) 0 else 2,
+        cbac_forgetting_names_posi = if (cbacForgetnearones.equals("yes", true)) 1 else if (cbacForgetnearones == null) 0 else 2,
+
         total_score = totalScore,
         cbac_feeling_down_score = CbacFeelingDownScore,
-        cbac_feeling_down_posi = CbacFeelingDownScore,
+        cbac_feeling_down_posi = CbacDepressedhopelessScore,
         cbac_little_interest_posi = CbacLittleInterestPleasureScore,
-        cbac_little_interest_score = CbacLittleInterestPleasureScore,
+        cbac_little_interest_score = (CbacLittleInterestPleasureScore - 1).coerceAtLeast(0),
         cbac_fuel_used_posi = CbacCookingOilScore,
         cbac_occupational_exposure_posi = CbacOccupationalExposureScore,
+        cbac_occupational_exposure_other = CbacOccupationalExposureOther,
         createdBy = createdBy,
         cbac_diffreading_posi = if (cbacDifficultyreading.equals("yes", true)) 1 else 2,
         VanID = vanId!!,

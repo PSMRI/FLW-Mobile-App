@@ -1,8 +1,17 @@
 package org.piramalswasthya.sakhi.helpers
 
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import java.util.concurrent.TimeUnit
 
 object Konstants {
+
+    val cbacOccupationalExposureArrayId: Int
+        get() = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            R.array.cbac_type_occupational_exposure_mitanin
+        else R.array.cbac_type_occupational_exposure
+
+    const val cbacOtherSourcesPosi: Int = 4
 
     val minMillisBwtweenCbacFiling: Long = TimeUnit.DAYS.toMillis(365)
     const val amritTokenTimeoutDuration: Int = 100

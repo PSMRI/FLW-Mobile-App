@@ -16,6 +16,8 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -33,6 +35,8 @@ class MalariaConfirmCasesDatasetTest : BaseViewModelTest() {
 
     @MockK private lateinit var context: Context
     @MockK private lateinit var mockResources: Resources
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     @Before
     override fun setUp() {
@@ -214,6 +218,33 @@ class MalariaConfirmCasesDatasetTest : BaseViewModelTest() {
         every { ben.processed } returns "N"
         ds.updateBen(ben)
         verify(exactly = 0) { ben.processed = "U" }
+    }
+
+    @Test
+    fun `pv tracking dropdown day range follows the build flavor`() = runTest {
+        every { mockResources.getStringArray(R.array.daysPv) } returns Array(4) { "Day ${it + 1}" }
+        every { mockResources.getStringArray(R.array.daysPvMitanin) } returns
+                Array(14) { "Day ${it + 1}" }
+        val ds = MalariaConfirmCasesDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, "opt1", null)
+        val pv = ds.listFlow.value.first { it.id == 23 }
+        assertEquals(if (isMitanin) R.array.daysPvMitanin else R.array.daysPv, pv.arrayId)
+        assertEquals(if (isMitanin) 14 else 4, pv.entries?.size)
+        assertEquals("Day 1", pv.value)
+    }
+
+    @Test
+    fun `pv day is mapped back through the flavor day array`() = runTest {
+        every { mockResources.getStringArray(R.array.daysPv) } returns Array(4) { "Day ${it + 1}" }
+        every { mockResources.getStringArray(R.array.daysPvMitanin) } returns
+                Array(14) { "Day ${it + 1}" }
+        val ds = MalariaConfirmCasesDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, "opt1", null)
+        val lastDay = if (isMitanin) "Day 14" else "Day 4"
+        ds.setValueById(23, lastDay)
+        val form = mockk<MalariaConfirmedCasesCache>(relaxed = true)
+        ds.mapValues(form, 0)
+        verify { form.day = lastDay }
     }
 
     @Test

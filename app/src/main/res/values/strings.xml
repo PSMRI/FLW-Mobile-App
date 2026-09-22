@@ -1341,6 +1341,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+        <item>Day 5</item>
+        <item>Day 6</item>
+        <item>Day 7</item>
+        <item>Day 8</item>
+        <item>Day 9</item>
+        <item>Day 10</item>
+        <item>Day 11</item>
+        <item>Day 12</item>
+        <item>Day 13</item>
+        <item>Day 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>Day 1</item>
         <item>Day 2</item>

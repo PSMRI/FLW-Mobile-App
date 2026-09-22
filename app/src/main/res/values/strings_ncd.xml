@@ -65,6 +65,7 @@
     <string name="cbac_no">No</string>
     <string name="cbac_risk_Factors_COPD">Part C: Risk factor for COPD</string>
     <string name="cbac_occupational_exposure">Occupational exposure</string>
+    <string name="cbac_other_sources_detail">Please specify (optional)</string>
     <string name="cbac_PHQ2">Part D: PHQ2</string>
     <string name="cbac_last_two_weeks">Over the last two weeks how often have you been bothered by the following problems ?</string>
     <string name="cbac_little_interest">Little interest or pleasure in doing things ?</string>
@@ -270,6 +271,12 @@
         <item>Crop residue burning</item>
         <item>Burning of garbage – leaves</item>
         <item>Working in industries with smoke, gas and dust exposure such as brick kilns and glass factories etc.</item>
+    </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>Crop residue burning</item>
+        <item>Burning of garbage – leaves</item>
+        <item>Working in industries with smoke, gas and dust exposure such as brick kilns and glass factories etc.</item>
+        <item>Other sources</item>
     </string-array>
     <string-array name="cbac_li">
         <item>Not at all</item>
