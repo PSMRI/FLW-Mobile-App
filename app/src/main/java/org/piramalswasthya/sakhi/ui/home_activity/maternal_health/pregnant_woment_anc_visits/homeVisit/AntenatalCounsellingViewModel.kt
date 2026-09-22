@@ -173,6 +173,13 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     fun setMotherAge(age: Int) {
         motherAge = age
+        val currentSchema = _schema.value ?: return
+        if (isViewMode) return
+        currentSchema.sections.orEmpty()
+            .flatMap { it.fields.orEmpty() }
+            .filter { it.fieldId == "age_risk" }
+            .forEach { it.value = getAgeRiskValue() }
+        _schema.value = currentSchema.copy()
     }
 
 
