@@ -10,13 +10,13 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.AdolescentHealthCache
-import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.network.AdolescentHealthRequestDTO
 import org.piramalswasthya.sakhi.network.AdolscentHealthDTO
 import org.piramalswasthya.sakhi.network.AmritApiService
-import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
+import org.piramalswasthya.sakhi.network.GetDataPaginatedNewRequest
 import timber.log.Timber
 import java.net.SocketTimeoutException
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -50,20 +50,24 @@ class AdolescentHealthRepo @Inject constructor(
             val lastTimeStamp = preferenceDao.getLastSyncedTimeStamp()
             try {
                 val response = tmcNetworkApiService.getAdolescentHealthData(
-                    GetDataPaginatedRequest(
+                    GetDataPaginatedNewRequest(
                         ashaId = user.userId,
+                        userId = user.userId,
                         pageNo = 0,
                         fromDate = BenRepo.getCurrentDate(Konstants.defaultTimeStamp),
                         toDate = getCurrentDate()
                     )
                 )
                 val statusCode = response.code()
+                Timber.d("Pull from amrit adolescent screening data aa : $statusCode")
+                Timber.d("Pull from amrit adolescent screening data aa : $response")
+
                 if (statusCode == 200) {
                     val responseString = response.body()?.string()
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
 
-                        val errorMessage = jsonObj.getString("errorMessage")
+//                        val errorMessage = jsonObj.getString("errorMessage")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit adolescent screening data : $responseStatusCode")
                         when (responseStatusCode) {
@@ -88,7 +92,7 @@ class AdolescentHealthRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                if (errorMessage == "No record found") return@withContext 0
+//                                if (errorMessage == "No record found") return@withContext 0
                             }
 
                             else -> {
@@ -110,28 +114,52 @@ class AdolescentHealthRepo @Inject constructor(
         }
     }
 
-    private suspend fun saveadolescentHealthCacheFromResponse(dataObj: String): MutableList<AdolescentHealthCache> {
-        val adolscentHealthList = mutableListOf<AdolescentHealthCache>()
-        var requestDTO = Gson().fromJson(dataObj, AdolescentHealthRequestDTO::class.java)
-        requestDTO?.adolescentHealths?.forEach { adolescenthealthDTO ->
-            adolescenthealthDTO.visitDate?.let {
+    private suspend fun saveadolescentHealthCacheFromResponse(
+        dataObj: String
+    ): MutableList<AdolescentHealthCache> {
 
-                var adolescentHealthCache: AdolescentHealthCache? =
-                    adolescentHealthDao.getAdolescentHealth(
-                        adolescenthealthDTO.benId,
-                        getLongFromDate(adolescenthealthDTO.visitDate),
-                        getLongFromDate(adolescenthealthDTO.visitDate) - 19_800_000
-                    )
-                if (adolescentHealthCache == null) {
-                    benDao.getBen(adolescenthealthDTO.benId)?.let {
-                        adolescentHealthDao.saveAdolescentHealth(adolescenthealthDTO.toCache())
-                    }
-                }
+        val adolscentHealthList = mutableListOf<AdolescentHealthCache>()
+
+        val adolscentnewHealthList: List<AdolscentHealthDTO> = if (dataObj.trimStart().startsWith("[")) {
+            Gson().fromJson(dataObj, Array<AdolscentHealthDTO>::class.java)?.toList() ?: emptyList()
+        } else {
+            return adolscentHealthList
+        }
+
+        Timber.d("Pull from amrit adolescent adolscentnewHealthList data aa : $adolscentnewHealthList")
+
+
+        adolscentnewHealthList.forEach { dto ->
+
+            val visitDate = dto.visitDate ?: return@forEach
+
+            val visitDateLong = getLongFromDate(visitDate)
+
+            val existing = adolescentHealthDao.getAdolescentHealth(
+                dto.benId,
+                visitDateLong,
+                visitDateLong - 19_800_000
+            )
+
+            if (existing == null) {
+
+                val cache = dto.toCache()
+
+                Timber.d("Saving adolescent cache = $cache")
+
+                adolescentHealthDao.saveAdolescentHealth(cache)
+
+            } else {
+
+                Timber.d(
+                    "Adolescent cache already exists: benId=${dto.benId}, " +
+                            "visitDate=$visitDate"
+                )
             }
         }
+
         return adolscentHealthList
     }
-
     // RECORD-LEVEL ISOLATION: Coordinator always returns true so the
     // WorkManager worker succeeds. Failed records stay UNSYNCED for next cycle.
     suspend fun pushUnSyncedRecords(): Boolean {
@@ -232,11 +260,30 @@ class AdolescentHealthRepo @Inject constructor(
             return "${dateString}T${timeString}.000Z"
         }
 
+
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
-            return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+
+            val formats = listOf(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                "MMM d, yyyy h:mm:ss a"
+            )
+
+            for (format in formats) {
+                try {
+                    val date = SimpleDateFormat(
+                        format,
+                        Locale.ENGLISH
+                    ).parse(dateString.trim())
+
+                    if (date != null) {
+                        return date.time
+                    }
+                } catch (_: ParseException) {
+                    // Try next format
+                }
+            }
+
+            throw IllegalStateException("Invalid date for dateReg: $dateString")
         }
     }
 
