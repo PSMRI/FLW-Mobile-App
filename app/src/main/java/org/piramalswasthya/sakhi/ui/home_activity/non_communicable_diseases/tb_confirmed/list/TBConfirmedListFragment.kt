@@ -62,16 +62,7 @@ class TBConfirmedListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbConfirmedListAdapter(
             TbConfirmedListAdapter.ClickListener(
-                { _, benId ->
-                    if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
-                        findNavController().navigate(
-                            TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
-                                benId
-                            )
-                        )
-                    }
-                },
-                { hhId, _ ->
+                clickedFamilyMembers = { hhId, _ ->
                     if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
                         findNavController().navigate(
                             TBConfirmedListFragmentDirections
@@ -80,6 +71,15 @@ class TBConfirmedListFragment : Fragment() {
                                     fromDisease = 6,
                                     diseaseType = getString(R.string.tb)
                                 )
+                        )
+                    }
+                },
+                clickedForm = { _, benId ->
+                    if (findNavController().currentDestination?.id == R.id.TBConfirmedListFragment) {
+                        findNavController().navigate(
+                            TBConfirmedListFragmentDirections.actionTBConfirmedListFragmentToTBConfirmedFormFragment(
+                                benId
+                            )
                         )
                     }
                 }

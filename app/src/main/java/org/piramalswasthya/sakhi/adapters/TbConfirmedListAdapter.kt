@@ -121,8 +121,8 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
 
     class ClickListener(
-        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null,
-        private val clickedFamilyMembers: ((hhId: Long, benId: Long) -> Unit)? = null
+        private val clickedFamilyMembers: ((hhId: Long, benId: Long) -> Unit)? = null,
+        private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
 
     ) {
         fun onClickForm(item: BenWithTbSuspectedDomain) =
