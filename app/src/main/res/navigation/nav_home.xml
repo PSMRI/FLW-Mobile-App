@@ -1122,6 +1122,9 @@
         <action
             android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
             app:destination="@id/TBConfirmedFormFragment"/>
+        <action
+            android:id="@+id/action_TBConfirmedListFragment_to_TBScreeningListFragment"
+            app:destination="@id/TBScreeningListFragment" />
     </fragment>
     <fragment
         android:id="@+id/TBConfirmedFormFragment"
