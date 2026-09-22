@@ -110,25 +110,26 @@ class AdolescentHealthRepo @Inject constructor(
         }
     }
 
-    private suspend fun saveadolescentHealthCacheFromResponse(dataObj: String): MutableList<TBScreeningCache> {
-        val tbScreeningList = mutableListOf<TBScreeningCache>()
+    private suspend fun saveadolescentHealthCacheFromResponse(dataObj: String): MutableList<AdolescentHealthCache> {
+        val adolscentHealthList = mutableListOf<AdolescentHealthCache>()
         var requestDTO = Gson().fromJson(dataObj, AdolescentHealthRequestDTO::class.java)
-        requestDTO?.adolescentHealths?.forEach { tbScreeningDTO ->
-            tbScreeningDTO.visitDate?.let {
-                var tbScreeningCache: AdolescentHealthCache? =
+        requestDTO?.adolescentHealths?.forEach { adolescenthealthDTO ->
+            adolescenthealthDTO.visitDate?.let {
+
+                var adolescentHealthCache: AdolescentHealthCache? =
                     adolescentHealthDao.getAdolescentHealth(
-                        tbScreeningDTO.benId,
-                        getLongFromDate(tbScreeningDTO.visitDate),
-                        getLongFromDate(tbScreeningDTO.visitDate) - 19_800_000
+                        adolescenthealthDTO.benId,
+                        getLongFromDate(adolescenthealthDTO.visitDate),
+                        getLongFromDate(adolescenthealthDTO.visitDate) - 19_800_000
                     )
-                if (tbScreeningCache == null) {
-                    benDao.getBen(tbScreeningDTO.benId)?.let {
-                        adolescentHealthDao.saveAdolescentHealth(tbScreeningDTO.toCache())
+                if (adolescentHealthCache == null) {
+                    benDao.getBen(adolescenthealthDTO.benId)?.let {
+                        adolescentHealthDao.saveAdolescentHealth(adolescenthealthDTO.toCache())
                     }
                 }
             }
         }
-        return tbScreeningList
+        return adolscentHealthList
     }
 
     // RECORD-LEVEL ISOLATION: Coordinator always returns true so the

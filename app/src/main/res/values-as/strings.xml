@@ -1486,4 +1486,10 @@
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">
     প্ৰসৱৰ তাৰিখ শেষৰ ANC ভিজিটৰ তাৰিখতকৈ আগৰ হ\'ব নোৱাৰে।
 </string>
+    <string name="next_follow_up_will_be_available_from">পৰৱৰ্তী ফলো-আপ %1$s ৰ পৰা উপলব্ধ হ\'ব</string>
+    <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">ফলো-আপৰ তাৰিখ হোম ভিজিটৰ তাৰিখৰ আগৰ হ\'ব নোৱাৰে</string>
+    <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
 </resources>

@@ -543,7 +543,8 @@ val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
         .map { list -> list.flatMap { it.asBasicDomainModel(false) } }
 
     fun getListForLowWeightInfantReg() = benDao.getListForLowWeightInfantRegister(selectedVillage)
-        .map { list -> list.flatMap { it.asBasicDomainModel(true) } }
+        .map { list -> list.flatMap { it.asBasicDomainModel(true) }
+            .filter { domain -> (domain.savedIr?.weight ?: Double.MAX_VALUE) < Konstants.babyLowWeight }}
 
     fun getInfantRegisterCount() = benDao.getInfantRegisterCount(selectedVillage)
 
