@@ -107,6 +107,15 @@ data class GetDataPaginatedRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class GetDataPaginatedNewRequest(
+    val ashaId: Int,
+    val userId: Int,
+    val pageNo: Int,
+    val fromDate: String,
+    val toDate: String
+)
+
+@JsonClass(generateAdapter = true)
 data class GetCBACRequest(
     val createdBy: String,
 )

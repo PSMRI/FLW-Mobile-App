@@ -696,6 +696,7 @@ data class BenWithCbacDomain(
 data class CbacResponseDto(
     val id: Int,
     val beneficiaryRegId: Long,
+    val beneficiaryId: Long? = null,
     val visitCode: Long,
 
     val cbacAge: String?,
@@ -784,7 +785,7 @@ fun CbacResponseDto.toEntity():CbacCache {
     return CbacCache(
         id = id,
         fillDate = createdDate.toMillisOrNull() ?: 0L,
-        benId = beneficiaryRegId,
+        benId = beneficiaryId ?: beneficiaryRegId,
         ashaId = 0,
         cbac_age_posi = cbacAgeScore ?: 0,
         cbac_smoke_posi = cbacConsumeGutkaScore ?: 0,
