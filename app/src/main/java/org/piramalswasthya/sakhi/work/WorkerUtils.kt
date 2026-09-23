@@ -506,6 +506,9 @@ object WorkerUtils {
                 .addTag("pull_group2_screening").build(),
             syncRequestBuilder<PullHRPFromAmritWorker>()
                 .addTag("pull_group2_screening").build(),
+            syncRequestBuilder<PullAdolescentFromWorker>()
+                .addTag("pull_group2_screening").build(),
+
         )
 
         // ─────────────────────────────────────────────────────────────

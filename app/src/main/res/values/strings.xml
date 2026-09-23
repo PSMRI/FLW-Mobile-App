@@ -1645,5 +1645,14 @@
         <item quantity="one">%d beneficiary</item>
         <item quantity="other">%d beneficiaries</item>
     </plurals>
+    <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
+    <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">Follow-up date cannot be before home visit date</string>
+    <string name="treatment_status_is_required">Treatment status is required</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">Treatment end date is required when treatment status is completed</string>
+    <string name="follow_up_date_is_required">Follow-up date is required</string>
+    <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
+    <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
+    <string name="failed_to_save_follow_up">Failed to save follow-up</string>
 </resources>
 

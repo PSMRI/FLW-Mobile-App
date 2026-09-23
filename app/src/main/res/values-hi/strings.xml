@@ -1480,4 +1480,13 @@
         <item quantity="one">%d लाभार्थी</item>
         <item quantity="other">%d लाभार्थी</item>
     </plurals>
+    <string name="next_follow_up_will_be_available_from">अगला फॉलो-अप %1$s से उपलब्ध होगा</string>
+    <string name="follow_up_date_cannot_be_in_the_future">फॉलो-अप की तारीख भविष्य की नहीं हो सकती</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">फॉलो-अप की तारीख होम विजिट की तारीख से पहले नहीं हो सकती</string>
+    <string name="treatment_status_is_required">उपचार की स्थिति आवश्यक है</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">जब उपचार की स्थिति पूर्ण हो, तो उपचार समाप्ति तिथि आवश्यक है</string>
+    <string name="follow_up_date_is_required">फॉलो-अप की तारीख आवश्यक है</string>
+    <string name="follow_up_saved_successfully">फॉलो-अप सफलतापूर्वक सहेजा गया</string>
+    <string name="visit_completed_starting_next_visit_screening">विज़िट पूरी हुई! अगली विज़िट की स्क्रीनिंग शुरू की जा रही है।</string>
+    <string name="failed_to_save_follow_up">फॉलो-अप सहेजने में विफल</string>
 </resources>

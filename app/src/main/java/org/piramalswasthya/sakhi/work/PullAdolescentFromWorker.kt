@@ -40,7 +40,8 @@ class PullAdolescentFromWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {            withContext(Dispatchers.IO) {
+        return try {
+            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
                 val startPage =
