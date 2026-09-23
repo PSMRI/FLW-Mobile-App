@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildImmunizationBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import java.text.SimpleDateFormat
@@ -47,7 +48,7 @@ class BenChildImmunizationListAdapter(
 
             var dob = getDateFromLong(item.ben.dob)
             binding.tvDob.text = dob
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

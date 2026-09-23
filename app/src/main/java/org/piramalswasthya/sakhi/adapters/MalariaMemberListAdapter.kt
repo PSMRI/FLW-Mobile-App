@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemMalariaMembersListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithMalariaScreeningDomain
 import timber.log.Timber
 
@@ -77,7 +78,12 @@ class MalariaMemberListAdapter(
                             Glide.with(binding.ivSyncState).load(R.drawable.pill).into(binding.ivMalariaStatus)
                             binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_treatment_started)
 
-                        } else {
+                        } else if (item.tb.caseStatus == "Not Suspected"){
+                            binding.btnFormTb.text = binding.root.resources.getString(R.string.malaria_not_suspected)
+                            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
+
+                        }
+                        else {
                             Glide.with(binding.ivSyncState).load(R.drawable.warning).into(binding.ivMalariaStatus)
                         }
 
@@ -136,7 +142,7 @@ class MalariaMemberListAdapter(
 //            binding.btnFormTb.text = if (item.tb == null) "Screening" else "View"
 //            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

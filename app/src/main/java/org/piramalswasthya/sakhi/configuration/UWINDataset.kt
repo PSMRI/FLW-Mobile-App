@@ -104,16 +104,22 @@ class UWINDataset(context: Context, language: Languages) : Dataset(context, lang
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
         when (formId) {
             uWinSessionDate.id -> {
-                uWinSessionDate.errorText = ((if (uWinSessionDate.value.isNullOrEmpty())
+                if (uWinSessionDate.value.isNullOrEmpty()) {
+                    uWinSessionDate.errorText = resources.getString(R.string.form_input_empty_error)
                     emitAlertErrorMessage(R.string.form_input_empty_error)
-                else null) as String?)
+                } else {
+                    uWinSessionDate.errorText = null
+                }
             }
 
 
             participant.id -> {
-                participant.errorText = (if (participant.value.isNullOrEmpty())
+                if (participant.value.isNullOrEmpty()) {
+                    participant.errorText = resources.getString(R.string.form_input_empty_error)
                     emitAlertErrorMessage(R.string.form_input_empty_error)
-                else null) as String?
+                } else {
+                    participant.errorText = null
+                }
             }
 
 

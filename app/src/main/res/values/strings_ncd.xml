@@ -2,8 +2,8 @@
 <resources>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
-    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
-    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#99cc00"> **</font>]]></string>
+    <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#ffbb33"> *</font>]]></string>
+    <string name="radio_title_cbac_ds_alt">%1s<![CDATA[<font color="#ffbb33"> **</font>]]></string>
     <string name="cbac_ask_pat">Ask if Patient has any of these Symptoms</string>
     <string name="cbac_early_detection">Part B1: Early Detection</string>
     <string name="cbac_early_detection_2">Part B2: Women Only</string>
@@ -164,6 +164,7 @@
     <string name="cbac_tv_bl_menopause">Inform ASHA Facilitator</string>
     <string name="cbac_form">CBAC Form</string>
     <string name="alert">Alert !</string>
+    <string name="alert_message_fill_required_fields">Please fill all mandatory fields before submitting.</string>
     <string name="missing_field">MISSING FIELD</string>
     <string name="suspected_hrp_and_ncd_case">SUSPECTED HRP AND NCD CASE!</string>
     <string name="ok">Ok</string>
@@ -192,6 +193,7 @@
     <string name="tb_suspected_alert">Refer to MO and collect the Sputum sample</string>
     <string name="refer_to_hwc_facility_alert">Do you want to refer to HWC facility?</string>
     <string name="tb_suspected_alert_positive">Refer to MO</string>
+    <string name="ncd_follow_up_hostory">NCD Follow-up History</string>
     <string name="tb_suspected_family_alert">Refer to MO or inform ANM/MPW to tracing of all family members</string>
     <string name="is_sputum_sample_collected">Is Sputum sample collected?</string>
     <string name="sputum_sample_submitted_at">Sputum sample submitted at</string>
@@ -199,7 +201,11 @@
     <string name="sputum_test_result">Sputum Test Result</string>
     <string name="referred_to_facility">Referred to Facility</string>
     <string name="facility_referral_follow_ups">Facility Referral follow-ups</string>
-
+    <string name="suspected_c_case">Suspected Cancer case</string>
+    <string name="c_cancer">Cancer</string>
+    <string name="further_depression">further assessment for depression</string>
+    <string name="geriatic">GERIATRIC</string>
+    <string name="geriatic_case">GERIATRIC CASE</string>
     <string-array name="tb_submitted_yet">
         <item>DMC</item>
         <item>SC</item>
@@ -284,4 +290,21 @@
     <string name="cat_geriatric">GERIATRIC</string>
     <string name="cat_hrp">HRP</string>
     <string name="cat_maternal">MATERNAL</string>
+
+    <string name="select_years">Select Years</string>
+    <string name="years_35">35 YEARS</string>
+    <string name="years_40">40 YEARS</string>
+    <string name="years_45">45 YEARS</string>
+    <string name="years_50">50 YEARS</string>
+    <string name="years_55">55 YEARS</string>
+    <string name="years_60">60 YEARS</string>
+    <string name="years_65">65 YEARS</string>
+    <string name="years_70">70 YEARS</string>
+    <string name="years_75">75 YEARS</string>
+    <string name="years_80">80 YEARS</string>
+
+    <string name="suspected_leprosy_case">SUSPECTED LEPROSY CASE</string>
+    <string name="ncd_referral_type">NCD</string>
+    <string name="suspected_tb_case">Suspected TB Case</string>
+    <string name="suspected_copd_case">Suspected COPD Case</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemAbortionBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 
 class AncAbortionListAdapter(
@@ -43,6 +44,7 @@ class AncAbortionListAdapter(
             )
 
             binding.btnViewVisits.visibility =View.INVISIBLE
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
         }
 

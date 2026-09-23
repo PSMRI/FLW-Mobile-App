@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemNcdCbacBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithCbacDomain
 
 class NcdCbacBenListAdapter(
@@ -69,6 +70,7 @@ class NcdCbacBenListAdapter(
                     binding.husband = false
                 }
             }
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
             binding.executePendingBindings()
 

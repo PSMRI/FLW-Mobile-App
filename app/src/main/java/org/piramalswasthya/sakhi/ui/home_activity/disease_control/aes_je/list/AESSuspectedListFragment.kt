@@ -55,11 +55,13 @@ class AESSuspectedListFragment : Fragment() {
 
         val benAdapter = AESMemberListAdapter(
             clickListener = AESMemberListAdapter.ClickListener { _, benId ->
-                findNavController().navigate(
-                    AESSuspectedListFragmentDirections.actionAESSuspectedListFragmentToAEFFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.AESSuspectedListFragment) {
+                    findNavController().navigate(
+                        AESSuspectedListFragmentDirections.actionAESSuspectedListFragmentToAEFFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter

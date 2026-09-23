@@ -52,6 +52,7 @@ class CbacViewModel @Inject constructor(
         GERIATRIC,
         COPD,
         DEPRESSION,
+        CANCER,
         HRP
     }
 

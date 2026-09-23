@@ -104,7 +104,10 @@ class PwAncFormViewModel @Inject constructor(
                     backFilePath = ""
                 )
             }
-            registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId)!!
+            registerRecord = maternalHealthRepo.getSavedRegistrationRecord(benId) ?: run {
+                Timber.e("PwAncFormViewModel: registerRecord is null for benId: $benId")
+                return@launch
+            }
             maternalHealthRepo.getSavedAncRecord(benId, visitNumber)?.let {
                 ancCache = it
                 originalDelivered = it.pregnantWomanDelivered

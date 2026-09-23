@@ -52,8 +52,11 @@ class BenRepo @Inject constructor(
 ) {
 
     private val processNewBenMutex = Mutex()
+    private enum class UploadResult { SUCCESS, FAILED, PAYLOAD_TOO_LARGE }
 
     companion object {
+        // Max beneficiaries pushed to Amrit in a single request. Large batches
+        private const val BEN_SYNC_BATCH_SIZE = 50
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         fun getCurrentDate(millis: Long = System.currentTimeMillis()): String {
@@ -445,54 +448,99 @@ class BenRepo @Inject constructor(
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
-            val benList = benDao.getAllUnprocessedBen()
-            Timber.d("YTR 419 $benList")
-
-            val benNetworkPostList = mutableSetOf<BenPost>()
-            val householdNetworkPostList = mutableSetOf<HouseholdNetwork>()
-            val kidNetworkPostList = mutableSetOf<BenRegKidNetwork>()
-//            val cbacPostList = mutableSetOf<CbacPost>()
+            val benList = benDao.getAllUnsyncedBen()
+            Timber.d("YTR 420 $benList")
+            Timber.d("YTR 420 ${benList.size}")
 
             benList.forEach {
+                Timber.d("START: ${it.beneficiaryId}")
+
                 createBenIdAtServerByBeneficiarySending(it, user, it.locationRecord)
                 Timber.d("YTR 429 $it")
+//                Timber.d("END: ${it.beneficiaryId} result=$result")
             }
 
             val updateBenList = benDao.getAllBenForSyncWithServer()
-            updateBenList.forEach {
-                benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
-                benNetworkPostList.add(it.asNetworkPostModel(context, user))
-                householdNetworkPostList.add(
-                    householdDao.getHousehold(it.householdId)!!.asNetworkModel(user)
+
+            // CHUNKED PUSH: uploading every unsynced beneficiary in one request
+            // overflows the server body-size limit once records
+            // accumulate, permanently stalling sync. Split into fixed-size
+            // batches so each batch uploads independently and one oversized/
+            // failed batch can't block the rest.
+            var totalSucceeded = 0
+            var totalFailed = 0
+            updateBenList.chunked(BEN_SYNC_BATCH_SIZE).forEach { chunk ->
+                val (succeeded, failed) = uploadBenBatch(chunk, user)
+                totalSucceeded += succeeded
+                totalFailed += failed
+            }
+            // The worker still returns true (failed records are marked via
+            // benSyncWithServerFailed and retry on the next cycle).
+            Timber.d("Beneficiary sync complete: $totalSucceeded succeeded, $totalFailed failed out of ${updateBenList.size}")
+            return@withContext true
+        }
+    }
+
+    /**
+     * Uploads a single batch of beneficiaries (with their correlated household
+     * and kid records). On HTTP 413 the batch is split in half and retried
+     * recursively; a single record that is still too large is marked failed and
+     * logged. Returns (succeeded, failed) beneficiary counts.
+     */
+    private suspend fun uploadBenBatch(
+        benCacheList: List<BenRegCache>,
+        user: User,
+    ): Pair<Int, Int> {
+        if (benCacheList.isEmpty()) return 0 to 0
+
+        val benNetworkPostList = mutableSetOf<BenPost>()
+        val householdNetworkPostList = mutableSetOf<HouseholdNetwork>()
+        val kidNetworkPostList = mutableSetOf<BenRegKidNetwork>()
+
+        benCacheList.forEach {
+            benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
+            benNetworkPostList.add(it.asNetworkPostModel(context, user))
+            householdDao.getHousehold(it.householdId)?.let { household ->
+                householdNetworkPostList.add(household.asNetworkModel(user))
+            }
+            try {
+                if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(
+                    it.asKidNetworkModel(user)
                 )
-                try {
-                    if (it.ageUnitId != 3 || it.age < 15) kidNetworkPostList.add(
-                        it.asKidNetworkModel(
-                            user
-                        )
-                    )
-                } catch (e: java.lang.Exception) {
-                    Timber.e("caught error in adding kidDetails : $e")
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("caught error in adding kidDetails : $e")
+            }
+        }
+
+        val benIds = benNetworkPostList.map { it.benId }.toLongArray()
+
+        return when (postDataToAmritServer(
+            benNetworkPostList, householdNetworkPostList, kidNetworkPostList
+        )) {
+            UploadResult.SUCCESS -> {
+                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+                benNetworkPostList.size to 0
             }
 
-            // RECORD-LEVEL ISOLATION: BenRepo previously returned true
-            // regardless of upload success (Pattern C — silent success).
-            // Now failures are explicitly logged so they're visible in Timber
-            // logs. The worker still returns true (failed records are already
-            // marked via benSyncWithServerFailed and retry on next cycle).
-            val uploadDone = postDataToAmritServer(
-                benNetworkPostList, householdNetworkPostList, kidNetworkPostList,
-            )
-            if (!uploadDone) {
-                benNetworkPostList.takeIf { it.isNotEmpty() }?.map { it.benId }?.let {
-                    benDao.benSyncWithServerFailed(*it.toLongArray())
-                }
+            UploadResult.FAILED -> {
+                if (benIds.isNotEmpty()) benDao.benSyncWithServerFailed(*benIds)
                 Timber.e("Beneficiary batch push FAILED: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
-            } else {
-                Timber.d("Beneficiary batch push succeeded: ${benNetworkPostList.size} ben records, ${householdNetworkPostList.size} household records")
+                0 to benNetworkPostList.size
             }
-            return@withContext true
+
+            UploadResult.PAYLOAD_TOO_LARGE -> {
+                if (benCacheList.size <= 1) {
+                    // Cannot split further — a single record exceeds the limit.
+                    if (benIds.isNotEmpty()) benDao.benSyncWithServerFailed(*benIds)
+                    Timber.e("Beneficiary push FAILED: single record exceeds server payload limit (HTTP 413), benIds=${benIds.toList()}")
+                    return 0 to benCacheList.size
+                }
+                val mid = benCacheList.size / 2
+                Timber.w("Beneficiary batch too large (HTTP 413), splitting ${benCacheList.size} -> ${mid} + ${benCacheList.size - mid}")
+                val (s1, f1) = uploadBenBatch(benCacheList.subList(0, mid), user)
+                val (s2, f2) = uploadBenBatch(benCacheList.subList(mid, benCacheList.size), user)
+                (s1 + s2) to (f1 + f2)
+            }
         }
     }
 
@@ -501,8 +549,8 @@ class BenRepo @Inject constructor(
         householdNetworkPostSet: MutableSet<HouseholdNetwork>,
         kidNetworkPostSet: MutableSet<BenRegKidNetwork>,
         retryCount: Int = 3,
-    ): Boolean {
-        if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return true
+    ): UploadResult {
+        if (benNetworkPostSet.isEmpty() && householdNetworkPostSet.isEmpty() && kidNetworkPostSet.isEmpty()) return UploadResult.SUCCESS
         val benIds = benNetworkPostSet.map { it.benId }
         val hhIds = householdNetworkPostSet.map { it.householdId }
         Timber.d("Amrit push syncDataToAmrit: sending ${benNetworkPostSet.size} ben(s) $benIds, ${householdNetworkPostSet.size} hh(s) $hhIds, ${kidNetworkPostSet.size} kid(s)")
@@ -537,7 +585,7 @@ class BenRepo @Inject constructor(
                             Timber.d("Amrit push syncDataToAmrit DB updated: benIds=${it.toList()}")
                         }
                         hhToUpdateList?.let { householdDao.householdSyncedWithServer(*it) }
-                        return true
+                        return UploadResult.SUCCESS
                     } else if (responseStatusCode == 5002 || responseStatusCode ==401)  {
                         val user = preferenceDao.getLoggedInUser()
                             ?: throw IllegalStateException("User not logged in according to db")
@@ -551,22 +599,26 @@ class BenRepo @Inject constructor(
                 } else {
                     Timber.e("Amrit push syncDataToAmrit failed: response body is null, httpStatus=$statusCode")
                 }
+            } else if (statusCode == 413) {
+                // Payload Too Large — signal the caller to split this batch.
+                Timber.w("Amrit push syncDataToAmrit payload too large: httpStatus=413, ${benNetworkPostSet.size} ben(s)")
+                return UploadResult.PAYLOAD_TOO_LARGE
             }
             Timber.w("Amrit push syncDataToAmrit bad response: httpStatus=$statusCode, benIds=$benIds")
-            return false
+            return UploadResult.FAILED
         } catch (e: SocketTimeoutException) {
             Timber.e("Amrit push syncDataToAmrit timeout: benIds=$benIds, error=$e")
             if (retryCount > 0) return postDataToAmritServer(
                 benNetworkPostSet, householdNetworkPostSet, kidNetworkPostSet, retryCount - 1
             )
             Timber.e("Amrit push syncDataToAmrit: max retries exhausted")
-            return false
+            return UploadResult.FAILED
         } catch (e: JSONException) {
             Timber.e("Amrit push syncDataToAmrit JSON error: benIds=$benIds, error=$e")
-            return false
+            return UploadResult.FAILED
         } catch (e: java.lang.Exception) {
             Timber.e("Amrit push syncDataToAmrit error: benIds=$benIds, error=$e")
-            return false
+            return UploadResult.FAILED
         }
     }
 
@@ -643,7 +695,7 @@ class BenRepo @Inject constructor(
 
 
         val rmnchData = SendingRMNCHData(
-         //   listOf(householdNetworkPostSet),
+            //   listOf(householdNetworkPostSet),
             benficieryRegistrationData= benNetworkPostList
         )
         try {
@@ -677,7 +729,7 @@ class BenRepo @Inject constructor(
         } catch (e: SocketTimeoutException) {
             Timber.e("Caught exception $e here")
             if (retryCount > 0) return deactivateBeneficiary(
-               benNetworkPostSet, retryCount - 1
+                benNetworkPostSet, retryCount - 1
             )
             Timber.e("deactivateBeneficiary: max retries exhausted")
             return false
@@ -738,8 +790,6 @@ class BenRepo @Inject constructor(
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
 
                                 benDao.upsert(*benCacheList.toTypedArray())
-//                                val cbacCacheList = getCbacCacheFromServerResponse(responseString)
-//                                cbacDao.upsert(*cbacCacheList.toTypedArray())
 
                                 Timber.d("GeTBenDataList: $pageSize")
                                 return@withContext pageSize
@@ -754,7 +804,7 @@ class BenRepo @Inject constructor(
                             }
 
                             5000 -> {
-                                 // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
+                                // HelperUtil.saveApiResponseToDownloads(context, "9864880049_getBeneficiaryData_response.txt", HelperUtil.allPagesContent.toString())
 
                                 if (errorMessage == "No record found") return@withContext 0
                             }
@@ -827,17 +877,6 @@ class BenRepo @Inject constructor(
                                         BenBasicDomain(
                                             benId = jsonObject.getLong("benficieryid"),
                                             hhId = jsonObject.getLong("houseoldId"),
-
-//                                            isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean("isDeath") else false,
-//                                            isDeathValue = jsonObject.optString("isDeath", null),
-//                                            dateOfDeath = jsonObject.optString("dateOfDeath", null),
-//                                            timeOfDeath = jsonObject.optString("timeOfDeath", null),
-//                                            reasonOfDeath = jsonObject.optString("reasonOfDeath", null),
-//                                            reasonOfDeathId = if (jsonObject.has("reasonOfDeathId")) jsonObject.optInt("reasonOfDeathId") else -1,
-//                                            placeOfDeath = jsonObject.optString("placeOfDeath", null),
-//                                            placeOfDeathId = if (jsonObject.has("placeOfDeathId")) jsonObject.optInt("placeOfDeathId") else -1,
-//                                            otherPlaceOfDeath = jsonObject.optString("otherPlaceOfDeath", null),
-
                                             isDeath = if (jsonObject.has("isDeath")) jsonObject.optBoolean(
                                                 "isDeath"
                                             ) else false,
@@ -887,7 +926,6 @@ class BenRepo @Inject constructor(
                                             familyHeadName = houseDataObj.getString("familyHeadName"),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
-//                                            typeOfList = benDataObj.getString("registrationType"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
                                             dob = 0L,
                                             relToHeadId = 0,
@@ -949,7 +987,7 @@ class BenRepo @Inject constructor(
                         getCurrentDate(lastTimeStamp),
                         getCurrentDate(),
 
-                    )
+                        )
                 )
                 val statusCode = response.code()
                 if (statusCode == 200) {
@@ -1046,8 +1084,6 @@ class BenRepo @Inject constructor(
                     val benDataObj = jsonObject.getJSONObject("beneficiaryDetails")
                     val abhaHealthDetailsObj = jsonObject.getJSONObject("abhaHealthDetails")
 
-//                    val houseDataObj = jsonObject.getJSONObject("householdDetails")
-//                    val cbacDataObj = jsonObject.getJSONObject("cbacDetails")
                     val childDataObj = jsonObject.getJSONObject("bornbirthDeatils")
                     val benId =
                         if (jsonObject.has("benficieryid")) jsonObject.getLong("benficieryid") else -1L
@@ -1126,7 +1162,6 @@ class BenRepo @Inject constructor(
                                 isAdult = (benDataObj.getString("age_unit") == "Years" && benDataObj.getInt(
                                     "age"
                                 ) > 14),
-//                                userImageBlob = getCompressedByteArray(benId, benDataObj),
                                 regDate = if (benDataObj.has("registrationDate")) getLongFromDate(
                                     benDataObj.getString("registrationDate")
                                 ) else 0,
@@ -1153,7 +1188,6 @@ class BenRepo @Inject constructor(
                                     "familyHeadRelation"
                                 ) else null,
                                 familyHeadRelationPosition = benDataObj.getInt("familyHeadRelationPosition"),
-//                            familyHeadRelationOther = benDataObj.getString("familyHeadRelationOther"),
                                 mobileNoOfRelation = if (benDataObj.has("mobilenoofRelation")) benDataObj.getString(
                                     "mobilenoofRelation"
                                 ) else null,
@@ -1169,7 +1203,6 @@ class BenRepo @Inject constructor(
                                 contactNumber = if (benDataObj.has("contact_number")) benDataObj.getString(
                                     "contact_number"
                                 ).toLong() else 0,
-//                            literacy = literacy,
                                 literacyId = if (benDataObj.has("literacyId")) benDataObj.getInt("literacyId") else 0,
                                 communityId = if (benDataObj.has("communityId")) benDataObj.getInt("communityId") else 0,
                                 community = if (benDataObj.has("community")) benDataObj.getString("community") else null,
@@ -1182,96 +1215,31 @@ class BenRepo @Inject constructor(
                                     "religionOthers"
                                 ) else null,
                                 rchId = if (benDataObj.has("rchid")) benDataObj.getString("rchid") else null,
-//                            registrationType = if (benDataObj.has("registrationType")) {
-//                                when (benDataObj.getString("registrationType")) {
-//                                    "NewBorn" -> {
-//                                        if (benDataObj.getString("age_unit") != "Years" || benDataObj.getInt(
-//                                                "age"
-//                                            ) < 2
-//                                        ) TypeOfList.INFANT
-//                                        else if (benDataObj.getInt("age") < 6) TypeOfList.CHILD
-//                                        else TypeOfList.ADOLESCENT
-//                                    }
-//                                    "General Beneficiary", "सामान्य लाभार्थी" -> if (benDataObj.has(
-//                                            "reproductiveStatus"
-//                                        )
-//                                    ) {
-//                                        with(benDataObj.getString("reproductiveStatus")) {
-//                                            when {
-//                                                contains("Eligible Couple") || contains("पात्र युगल") -> TypeOfList.ELIGIBLE_COUPLE
-//                                                contains("Antenatal Mother") -> TypeOfList.ANTENATAL_MOTHER
-//                                                contains("Delivery Stage") -> TypeOfList.DELIVERY_STAGE
-//                                                contains("Postnatal Mother") -> TypeOfList.POSTNATAL_MOTHER
-//                                                contains("Menopause Stage") -> TypeOfList.MENOPAUSE
-//                                                contains("Teenager") || contains("किशोरी") -> TypeOfList.TEENAGER
-//                                                else -> TypeOfList.GENERAL
-//                                            }
-//                                        }
-//                                    } else TypeOfList.GENERAL
-//                                    else -> TypeOfList.GENERAL
-//                                }
-//                            } else TypeOfList.OTHER,
                                 latitude = benDataObj.getDouble("latitude"),
                                 longitude = benDataObj.getDouble("longitude"),
                                 aadharNum = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") else null,
                                 aadharNumId = benDataObj.getInt("aadha_noId"),
                                 hasAadhar = if (benDataObj.has("aadhaNo")) benDataObj.getString("aadhaNo") != "" else false,
                                 hasAadharId = if (benDataObj.getInt("aadha_noId") == 1) 1 else 0,
-//                            bankAccountId = benDataObj.getString("bank_accountId"),
                                 bankAccount = if (benDataObj.has("bankAccount")) benDataObj.getString(
                                     "bankAccount"
                                 ) else null,
                                 nameOfBank = if (benDataObj.has("nameOfBank")) benDataObj.getString(
                                     "nameOfBank"
                                 ) else null,
-//                            nameOfBranch = benDataObj.getString("nameOfBranch"),
                                 ifscCode = if (benDataObj.has("ifscCode")) benDataObj.getString("ifscCode") else null,
-//                            needOpCare = benDataObj.getString("need_opcare"),
                                 needOpCareId = if (benDataObj.has("need_opcareId")) benDataObj.getInt(
                                     "need_opcareId"
                                 ) else 0,
                                 ncdPriority = if (benDataObj.has("ncd_priority")) benDataObj.getInt(
                                     "ncd_priority"
                                 ) else 0,
-//                            cbacAvailable = cbacDataObj.length() != 0,
                                 guidelineId = if (benDataObj.has("guidelineId")) benDataObj.getString(
                                     "guidelineId"
                                 ) else null,
                                 isHrpStatus = if (benDataObj.has("hrpStatus")) benDataObj.getBoolean(
                                     "hrpStatus"
                                 ) else false,
-//                            hrpIdentificationDate = hrp_identification_date,
-//                            hrpLastVisitDate = hrp_last_vist_date,
-//                            nishchayPregnancyStatus = nishchayPregnancyStatus,
-//                            nishchayPregnancyStatusPosition = nishchayPregnancyStatusPosition,
-//                            nishchayDeliveryStatus = nishchayDeliveryStatus,
-//                            nishchayDeliveryStatusPosition = nishchayDeliveryStatusPosition,
-//                            nayiPahalDeliveryStatus = nayiPahalDeliveryStatus,
-//                            nayiPahalDeliveryStatusPosition = nayiPahalDeliveryStatusPosition,
-//                            suspectedNcd = if (cbacDataObj.has("suspected_ncd")) cbacDataObj.getString(
-//                                "suspected_ncd"
-//                            ) else null,
-//                            suspectedNcdDiseases = if (cbacDataObj.has("suspected_ncd_diseases")) cbacDataObj.getString(
-//                                "suspected_ncd_diseases"
-//                            ) else null,
-//                            suspectedTb = if (cbacDataObj.has("suspected_tb")) cbacDataObj.getString(
-//                                "suspected_tb"
-//                            ) else null,
-//                            confirmed_Ncd = if (cbacDataObj.has("confirmed_ncd")) cbacDataObj.getString(
-//                                "confirmed_ncd"
-//                            ) else null,
-//                            confirmedHrp = if (cbacDataObj.has("confirmed_hrp")) cbacDataObj.getString(
-//                                "confirmed_hrp"
-//                            ) else null,
-//                            confirmedTb = if (cbacDataObj.has("confirmed_tb")) cbacDataObj.getString(
-//                                "confirmed_tb"
-//                            ) else null,
-//                            confirmedNcdDiseases = if (cbacDataObj.has("confirmed_ncd_diseases")) cbacDataObj.getString(
-//                                "confirmed_ncd_diseases"
-//                            ) else null,
-//                            diagnosisStatus = if (cbacDataObj.has("diagnosis_status")) cbacDataObj.getString(
-//                                "diagnosis_status"
-//                            ) else null,
                                 locationRecord = LocationRecord(
                                     country = preferenceDao.getLocationRecord()!!.country,
                                     state = LocationEntity(
@@ -1363,11 +1331,9 @@ class BenRepo @Inject constructor(
                                     ) else null,
                                     term = if (childDataObj.has("term")) childDataObj.getString("term") else null,
                                     termId = if (childDataObj.has("termid")) childDataObj.getInt("termid") else 0,
-//                                    gestationalAge  = if(childDataObj.has("gestationalAge")) childDataObj.getString("gestationalAge") else null,
                                     gestationalAgeId = if (childDataObj.has("gestationalAgeid")) childDataObj.getInt(
                                         "gestationalAgeid"
                                     ) else 0,
-//                                    corticosteroidGivenMother  = if(childDataObj.has("corticosteroidGivenMother")) childDataObj.getString("corticosteroidGivenMother") else null,
                                     corticosteroidGivenMotherId = if (childDataObj.has("corticosteroidGivenMotherid")) childDataObj.getInt(
                                         "corticosteroidGivenMotherid"
                                     ) else 0,
@@ -1407,30 +1373,19 @@ class BenRepo @Inject constructor(
                                     opvBatchNo = if (childDataObj.has("opvBatchNo")) childDataObj.getString(
                                         "opvBatchNo"
                                     ) else null,
-//                                opvGivenDueDate  = childDataObj.getString("opvGivenDueDate"),
-//                                opvDate  = childDataObj.getString("opvDate"),
                                     bcdBatchNo = if (childDataObj.has("bcdBatchNo")) childDataObj.getString(
                                         "bcdBatchNo"
                                     ) else null,
-//                                bcgGivenDueDate  = childDataObj.getString("bcgGivenDueDate"),
-//                                bcgDate  = childDataObj.getString("bcgDate"),
                                     hptBatchNo = if (childDataObj.has("hptdBatchNo")) childDataObj.getString(
                                         "hptdBatchNo"
                                     ) else null,
-//                                hptGivenDueDate  = childDataObj.getString("hptGivenDueDate"),
-//                                hptDate  = childDataObj.getString("hptDate"),
                                     vitaminKBatchNo = if (childDataObj.has("vitaminkBatchNo")) childDataObj.getString(
                                         "vitaminkBatchNo"
                                     ) else null,
-//                                vitaminKGivenDueDate  =  childDataObj.getString("vitaminKGivenDueDate"),
-//                                vitaminKDate =  childDataObj.getString("vitaminKDate"),
                                     deliveryTypeOther = if (childDataObj.has("deliveryTypeOther")) childDataObj.getString(
                                         "deliveryTypeOther"
                                     ) else null,
 
-//                                motherBenId =  childDataObj.getString("conductedDeliveryOther"),
-//                                childMotherName =  childDataObj.getString("conductedDeliveryOther"),
-//                                motherPosition =  childDataObj.getString("conductedDeliveryOther"),
                                     birthBCG = if (childDataObj.has("birthBCG")) childDataObj.getBoolean(
                                         "birthBCG"
                                     ) else false,
@@ -1460,31 +1415,9 @@ class BenRepo @Inject constructor(
                                     ageAtMarriage = if (benDataObj.has("ageAtMarriage")) benDataObj.getInt(
                                         "ageAtMarriage"
                                     ) else 0,
-//                                dateOfMarriage = getLongFromDate(dateMarriage),
                                     marriageDate = if (benDataObj.has("marriageDate")) getLongFromDate(
                                         benDataObj.getString("marriageDate")
                                     ) else null,
-//                                menstrualStatus = menstrualStatus,
-//                                menstrualStatusId = if (benDataObj.has("menstrualStatusId")) benDataObj.getInt(
-//                                    "menstrualStatusId"
-//                                ) else null,
-//                                regularityOfMenstrualCycle = regularityofMenstrualCycle,
-//                                regularityOfMenstrualCycleId = if (benDataObj.has("regularityofMenstrualCycleId")) benDataObj.getInt(
-//                                    "regularityofMenstrualCycleId"
-//                                ) else 0,
-//                                lengthOfMenstrualCycle = lengthofMenstrualCycle,
-//                                lengthOfMenstrualCycleId = if (benDataObj.has("lengthofMenstrualCycleId")) benDataObj.getInt(
-//                                    "lengthofMenstrualCycleId"
-//                                ) else 0,
-//                                menstrualBFD = menstrualBFD,
-//                                menstrualBFDId = if (benDataObj.has("menstrualBFDId")) benDataObj.getInt(
-//                                    "menstrualBFDId"
-//                                ) else 0,
-//                                menstrualProblem = menstrualProblem,
-//                                menstrualProblemId = if (benDataObj.has("menstrualProblemId")) benDataObj.getInt(
-//                                    "menstrualProblemId"
-//                                ) else 0,
-//                                lastMenstrualPeriod = lastMenstrualPeriod,
                                     /**
                                      * part of reproductive status id mapping on @since Aug 7
                                      */
@@ -1505,20 +1438,6 @@ class BenRepo @Inject constructor(
                                             else -> 5
                                         }
                                     } else 0,
-//                                lastDeliveryConducted = lastDeliveryConducted,
-//                                lastDeliveryConductedId = if (benDataObj.has("lastDeliveryConductedID")) benDataObj.getInt(
-//                                    "lastDeliveryConductedID"
-//                                ) else 0,
-//                                facilityName = facilitySelection,
-//                                whoConductedDelivery = whoConductedDelivery,
-//                                whoConductedDeliveryId = if (benDataObj.has("whoConductedDeliveryID")) benDataObj.getInt(
-//                                    "whoConductedDeliveryID"
-//                                ) else 0,
-//                                deliveryDate = deliveryDate,
-//                                expectedDateOfDelivery = if (benDataObj.has("expectedDateOfDelivery")) getLongFromDate(
-//                                    benDataObj.getString("expectedDateOfDelivery")
-//                                ) else null,
-//                                noOfDaysForDelivery = noOfDaysForDelivery,
                                 ),
                                 healthIdDetails = if (abhaHealthDetailsObj != null && abhaHealthDetailsObj.length() > 0) {
                                     BenHealthIdDetails(
@@ -1541,42 +1460,6 @@ class BenRepo @Inject constructor(
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
                             )
                         )
-
-
-                        /*val registrationType = if (benDataObj.has("registrationType")) {
-                            when (benDataObj.getString("registrationType")) {
-                                "NewBorn" -> {
-                                    if (benDataObj.getString("age_unit") != "Years" || benDataObj.getInt(
-                                            "age"
-                                        ) < 2
-                                    ) TypeOfList.INFANT
-                                    else if (benDataObj.getInt("age") < 6) TypeOfList.CHILD
-                                    else TypeOfList.ADOLESCENT
-                                }
-                                "General Beneficiary", "सामान्य लाभार्थी" -> if (benDataObj.has(
-                                        "reproductiveStatus"
-                                    )
-                                ) {
-                                    when (benDataObj.getString("reproductiveStatus")) {
-                                        "Eligible Couple" -> TypeOfList.ELIGIBLE_COUPLE
-                                        "Antenatal Mother" -> TypeOfList.ANTENATAL_MOTHER
-                                        "Delivery Stage" -> TypeOfList.DELIVERY_STAGE
-                                        "Postnatal Mother" -> TypeOfList.POSTNATAL_MOTHER
-                                        "Menopause" -> TypeOfList.MENOPAUSE
-                                        "Teenager" -> TypeOfList.TEENAGER
-                                        else -> TypeOfList.OTHER
-                                    }
-                                } else TypeOfList.GENERAL
-                                else -> TypeOfList.GENERAL
-                            }
-                        } else TypeOfList.OTHER
-                        Timber.d(
-                            "Custom Validation: $registrationType, ${benDataObj.getString("age_unit")}, " + "${
-                                benDataObj.getInt(
-                                    "age"
-                                )
-                            }, ${benDataObj.getString("reproductiveStatus")}"
-                        )*/
 
 //                        if (benDataObj.has("benficieryid")){
 //                            count++
@@ -1664,13 +1547,8 @@ class BenRepo @Inject constructor(
                                     otherHouseType = houseDataObj.getString("other_houseType"),
                                     isHouseOwned = houseDataObj.getString("houseOwnerShip"),
                                     isHouseOwnedId = houseDataObj.getInt("houseOwnerShipId"),
-//                                isLandOwned = houseDataObj.getString("landOwned") == "Yes",
-//                                isLandIrrigated = houseDataObj.has("landIrregated") && houseDataObj.getString("landIrregated") == "Yes",
-//                                isLivestockOwned = houseDataObj.getString("liveStockOwnerShip") == "Yes",
-//                                street = houseDataObj.getString("street"),
-//                                colony = houseDataObj.getString("colony"),
-//                                pincode = houseDataObj.getInt("pincode"),
-                                ),
+
+                                    ),
                                 amenities = HouseholdAmenities(
                                     separateKitchen = houseDataObj.getString("seperateKitchen"),
                                     separateKitchenId = houseDataObj.getInt("seperateKitchenId"),
@@ -1687,8 +1565,6 @@ class BenRepo @Inject constructor(
                                     availabilityOfToiletId = houseDataObj.getInt("availabilityofToiletId"),
                                     otherAvailabilityOfToilet = houseDataObj.getString("other_availabilityofToilet"),
                                 ),
-//                                motorizedVehicle = houseDataObj.getString("motarizedVehicle"),
-//                                otherMotorizedVehicle = houseDataObj.getString("other_motarizedVehicle"),
                                 registrationType = if (houseDataObj.has("registrationType")) houseDataObj.getString(
                                     "registrationType"
                                 ) else null,
@@ -1858,31 +1734,126 @@ class BenRepo @Inject constructor(
         return null
     }
 
-    suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
 
-            var validateOtp = ValidateOtpRequest(otp,mobileNo)
-        val response = tmcNetworkApiService.validateOtp(validateOtp)
+    suspend fun getUserDetailsByAyushmanAbhaCardNo(cardNo: String,houseHoldId:String): NetworkResult<List<FamilyMember>> {
+        return try {
+            val response = tmcNetworkApiService.getUserDetailsByAyushmanCardNo(
+                UserDetailsByAyushmanCardNoRequest(cardNo,houseHoldId)
+            )
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
-                when (responseBody?.let { JSONObject(it).getInt("statusCode") }) {
-                    200 -> {
-                        val jsonObj = JSONObject(responseBody)
-                        val data = jsonObj.getJSONObject("data").toString()
-                        val myresponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
-                        NewBenRegViewModel.isOtpVerified = true
-                        return myresponse
-                    }
+                if (responseBody.isNullOrBlank()) {
+                    NetworkResult.Error(response.code(), "Empty response from server")
+                } else {
+                    Timber.d("getUserDetailsByAyushmanCardNo raw response: $responseBody")
+                    parseAyushmanResponse(responseBody)
+                }
+            } else {
+                NetworkResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "getUserDetailsByAyushmanAbhaCardNo failed")
+            NetworkResult.NetworkError
+        }
+    }
 
-                    5000, 5002 -> {
-                        Toast.makeText(context,"Please enter valid OTP.",Toast.LENGTH_SHORT).show()
+    private fun parseAyushmanResponse(body: String): NetworkResult<List<FamilyMember>> {
+        val gson = Gson()
+        return try {
+            val root = JSONObject(body.trim())
+            val inner = root.optJSONObject("data")
+            if (inner != null &&
+                (inner.has("message") || inner.has("data") ||
+                        inner.has("statusCode") || inner.has("status_code"))
+            ) {
+                val message = inner.optString("message").takeIf { it.isNotBlank() }
+                val memberArray = inner.optJSONArray("data")
+                if (memberArray != null && memberArray.length() > 0) {
+                    NetworkResult.Success(
+                        gson.fromJson(memberArray.toString(), Array<FamilyMember>::class.java).toList()
+                    )
+                } else {
+                    val code = inner.optInt(
+                        "statusCode",
+                        inner.optString("status_code").toIntOrNull() ?: 0
+                    )
+                    NetworkResult.Error(code, message ?: "No records found for this card number")
+                }
+            } else {
+                val members = parseFamilyMembers(body)
+                if (members.isEmpty()) NetworkResult.Error(0, "No records found for this card number")
+                else NetworkResult.Success(members)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "parseAyushmanResponse failed")
+            val members = runCatching { parseFamilyMembers(body) }.getOrDefault(emptyList())
+            if (members.isEmpty()) NetworkResult.Error(0, "Unable to parse response")
+            else NetworkResult.Success(members)
+        }
+    }
 
-                    }
+    private fun parseFamilyMembers(body: String): List<FamilyMember> {
+        val gson = Gson()
+        val trimmed = body.trim()
+        return when {
+            trimmed.startsWith("[") ->
+                gson.fromJson(trimmed, Array<FamilyMember>::class.java).toList()
 
-                    else -> {
-                        NetworkResult.Error(0, responseBody.toString())
-                    }
+            trimmed.startsWith("{") -> {
+                val json = JSONObject(trimmed)
+                val dataKey = listOf("object_data", "data", "result", "userDetails", "userDetail")
+                    .firstOrNull { json.has(it) }
+                when (val node = dataKey?.let { runCatching { json.get(it) }.getOrNull() }) {
+                    is JSONArray ->
+                        gson.fromJson(node.toString(), Array<FamilyMember>::class.java).toList()
+
+                    is JSONObject ->
+                        listOf(gson.fromJson(node.toString(), FamilyMember::class.java))
+
+                    else ->
+                        if (json.has("cardNo") || json.has("cardno") ||
+                            json.has("personName") || json.has("name") ||
+                            json.has("abhaId") || json.has("abhId") ||
+                            json.has("familyid") || json.has("familyId")
+                        ) {
+                            listOf(gson.fromJson(trimmed, FamilyMember::class.java))
+                        } else {
+                            emptyList()
+                        }
                 }
             }
+
+            else -> emptyList()
+        }
+    }
+
+    suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
+        val validateOtp = ValidateOtpRequest(otp,mobileNo)
+        val response = tmcNetworkApiService.validateOtp(validateOtp)
+        if (response.isSuccessful) {
+            val responseBody = response.body()?.string()
+            val json = JSONObject(responseBody.toString())
+            val statusCode = json.getInt("statusCode")
+            when (statusCode) {
+                200 -> {
+                    val jsonObj = JSONObject(responseBody)
+                    val data = jsonObj.getJSONObject("data").toString()
+                    val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                    NewBenRegViewModel.isOtpVerified = true
+                    return myResponse
+                }
+
+                500, 502, 5000, 5002 -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                else -> {
+                    NetworkResult.Error(0, responseBody.toString())
+                }
+            }
+        }
 
         return null
     }

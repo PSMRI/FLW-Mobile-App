@@ -59,7 +59,7 @@ data class ReferalCache(
             createdBy = createdBy,
             benVisitID = benVisitID,
             visitCode = visitCode,
-            beneficiaryRegID = benId,
+            beneficiaryRegID = beneficiaryRegID,
             type = type
 
 

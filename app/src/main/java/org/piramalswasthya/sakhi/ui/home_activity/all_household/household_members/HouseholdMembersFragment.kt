@@ -2,6 +2,8 @@ package org.piramalswasthya.sakhi.ui.home_activity.all_household.household_membe
 
 import androidx.appcompat.app.AlertDialog
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,6 +36,8 @@ import org.piramalswasthya.sakhi.utils.HelperUtil
 import javax.inject.Inject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
 
 @AndroidEntryPoint
 class HouseholdMembersFragment : Fragment() {
@@ -46,6 +52,10 @@ class HouseholdMembersFragment : Fragment() {
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
+
+    private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    private var connectivityManager: ConnectivityManager? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     var showAbha = false
     private val abhaDisclaimer by lazy {
@@ -173,8 +183,8 @@ class HouseholdMembersFragment : Fragment() {
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Beneficiary")
-            .setMessage("Are you sure you want to delete ${benBasicDomain.benFullName}")
+            .setTitle(getString(R.string.str_delete_beneficiary))
+            .setMessage("${getString(R.string.str_delete_household_msg)} ${benBasicDomain.benFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateBeneficiary(benBasicDomain)
             }
@@ -203,6 +213,7 @@ class HouseholdMembersFragment : Fragment() {
         normalFlow: () -> Unit
     ){
         if (!canProceed(item)) return
+        if (findNavController().currentDestination?.id != R.id.householdMembersFragment) return
         if (viewModel.isFromDisease == 0) normalFlow() else navigateToDiseaseForm(benId)
     }
 
@@ -235,6 +246,10 @@ class HouseholdMembersFragment : Fragment() {
 
         binding.fabAddMember.setOnClickListener {
             addBenAlert?.show()
+        }
+
+        if (isMitaninFlavor && binding.fabAddMember.visibility == View.VISIBLE) {
+           // setupFabAddMemberInternetGate()
         }
 
         val benAdapter = BenListAdapter(
@@ -300,7 +315,10 @@ class HouseholdMembersFragment : Fragment() {
                 { item, benId, hhId ->
                     if (canProceed(item)) checkAndGenerateABHA(benId)
                 },
-                { item, benId, hhId, isViewMode, isIFA ->
+                { item,benId, hhId, isViewMode, isIFA ->
+                    if (!isIFA && !item.isDeactivate) {
+                        showEyeSurgeryBottomSheet(benId, hhId, item.benFullName, item.gender, item.age)
+                    }
                     if (canProceed(item)) {
                         findNavController().navigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
@@ -322,7 +340,8 @@ class HouseholdMembersFragment : Fragment() {
                             activity?.let {
                                 (it as HomeActivity).askForPermissions()
                             }
-                            Toast.makeText(requireContext(), "Please allow permissions first", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),
+                                getString(R.string.str_pls_allow_permissions), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -337,7 +356,7 @@ class HouseholdMembersFragment : Fragment() {
                             } else {
                                 Toast.makeText(
                                     requireContext(),
-                                    "Head of Family cannot be deleted when other members exist.",
+                                    getString(R.string.str_hof_cant_delete),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -419,6 +438,37 @@ class HouseholdMembersFragment : Fragment() {
         }
     }
 
+    private fun setupFabAddMemberInternetGate() {
+        updateFabAddMemberState()
+        val cm = ContextCompat.getSystemService(requireContext(), ConnectivityManager::class.java)
+        connectivityManager = cm
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                _binding?.root?.post { updateFabAddMemberState() }
+            }
+
+            override fun onLost(network: Network) {
+                _binding?.root?.post { updateFabAddMemberState() }
+            }
+        }
+        networkCallback = callback
+        cm?.registerDefaultNetworkCallback(callback)
+    }
+
+    private fun updateFabAddMemberState() {
+        val b = _binding ?: return
+        val hasInternet = isInternetAvailable(requireContext())
+        b.fabAddMember.isEnabled = hasInternet
+        val tint = if (hasInternet) {
+            com.google.android.material.color.MaterialColors.getColor(
+                b.fabAddMember, com.google.android.material.R.attr.colorPrimary
+            )
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.md_theme_light_ongray)
+        }
+        b.fabAddMember.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
+    }
+
     private fun checkAndGenerateABHA(benId: Long) {
         viewModel.fetchAbha(benId)
     }
@@ -446,9 +496,29 @@ class HouseholdMembersFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        networkCallback?.let { connectivityManager?.unregisterNetworkCallback(it) }
+        networkCallback = null
+        connectivityManager = null
         addBenAlert?.dismiss()
         addBenAlert = null
         _binding = null
     }
-
+    private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {
+        val bottomSheet = EyeSurgeryBottomSheetFragment.newInstance(benId, hhId, benName, gender, age)
+        bottomSheet.setNavigationCallback(object : EyeSurgeryBottomSheetFragment.NavigationCallback {
+            override fun navigateToEyeSurgeryForm(
+                benId: Long, hhId: Long, eyeSide: String, isViewMode: Boolean,
+                formDataJson: String?, recordId: Int, benName: String, gender: String, age: String
+            ) {
+                findNavController().navigate(
+                    HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
+                        benId = benId, hhId = hhId, eyeSide = eyeSide,
+                        isViewMode = isViewMode, formDataJson = formDataJson,
+                        recordId = recordId, benName = benName, gender = gender, age = age
+                    )
+                )
+            }
+        })
+        bottomSheet.show(childFragmentManager, "EyeSurgeryBottomSheet")
+    }
 }

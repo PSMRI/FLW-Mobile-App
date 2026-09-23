@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.ChildCareVisitListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCUFYBottomSheetBinding
@@ -30,6 +31,10 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var formID: String
     private val viewModel: CUFYListViewModel by viewModels({ requireParentFragment() })
+
+    private val isMitaninVariant: Boolean by lazy {
+        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    }
 
 
     override fun onCreateView(
@@ -93,7 +98,35 @@ class CUFYBottomSheetFragment : BottomSheetDialogFragment() {
 
             val savedList = viewModel.getSavedVisits(formID, benId)
 
-            if (type == FormConstants.IFA_FORM_NAME) {
+            if (type == FormConstants.IFA_FORM_NAME && isMitaninVariant) {
+                // FLW-1129 — the raw bottle count is gone from the Mitanin UI; each provision is
+                // presented as "IFA Visit 1", "IFA Visit 2"... with a separate row to add the next.
+                // isIFA is left false on purpose: its only effect in the row layout is to force an
+                // Add button onto a view row, and these rows are view-only.
+                val viewOptions = savedList.sortedBy { it.visitDate }.mapIndexed { index, entity ->
+                    ChildOption(
+                        formType = mapFormIdToType(entity.formId),
+                        title = getString(R.string.ifa_visit, index + 1),
+                        description = entity.visitDate,
+                        isViewMode = true,
+                        visitDay = entity.visitDate,
+                        formDataJson = entity.formDataJson,
+                        recordId = entity.id
+                    )
+                }
+
+                val addOption = ChildOption(
+                    formType = type ?: "",
+                    title = getString(R.string.add_new_visit),
+                    description = "",
+                    isViewMode = false,
+                    formDataJson = null
+                )
+
+                (_binding?.rvAnc?.adapter as ChildCareVisitListAdapter?)
+                    ?.submitList(viewOptions + addOption)
+
+            } else if (type == FormConstants.IFA_FORM_NAME) {
                 val latestVisit = savedList.lastOrNull()
 
                 val viewOptions = latestVisit?.let { entity ->

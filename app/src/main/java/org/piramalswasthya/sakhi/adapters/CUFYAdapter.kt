@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.ChildrenUnderFiveYearsItemBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.children_under_five_years.CUFYListViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
@@ -43,6 +44,7 @@ class CUFYAdapter(
             binding.ben =  item.ben
             binding.clickListener = clickListener
             binding.samStatus = item.samStatus
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.AshaProfileDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenRegCache
-import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
@@ -65,7 +64,7 @@ class AshaProfileViewModel @Inject constructor(
         get() = _recordExists
 
     private val dataset =
-        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo)
+        AshaProfileDataset(context, preferenceDao.getCurrentLanguage(),ashaProfileRepo,preferenceDao)
     val formList = dataset.listFlow
 
     var isPregnant: Boolean = false
@@ -106,8 +105,19 @@ class AshaProfileViewModel @Inject constructor(
                 }
 
             } ?: run {
+                val savedImageUri = preferenceDao.getProfilePicUri()?.toString() ?: ""
+                profileActivityCache = ProfileActivityCache(
+                    id = asha.userId.toLong(),
+                    employeeId = asha.userId,
+                    profileImage = savedImageUri
+                )
                 _recordExists.value = false
-
+                currentUser?.let {
+                    dataset.setUpPage(
+                        asha,
+                        profileActivityCache
+                    )
+                }
             }
 
 
@@ -125,6 +135,10 @@ class AshaProfileViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
+                    if (!::profileActivityCache.isInitialized) {
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _state.postValue(State.SAVING)
                     dataset.mapProfileValues(profileActivityCache,context)
                     ashaProfileRepo.saveRecord(profileActivityCache)

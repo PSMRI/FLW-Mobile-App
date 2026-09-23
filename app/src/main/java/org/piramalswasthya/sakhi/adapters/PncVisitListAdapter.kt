@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemPncVisitBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.concurrent.TimeUnit
@@ -61,6 +62,9 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
                 if (item.savedPncRecords.isEmpty()) View.INVISIBLE else View.VISIBLE
             binding.btnAddPnc.visibility =
                 if (item.allowFill) View.VISIBLE else View.INVISIBLE
+
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+
             binding.clickListener = clickListener
             binding.executePendingBindings()
 

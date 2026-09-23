@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.login_activity.sign_in
 
 import android.app.AlertDialog
+import timber.log.Timber
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -26,14 +28,13 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentSignInBinding
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
-import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
 import org.piramalswasthya.sakhi.utils.NoCopyPasteHelper
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -41,6 +42,7 @@ import javax.inject.Inject
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 
 
 @AndroidEntryPoint
@@ -83,6 +85,8 @@ class SignInFragment : Fragment() {
                     if (it > 0) {
                         WorkerUtils.triggerAmritPushWorker(requireContext())
                     } else {
+                        // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                        FcmTokenUploader.clearToken(requireContext())
                         lifecycleScope.launch {
                             viewModel.logout()
                         }
@@ -138,14 +142,15 @@ class SignInFragment : Fragment() {
             viewModel.loginInClicked()
         }
 
-        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+       /* if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
             binding.rbAssamese.visibility = android.view.View.GONE
+//            binding.rbBangala!!.visibility = android.view.View.GONE
         }
-
         when (prefDao.getCurrentLanguage()) {
             ENGLISH -> binding.rgLangSelect.check(binding.rbEng.id)
             Languages.HINDI -> binding.rgLangSelect.check(binding.rbHindi.id)
             ASSAMESE -> binding.rgLangSelect.check(binding.rbAssamese.id)
+            Languages.BANGLA -> binding.rgLangSelect.check(binding.rbEng.id)
         }
 
         binding.rgLangSelect.setOnCheckedChangeListener { _, i ->
@@ -153,6 +158,7 @@ class SignInFragment : Fragment() {
                 binding.rbEng.id -> ENGLISH
                 binding.rbHindi.id -> Languages.HINDI
                 binding.rbAssamese.id -> ASSAMESE
+//                binding.rbBangala!!.id -> Languages.BANGLA
                 else -> ENGLISH
             }
             prefDao.saveSetLanguage(currentLanguage)
@@ -162,6 +168,20 @@ class SignInFragment : Fragment() {
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 
 
+        }*/
+
+        updateSelectedLangText(prefDao.getCurrentLanguage())
+        binding.llSelectLang?.setOnClickListener {
+            LanguageBottomSheet(prefDao.getCurrentLanguage()) { selectedLang ->
+                prefDao.saveSetLanguage(selectedLang.language)
+                val refresh = Intent(requireContext(), LoginActivity::class.java)
+                requireActivity().finish()
+                startActivity(refresh)
+                activity?.overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            }.show(childFragmentManager, "LanguageBottomSheet")
         }
 
         binding.tvDeleteAccount?.setOnClickListener {
@@ -175,9 +195,14 @@ class SignInFragment : Fragment() {
             }
 
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(requireContext(), getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -224,7 +249,7 @@ class SignInFragment : Fragment() {
                     binding.tvError.visibility = View.GONE
 
                     val loggedInUser = prefDao.getLoggedInUser()
-                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+                    if (loggedInUser?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || loggedInUser?.role.equals(RoleConstants.ROLE_ANM, true) || loggedInUser?.role.equals(RoleConstants.ROLE_CHO, true)) {
                         val user = loggedInUser!!
                         val village = user.villages.firstOrNull()
                         val locationRecord = LocationRecord(
@@ -235,11 +260,11 @@ class SignInFragment : Fragment() {
                             LocationEntity(village?.id ?: 0, village?.name ?: ""),
                         )
                         prefDao.saveLocationRecord(locationRecord)
-
                         activity?.finish()
                         val goToHome = Intent(requireContext(), SupervisorActivity::class.java)
                         startActivity(goToHome)
                     } else {
+
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                         if (BuildConfig.FLAVOR.equals("niramay", true)) {
 //                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
@@ -287,6 +312,20 @@ class SignInFragment : Fragment() {
             it?.let {
                 if (it) validateInput()
             }
+        }
+
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+        val isNonProdMitanin = isMitanin &&
+                (!BuildConfig.FLAVOR.equals("mitanin", ignoreCase = true) || BuildConfig.DEBUG)
+        binding.tvDemo?.visibility = if (isNonProdMitanin) View.VISIBLE else View.GONE
+    }
+
+    private fun updateSelectedLangText(language: Languages) {
+        binding.tvSelectedLang?.text = when (language) {
+            Languages.ENGLISH  -> getString(R.string.text_english)
+            Languages.HINDI    -> getString(R.string.text_hindi)
+            Languages.ASSAMESE -> getString(R.string.text_assamese)
+            Languages.BANGLA   -> getString(R.string.text_bangali)
         }
     }
 

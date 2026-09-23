@@ -12,6 +12,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.setToEndOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveActivityListRequest
 import org.piramalswasthya.sakhi.model.IncentiveActivityNetwork
@@ -117,11 +118,22 @@ class IncentiveRepo @Inject constructor(
     suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
+                val localRecordCount = incentiveDao.getRecordCount()
+                val fromTimestamp = if (localRecordCount == 0) {
+                    Konstants.defaultTimeStamp
+                } else {
+                    preferenceDao.lastIncentivePullTimestamp
+                }
+                Timber.d(
+                    "Incentive record pull: localRecordCount=$localRecordCount, " +
+                        "cursor=${preferenceDao.lastIncentivePullTimestamp}, " +
+                        "fromTimestamp=$fromTimestamp (default=${Konstants.defaultTimeStamp})"
+                )
 
                 val requestBody = IncentiveRecordListRequest(
                     user.userId,
                     getDateTimeStringFromLong(
-                        preferenceDao.lastIncentivePullTimestamp
+                        fromTimestamp
                     )!!,
                     getDateTimeStringFromLong(
                         Calendar.getInstance().setToEndOfTheDay().timeInMillis

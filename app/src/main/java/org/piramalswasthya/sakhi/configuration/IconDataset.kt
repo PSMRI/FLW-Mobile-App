@@ -8,7 +8,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
-import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.SupervisorFragmentDirections
+import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.getTitleRes
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
@@ -46,13 +46,17 @@ class IconDataset @Inject constructor(
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
         val showAll = preferenceDao.isDevModeEnabled
-        val vlfTitle = resources.getString(R.string.icon_title_vlf)
+        val vlfTitle = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            resources.getString(R.string.mitanin_village_meetings)
+        } else {
+            resources.getString(R.string.asha_village_meetings)
+        }
 
         Timber.d("currently : $showAll")
-        lateinit var showModules:Modules
+        lateinit var showModules: Modules
         if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
             showModules = Modules.HRP
-        }else{
+        } else {
             showModules = Modules.ALL
         }
         return when (showModules) {
@@ -94,10 +98,10 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
                 ),
                 Icon(
-                    R.drawable.ic__ncd,
-                    resources.getString(R.string.icon_title_cd),
-                    null,
-                    HomeFragmentDirections.actionHomeFragmentToCdFragment()
+                    R.drawable.referral,
+                    resources.getString(R.string.ncd_refer_list),
+                    recordsRepo.getNcdrefferedListCount,
+                    HomeFragmentDirections.actionHomeFragmentToNcdReferredListFragment()
                 ),
                 Icon(
                     R.drawable.ic_vaccines,
@@ -219,67 +223,74 @@ class IconDataset @Inject constructor(
             R.drawable.ic__hh,
             resources.getString(R.string.sup_households),
             recordsRepo.hhListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToAllHouseholdFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToAllHouseholdFragments()
         ),
         Icon(
             R.drawable.ic__ben,
             resources.getString(R.string.sup_beneficiaries),
             recordsRepo.allBenListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToAllBenFragments(0)
+            SupervisorHomeFragmentDirections.actionNavSupervisorToAllBenFragments(0)
         ),
         Icon(
             R.drawable.ic__eligible_couple,
             resources.getString(R.string.sup_eligible_couples),
             recordsRepo.eligibleCoupleTrackingListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToEligibleCoupleTrackingListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToEligibleCoupleTrackingListFragments()
         ),
         Icon(
             R.drawable.ic__maternal_health,
             resources.getString(R.string.sup_pregnant_women),
             recordsRepo.getPregnantWomenListCount(),
-            SupervisorFragmentDirections.actionNavSupervisorToPwRegistrationFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToPwRegistrationFragments()
         ),
         Icon(
             R.drawable.ic__anc_visit,
             resources.getString(R.string.sup_anc_visits),
             recordsRepo.getRegisteredPregnantWomanListCount(),
-            SupervisorFragmentDirections.actionNavSupervisorToPwAncVisitsFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToPwAncVisitsFragments()
         ),
         Icon(
             R.drawable.ic__hrp,
             resources.getString(R.string.sup_hrp_woman),
             recordsRepo.hrpPregnantWomenListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToPregnantListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToPregnantListFragments()
         ),
         Icon(
             R.drawable.ic__delivery_outcome,
             resources.getString(R.string.sup_deliveries),
             recordsRepo.getDeliveredWomenListCount(),
-            SupervisorFragmentDirections.actionNavSupervisorToDeliveryOutcomeListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToDeliveryOutcomeListFragments()
         ),
         Icon(
             R.drawable.ic__immunization,
             resources.getString(R.string.sup_routine_immunization),
             recordsRepo.childrenImmunizationListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToChildImmunizationListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToChildImmunizationListFragments()
         ),
         Icon(
             R.drawable.ic__ncd_list,
             resources.getString(R.string.sup_ncd_screened),
             recordsRepo.ncdListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToNcdListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToNcdListFragments()
         ),
         Icon(
             R.drawable.ic__ncd_priority,
             resources.getString(R.string.sup_ncd_priority),
             recordsRepo.getNcdPriorityListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToNcdPriorityListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToNcdPriorityListFragments()
         ),
         Icon(
             R.drawable.ic__death,
             resources.getString(R.string.sup_tb_cases),
             recordsRepo.tbSuspectedListCount,
-            SupervisorFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
+            SupervisorHomeFragmentDirections.actionNavSupervisorToTBSuspectedListFragments()
+        ),
+        Icon(
+            R.drawable.ic__incentive,
+            resources.getString(R.string.incentive_verification),
+            null,
+            SupervisorHomeFragmentDirections.actionNavSupervisorToIncentiveVerificationFragment()
+
         )
     ).apply {
         forEachIndexed { index, icon ->
@@ -535,7 +546,8 @@ class IconDataset @Inject constructor(
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
 
             )
-        ), Icon(
+        ),
+        Icon(
             R.drawable.kala,
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
@@ -563,6 +575,12 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_leprosy),
             recordsRepo.tbScreeningListCount,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
+        ),
+        Icon(
+            R.drawable.ic__ncd,
+            resources.getString(R.string.tb),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDisease()
         ),
         /*Icon(
             R.drawable.ic__eligible_couple,
@@ -691,12 +709,13 @@ class IconDataset @Inject constructor(
             recordsRepo.getNcdNonEligibleListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdNonEligibleListFragment()
         ),
-        Icon(
+       /* Icon(
             R.drawable.ic_ncd_noneligible,
-            resources.getString(R.string.ncd_refer_list),
+            resources.getString(R.string.hwc_refer_list),
             recordsRepo.getNcdrefferedListCount,
             NcdFragmentDirections.actionNcdFragmentToNcdReferredListFragment()
-        ),
+        ),*/
+
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -759,7 +778,9 @@ class IconDataset @Inject constructor(
             R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
-            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(resources.getString(Disease.MALARIA.getTitleRes()))
+            MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.MALARIA.getTitleRes())
+            ),
         ), Icon(
             R.drawable.confirmed,
             resources.getString(R.string.icon_title_malaria_confirmed),

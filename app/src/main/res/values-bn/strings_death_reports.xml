@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="cdr_form">CDR ফর্ম</string>
+    <string name="maternal">মাতৃ</string>
+    <string name="non_maternal">অ-মাতৃ</string>
+    <string name="accident">দুর্ঘটনা</string>
+
+    <string name="str_age">বয়স</string>
+    <string name="str_visit">ভিজিটের তারিখ</string>
+    <string name="str_gender">লিঙ্গ</string>
+    <string name="str_father_name">পিতার নাম</string>
+    <string name="str_address">ঠিকানা</string>
+    <string name="str_house_number">বাড়ি নম্বর</string>
+    <string name="str_mohalla_colony">মহল্লা/কলোনি</string>
+    <string name="str_landmark_if_any">নিকটবর্তী চিহ্ন (যদি থাকে)</string>
+    <string name="str_pincode">পিন কোড</string>
+    <string name="str_landline">ল্যান্ডলাইন</string>
+    <string name="str_mobile_number">মোবাইল নম্বর</string>
+    <string name="str_date_of_death">মৃত্যুর তারিখ</string>
+    <string name="str_time">সময়</string>
+    <string name="str_place_of_death">মৃত্যুর স্থান</string>
+    <string name="str_name_of_first_informant">প্রথম তথ্যদাতার নাম</string>
+    <string name="str_name_of_asha">ASHA-এর স্বাক্ষর/নাম</string>
+    <string name="str_date_of_notification">অবগতির তারিখ</string>
+    <string name="str_hospital">হাসপাতাল</string>
+    <string name="str_transit">পথে</string>
+
+    <string name="maternal_death">মাতৃ মৃত্যু</string>
+    <string name="general_deaths">সাধারণ মৃত্যু</string>
+    <string name="non_maternal_deaths">অ-মাতৃ মৃত্যু</string>
+    <string name="child_deaths">শিশু মৃত্যু</string>
+
+    <string name="name_of_child">শিশুর নাম</string>
+    <string name="date_of_birth">জন্ম তারিখ</string>
+    <string name="age">বয়স</string>
+    <string name="gender">লিঙ্গ</string>
+    <string name="mothers_name">মায়ের নাম</string>
+    <string name="fathers_name">পিতার নাম</string>
+
+    <string name="complete_address">সম্পূর্ণ ঠিকানা</string>
+    <string name="address">ঠিকানা</string>
+    <string name="house_number">বাড়ি নম্বর</string>
+    <string name="mohalla_colony">মহল্লা/কলোনি</string>
+    <string name="village_town_city">গ্রাম/শহর</string>
+    <string name="block">ব্লক</string>
+    <string name="district_tehsil">জেলা/তহসিল</string>
+    <string name="state">রাজ্য</string>
+    <string name="pin_code">পিন কোড</string>
+    <string name="landmarks_if_any">নিকটবর্তী চিহ্ন (যদি থাকে)</string>
+
+    <string name="phone_number_parents_family">অভিভাবক/পরিবারের ফোন নম্বর (একই বাড়িতে বসবাসকারী)</string>
+    <string name="landline">ল্যান্ডলাইন</string>
+    <string name="mobile_number">মোবাইল নম্বর</string>
+
+    <string name="date_of_death">মৃত্যুর তারিখ</string>
+    <string name="place_of_death">মৃত্যুর স্থান</string>
+    <string name="name_of_first_informant">প্রথম তথ্যদাতার নাম</string>
+    <string name="time">সময়</string>
+    <string name="timing_of_informing">(তথ্য দেওয়ার সময়)</string>
+    <string name="date_of_notification">অবগতির তারিখ</string>
+
+    <string name="cdr_form_from_anm">ANM থেকে CDR ফর্ম</string>
+    <string name="death_certificate">মৃত্যু সনদ</string>
+    <string name="death_certificate_duplicate">মৃত্যু সনদ</string>
+
+</resources>

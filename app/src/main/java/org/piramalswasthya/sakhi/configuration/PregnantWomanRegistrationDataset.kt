@@ -226,6 +226,7 @@ class PregnantWomanRegistrationDataset(
         id = 20,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_other),
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
         required = true,
     )
 
@@ -262,6 +263,7 @@ class PregnantWomanRegistrationDataset(
         id = 24,
         inputType = InputType.EDIT_TEXT,
         title = resources.getString(R.string.pwrdst_any_other_comp),
+        etInputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS,
         required = true,
     )
 
@@ -663,24 +665,20 @@ class PregnantWomanRegistrationDataset(
         }
 
         ecr?.let {
-            // if no of children in ec registration is
-            // > 0 => setting is first pregnancy false and no of pregnancies value
-            // else => setting is first pregnancy true
-            if (ecr.noOfChildren > 0) {
-                isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[1]
-                isFirstPregnancy.isEnabled = false
-                totalNumberOfPreviousPregnancy.min = ecr.noOfChildren.toLong()
-                if (saved == null) {
+            if (saved == null) {
+                if (ecr.noOfChildren > 0) {
+                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[1]
+                    isFirstPregnancy.isEnabled = false
+                    totalNumberOfPreviousPregnancy.min = ecr.noOfChildren.toLong()
                     list.addAll(
                         list.indexOf(isFirstPregnancy) + 1,
                         listOf(totalNumberOfPreviousPregnancy, complicationsDuringLastPregnancy)
                     )
                     totalNumberOfPreviousPregnancy.value = ecr.noOfChildren.toString()
+                } else {
+                    isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[0]
                 }
-            } else {
-                isFirstPregnancy.value = resources.getStringArray(R.array.yes_no)[0]
             }
-            // if no of children greater than 3 setting no of deliveries greater than 3 as true
             if (ecr.noOfChildren > 3) {
                 noOfDeliveries.value = resources.getStringArray(R.array.yes_no)[0]
                 noOfDeliveries.isEnabled = false
@@ -693,8 +691,8 @@ class PregnantWomanRegistrationDataset(
 //        }
 
 
-        noOfDeliveries.isEnabled=false
-        timeLessThan18m.isEnabled=false
+      /*  noOfDeliveries.isEnabled=false
+        timeLessThan18m.isEnabled=false*/
         setUpPage(list)
 
     }
@@ -829,36 +827,49 @@ class PregnantWomanRegistrationDataset(
                     ?: mutableSetOf()
 
                 if (index == noneIndex) {
-                    // "None" selected: clear all others, keep only None
                     pastIllness.value = "0"
-                } else {
-                    // Other option selected: remove None
-                    selectedIndexes.remove(noneIndex)
-                    pastIllness.value =
-                        if (selectedIndexes.isEmpty()) "0"
-                        else selectedIndexes.sorted().joinToString("|")
-                }
-
-                if (selectedIndexes.contains(otherIndex)) {
-                    triggerDependants(
-                        source = pastIllness,
-                        passedIndex = index,
-                        triggerIndex = index,
-                        target = otherPastIllness
-                    )
-                } else {
+                    // ✅ None selected: explicitly hide otherPastIllness
                     triggerDependants(
                         source = pastIllness,
                         passedIndex = index,
                         triggerIndex = -230,
                         target = otherPastIllness
                     )
+                } else {
+                    selectedIndexes.remove(noneIndex)
+                    pastIllness.value =
+                        if (selectedIndexes.isEmpty()) "0"
+                        else selectedIndexes.sorted().joinToString("|")
+
+                    // ✅ Recalculate from updated value
+                    val updatedIndexes = pastIllness.value
+                        ?.split("|")
+                        ?.mapNotNull { it.trim().toIntOrNull() }
+                        ?.toSet()
+                        ?: emptySet()
+
+                    if (updatedIndexes.contains(otherIndex)) {
+                        triggerDependants(
+                            source = pastIllness,
+                            passedIndex = index,
+                            triggerIndex = index,
+                            target = otherPastIllness
+                        )
+                    } else {
+                        triggerDependants(
+                            source = pastIllness,
+                            passedIndex = index,
+                            triggerIndex = -230,
+                            target = otherPastIllness
+                        )
+                    }
                 }
             }
 
             otherPastIllness.id -> {
                 validateEmptyOnEditText(otherPastIllness)
-                validateAllAlphabetsSpaceOnEditText(otherPastIllness)
+                validateEditTextWithTextNonNumericHindiEnabled(otherPastIllness)
+                //validateAllAlphabetsSpaceOnEditText(otherPastIllness)
             }
 
             isFirstPregnancy.id -> {
@@ -916,7 +927,8 @@ class PregnantWomanRegistrationDataset(
 
             otherComplicationsDuringLastPregnancy.id -> {
                 validateEmptyOnEditText(otherComplicationsDuringLastPregnancy)
-                validateAllAlphabetsSpaceOnEditText(otherComplicationsDuringLastPregnancy)
+                validateEditTextWithTextNonNumericHindiEnabled(otherComplicationsDuringLastPregnancy)
+                //validateAllAlphabetsSpaceOnEditText(otherComplicationsDuringLastPregnancy)
             }
 
             noOfDeliveries.id, timeLessThan18m.id -> {

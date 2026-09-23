@@ -42,6 +42,7 @@ import org.piramalswasthya.sakhi.database.room.dao.PncDao
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.room.dao.SaasBahuSammelanDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
+import org.piramalswasthya.sakhi.database.room.dao.NotificationDao
 import org.piramalswasthya.sakhi.database.room.dao.TBDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
@@ -152,13 +153,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+    fun provideHttpLoggingInterceptor(@ApplicationContext context: Context): HttpLoggingInterceptor {
+        val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
         val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
             level =
-                //if (BuildConfig.DEBUG)
+               // if (isDebuggable)
                     HttpLoggingInterceptor.Level.BODY
-                //else
-                    //HttpLoggingInterceptor.Level.NONE
+//                else
+//                    HttpLoggingInterceptor.Level.NONE
         }
         return loggingInterceptor
     }
@@ -295,6 +297,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideTBDao(database: InAppDb): TBDao = database.tbDao
+
+    @Singleton
+    @Provides
+    fun provideNotificationDao(database: InAppDb): NotificationDao = database.notificationDao
 
     @Singleton
     @Provides

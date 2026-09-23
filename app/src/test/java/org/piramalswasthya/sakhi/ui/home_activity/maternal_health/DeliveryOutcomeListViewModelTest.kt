@@ -1,12 +1,16 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health
 
+import android.util.Log
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -23,6 +27,8 @@ class DeliveryOutcomeListViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
+        mockkStatic(Log::class)
+        every { Log.i(any(), any()) } returns 0
         every { recordsRepo.getDeliveredWomenList() } returns flowOf(emptyList())
         viewModel = DeliveryOutcomeListViewModel(recordsRepo)
     }
@@ -55,5 +61,11 @@ class DeliveryOutcomeListViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `benList collects real results once the flow is exercised`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }
