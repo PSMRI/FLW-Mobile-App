@@ -1026,6 +1026,10 @@
             android:name="lastItemClick"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="visitId"
+            app:argType="integer"
+            android:defaultValue="-1" />
 
         <action
             android:id="@+id/action_pwAncCounsellingFormFragment_to_pwAncFormFragment"

@@ -31,16 +31,17 @@ class AncHomeVisitAdapter(
             }
         }
 
-        fun bind(item: HomeVisitDomain, clickListener: HomeVisitClickListener?) {
+        fun bind(
+            item: HomeVisitDomain,
+            clickListener: HomeVisitClickListener?,
+            isLastItem: Boolean
+        ) {
             binding.visit = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
-
-
-
             binding.btnView.setOnClickListener {
-                clickListener?.onViewClick(item)
+                clickListener?.onViewClick(item, isLastItem)
             }
 
             binding.executePendingBindings()
@@ -51,12 +52,14 @@ class AncHomeVisitAdapter(
         HomeVisitViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: HomeVisitViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        val isLastItem = position == itemCount - 1
+        holder.bind(getItem(position), clickListener, isLastItem)
     }
 
     class HomeVisitClickListener(
-        private val onViewClick: (HomeVisitDomain) -> Unit
+        private val onViewClick: (HomeVisitDomain, Boolean) -> Unit
     ) {
-        fun onViewClick(item: HomeVisitDomain) = onViewClick.invoke(item)
+        fun onViewClick(item: HomeVisitDomain, isLastItem: Boolean) =
+            onViewClick.invoke(item, isLastItem)
     }
 }

@@ -1874,4 +1874,78 @@ class CommonUtilsTest {
         }
         assertEquals(expected, getLocalizedAge(ageContext(), dobCal.timeInMillis))
     }
+
+    @Test
+    fun `parseHourAndMinute reads the twenty four hour values already stored`() {
+        assertEquals(Pair(15, 55), parseHourAndMinute("15:55"))
+        assertEquals(Pair(14, 5), parseHourAndMinute("14:5"))
+        assertEquals(Pair(0, 0), parseHourAndMinute("0:0"))
+        assertEquals(Pair(23, 59), parseHourAndMinute("23:59"))
+    }
+
+    @Test
+    fun `parseHourAndMinute reads the twelve hour format`() {
+        assertEquals(Pair(15, 55), parseHourAndMinute("03:55 PM"))
+        assertEquals(Pair(3, 55), parseHourAndMinute("03:55 AM"))
+        assertEquals(Pair(15, 55), parseHourAndMinute("3:55 pm"))
+        assertEquals(Pair(0, 30), parseHourAndMinute("12:30 AM"))
+        assertEquals(Pair(12, 30), parseHourAndMinute("12:30 PM"))
+    }
+
+    @Test
+    fun `parseHourAndMinute returns null instead of throwing on unreadable values`() {
+        assertNull(parseHourAndMinute(null))
+        assertNull(parseHourAndMinute(""))
+        assertNull(parseHourAndMinute("   "))
+        assertNull(parseHourAndMinute("morning"))
+        assertNull(parseHourAndMinute("10"))
+        assertNull(parseHourAndMinute("10:20:30"))
+        assertNull(parseHourAndMinute("24:00"))
+        assertNull(parseHourAndMinute("10:60"))
+        assertNull(parseHourAndMinute("13:00 PM"))
+        assertNull(parseHourAndMinute("00:30 AM"))
+    }
+
+    @Test
+    fun `formatTwelveHourTime pads both parts and appends the meridiem`() {
+        assertEquals("12:00 AM", formatTwelveHourTime(0, 0))
+        assertEquals("12:05 AM", formatTwelveHourTime(0, 5))
+        assertEquals("09:05 AM", formatTwelveHourTime(9, 5))
+        assertEquals("12:30 PM", formatTwelveHourTime(12, 30))
+        assertEquals("06:00 PM", formatTwelveHourTime(18, 0))
+        assertEquals("11:59 PM", formatTwelveHourTime(23, 59))
+    }
+
+    @Test
+    fun `toTwelveHourTime converts a stored value for display`() {
+        assertEquals("02:30 PM", toTwelveHourTime("14:30"))
+        assertEquals("02:05 PM", toTwelveHourTime("14:5"))
+        assertEquals("02:30 PM", toTwelveHourTime("02:30 PM"))
+        assertNull(toTwelveHourTime(null))
+        assertNull(toTwelveHourTime("not a time"))
+    }
+
+    @Test
+    fun `toTwentyFourHourTime sends back the format the server already receives`() {
+        assertEquals("00:05", toTwentyFourHourTime("12:05 AM"))
+        assertEquals("18:00", toTwentyFourHourTime("06:00 PM"))
+        assertEquals("14:30", toTwentyFourHourTime("02:30 PM"))
+        assertEquals("02:30", toTwentyFourHourTime("02:30 AM"))
+        assertEquals("12:00", toTwentyFourHourTime("12:00 PM"))
+        assertEquals("14:30", toTwentyFourHourTime("14:30"))
+        assertEquals("14:05", toTwentyFourHourTime("14:5"))
+        assertNull(toTwentyFourHourTime(null))
+        assertNull(toTwentyFourHourTime("not a time"))
+    }
+
+    @Test
+    fun `a picked time survives the display and push round trip`() {
+        listOf(0 to 5, 9 to 30, 12 to 0, 18 to 0, 23 to 59).forEach { (hour, minute) ->
+            val displayed = formatTwelveHourTime(hour, minute)
+            assertEquals(
+                String.format(Locale.ENGLISH, "%02d:%02d", hour, minute),
+                toTwentyFourHourTime(displayed)
+            )
+        }
+    }
 }

@@ -471,7 +471,7 @@ interface AmritApiService {
     @POST("flw-api/maternalCare/ancVisit/counselling/saveAll")
     suspend fun  submitFromANC(
         @Body request: List<FormSubmitRequest>
-    ): Response<Unit>
+    ): Response<com.google.gson.JsonElement>
 
 
     @POST("flw-api/child-care/hbycVisit/getAll")

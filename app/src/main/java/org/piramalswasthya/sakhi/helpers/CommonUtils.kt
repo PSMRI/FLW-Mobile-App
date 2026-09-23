@@ -972,6 +972,44 @@ fun getDateFromLong(time: Long) : Date {
 //    val format = SimpleDateFormat(pattern, Locale.getDefault())
     return date
 }
+
+fun parseHourAndMinute(value: String?): Pair<Int, Int>? {
+    val raw = value?.trim()?.uppercase(Locale.ENGLISH).orEmpty()
+    if (raw.isEmpty()) return null
+
+    val meridiem = when {
+        raw.endsWith("AM") -> "AM"
+        raw.endsWith("PM") -> "PM"
+        else -> null
+    }
+
+    val parts = raw.removeSuffix("AM").removeSuffix("PM").trim().split(":")
+    if (parts.size != 2) return null
+
+    val hour = parts[0].trim().toIntOrNull() ?: return null
+    val minute = parts[1].trim().toIntOrNull() ?: return null
+    if (minute !in 0..59) return null
+
+    return when (meridiem) {
+        "AM" -> if (hour in 1..12) Pair(if (hour == 12) 0 else hour, minute) else null
+        "PM" -> if (hour in 1..12) Pair(if (hour == 12) 12 else hour + 12, minute) else null
+        else -> if (hour in 0..23) Pair(hour, minute) else null
+    }
+}
+
+fun formatTwelveHourTime(hourOfDay: Int, minute: Int): String {
+    val meridiem = if (hourOfDay < 12) "AM" else "PM"
+    val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
+    return String.format(Locale.ENGLISH, "%02d:%02d %s", hour, minute, meridiem)
+}
+
+fun toTwelveHourTime(value: String?): String? =
+    parseHourAndMinute(value)?.let { formatTwelveHourTime(it.first, it.second) }
+
+fun toTwentyFourHourTime(value: String?): String? =
+    parseHourAndMinute(value)?.let {
+        String.format(Locale.ENGLISH, "%02d:%02d", it.first, it.second)
+    }
 fun getPatientTypeByAge(dateOfBirth: Date): String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 

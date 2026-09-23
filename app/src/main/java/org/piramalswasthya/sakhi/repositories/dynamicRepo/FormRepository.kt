@@ -385,6 +385,45 @@ class FormRepository @Inject constructor(
     suspend fun insertFormResponseANC(entity: ANCFormResponseJsonEntity) =
         jsonResponseDaoANC.insertFormResponse(entity)
 
+    suspend fun updateFormResponseANC(entity: ANCFormResponseJsonEntity) {
+        val recordId = jsonResponseDaoANC.getFormResponseById(entity.id)
+            ?.let { readServerRecordId(it.formDataJson) }
+        val toSave = if (recordId != null) {
+            entity.copy(formDataJson = withServerRecordId(entity.formDataJson, recordId))
+        } else {
+            entity
+        }
+        jsonResponseDaoANC.updateFormResponse(toSave)
+    }
+
+    private fun readServerRecordId(formDataJson: String): Long? {
+        return try {
+            JSONObject(formDataJson).optJSONObject("fields")
+                ?.optLong("id", 0L)
+                ?.takeIf { it > 0L }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun withServerRecordId(formDataJson: String, recordId: Long): String {
+        return try {
+            val root = JSONObject(formDataJson)
+            val fields = root.optJSONObject("fields") ?: JSONObject()
+            fields.put("id", recordId)
+            root.put("fields", fields)
+            root.toString()
+        } catch (e: Exception) {
+            formDataJson
+        }
+    }
+
+    suspend fun getFormResponseANC(benId: Long, visitDate: String): ANCFormResponseJsonEntity? =
+        jsonResponseDaoANC.getFormResponse(benId, visitDate)
+
+    suspend fun getFormResponseANCById(id: Int): ANCFormResponseJsonEntity? =
+        jsonResponseDaoANC.getFormResponseById(id)
+
     suspend fun loadFormResponseJsonANC(benId: Long, visitDate: String): String? =
         jsonResponseDaoANC.getFormResponse(benId, visitDate)?.formDataJson
 

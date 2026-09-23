@@ -137,6 +137,8 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
 
     fun getIndexOfObstetricHistoryLabel() = dataset.getIndexOfObstetricHistoryLabel()
 
+    fun getIndexOfRhNegative() = dataset.getIndexOfRhNegative()
+
     fun getIndexOfEdd(): Int = dataset.getIndexOfEdd()
     fun getIndexofLmp(): Int = dataset.getIndexOfLmp()
     fun getIndexOfWeeksOfPregnancy(): Int = dataset.getIndexOfWeeksPregnancy()
