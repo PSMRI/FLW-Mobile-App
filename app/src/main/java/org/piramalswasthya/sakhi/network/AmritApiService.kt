@@ -182,7 +182,7 @@ interface AmritApiService {
     ): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/getAll")
-    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedNewRequest): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>

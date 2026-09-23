@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.toActivityGroups
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.isClaimActionable
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.defaultSelectedIncentiveIds
@@ -75,12 +76,17 @@ class WorkerDetailFragment : Fragment() {
         arguments?.getInt("approval_status") ?: 0
     }
 
+    /**
+     * The month is still open for a Verify / Reject decision. One rule, shared with the action
+     * card and the Mitanin checkbox column, so the three cannot drift apart.
+     */
+    private val isMonthActionable: Boolean
+        get() = isClaimActionable(workerStatus, workerApprovalStatus)
+
     private val showActivityCheckboxes: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
             //    hasDefaultRecord &&
-                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
-                workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED"
+                isMonthActionable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -235,7 +241,13 @@ class WorkerDetailFragment : Fragment() {
                     }
                     binding.tvClaimsCount.text = currentRecords.size.toString()
                   //   hasDefaultRecord = currentRecords.any { it.isDefault }
-                    binding.btnVerify.visibility = if (/*hasDefaultRecord &&*/ BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    // Mitanin keeps its own flavour rule (FLW-1145). Every other flavour shows
+                    // Verify whenever the month is still actionable: the flavour check on its own
+                    // left saksham / utprerona / niramay / xushrukha with a lone Reject button on
+                    // a PENDING (102) claim, while Reject was never flavour-gated at all.
+                    binding.btnVerify.visibility = if (
+                        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) || isMonthActionable
+                    ) {
                         View.VISIBLE
                     } else {
                         View.GONE
@@ -256,7 +268,8 @@ class WorkerDetailFragment : Fragment() {
                         updateActionButtonsEnabled()
                     }
 
-                    binding.cvMain.visibility = if (workerStatus=="VERIFIED" || workerStatus=="APPROVED" || workerStatus=="REJECTED") View.GONE else View.VISIBLE
+                    binding.cvMain.visibility =
+                        if (isMonthActionable) View.VISIBLE else View.GONE
                 }
                 is WorkerDetailUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
