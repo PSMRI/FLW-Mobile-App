@@ -1612,5 +1612,15 @@
     <string name="incentive_header_activity">Activity</string>
     <string name="incentive_header_no_of_claims">No of Claims</string>
     <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+
+    <!-- Dashboard (PR #462) -->
+    <string name="all_household">Households</string>
+    <string name="hrp_cases">HRP Cases</string>
+    <string name="coverage">Coverage</string>
+    <string name="maternal_health">Maternal Health</string>
+    <plurals name="pending_sync">
+        <item quantity="one">%d record pending sync</item>
+        <item quantity="other">%d records pending sync</item>
+    </plurals>
 </resources>
 
