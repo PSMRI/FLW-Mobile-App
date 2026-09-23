@@ -64,6 +64,23 @@ class AntenatalCounsellingViewModel @Inject constructor(
 
     companion object {
         val VISIT_DATE_FIELD_IDS = setOf("home_visit_date", "visit_date")
+
+        fun ageRiskValue(dobMillis: Long, nowMillis: Long = System.currentTimeMillis()): String? {
+            if (dobMillis <= 0L || dobMillis > nowMillis) return null
+            val today = startOfDay(nowMillis)
+            val eighteenthBirthday = startOfDay(dobMillis).apply { add(Calendar.YEAR, 18) }
+            val thirtyFifthBirthday = startOfDay(dobMillis).apply { add(Calendar.YEAR, 35) }
+            val isRisk = today.before(eighteenthBirthday) || today.after(thirtyFifthBirthday)
+            return if (isRisk) "Yes" else "No"
+        }
+
+        private fun startOfDay(millis: Long): Calendar = Calendar.getInstance().apply {
+            timeInMillis = millis
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
     }
 
     private var _visitCount = MutableStateFlow(0)
@@ -169,19 +186,16 @@ class AntenatalCounsellingViewModel @Inject constructor(
     private val _isSNCU = MutableStateFlow(false)
     val isSNCU: StateFlow<Boolean> = _isSNCU
 
-    private var motherAge: Int = 0
+    private var motherDob: Long = 0L
 
-    fun setMotherAge(age: Int) {
-        motherAge = age
-        val currentSchema = _schema.value ?: return
-        if (isViewMode) return
-        currentSchema.sections.orEmpty()
-            .flatMap { it.fields.orEmpty() }
-            .filter { it.fieldId == "age_risk" }
-            .forEach { it.value = getAgeRiskValue() }
-        _schema.value = currentSchema.copy()
+    private suspend fun loadMotherDob(benId: Long): Long {
+        return try {
+            benRepo.getBenFromId(benId)?.dob ?: 0L
+        } catch (e: Exception) {
+            Timber.e(e, "Error loading mother's dob")
+            0L
+        }
     }
-
 
 
     suspend fun loadLastVisitData(benId: Long) {
@@ -271,6 +285,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         visitId: Int
     ) {
         loadVisitCount(benId)
+        motherDob = loadMotherDob(benId)
         val schema = loadSchema(formId, lang) ?: return
         val savedFieldValues = loadSavedFieldValues(benId, visitDay, visitId)
 
@@ -348,7 +363,7 @@ class AntenatalCounsellingViewModel @Inject constructor(
         field.value = when (field.fieldId) {
             "visit_day" -> visitDay
             "visit_number" -> getVisitNumberValue(field, viewMode, visitNumber)
-            "age_risk" -> getAgeRiskValue()
+            "age_risk" -> ageRiskValue(motherDob) ?: savedFieldValues[field.fieldId]
             else -> savedFieldValues[field.fieldId] ?: field.default
         }
     }
@@ -357,9 +372,6 @@ class AntenatalCounsellingViewModel @Inject constructor(
         return visitNumberString
     }
 
-    private fun getAgeRiskValue(): String {
-        return if (motherAge < 18 || motherAge > 35) "Yes" else "No"
-    }
 
     private fun setFieldEditability(field: FormFieldDto, viewMode: Boolean) {
         field.isEditable = when (field.fieldId) {

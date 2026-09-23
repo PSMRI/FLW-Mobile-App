@@ -23,6 +23,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManager
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.InfantRegCache
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.ConditionalLogic
@@ -99,12 +100,131 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
     }
 
     // =====================================================
-    // setMotherAge() Tests
+    // ageRiskValue() Tests
     // =====================================================
 
+    private val fixedNow: Long = Calendar.getInstance().apply {
+        set(2026, Calendar.SEPTEMBER, 23, 10, 0, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    private fun dobYearsAgo(years: Int, months: Int = 0): Long = Calendar.getInstance().apply {
+        timeInMillis = fixedNow
+        add(Calendar.YEAR, -years)
+        add(Calendar.MONTH, -months)
+    }.timeInMillis
+
+    private fun ageRisk(years: Int, months: Int = 0) =
+        AntenatalCounsellingViewModel.ageRiskValue(dobYearsAgo(years, months), fixedNow)
+
     @Test
-    fun `setMotherAge does not throw`() {
-        viewModel.setMotherAge(25)
+    fun `ageRiskValue is Yes for 16`() = assertEquals("Yes", ageRisk(16))
+
+    @Test
+    fun `ageRiskValue is Yes for 17`() = assertEquals("Yes", ageRisk(17))
+
+    @Test
+    fun `ageRiskValue is Yes for 17 years 11 months`() = assertEquals("Yes", ageRisk(17, 11))
+
+    @Test
+    fun `ageRiskValue is No on 18th birthday`() = assertEquals("No", ageRisk(18))
+
+    @Test
+    fun `ageRiskValue is No for 29`() = assertEquals("No", ageRisk(29))
+
+    @Test
+    fun `ageRiskValue is No for exactly 35`() = assertEquals("No", ageRisk(35))
+
+    @Test
+    fun `ageRiskValue is Yes for 35 and a half`() = assertEquals("Yes", ageRisk(35, 6))
+
+    @Test
+    fun `ageRiskValue is Yes for 36`() = assertEquals("Yes", ageRisk(36))
+
+    @Test
+    fun `ageRiskValue is Yes for 41`() = assertEquals("Yes", ageRisk(41))
+
+    @Test
+    fun `ageRiskValue is null when dob is missing`() =
+        assertNull(AntenatalCounsellingViewModel.ageRiskValue(0L, fixedNow))
+
+    @Test
+    fun `ageRiskValue is null when dob is in the future`() =
+        assertNull(AntenatalCounsellingViewModel.ageRiskValue(fixedNow + 86_400_000L, fixedNow))
+
+    private fun stubMotherDob(dob: Long) {
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.dob } returns dob
+        coEvery { benRepo.getBenFromId(10L) } returns ben
+    }
+
+    private fun dobAgeToday(years: Int, months: Int = 0): Long = Calendar.getInstance().apply {
+        add(Calendar.YEAR, -years)
+        add(Calendar.MONTH, -months)
+    }.timeInMillis
+
+    @Test
+    fun `loadFormSchema sets age risk No for a 29 year old on a fresh visit`() = runTest {
+        stubMotherDob(dobAgeToday(29))
+        stubAncSchema(ancSchema(ancField("age_risk")))
+
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertEquals("No", ancFieldOf("age_risk").value)
+    }
+
+    @Test
+    fun `loadFormSchema sets age risk Yes for a 41 year old on a fresh visit`() = runTest {
+        stubMotherDob(dobAgeToday(41))
+        stubAncSchema(ancSchema(ancField("age_risk")))
+
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertEquals("Yes", ancFieldOf("age_risk").value)
+    }
+
+    @Test
+    fun `loadFormSchema sets age risk Yes for a 41 year old when a previous visit says No`() = runTest {
+        stubMotherDob(dobAgeToday(41))
+        stubAncSchema(
+            ancSchema(ancField("age_risk")),
+            visits = listOf(ancVisit(formDataJson = """{"visitDate":"01-01-2024","fields":{"age_risk":"No"}}"""))
+        )
+
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertEquals("Yes", ancFieldOf("age_risk").value)
+    }
+
+    @Test
+    fun `loadFormSchema sets age risk No for a 29 year old when a previous visit says Yes`() = runTest {
+        stubMotherDob(dobAgeToday(29))
+        stubAncSchema(
+            ancSchema(ancField("age_risk")),
+            visits = listOf(ancVisit(formDataJson = """{"visitDate":"01-01-2024","fields":{"age_risk":"Yes"}}"""))
+        )
+
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertEquals("No", ancFieldOf("age_risk").value)
+    }
+
+    @Test
+    fun `loadFormSchema keeps saved age risk when dob is unavailable`() = runTest {
+        coEvery { benRepo.getBenFromId(10L) } returns null
+        stubAncSchema(
+            ancSchema(ancField("age_risk")),
+            savedJson = """{"fields":{"age_risk":"Yes"}}"""
+        )
+
+        loadAncSchema()
+        advanceUntilIdle()
+
+        assertEquals("Yes", ancFieldOf("age_risk").value)
     }
 
     // =====================================================
@@ -528,7 +648,7 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `loadFormSchema populates schema and locks fixed fields`() = runTest {
-        viewModel.setMotherAge(25)
+        stubMotherDob(dobAgeToday(25))
         stubAncSchema(
             ancSchema(
                 ancField("visit_day"),
@@ -552,7 +672,7 @@ class AntenatalCounsellingViewModelTest : BaseViewModelTest() {
 
     @Test
     fun `loadFormSchema computes age risk for a young mother`() = runTest {
-        viewModel.setMotherAge(16)
+        stubMotherDob(dobAgeToday(16))
         stubAncSchema(ancSchema(ancField("age_risk")))
 
         loadAncSchema()
