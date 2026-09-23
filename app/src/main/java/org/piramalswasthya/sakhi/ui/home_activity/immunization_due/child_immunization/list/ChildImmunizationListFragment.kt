@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +44,7 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
     private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
     private val filterBottomSheet: ChildImmunizationFilterBottomSheetFragment by lazy { ChildImmunizationFilterBottomSheetFragment() }
+    private var isBottomSheetShowing = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -52,14 +54,21 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f is ChildImmunizationVaccineBottomSheetFragment) isBottomSheetShowing = false
+            }
+        }, false)
 
         binding.rvCat.adapter = ImmunizationBirthDoseCategoryAdapter(viewModel.categoryData(),this,viewModel)
 
         binding.rvList.adapter =
             BenChildImmunizationListAdapter(BenChildImmunizationListAdapter.VaccinesClickListener {
-                viewModel.updateBottomSheetData(it)
-                if (!bottomSheet.isVisible)
+                if (!isBottomSheetShowing) {
+                    isBottomSheetShowing = true
+                    viewModel.updateBottomSheetData(it)
                     bottomSheet.show(childFragmentManager, "ImM")
+                }
             })
 
 

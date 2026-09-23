@@ -41,11 +41,13 @@ class LeprosyConfirmedListFragment: Fragment() {
         val benAdapter = LeprosyMemberListAdapter(
             clickListener = LeprosyMemberListAdapter.ClickListener(
                 clickedForm = { hhId, benId ->
-                    findNavController().navigate(
-                        LeprosyConfirmedListFragmentDirections.actionLeprosyConfirmedListFragmentToLeprosyConfirmedFromFragment(
-                            benId = benId
+                    if (findNavController().currentDestination?.id == R.id.leprosyConfirmedListFragment) {
+                        findNavController().navigate(
+                            LeprosyConfirmedListFragmentDirections.actionLeprosyConfirmedListFragmentToLeprosyConfirmedFromFragment(
+                                benId = benId
+                            )
                         )
-                    )
+                    }
                 },
 
             ),

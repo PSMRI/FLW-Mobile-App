@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
+import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
+import org.piramalswasthya.sakhi.utils.PendingNotificationDeeplink
 import androidx.core.view.WindowCompat
 import javax.inject.Inject
 
@@ -74,6 +76,9 @@ class LoginActivity : AppCompatActivity() {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        // A `notification`-type push displayed by the Firebase SDK lands here (LAUNCHER activity)
+        // with the payload as Intent extras. Park it so HomeActivity can route once it exists.
+        PendingNotificationDeeplink.capture(intent)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         TapjackingProtectionHelper.enableTouchFiltering(this)
         createSyncServiceNotificationChannel()
@@ -160,5 +165,17 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+
+
+    /**
+     * Firebase's own notification tap targets the LAUNCHER activity with NEW_TASK|CLEAR_TOP, which
+     * can be delivered to a live instance instead of a fresh one. Capture here too so the deeplink
+     * isn't lost in that case.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        PendingNotificationDeeplink.capture(intent)
+    }
 
 }

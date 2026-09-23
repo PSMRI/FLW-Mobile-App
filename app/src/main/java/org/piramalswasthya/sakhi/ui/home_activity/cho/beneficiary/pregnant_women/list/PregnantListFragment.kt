@@ -62,26 +62,31 @@ class PregnantListFragment : Fragment() {
                 {
                 },
                 { _, benId ->
-                    findNavController().navigate(
-                        PregnantListFragmentDirections.actionPregnantListFragmentToHRPPregnantAssessFragment(
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.pregnantListFragment) {
+                        findNavController().navigate(
+                            PregnantListFragmentDirections.actionPregnantListFragmentToHRPPregnantAssessFragment(
+                                benId
+                            )
                         )
-                    )
+                    }
                 },
                 { _, benId ->
-
-                    findNavController().navigate(
-                        PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanFragment(
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.pregnantListFragment) {
+                        findNavController().navigate(
+                            PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanFragment(
+                                benId
+                            )
                         )
-                    )
+                    }
                 },
                 { _, benId ->
-                    findNavController().navigate(
-                        PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanTable(
-                            benId
+                    if (findNavController().currentDestination?.id == R.id.pregnantListFragment) {
+                        findNavController().navigate(
+                            PregnantListFragmentDirections.actionPregnantListFragmentToHRPMicroBirthPlanTable(
+                                benId
+                            )
                         )
-                    )
+                    }
                 }),
 
             formButtonText = arrayOf(

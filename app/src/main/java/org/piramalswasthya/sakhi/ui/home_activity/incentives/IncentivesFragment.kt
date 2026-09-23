@@ -1,20 +1,24 @@
 package org.piramalswasthya.sakhi.ui.home_activity.incentives
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
+import android.health.connect.datatypes.units.Length
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -25,6 +29,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -42,28 +47,20 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.IncentiveListAdapter
-import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
+import org.piramalswasthya.sakhi.adapters.IncentiveGroupSectionAdapter
+import org.piramalswasthya.sakhi.adapters.toIncentiveGroupSections
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
+import org.piramalswasthya.sakhi.databinding.LayoutRejectedDialogBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
-import org.piramalswasthya.sakhi.helpers.Konstants.additionalIncentivetoAshaSGovt
-import org.piramalswasthya.sakhi.helpers.Konstants.adolescentHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.antaraProg
-import org.piramalswasthya.sakhi.helpers.Konstants.ashaIncetiveJSY
-import org.piramalswasthya.sakhi.helpers.Konstants.ashaMonthlyRActivity
-import org.piramalswasthya.sakhi.helpers.Konstants.childHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.familyPlanning
-import org.piramalswasthya.sakhi.helpers.Konstants.immunization
-import org.piramalswasthya.sakhi.helpers.Konstants.maternalHealth
-import org.piramalswasthya.sakhi.helpers.Konstants.ncd
-import org.piramalswasthya.sakhi.helpers.Konstants.umbrellaProgrames
 import org.piramalswasthya.sakhi.helpers.setToEndOfTheDay
 import org.piramalswasthya.sakhi.helpers.setToStartOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveActivityDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomain
 import org.piramalswasthya.sakhi.model.IncentiveDomainDTO
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.HelperUtil.drawMultilineText
+import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.MonthYearPickerDialog
 import java.io.File
 import java.io.FileOutputStream
@@ -72,12 +69,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.Objects
+import java.util.Timer
 import kotlin.math.max
 
 
 @AndroidEntryPoint
 class IncentivesFragment : Fragment() {
 
+    private  var supervisorRole: String = ""
     private var _binding: FragmentIncentivesBinding? = null
     private val binding: FragmentIncentivesBinding
         get() = _binding!!
@@ -93,7 +92,7 @@ class IncentivesFragment : Fragment() {
 
     var selectedYear: String = ""
 
-    private lateinit var groupedAdapter: IncentiveGroupedAdapter
+    private lateinit var groupedAdapter: IncentiveGroupSectionAdapter
 
     private val PERMISSION_REQUEST_CODE = 792
 
@@ -103,6 +102,73 @@ class IncentivesFragment : Fragment() {
     }
 
     private var isChhattisgarhVariant: Boolean = false
+
+    fun showRejectedDialog(
+        status: Int,
+        rejectedBy: String,
+        rejectedReason: String,
+        rejectedDate: String,
+        claimDate: String
+    ) {
+
+        val binding = LayoutRejectedDialogBinding.inflate(layoutInflater)
+
+        binding.tvRejectedBy.text = rejectedBy
+        binding.tvRejectedReason.text = rejectedReason
+        binding.tvRejectedDate.text = rejectedDate
+        binding.tvClaimDate.text = claimDate
+        if (rejectedDate.isEmpty()) {
+            binding.date.visibility = View.GONE
+        } else {
+            binding.date.visibility = View.VISIBLE
+        }
+
+        when (status) {
+
+            101 -> {
+                binding.tvTitle.text = "Verified By"
+                binding.date.text = "Verified Date"
+                binding.cliamStatusTV.text = "Verified"
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+                binding.tvRejectedReason.visibility = View.GONE
+                binding.rejectedTitle.visibility = View.GONE
+                binding.rejectedTitleView.visibility = View.GONE
+            }
+
+            102 -> {
+                binding.tvTitle.text = "Claim Status"
+                binding.date.visibility = View.GONE
+                binding.cliamStatusTV.text = "Pending"
+                binding.tvRejectedBy.text = "Pending"
+
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_orange_dark))
+
+                binding.tvRejectedReason.visibility = View.GONE
+                binding.rejectedTitle.visibility = View.GONE
+                binding.rejectedTitleView.visibility = View.GONE
+            }
+
+            103 -> {
+                binding.tvTitle.text = "Rejected By"
+                binding.date.text = "Rejected Date"
+                binding.tvRejectedReason.text = rejectedReason
+                binding.cliamStatusTV.text = "Rejected"
+                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+
+                binding.tvRejectedReason.visibility = View.VISIBLE
+                binding.rejectedTitle.visibility = View.VISIBLE
+                binding.rejectedTitleView.visibility = View.VISIBLE
+            }
+        }
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(binding.root)
+            .setCancelable(true)
+            .create()
+
+        dialog.show()
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -115,6 +181,15 @@ class IncentivesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val calendar = Calendar.getInstance()
+
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentYears = calendar.get(Calendar.YEAR)
+
+        binding.et1.setText(
+            "${resources.getStringArray(R.array.months)[currentMonth]} $currentYears"
+        )
         // from month
         val fromMonth: Spinner = binding.fromMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -129,6 +204,13 @@ class IncentivesFragment : Fragment() {
         }
 
 //        fromMonth.setSelection(0)
+        // FLW-1177: et1 above already displays the current month, but the spinner was left on
+        // its default index 0 (January), so the first Submit fetched January instead of the month
+        // on screen — the list came back empty and the claim button stayed hidden. It only
+        // corrected itself once the picker dialog called setSelection (see et1 click listener).
+        // Sync the spinner to what is displayed. No OnItemSelectedListener is attached to these
+        // spinners, so this cannot re-trigger a fetch.
+        fromMonth.setSelection(currentMonth)
 
         val myArrayList = ArrayList<Int>()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -145,6 +227,10 @@ class IncentivesFragment : Fragment() {
             )
         fromYear.adapter = fromYearsAdapter
         //  fromYear.setSelection(0)
+        // FLW-1177: index 0 is the current year only because the list is built currentYear
+        // downTo 2020. Pin it explicitly so a change to that range cannot silently desync the
+        // year from et1 the same way the month was.
+        fromYear.setSelection(myArrayList.indexOf(currentYears).coerceAtLeast(0))
 
         val toMonth: Spinner = binding.toMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -164,7 +250,7 @@ class IncentivesFragment : Fragment() {
         toYear.setSelection(0)
 
 
-        groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
+        groupedAdapter = IncentiveGroupSectionAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
@@ -229,17 +315,49 @@ class IncentivesFragment : Fragment() {
         }
 
 
+
         lifecycleScope.launch {
             viewModel.incentiveList.collect {
 
                 incentiveRecordList = it
+                try {
+                    supervisorRole = if (
+                        BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+                    ) {
+
+                        if (incentiveRecordList.get(0).record.supervisorRole.equals("ASHA Supervisor")){
+                            getString(R.string.mitanin_trainer)
+
+                        } else {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        }
+                    } else {
+                        if (incentiveRecordList.isNotEmpty() && incentiveRecordList[0].record.isClaimed) {
+                            incentiveRecordList.get(0).record.supervisorRole
+                        } else {
+                            ""
+                        }
+                    }
+                } catch (e:Exception) {
+                    Timer("")
+                }
+
                 val activityList = it.map { it.activity }
                 val pending = activityList.filter { !it.isPaid }.sumOf { it.rate }
                 val processed = activityList.filter { it.isPaid }.sumOf { it.rate }
+               /* if (isMitaninVariant) {
+                    binding.tvTotalPending.visibility = View.GONE
+                    binding.tvTotalProcessed.visibility = View.GONE
+                } else {
+                    binding.tvTotalPending.visibility = View.VISIBLE
+                    binding.tvTotalProcessed.visibility = View.VISIBLE
+
+                }*/
                 binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
                 binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
                 binding.tvLastupdated.text =
                     getString(R.string.incentive_last_updated, viewModel.lastUpdated)
+
 
             }
 
@@ -250,11 +368,15 @@ class IncentivesFragment : Fragment() {
         lifecycleScope.launch {
 
             viewModel.groupedIncentiveList.collect { groupedList ->
-                groupedAdapter.submitList(groupedList)
+                groupedAdapter.submitList(groupedList.toIncentiveGroupSections())
             }
         }
 
+
+
         binding.fetchData.setOnClickListener {
+            binding.claimlayout.visibility = View.VISIBLE
+
             val calendar = Calendar.getInstance()
             calendar.set(
                 Calendar.MONTH,
@@ -270,9 +392,229 @@ class IncentivesFragment : Fragment() {
             calendar.setToEndOfTheDay()
             val lastDay = calendar.timeInMillis
             viewModel.setRange(firstDay, lastDay)
+
+            val today = Calendar.getInstance()
+            val currentMonth = today.get(Calendar.MONTH)
+            val currentYear = today.get(Calendar.YEAR)
+            val currentDay = today.get(Calendar.DAY_OF_MONTH)
+
+            val selectedMonthIndex = resources.getStringArray(R.array.months)
+                .indexOf(fromMonth.selectedItem)
+            val selectedYearInt = fromYear.selectedItem.toString().toInt()
+
+            // FLW-1177: both predicates moved into IncentiveClaimWindow so the rule is unit
+            // testable. Kept here, commented, because they read as the definition of the window.
+//            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
+//                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
+//
+//            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
+//                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
+
+            val rejectedRecords = try {
+                incentiveRecordList.filter {
+                    it.record.approvalStatus == 103
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+            val isRejectedClaim = rejectedRecords.isNotEmpty()
+
+
+            // ── FLW-1177: kept for reuse once the pilot ends and permanent cut-offs are decided ──
+            // Pre-FLW-1177 Mitanin rule: month M was claimed on days 1-3 of M+1, extended to
+            // day 5 only when something in M had been rejected. Restore this block (and delete
+            // the one below) when the state confirms the permanent cut-off dates.
+//            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+//
+//            val isPreviousMonth = if (isMitaninVariant) {
+//                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
+//            } else {
+//                when {
+//                    isExactlyLastMonth -> currentDay <= 12
+//                    isSelectedPreviousMonth -> true
+//                    else -> false
+//                }
+//            }
+
+            // FLW-1177: rule now lives in IncentiveClaimWindow (unit tested in
+            // IncentiveClaimWindowTest). Mitanin still claims the PREVIOUS month — only the
+            // days 1-3 / 1-5 cut-off is gone, so Claim and Reclaim are offered on every day of
+            // the current month. Every other flavor keeps the legacy window unchanged.
+            // Name kept as-is: it is read again by the claim and reclaim click handlers below.
+            val isPreviousMonth = IncentiveClaimWindow.isClaimAllowed(
+                isMitaninVariant = isMitaninVariant,
+                selectedMonthIndex = selectedMonthIndex,
+                selectedYear = selectedYearInt,
+                currentMonthIndex = currentMonth,
+                currentYear = currentYear,
+                currentDayOfMonth = currentDay
+            )
+            binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
+
+            binding.claimbtn.setOnClickListener {
+                if (!isPreviousMonth) {
+                    Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                   return@setOnClickListener
+                     }
+                viewModel.claimIncentive(selectedMonth, selectedYear, emptyList())
+            }
+
+            if (incentiveRecordList.isNotEmpty()) {
+                if (incentiveRecordList.get(0).record.isClaimed) {
+
+                    binding.claimbtn.text = "Claimed"
+                    binding.claimbtn.isClickable = false
+                    binding.claimbtn.isEnabled = false
+                    binding.claimStatus.visibility = View.VISIBLE
+                    binding.approved.text = ""
+                    binding.approved.setOnClickListener {
+                        showRejectedDialog(
+                            incentiveRecordList.get(0).record.approvalStatus,
+                            "${incentiveRecordList.get(0).record.verifiedByUserName} (${supervisorRole})",
+                            incentiveRecordList.get(0).record.reason,
+                            incentiveRecordList.get(0).record.approvalDate,
+                            incentiveRecordList.get(0).record.calimedDate,
+                        )
+                    }
+                    when (incentiveRecordList.get(0).record.approvalStatus) {
+                        101 -> {
+                            binding.approved.text = "Verified"
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
+                            )
+                        }
+                        102 -> {
+                            binding.approved.text = "Pending"
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
+                            )
+                        }
+                        103 -> {
+                            binding.approved.text = "Rejected"
+                            binding.claimbtn.text = "Claim"
+                            binding.claimbtn.isEnabled = true
+
+                            binding.claimbtn.isClickable = true
+                            binding.approved.setBackgroundColor(
+                                ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
+                            )
+                        }
+                    }
+                } else {
+                    binding.claimbtn.text = "Claim"
+                    binding.claimbtn.isEnabled = true
+
+                    binding.claimbtn.isClickable = true
+                    binding.claimStatus.visibility = View.GONE
+                }
+            } else {
+                binding.claimStatus.visibility = View.GONE
+
+            }
+
+            // If any claim in the fetched list was rejected, switch the claim button into
+            // "Reclaim" mode so only the rejected activity's incentive id(s) are resubmitted,
+            // instead of the blanket whole-month claim above. Mitanin-only.
+            if (isMitaninVariant && isRejectedClaim) {
+                binding.claimbtn.text = "Reclaim"
+                binding.claimbtn.isEnabled = true
+                binding.claimbtn.isClickable = true
+                binding.claimbtn.setOnClickListener reclaimClick@{
+                    if (!isPreviousMonth) {
+                        Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                        return@reclaimClick
+                    }
+                    val rejectedIncentiveIds = rejectedRecords.map { it.record.id }
+                    viewModel.claimIncentive(selectedMonth, selectedYear, rejectedIncentiveIds)
+                }
+            }
         }
 
 
+        viewModel.actionState.observe(viewLifecycleOwner) { state ->
+
+            when (state) {
+
+                is ActionState.Loading -> {
+                    binding.claimbtn.isEnabled = false
+                    binding.claimbtn.text = "Claiming..."
+                }
+
+                is ActionState.Success -> {
+
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+
+                    binding.claimbtn.text = "Claimed"
+//                    binding.claimbtn.isEnabled = false
+//                    binding.claimbtn.isClickable = false
+                    binding.claimStatus.visibility = View.VISIBLE
+                    if (incentiveRecordList.isNotEmpty()) {
+                        if (incentiveRecordList.get(0).record.isClaimed) {
+                            binding.claimbtn.text = "Claimed"
+                            binding.claimbtn.isClickable = false
+                            binding.claimStatus.visibility = View.VISIBLE
+                            binding.approved.text = ""
+                            binding.approved.setOnClickListener {
+                                showRejectedDialog(
+                                    incentiveRecordList.get(0).record.approvalStatus,
+                                    "${incentiveRecordList.get(0).record.verifiedByUserName} (${supervisorRole})" ,
+                                    incentiveRecordList.get(0).record.reason,
+                                    incentiveRecordList.get(0).record.approvalDate,
+                                    incentiveRecordList.get(0).record.calimedDate,
+                                )
+                            }
+                            when (incentiveRecordList.get(0).record.approvalStatus) {
+                                101 ->  {
+                                    binding.approved.text = "Verified"
+
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_green_dark
+                                            )
+                                        )
+                                }
+                                102 ->  {
+                                    binding.approved.text = "Pending"
+
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_orange_light
+                                            )
+                                        )
+                                }
+                                103 -> {
+                                    binding.approved.text = "Rejected"
+
+                                    binding.approved.backgroundTintList =
+                                        ColorStateList.valueOf(
+                                            ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.holo_red_dark
+                                            )
+                                        )
+                                }
+
+                            }
+                        } else {
+                            binding.claimbtn.text = "Claim"
+                            binding.claimbtn.isClickable = true
+                            binding.claimStatus.visibility = View.GONE
+                        }
+
+                    }
+
+                }
+
+                is ActionState.Error -> {
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.tvTotalPending.setOnClickListener {
             if (isMitaninVariant || isChhattisgarhVariant) {
@@ -297,9 +639,9 @@ class IncentivesFragment : Fragment() {
         }
 
         if (isMitaninVariant) {
-            binding.tvHeaderAmount.visibility = View.GONE
-            binding.tvHeaderDoc.visibility = View.GONE
-            binding.guideline75.setGuidelinePercent(0.9f)
+            binding.tvHeaderAmount.visibility = View.VISIBLE
+            binding.tvHeaderDoc.visibility = View.VISIBLE
+//            binding.guideline75.setGuidelinePercent(0.9f)
         }
     }
 
@@ -826,7 +1168,7 @@ class IncentivesFragment : Fragment() {
         document.finishPage(page1)
 
         // You can continue with more pages if needed
-        val fileName = "Incentives_" + selectedMonth + "_" + selectedYear + ".pdf"
+        val fileName = "Incentives_${selectedMonth}_${selectedYear}_${System.currentTimeMillis()}.pdf"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
@@ -1112,44 +1454,53 @@ class IncentivesFragment : Fragment() {
 
     }
 
-    private fun askPermissions() {
-
-        if (isMitaninVariant || isChhattisgarhVariant) {
-            return
-        }
-
-        val sdkversion = Build.VERSION.SDK_INT
-
-        if (sdkversion >= 33) {
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.all { it.value }) {
             downloadPdf()
-
         } else {
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            for (permission in permissions) {
-                if (ContextCompat.checkSelfPermission(
-                        Objects.requireNonNull<Any>(
-                            requireContext()
-                        ) as Context, permission
-                    ) == PackageManager.PERMISSION_DENIED
-                ) {
-                    requestPermissions(
-                        permissions,
-                        PERMISSION_REQUEST_CODE
-                    )
-                    return
-                } else {
-                    downloadPdf()
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.permission_required_title))
+                .setMessage(getString(R.string.permission_required_message))
+                .setPositiveButton(getString(R.string.permission_open_settings)) { _, _ ->
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", requireContext().packageName, null)
+                    }
+                    startActivity(intent)
                 }
-            }
-
+                .setNegativeButton(getString(R.string.permission_cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
 
+    private fun askPermissions() {
+        if (isMitaninVariant || isChhattisgarhVariant) return
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            downloadPdf()
+            return
+        }
+
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        val anyDenied = permissions.any {
+            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_DENIED
+        }
+
+        if (anyDenied) {
+            requestPermissionLauncher.launch(permissions)
+        } else {
+            downloadPdf()
+        }
+    }
 }
+
 
 private fun getCurrentDateString(): String {
     val calendar = Calendar.getInstance()

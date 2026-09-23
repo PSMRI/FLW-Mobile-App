@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_household
 
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
@@ -28,6 +32,7 @@ import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseHoldBasicDomain
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import timber.log.Timber
 import javax.inject.Inject
@@ -45,6 +50,11 @@ class AllHouseholdFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: AllHouseholdViewModel by viewModels()
+
+    private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+    private var connectivityManager: ConnectivityManager? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var householdAdapter: HouseHoldListAdapter? = null
 
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -76,8 +86,8 @@ class AllHouseholdFragment : Fragment() {
 
     fun showSoftDeleteDialog(houseHoldBasicDomain: HouseHoldBasicDomain) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Household")
-            .setMessage("Are you sure you want to delete ${houseHoldBasicDomain.headFullName}")
+            .setTitle(getString(R.string.str_delete_household))
+            .setMessage("${getString(R.string.str_delete_household_msg)} ${houseHoldBasicDomain.headFullName}")
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deActivateHouseHold(houseHoldBasicDomain)
             }
@@ -195,7 +205,7 @@ class AllHouseholdFragment : Fragment() {
 //        binding.tvEmptyContent.text = resources.getString(R.string.no_records_found_hh)
         val householdAdapter = HouseHoldListAdapter("",isDisease, prefDao,true, HouseHoldListAdapter.HouseholdClickListener({
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                if (!it.isDeactivate){
+                if (!it.isDeactivate && findNavController().currentDestination?.id == R.id.allHouseholdFragment){
                     findNavController().navigate(
                         AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment(
                             it.hhId
@@ -204,7 +214,7 @@ class AllHouseholdFragment : Fragment() {
                 }
             }
         }, {
-            if (!it.isDeactivate){
+            if (!it.isDeactivate && findNavController().currentDestination?.id == R.id.allHouseholdFragment){
                 findNavController().navigate(
                     AllHouseholdFragmentDirections.actionAllHouseholdFragmentToHouseholdMembersFragment(
                         it.hhId,0,"No"
@@ -213,7 +223,7 @@ class AllHouseholdFragment : Fragment() {
             }
 
         }, {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
+            if (prefDao.getLoggedInUser()?.role.equals("asha", true) && findNavController().currentDestination?.id == R.id.allHouseholdFragment) {
                 if (it.numMembers == 0 && !it.isDeactivate) {
                         findNavController().navigate(
                             AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
@@ -236,7 +246,8 @@ class AllHouseholdFragment : Fragment() {
         }, {
             showSoftDeleteDialog(it)
         }
-            ))
+            ), gateNewBenOnInternet = isMitaninFlavor)
+        this.householdAdapter = householdAdapter
         binding.rvAny.adapter = householdAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -264,6 +275,7 @@ class AllHouseholdFragment : Fragment() {
             if (hasDraft) draftLoadAlert.show()
             else viewModel.navigateToNewHouseholdRegistration(false)
         }
+       // if (isMitaninFlavor) setupNextPageInternetGate()
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
 
@@ -288,8 +300,45 @@ class AllHouseholdFragment : Fragment() {
         }
     }
 
+
+    private fun setupNextPageInternetGate() {
+        updateNextPageButtonState()
+        val cm = ContextCompat.getSystemService(requireContext(), ConnectivityManager::class.java)
+        connectivityManager = cm
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                _binding?.root?.post { updateNextPageButtonState() }
+            }
+
+            override fun onLost(network: Network) {
+                _binding?.root?.post { updateNextPageButtonState() }
+            }
+        }
+        networkCallback = callback
+        cm?.registerDefaultNetworkCallback(callback)
+    }
+
+    private fun updateNextPageButtonState() {
+        val b = _binding ?: return
+        val hasInternet = isInternetAvailable(requireContext())
+        b.btnNextPage.isEnabled = hasInternet
+        val tint = if (hasInternet) {
+            com.google.android.material.color.MaterialColors.getColor(
+                b.btnNextPage, com.google.android.material.R.attr.colorPrimary
+            )
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.md_theme_light_ongray)
+        }
+        b.btnNextPage.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
+        householdAdapter?.notifyDataSetChanged()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        networkCallback?.let { connectivityManager?.unregisterNetworkCallback(it) }
+        networkCallback = null
+        connectivityManager = null
+        householdAdapter = null
         addBenAlert?.dismiss()
         addBenAlert = null
         addBenAlertBinding = null
@@ -367,6 +416,7 @@ class AllHouseholdFragment : Fragment() {
 
         if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
             list.remove(common[4])
+            list.remove(common[18])
         }
         return list
     }

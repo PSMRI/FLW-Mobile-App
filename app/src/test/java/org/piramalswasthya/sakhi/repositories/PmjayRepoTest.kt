@@ -2,12 +2,14 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -67,4 +69,118 @@ class PmjayRepoTest : BaseRepositoryTest() {
             assertTrue(e.message!!.contains("No user logged in"))
         }
     }
+
+    @Test
+    fun `savePmjayData delegates to dao upsert on success`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.upsert(cache) } returns Unit
+
+        assertTrue(repo.savePmjayData(cache))
+        coVerify(exactly = 1) { pmjayDao.upsert(cache) }
+    }
+
+    @Test
+    fun `savePmjayData returns false when upsert throws`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.upsert(cache) } throws RuntimeException("boom")
+
+        assertFalse(repo.savePmjayData(cache))
+    }
+
+    @Test
+    fun `processNewPmjay throws when no user logged in`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns null
+
+        try {
+            repo.processNewPmjay()
+            assertFalse("Should have thrown", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.contains("No user logged in"))
+        }
+    }
+
+    @Test
+    fun `processNewPmjay returns true when no unprocessed records`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns emptyList()
+
+        assertEquals(true, repo.processNewPmjay())
+    }
+
+    @Test
+    fun `processNewPmjay returns true after building post model for a single record`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(any(), any()) } returns mockk(relaxed = true)
+        coEvery { database.mdsrDao.mdsrCount() } returns 2
+
+        val result = repo.processNewPmjay()
+
+        assertTrue(result)
+        coVerify { database.mdsrDao.mdsrCount() }
+    }
+
+    @Test
+    fun `processNewPmjay throws when household is missing for a record`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        every { cache.hhId } returns 111L
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(111L) } returns null
+
+        try {
+            repo.processNewPmjay()
+            assertFalse("Should have thrown", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.contains("No household exists"))
+        }
+    }
+
+    @Test
+    fun `processNewPmjay throws when beneficiary is missing for a record`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<PMJAYCache>(relaxed = true)
+        every { cache.hhId } returns 222L
+        every { cache.benId } returns 333L
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns listOf(cache)
+        coEvery { database.householdDao.getHousehold(222L) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(222L, 333L) } returns null
+
+        try {
+            repo.processNewPmjay()
+            assertFalse("Should have thrown", true)
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.contains("No beneficiary exists"))
+        }
+    }
+
+    @Test
+    fun `processNewPmjay builds a post model for every unprocessed record`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { preferenceDao.getLoggedInUser() } returns user
+        val first = mockk<PMJAYCache>(relaxed = true)
+        val second = mockk<PMJAYCache>(relaxed = true)
+        coEvery { pmjayDao.getAllUnprocessedPMJAY() } returns listOf(first, second)
+        coEvery { database.householdDao.getHousehold(any()) } returns mockk(relaxed = true)
+        coEvery { database.benDao.getBen(any(), any()) } returns mockk(relaxed = true)
+        coEvery { database.mdsrDao.mdsrCount() } returns 0
+
+        val result = repo.processNewPmjay()
+
+        assertTrue(result)
+        coVerify(exactly = 2) { database.householdDao.getHousehold(any()) }
+    }
+
 }

@@ -174,7 +174,8 @@
                                 android:layout_alignEnd="@+id/cbac_tv_age"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:labelFor="@id/actv_age_dropdown"
-                                app:hintEnabled="false">
+                                app:hintEnabled="false"
+                                android:importantForAccessibility="yes">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/actv_age_dropdown"
@@ -222,7 +223,7 @@
                                 android:layout_below="@+id/cbac_tv_smoke"
                                 android:layout_alignStart="@+id/cbac_tv_smoke"
                                 android:layout_alignEnd="@+id/cbac_tv_smoke"
-
+                                android:importantForAccessibility="yes"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:labelFor="@id/actv_smoke_dropdown"
                                 app:hintEnabled="false">
@@ -233,6 +234,8 @@
                                     android:layout_height="wrap_content"
                                     android:hint="@string/cbac_select"
                                     android:inputType="none"
+                                    android:contentDescription="smoke_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_smoke"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -274,6 +277,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_alcohol"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_alcohol_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -282,6 +286,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="alcohol_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_alcohol"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -323,6 +329,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_waist"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_waist_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -331,6 +338,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="waist_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_waist_mes_male"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -372,6 +381,7 @@
                                 android:layout_marginEnd="32dp"
                                 android:layout_toStartOf="@+id/dd_pa_score"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_pa_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -380,6 +390,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="waist_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_pa"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -421,6 +433,7 @@
                                 android:layout_alignEnd="@+id/cbac_tv_fh"
                                 android:layout_marginEnd="@dimen/margin_huge"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_fh_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -429,6 +442,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fh_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_fh"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -464,6 +479,12 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
+                <include
+                    android:id="@+id/layout_referral_form"
+                    layout="@layout/fragment_new_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_ed"
@@ -508,7 +529,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat_note"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -516,7 +537,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast1"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -524,7 +545,7 @@
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast2"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_green_light" />
+                                android:textColor="@android:color/holo_orange_light" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -538,6 +559,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     style="@style/cbac_ed_hint"
+                                    android:textStyle="bold"
                                     android:text="@string/none_of"  />
 
                                 <CheckBox
@@ -753,12 +775,12 @@
 
                                 app:numAsteriskAlt="@{0}" />
 
-                            <include
+                       <!--     <include
                                 android:id="@+id/cbac_suspected_leprosy"
                                 layout="@layout/fragment_cbac_element_radio"
                                 app:fieldName="@{@string/cbac_is_leprosy_suspected}"
 
-                                app:numAsteriskAlt="@{0}" />
+                                app:numAsteriskAlt="@{0}" />-->
 
                             <LinearLayout
                                 android:id="@+id/cbac_ll_ed_women"
@@ -940,6 +962,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_fuel"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_alcohol_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -948,6 +971,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fuel_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_type_Cooking_fuel"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -975,6 +1000,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_exposure"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_exposure_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -983,6 +1009,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="exposure_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_type_occupational_exposure"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -1072,6 +1100,7 @@
                                 android:layout_alignStart="@+id/cbac_phq2_tv_little_interest"
                                 android:layout_alignEnd="@+id/cbac_phq2_tv_little_interest"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_li_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -1080,6 +1109,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="li_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_li"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -1120,6 +1151,7 @@
                                 android:layout_alignStart="@+id/cbac_tv_fd"
                                 android:layout_alignEnd="@+id/cbac_tv_fd"
                                 android:hint="@string/cbac_select"
+                                android:importantForAccessibility="yes"
                                 android:labelFor="@id/actv_fd_dropdown"
                                 app:expandedHintEnabled="true">
 
@@ -1128,6 +1160,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="none"
+                                    android:contentDescription="fd_dropdown"
+                                    android:importantForAccessibility="yes"
                                     app:simpleItems="@array/cbac_fd"
                                     tools:ignore="SpeakableTextPresentCheck"
                                     tools:text="ABB" />
@@ -1426,14 +1460,6 @@
 
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:text="@string/save"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    android:textColor="?attr/colorOnPrimary" />
 
 
             </LinearLayout>
@@ -1447,6 +1473,18 @@
             android:layout_gravity="center"
             android:indeterminateTint="?attr/colorPrimary"
             android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:text="@string/submit"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="?attr/colorOnPrimary" />
+
     </FrameLayout>
 
 </layout>

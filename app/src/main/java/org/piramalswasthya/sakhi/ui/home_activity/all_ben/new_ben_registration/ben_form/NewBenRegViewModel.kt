@@ -23,19 +23,23 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.HofAbhaPrefillCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.BenRegGen
 import org.piramalswasthya.sakhi.model.BenRegKid
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.PreviewItem
 import org.piramalswasthya.sakhi.model.User
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.HouseholdRepo
 import org.piramalswasthya.sakhi.repositories.UserRepo
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
@@ -48,6 +52,7 @@ class NewBenRegViewModel @Inject constructor(
     private val benRepo: BenRepo,
     private val householdRepo: HouseholdRepo,
     private val ecrRepo: EcrRepo,
+    private val hofAbhaPrefillCache: HofAbhaPrefillCache,
     userRepo: UserRepo
 ) : ViewModel() {
     enum class State {
@@ -107,6 +112,27 @@ class NewBenRegViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _abhaUserDetails = MutableLiveData<NetworkResult<List<FamilyMember>>?>(null)
+    val abhaUserDetails: LiveData<NetworkResult<List<FamilyMember>>?>
+        get() = _abhaUserDetails
+
+    fun getUserDetailsByAyushmanAbhaCardNo(abhaId: String) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                benRepo.getUserDetailsByAyushmanAbhaCardNo(abhaId, hhId.toString())
+            }
+            _abhaUserDetails.postValue(result)
+        }
+    }
+
+    fun clearAbhaUserDetails() {
+        _abhaUserDetails.value = null
+    }
+
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        dataset.prefillFromAyushmanCard(member)
+    }
+
 
     private var isConsentAgreed = false
     var isEditClicked = false
@@ -124,6 +150,7 @@ class NewBenRegViewModel @Inject constructor(
     private lateinit var household: HouseholdCache
     private lateinit var ben: BenRegCache
     private lateinit var locationRecord: LocationRecord
+    private var isSetupComplete = false
 
     private var lastImageFormId: Int = 0
     var otp = 1234
@@ -155,12 +182,24 @@ class NewBenRegViewModel @Inject constructor(
     suspend fun setUpPage() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                user = preferenceDao.getLoggedInUser()!!
-                household = benRepo.getHousehold(hhId)!!
-                locationRecord = preferenceDao.getLocationRecord()!!
+                user = preferenceDao.getLoggedInUser() ?: run {
+                    Timber.e("User not logged in")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
+                household = benRepo.getHousehold(hhId) ?: run {
+                    Timber.e("Household not found: hhId=$hhId")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
+                locationRecord = household.locationRecord
 
                 if (benIdFromArgs != 0L && recordExists.value == true) {
-                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
+                        Timber.e("Beneficiary not found: benId=$benIdFromArgs, hhId=$hhId")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _isDeath.postValue(ben.isDeath ?: false)
                     if (ben.genDetails?.maritalStatus == "Unmarried") {
                         isBenMarried = false
@@ -170,12 +209,19 @@ class NewBenRegViewModel @Inject constructor(
                     isOtpVerified = ben.isConsent
                     parentName = ben.firstName + " " + ben.lastName
                     parentFirstName = ben.firstName.toString()
+                    if (ben.isKid && ben.lastName.isNullOrBlank()) {
+                        ben.lastName = household.family?.familyName
+                    }
                     dataset.setFirstPageToRead(
                         ben,
                         familyHeadPhoneNo = household.family?.familyHeadPhoneNo
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
-                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)!!
+                    ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
+                        Timber.e("Beneficiary not found: benId=$benIdFromArgs, hhId=$hhId")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     isOtpVerified = ben.isConsent
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
@@ -185,10 +231,15 @@ class NewBenRegViewModel @Inject constructor(
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
 
+                        val resolvedGender = ben.gender ?: benGender ?: run {
+                            Timber.e("Gender missing for ben=$benIdFromArgs, hhId=$hhId")
+                            _state.postValue(State.SAVE_FAILED)
+                            return@withContext
+                        }
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = ben.gender!!,
+                            hoF = hoFBen, benGender = resolvedGender,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
@@ -197,10 +248,16 @@ class NewBenRegViewModel @Inject constructor(
                     }
                 } else {
 
-                    if (isHoF) dataset.setPageForHof(
-                        if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
-                        household
-                    ) else {
+                    if (isHoF) {
+                        // Option 1 hand-off: prefill the new HoF from ABHA details fetched during
+                        // household registration (keyed by this household id, consumed once). Passed
+                        // into setPageForHof so values are applied while the page is built.
+                        dataset.setPageForHof(
+                            if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
+                            household,
+                            hofAbhaPrefillCache.consume(hhId)
+                        )
+                    } else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
                         val selectedben = familyList.firstOrNull { it.beneficiaryId == SelectedbenIdFromArgs }
@@ -215,11 +272,15 @@ class NewBenRegViewModel @Inject constructor(
                             femaleOfHouse?.beneficiaryId ?: hoFBen?.beneficiaryId ?: 0L
                         }
 
-
+                        val resolvedGender2 = benGender ?: run {
+                            Timber.e("Gender missing for new ben registration, hhId=$hhId")
+                            _state.postValue(State.SAVE_FAILED)
+                            return@withContext
+                        }
                         dataset.setPageForFamilyMember(
                             ben = if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household = household,
-                            hoF = hoFBen, benGender = benGender!!,
+                            hoF = hoFBen, benGender = resolvedGender2,
                             relationToHeadId = relToHeadId,
                             hoFSpouse = familyList.filter { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 },
                             selectedben,
@@ -229,6 +290,7 @@ class NewBenRegViewModel @Inject constructor(
                             )
                     }
                 }
+                isSetupComplete = true
             }
         }
 
@@ -238,6 +300,11 @@ class NewBenRegViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
+                    if (!isSetupComplete) {
+                        Timber.e("saveForm() called before setup completed")
+                        _state.postValue(State.SAVE_FAILED)
+                        return@withContext
+                    }
                     _state.postValue(State.SAVING)
                     if (!this@NewBenRegViewModel::ben.isInitialized) {
                         val benIdToSet = minOf(benRepo.getMinBenId() - 1L, -1L)
@@ -288,8 +355,9 @@ class NewBenRegViewModel @Inject constructor(
                     if (ben.gender == Gender.MALE) {
                         benRepo.updateFather(ben.firstName + " " + ben.lastName, ben.householdId, parentName, SyncState.UNSYNCED)
                     } else {
+                        Log.e("CHECK DATA","SSSSSSS")
                         benRepo.updateBabyName("Baby of " + ben.firstName, ben.householdId, parentFirstName, SyncState.UNSYNCED)
-                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
+//                        benRepo.updateMother(ben.firstName.toString(), ben.householdId, parentFirstName, SyncState.UNSYNCED)
                     }
                     if (isHoF) {
                         if (ben.genDetails?.maritalStatusId == 2) {

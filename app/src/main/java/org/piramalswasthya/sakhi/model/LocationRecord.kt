@@ -19,5 +19,6 @@ data class LocationEntity(
     val id: Int,
     val name: String,
     val nameHindi: String? = null,
-    val nameAssamese: String? = null
+    val nameAssamese: String? = null,
+    val nameBangla: String? = null
 ) : java.io.Serializable

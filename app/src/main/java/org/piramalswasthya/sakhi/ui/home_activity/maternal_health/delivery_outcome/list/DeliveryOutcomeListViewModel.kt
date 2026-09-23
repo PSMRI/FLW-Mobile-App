@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.delivery_outcome.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,8 @@ class DeliveryOutcomeListViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            Log.i( "filterText123",text.toString())
+            filter.emit(text.trim().lowercase())
         }
 
     }

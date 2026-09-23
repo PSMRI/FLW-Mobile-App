@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -19,6 +20,10 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.FPOTCache
 import org.piramalswasthya.sakhi.model.User
 
+/**
+ * Unit tests for [FpotRepo]. Consolidated from the previously separate
+ * FpotRepoTest + Extra* files into a single class.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class FpotRepoTest : BaseRepositoryTest() {
 
@@ -37,10 +42,6 @@ class FpotRepoTest : BaseRepositoryTest() {
         every { database.fpotDao } returns fpotDao
         repo = FpotRepo(database, preferenceDao)
     }
-
-    // =====================================================
-    // saveFpotData() Tests
-    // =====================================================
 
     @Test
     fun `saveFpotData returns true on success`() = runTest {
@@ -66,5 +67,28 @@ class FpotRepoTest : BaseRepositoryTest() {
         } catch (e: IllegalStateException) {
             assertTrue(e.message!!.contains("No user logged in"))
         }
+    }
+
+    @Test
+    fun `saveFpotData delegates to dao upsert on success`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<FPOTCache>(relaxed = true)
+        coEvery { fpotDao.upsert(cache) } returns Unit
+
+        assertTrue(repo.saveFpotData(cache))
+        coVerify(exactly = 1) { fpotDao.upsert(cache) }
+    }
+
+    @Test
+    fun `saveFpotData returns false when upsert throws`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userName } returns "asha"
+        every { preferenceDao.getLoggedInUser() } returns user
+        val cache = mockk<FPOTCache>(relaxed = true)
+        coEvery { fpotDao.upsert(cache) } throws RuntimeException("boom")
+
+        assertFalse(repo.saveFpotData(cache))
     }
 }

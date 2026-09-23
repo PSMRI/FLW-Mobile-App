@@ -75,7 +75,7 @@ class AllHouseholdViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filter.emit(text.trim())
         }
 
     }
@@ -88,10 +88,10 @@ class AllHouseholdViewModel @Inject constructor(
         val filteredList = if (filter.isBlank()) {
             list
         } else {
-            val filterText = filter.lowercase()
+            val filterText = filter.trim().lowercase().replace(" ", "")
             list.filter {
                 it.hhId.toString().contains(filterText) ||
-                        it.headFullName.lowercase().contains(filterText) ||
+                        it.headFullName.lowercase().replace(" ", "").contains(filterText) ||
                         it.contactNumber.contains(filterText)
             }
         }

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "ALL_EYE_SURGERY_VISIT_HISTORY",
     indices = [
-        Index(value = ["benId", "formId", "visitMonth"], unique = true),
+        Index(value = ["benId", "formId", "eyeSide"], unique = true),
         Index(value = ["benId", "visitDate"])
     ]
 )
@@ -17,6 +17,7 @@ data class EyeSurgeryFormResponseJsonEntity(
     val hhId: Long,
     val visitDate: String,
     val visitMonth: String,
+    val eyeSide: String = "",
     val formId: String,
     val version: Int,
     val formDataJson: String,

@@ -396,7 +396,7 @@ class AbhaIdRepo @Inject constructor(
             } catch (e: IOException) {
                 NetworkResult.Error(-1, "Unable to connect to Internet!")
             } catch (e: JSONException) {
-                NetworkResult.Error(-2, "SMS Gateway is unavailable! Please try again!")
+                NetworkResult.Error(-2, "Creation/SMS Limit Reached! Please try again!")
             } catch (e: SocketTimeoutException) {
                 NetworkResult.Error(-3, "Request Timed out! Please try again!")
             } catch (e: java.lang.Exception) {
@@ -806,21 +806,25 @@ class AbhaIdRepo @Inject constructor(
         mapHIDtoBeneficiary: MapHIDtoBeneficiary,
         ben: BenRegCache?
     ) {
-        val abhaProfileJson = Gson().toJson(mapHIDtoBeneficiary.ABHAProfile)
-        val abha = ABHAModel(
-            beneficiaryID = mapHIDtoBeneficiary.beneficiaryID!!,
-            beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID!!,
-            benName = ben?.firstName.toString(),
-            benSurname = ben?.lastName,
-            healthId = mapHIDtoBeneficiary.healthId!!,
-            txnId = mapHIDtoBeneficiary.txnId!!,
-            message = mapHIDtoBeneficiary.message!!,
-            createdBy = "",
-            providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId!!,
-            abhaProfileJson = abhaProfileJson,
-            healthIdNumber = mapHIDtoBeneficiary.healthIdNumber.toString(),
-            isNewAbha = mapHIDtoBeneficiary.isNew!!
-        )
-        abhaGenerated.saveAbhaGenrated(abha)
+        try {
+            val abhaProfileJson = Gson().toJson(mapHIDtoBeneficiary.ABHAProfile)
+            val abha = ABHAModel(
+                beneficiaryID = mapHIDtoBeneficiary.beneficiaryID ?: return,
+                beneficiaryRegID = mapHIDtoBeneficiary.beneficiaryRegID ?: return,
+                benName = ben?.firstName ?: "",
+                benSurname = ben?.lastName,
+                healthId = mapHIDtoBeneficiary.healthId ?: return,
+                txnId = mapHIDtoBeneficiary.txnId ?: "",
+                message = mapHIDtoBeneficiary.message ?: "",
+                createdBy = "",
+                providerServiceMapId = prefDao.getLoggedInUser()?.serviceMapId ?: return,
+                abhaProfileJson = abhaProfileJson,
+                healthIdNumber = mapHIDtoBeneficiary.healthIdNumber?.toString() ?: "",
+                isNewAbha = mapHIDtoBeneficiary.isNew ?: false
+            )
+            abhaGenerated.saveAbhaGenrated(abha)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save ABHA model")
+        }
     }
 }

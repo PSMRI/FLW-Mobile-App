@@ -120,7 +120,7 @@ class SyncLogTreeTest {
 
     @Test
     fun `non sync message is not captured`() {
-        Timber.tag("OkHttp").d("UI button clicked")
+        Timber.tag("UI").d("button clicked")
 
         verify(exactly = 0) { syncLogManager.addLog(any(), any(), any()) }
     }

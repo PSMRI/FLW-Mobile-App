@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvGeneralOpdBenBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class GeneralOPDAdapter(
     private val clickListener: CallClickListener? = null,
@@ -90,10 +93,25 @@ class GeneralOPDAdapter(
                 binding.husband = false
                 binding.spouse = false
             }
+            val dobMillis = parseDobToMillis(item?.dob.toString())
+
+            dobMillis?.let { binding.age.text = getLocalizedAge(binding.root.context, it) }
             binding.executePendingBindings()
 
         }
+
+        fun parseDobToMillis(dob: String): Long? {
+            return try {
+                SimpleDateFormat(
+                    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                    Locale.US
+                ).parse(dob)?.time
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int

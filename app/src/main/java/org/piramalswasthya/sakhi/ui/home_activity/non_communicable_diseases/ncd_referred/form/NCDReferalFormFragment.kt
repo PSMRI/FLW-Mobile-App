@@ -129,6 +129,7 @@ class NCDReferalFormFragment : Fragment() {
     private fun getActionBarTitle(): String {
         return when (viewModel.referraltype.uppercase()) {
             "MATERNAL" -> getString(R.string.hwc_refer_form)
+            "TB" -> getString(R.string.hwc_refer_form)
             else -> getString(R.string.ncd_refer_form)
         }
     }
