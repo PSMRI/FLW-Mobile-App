@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareInfantBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import java.util.concurrent.TimeUnit
 
@@ -45,6 +46,7 @@ class InfantListAdapter(
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
+            binding.age.text = getLocalizedAge(binding.root.context, item.dob)
             binding.executePendingBindings()
             setOverDueStatus(item.dob)
         }

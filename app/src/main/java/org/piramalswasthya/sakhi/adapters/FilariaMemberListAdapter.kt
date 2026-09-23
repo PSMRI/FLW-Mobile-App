@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemFilariaMemberListBinding
 import org.piramalswasthya.sakhi.databinding.RvItemKalaAzarMemberListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithFilariaScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 
@@ -92,7 +93,7 @@ class FilariaMemberListAdapter(
             binding.btnFormTb.text = if (item.filaria == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.filaria == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

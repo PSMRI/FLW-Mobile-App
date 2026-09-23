@@ -63,7 +63,7 @@ class UwinRepo @Inject constructor(
 
     suspend fun getUwinById(id: Int): UwinCache? = uwinDao.getUwinById(id)
 
-    private fun buildMultipartFromUris(network: UwinNetwork): List<MultipartBody.Part> {
+    private fun buildMultipartFromUris(network: UwinNetwork): List<MultipartBody.Part> = withContext(Dispatchers.IO){
         val files = listOfNotNull(network.uploadedFiles1, network.uploadedFiles2)
         val parts = mutableListOf<MultipartBody.Part>()
 
@@ -83,7 +83,7 @@ class UwinRepo @Inject constructor(
                 Timber.e(e, "❌ Failed to build multipart from URI: $uriStr")
             }
         }
-        return parts
+        return@withContext parts
     }
 
     suspend fun tryUpsync(): Boolean = withContext(Dispatchers.IO) {
@@ -219,7 +219,7 @@ class UwinRepo @Inject constructor(
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
                     val (ext, _) = detectExtAndMime(bytes)
-                    val file = File(appContext.cacheDir, "uwin_${System.currentTimeMillis()}.$ext")
+                    val file = File(appContext.cacheDir, "uwin_${item.id}_img${index}.$ext")
                     file.outputStream().use { it.write(bytes) }
                     val uri = FileProvider.getUriForFile(
                         appContext,

@@ -312,6 +312,7 @@ class EcrRepo @Inject constructor(
                                 try {
                                     val dataObj = jsonObj.getJSONArray("data")
                                     val ecrList = getEcrCacheFromServerResponse(dataObj)
+                                    Timber.d("===171213:ECRList::${ecrList}")
                                     val assessList = getHighRiskAssess(dataObj)
 
                                     ecrList.forEach { ecr ->
@@ -409,8 +410,9 @@ class EcrRepo @Inject constructor(
                             200 -> {
                                 try {
                                     val dataObj = jsonObj.getJSONArray("data")
-                                    val ecrList = getEctCacheFromServerResponse(dataObj)
-                                    ecrList.filter {
+                                    val ectList = getEctCacheFromServerResponse(dataObj)
+                                    Timber.d("===171213:ECTList::${ectList}")
+                                    ectList.filter {
                                         !database.ecrDao.ectWithsameCreateDateExists(it.createdDate) && database.benDao.getBen(
                                             it.benId
                                         ) != null

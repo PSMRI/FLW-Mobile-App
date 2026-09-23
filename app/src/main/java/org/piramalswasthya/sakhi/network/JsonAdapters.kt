@@ -243,6 +243,13 @@ data class AbhaGenerateAadhaarOtpResponseV2(
     val message:String
 )
 
+data class UserDetailsByAyushmanCardNoRequest(
+//    val userId: String,
+//    val password: String,
+    val cardNo: String,
+    val houseHoldId: String
+
+)
 @JsonClass(generateAdapter = true)
 data class SendOtpResponse(
     val data: Data,
@@ -1142,6 +1149,7 @@ data class AdolscentHealthDTO(
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
     var sanitaryNapkinDistributed: Boolean? = null,
+    var isSanitaryNapkinUsed: Boolean? = null,
     var noOfPacketsDistributed: Int? = null,
     var place: String? = null,
     var distributionDate: String? = null,
@@ -1426,6 +1434,7 @@ data class MalariaConfirmedDTO(
             houseHoldDetailsId = houseHoldDetailsId,
             diseaseId = diseaseId,
             day = day,
+            syncState = SyncState.SYNCED,
             )
     }
 }
@@ -1744,7 +1753,7 @@ data class FilariaScreeningDTO(
             medicineSideEffect = medicineSideEffect.toString(),
             otherSideEffectDetails = otherSideEffectDetails.toString(),
             createdBy = createdBy.toString(),
-            createdDate = getLongFromDate(createdDate),
+            createdDate = convertIsoDateToMillis(createdDate),
 
         )
     }
@@ -1818,11 +1827,41 @@ data class KALAZARScreeningDTO(
     }
 }
 
+fun convertIsoDateToMillis(dateString: String?): Long {
+    return try {
+        val sdf = SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+            Locale.getDefault()
+        )
+        sdf.parse(dateString ?: "")?.time ?: 0L
+    } catch (e: Exception) {
+        0L
+    }
+}
+
 fun getLongFromDate(dateString: String?): Long {
-    val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-    val date = dateString?.let { f.parse(it) }
+
+    if (dateString.isNullOrBlank() ||
+        dateString.equals("null", true)
+    ) {
+        return 0L
+    }
+
+    val date = try {
+        SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            .parse(dateString.trim())
+    } catch (_: Exception) {
+        try {
+            SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
+                .parse(dateString.trim())
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     return date?.time ?: 0L
 }
+
 
 fun getLongFromDateMultipleSupport(dateStr: String?): Long? {
     if (dateStr.isNullOrBlank() || dateStr == "1970-01-01") return null

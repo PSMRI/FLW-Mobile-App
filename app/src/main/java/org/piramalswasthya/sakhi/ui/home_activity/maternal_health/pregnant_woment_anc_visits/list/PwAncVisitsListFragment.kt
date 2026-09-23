@@ -15,6 +15,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.CompositeDateValidator
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -32,6 +37,7 @@ import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.PmsmaViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaBottomSheetFragment
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pregnant_woment_anc_visits.form.PwAncFormViewModel
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import java.util.Collections.list
 
@@ -51,7 +57,6 @@ class PwAncVisitsListFragment : Fragment() {
 
     private val viewModel: PwAncVisitsListViewModel by viewModels()
     private val viewModelListPmsma: PmsmaVisitsListViewModel by viewModels()
-
     private val bottomSheet: AncBottomSheetFragment by lazy { AncBottomSheetFragment() }
     private var bottomSheetPmsma: PmsmaBottomSheetFragment? = null
 
@@ -116,18 +121,22 @@ class PwAncVisitsListFragment : Fragment() {
                     )
                 },
                 addVisit = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
-                            benId, hhId.toString(), visitNumber,false
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncFormFragment(
+                                benId, hhId.toString(), visitNumber, false
+                            )
                         )
-                    )
+                    }
                 },
                 pmsma = { benId, hhId, visitNumber ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
-                            benId, hhId, visitNumber
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPmsmaFragment(
+                                benId, hhId, visitNumber
+                            )
                         )
-                    )
+                    }
                 }, showPmsmaVisits = { benId, hhId ->
                     viewModel.showAncBottomSheet(
                         benId,
@@ -155,11 +164,13 @@ class PwAncVisitsListFragment : Fragment() {
                         ).show()
                     }
               }, addHomeVisit = {benId ->
-                    findNavController().navigate(
-                        PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
-                            benId,0
+                    if (findNavController().currentDestination?.id == R.id.pwAncVisitsFragment) {
+                        findNavController().navigate(
+                            PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
+                                benId, 0
+                            )
                         )
-                    )
+                    }
 
                  },
                 showHomeVisit = { benId ->
@@ -172,8 +183,17 @@ class PwAncVisitsListFragment : Fragment() {
                         bottomSheetAncHomeVisit!!.show(childFragmentManager, "HomeVisit")
 
                     }}
-                ),true, prefDao,false,true
+                ),true, prefDao,false,true,
+            onDeliveryStatusChanged = { item, isDelivered ->
 
+
+                if (isDelivered) {
+
+                    showDeliveryDatePicker(item)
+
+
+                }
+            }
 
         )
         binding.rvAny.adapter = benAdapter
@@ -245,6 +265,56 @@ class PwAncVisitsListFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun showDeliveryDatePicker(item: BenWithAncListDomain) {
+
+        val constraints = CalendarConstraints.Builder()
+            .setStart(item.ancDate)
+            .setEnd(System.currentTimeMillis())
+            .setValidator(
+                CompositeDateValidator.allOf(
+                listOf(
+                    DateValidatorPointForward.from(item.ancDate),
+                    DateValidatorPointBackward.before(System.currentTimeMillis() + 1)
+                )
+            ))
+            .build()
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(getString(R.string.do_delivery_date))
+            .setCalendarConstraints(constraints)
+
+            .build()
+
+
+
+
+
+        datePicker.addOnPositiveButtonClickListener { selectedDate ->
+
+            if (selectedDate >= item.ancDate) {
+
+                viewModel.updateDeliveryStatus(
+                    benId = item.ben.benId,
+                    visitNumber = if (item.anc.isEmpty()) {
+                        1
+                    } else {
+                        item.anc.maxOf { it.visitNumber } + 1
+                    },
+                    isDelivered = true,
+                    deliveryDate = selectedDate
+                )
+
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.delivery_date_cannot_be_before_last_anc_visit_date),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        datePicker.show(childFragmentManager, "delivery_date")
     }
 
     override fun onDestroy() {

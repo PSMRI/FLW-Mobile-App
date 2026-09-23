@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemBenWithHrpaFormBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithHRPADomain
 import org.piramalswasthya.sakhi.utils.RoleConstants
 
@@ -91,6 +92,7 @@ class HRPAdapter(
                     setFormButtonColor(i + 1, item, role)
                 }
             }
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

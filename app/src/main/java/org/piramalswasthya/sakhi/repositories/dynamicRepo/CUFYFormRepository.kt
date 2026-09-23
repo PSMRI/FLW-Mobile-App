@@ -122,7 +122,12 @@ class CUFYFormRepository @Inject constructor(
                 e.printStackTrace()
             }
         }
+
+        // Row position is now the visit number shown to the Mitanin, so order by the date the
+        // bottle was handed over instead of relying on insertion order.
+        val displayDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         return result
+            .sortedBy { runCatching { displayDateFormat.parse(it.dateOfProvision) }.getOrNull() }
     }
 
     suspend fun saveDownloadedVisitList(list: List<HBNCVisitResponse>, formId: String) {

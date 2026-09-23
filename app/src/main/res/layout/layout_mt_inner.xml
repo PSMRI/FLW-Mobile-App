@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  One claimed record on the Mitanin Trainer / ANM single-activity screen.
+
+  BRD 164692128 §19.3/§19.4: every row is approved or rejected on the spot with its own tick and
+  cross — there is no checkbox and no bulk footer at this level. A beneficiary-linked claim shows
+  the beneficiary block; a meeting/register claim shows the date it happened instead, so the
+  reviewer is checking something real rather than ticking a blank box.
+
+  Flat by design: the rows live inside a single card owned by fragment_beneficiary_detail.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:paddingStart="12dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+    <!-- Approve: immediate, no confirmation sheet -->
+    <ImageView
+        android:id="@+id/btnApprove"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/approve"
+        android:src="@drawable/ic_check_circle_green"
+        app:layout_constraintBottom_toBottomOf="@id/llInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/llInfo" />
+
+    <!-- Reject: opens the reason sheet for this row only -->
+    <ImageView
+        android:id="@+id/btnReject"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/reject"
+        android:src="@drawable/ic_crossed_circle"
+        app:layout_constraintBottom_toBottomOf="@id/btnApprove"
+        app:layout_constraintStart_toEndOf="@id/btnApprove"
+        app:layout_constraintTop_toTopOf="@id/btnApprove" />
+
+    <!-- Fixed width, and the same gone-margin as the header spacer: read-only rows hide the two
+         action icons, and the S.No column must land in the same place either way. -->
+    <TextView
+        android:id="@+id/tvSerialNo"
+        android:layout_width="@dimen/mt_row_serial_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mt_row_serial_margin"
+        android:gravity="center"
+        android:textColor="#111827"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btnApprove"
+        app:layout_constraintStart_toEndOf="@id/btnReject"
+        app:layout_constraintTop_toTopOf="@id/btnApprove"
+        app:layout_goneMarginStart="@dimen/mt_row_serial_margin"
+        tools:text="1" />
+
+    <LinearLayout
+        android:id="@+id/llInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mt_row_info_margin"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/tvAmount"
+        app:layout_constraintStart_toEndOf="@id/tvSerialNo"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Shown for claims with no beneficiary behind them (meetings, registers) -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#6B7280"
+            android:textSize="15sp"
+            android:visibility="gone"
+            tools:text="Date: 06 Jul 2026"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvBenId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#001B44"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Ben ID: 664547959811" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#111827"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="RAJA SING" />
+
+        <TextView
+            android:id="@+id/tvRchId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            tools:text="RCH ID: 123456789" />
+
+        <TextView
+            android:id="@+id/tvAbhaNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            tools:text="ABHA Number: 12-3456-7890-1234" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textColor="#111827"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/llInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/llInfo"
+        tools:text="₹150" />
+
+    <View
+        android:id="@+id/rowDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#EEF0F3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llInfo" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

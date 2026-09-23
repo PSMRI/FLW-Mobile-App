@@ -106,7 +106,23 @@ class SakhiApplication : Application(), Configuration.Provider {
                     description = "Notifications for ABHA card downloads"
                 }
             )
+
+            // General push/in-app notifications channel used by FBMessaging
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    "Notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "General app notifications"
+                }
+            )
         }
+    }
+
+    companion object {
+        /** Channel id for FCM / in-app notifications (created in [createNotificationChannels]). */
+        const val NOTIFICATION_CHANNEL_ID = "flw_notifications"
     }
 
     private suspend fun recoverOrphanedSyncStates() {

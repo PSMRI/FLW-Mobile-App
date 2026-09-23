@@ -4,5 +4,6 @@ enum class Languages(val symbol: String) {
     ENGLISH("en"),
     ASSAMESE("as"),
     HINDI("hi"),
+    BANGLA("bn")
 
 }

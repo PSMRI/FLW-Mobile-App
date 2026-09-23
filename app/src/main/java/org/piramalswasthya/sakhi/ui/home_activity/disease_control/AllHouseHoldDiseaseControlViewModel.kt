@@ -74,21 +74,25 @@ class AllHouseHoldDiseaseControlViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filter.emit(text.trim().lowercase())
         }
 
     }
 
     private fun filterHH(
-        list: List<HouseHoldBasicDomain>, filter: String
+        list: List<HouseHoldBasicDomain>,
+        filter: String
     ): List<HouseHoldBasicDomain> {
-        return if (filter == "") list
-        else {
-            val filterText = filter.lowercase()
-            list.filter {
-                it.hhId.toString().contains(filterText) || it.headFullName.lowercase()
-                    .contains(filterText) || it.contactNumber.lowercase().contains(filterText)
-            }
+        if (filter.isBlank()) return list
+
+        val filterText = filter.trim().lowercase().replace(" ", "")
+
+        return list.filter {
+            val fullName = it.headFullName.lowercase().replace(" ", "")
+
+            it.hhId.toString().contains(filterText) ||
+                    fullName.contains(filterText) ||
+                    it.contactNumber.contains(filterText)
         }
     }
 
