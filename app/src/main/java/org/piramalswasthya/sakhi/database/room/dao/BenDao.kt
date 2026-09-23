@@ -674,6 +674,23 @@ GROUP BY b.benId
     """)
     fun getAllDeliveredWomenListCount(selectedVillage: Int): Flow<Int>
 
+    @Query("""
+        SELECT COUNT(DISTINCT ben.benId)
+        FROM BEN_BASIC_CACHE ben
+        INNER JOIN pregnancy_register pwr ON pwr.benId = ben.benId
+        WHERE pwr.active = 1
+          AND ben.reproductiveStatusId = 2
+          AND ben.isDeactivate = 0
+          AND ben.villageId = :selectedVillage
+          AND (ben.isDeath = 0 OR ben.isDeath IS NULL OR ben.isDeath = 'undefined')
+          AND (pwr.lmpDate + 24192000000) <= (strftime('%s','now') * 1000)
+          AND ben.benId NOT IN (
+              SELECT benId FROM pregnancy_anc
+              WHERE pregnantWomanDelivered = 1 OR maternalDeath = 1
+          )
+    """)
+    fun getDeliveryDueWomenCount(selectedVillage: Int): Flow<Int>
+
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 1 and  isDeactivate=0  and gender = 'FEMALE' and villageId=:selectedVillage")
     fun getAllNonPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithHRNPACache>>

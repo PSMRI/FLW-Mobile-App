@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_light_background"
+    android:background="@color/read_only"
     android:fillViewport="true"
     tools:context=".ui.home_activity.dashboard.DashboardFragment">
 
@@ -12,194 +12,152 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/padding_wide">
 
-        <!-- Header card: Worker name + village -->
+        <TextView
+            android:id="@+id/tv_dashboard_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/asha_dashboard"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:textColor="@color/md_theme_light_onSurface"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_dashboard_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/asha_dashboard_summary"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="@color/md_theme_light_onSurfaceVariant" />
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/md_theme_light_primary"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp">
+            android:layout_marginTop="@dimen/margin_big"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/padding_normal"
+            app:cardElevation="@dimen/padding_normal">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="@dimen/padding_wide">
 
                 <TextView
-                    android:id="@+id/tv_worker_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_total_anc_women"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/md_theme_light_onPrimary"
-                    android:textSize="20sp"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    android:textColor="@color/md_theme_light_primary"
                     android:textStyle="bold"
-                    tools:text="Priya Sharma" />
+                    tools:text="24" />
 
                 <TextView
-                    android:id="@+id/tv_village_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/md_theme_light_primaryContainer"
-                    android:textSize="14sp"
-                    tools:text="Village: Rampur" />
-
-                <!-- Pending sync badge -->
-                <LinearLayout
-                    android:id="@+id/ll_sync_badge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_sync_badge"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginEnd="6dp"
-                        android:contentDescription="@null"
-                        app:srcCompat="@drawable/ic_syncing"
-                        app:tint="@color/md_theme_light_onPrimary" />
-
-                    <TextView
-                        android:id="@+id/tv_pending_sync"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/md_theme_light_onPrimary"
-                        android:textSize="13sp"
-                        tools:text="3 records pending sync" />
-                </LinearLayout>
-
+                    android:text="@string/total_anc_women"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/md_theme_light_onSurface" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Section: Coverage -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/coverage"
-            android:textColor="@color/md_theme_light_onSurfaceVariant"
-            android:textSize="13sp"
-            android:textAllCaps="true"
-            android:letterSpacing="0.08" />
-
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_marginTop="@dimen/margin_normal"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/padding_normal"
+            app:cardElevation="@dimen/padding_normal">
 
-            <!-- Households -->
-            <include
-                android:id="@+id/card_households"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1" />
+                android:orientation="vertical"
+                android:padding="@dimen/padding_wide">
 
-            <!-- Total Beneficiaries -->
-            <include
-                android:id="@+id/card_beneficiaries"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_delivery_due"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    android:textColor="@color/Quartenary"
+                    android:textStyle="bold"
+                    tools:text="6" />
 
-        <!-- Male / Female row -->
-        <LinearLayout
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delivery_due_list"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/md_theme_light_onSurface" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_marginTop="@dimen/margin_normal"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/padding_normal"
+            app:cardElevation="@dimen/padding_normal">
 
-            <include
-                android:id="@+id/card_male"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1" />
+                android:orientation="vertical"
+                android:padding="@dimen/padding_wide">
 
-            <include
-                android:id="@+id/card_female"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_total_delivery_women"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    android:textColor="@color/Tertiary"
+                    android:textStyle="bold"
+                    tools:text="18" />
 
-        <!-- Section: Maternal Health -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/maternal_health"
-            android:textColor="@color/md_theme_light_onSurfaceVariant"
-            android:textSize="13sp"
-            android:textAllCaps="true"
-            android:letterSpacing="0.08" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_delivery_women"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/md_theme_light_onSurface" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_marginTop="@dimen/margin_normal"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/padding_normal"
+            app:cardElevation="@dimen/padding_normal">
 
-            <include
-                android:id="@+id/card_pregnant"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1" />
+                android:orientation="vertical"
+                android:padding="@dimen/padding_wide">
 
-            <include
-                android:id="@+id/card_high_risk"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_pnc_women"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    android:textColor="@color/md_theme_light_secondary"
+                    android:textStyle="bold"
+                    tools:text="12" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <include
-                android:id="@+id/card_delivered"
-                layout="@layout/item_dashboard_stat_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1" />
-
-            <!-- empty spacer -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pnc_women"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/md_theme_light_onSurface" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
