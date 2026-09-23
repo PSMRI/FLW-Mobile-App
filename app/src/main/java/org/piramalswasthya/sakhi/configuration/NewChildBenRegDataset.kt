@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDiffYears
+import org.piramalswasthya.sakhi.utils.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -820,6 +821,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
             dateOfReg.value = getDateFromLong(System.currentTimeMillis())
 
             noOfChildren.value = childList.size.toString()
+            noOfChildren.min = childList.size.toLong()
 
             elderChildrenCount.value = elderChildCount.coerceAtMost(5).toString()
 
@@ -1370,49 +1372,53 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
         }
 
         if (formId == noOfChildren.id) {
-            noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
-            validateIntMinMax(noOfChildren)
+
 
             if (isExistingRecord) {
-
+                noOfChildren.min = noOfChildren.value.takeIf { !it.isNullOrEmpty() }?.toLong()
+                validateIntMinMax(noOfChildren)
                 val newCount = noOfChildren.value?.toIntOrNull() ?: 0
 
-                val oldCount = children.count { child ->
+                val filledCount = children.count { child ->
                     child.dob.value != null ||
                             child.gender.value != null ||
                             child.age.value != null
                 }
 
-                if (newCount > oldCount) {
-                    for (i in oldCount until newCount) {
-                        if (i == 0) {
-                            if (timeAtMarriage != 0L) {
-                                children[i].dob.min = timeAtMarriage
-                            }
-                        } else {
-                            val prevDob = children[i - 1].dob.value
-                            if (!prevDob.isNullOrEmpty()) {
-                                children[i].dob.min =
-                                    getLongFromDate(getMinimumSecondChildDob(prevDob))
-                            }
+                val effectiveCount = maxOf(newCount, filledCount)
+
+                val addItems = children.take(effectiveCount).flatMap { it.toFormList() }
+                val removeItems = children.drop(effectiveCount).flatMap { it.toFormList() }
+                children.drop(effectiveCount).forEach { it.clearValues() }
+
+                for (i in filledCount until effectiveCount) {
+                    if (i == 0) {
+                        if (timeAtMarriage != 0L) {
+                            children[i].dob.min = timeAtMarriage
+                        }
+                    } else {
+                        val prevDob = children[i - 1].dob.value
+                        if (!prevDob.isNullOrEmpty()) {
+                            children[i].dob.min =
+                                getLongFromDate(getMinimumSecondChildDob(prevDob))
                         }
                     }
-
-                    val addItems = children.subList(oldCount, newCount)
-                        .flatMap { it.toFormList() }
-
-                    infantTriggerDependants(
-                        source = noOfChildren,
-                        addItems = addItems,
-                        removeItems = emptyList()
-                    )
                 }
+
+                infantTriggerDependants(
+                    source = noOfChildren,
+                    addItems = addItems,
+                    removeItems = removeItems
+                )
             } else {
+
+                validateIntMinMax(noOfChildren)
                 val count = noOfChildren.value?.toIntOrNull() ?: 0
                 val addItems = children.take(count).flatMap { it.toFormList() }
                 val removeItems = children.drop(count).flatMap { it.toFormList() }
-                triggerDependants( source = noOfChildren, addItems = addItems, removeItems = removeItems )
+                triggerDependants(source = noOfChildren, addItems = addItems, removeItems = removeItems)
                 children.drop(count).forEach { it.clearValues() }
+
 
             }
 

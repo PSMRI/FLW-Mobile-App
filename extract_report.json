@@ -1,0 +1,126 @@
+{
+  "modules": {
+    "core": {
+      "strings.xml": {
+        "strings": 1021,
+        "string_arrays": 60
+      }
+    },
+    "abha": {
+      "strings_abha.xml": {
+        "strings": 100,
+        "string_arrays": 0
+      }
+    },
+    "ben": {
+      "strings_ben.xml": {
+        "strings": 85,
+        "string_arrays": 46
+      }
+    },
+    "death_reports": {
+      "strings_death_reports.xml": {
+        "strings": 55,
+        "string_arrays": 0
+      }
+    },
+    "ecr": {
+      "strings_ecr.xml": {
+        "strings": 69,
+        "string_arrays": 0
+      }
+    },
+    "ect": {
+      "strings_ect.xml": {
+        "strings": 13,
+        "string_arrays": 0
+      }
+    },
+    "hh": {
+      "strings_hh.xml": {
+        "strings": 80,
+        "string_arrays": 9
+      }
+    },
+    "home": {
+      "strings_home.xml": {
+        "strings": 131,
+        "string_arrays": 0
+      }
+    },
+    "hrp": {
+      "strings_hrp.xml": {
+        "strings": 125,
+        "string_arrays": 2
+      }
+    },
+    "immunization": {
+      "strings_immunization.xml": {
+        "strings": 13,
+        "string_arrays": 0
+      }
+    },
+    "incentives": {
+      "strings_incentives.xml": {
+        "strings": 60,
+        "string_arrays": 1
+      }
+    },
+    "kid": {
+      "strings_kid.xml": {
+        "strings": 76,
+        "string_arrays": 16
+      }
+    },
+    "login": {
+      "strings_login.xml": {
+        "strings": 25,
+        "string_arrays": 0
+      }
+    },
+    "maternal_health": {
+      "strings_maternal_health.xml": {
+        "strings": 141,
+        "string_arrays": 50
+      }
+    },
+    "ncd": {
+      "strings_ncd.xml": {
+        "strings": 225,
+        "string_arrays": 14
+      }
+    },
+    "pwr": {
+      "strings_pwr.xml": {
+        "strings": 25,
+        "string_arrays": 0
+      }
+    },
+    "sam": {
+      "strings_sam.xml": {
+        "strings": 43,
+        "string_arrays": 0
+      }
+    },
+    "uwin": {
+      "strings_uwin.xml": {
+        "strings": 6,
+        "string_arrays": 0
+      }
+    },
+    "village_level": {
+      "strings_village_level.xml": {
+        "strings": 12,
+        "string_arrays": 2
+      }
+    }
+  },
+  "total_string_files_scanned": 19,
+  "total_strings_extracted": 2305,
+  "total_string_arrays_extracted": 200,
+  "total_array_items_extracted": 991,
+  "duplicate_keys": {},
+  "duplicate_array_keys": {},
+  "unresolved_array_refs": [],
+  "unparsed": []
+}

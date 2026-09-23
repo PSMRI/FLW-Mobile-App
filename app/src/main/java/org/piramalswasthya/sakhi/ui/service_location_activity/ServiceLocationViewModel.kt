@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,15 +29,15 @@ class ServiceTypeViewModel @Inject constructor(
         SUCCESS
     }
 
-    private lateinit var stateDropdownEntry: String
+    lateinit var stateDropdownEntry: String
     val stateList: Array<String>
         get() = arrayOf(stateDropdownEntry)
 
-    private lateinit var districtDropdownEntry: String
+     lateinit var districtDropdownEntry: String
     val districtList: Array<String>
         get() = arrayOf(districtDropdownEntry)
 
-    private lateinit var blockDropdownEntry: String
+     lateinit var blockDropdownEntry: String
     val blockList: Array<String>
         get() = arrayOf(blockDropdownEntry)
 
@@ -48,6 +49,10 @@ class ServiceTypeViewModel @Inject constructor(
     val userName: String
         get() = _userName
 
+    private lateinit var _facilityName: String
+    val facilityName: String
+        get() = _facilityName
+
     private var _selectedVillage: LocationEntity? = null
     val selectedVillage: LocationEntity?
         get() = _selectedVillage
@@ -56,6 +61,7 @@ class ServiceTypeViewModel @Inject constructor(
             ENGLISH -> selectedVillage?.name
             Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
+            Languages.BANGLA -> selectedVillage?.nameBangla ?: selectedVillage?.name
         }
 
 
@@ -67,47 +73,95 @@ class ServiceTypeViewModel @Inject constructor(
     private var currentLocation: LocationRecord? = null
     private lateinit var user: User
 
+    private val _isNoUserFound = MutableLiveData(false)
+    val isNoUserFound: LiveData<Boolean> get() = _isNoUserFound
+
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                user = pref.getLoggedInUser()!!
+            val userFound = withContext(Dispatchers.IO) {
+                val loggedInUser = pref.getLoggedInUser() ?: run {
+                    Timber.w("User not found")
+                    _isNoUserFound.postValue(true)
+                    return@withContext false
+                }
+                user = loggedInUser
+
                 _userName = user.name
+                _facilityName = pref.getSupervisorSubcenter().toString()
                 currentLocation = pref.getLocationRecord()
                 _selectedVillage = currentLocation?.village
                 when (pref.getCurrentLanguage()) {
                     ENGLISH -> {
-                        stateDropdownEntry = user.state.name
-                        districtDropdownEntry = user.district.name
-                        blockDropdownEntry = user.block.name
-                        villageDropdownEntries = user.villages.map { it.name }.toTypedArray()
+                        stateDropdownEntry =
+                            pref.getState().ifEmpty { user.state.name }
+
+                        districtDropdownEntry =
+                            pref.getDistrict().ifEmpty { user.district.name }
+
+                        blockDropdownEntry =
+                            pref.getBlock().ifEmpty { user.block.name }
+
+                        villageDropdownEntries =
+                            user.villages.map { it.name }.toTypedArray()
 
                     }
 
-                   Languages.HINDI -> {
+                    Languages.HINDI -> {
                         stateDropdownEntry =
-                            user.state.let { it.nameHindi ?: it.name }
+                            pref.getState().ifEmpty {
+                                user.state.nameHindi ?: user.state.name
+                            }
+
                         districtDropdownEntry =
-                            user.district.let { it.nameHindi ?: it.name }
+                            pref.getDistrict().ifEmpty {
+                                user.district.nameHindi ?: user.district.name
+                            }
+
                         blockDropdownEntry =
-                            user.block.let { it.nameHindi ?: it.name }
+                            pref.getBlock().ifEmpty {
+                                user.block.nameHindi ?: user.block.name
+                            }
+
                         villageDropdownEntries =
                             user.villages.map { it.nameHindi ?: it.name }.toTypedArray()
                     }
 
                     ASSAMESE -> {
                         stateDropdownEntry =
-                            user.state.let { it.nameAssamese ?: it.name }
+                            pref.getState().ifEmpty {
+                                user.state.nameAssamese ?: user.state.name
+                            }
+
                         districtDropdownEntry =
-                            user.district.let { it.nameAssamese ?: it.name }
+                            pref.getDistrict().ifEmpty {
+                                user.district.nameAssamese ?: user.district.name
+                            }
+
                         blockDropdownEntry =
-                            user.block.let { it.nameAssamese ?: it.name }
+                            pref.getBlock().ifEmpty {
+                                user.block.nameAssamese ?: user.block.name
+                            }
+
                         villageDropdownEntries =
                             user.villages.map { it.nameAssamese ?: it.name }.toTypedArray()
                    }
-                }
 
+                    Languages.BANGLA ->  {
+                        stateDropdownEntry =
+                            user.state.let { it.nameBangla ?: it.name }
+                        districtDropdownEntry =
+                            user.district.let { it.nameBangla ?: it.name }
+                        blockDropdownEntry =
+                            user.block.let { it.nameBangla ?: it.name }
+                        villageDropdownEntries =
+                            user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
+                    }
+                }
+                true
             }
-            _state.value = State.SUCCESS
+            if (userFound) {
+                _state.value = State.SUCCESS
+            }
         }
     }
 

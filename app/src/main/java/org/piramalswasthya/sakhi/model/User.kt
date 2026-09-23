@@ -274,6 +274,43 @@ data class UserNetworkResponse(
 )
 
 @JsonClass(generateAdapter = true)
+data class FacilityData(
+    val location: FacilityLocation?,
+    val facility: Facility?,
+    val supervisor: Supervisor?,
+    val peersAtFacility: List<PeerAtFacility> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class FacilityLocation(
+    val district: String?,
+    val blockOrUlb: String?,
+    val locationType: String?,
+    val state: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class Facility(
+    val facilityId: Int?,
+    val facilityType: String?,
+    val facilityName: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class Supervisor(
+    val mobile: String?,
+    val fullName: String?,
+    val userId: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class PeerAtFacility(
+    val role: String?,
+    val fullName: String?,
+    val mobile: String?,
+    val userId: Int?
+)
+@JsonClass(generateAdapter = true)
 data class UserDetailsInResponse(
     val userId: Int,
     val name: String,
@@ -289,7 +326,9 @@ data class UserDetailsInResponse(
     val blockId: Int,
     val blockName: String,
     val villageId: String,
-    val villageName: String
+    val villageName: String,
+    val facilityData: FacilityData? = null
+
 ) {
     fun toUser(password: String): User {
         return User(

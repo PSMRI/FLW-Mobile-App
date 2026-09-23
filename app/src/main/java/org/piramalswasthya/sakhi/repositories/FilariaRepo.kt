@@ -14,6 +14,8 @@ import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.FilariaScreeningDTO
 import org.piramalswasthya.sakhi.network.FilariaScreeningRequestDTO
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequestForDisease
+import org.piramalswasthya.sakhi.network.MalariaScreeningDTO
+import org.piramalswasthya.sakhi.network.MalariaScreeningRequestDTO
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
@@ -77,6 +79,8 @@ class FilariaRepo @Inject constructor(
                         val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit Filaria screening data : $responseStatusCode")
+                        Timber.d("Pull from amrit Filaria screening data : ${jsonObj.getString("data")}")
+
                         when (responseStatusCode) {
                             200 -> {
                                 try {
@@ -123,19 +127,39 @@ class FilariaRepo @Inject constructor(
 
     private suspend fun saveAESScreeningCacheFromResponse(dataObj: String): MutableList<FilariaScreeningCache> {
         val filariaScreeningList = mutableListOf<FilariaScreeningCache>()
-        var requestDTO = Gson().fromJson(dataObj, FilariaScreeningRequestDTO::class.java)
-        requestDTO?.filariaLists?.forEach { filariaScreeningDTO ->
-            filariaScreeningDTO.mdaHomeVisitDate?.let {
-                var aesScreeningCache: FilariaScreeningCache? =
+
+        val filariaLists: List<FilariaScreeningDTO> =
+            if (dataObj.trimStart().startsWith("[")) {
+                Gson().fromJson(dataObj, Array<FilariaScreeningDTO>::class.java)?.toList()
+                    ?: emptyList()
+            } else {
+                val requestDTO =
+                    Gson().fromJson(dataObj, FilariaScreeningRequestDTO::class.java)
+                requestDTO?.filariaLists ?: emptyList()
+            }
+
+        filariaLists.forEach { filariaScreeningDTO ->
+            filariaScreeningDTO.mdaHomeVisitDate.let {
+                val aesScreeningCache: FilariaScreeningCache? =
                     filariaDao.getFilariaScreening(
                         filariaScreeningDTO.benId,
                         getLongFromDate(filariaScreeningDTO.mdaHomeVisitDate),
                         getLongFromDate(filariaScreeningDTO.mdaHomeVisitDate) - 19_800_000
                     )
                 if (aesScreeningCache == null) {
-                    benDao.getBen(filariaScreeningDTO.benId)?.let {
-                        filariaDao.saveFilariaScreening(filariaScreeningDTO.toCache())
+                    try {
+                        benDao.getBen(filariaScreeningDTO.benId)?.let {
+                            filariaDao.saveFilariaScreening(filariaScreeningDTO.toCache())
+                        }
+
+                    } catch (e:Exception)
+                    {
+                        Timber.e(
+                            e,
+                            "Failed record benId=${filariaScreeningDTO.benId}, screeningDate=${filariaScreeningDTO.mdaHomeVisitDate}"
+                        )
                     }
+
                 }
             }
         }
@@ -408,10 +432,13 @@ class FilariaRepo @Inject constructor(
         }
 
         private fun getLongFromDate(dateString: String): Long {
-            //Jul 22, 2023 8:17:23 AM"
-            val f = SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH)
-            val date = f.parse(dateString)
+            val date = try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dateString)
+            } catch (_: Exception) {
+                SimpleDateFormat("MMM d, yyyy h:mm:ss a", Locale.ENGLISH).parse(dateString)
+            }
             return date?.time ?: throw IllegalStateException("Invalid date for dateReg")
+
         }
     }
 

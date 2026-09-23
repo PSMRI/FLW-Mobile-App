@@ -10,4 +10,7 @@
     <string name="participant_label">অংশগ্ৰহণকাৰী: %1$s</string>
     <string name="no_of_participants_attended">উপস্থিত অংশগ্ৰহণকাৰীৰ সংখ্যা</string>
     <string name="total_no_of_participants_attended">মুঠ অংশগ্ৰহণকাৰীৰ সংখ্যা</string>
+
+    <string name="maa_meeting_date">MAA সভাৰ তাৰিখ</string>
+    <string name="meeting_photos_mom">সভাৰ ফটো / MoM (%1$d)</string>
 </resources>

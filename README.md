@@ -155,26 +155,6 @@ To run this project, Follow these steps:
     - `keystore.jks`
 
 
-## 🔧 Additional Setup Steps (After Cloning)
-
-### 1. Open Project in Android Studio
-Open the cloned project in **Android Studio** and wait for the Gradle sync to complete. This step is required to generate `local.properties` with your Android SDK path.
-
-### 2. Run Setup Script
-Open **Git Bash** and run the following commands:
-
-```bash
-cd "YOUR_PROJECT_PATH/FLW-Mobile-App"
-bash setup.sh
-```
-
-> Replace `YOUR_PROJECT_PATH` with the actual path where you cloned the repository.  
-> Example: `cd "D:/Projects/FLW-Mobile-App"`
-
-### 3. Build & Run in Android Studio
-1. Open the project in **Android Studio**
-2. Switch build variant to **`sakshamUat`** (bottom-left dropdown)
-3. Click **Run**
 
 
 **Configurations:**
@@ -208,9 +188,13 @@ bash setup.sh
         + Once the APK is generated android studio will notify with the location of APK, 
              generally in release folder 
 
-## Contributing
+## Code Coverage
 
-Before picking up an issue, please read the [CONTRIBUTOR_GUIDELINES.md](https://github.com/PSMRI/AMRIT/blob/main/CONTRIBUTOR_GUIDELINES.md). It covers issue assignment, expected timelines, and how to link your PR to the right issue.
+```bash
+./gradlew jacocoTestReport
+```
+
+Prints coverage to the console and writes HTML to `app/build/reports/jacoco/jacocoTestReport/html/index.html`.
 
 ## Filing Issues
 

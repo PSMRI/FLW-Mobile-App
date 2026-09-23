@@ -3,7 +3,7 @@ package org.piramalswasthya.sakhi.helpers
 import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -41,8 +41,33 @@ class TokenExpiryManagerTest {
     }
 
     @Test
-    fun `three consecutive failures trigger logout`() = runTest {
+    fun `three failures do not trigger logout`() = runTest {
         manager.forceLogoutEvent.test {
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `four failures do not trigger logout`() = runTest {
+        manager.forceLogoutEvent.test {
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `five consecutive failures trigger logout`() = runTest {
+        manager.forceLogoutEvent.test {
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
@@ -54,7 +79,9 @@ class TokenExpiryManagerTest {
     @Test
     fun `counter resets after triggering logout`() = runTest {
         manager.forceLogoutEvent.test {
-            // First round: 3 failures → logout
+            // First round: 5 failures → logout
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
@@ -67,15 +94,19 @@ class TokenExpiryManagerTest {
     }
 
     @Test
-    fun `six consecutive failures trigger logout twice`() = runTest {
+    fun `ten consecutive failures trigger logout twice`() = runTest {
         manager.forceLogoutEvent.test {
             // First round
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             awaitItem()
 
             // Second round
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
@@ -92,17 +123,21 @@ class TokenExpiryManagerTest {
         manager.forceLogoutEvent.test {
             manager.onRefreshFailed()
             manager.onRefreshFailed()
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshSuccess() // reset
 
-            // Need 3 more failures now, not 1
+            // Need 5 more failures now, not 1
             manager.onRefreshFailed()
             expectNoEvents()
         }
     }
 
     @Test
-    fun `success after two failures prevents logout`() = runTest {
+    fun `success after four failures prevents logout`() = runTest {
         manager.forceLogoutEvent.test {
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshSuccess()
@@ -131,12 +166,14 @@ class TokenExpiryManagerTest {
     // =====================================================
 
     @Test
-    fun `fail fail success fail fail fail triggers logout`() = runTest {
+    fun `fail fail success fail fail fail fail fail triggers logout`() = runTest {
         manager.forceLogoutEvent.test {
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshSuccess()
 
+            manager.onRefreshFailed()
+            manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
             manager.onRefreshFailed()
@@ -154,5 +191,29 @@ class TokenExpiryManagerTest {
 
             expectNoEvents()
         }
+    }
+
+    // =====================================================
+    // TokenExpiryManager Tests (extended)
+    // =====================================================
+
+    @Test fun `TokenExpiryManager can be created`() {
+        val manager = TokenExpiryManager()
+        assertNotNull(manager)
+    }
+
+    @Test fun `TokenExpiryManager onRefreshSuccess does not throw`() {
+        val manager = TokenExpiryManager()
+        manager.onRefreshSuccess()
+    }
+
+    @Test fun `TokenExpiryManager onRefreshFailed does not throw on first call`() {
+        val manager = TokenExpiryManager()
+        manager.onRefreshFailed()
+    }
+
+    @Test fun `TokenExpiryManager forceLogoutEvent is not null`() {
+        val manager = TokenExpiryManager()
+        assertNotNull(manager.forceLogoutEvent)
     }
 }

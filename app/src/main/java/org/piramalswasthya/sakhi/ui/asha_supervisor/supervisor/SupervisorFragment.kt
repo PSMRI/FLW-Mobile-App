@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.helpers.Languages.ASSAMESE
 import org.piramalswasthya.sakhi.helpers.Languages.ENGLISH
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceTypeViewModel
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import org.piramalswasthya.sakhi.work.PullFromAmritWorker
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
@@ -154,11 +155,12 @@ class SupervisorFragment : Fragment() {
         viewModel.state.observe(this) {
             it?.let {
                 when (it) {
-                    ServiceTypeViewModel.State.IDLE -> {}//TODO()
-                    ServiceTypeViewModel.State.LOADING -> {}//TODO()
+                    ServiceTypeViewModel.State.IDLE -> {}
+                    ServiceTypeViewModel.State.LOADING -> {}
                     ServiceTypeViewModel.State.SUCCESS -> {
                         binding.viewModel = viewModel
                         binding.tietVillage.apply {
+                            contentDescription = "village_dropdown"
                             setText(viewModel.selectedVillageName)
                             if (viewModel.villageList.size == 1) {
                                 setText(viewModel.villageList.first())
@@ -251,7 +253,7 @@ class SupervisorFragment : Fragment() {
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener {
-            findNavController().navigate(it)
+            safeNavigate(it)
         }, viewModel.scope)
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {
@@ -270,6 +272,8 @@ class SupervisorFragment : Fragment() {
                         ENGLISH -> it.name
                         Languages.HINDI -> it.nameHindi ?: it.name
                         ASSAMESE -> it.nameAssamese ?: it.name
+                        Languages.BANGLA -> it.nameBangla ?: it.name
+
 
                     }
                 )

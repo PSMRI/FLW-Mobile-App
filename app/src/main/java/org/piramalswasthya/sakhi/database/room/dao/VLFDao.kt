@@ -24,7 +24,14 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(vhndCache: VHNDCache)
 
-    @Query("SELECT * FROM VHND")
+    @Query("""
+    SELECT * FROM VHND
+    ORDER BY date(
+        substr(vhndDate, 7, 4) || '-' ||
+        substr(vhndDate, 4, 2) || '-' ||
+        substr(vhndDate, 1, 2)
+    ) DESC
+""")
     fun getAllVHND(): Flow<List<VHNDCache>>
 
     @Query("select * from VHNC where id = :id limit 1")
@@ -33,7 +40,14 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(vhndCache: VHNCCache)
 
-    @Query("SELECT * FROM VHNC")
+    @Query("""
+    SELECT * FROM VHNC
+    ORDER BY date(
+        substr(vhncDate, 7, 4) || '-' ||
+        substr(vhncDate, 4, 2) || '-' ||
+        substr(vhncDate, 1, 2)
+    ) DESC
+""")
     fun getAllVHNC(): Flow<List<VHNCCache>>
 
     @Query("select * from PHCReviewMeeting where id = :id limit 1")
@@ -42,13 +56,27 @@ interface VLFDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveRecord(phcCache: PHCReviewMeetingCache)
 
-    @Query("SELECT * FROM PHCReviewMeeting")
+    @Query("""
+    SELECT * FROM PHCReviewMeeting
+    ORDER BY date(
+        substr(phcReviewDate, 7, 4) || '-' ||
+        substr(phcReviewDate, 4, 2) || '-' ||
+        substr(phcReviewDate, 1, 2)
+    ) DESC
+""")
     fun getAllPHC(): Flow<List<PHCReviewMeetingCache>>
 
     @Query("SELECT * FROM AHDMeeting WHERE id = :id")
     suspend fun getAHD(id: Int): AHDCache?
 
-    @Query("SELECT * FROM AHDMeeting")
+    @Query("""
+    SELECT * FROM AHDMeeting
+    ORDER BY date(
+        substr(ahdDate, 7, 4) || '-' ||
+        substr(ahdDate, 4, 2) || '-' ||
+        substr(ahdDate, 1, 2)
+    ) DESC
+""")
     fun getAllAHD(): Flow<List<AHDCache>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -58,7 +86,14 @@ interface VLFDao {
     @Query("SELECT * FROM DewormingMeeting WHERE id = :id")
     suspend fun getDeworming(id: Int): DewormingCache?
 
-    @Query("SELECT * FROM DewormingMeeting ")
+    @Query("""
+    SELECT * FROM DewormingMeeting
+    ORDER BY date(
+        substr(dewormingDate, 7, 4) || '-' ||
+        substr(dewormingDate, 4, 2) || '-' ||
+        substr(dewormingDate, 1, 2)
+    ) DESC
+""")
     fun getAllDeworming(): Flow<List<DewormingCache>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

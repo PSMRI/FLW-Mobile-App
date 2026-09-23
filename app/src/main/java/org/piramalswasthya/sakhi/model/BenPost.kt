@@ -288,4 +288,10 @@ data class BenPost(
     @Json(name = "isDeactivate")
     val isDeactivate: Boolean = false,
 
+    @Json(name = "abhaId")
+    val abhaId: String? = null,
+
+    @Json(name = "familyId")
+    val familyId: String? = null,
+
     )

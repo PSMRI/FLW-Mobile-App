@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
@@ -21,11 +23,14 @@ import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
+import org.piramalswasthya.sakhi.model.BenPncDomain
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.BenWithDoAndPncCache
 import org.piramalswasthya.sakhi.model.HomeVisitUiState
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.filterMdsr
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.HelperUtil.isAncDue
 import org.piramalswasthya.sakhi.utils.HomeVisitHelper
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -40,6 +45,7 @@ class RecordsRepo @Inject constructor(
     private val vaccineDao: ImmunizationDao,
     private val maternalHealthDao: MaternalHealthDao,
     private val childRegistrationDao: ChildRegistrationDao,
+    private val benRepo: BenRepo,
     preferenceDao: PreferenceDao
 ) {
     private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
@@ -183,10 +189,25 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val infantListCount = infantList.map { it.size }
 
-    val childList = benDao.getAllChildList(selectedVillage)
-        .map { list -> list.map { it.asBasicDomainModel() } }
-    val childListCount = childList.map { it.size }
+    val minAgeInDaysForThreeMonths = TimeUnit.MILLISECONDS.toDays(
+        System.currentTimeMillis() - Calendar.getInstance().apply {
+            add(Calendar.MONTH, -3)
+        }.timeInMillis
+    ).toInt()
 
+    val maxAgeInDaysForFifteenMonths = TimeUnit.MILLISECONDS.toDays(
+        System.currentTimeMillis() - Calendar.getInstance().apply {
+            add(Calendar.MONTH, -15)
+        }.timeInMillis
+    ).toInt()
+
+    val childList = benDao.getAllChildList(
+        selectedVillage = selectedVillage,
+        min = minAgeInDaysForThreeMonths,
+        max = maxAgeInDaysForFifteenMonths
+    ).map { list -> list.map { it.asBasicDomainModel() } }
+
+    val childListCount = childList.map { it.size }
 
     val childCard = benDao.getAllInfantList(selectedVillage)
         .map { list -> list.map { it.asBasicDomainModel() } }
@@ -213,11 +234,51 @@ class RecordsRepo @Inject constructor(
             .map { list -> list.map { it.asBasicDomainModel() } }
     val hrpListCount = menopauseList.map { it.size }
 
-    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage)
-        .map { list -> list.map { it.asBasicDomainModelForPNC() } }
+    val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
+
+    private suspend fun updateWomanStatusAfter60Days(
+        item: BenWithDoAndPncCache
+    ) {
+
+        val benId = item.ben.benId
+
+        val ben = benRepo.getBenFromId(benId) ?: return
+
+        val activeDo = item.deliveryOutcomeCache
+            .firstOrNull { it.isActive }
+
+        val dateOfDelivery = activeDo?.dateOfDelivery ?: return
+
+        val daysSinceDelivery = TimeUnit.MILLISECONDS.toDays(
+            System.currentTimeMillis() - dateOfDelivery
+        )
+
+        val isAfter60Days = daysSinceDelivery >= 60
+
+        if (!isAfter60Days) return
+
+            if (ben.genDetails?.reproductiveStatusId != 1) {
+                ben.genDetails?.reproductiveStatus = "Eligible Couple"
+                ben.genDetails?.reproductiveStatusId = 1
+
+                if (ben.processed != "N") {
+                    ben.processed = "U"
+                }
+
+                ben.syncState = SyncState.UNSYNCED
+                benRepo.updateRecord(ben)
+
+        }
+    }
+    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
+        .map { list ->
+            list.forEach {
+                updateWomanStatusAfter60Days(it)
+            }
+            list.map { it.asBasicDomainModelForPNC() } }
     val pncMotherListCount = pncMotherList.map { it.size }
 
-    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage)
+    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
         .map { list ->
             list.filter {
                 if (!it.savedPncRecords.isNullOrEmpty()) {
@@ -280,23 +341,39 @@ class RecordsRepo @Inject constructor(
         .map { list -> list.map { it.asBasicDomainModel() } }
     val motherImmunizationListCount = motherImmunizationList.map { it.size }
 
-    val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
-        .map { list -> list.map { it.asDomainModel() } }
+//    val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
+//        .map { list -> list.map { it.asDomainModel() } }
+val eligibleCoupleList = benDao.getAllEligibleRegistrationList(selectedVillage)
+    .combine(childCountsByBen) { list, counts ->
+        list.map { it.asDomainModel(counts[it.ben.benId]) }
+    }
+
     val eligibleCoupleListCount = eligibleCoupleList.map { it.size }
 
+//    val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
+//        .map { list ->
+//            list.filter {
+//                it.ecr != null && it.ecr.lmpDate != 0L &&
+//                        System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+////                if (it.ecr != null && it.ecr.lmpDate != 0L) {
+////                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
+////                } else {
+////                    true
+////                }
+//                }
+//                .map { it.asDomainModel() } }
+
     val eligibleCoupleMissedPeriodList = benDao.getAllEligibleRegistrationList(selectedVillage)
-        .map { list ->
+        .combine(childCountsByBen) { list, counts ->
             list.filter {
                 it.ecr != null && it.ecr.lmpDate != 0L &&
                         System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
-//                if (it.ecr != null && it.ecr.lmpDate != 0L) {
-//                    System.currentTimeMillis() - it.ecr.lmpDate > TimeUnit.DAYS.toMillis(35)
-//                } else {
-//                    true
-//                }
-                }
-                .map { it.asDomainModel() } }
+            }
+                .map { it.asDomainModel(counts[it.ben.benId]) }
+        }
     val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
+
+//    val eligibleCoupleMissedPeriodListCount = eligibleCoupleMissedPeriodList.map { it.size }
 
     val eligibleCoupleTrackingList = benDao.getAllEligibleTrackingList(selectedVillage)
         .combine(childCountsByBen) { list, counts ->
@@ -356,12 +433,11 @@ class RecordsRepo @Inject constructor(
     val hrpTrackingNonPregListCount = benDao.getAllHRPTrackingNonPregListCount(selectedVillage)
 
 
-    val lowWeightBabiesCount = benDao.getLowWeightBabiesCount(selectedVillage)
 
-    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage)
+    fun getPregnantWomenList() = benDao.getAllPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
         .map { list -> list.map { it.asPwrDomainModel() } }
 
-    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage)
+    fun getPregnantWomenWithRchList() = benDao.getAllPregnancyWomenWithRchList(selectedVillage, Konstants.pregnancyExpiryMillis)
         .map { list -> list.map { it.asPwrDomainModel() } }
 
     fun getRegisteredInfants() = childRegistrationDao.getAllRegisteredInfants(selectedVillage)
@@ -371,7 +447,7 @@ class RecordsRepo @Inject constructor(
         childRegistrationDao.getAllRegisteredInfantsCount(selectedVillage)
 
     //        .map { list -> list.map { it.ben } }
-    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage)
+    fun getPregnantWomenListCount() = benDao.getAllPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
     fun getAbortionPregnantWomanCount() = benDao.getAllAbortionWomenListCount(selectedVillage)
     fun getHighRiskWomenCount() = benDao.getHighRiskWomenCount(selectedVillage)
     fun getMaternalDeathCount() = benDao.getAllMDSRCount(selectedVillage)
@@ -384,7 +460,7 @@ class RecordsRepo @Inject constructor(
                 list.map { it.asDomainModel() }
             }
     fun getRegisteredPregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter { !it.savedAncRecords.any { it.maternalDeath == true } }
                     .map { it.asDomainModel() }
@@ -415,10 +491,10 @@ class RecordsRepo @Inject constructor(
 
 
     fun getRegisteredPregnantWomanListCount() =
-        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenListCount(selectedVillage, Konstants.pregnancyExpiryMillis)
 
     fun getRegisteredPregnantWomanNonFollowUpList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.filter {
                     if (!it.savedAncRecords.isNullOrEmpty()) {
@@ -445,28 +521,10 @@ class RecordsRepo @Inject constructor(
         getRegisteredPregnantWomanNonFollowUpList().map { it.size }
 
     fun getDuePregnantWomanList() =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
-                list.filter { benWithAnc ->
-                    // Exclude maternal deaths
-                    if (benWithAnc.savedAncRecords.any { it.maternalDeath == true }) return@filter false
-                    // Exclude delivered women
-                    if (benWithAnc.savedAncRecords.any { it.pregnantWomanDelivered == true }) return@filter false
-
-                    val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return@filter false
-                    val ancRecords = benWithAnc.savedAncRecords
-
-                    if (ancRecords.isEmpty()) {
-                        // First ANC: due if >= minAnc1Week weeks from LMP
-                        TimeUnit.MILLISECONDS.toDays(getTodayMillis() - activePwr.lmpDate) >= Konstants.minAnc1Week * 7
-                    } else {
-                        val lastAncRecord = ancRecords.maxBy { it.visitNumber }
-                        // Subsequent ANCs: due if EDD > lastAnc+28days, visitNumber < 4, and > 28 days since last ANC
-                        (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) > (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
-                                lastAncRecord.visitNumber < 4 &&
-                                TimeUnit.MILLISECONDS.toDays(getTodayMillis() - lastAncRecord.ancDate) > 28
-                    }
-                }.map { it.asDomainModel() }
+                list.filter { isAncDue(it) }
+                    .map { it.asDomainModel() }
             }
 
     val hrpCases = benDao.getHrpCases(selectedVillage)
@@ -482,12 +540,16 @@ class RecordsRepo @Inject constructor(
 
     fun getAllWomenForPmsmaCount() = benDao.getAllWomenListForPmsmaCount(selectedVillage)
     fun getListForInfantReg() = benDao.getListForInfantRegister(selectedVillage)
-        .map { list -> list.flatMap { it.asBasicDomainModel() } }
+        .map { list -> list.flatMap { it.asBasicDomainModel(false) } }
 
     fun getListForLowWeightInfantReg() = benDao.getListForLowWeightInfantRegister(selectedVillage)
-        .map { list -> list.flatMap { it.asBasicDomainModel() } }
+        .map { list -> list.flatMap { it.asBasicDomainModel(true) } }
 
     fun getInfantRegisterCount() = benDao.getInfantRegisterCount(selectedVillage)
+
+    val lowWeightBabiesCount =  getListForLowWeightInfantReg()
+        .map { it.size }
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val hrpCount = maternalHealthDao.getAllPregnancyAssessRecords().transformLatest { it ->
@@ -546,4 +608,6 @@ class RecordsRepo @Inject constructor(
         val diff = to - from
         return TimeUnit.MILLISECONDS.toDays(diff)
     }
+
+
 }

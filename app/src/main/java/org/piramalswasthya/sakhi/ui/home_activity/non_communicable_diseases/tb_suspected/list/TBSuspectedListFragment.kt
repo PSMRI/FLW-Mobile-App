@@ -56,11 +56,13 @@ class TBSuspectedListFragment : Fragment() {
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = TbSuspectedListAdapter(
             TbSuspectedListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    TBSuspectedListFragmentDirections.actionTBSuspectedListFragmentToTBSuspectedFragment(
-                        benId
+                if (findNavController().currentDestination?.id == R.id.TBSuspectedListFragment) {
+                    findNavController().navigate(
+                        TBSuspectedListFragmentDirections.actionTBSuspectedListFragmentToTBSuspectedFragment(
+                            benId
+                        )
                     )
-                )
+                }
             }, pref = prefDao
         )
         binding.rvAny.adapter = benAdapter

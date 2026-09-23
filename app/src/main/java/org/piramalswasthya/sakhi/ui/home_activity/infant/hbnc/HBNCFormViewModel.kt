@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbnc
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +21,6 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
-import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pnc.form.PncFormViewModel
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -105,12 +103,6 @@ class HBNCFormViewModel @Inject constructor(
 
             if (localSchemaToRender == null) return@launch
 
-            launch {
-                val updatedSchema = repository.getFormSchema(formId, lang)
-                if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-                }
-            }
-
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
                 try {
@@ -128,7 +120,7 @@ class HBNCFormViewModel @Inject constructor(
                     field.value = when (field.fieldId) {
                         "visit_day" -> visitDay
                         "due_date" -> calculateDueDate(dob, visitDay)?.let { formatDate(it) } ?: ""
-                        else -> savedFieldValues[field.fieldId] ?: if (field.type == "radio") null else field.defaultValue
+                        else -> savedFieldValues[field.fieldId] ?: if (field.type == "radio" || field.type == "dropdown") null else field.defaultValue
                     }
 
                     field.isEditable = when (field.fieldId) {

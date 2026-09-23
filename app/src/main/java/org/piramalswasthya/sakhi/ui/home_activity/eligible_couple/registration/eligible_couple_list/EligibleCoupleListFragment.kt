@@ -66,19 +66,23 @@ class EligibleCoupleListFragment : Fragment() {
         val benAdapter = ECRegistrationAdapter(
             ECRegistrationAdapter.ClickListener(
                 clickedForm = { hhId, benId ->
-                    findNavController().navigate(
-                        EligibleCoupleListFragmentDirections
-                            .actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(benId)
-                    )
+                    if (findNavController().currentDestination?.id == R.id.eligibleCoupleListFragment) {
+                        findNavController().navigate(
+                            EligibleCoupleListFragmentDirections
+                                .actionEligibleCoupleListFragmentToEligibleCoupleRegFragment(benId)
+                        )
+                    }
                 },
                 clickedAddAllBenBtn = { item, benId, hhId, isViewMode, isIFA ->
-                    findNavController().navigate(
-                        EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToBenIfaFormFragment(
-                            hhId = hhId,
-                            benId = benId,
-                            isViewMode = isViewMode,
+                    if (findNavController().currentDestination?.id == R.id.eligibleCoupleListFragment) {
+                        findNavController().navigate(
+                            EligibleCoupleListFragmentDirections.actionEligibleCoupleListFragmentToBenIfaFormFragment(
+                                hhId = hhId,
+                                benId = benId,
+                                isViewMode = isViewMode,
+                            )
                         )
-                    )
+                    }
                 }
             )
         )

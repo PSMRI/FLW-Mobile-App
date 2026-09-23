@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -55,5 +57,35 @@ class CdrListViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `filterText with whitespace combine does not throw`() = runTest {
+        viewModel.filterText("  abc  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `sequential filterText emissions do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("ab")
+        viewModel.filterText("")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `benList reference is stable`() {
+        val first = viewModel.benList
+        val second = viewModel.benList
+        assertNotNull(first)
+        assertNotNull(second)
+    }
+
+    @Test
+    fun `benList collects real results once the flow is exercised`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

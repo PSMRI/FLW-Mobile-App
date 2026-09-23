@@ -20,6 +20,8 @@ import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.VaccineDomain
 import org.piramalswasthya.sakhi.model.VaccineState
+import org.piramalswasthya.sakhi.model.VaccineType
+import org.piramalswasthya.sakhi.model.toVaccineType
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import java.util.Calendar
 import javax.inject.Inject
@@ -75,24 +77,65 @@ class ChildImmunizationListViewModel @Inject constructor(
     var selectedPosition = 0
 
     private val vaccinesFlow = MutableStateFlow<List<Vaccine>>(emptyList())
-    val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, vaccines ->
-        vaccineIdList.map { cache ->
-            val ageMillis = System.currentTimeMillis() - cache.ben.dob
-            ImmunizationDetailsDomain(
-                ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
-                    val state = when {
-                        cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
-                        ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
-                        ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
-                        else -> VaccineState.MISSED
+//    val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, vaccines ->
+//        vaccineIdList.map { cache ->
+//            val ageMillis = System.currentTimeMillis() - cache.ben.dob
+//            ImmunizationDetailsDomain(
+//                ben = cache.ben.asBasicDomainModel(),
+//                vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+//                    val state = when {
+//                        cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
+//                        ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+//                        ageMillis <= vaccine.maxAllowedAgeInMillis -> VaccineState.OVERDUE
+//                        else -> VaccineState.MISSED
+//                    }
+//                    VaccineDomain(vaccine.vaccineId, vaccine.vaccineName, vaccine.immunizationService, state)
+//                }
+//            )
+//        }
+//    }
+val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, vaccines ->
+    vaccineIdList.map { cache ->
+        val ageMillis = System.currentTimeMillis() - cache.ben.dob
+        val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
+        ImmunizationDetailsDomain(
+            ben = cache.ben.asBasicDomainModel(),
+            vaccineStateList = vaccines.filter { it.minAllowedAgeInMillis < ageMillis }.map { vaccine ->
+                val vaccineType = vaccine.vaccineName.toVaccineType()
+                val buffersApplicableVaccines = setOf(
+                    VaccineType.HEPB_BIRTH,
+                    VaccineType.OPV_0,
+                    VaccineType.VIT_K
+                )
+                val oneMonthBufferMillis = 30L * 24 * 60 * 60 * 1000
+                val effectiveMaxAllowedAgeInMillis =
+                    if (vaccineType in buffersApplicableVaccines) {
+                        vaccine.maxAllowedAgeInMillis + oneMonthBufferMillis
+                    } else {
+                        vaccine.maxAllowedAgeInMillis
                     }
-                    VaccineDomain(vaccine.vaccineId, vaccine.vaccineName, vaccine.immunizationService, state)
-                }
-            )
-        }
-    }
 
+                val state = when {
+                    cache.givenVaccines.any { it.vaccineId == vaccine.vaccineId } -> VaccineState.DONE
+                    ageMillis <= vaccine.minAllowedAgeInMillis -> VaccineState.PENDING
+                    ageMillis <= effectiveMaxAllowedAgeInMillis -> VaccineState.OVERDUE
+                    else -> VaccineState.MISSED
+                }
+                // NEW - due date calculate karo
+                val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis
+                val dueDateStr = sdf.format(java.util.Date(dueDateMillis))
+
+                VaccineDomain(
+                    vaccineId = vaccine.vaccineId,
+                    vaccineName = vaccine.vaccineName,
+                    vaccineCategory = vaccine.immunizationService,
+                    state = state,
+                    dueDate = dueDateStr  // NEW
+                )
+            }
+        )
+    }
+}
     // init: populate vaccinesFlow
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -136,7 +179,7 @@ class ChildImmunizationListViewModel @Inject constructor(
 
     fun filterText(text: String) {
         viewModelScope.launch {
-            filter.emit(text)
+            filter.emit(text.trim().lowercase())
         }
 
     }

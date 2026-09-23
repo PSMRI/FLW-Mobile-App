@@ -25,6 +25,7 @@
             hintText="@{form.title}"
             android:labelFor="@id/actv_rv_dropdown"
             android:orientation="horizontal"
+            android:importantForAccessibility="yes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -38,6 +39,8 @@
                 android:focusableInTouchMode="false"
                 android:cursorVisible="false"
                 android:paddingLeft="@dimen/_20sdp"
+                android:contentDescription="@{form.title}"
+                android:importantForAccessibility="yes"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />

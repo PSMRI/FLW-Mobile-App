@@ -20,6 +20,8 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.getLocalizedAgeUnit
+import org.piramalswasthya.sakhi.helpers.getLocalizedGender
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
@@ -46,7 +48,7 @@ class ImmunizationFormViewModel @Inject constructor(
     }
 
     var vaccinationDoneList = arrayListOf<VaccineDomain>()
-    lateinit var list: List<VaccineDomain>
+    var list: List<VaccineDomain> = emptyList()
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -97,6 +99,8 @@ class ImmunizationFormViewModel @Inject constructor(
 
     }
 
+
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -111,11 +115,15 @@ class ImmunizationFormViewModel @Inject constructor(
                         syncState = SyncState.UNSYNCED
                     )
                 }.also { _recordExists.postValue(false) }
-                val ben = benDao.getBen(benId)!!
+                val ben = benDao.getBen(benId) ?: run {
+                    Timber.e("Ben not found for benId: $benId")
+                    _state.postValue(State.SAVE_FAILED)
+                    return@withContext
+                }
                 clickedBenId.emit(benId)
                 _benRegCache.postValue(ben)
                 _benName.postValue("${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}")
-                _benAgeGender.postValue("${ben.age} ${ben.ageUnit?.name} | ${ben.gender?.name}")
+                _benAgeGender.postValue("${ben.age} ${context.getLocalizedAgeUnit(ben.ageUnit)} | ${context.getLocalizedGender(ben.gender)}")
                 val vaccine = vaccineDao.getVaccineById(vaccineId)
                     ?: throw IllegalStateException("Unknown Vaccine Injected, contact HAZMAT team!")
                 dataset.setFirstPage(ben, vaccine, savedRecord)
@@ -195,7 +203,7 @@ class ImmunizationFormViewModel @Inject constructor(
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            add(Calendar.YEAR, -16)
+            add(Calendar.YEAR, -6)
         }.timeInMillis,
         maxDob = System.currentTimeMillis(),
     )
@@ -203,11 +211,16 @@ class ImmunizationFormViewModel @Inject constructor(
 
     val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
         vaccineIdList.map { cache ->
+
+            val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
+
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
                 vaccineStateList = vaccinesList.filter {
                     it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
+                    val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis
+                    val dueDateStr = sdf.format(java.util.Date(dueDateMillis))
                     VaccineDomain(
                         vaccine.vaccineId,
                         vaccine.vaccineName,
@@ -217,9 +230,13 @@ class ImmunizationFormViewModel @Inject constructor(
                             VaccineState.PENDING
                         } else if (ageMillis <= (vaccine.maxAllowedAgeInMillis)) {
                             VaccineState.OVERDUE
-                        } else VaccineState.MISSED
+                        } else VaccineState.MISSED,
+                        dueDate = dueDateStr
+
                     )
-                })
+                }
+
+            )
         }
     }
     val bottomSheetContent = clickedBenId.combine(benWithVaccineDetails) { a, b ->
