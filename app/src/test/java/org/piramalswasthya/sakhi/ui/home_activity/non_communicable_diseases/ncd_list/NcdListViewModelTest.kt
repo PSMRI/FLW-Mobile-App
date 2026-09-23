@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -80,5 +82,47 @@ class NcdListViewModelTest : BaseViewModelTest() {
     fun `resetBenRegId sets benRegId to null`() {
         viewModel.resetBenRegId()
         assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `abha benId benRegId are null initially`() {
+        assertNull(viewModel.abha.value)
+        assertNull(viewModel.benId.value)
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `resetBenRegId keeps benRegId null`() {
+        viewModel.resetBenRegId()
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `resetBenRegId called twice does not throw`() {
+        viewModel.resetBenRegId()
+        viewModel.resetBenRegId()
+        assertNull(viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `filterText with whitespace and combine does not throw`() = runTest {
+        viewModel.filterText("  search  ")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `multiple filterText emissions do not throw`() = runTest {
+        viewModel.filterText("a")
+        viewModel.filterText("")
+        viewModel.filterText("b")
+        advanceUntilIdle()
+        assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `benList collects the combined and filtered list`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

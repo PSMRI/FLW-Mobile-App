@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="?attr/colorOnPrimary"
-                android:text='@{@string/place_label(uwin.place)}' />
+                app:setUWINLocalization='@{uwin.place}' />
 
             <TextView
                 android:id="@+id/tvParticipants"

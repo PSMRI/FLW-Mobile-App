@@ -19,6 +19,14 @@ interface MaternalHealthDao {
     @Query("select * from pregnancy_anc where benId = :benId  limit 1")
     fun getSavedRecordANC(benId: Long): PregnantWomanAncCache?
 
+    @Query("""
+    SELECT * FROM pregnancy_anc 
+    WHERE benId = :benId 
+    ORDER BY visitNumber DESC 
+    LIMIT 1
+""")
+    suspend fun getLastVisitAncRecord(benId: Long): PregnantWomanAncCache?
+
     @Query("select * from pregnancy_anc where isActive== 1 and benId = :benId")
     fun getAllActiveAncRecords(benId: Long): List<PregnantWomanAncCache>
 

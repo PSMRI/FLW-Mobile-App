@@ -110,7 +110,20 @@ class MaaMeetingRepo @Inject constructor(
                 meetingImages = imagesParts
             )
             if (response.isSuccessful) {
-                dao.updateSyncState(row.id, SyncState.SYNCED)
+                val responseString = response.body()?.string()
+                if (!responseString.isNullOrBlank()) {
+                    try {
+                        val jsonObj = org.json.JSONObject(responseString)
+                        val responseStatusCode = jsonObj.optInt("statusCode", -1)
+                        if (responseStatusCode == 200) {
+                            dao.updateSyncState(row.id, SyncState.SYNCED)
+                        } else {
+                            timber.log.Timber.e("MaaMeeting server rejected payload with status: $responseStatusCode")
+                        }
+                    } catch (e: Exception) {
+                        timber.log.Timber.e("Failed to parse MaaMeeting response: $e")
+                    }
+                }
             }
         }
     }
@@ -143,7 +156,7 @@ class MaaMeetingRepo @Inject constructor(
 
         serverList.forEach { item ->
 
-            val imageUriList = (item.meetingImages ?: emptyList()).mapNotNull { base64 ->
+            val imageUriList = withContext(Dispatchers.IO) {(item.meetingImages ?: emptyList()).mapNotNull { base64 ->
                 try {
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
@@ -151,7 +164,7 @@ class MaaMeetingRepo @Inject constructor(
 
                     val file = File(
                         appContext.cacheDir,
-                        "meeting_${System.currentTimeMillis()}.$ext"
+                        "meeting_${item.id}_img${index}.$ext"
                     )
 
                     file.outputStream().use { it.write(bytes) }
@@ -164,7 +177,8 @@ class MaaMeetingRepo @Inject constructor(
 
                 } catch (e: Exception) {
                     null
-                }
+                }}
+            }
             }
 
             val entity = MaaMeetingEntity(
@@ -181,7 +195,19 @@ class MaaMeetingRepo @Inject constructor(
                 syncState = SyncState.SYNCED
             )
 
-            dao.insert(entity)
+            // A locally-created row has an auto-generated id. Once the server
+            // assigns its id, remove that local copy before inserting the
+            // canonical server row. This also repairs duplicates created by
+            // older app versions.
+            dao.replaceLocalCopyWithServerMeeting(
+                entity = entity,
+                serverId = entity.id,
+                meetingDate = entity.meetingDate,
+                place = entity.place,
+                participants = entity.participants,
+                ashaId = entity.ashaId,
+                villageName = entity.villageName
+            )
         }
 
     }

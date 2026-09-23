@@ -29,12 +29,14 @@ import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.ArrayRes
 import androidx.collection.lruCache
 import androidx.core.content.FileProvider
 import androidx.core.graphics.withTranslation
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -44,9 +46,13 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.helpers.getTodayMillis
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
+import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -54,6 +60,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 object HelperUtil {
 
@@ -159,26 +167,75 @@ object HelperUtil {
     /**
      * gets age string like -- 2 years, 3 months or 3 months, 4 days
      */
-    fun getAgeStrFromAgeUnit(ageUnitDTO: AgeUnitDTO): String {
-        val str = StringBuilder("")
+//    fun getAgeStrFromAgeUnit(ageUnitDTO: AgeUnitDTO): String {
+//        val str = StringBuilder("")
+//
+//        if (ageUnitDTO.years >= 1) {
+//            str.append(ageUnitDTO.years)
+//            str.append(if (ageUnitDTO.years == 1) " Year" else " Years")
+//        }
+//
+//        if (ageUnitDTO.months >= 1) {
+//            if (ageUnitDTO.years >= 1) str.append(", ")
+//            str.append(ageUnitDTO.months)
+//            str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
+//        }
+//
+//        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
+//            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
+//            str.append(ageUnitDTO.days)
+//            str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
+//        }
+//        return str.toString()
+//    }
 
-        if (ageUnitDTO.years >= 1) {
-            str.append(ageUnitDTO.years)
-            str.append(if (ageUnitDTO.years == 1) " Year" else " Years")
-        }
+    fun getAgeStrFromAgeUnit(
+        context: Context,
+        ageUnitDTO: AgeUnitDTO
+    ): String {
 
-        if (ageUnitDTO.months >= 1) {
-            if (ageUnitDTO.years >= 1) str.append(", ")
-            str.append(ageUnitDTO.months)
-            str.append(if (ageUnitDTO.months == 1) " Month" else " Months")
-        }
+        return buildString {
 
-        if (ageUnitDTO.days >= 1 /*&& ageUnitDTO.years < 1*/) {
-            if (ageUnitDTO.years >= 1 || ageUnitDTO.months >= 1) str.append(", ")
-            str.append(ageUnitDTO.days)
-            str.append(if (ageUnitDTO.days == 1) " Day " else " Days ")
+            if (ageUnitDTO.years >= 1) {
+                append("${ageUnitDTO.years} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.years == 1)
+                            R.string.year
+                        else
+                            R.string.years
+                    )
+                )
+            }
+
+            if (ageUnitDTO.months >= 1) {
+                if (isNotEmpty()) append(", ")
+
+                append("${ageUnitDTO.months} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.months == 1)
+                            R.string.month
+                        else
+                            R.string.months
+                    )
+                )
+            }
+
+            if (ageUnitDTO.days >= 1) {
+                if (isNotEmpty()) append(", ")
+
+                append("${ageUnitDTO.days} ")
+                append(
+                    context.getString(
+                        if (ageUnitDTO.days == 1)
+                            R.string.day
+                        else
+                            R.string.days
+                    )
+                )
+            }
         }
-        return str.toString()
     }
 
     fun getDiffYears(a: Calendar, b: Calendar): Int {
@@ -637,9 +694,116 @@ object HelperUtil {
 
 
 
+    fun Context.getLocalizedDewormingLocation(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+            "Home Visit"
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.deworming_location_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+
+    fun Context.getahd(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.ahd_place_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+    fun Context.getVHND(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "Anganwadi Centre",
+            "HWC",
+            "School",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_of_vhsnc)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
 
 
 
+    fun Context.getSaasBahuSamalonLocalization(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "HWC",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_array)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
+
+    fun Context.getUWINLocalization(value: String?): String {
+        if (value.isNullOrBlank()) return "N/A"
+
+        val englishValues = arrayOf(
+            "HWC",
+            "School",
+            "Anganwadi Centre",
+            "Community center",
+        )
+
+        val localizedValues =
+            resources.getStringArray(R.array.place_of_delivery_options)
+
+        val index = englishValues.indexOf(value)
+
+        return if (index >= 0 && index < localizedValues.size) {
+            localizedValues[index]
+        } else {
+            value
+        }
+    }
 
 
     fun base64ToTempFile(base64: String, cacheDir: File, context: Context): Uri? {
@@ -882,6 +1046,32 @@ object HelperUtil {
         }.time
     }
 
+    fun formatDate(dateString: String?): String {
+        return try {
+            if (dateString.isNullOrBlank()) return ""
+
+            val inputFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+
+            val outputFormat = SimpleDateFormat(
+                "d MMM yyyy",
+                Locale.ENGLISH
+            ).apply {
+                timeZone = TimeZone.getDefault()
+            }
+
+            val date = inputFormat.parse(dateString)
+            if (date != null) outputFormat.format(date) else ""
+
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to parse date: $dateString")
+            ""
+        }
+    }
      fun getFilesName(uri: Uri,context: Context): String? {
         var result: String? = null
 
@@ -913,6 +1103,47 @@ object HelperUtil {
     fun String.toRequestBody(): RequestBody =
         this.toRequestBody("text/plain".toMediaType())
 
+    fun showImageLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.image_uploaded), Toast.LENGTH_SHORT).show()
+    }
+
+    fun showFileLoadedMessage(context: Context) {
+        Toast.makeText(context, context.resources.getString(R.string.file_uploaded), Toast.LENGTH_SHORT).show()
+    }
+
+    fun isAncDue(benWithAnc: BenWithAncVisitCache): Boolean {
+
+        val ancRecords = benWithAnc.savedAncRecords
+
+        if (ancRecords.any { it.maternalDeath == true }) return false
+        if (ancRecords.any { it.pregnantWomanDelivered == true }) return false
+
+        val activePwr = benWithAnc.pwr.firstOrNull { it.active } ?: return false
+
+        return if (ancRecords.isEmpty()) {
+            TimeUnit.MILLISECONDS.toDays(
+                getTodayMillis() - activePwr.lmpDate
+            ) >= Konstants.minAnc1Week * 7
+        } else {
+            val lastAncRecord = ancRecords.maxBy { it.visitNumber }
+
+            (activePwr.lmpDate + TimeUnit.DAYS.toMillis(280)) >
+                    (lastAncRecord.ancDate + TimeUnit.DAYS.toMillis(28)) &&
+                    lastAncRecord.visitNumber < 4 &&
+                    TimeUnit.MILLISECONDS.toDays(
+                        getTodayMillis() - lastAncRecord.ancDate
+                    ) > 28
+        }
+    }
+
+    fun Context.getBabyOrder(index: Int): String {
+        return when (index) {
+            0 -> getString(R.string.first_baby)
+            1 -> getString(R.string.second_baby)
+            2 -> getString(R.string.third_baby)
+            else -> getString(R.string.nth_baby, index + 1)
+        }
+    }
 
 
 }

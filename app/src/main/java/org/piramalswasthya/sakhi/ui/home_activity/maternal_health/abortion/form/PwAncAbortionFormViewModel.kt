@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.abortion.form
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -14,19 +13,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.PregnantWomanAncAbortionDataset
-import org.piramalswasthya.sakhi.configuration.PregnantWomanAncVisitDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
-import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+
 import javax.inject.Inject
 
 @HiltViewModel
@@ -111,7 +105,7 @@ class PwAncAbortionFormViewModel @Inject constructor(
             } ?: run {
                 _recordExists.value = false
             }
-            val lastAnc = maternalHealthRepo.getSavedRecordANC(benId)
+            val lastAnc = maternalHealthRepo.getLastVisitRecordANC(benId)
 
             ectCache = EligibleCoupleTrackingCache(
                 benId = benId,

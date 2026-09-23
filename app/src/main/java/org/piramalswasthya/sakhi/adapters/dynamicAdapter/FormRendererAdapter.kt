@@ -14,6 +14,7 @@
     import android.view.*
     import android.view.inputmethod.InputMethodManager
     import android.util.Base64
+    import android.util.Log
     import android.widget.*
     import androidx.appcompat.content.res.AppCompatResources
     import androidx.core.content.ContextCompat
@@ -41,7 +42,7 @@
 
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
-        private val isViewOnly: Boolean = false,
+        private var isViewOnly: Boolean = false,
         private val minVisitDate: Date? = null,
         private val maxVisitDate: Date? = null,
         private val isSNCU: Boolean = false,
@@ -79,6 +80,10 @@
             }
         }
 
+        fun setViewMode(viewOnly: Boolean) {
+            isViewOnly = viewOnly
+            notifyDataSetChanged()
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FormViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -383,6 +388,14 @@
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
                                     val value = normalized.toFloatOrNull()
                                     field.value = value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     onValueChanged(field, s.toString())
 
                                 }
@@ -514,6 +527,14 @@
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
                                     val value = normalized.toFloatOrNull()
                                     field.value = value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     if (field.fieldId.contains("muac", ignoreCase = true)) {
                                         muacDebounceJob?.cancel()
                                         muacDebounceJob = viewHolderScope.launch {
@@ -595,6 +616,14 @@
                                     val selected = options[which]
                                     editText.setText(selected.label)
                                     field.value = selected.value
+                                    if (!field.errorMessage.isNullOrBlank()) {
+                                        field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
+                                    }
                                     onValueChanged(field, selected.value)
                                 }
                                 builder.show()
@@ -699,7 +728,7 @@
 
                                     if (minDate == null) {
                                         calendar.time = today
-                                        calendar.add(Calendar.MONTH, -2)
+                                        calendar.add(Calendar.MONTH, -10)
                                         minDate = calendar.time
                                     }
                                     if (maxDate == null) {
@@ -707,9 +736,19 @@
                                     }
                                 }
                                 else {
-
-
-                                    if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID || formId == FormConstants.MDA_DISTRIBUTION_FORM_ID) {
+                                    if (field.fieldId == "treatment_start_date") {
+                                        val pastMonths = field.validation?.minDate?.toInt() ?: 6
+                                        val minCal = Calendar.getInstance().apply {
+                                            add(Calendar.MONTH, -pastMonths)
+                                            set(Calendar.DAY_OF_MONTH, 1)
+                                        }
+                                        minDate = minCal.time
+                                        maxDate = when (field.validation?.maxDate?.lowercase()) {
+                                            "today" -> today
+                                            null -> today
+                                            else -> today
+                                        }
+                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 
@@ -726,10 +765,10 @@
                                         if (field.fieldId == "end_date") {
                                             val startDateValue = getDate("start_date")
                                             if (startDateValue != null) {
-                                                val minDateCalendar = Calendar.getInstance()
-                                                minDateCalendar.time = startDateValue
-                                                minDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
-                                                minDate = minDateCalendar.time
+                                                val cal = Calendar.getInstance()
+                                                cal.time = startDateValue
+                                                cal.add(Calendar.DAY_OF_MONTH, 1)
+                                                minDate = cal.time
                                             } else {
                                                 minDate = minVisitDate
                                             }
@@ -737,16 +776,17 @@
                                             minDate = minVisitDate
                                         }
 
-                                        maxDate = maxVisitDate
-
-                                        if (minDate == null) {
-                                            calendar.time = today
-                                            calendar.add(Calendar.MONTH, -2)
-                                            minDate = calendar.time
-                                        }
-                                        if (maxDate == null) {
+                                        maxDate = maxVisitDate ?: today
+                                    }
+                                    else {
+                                        if (formId == FormConstants.EYE_SURGERY_FORM_ID &&
+                                            (field.fieldId == "visit_date" || field.fieldId == "date_of_surgery")){
+                                            val cal = Calendar.getInstance()
+                                            cal.time = today
+                                            cal.add(Calendar.MONTH, -1)
+                                            minDate = cal.time
                                             maxDate = today
-                                        }
+
                                     }
                                     else{
                                         minDate = when (field.fieldId) {
@@ -763,13 +803,14 @@
                                                 } else {
                                                     null
                                                 }
+                                                }
+                                                "nrc_admission_date" -> getDate("visit_date")
+                                                "nrc_discharge_date" -> getDate("nrc_admission_date")
+                                                "follow_up_visit_date" -> getDate("nrc_discharge_date")
+                                                else -> null
                                             }
-                                            "nrc_admission_date" -> getDate("visit_date")
-                                            "nrc_discharge_date" -> getDate("nrc_admission_date")
-                                            "follow_up_visit_date" -> getDate("nrc_discharge_date")
-                                            else -> null
+                                            maxDate = today
                                         }
-                                        maxDate = today
                                     }
 
                                 }
@@ -789,6 +830,11 @@
                                         editText.setText(dateStr)
                                         field.value = dateStr
                                         field.errorMessage = null
+                                        val errorTv = inputContainer.findViewWithTag<TextView>("field_error_tv")
+                                        errorTv?.let {
+                                            it.text = ""
+                                            it.visibility = View.GONE
+                                        }
                                         onValueChanged(field, dateStr)
 
                                         if (field.fieldId == "ifa_provision_date") {
@@ -947,7 +993,6 @@
                                     } catch (e: Exception) {
                                         Timber.tag("FormRendererAdapter").e(e, "Error setting date constraints for field: ${field.fieldId}")
                                     }
-
                                     setOnDismissListener {
                                         HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                                     }
@@ -970,21 +1015,30 @@
                             ).apply { setMargins(0, 8, 0, 8) }
                         }
 
-                        val isFieldDisabled = field.fieldId == "discharged_from_sncu" &&
+                        val isSNCUDisabled = field.fieldId == "discharged_from_sncu" &&
                                 fields.find { it.fieldId == "is_baby_alive" }?.value == "Yes" &&
                                 isSNCU
 
-                        if (isFieldDisabled && field.value != "Yes") {
+                        if (isSNCUDisabled && field.value != "Yes") {
                             field.value = "Yes"
                             onValueChanged(field, "Yes")
                             notifyItemChanged(adapterPosition)
                         }
 
+                        val preSelectedValue = if (!field.isEditable) field.value?.toString() else null
+
                         field.options?.forEachIndexed { index, option ->
                             val radioButton = RadioButton(context).apply {
                                 id = View.generateViewId()
                                 text = option.label
-                                isEnabled = !isViewOnly && !isFieldDisabled
+                                isChecked = field.value?.toString().equals(option.value, ignoreCase = true)
+                                isEnabled = when {
+                                    isViewOnly -> false
+                                    isSNCUDisabled -> false
+                                    !field.isEditable -> option.value.equals(preSelectedValue, ignoreCase = true) // CASE-INSENSITIVE
+                                    else -> true
+                                }
+
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -1001,7 +1055,7 @@
                             }
                         }
 
-                        if (!isViewOnly && !isFieldDisabled) {
+                        if (!isViewOnly && !isSNCUDisabled && field.isEditable) {
                             radioGroup.setOnCheckedChangeListener { group, checkedId ->
                                 // Clear focus from any previously focused EditText to prevent auto-scroll
                                 itemView.rootView.findFocus()?.clearFocus()
@@ -1014,6 +1068,16 @@
                                     onValueChanged(field, selectedOption.value)
                                 }
                             }
+//                            radioButton.setOnCheckedChangeListener { _, isChecked ->
+//                                if (isChecked && field.value != option) {
+//                                    field.value = option
+//                                    onValueChanged(field, option)
+//                                    for (i in 0 until radioGroup.childCount) {
+//                                        val child = radioGroup.getChildAt(i) as RadioButton
+//                                        if (child.text != option) child.isChecked = false
+//                                    }
+//                                }
+//                            }
                         }
 
                         val wrapper = LinearLayout(itemView.context).apply {

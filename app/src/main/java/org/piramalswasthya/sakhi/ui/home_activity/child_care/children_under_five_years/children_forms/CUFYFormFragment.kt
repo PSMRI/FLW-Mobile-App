@@ -51,6 +51,9 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
 import timber.log.Timber
 import java.util.Calendar
 
+/** layout_bottle_table declares weightSum 3; without the serial column only two remain. */
+private const val TWO_COLUMN_WEIGHT_SUM = 2f
+
 @AndroidEntryPoint
 class CUFYFormFragment : Fragment() {
 
@@ -168,12 +171,10 @@ class CUFYFormFragment : Fragment() {
         }else if (visitType.equals(SAM_FORM_NAME)){
             formId = FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID;
         }
-        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
-        binding.fabEdit.visibility = View.GONE
-        }
-        else{
-            binding.fabEdit.isVisible = isViewMode
-        }
+
+
+        binding.fabEdit.isVisible =
+            isViewMode && formId == FormConstants.CHILDREN_UNDER_FIVE_SAM_FORM_ID
 
         setupFollowUpRecyclerView()
 
@@ -259,17 +260,31 @@ class CUFYFormFragment : Fragment() {
 
     private fun tableRender() {
         binding.includeBottleTable.tableRv.layoutManager = LinearLayoutManager(requireContext())
+
+        // FLW-1129 — the Mitanin build never shows the raw bottle count, so the panel becomes
+        // "IFA Visit N | Date of Provision". Applies to add and view mode alike.
+        val showAsVisitNumber = isIfaVisitNumberingEnabled()
+        if (showAsVisitNumber) {
+            binding.includeBottleTable.tableHeading.text = getString(R.string.ifa_visits)
+            binding.includeBottleTable.sNo.visibility = View.GONE
+            binding.includeBottleTable.bottleNum.text = getString(R.string.ifa_visit_column)
+            binding.includeBottleTable.tableHeader.weightSum = TWO_COLUMN_WEIGHT_SUM
+        }
+
         viewModel.bottleList.observe(viewLifecycleOwner) { list ->
 
             if (formId.equals(FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID, ignoreCase = true) && !list.isNullOrEmpty()) {
                 binding.includeBottleTable.llTable.visibility = View.VISIBLE
-                binding.includeBottleTable.tableRv.adapter = BottleAdapter(list)
+                binding.includeBottleTable.tableRv.adapter = BottleAdapter(list, showAsVisitNumber)
             } else {
                 binding.includeBottleTable.llTable.visibility = View.GONE
             }
         }
         viewModel.loadBottleData(benId, formId)
     }
+
+    private fun isIfaVisitNumberingEnabled(): Boolean =
+        isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID
 
     private fun refreshAdapter() {
         val visibleFields = viewModel.getVisibleFields().toMutableList()
@@ -283,8 +298,8 @@ class CUFYFormFragment : Fragment() {
                 val calendar = Calendar.getInstance()
                 val today = calendar.time
 
-                calendar.add(Calendar.MONTH, -2)
-                val twoMonthsAgo = calendar.time
+                calendar.add(Calendar.MONTH, -10)
+                val tenMonthsAgo = calendar.time
 
                 val previousVisitDate = viewModel.getPreviousIFAVisitDate(benId)
 
@@ -293,13 +308,13 @@ class CUFYFormFragment : Fragment() {
                     calendarPrev.time = previousVisitDate
                     calendarPrev.add(Calendar.DATE, 1)
 
-                    if (calendarPrev.time.after(twoMonthsAgo)) {
+                    if (calendarPrev.time.after(tenMonthsAgo)) {
                         calendarPrev.time
                     } else {
-                        twoMonthsAgo
+                        tenMonthsAgo
                     }
                 } else {
-                    twoMonthsAgo
+                    tenMonthsAgo
                 }
 
                 ifaMaxDate = today
@@ -320,6 +335,8 @@ class CUFYFormFragment : Fragment() {
         // to call offsetDescendantRectToMyCoords() on a focused view that RecyclerView has
         // already detached, throwing IllegalArgumentException: "parameter must be a descendant".
         if (::adapter.isInitialized) {
+            adapter.setViewMode(isViewMode)
+
             adapter.updateFields(visibleFields)
             return
         }
@@ -363,12 +380,12 @@ class CUFYFormFragment : Fragment() {
 
         binding.recyclerView.adapter = adapter
         binding.btnSave.isVisible = !isViewMode
-        if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
+       /* if(isMitaninVariant && formId == FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID){
         binding.fabEdit.isVisible = false}
         else
         {
             binding.fabEdit.isVisible = isViewMode
-        }
+        }*/
     }
 
     private fun createAdapterWithIFADates(
@@ -485,11 +502,11 @@ class CUFYFormFragment : Fragment() {
                             else -> {
                                 val calendar = Calendar.getInstance()
                                 calendar.time = today
-                                calendar.add(Calendar.MONTH, -2)
-                                val twoMonthsAgo = calendar.time
+                                calendar.add(Calendar.MONTH, -10)
+                                val tenMonthsAgo = calendar.time
 
-                                if (provisionDate.before(twoMonthsAgo)) {
-                                    getString(R.string.visit_date_cannot_be_more_than_2_months_old)
+                                if (provisionDate.before(tenMonthsAgo)) {
+                                    getString(R.string.visit_date_cannot_be_more_than_10_months_old)
                                 } else {
                                     null
                                 }

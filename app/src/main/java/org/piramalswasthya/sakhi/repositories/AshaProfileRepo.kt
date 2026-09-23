@@ -1,13 +1,18 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.Context
+import android.net.Uri
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.ProfileDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
+import org.piramalswasthya.sakhi.model.ProfileActivityNetwork
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import timber.log.Timber
@@ -18,7 +23,8 @@ class AshaProfileRepo @Inject constructor(
     private val amritApiService: AmritApiService,
     private val profileDao: ProfileDao,
     private val preferenceDao: PreferenceDao,
-    private val userRepo: UserRepo
+    private val userRepo: UserRepo,
+    @ApplicationContext private val context: Context
 ) {
 
 
@@ -37,7 +43,7 @@ class AshaProfileRepo @Inject constructor(
                     val jsonObj = JSONObject(responseString)
                     val responseStatusCode = jsonObj.getInt("statusCode")
                     if (responseStatusCode == 200) {
-                        Timber.d("response : $jsonObj")
+                        Timber.d("responseAsha : $jsonObj")
                         try {
                             val dataObj = jsonObj.getString("data")
                             saveProfileData(dataObj)
@@ -85,20 +91,9 @@ class AshaProfileRepo @Inject constructor(
                     val responseString = response.body()?.string()
                     if (responseString != null) {
                         val jsonObj = JSONObject(responseString)
-                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        val responseStatusCode = jsonObj.optInt("statusCode", 200)
                         Timber.d("Pull from amrit asha profile data : $responseStatusCode")
                         when (responseStatusCode) {
-                            200 -> {
-                                try {
-                                    val dataObj = jsonObj.getString("data")
-                                    saveProfileData(dataObj)
-                                } catch (e: Exception) {
-                                    Timber.d("profile data not synced $e")
-                                    return@withContext false
-                                }
-                                return@withContext true
-                            }
-
                             5002 -> {
                                 if (userRepo.refreshTokenTmc(
                                         user.userName, user.password
@@ -112,7 +107,15 @@ class AshaProfileRepo @Inject constructor(
                             }
 
                             else -> {
-                                throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
+                                if (jsonObj.has("data") && !jsonObj.isNull("data")) {
+                                    try {
+                                        saveProfileData(jsonObj.getString("data"))
+                                    } catch (e: Exception) {
+                                        Timber.e("profile data not synced $e")
+                                        return@withContext false
+                                    }
+                                }
+                                return@withContext true
                             }
                         }
                     }
@@ -144,20 +147,67 @@ class AshaProfileRepo @Inject constructor(
         }
     }
     private suspend fun saveProfileData(dataObj: String) {
+        val net = try {
+            Gson().fromJson(dataObj, ProfileActivityNetwork::class.java)
+        } catch (e: Exception) {
+            Timber.e("saveProfileData parse failed $e")
+            null
+        } ?: return
 
-        val activitiesCache =
-            Gson().fromJson(dataObj, ProfileActivityCache::class.java) as ProfileActivityCache
-        if (activitiesCache != null) {
-            // Preserve local profileImage — server stores the URI string which is
-            // only meaningful on this device, so always prefer the local file.
-            val existingRecord = profileDao.getProfileActivityById(activitiesCache.employeeId.toLong())
-            if (existingRecord != null && existingRecord.profileImage.isNotEmpty()) {
-                activitiesCache.profileImage = existingRecord.profileImage
+        val employeeId = (net.employeeId ?: 0)
+        if (employeeId == 0) {
+            Timber.w("saveProfileData skipped: employeeId missing")
+            return
+        }
+        val existingRecord = profileDao.getProfileActivityById(employeeId.toLong())
+
+        val serverImage = net.profileImage ?: ""
+        val resolvedImage = when {
+            serverImage.isNotBlank() && !serverImage.startsWith("file://") -> {
+                val localUri = ImageUtils.saveBenImageFromServerToStorage(
+                    context, serverImage, employeeId.toLong()
+                )
+                localUri?.also { preferenceDao.saveProfilePicUri(Uri.parse(it)) }
+                    ?: existingRecord?.profileImage ?: ""
             }
-            profileDao.insert(activitiesCache)
+
+            serverImage.startsWith("file://") -> serverImage
+
+            else -> existingRecord?.profileImage ?: ""
         }
 
-
+        val record = ProfileActivityCache(
+            id = employeeId.toLong(),
+            name = net.name,
+            profileImage = resolvedImage,
+            village = net.village ?: "",
+            employeeId = employeeId,
+            dob = net.dob ?: "",
+            age = net.age ?: 0,
+            mobileNumber = net.mobileNumber ?: "",
+            alternateMobileNumber = net.alternateMobileNumber ?: "",
+            fatherOrSpouseName = net.fatherOrSpouseName ?: "",
+            dateOfJoining = net.dateOfJoining ?: "",
+            bankAccount = net.bankAccount ?: "",
+            ifsc = net.ifsc ?: "",
+            populationCovered = net.populationCovered ?: 0,
+            choName = net.choName ?: "",
+            choMobile = net.choMobile ?: "",
+            awwName = net.awwName ?: "",
+            awwMobile = net.awwMobile ?: "",
+            anm1Name = net.anm1Name ?: "",
+            anm1Mobile = net.anm1Mobile ?: "",
+            anm2Name = net.anm2Name ?: "",
+            anm2Mobile = net.anm2Mobile ?: "",
+            abhaNumber = net.abhaNumber ?: "",
+            ashaHouseholdRegistration = net.ashaHouseholdRegistration ?: "",
+            ashaFamilyMember = net.ashaFamilyMember ?: "",
+            providerServiceMapID = net.providerServiceMapID ?: " ",
+            isFatherOrSpouse = net.isFatherOrSpouse ?: false,
+            supervisorName = net.supervisorName ?: "",
+            supervisorMobile = net.supervisorMobile ?: ""
+        )
+        profileDao.insert(record)
     }
 
 

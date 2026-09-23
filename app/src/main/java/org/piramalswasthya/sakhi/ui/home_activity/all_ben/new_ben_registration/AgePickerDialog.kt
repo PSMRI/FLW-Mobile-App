@@ -94,17 +94,20 @@ class AgePickerDialog(context: Context) : AlertDialog(context) {
                 val mInputTextYears: EditText = binding.dialogNumberPickerYears.findViewById(
                     Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
                 )
-                ageUnitDTO.years = mInputTextYears.text.toString().toInt()
+                ageUnitDTO.years = mInputTextYears.text.toString().toIntOrNull()
+                    ?: binding.dialogNumberPickerYears.value
 
                 val mInputTextMonths: EditText = binding.dialogNumberPickerMonths.findViewById(
                     Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
                 )
-                ageUnitDTO.months = mInputTextMonths.text.toString().toInt()
+                ageUnitDTO.months = mInputTextMonths.text.toString().toIntOrNull()
+                    ?: binding.dialogNumberPickerMonths.value
 
                 val mInputTextDays: EditText = binding.dialogNumberPickerDays.findViewById(
                     Resources.getSystem().getIdentifier("numberpicker_input", "id", "android")
                 )
-                ageUnitDTO.days = mInputTextDays.text.toString().toInt()
+                ageUnitDTO.days = mInputTextDays.text.toString().toIntOrNull()
+                    ?: binding.dialogNumberPickerDays.value
                 dismiss()
             }
 

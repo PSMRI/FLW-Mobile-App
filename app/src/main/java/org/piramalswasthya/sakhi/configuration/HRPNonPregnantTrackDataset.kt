@@ -424,6 +424,11 @@ class HRPNonPregnantTrackDataset(
                 1
             }
 
+            ifaQuantity.id ->{
+                validateEmptyOnEditText(ifaQuantity)
+                1
+            }
+
             systolic.id->{
                 validateIntMinMax(systolic)
                 1

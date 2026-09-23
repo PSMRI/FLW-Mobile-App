@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemMalariaCasesConfirmedListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithMalariaConfirmedDomain
 
 class MalariaConfirmedCasesListAdapter(
@@ -113,7 +114,7 @@ class MalariaConfirmedCasesListAdapter(
             binding.btnFormTb.text = if (item.malariaConfirmed == null) binding.root.resources.getString(R.string.follow_up) else item.malariaConfirmed.day
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.malariaConfirmed == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

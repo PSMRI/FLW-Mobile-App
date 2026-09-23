@@ -41,6 +41,7 @@ class EligibleCoupleTrackingDataset(
         arrayId = -1,
         required = true,
         min = Calendar.getInstance().apply {
+            add(Calendar.MONTH, -1)
             set(Calendar.DAY_OF_MONTH, 1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -147,7 +148,7 @@ class EligibleCoupleTrackingDataset(
     private val antraDoses = FormElement(
         id = 11,
         inputType = InputType.DROPDOWN,
-        title = "Antra injection",
+        title = resources.getString(R.string.antra_injection),
         arrayId = R.array.antra_doses,
         entries = resources.getStringArray(R.array.antra_doses),
         required = true,
@@ -161,13 +162,14 @@ class EligibleCoupleTrackingDataset(
         title = resources.getString(R.string.ectdset_other_mthd),
         required = true,
         etInputType = android.text.InputType.TYPE_CLASS_TEXT,
-        etMaxLength = 50
+        etMaxLength = 50,
+        hasDependants = true
     )
 
     private var dateOfAntraInjection = FormElement(
         id = 13,
         inputType = InputType.DATE_PICKER,
-        title = context.getString(R.string.date_of_antra_injection),
+        title = resources.getString(R.string.date_of_antra_injection),
         arrayId = -1,
         required = true,
         max = System.currentTimeMillis(),
@@ -177,7 +179,7 @@ class EligibleCoupleTrackingDataset(
     private var dueDateOfAntraInjection = FormElement(
         id = 14,
         inputType = InputType.TEXT_VIEW,
-        title = context.getString(R.string.due_date_of_next_injection),
+        title = resources.getString(R.string.due_date_of_next_injection),
         required = false,
 
         )
@@ -185,7 +187,7 @@ class EligibleCoupleTrackingDataset(
     private val mpaFileUpload1 = FormElement(
         id = 23,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mpa_card),
+        title = resources.getString(R.string.mpa_card),
         required = false,
     )
 
@@ -283,99 +285,106 @@ class EligibleCoupleTrackingDataset(
                 list.add(list.indexOf(isPregnancyTestDone) + 1, pregnancyTestResult)
                 pregnancyTestResult.value = getLocalValueInArray(R.array.ectdset_po_neg, saved.pregnancyTestResult)
 
-            } else {
+                isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
+                list.add(list.indexOf(pregnancyTestResult) + 1, isPregnant)
 
-                // Restore FP answers
-                if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            }
 
-                    usingFamilyPlanning.value =
-                        if (saved.usingFamilyPlanning == true)
-                            resources.getStringArray(R.array.yes_no)[0]
-                        else
-                            resources.getStringArray(R.array.yes_no)[1]
+            // Restore FP answers — regardless of isPregnancyTestDone, since Family Planning is
+            // asked whenever pregnancy status is resolved (No test done, or Yes with a result answered)
+            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
 
-                    if (saved.usingFamilyPlanning == true) {
-                        list.add(methodOfContraception)
-                    }
+                usingFamilyPlanning.value =
+                    if (saved.usingFamilyPlanning == true)
+                        resources.getStringArray(R.array.yes_no)[0]
+                    else
+                        resources.getStringArray(R.array.yes_no)[1]
 
-                } else {
+                list.add(usingFamilyPlanning)
 
-                    usingFamilyPlanningMitanin.value =
-                        if (saved.usingFamilyPlanning == true)
-                            resources.getStringArray(R.array.ectdset_yes_no)[0]
-                        else
-                            resources.getStringArray(R.array.ectdset_yes_no)[1]
-
-                    if (saved.usingFamilyPlanning == true) {
-                        list.add(methodOfContraception)
-                    } else {
-                        list.add(wantToUseFamilyPlanning)
-
-                        if (saved.methodOfContraception != null) {
-                            wantToUseFamilyPlanning.value =
-                                resources.getStringArray(R.array.ectdset_yes_no)[0]
-                            list.add(methodOfContraception)
-                        }
-                    }
+                if (saved.usingFamilyPlanning == true) {
+                    list.add(methodOfContraception)
+                } else if (saved.methodOfContraception != null) {
+                    list.add(methodOfContraception)
                 }
 
-                // Restore FP method details
-                saved.methodOfContraception?.let { method ->
-                    val methods = resources.getStringArray(R.array.method_of_contraception)
-                    val sterilizationIndices = listOf(7, 8)
-                    val methodPart = method.split("/")[0]
-                    val localMethodPart = getLocalValueInArray(R.array.method_of_contraception, methodPart) ?: methodPart
+            } else {
 
-                    when {
-                        localMethodPart in methods && !method.contains("/") -> {
-                            methodOfContraception.value = localMethodPart
-                            val selectedIndex = methods.indexOf(localMethodPart)
+                usingFamilyPlanningMitanin.value =
+                    if (saved.usingFamilyPlanning == true)
+                        resources.getStringArray(R.array.ectdset_yes_no)[0]
+                    else
+                        resources.getStringArray(R.array.ectdset_yes_no)[1]
 
-                            if (selectedIndex in sterilizationIndices &&
-                                !BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
-                            ) {
-                                list.add(deliveryDischargeSummary1)
-                                list.add(deliveryDischargeSummary2)
-                                deliveryDischargeSummary1.value = saved.dischargeSummary1
-                                deliveryDischargeSummary2.value = saved.dischargeSummary2
-                            }
-                        }
+                list.add(usingFamilyPlanningMitanin)
 
-                        localMethodPart == methods[1] -> {
-                            methodOfContraception.value = methods[1]
-                            list.add(antraDoses)
-                            list.add(dateOfAntraInjection)
-                            list.add(dueDateOfAntraInjection)
+                if (saved.usingFamilyPlanning == true) {
+                    list.add(methodOfContraception)
+                } else {
+                    list.add(wantToUseFamilyPlanning)
 
-                            if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-                                list.add(mpaFileUpload1)
-                                mpaFileUpload1.value = saved.mpaFile
-                            }
-
-                            dateOfAntraInjection.value = saved.dateOfAntraInjection
-                            dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
-
-                            if (saved.antraDose != null) {
-                                antraDoseValue = saved.antraDose!!
-                                antraDoses.value = saved.antraDose
-                            }
-                        }
-
-                        else -> {
-                            methodOfContraception.value = methods.last()
-                            list.add(anyOtherMethod)
-                            anyOtherMethod.value = method
-                        }
+                    if (saved.methodOfContraception != null) {
+                        wantToUseFamilyPlanning.value =
+                            resources.getStringArray(R.array.ectdset_yes_no)[0]
+                        list.add(methodOfContraception)
                     }
                 }
             }
 
-            isPregnant.value = getLocalValueInArray(R.array.yes_no, saved.isPregnant)
+            // Restore FP method details
+            saved.methodOfContraception?.let { method ->
+                val methods = resources.getStringArray(R.array.method_of_contraception)
+                val sterilizationIndices = listOf(7, 8)
+                val methodPart = method.split("/")[0]
+                val localMethodPart = getLocalValueInArray(R.array.method_of_contraception, methodPart) ?: methodPart
+
+                when {
+                    localMethodPart in methods && !method.contains("/") -> {
+                        methodOfContraception.value = localMethodPart
+                        val selectedIndex = methods.indexOf(localMethodPart)
+
+                        if (selectedIndex in sterilizationIndices &&
+                            !BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+                        ) {
+                            list.add(deliveryDischargeSummary1)
+                            list.add(deliveryDischargeSummary2)
+                            deliveryDischargeSummary1.value = saved.dischargeSummary1
+                            deliveryDischargeSummary2.value = saved.dischargeSummary2
+                        }
+                    }
+
+                    localMethodPart == methods[1] -> {
+                        methodOfContraception.value = methods[1]
+
+                        if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                            list.add(mpaFileUpload1)
+                            mpaFileUpload1.value = saved.mpaFile
+                        }
+
+                        dateOfAntraInjection.value = saved.dateOfAntraInjection
+                        dueDateOfAntraInjection.value = saved.dueDateOfAntraInjection
+
+                        if (saved.antraDose != null) {
+                            antraDoseValue = saved.antraDose!!
+                            antraDoses.value = saved.antraDose
+                        }
+                    }
+
+                    else -> {
+                        methodOfContraception.value = methods.last()
+                        list.add(anyOtherMethod)
+                        anyOtherMethod.value = method
+                    }
+                }
+            }
+
         }
 
-        val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
-        antraDoses.value = nextDose
-        antraDoseValue = nextDose
+        if (saved == null) {
+            val nextDose = getNextDose(lastDose, lastDateofDose, dateOfVisit.value!!)
+            antraDoses.value = nextDose
+            antraDoseValue = nextDose
+        }
         antraDoses.isEnabled = false
 
         setUpPage(list)
@@ -421,13 +430,13 @@ class EligibleCoupleTrackingDataset(
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
                         triggerDependants(
                             source = isPregnancyTestDone,
-                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2),
+                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanning,usingFamilyPlanningMitanin,wantToUseFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2),
                             addItems = listOf(usingFamilyPlanning)
                         )
                     }else{
                         triggerDependants(
                             source = isPregnancyTestDone,
-                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanning,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2,wantToUseFamilyPlanning),
+                            removeItems = listOf(isPregnant,pregnancyTestResult,usingFamilyPlanning,usingFamilyPlanningMitanin,methodOfContraception,antraDoses,dateOfAntraInjection,dueDateOfAntraInjection,anyOtherMethod,mpaFileUpload1,dateOfSterilisation,deliveryDischargeSummary1,deliveryDischargeSummary2,wantToUseFamilyPlanning),
                             addItems = listOf(usingFamilyPlanningMitanin)
                         )
                     }
@@ -439,7 +448,7 @@ class EligibleCoupleTrackingDataset(
             pregnancyTestResult.id -> {
                 antraDoses.value = antraDoseValue
                 if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[0]) {
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[0]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[0]
                     isPregnant.isEnabled = false
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -477,7 +486,7 @@ class EligibleCoupleTrackingDataset(
                 }
                 else if (pregnancyTestResult.value == resources.getStringArray(R.array.ectdset_po_neg)[1]) {
                     isPregnant.isEnabled = false
-                    isPregnant.value = resources.getStringArray(R.array.yes_no)[1]
+                    isPregnant.value = resources.getStringArray(R.array.ectdset_yes_no_dont)[1]
 
 
                     if (!BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
@@ -539,7 +548,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanning,
                             targetSideEffect = list1
                         )
@@ -547,7 +556,7 @@ class EligibleCoupleTrackingDataset(
                         triggerDependants(
                             source = isPregnant,
                             passedIndex = index,
-                            triggerIndex = 1,
+                            triggerIndex = 0,
                             target = usingFamilyPlanningMitanin,
                             targetSideEffect = list1
                         )
@@ -704,6 +713,7 @@ class EligibleCoupleTrackingDataset(
 
 
             anyOtherMethod.id -> {
+                validateEmptyOnEditText(anyOtherMethod)
                 validateAllAlphabetsSpaceOnEditText(anyOtherMethod)
             }
             usingFamilyPlanningMitanin.id -> {
@@ -834,15 +844,15 @@ class EligibleCoupleTrackingDataset(
     fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {
 
         when (lastImageFormId) {
-            21 -> {
+            23 -> {
                 mpaFileUpload1.value = dpUri.toString()
                 mpaFileUpload1.errorText = null
             }
-            58 -> {
+            60 -> {
                 deliveryDischargeSummary1.value = dpUri.toString()
                 deliveryDischargeSummary1.errorText = null
             }
-            59 -> {
+            61 -> {
                 deliveryDischargeSummary2.value = dpUri.toString()
                 deliveryDischargeSummary2.errorText = null
             }
@@ -878,21 +888,22 @@ class EligibleCoupleTrackingDataset(
     private fun getNextDose(lastDose: String?, lastDate: String?, visitDate: String): String {
 
         if (lastDose == null || lastDate == null) {
-            return "Dose-1"
+            return resources.getString(R.string.str_dose_one)
         }
 
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
-        val last = sdf.parse(lastDate) ?: return "Dose-1"
-        val visit = sdf.parse(visitDate) ?: return "Dose-1"
+        val last = sdf.parse(lastDate) ?:   return resources.getString(R.string.str_dose_one)
+        val visit = sdf.parse(visitDate) ?:  return resources.getString(R.string.str_dose_one)
 
         val diffDays = ((visit.time - last.time) / (1000 * 60 * 60 * 24))
         if (diffDays > 120) {
-            return "Dose-1"
+            return resources.getString(R.string.str_dose_one)
         }
         val doseNum = lastDose.filter { it.isDigit() }.toIntOrNull() ?: 0
         val next = doseNum + 1
-        return if (next in 1..10) "Dose-$next" else "No More Doses"
+        return if (next in 1..10) "${resources.getString(R.string.str_dose)}-$next" else resources.getString(R.string.str_no_more_dose)
+
     }
 
 }

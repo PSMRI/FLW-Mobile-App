@@ -38,11 +38,13 @@ class KalaAzarSuspectedListFragment : Fragment() {
 
         val benAdapter = KalaAzarMemberListAdapter(
             clickListener = KalaAzarMemberListAdapter.ClickListener { hhId, benId ->
-                findNavController().navigate(
-                    KalaAzarSuspectedListFragmentDirections.actionKalaAzarSuspectedListFragmentToKalaAzarFormFragment(
-                        benId = benId
+                if (findNavController().currentDestination?.id == R.id.kalaAzarSuspectedListFragment) {
+                    findNavController().navigate(
+                        KalaAzarSuspectedListFragmentDirections.actionKalaAzarSuspectedListFragmentToKalaAzarFormFragment(
+                            benId = benId
+                        )
                     )
-                )
+                }
             },
         )
         binding.rvAny.adapter = benAdapter

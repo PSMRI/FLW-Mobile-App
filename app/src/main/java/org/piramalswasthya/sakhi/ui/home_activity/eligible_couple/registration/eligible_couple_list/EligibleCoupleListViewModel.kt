@@ -39,7 +39,7 @@ class EligibleCoupleListViewModel @Inject constructor(
         .combine(sortFilter) { list, sort -> sortEcRegistrationList(list, sort) }
 
     fun filterText(text: String) {
-        viewModelScope.launch { filter.emit(text) }
+        viewModelScope.launch { filter.emit(text.trim().lowercase()) }
     }
 
     fun setSortFilter(type: EcFilterType) {

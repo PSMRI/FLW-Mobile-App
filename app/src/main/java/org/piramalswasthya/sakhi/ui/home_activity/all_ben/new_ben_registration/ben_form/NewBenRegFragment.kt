@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -45,7 +46,9 @@ import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
+import org.piramalswasthya.sakhi.network.NetworkResult
 import org.piramalswasthya.sakhi.model.Gender
+import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel.Companion.isOtpVerified
@@ -53,6 +56,9 @@ import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.b
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
 import java.io.File
+
+
+private const val ABHA_ALREADY_EXISTS_CODE = 5001
 
 @AndroidEntryPoint
 class NewBenRegFragment : Fragment() {
@@ -64,13 +70,20 @@ class NewBenRegFragment : Fragment() {
 
     private val viewModel: NewBenRegViewModel by viewModels()
 
+    private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    // The HoF has no in-form ABHA button (captured at household stage), so don't gate its Submit —
+    // its details arrive prefilled via the hand-off, and manual entry must stay possible.
+    private val gateSubmitOnAbhaFetch: Boolean
+        get() = isMitaninFlavor && viewModel.benIdFromArgs == 0L && !viewModel.isHoF
+
     private var micClickedElementId: Int = -1
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val formattedValue = value/*.substring(0,50)*/.uppercase()
         val listIndex =
             viewModel.updateValueByIdAndReturnListIndex(micClickedElementId, formattedValue)
         listIndex.takeIf { it >= 0 }?.let {
-            binding.form.rvInputForm.adapter?.notifyItemChanged(it)
+            _binding?.form?.rvInputForm?.adapter?.notifyItemChanged(it)
         }
     }
 
@@ -97,11 +110,12 @@ class NewBenRegFragment : Fragment() {
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
+                val currentBinding = _binding ?: return@registerForActivityResult
                 if(viewModel.getDocumentFormId() == 46) {
                     frontViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -111,7 +125,7 @@ class NewBenRegFragment : Fragment() {
                     backViewFileUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -121,7 +135,7 @@ class NewBenRegFragment : Fragment() {
                     latestTmpUri?.let { uri ->
                         viewModel.setImageUriToFormElement(uri)
 
-                        binding.form.rvInputForm.apply {
+                        currentBinding.form.rvInputForm.apply {
                             val adapter = this.adapter as FormInputAdapter
                             adapter.notifyItemChanged(0)
                         }
@@ -136,6 +150,7 @@ class NewBenRegFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val currentBinding = _binding ?: return
         if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
             if(viewModel.getDocumentFormId() == 46) {
                 data?.data?.let { pdfUri ->
@@ -146,7 +161,7 @@ class NewBenRegFragment : Fragment() {
                         frontViewFileUri = pdfUri
                         frontViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
@@ -164,7 +179,7 @@ class NewBenRegFragment : Fragment() {
                         backViewFileUri = pdfUri
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
-                            binding.form.rvInputForm.apply {
+                            currentBinding.form.rvInputForm.apply {
                                 val adapter = this.adapter as FormInputAdapter
                                 adapter.notifyDataSetChanged()
                             }
@@ -178,6 +193,7 @@ class NewBenRegFragment : Fragment() {
         }
     }
     private fun showAddSpouseAlert() {
+        if (!isAdded) return
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
@@ -194,14 +210,16 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setPositiveButton(
             resources.getString(R.string.yes)
         ) { dialog, _ ->
-            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
-            findNavController().navigate(
-                NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
-                    hhId = viewModel.hhId,
-                    gender = spouseGender,
-                    relToHeadId = if (spouseGender == 1) 5 else 4
+            if (isAdded && findNavController().currentDestination?.id == R.id.newBenRegFragment) {
+                val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+                findNavController().navigate(
+                    NewBenRegFragmentDirections.actionNewBenRegFragmentSelf(
+                        hhId = viewModel.hhId,
+                        gender = spouseGender,
+                        relToHeadId = if (spouseGender == 1) 5 else 4
+                    )
                 )
-            )
+            }
             dialog.dismiss()
         }
 
@@ -291,10 +309,32 @@ class NewBenRegFragment : Fragment() {
         alertDialog.show()
     }
 
+    private fun showCreateNewAbhaDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(false)
+            .setTitle(getString(R.string.abha_not_created_title))
+            .setMessage(getString(R.string.abha_not_created_message))
+            .setPositiveButton(getString(R.string.yes_dialog)) { dialog, _ ->
+
+                findNavController().popBackStack(R.id.homeFragment, false)
+                startActivity(Intent(requireActivity(), AbhaIdActivity::class.java))
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.no_dialog)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
         alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
-        alertBinding.scrollableText.text = resources.getString(R.string.consent_text)
+
+        alertBinding.scrollableText.text = if (isMitaninFlavor){
+            resources.getString(R.string.mitanin_consent_text)
+        }else{
+            resources.getString(R.string.consent_text)
+        }
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(alertBinding.root)
             .setCancelable(false)
@@ -338,12 +378,61 @@ class NewBenRegFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cvPatientInformation.visibility = View.GONE
+
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+       // if (gateSubmitOnAbhaFetch) setSubmitEnabled(false)
+
+        viewModel.abhaUserDetails.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    val member = result.data.firstOrNull { it.hasUsableData() }
+                    if (isMitanin && member != null) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.prefillFromAyushmanCard(member)
+                            (_binding?.form?.rvInputForm?.adapter as? FormInputAdapter)
+                                ?.notifyDataSetChanged()
+                          //  if (gateSubmitOnAbhaFetch) setSubmitEnabled(true)
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.abha_no_valid_details),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                is NetworkResult.Error -> {
+                    if (result.code == ABHA_ALREADY_EXISTS_CODE) {
+                        showCreateNewAbhaDialog()
+                    } else {
+                        val errorMessage = result.message.takeIf { it.isNotBlank() }
+                            ?: getString(R.string.abha_no_valid_details)
+
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                    }
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                NetworkResult.NetworkError -> {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.network_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.clearAbhaUserDetails()
+                }
+
+                null -> Unit
+            }
+        }
         binding.btnSubmit.setOnClickListener {
            // submitBenForm()
             if (validateCurrentPage()) {
                 showPreview()
             }
-
         }
 
         viewModel.isDeath.observe(viewLifecycleOwner) { isDeath ->
@@ -371,7 +460,20 @@ class NewBenRegFragment : Fragment() {
                         }
 
                     },
-                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{_, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        sendOtpClickListener = FormInputAdapter.SendOtpClickListener{ clickedFormId, button, timerInsec, tilEditText, isEnabled, position, otpField ->
+                        if (clickedFormId == viewModel.dataset.getAbhaSubmitBtnId()) {
+                            val abhaId = viewModel.dataset.getAbhaCardInput().orEmpty()
+                            if (abhaId.isEmpty()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.enter_abha_id_ayushman_card_number),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                viewModel.getUserDetailsByAyushmanAbhaCardNo(abhaId)
+                            }
+                            return@SendOtpClickListener
+                        }
                        var tempContactNo = ""
                         lifecycleScope.launch {
                             viewModel.formList.collect {
@@ -468,6 +570,13 @@ class NewBenRegFragment : Fragment() {
                         Timber.d("Collecting $it")
                         if (it.isNotEmpty())
                             adapter.submitList(it)
+                    }
+                }
+                viewModel.listUpdateState.observe(viewLifecycleOwner) { state ->
+                    if (state is NewBenRegViewModel.ListUpdateState.Updated &&
+                        (state.formElementId == 50 || state.formElementId == 54)
+                    ) {
+                        adapter.notifyDataSetChanged()
                     }
                 }
                 lifecycleScope.launch {
@@ -704,15 +813,29 @@ class NewBenRegFragment : Fragment() {
 
 
 
+    private fun setSubmitEnabled(enabled: Boolean) {
+        val b = _binding ?: return
+        b.btnSubmit.isEnabled = enabled
+        val tint = if (enabled) {
+            com.google.android.material.color.MaterialColors.getColor(
+                b.btnSubmit, com.google.android.material.R.attr.colorPrimary
+            )
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.md_theme_light_ongray)
+        }
+        b.btnSubmit.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
+    }
+
     private fun validateCurrentPage(): Boolean {
-        val result = binding.form.rvInputForm.adapter?.let {
+        val currentBinding = _binding ?: return false
+        val result = currentBinding.form.rvInputForm.adapter?.let {
             (it as FormInputAdapter).validateInput(resources)
         }
         Timber.d("Validation : $result")
         return if (result == -1) true
         else {
             if (result != null) {
-                binding.form.rvInputForm.scrollToPosition(result)
+                currentBinding.form.rvInputForm.scrollToPosition(result)
             }
             false
         }

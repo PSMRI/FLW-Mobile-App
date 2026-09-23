@@ -35,7 +35,7 @@ class DatasetCreationTest : BaseViewModelTest() {
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray()
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns ""
         every { mockResources.getString(any(), any()) } returns ""
         every { preferenceDao.getLoggedInUser() } returns null
@@ -250,7 +250,7 @@ class DatasetCreationTest : BaseViewModelTest() {
 
 
     @Test fun `HouseholdFormDataset can be created`() {
-        val ds = HouseholdFormDataset(context, Languages.ENGLISH)
+        val ds = HouseholdFormDataset(context, Languages.ENGLISH,preferenceDao)
         assertNotNull(ds)
         assertNotNull(ds.listFlow)
     }
@@ -534,7 +534,7 @@ class DatasetCreationTest : BaseViewModelTest() {
     }
 
     @Test fun `HouseholdFormDataset can be created with HINDI`() {
-        val ds = HouseholdFormDataset(context, Languages.HINDI)
+        val ds = HouseholdFormDataset(context, Languages.HINDI,preferenceDao)
         assertNotNull(ds)
     }
 
@@ -762,7 +762,7 @@ class DatasetCreationTest : BaseViewModelTest() {
     }
 
     @Test fun `HouseholdFormDataset can be created with ASSAMESE`() {
-        val ds = HouseholdFormDataset(context, Languages.ASSAMESE)
+        val ds = HouseholdFormDataset(context, Languages.ASSAMESE,preferenceDao)
         assertNotNull(ds)
     }
 

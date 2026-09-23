@@ -22,6 +22,10 @@ class TokenAuthenticator @Inject constructor(
 
     private val refreshLock = Any()
 
+    private var lastFailedRefreshToken: String? = null
+    private var lastFailedAt: Long = 0L
+    private val DEDUPE_WINDOW_MS = 3000L
+
     override fun authenticate(route: Route?, response: Response): Request? {
 
         if (responseCount(response) >= 3) return null
@@ -32,9 +36,15 @@ class TokenAuthenticator @Inject constructor(
 
         val newJwt = synchronized(refreshLock) {
             val currentJwt = pref.getJWTAmritToken()
-            if (!currentJwt.isNullOrBlank() && currentJwt != oldJwt) {
+            if (!oldJwt.isNullOrBlank() && !currentJwt.isNullOrBlank() && currentJwt != oldJwt) {
                 return@synchronized currentJwt
             }
+
+            val now = System.currentTimeMillis()
+            if (refreshToken == lastFailedRefreshToken && (now - lastFailedAt) < DEDUPE_WINDOW_MS) {
+                return@synchronized null
+            }
+
             runBlocking {
                 try {
                     val resp = authApi.getRefreshToken(
@@ -42,17 +52,23 @@ class TokenAuthenticator @Inject constructor(
                     )
 
                     if (!resp.isSuccessful) {
+                        val code = resp.code()
                         resp.errorBody()?.close()
                         Timber.w(
-                            "Token refresh failed: HTTP ${resp.code()}"
+                            "Token refresh failed: HTTP $code"
                         )
-                        tokenExpiryManager.onRefreshFailed()
+                        // Only count genuine auth failures, not transient server errors
+                        if (code == 401 || code == 403) {
+                            tokenExpiryManager.onRefreshFailed()
+                            lastFailedRefreshToken = refreshToken
+                            lastFailedAt = System.currentTimeMillis()
+                        }
                         return@runBlocking null
                     }
 
                     val body = resp.body()?.string().orEmpty()
                     if (body.isEmpty()) {
-                        tokenExpiryManager.onRefreshFailed()
+                        Timber.w("Token refresh returned empty body")
                         return@runBlocking null
                     }
 
@@ -61,18 +77,21 @@ class TokenAuthenticator @Inject constructor(
                     val newRefresh = json.optString("refreshToken", refreshToken)
 
                     if (jwt.isBlank()) {
-                        tokenExpiryManager.onRefreshFailed()
+                        Timber.w("Token refresh returned blank JWT")
                         null
                     } else {
                         pref.registerJWTAmritToken(jwt)
-                        pref.registerRefreshToken(newRefresh)
+                        if (newRefresh.isNotBlank()) {
+                            pref.registerRefreshToken(newRefresh)
+                        }
                         tokenExpiryManager.onRefreshSuccess()
                         jwt
                     }
 
                 } catch (e: Exception) {
-                    Timber.e(e, "Token refresh failed")
-                    tokenExpiryManager.onRefreshFailed()
+                    // Network exceptions (timeout, connection lost, etc.)
+                    // are transient — do NOT count as auth failures
+                    Timber.e(e, "Token refresh failed due to network error")
                     null
                 }
             }

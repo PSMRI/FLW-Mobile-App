@@ -79,6 +79,8 @@ class KalaAzarRepo @Inject constructor(
                         val errorMessage = jsonObj.optString("errorMessage", "")
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         Timber.d("Pull from amrit tb screening data : $responseStatusCode")
+                        Timber.d("Pull from amrit KALA screening data : ${jsonObj.getString("data")}")
+
                         when (responseStatusCode) {
                             200 -> {
                                 try {

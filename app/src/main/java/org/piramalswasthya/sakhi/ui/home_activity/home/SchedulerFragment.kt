@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 import java.util.Calendar
 import java.util.concurrent.atomic.AtomicInteger
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -76,34 +77,34 @@ class SchedulerFragment : Fragment() {
             }
         }
         binding.cvAnc.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
         }
 
         binding.cvImm.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment(showDueOnly = true))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment(showDueOnly = true))
         }
         binding.cvHrp.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvNonHrp.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
         }
         binding.cvLwb.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
         }
         binding.cvAbha.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
+            safeNavigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
 //            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvRch.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(2))
+            safeNavigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(2))
 //            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvNon.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
         }
         binding.cvMiss.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
         }
         lifecycleScope.launch {
             viewModel.hrpDueCount.collect {
