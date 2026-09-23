@@ -1454,4 +1454,7 @@
     <string name="treatment_status_is_required">उपचार की स्थिति आवश्यक है</string>
     <string name="treatment_end_date_is_required_when_treatment_status_is_completed">जब उपचार की स्थिति पूर्ण हो, तो उपचार समाप्ति तिथि आवश्यक है</string>
     <string name="follow_up_date_is_required">फॉलो-अप की तारीख आवश्यक है</string>
+    <string name="follow_up_saved_successfully">फॉलो-अप सफलतापूर्वक सहेजा गया</string>
+    <string name="visit_completed_starting_next_visit_screening">विज़िट पूरी हुई! अगली विज़िट की स्क्रीनिंग शुरू की जा रही है।</string>
+    <string name="failed_to_save_follow_up">फॉलो-अप सहेजने में विफल</string>
 </resources>

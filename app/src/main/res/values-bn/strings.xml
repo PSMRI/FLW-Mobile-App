@@ -1478,4 +1478,7 @@
     <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
     <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
     <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_saved_successfully">ফলো-আপ সফলভাবে সংরক্ষণ করা হয়েছে</string>
+    <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পন্ন হয়েছে! পরবর্তী ভিজিটের স্ক্রিনিং শুরু হচ্ছে।</string>
+    <string name="failed_to_save_follow_up">ফলো-আপ সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
 </resources>

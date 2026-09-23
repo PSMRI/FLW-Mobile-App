@@ -1618,5 +1618,8 @@
     <string name="treatment_status_is_required">Treatment status is required</string>
     <string name="treatment_end_date_is_required_when_treatment_status_is_completed">Treatment end date is required when treatment status is completed</string>
     <string name="follow_up_date_is_required">Follow-up date is required</string>
+    <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
+    <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
+    <string name="failed_to_save_follow_up">Failed to save follow-up</string>
 </resources>
 
