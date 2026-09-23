@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemLeprosyMemberListBinding
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
 
@@ -110,16 +111,16 @@ class LeprosyMemberListAdapter(
             val (text, colorRes) = when {
 
                 item.leprosy == null -> {
-                    R.string.screening to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 1 -> {
-                    R.string.screening to android.R.color.holo_green_dark
+                    R.string.screening to android.R.color.holo_red_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
-                    R.string.follow_up to android.R.color.holo_red_dark
+                    R.string.follow_up to android.R.color.holo_green_dark
                 }
                 item.leprosy.leprosySymptomsPosition == 0 -> {
-                  R.string.suspected to android.R.color.holo_red_dark
+                  R.string.suspected to android.R.color.holo_orange_dark
                 }
                 else -> {
                     R.string.view to android.R.color.holo_green_dark
@@ -134,7 +135,7 @@ class LeprosyMemberListAdapter(
             item.leprosy.leprosySymptomsPosition
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))*/
             binding.clickListener = clickListener
-
+            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 
         }

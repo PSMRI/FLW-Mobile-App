@@ -90,13 +90,15 @@ class ChildListFragment : Fragment() {
 
         benAdapter = ChildListAdapter(
             ChildListAdapter.ChildListClickListener { benId, hhId,dob ->
-                findNavController().navigate(
-                    ChildListFragmentDirections.actionChildListFragmentToChildMonthListFragment(
-                        hhId,
-                        benId,
-                        dob
+                if (findNavController().currentDestination?.id == R.id.childListFragment) {
+                    findNavController().navigate(
+                        ChildListFragmentDirections.actionChildListFragmentToChildMonthListFragment(
+                            hhId,
+                            benId,
+                            dob
+                        )
                     )
-                )
+                }
             }
         )
         binding.rvAny.adapter = benAdapter

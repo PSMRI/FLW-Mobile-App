@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.utils
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import org.piramalswasthya.sakhi.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -20,7 +21,7 @@ object TextViewBindingAdapters {
                 val monthFormat = SimpleDateFormat("MMMM-yyyy", Locale.ENGLISH)
                 val formatted = monthFormat.format(date!!)
 
-                view.text = "Maa Meeting - ($formatted)"
+                view.text = "${view.rootView.resources.getString(R.string.maa_meeting)} - ($formatted)"
             } catch (e: Exception) {
                 view.text = ""
             }

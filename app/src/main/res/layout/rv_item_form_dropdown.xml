@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:hint="@{form.title}"
             android:labelFor="@id/actv_rv_dropdown"
+            android:importantForAccessibility="yes"
             android:orientation="horizontal">
 
             <AutoCompleteTextView
@@ -32,6 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
+                android:contentDescription="title"
+                android:importantForAccessibility="yes"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />

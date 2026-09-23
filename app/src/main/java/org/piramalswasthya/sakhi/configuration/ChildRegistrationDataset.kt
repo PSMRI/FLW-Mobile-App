@@ -286,7 +286,7 @@ class ChildRegistrationDataset(
             fatherName.id -> validateAllCapsOrSpaceOnEditText(fatherName)
             weightAtBirth.id -> validateWeightOnEditText(weightAtBirth)
             //validateDoubleMinMax(weightAtBirth)
-            birthCertificateNo.id -> validateNoAlphabetSpaceOnEditText(birthCertificateNo)
+            birthCertificateNo.id -> validateBirthCertificateNumber(birthCertificateNo)
 
             else -> -1
         }
@@ -341,7 +341,7 @@ class ChildRegistrationDataset(
             syncState = SyncState.UNSYNCED,
             //Mapping values
             firstName = childName.value,
-            lastName = null,
+            lastName = motherBen.lastName,
             regDate = getLongFromDate(dateOfReg.value),
             dob = dob,
             age = age,

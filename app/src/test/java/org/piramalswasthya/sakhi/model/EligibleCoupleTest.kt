@@ -104,8 +104,8 @@ class EligibleCoupleTest {
     }
 
     @Test fun `AdolescentHealthCache equals`() {
-        val a = AdolescentHealthCache(benId = 1L)
-        val b = AdolescentHealthCache(benId = 1L)
+        val a = AdolescentHealthCache(benId = 1L, visitDate = 0L, distributionDate = 0L, followUpDate = 0L)
+        val b = AdolescentHealthCache(benId = 1L, visitDate = 0L, distributionDate = 0L, followUpDate = 0L)
         assertEquals(a, b)
     }
 

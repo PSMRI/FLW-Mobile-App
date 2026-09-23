@@ -5,12 +5,14 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -105,5 +107,11 @@ class GeneralOpCareViewModelTest : BaseViewModelTest() {
         val result = viewModel.getBenFromId(100L)
 
         assertEquals(0L, result)
+    }
+
+    @Test
+    fun `benList collects real results once the flow is exercised`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

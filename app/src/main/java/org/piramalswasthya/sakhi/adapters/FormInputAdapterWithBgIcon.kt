@@ -45,6 +45,7 @@ import org.piramalswasthya.sakhi.databinding.RvItemFormHeadlineV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormImageViewWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormNumberPickerBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormRadioWithBgIconBinding
+import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewPairWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTextViewWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormTimepickerWithBgIconBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormUploadImageBinding
@@ -595,7 +596,7 @@ class FormInputAdapterWithBgIcon (
                     binding.invalidateAll()
 
                 }, hour, minute, false)
-                mTimePicker.setTitle("Select Time")
+                mTimePicker.setTitle(binding.root.context.getString(R.string.select_time))
                 mTimePicker.show()
             }
             binding.executePendingBindings()
@@ -610,6 +611,23 @@ class FormInputAdapterWithBgIcon (
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = RvItemFormTextViewWithBgIconBinding.inflate(layoutInflater, parent, false)
                 return TextViewInputViewHolder(binding)
+            }
+        }
+
+        fun bind(item: FormElement) {
+            binding.form = item
+            binding.executePendingBindings()
+        }
+    }
+
+    class TextViewPairInputViewHolder private constructor(private val binding: RvItemFormTextViewPairWithBgIconBinding) :
+        ViewHolder(binding.root) {
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding =
+                    RvItemFormTextViewPairWithBgIconBinding.inflate(layoutInflater, parent, false)
+                return TextViewPairInputViewHolder(binding)
             }
         }
 
@@ -990,7 +1008,7 @@ class FormInputAdapterWithBgIcon (
             item.value?.let {
                 calDob.timeInMillis = getLongFromDate(it)
                 updateAgeDTO(ageUnitDTO, calDob)
-                binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
 
             }
 
@@ -1018,7 +1036,7 @@ class FormInputAdapterWithBgIcon (
                     )
                 }
                 agePicker.setOnDismissListener {
-                    binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                    binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                     calDob.timeInMillis =
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
@@ -1070,7 +1088,7 @@ class FormInputAdapterWithBgIcon (
                             item.value = getDateString(millis)
 
                         updateAgeDTO(ageUnitDTO, millisCal)
-                        binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                        binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay
@@ -1146,6 +1164,7 @@ class FormInputAdapterWithBgIcon (
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            InputType.TEXT_VIEW_PAIR -> TextViewPairInputViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -1175,6 +1194,7 @@ class FormInputAdapterWithBgIcon (
             )
 
             TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+            InputType.TEXT_VIEW_PAIR -> (holder as TextViewPairInputViewHolder).bind(item)
             IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                 item, imageClickListener, isEnabled
             )

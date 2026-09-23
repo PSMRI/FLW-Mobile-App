@@ -11,6 +11,7 @@
     <string name="ecrdset_bank_ac">Bank AC No or Post Office AC No</string>
     <string name="ecrdset_bank_name">Bank Name</string>
     <string name="ecrdset_branch_name">Branch Name</string>
+    <string name="ecrdset_already_filled">Already filled for this Month!</string>
     <string name="ecrdset_ifsc_code">IFSC Code</string>
     <string name="ecrdset_ttl_child_born">Total No. Live Children Born</string>
     <string name="ecrdset_no_live_child">No. of Live Children</string>

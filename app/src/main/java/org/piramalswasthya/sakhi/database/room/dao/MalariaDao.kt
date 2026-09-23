@@ -29,7 +29,7 @@ interface MalariaDao {
     @Query("SELECT MAX(visitId) FROM MALARIA_SCREENING WHERE benId = :benId")
     suspend fun getLastVisitIdForBen(benId: Long): Long?
 
-    @Query("SELECT * FROM MALARIA_SCREENING WHERE benId =:benId and (caseDate = :visitDate or caseDate = :visitDateGMT) limit 1")
+    @Query("SELECT * FROM MALARIA_SCREENING WHERE benId =:benId and (screeningDate = :visitDate or screeningDate = :visitDateGMT) limit 1")
     suspend fun getMalariaScreening(benId: Long, visitDate: Long, visitDateGMT: Long): MalariaScreeningCache?
 
     @Query("SELECT * FROM MALARIA_SCREENING WHERE  syncState = :syncState")

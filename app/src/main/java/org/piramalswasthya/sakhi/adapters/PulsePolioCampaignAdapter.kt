@@ -1,13 +1,16 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutPulsePolioCampaignItemBinding
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
+import org.piramalswasthya.sakhi.utils.CampaignDateUtil
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
 class PulsePolioCampaignAdapter(
@@ -36,13 +39,14 @@ class PulsePolioCampaignAdapter(
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: PulsePolioCampaignCache, clickListener: PulsePolioCampaignClickListener?) {
             binding.pulsePolioCampaign = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
             val startDate = HelperUtil.extractFieldValue(item.formDataJson,"start_date")
             val numberOfChildren = HelperUtil.extractFieldValue(item.formDataJson,"children_vaccinated")
-            binding.tvDate.text = startDate
+            binding.tvDate.text = CampaignDateUtil.formatDateForDisplay(startDate)
             binding.numberOfChildren.text = binding.root.context.getString(R.string.number_of_children_label, numberOfChildren)
         }
     }

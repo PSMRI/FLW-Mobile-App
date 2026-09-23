@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -11,6 +13,7 @@ import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
+import org.piramalswasthya.sakhi.model.PeerAtFacility
 import org.piramalswasthya.sakhi.model.SyncStatusCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
@@ -90,10 +93,117 @@ class UserRepo @Inject constructor(
         }
     }
 
+     suspend fun setFacilityData(userId: Int) {
+         try {
+             val response = amritApiService.getUserDetailsById(userId = userId)
+             val userData = response.data
+             val facilityData = userData.facilityData
+             facilityData?.location?.let { location ->
+
+                 preferenceDao.saveLocationType(location.locationType ?: "")
+                 preferenceDao.saveBlock(location.blockOrUlb ?: "")
+                 preferenceDao.saveState(location.state ?: "")
+                 preferenceDao.saveDistrict(location.district ?: "")
+
+                 preferenceDao.saveSupervisorDistrict(location.district ?: "")
+                 preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+                 preferenceDao.saveSupervisorState(location.state ?: "")
+             }
+
+             // ---------- FACILITY ----------
+             facilityData?.facility?.let { facility ->
+
+                 preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+                 preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+                 preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+             }
+
+             // ---------- SUPERVISOR ----------
+             facilityData?.supervisor?.let { supervisor ->
+
+                 preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+                 preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+                 preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+             }
+
+             val choList = mutableListOf<PeerAtFacility>()
+             val anmList = mutableListOf<PeerAtFacility>()
+
+             facilityData?.peersAtFacility?.forEach { peer ->
+
+                 when (peer.role?.trim()?.uppercase()) {
+
+                     "CHO" -> {
+                         choList.add(peer)
+                     }
+
+                     "ANM" -> {
+                         anmList.add(peer)
+                     }
+                 }
+             }
+
+             val moshi = Moshi.Builder().build()
+
+             val choAdapter = moshi.adapter<List<PeerAtFacility>>(
+                 Types.newParameterizedType(
+                     List::class.java,
+                     PeerAtFacility::class.java
+                 )
+             )
+
+             val anmAdapter = moshi.adapter<List<PeerAtFacility>>(
+                 Types.newParameterizedType(
+                     List::class.java,
+                     PeerAtFacility::class.java
+                 )
+             )
+
+             preferenceDao.saveChoList(choAdapter.toJson(choList))
+             preferenceDao.saveAnmList(anmAdapter.toJson(anmList))
+         }
+         catch (e: HttpException) {
+             Timber.w("setFacilityData: HTTP ${e.code()}, skipping")
+         } catch (e: Exception) {
+             Timber.w("setFacilityData: failed, skipping")
+         }
+    }
+
+
     private suspend fun setUserRole(userId: Int, password: String): User {
         val response = amritApiService.getUserDetailsById(userId = userId)
         val user = response.data.toUser(password)
         preferenceDao.registerUser(user)
+        preferenceDao.saveStateId(response.data.stateId)
+        val userData = response.data
+        val facilityData = userData.facilityData
+        facilityData?.location?.let { location ->
+
+            preferenceDao.saveLocationType(location.locationType ?: "")
+            preferenceDao.saveBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveState(location.state ?: "")
+            preferenceDao.saveDistrict(location.district ?: "")
+
+            preferenceDao.saveSupervisorDistrict(location.district ?: "")
+            preferenceDao.saveSupervisorBlock(location.blockOrUlb ?: "")
+            preferenceDao.saveSupervisorState(location.state ?: "")
+        }
+
+        // ---------- FACILITY ----------
+        facilityData?.facility?.let { facility ->
+
+            preferenceDao.saveSupervisorSubcenter(facility.facilityName ?: "")
+            preferenceDao.saveFacilityId(facility.facilityId ?: 0)
+            preferenceDao.saveSupervisorFacilityType(facility.facilityType ?: "")
+        }
+
+        // ---------- SUPERVISOR ----------
+        facilityData?.supervisor?.let { supervisor ->
+
+            preferenceDao.saveSupervisorName(supervisor.fullName ?: "")
+            preferenceDao.saveSupervisorId(supervisor.userId ?: -1)
+            preferenceDao.saveSupervisorContact(supervisor.mobile ?: "")
+        }
         return user
     }
 
@@ -133,26 +243,30 @@ class UserRepo @Inject constructor(
                     json = TmcRefreshTokenRequest(refreshToken)
                 )
 
+                if (!response.isSuccessful) {
+                    Timber.e("refreshTokenTmc: refresh failed HTTP ${response.code()}")
+                    response.errorBody()?.close()
+                    return@withContext false
+                }
+
                 val responseBody = JSONObject(
                     response.body()?.string()
                         ?: throw IllegalStateException("Response success but data missing @ $response")
                 )
-                val responseStatusCode = responseBody.getInt("statusCode")
-                if (responseStatusCode == 200) {
-                    val data = responseBody.getJSONObject("data")
-                    TokenInsertTmcInterceptor.setJwt(data.getString("jwtToken"))
-                    preferenceDao.registerJWTAmritToken(data.getString("jwtToken"))
-                    preferenceDao.registerRefreshToken(data.getString("refreshToken"))
+                val jwtToken = responseBody.optString("jwtToken", "")
+                val newRefreshToken = responseBody.optString("refreshToken", "")
 
-                    val token = data.getString("key")
-                    TokenInsertTmcInterceptor.setToken(token)
-                    preferenceDao.registerAmritToken(token)
-                    return@withContext true
-                } else {
-                    val errorMessage = responseBody.getString("errorMessage")
-                    Timber.e("Error Message $errorMessage")
+                if (jwtToken.isBlank()) {
+                    Timber.e("refreshTokenTmc: refresh returned blank JWT")
                     return@withContext false
                 }
+
+                TokenInsertTmcInterceptor.setJwt(jwtToken)
+                preferenceDao.registerJWTAmritToken(jwtToken)
+                if (newRefreshToken.isNotBlank()) {
+                    preferenceDao.registerRefreshToken(newRefreshToken)
+                }
+                return@withContext true
 
             } catch (se: SocketTimeoutException) {
                 return@withContext refreshTokenTmc(userName, password)
@@ -160,7 +274,8 @@ class UserRepo @Inject constructor(
                 Timber.e("Auth Failed!")
                 return@withContext false
             } catch (e: Exception) {
-                return@withContext true
+                Timber.e(e, "refreshTokenTmc: unexpected error during token refresh")
+                return@withContext false
             }
         }
     }
@@ -181,8 +296,9 @@ class UserRepo @Inject constructor(
                     ?: throw IllegalStateException("Response success but data missing @ $response")
             )
             val statusCode = responseBody.getInt("statusCode")
+            val message = responseBody.getString("errorMessage")
             if (statusCode == 5002)
-                throw IllegalStateException("Login failed")
+                throw IllegalStateException(message/*"Login failed"*/)
             if (statusCode == 401)
                 throw IllegalStateException("Invalid username / password")
             val data = responseBody.getJSONObject("data")
@@ -196,6 +312,110 @@ class UserRepo @Inject constructor(
             TokenInsertTmcInterceptor.setToken(token)
             preferenceDao.registerAmritToken(token)
             preferenceDao.lastAmritTokenFetchTimestamp = System.currentTimeMillis()
+            val designationId = data.optInt("designationID", -1)
+            preferenceDao.saveDesignationId(designationId)
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+                    val locationType = location.optString("locationType", "")
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
+                    preferenceDao.saveLocationType(locationType)
+                    preferenceDao.saveBlock(block)
+                    preferenceDao.saveState(state)
+                    preferenceDao.saveDistrict(district)
+
+
+                }
+
+                if (facilityData.has("user")) {
+
+                    val userObj = facilityData.getJSONObject("user")
+                    val employeeId = userObj.optString("employeeId", "")
+                    preferenceDao.saveEmployeeId(employeeId)
+                    if (userObj.has("demographics")) {
+
+                        val demographics = userObj.getJSONObject("demographics")
+                        val gender = demographics.optString("gender", "")
+                        val dob = demographics.optString("dob", "")
+                        val mobile = demographics.optString("mobile", "")
+                        val email = demographics.optString("email", "")
+                        preferenceDao.saveUserGender(gender)
+                        preferenceDao.saveUserDob(dob)
+                        preferenceDao.saveUserMobile(mobile)
+                        preferenceDao.saveUserEmail(email)
+
+                    }
+                }
+                val supervisorName = data.optString("fullName", "")
+                val supervisorId = data.optInt("userID", -1)
+                preferenceDao.saveSupervisorName(supervisorName)
+                preferenceDao.saveSupervisorId(supervisorId)
+            }
+            if (data.has("facilityData")) {
+
+                val facilityData = data.getJSONObject("facilityData")
+
+                if (facilityData.has("location")) {
+                    val location = facilityData.getJSONObject("location")
+
+                    val district = location.optString("district", "")
+                    val block = location.optString("blockOrUlb", "")
+                    val state = location.optString("state", "")
+
+                    preferenceDao.saveSupervisorDistrict(district)
+                    preferenceDao.saveSupervisorBlock(block)
+                    preferenceDao.saveSupervisorState(state)
+                }
+
+                if (facilityData.has("facility")) {
+                    val facilityObj = facilityData.getJSONObject("facility")
+
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+
+                }
+
+                if (facilityData.has("facilities")) {
+                    val facilitiesArray = facilityData.getJSONArray("facilities")
+
+                    if (facilitiesArray.length() > 0) {
+                        val facilityObj = facilitiesArray.getJSONObject(0)
+
+                        val subcenterName = facilityObj.optString("facilityName", "")
+                        val facilityType = facilityObj.optString("facilityType", "")
+                        val facilityId = facilityObj.optInt("facilityId", 0)
+
+                        preferenceDao.saveSupervisorSubcenter(subcenterName)
+                        preferenceDao.saveFacilityId(facilityId)
+                        preferenceDao.saveSupervisorFacilityType(facilityType)
+                    }
+                }
+
+                if (facilityData.has("supervisor")) {
+                    val facilityObj = facilityData.getJSONObject("supervisor")
+
+
+                    val supervisorName = facilityObj.optString("fullName", "")
+                    val supervisorEmpID = facilityObj.optString("employeeId", "")
+                    val supervisorContact = facilityObj.optString("mobile", "")
+
+                    preferenceDao.saveSupervisorName(supervisorName)
+                    preferenceDao.saveSupervisorEmpID(supervisorEmpID)
+                    preferenceDao.saveSupervisorContact(supervisorContact)
+
+                }
+            }
             return@withContext userId
         }
     }
@@ -205,8 +425,7 @@ class UserRepo @Inject constructor(
             try {
                 val requestBody = mapOf(
                     "userId" to userId,
-                    "token" to token,
-                    "updatedAt" to updatedAt
+                    "token" to token
                 )
 
                 val response = amritApiService.saveFirebaseToken(requestBody)
@@ -218,6 +437,27 @@ class UserRepo @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Exception while saving Firebase token")
+            }
+        }
+    }
+
+    /**
+     * Unbinds this device's FCM token from [userId] on the server (called on logout) so a
+     * subsequent user on the same device does not receive token-targeted pushes for [userId].
+     */
+    suspend fun clearFirebaseToken(userId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf<String, Any>("userId" to userId)
+                val response = amritApiService.clearFirebaseToken(requestBody)
+
+                if (response.isSuccessful) {
+                    Timber.d("Firebase token cleared successfully: ${response.body()?.string()}")
+                } else {
+                    Timber.e("Failed to clear Firebase token: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Exception while clearing Firebase token")
             }
         }
     }

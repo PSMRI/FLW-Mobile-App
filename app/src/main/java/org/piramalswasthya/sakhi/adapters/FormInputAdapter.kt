@@ -76,6 +76,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil.getAgeStrFromAgeUnit
 import org.piramalswasthya.sakhi.utils.HelperUtil.getDobFromAge
 import org.piramalswasthya.sakhi.utils.HelperUtil.getLongFromDate
 import org.piramalswasthya.sakhi.utils.HelperUtil.updateAgeDTO
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
@@ -367,6 +368,11 @@ class FormInputAdapter(
                 binding.et.isClickable = false
                 binding.executePendingBindings()
                 return
+            } else{
+                binding.tilRvDropdown.visibility = View.VISIBLE
+                binding.tilEditText.visibility = View.GONE
+                binding.et.isFocusable = true
+                binding.et.isClickable = true
             }
 
             hideKeyboardImmediately()
@@ -375,6 +381,7 @@ class FormInputAdapter(
             binding.actvRvDropdown.setOnItemClickListener { _, _, index, _ ->
                 hideKeyboardWithRetry()
                 item.value = item.entries?.get(index)
+                item.errorText = null
                 Timber.d("Item DD : $item")
 //                if (item.hasDependants || item.hasAlertError) {
                 formValueListener?.onValueChanged(item, index)
@@ -631,7 +638,7 @@ class FormInputAdapter(
 
         fun bind(item: FormElement, isEnabled: Boolean, formValueListener: SendOtpClickListener?) {
             binding.form = item
-            isOtpVerified(isEnabled, isInternetAvailable(binding.root.context))
+            isOtpVerified(item.title, isEnabled, isInternetAvailable(binding.root.context))
 
             binding.generateOtp.setOnClickListener {
                 formValueListener!!.onButtonClick(item,binding.generateOtp,binding.timerInSec,binding.tilEditText,isEnabled,adapterPosition,binding.et)
@@ -641,13 +648,15 @@ class FormInputAdapter(
 
         }
 
-        private fun isOtpVerified(isEnabled: Boolean, internetAvailable: Boolean) {
+        private fun isOtpVerified(buttonTitle: String, isEnabled: Boolean, internetAvailable: Boolean) {
             if(isOtpVerified) {
                 binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.verified)
                 binding.generateOtp.isEnabled = isEnabled
 
             } else {
-                binding.generateOtp.text = binding.generateOtp.resources.getString(R.string.send_otp)
+                // Label comes from the FormElement so non-OTP buttons (e.g. ABHA submit) show their
+                // own title; the OTP element's title is R.string.send_otp, so OTP is unchanged.
+                binding.generateOtp.text = buttonTitle
                 if (internetAvailable){
                     binding.generateOtp.isEnabled = isEnabled
 
@@ -722,9 +731,10 @@ class FormInputAdapter(
                             set(Calendar.MONTH, month)
                             set(Calendar.DAY_OF_MONTH, day)
                         }.timeInMillis
-                        if (item.min != null && millis < item.min!!) {
+                        val ignoreBounds = item.hasInvertedDateRange()
+                        if (!ignoreBounds && item.min != null && millis < item.min!!) {
                             item.value = getDateString(item.min)
-                        } else if (item.max != null && millis > item.max!!)
+                        } else if (!ignoreBounds && item.max != null && millis > item.max!!)
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
@@ -734,8 +744,10 @@ class FormInputAdapter(
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                if (!item.hasInvertedDateRange()) {
+                    item.min?.let { datePickerDialog.datePicker.minDate = it }
+                    item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -780,7 +792,7 @@ class FormInputAdapter(
                     binding.invalidateAll()
 
                 }, hour, minute, false)
-                mTimePicker.setTitle("Select Time")
+                mTimePicker.setTitle(binding.root.context.getString(R.string.select_time))
                 mTimePicker.show()
             }
             binding.executePendingBindings()
@@ -852,7 +864,7 @@ class FormInputAdapter(
             item.value?.let {
                 calDob.timeInMillis = getLongFromDate(it)
                 updateAgeDTO(ageUnitDTO, calDob)
-                binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
 
             }
 
@@ -880,7 +892,7 @@ class FormInputAdapter(
                     )
                 }
                 agePicker.setOnDismissListener {
-                    binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                    binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                     calDob.timeInMillis =
                         getDobFromAge(ageUnitDTO)
                     binding.etDate.setText(getDateString(calDob.timeInMillis))
@@ -926,23 +938,26 @@ class FormInputAdapter(
                             set(Calendar.DAY_OF_MONTH, day)
                         }
                         val millis = millisCal.timeInMillis
-                        if (item.min != null && millis < item.min!!) {
+                        val ignoreBounds = item.hasInvertedDateRange()
+                        if (!ignoreBounds && item.min != null && millis < item.min!!) {
                             item.value = getDateString(item.min)
-                        } else if (item.max != null && millis > item.max!!)
+                        } else if (!ignoreBounds && item.max != null && millis > item.max!!)
                             item.value = getDateString(item.max)
                         else
                             item.value = getDateString(millis)
 
                         updateAgeDTO(ageUnitDTO, millisCal)
-                        binding.etNum.setText(getAgeStrFromAgeUnit(ageUnitDTO))
+                        binding.etNum.setText(getAgeStrFromAgeUnit(binding.root.context,ageUnitDTO))
                         binding.invalidateAll()
                         if (item.hasDependants) formValueListener?.onValueChanged(item, -1)
                     }, thisYear, thisMonth, thisDay
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                if (!item.hasInvertedDateRange()) {
+                    item.min?.let { datePickerDialog.datePicker.minDate = it }
+                    item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                }
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
@@ -1045,7 +1060,10 @@ class FormInputAdapter(
             val maxValue = item.max?.toInt()
             val allowNegative = item.minDecimal != null && item.minDecimal!! < 0
 
-            binding.etNumberInput.setText(minValue.toString())
+            if (item.value.isNullOrEmpty()) {
+                item.value = minValue.toString()
+            }
+            binding.etNumberInput.setText(item.value)
             binding.etNumberInput.setSelection(binding.etNumberInput.text!!.length)
             var currentValue = item.value?.toIntOrNull() ?: minValue
 
@@ -1181,6 +1199,7 @@ class FormInputAdapter(
             RADIO -> RadioInputViewHolder.from(parent)
             DATE_PICKER -> DatePickerInputViewHolder.from(parent)
             TEXT_VIEW -> TextViewInputViewHolder.from(parent)
+            InputType.TEXT_VIEW_PAIR -> TextViewInputViewHolder.from(parent)
             IMAGE_VIEW -> ImageViewInputViewHolder.from(parent)
             CHECKBOXES -> CheckBoxesInputViewHolder.from(parent)
             TIME_PICKER -> TimePickerInputViewHolder.from(parent)
@@ -1255,7 +1274,9 @@ class FormInputAdapter(
             binding.tvTitle.text = item.title
             binding.clickListener = clickListener
             binding.documentclickListener = documentOnClick
-            binding.btnView.visibility = if (!item.value.isNullOrEmpty()) View.VISIBLE else View.GONE
+            binding.btnView.visibility = if (!item.value.isNullOrEmpty() && item.value != "default") View.VISIBLE else View.GONE
+
+            Log.e("ItemValue",item.value.toString())
 
             if (isEnabled) {
                 binding.addFile.visibility = View.VISIBLE
@@ -1292,6 +1313,7 @@ class FormInputAdapter(
                 )
 
                 TEXT_VIEW -> (holder as TextViewInputViewHolder).bind(item)
+                InputType.TEXT_VIEW_PAIR -> (holder as TextViewInputViewHolder).bind(item)
                 IMAGE_VIEW -> (holder as ImageViewInputViewHolder).bind(
                     item, imageClickListener, isEnabled
                 )
@@ -1345,20 +1367,22 @@ class FormInputAdapter(
     fun validateInput(resources: Resources): Int {
         var retVal = -1
         if (!isEnabled) return retVal
-        currentList.forEachIndexed { index, it ->
-            Timber.d("Error text for ${it.title} ${it.errorText}")
-            if (it.inputType != TEXT_VIEW && it.errorText != null) {
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            Timber.d("Error text for ${item.title} ${item.errorText}")
+            if (item.inputType != TEXT_VIEW && item.errorText != null) {
                 retVal = index
                 return@forEachIndexed
             }
         }
         Timber.d("Validation : $retVal")
         if (retVal != -1) return retVal
-        currentList.forEachIndexed { index, it ->
-            if (it.inputType != TEXT_VIEW && it.required) {
-                if (it.value.isNullOrBlank()) {
-                    Timber.d("validateInput called for item $it, with index ${index}")
-                    it.errorText = resources.getString(R.string.form_input_empty_error)
+        currentList.forEachIndexed { index, item ->
+            item ?: return@forEachIndexed
+            if (item.inputType != TEXT_VIEW && item.required) {
+                if (item.value.isNullOrBlank()) {
+                    Timber.d("validateInput called for item $item, with index ${index}")
+                    item.errorText = resources.getString(R.string.form_input_empty_error)
                     notifyItemChanged(index)
                     if (retVal == -1) retVal = index
                 }
@@ -1373,4 +1397,10 @@ class FormInputAdapter(
 
 
 
+}
+
+private fun FormElement.hasInvertedDateRange(): Boolean {
+    val lowerBound = min
+    val upperBound = max
+    return lowerBound != null && upperBound != null && lowerBound > upperBound
 }

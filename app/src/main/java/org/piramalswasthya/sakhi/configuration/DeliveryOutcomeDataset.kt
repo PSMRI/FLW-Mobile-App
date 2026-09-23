@@ -3,11 +3,9 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import android.net.Uri
 import java.util.Locale
-import android.util.Log
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
-import org.piramalswasthya.sakhi.model.BenStatus
 import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
@@ -117,7 +115,7 @@ open class DeliveryOutcomeDataset(
     private val dateOfDeath = FormElement(
         id = 51,
         inputType = DATE_PICKER,
-        title = context.getString(R.string.date_of_death),
+        title = resources.getString(R.string.date_of_death),
         max = System.currentTimeMillis(),
         required = true,
     )
@@ -125,7 +123,7 @@ open class DeliveryOutcomeDataset(
     private val placeOfDeath = FormElement(
         id = 54,
         inputType = DROPDOWN,
-        title = context.getString(R.string.place_of_death),
+        title = resources.getString(R.string.place_of_death),
         arrayId = R.array.death_place_array,
         entries = resources.getStringArray(R.array.death_place_array),
         required = true,
@@ -133,7 +131,7 @@ open class DeliveryOutcomeDataset(
     private val otherPlaceOfDeath = FormElement(
         id = 55,
         inputType = EDIT_TEXT,
-        title = context.getString(R.string.other_place_of_death),
+        title = resources.getString(R.string.other_place_of_death),
         required = true,
         hasDependants = true,
     )
@@ -217,26 +215,26 @@ open class DeliveryOutcomeDataset(
     private val mcpFileUpload1 = FormElement(
         id = 21,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mcp_card_1),
+        title = resources.getString(R.string.mcp_card_1),
         required = false,
     )
     private val mcpFileUpload2 = FormElement(
         id = 22,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.mcp_card_2),
+        title = resources.getString(R.string.mcp_card_2),
         required = false,
     )
     private val jsyFileUpload = FormElement(
         id = 23,
         inputType = InputType.FILE_UPLOAD,
-        title = context.getString(R.string.jsy_payment_voucher),
+        title = resources.getString(R.string.jsy_payment_voucher),
         required = false,
         hasDependants = true
     )
 
     suspend fun setUpPage(
         pwr: PregnantWomanRegistrationCache,
-        anc: PregnantWomanAncCache,
+        anc: PregnantWomanAncCache?,
         saved: DeliveryOutcomeCache?
     ) {
         var list = mutableListOf(
@@ -353,13 +351,23 @@ open class DeliveryOutcomeDataset(
                 isJSYBenificiary.value = isJSYBenificiary.entries!![1]
             }
         }
-        dateOfDeath.min=pwr.lmpDate
-        dateOfDelivery.min = maxOf(pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7), anc.ancDate)
+        //dateOfDeath.min=pwr.lmpDate
+        dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
+
+        val earliestByGestation = pwr.lmpDate + TimeUnit.DAYS.toMillis(21 * 7)
+        val lastAncVisitDate = anc?.takeIf { it.pregnantWomanDelivered != true }?.ancDate ?: 0L
+        dateOfDelivery.min = maxOf(earliestByGestation, lastAncVisitDate)
         dateOfDelivery.max =
             minOf(
                 System.currentTimeMillis(),
                 getEddFromLmp(pwr.lmpDate) + TimeUnit.DAYS.toMillis(25)
             )
+
+        if (saved == null) {
+            anc?.takeIf { it.pregnantWomanDelivered == true }?.let {
+                dateOfDelivery.value = getDateFromLong(it.ancDate)
+            }
+        }
 
         setUpPage(list)
 
@@ -370,8 +378,26 @@ open class DeliveryOutcomeDataset(
             dateOfDelivery.id -> {
                 dateOfDischarge.min = getLongFromDate(dateOfDelivery.value)
                 dateOfDischarge.max =getLongFromDate(getOneMonthLater(dateOfDelivery.value))
+                dateOfDeath.min = getLongFromDate(dateOfDelivery.value)
                 -1
             }
+            otherComplication.id -> {
+                validateEmptyOnEditText(otherComplication)
+                validateAllAlphabetsSpaceOnEditText(otherComplication)
+                return 0
+            }
+            otherPlaceOfDeath.id -> {
+                validateEmptyOnEditText(otherPlaceOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherPlaceOfDeath)
+                return 0
+            }
+
+            otherCauseOfDeath.id -> {
+                validateEmptyOnEditText(otherCauseOfDeath)
+                validateAllAlphabetsSpaceOnEditText(otherCauseOfDeath)
+                return 0
+            }
+
 
             hadComplications.id -> {
                 triggerDependants(
@@ -395,8 +421,8 @@ open class DeliveryOutcomeDataset(
 
             complication.id -> {
                 if (index == 6) {
-                    liveBirth.value = "0"
-                    liveBirth.isEnabled =false
+                    //liveBirth.value = "0"
+                    //liveBirth.isEnabled =false
 
                     handleListOnValueChanged(liveBirth.id, 0)
 
@@ -490,8 +516,7 @@ open class DeliveryOutcomeDataset(
             !deliveryOutcome.value.isNullOrEmpty() && formElement.errorText.isNullOrEmpty()
         ) {
             if (deliveryOutcome.value!!.toInt() != liveBirth.value!!.toInt() + stillBirth.value!!.toInt()) {
-                formElement.errorText =
-                    "Outcome of Delivery should be equal to sum of Live and Still births"
+                formElement.errorText = resources.getString(R.string.str_delivery_outcome_err_msg)
             }else{
                 deliveryOutcome.errorText = null
                 liveBirth.errorText = null

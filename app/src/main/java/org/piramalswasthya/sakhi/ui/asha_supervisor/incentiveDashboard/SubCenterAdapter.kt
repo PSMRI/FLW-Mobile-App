@@ -1,0 +1,62 @@
+package org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.databinding.LayoutListItemBinding
+import org.piramalswasthya.sakhi.ui.asha_supervisor.incentiveDashboard.model.Facility
+
+class SubCenterAdapter(private val onSubCenterClick: (Facility) -> Unit) : ListAdapter<Facility, SubCenterAdapter.SubCenterViewHolder>(DiffCallback()) {
+
+    inner class SubCenterViewHolder(private val binding: LayoutListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(facility: Facility) {
+            if (position == itemCount - 1) {
+                binding.underLine.visibility = View.GONE
+            } else {
+                binding.underLine.visibility = View.VISIBLE
+            }
+
+
+            binding.subCenterName.text = facility.facilityName
+            if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                binding.tvAshaCount.text = binding.root.context.getString(R.string.mitanins, facility.ashaCount)
+
+            } else {
+                binding.tvAshaCount.text = binding.root.context.getString(R.string.ashas, facility.ashaCount)
+
+            }
+            binding.subCenterName.setOnClickListener {
+                onSubCenterClick(facility)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubCenterViewHolder {
+        val binding = LayoutListItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return SubCenterViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: SubCenterViewHolder, position: Int) {
+        holder.bind(getItem(position))
+
+    }
+
+    class DiffCallback : DiffUtil.ItemCallback<Facility>() {
+        override fun areItemsTheSame(oldItem: Facility, newItem: Facility) =
+            oldItem.facilityId == newItem.facilityId
+
+        override fun areContentsTheSame(oldItem: Facility, newItem: Facility) =
+            oldItem == newItem
+    }
+}

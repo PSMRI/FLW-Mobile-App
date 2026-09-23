@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_u_win_sessions_found">কোনও ইউ-উইন সেশন পাওয়া যায়নি।</string>
+    <string name="add_new_u_win_entry">নতুন ইউ-উইন এন্ট্রি যোগ করুন</string>
+    <string name="u_win_session_list">ইউ-উইন সেশন তালিকা</string>
+    <string name="u_win_session_detail">ইউ-উইন সেশনের বিবরণ</string>
+    <string name="do_you_want_to_upload_uwin_form_immunization_page_section_photo_copy_to_claim_your_incentive">আপনি কি আপনার প্রণোদনা দাবি করার জন্য ইউ-উইন ফর্মের টিকাদান পৃষ্ঠা/অংশের ফটোকপি আপলোড করতে চান?</string>
+    <string name="file_upload_n">ফাইল আপলোড %1$d</string>
+</resources>

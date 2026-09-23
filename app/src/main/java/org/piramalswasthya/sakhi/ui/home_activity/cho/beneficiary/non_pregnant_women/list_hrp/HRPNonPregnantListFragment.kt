@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,6 +30,7 @@ class HRPNonPregnantListFragment : Fragment() {
     private val viewModel: HRPNonPregnantListViewModel by viewModels()
 
     private val bottomSheet: HRNonPregnantTrackBottomSheet by lazy { HRNonPregnantTrackBottomSheet() }
+    private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
@@ -48,26 +50,35 @@ class HRPNonPregnantListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f is HRNonPregnantTrackBottomSheet) isBottomSheetShowing = false
+            }
+        }, false)
         binding.btnNextPage.visibility = View.GONE
         val benAdapter = HRNPTListAdapter(
             clickListener = HRNPTListAdapter.HRNPTClickListener(
                 {
                 },
                 { _, benId ->
-                    findNavController().navigate(
-                        HRPNonPregnantListFragmentDirections.actionHRPNonPregnantListFragmentToHRPNonPregnantTrackFragment(
-                            benId = benId,
-                            trackId = 0
+                    if (findNavController().currentDestination?.id == R.id.HRPNonPregnantListFragment) {
+                        findNavController().navigate(
+                            HRPNonPregnantListFragmentDirections.actionHRPNonPregnantListFragmentToHRPNonPregnantTrackFragment(
+                                benId = benId,
+                                trackId = 0
+                            )
                         )
-                    )
+                    }
                 },
                 { _, benId ->
-                    viewModel.setBenId(benId)
-                    if (!bottomSheet.isVisible)
+                    if (!isBottomSheetShowing) {
+                        isBottomSheetShowing = true
+                        viewModel.setBenId(benId)
                         bottomSheet.show(
                             childFragmentManager,
                             resources.getString(R.string.follow_up)
                         )
+                    }
                 }
             ),
             formButtonText = arrayOf(

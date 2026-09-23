@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug-only components. Merged into the app manifest for debug builds only. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- DEBUG-ONLY: adb-triggerable test hook for FCM token upload + local notifications. -->
+        <receiver
+            android:name=".debug.NotificationTestReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.piramalswasthya.sakhi.TEST_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

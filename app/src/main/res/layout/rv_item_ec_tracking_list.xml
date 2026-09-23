@@ -142,17 +142,19 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
+                            android:id="@+id/age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{item.ben.age}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                             android:textColor="?attr/colorOnPrimary"
                             tools:text="TextView" />
+<!--                        android:text="@{item.ben.age}"-->
+
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:padding="@dimen/padding_small">
