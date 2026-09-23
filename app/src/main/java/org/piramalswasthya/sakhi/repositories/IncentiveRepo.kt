@@ -44,7 +44,7 @@ class IncentiveRepo @Inject constructor(
     val activity_list = incentiveDao.getAllActivity()
 
 
-    suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveActivities(user: User, retryCount: Int = 3): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 retryWithBackoff {
@@ -96,8 +96,12 @@ class IncentiveRepo @Inject constructor(
                     true
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.e(e, "incentives error after exhausting retries")
-                false
+                Timber.e("incentives error : $e")
+                if (retryCount > 0) {
+                    return@withContext pullAndSaveAllIncentiveActivities(user,retryCount - 1)
+                } else {
+                    return@withContext false
+                }
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
                 false
@@ -115,7 +119,7 @@ class IncentiveRepo @Inject constructor(
 
     }
 
-    suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
+    suspend fun pullAndSaveAllIncentiveRecords(user: User,retryCount: Int = 3): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 retryWithBackoff {
@@ -173,8 +177,12 @@ class IncentiveRepo @Inject constructor(
                     true
                 }
             } catch (e: SocketTimeoutException) {
-                Timber.e(e, "incentives error after exhausting retries")
-                false
+                Timber.e("incentives error : $e")
+                if (retryCount > 0) {
+                    return@withContext pullAndSaveAllIncentiveRecords(user, retryCount - 1)
+                } else {
+                    return@withContext false
+                }
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
                 false
