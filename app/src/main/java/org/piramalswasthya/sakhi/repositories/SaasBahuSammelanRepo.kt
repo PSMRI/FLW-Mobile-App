@@ -193,6 +193,7 @@ class SaasBahuSammelanRepo @Inject constructor(
                     null
                 }
             }
+            }
 
             val entity = SaasBahuSammelanCache(
                 id = item.id?.toLong()!!,
