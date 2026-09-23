@@ -15,6 +15,8 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.EligibleCoupleRegistrationDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.getLocalizedAgeUnit
+import org.piramalswasthya.sakhi.helpers.getLocalizedGender
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -49,6 +51,12 @@ class EligibleCoupleRegViewModel @Inject constructor(
     private val _benName = MutableLiveData<String>()
     val benName: LiveData<String>
         get() = _benName
+
+    private val _husbandName = MutableLiveData<String?>()
+    val husbandName: LiveData<String?> get() = _husbandName
+
+    private val _marriageDate = MutableLiveData<String?>()
+    val marriageDate: LiveData<String?> get() = _marriageDate
 
     private val _childCount = MutableLiveData<Int>()
     val childCount: LiveData<Int>
@@ -115,7 +123,12 @@ class EligibleCoupleRegViewModel @Inject constructor(
                         calDob,
                         Calendar.getInstance()
                     )
-                } ${ben.ageUnit?.name} | ${ben.gender?.name}"
+                } ${context.getLocalizedAgeUnit(ben.ageUnit)} | ${context.getLocalizedGender(ben.gender)}"
+                _husbandName.value = ben.genDetails?.spouseName
+                _marriageDate.value = ben.genDetails?.marriageDate?.let { date ->
+                    java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+                        .format(java.util.Date(date))
+                }
                 ecrForm = EligibleCoupleRegCache(
                     benId = ben.beneficiaryId,
                     syncState = SyncState.UNSYNCED,

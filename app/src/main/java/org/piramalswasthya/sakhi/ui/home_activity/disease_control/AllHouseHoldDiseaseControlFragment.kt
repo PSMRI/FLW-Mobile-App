@@ -59,64 +59,67 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
         val householdAdapter = HouseHoldListAdapter(viewModel.diseaseType,isDisease, prefDao, false,HouseHoldListAdapter.HouseholdClickListener({
 
         }, {
-            when (viewModel.diseaseType) {
+            if (findNavController().currentDestination?.id == R.id.allHouseHoldDiseaseControlFragment) {
+                when (viewModel.diseaseType) {
 
-                requireContext().getString(R.string.icon_title_maleria) -> {
-                    findNavController().navigate(
-                        AllHouseHoldDiseaseControlFragmentDirections
-                            .actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
-                                it.hhId, 1, viewModel.diseaseType
-                            )
-                    )
-                }
+                    requireContext().getString(R.string.icon_title_maleria) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToMalariaSuspectedListFragment(
+                                    it.hhId, 1, viewModel.diseaseType
+                                )
+                        )
+                    }
 
-                requireContext().getString(R.string.icon_title_aes)-> {
-                    findNavController().navigate(
-                        AllHouseHoldDiseaseControlFragmentDirections
-                            .actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
-                                it.hhId, 3, viewModel.diseaseType
-                            )
-                    )
-                }
+                    requireContext().getString(R.string.icon_title_aes) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToAESSuspectedListFragment(
+                                    it.hhId, 3, viewModel.diseaseType
+                                )
+                        )
+                    }
 
-                requireContext().getString(R.string.icon_title_ka) -> {
-                    findNavController().navigate(
-                        AllHouseHoldDiseaseControlFragmentDirections
-                            .actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
-                                it.hhId, 2, viewModel.diseaseType
-                            )
-                    )
-                }
+                    requireContext().getString(R.string.icon_title_ka) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToKalaAzarSuspectedListFragment(
+                                    it.hhId, 2, viewModel.diseaseType
+                                )
+                        )
+                    }
 
-                requireContext().getString(R.string.icon_title_filaria) -> {
-                    findNavController().navigate(
-                        AllHouseHoldDiseaseControlFragmentDirections
-                            .actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
-                                it.hhId, 4, viewModel.diseaseType
-                            )
-                    )
-                }
+                    requireContext().getString(R.string.icon_title_filaria) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToFilariaSuspectedListFragment(
+                                    it.hhId, 4, viewModel.diseaseType
+                                )
+                        )
+                    }
 
-                requireContext().getString(R.string.icon_title_leprosy)  -> {
-                    findNavController().navigate(
-                        AllHouseHoldDiseaseControlFragmentDirections
-                            .actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
-                                it.hhId, 5, viewModel.diseaseType
-                            )
-                    )
+                    requireContext().getString(R.string.icon_title_leprosy) -> {
+                        findNavController().navigate(
+                            AllHouseHoldDiseaseControlFragmentDirections
+                                .actionAllHouseHoldDiseaseControlFragmentToLeprosySuspectedListFragment(
+                                    it.hhId, 5, viewModel.diseaseType
+                                )
+                        )
+                    }
                 }
             }
-
 
         }, {
 
 
         },{
-            findNavController().navigate(
-                AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToFilariaMDAFormFragment(
-                    it.hhId
+            if (findNavController().currentDestination?.id == R.id.allHouseHoldDiseaseControlFragment) {
+                findNavController().navigate(
+                    AllHouseHoldDiseaseControlFragmentDirections.actionAllHouseHoldDiseaseControlFragmentToFilariaMDAFormFragment(
+                        it.hhId
+                    )
                 )
-            )
+            }
         },{
 
         }

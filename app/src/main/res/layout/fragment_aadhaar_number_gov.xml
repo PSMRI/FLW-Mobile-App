@@ -130,6 +130,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/state"
+        android:importantForAccessibility="yes"
         android:labelFor="@id/actv_state_dn"
         android:orientation="horizontal">
 
@@ -139,6 +140,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:inputType="none"
+            android:importantForAccessibility="yes"
+            android:contentDescription="state dropdown"
             tools:ignore="SpeakableTextPresentCheck" />
 
 

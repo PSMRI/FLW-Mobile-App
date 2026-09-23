@@ -32,6 +32,8 @@ import java.io.File
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.forEach
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class SaasBahuSammelanRepo @Inject constructor(
     private val userRepo: UserRepo,
@@ -43,6 +45,8 @@ class SaasBahuSammelanRepo @Inject constructor(
 
 
 )  {
+    
+    private val syncMutex = Mutex()
 
     suspend fun saveSammelanForm(saasBahuSammelanCache: SaasBahuSammelanCache) {
         withContext(Dispatchers.IO) {
@@ -52,13 +56,14 @@ class SaasBahuSammelanRepo @Inject constructor(
 
      suspend fun pushUnSyncedRecordsSaasBahuSammelan(): Boolean {
 
-        return withContext(Dispatchers.IO) {
+        return syncMutex.withLock { withContext(Dispatchers.IO) {
             val user =
                 preferenceDao.getLoggedInUser()
                     ?: throw IllegalStateException("No user logged in!!")
 
             val saasBahuList: List<SaasBahuSammelanCache> =
                 saasBahuDao.getBySyncState(SyncState.UNSYNCED)
+            if (saasBahuList.isEmpty()) return@withContext true
             try {
                 saasBahuList.forEach { row ->
                     val imagesParts = (row.sammelanImages ?: emptyList()).mapNotNull { uriStr ->
@@ -134,7 +139,7 @@ class SaasBahuSammelanRepo @Inject constructor(
                 return@withContext false
             }
             true
-        }
+        }}
     }
 
 
@@ -166,6 +171,7 @@ class SaasBahuSammelanRepo @Inject constructor(
         Log.e("AHJAHA",body)
         val adapter = moshi.adapter(SaasBahuSammelanGetAllResponse::class.java)
         val parsed = adapter.fromJson(body) ?: return@withContext
+        val unsyncedRecords = saasBahuDao.getBySyncState(SyncState.UNSYNCED)
         saasBahuDao.clearAll()
         parsed.data?.forEach { item ->
             val imageBase64List = item.meetingImages ?: emptyList()
@@ -174,7 +180,7 @@ class SaasBahuSammelanRepo @Inject constructor(
                     val base64Data = base64.substringAfter(",", base64)
                     val bytes = Base64.decode(base64Data, Base64.DEFAULT)
                     val (ext, _) = detectExtAndMime(bytes)
-                    val file = File(appContext.cacheDir, "saas_bahu_sammelan${System.currentTimeMillis()}.$ext")
+                    val file = File(appContext.cacheDir, "saas_bahu_${item.id}_img${index}.$ext")
                     file.outputStream().use { it.write(bytes) }
                     val uri = FileProvider.getUriForFile(
                         appContext,
@@ -200,6 +206,9 @@ class SaasBahuSammelanRepo @Inject constructor(
             )
 
             saasBahuDao.insertSammelan(entity)
+        }
+        unsyncedRecords.forEach {
+            saasBahuDao.insertSammelan(it)
         }
     }
 

@@ -29,7 +29,7 @@ object Konstants {
     const val minAgeForReproductiveAge: Int = 15
     const val maxAgeForReproductiveAge: Int = 49
     const val maxAgeForInfant: Int = 61
-    const val minAgeForChild: Int = 92
+    const val minAgeForChild: Int = 91
     const val maxAgeForChild: Int = 456
     const val minAgeForAdolescent: Int = 10
     const val maxAgeForAdolescent: Int = 14
@@ -64,6 +64,9 @@ object Konstants {
 
     //PNC-EC cycle
     const val pncEcGap: Long = 45
+
+    const val pregnancyExpiryDays: Long = 340
+    const val pregnancyExpiryMillis: Long = pregnancyExpiryDays * 24 * 60 * 60 * 1000
 
 
     const val defaultTimeStamp = 1577817001000L

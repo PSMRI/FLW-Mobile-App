@@ -43,7 +43,7 @@
             android:id="@+id/followup_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="NCD Follow-up History"
+            android:text="@string/ncd_follow_up_hostory"
             android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="center"

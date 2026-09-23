@@ -3,25 +3,40 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.text.InputType
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.FamilyMember
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.HouseholdAmenities
 import org.piramalswasthya.sakhi.model.HouseholdCache
 import org.piramalswasthya.sakhi.model.HouseholdDetails
 import org.piramalswasthya.sakhi.model.HouseholdFamily
+import org.piramalswasthya.sakhi.model.InputType.BUTTON
 import org.piramalswasthya.sakhi.model.InputType.DROPDOWN
 import org.piramalswasthya.sakhi.model.InputType.EDIT_TEXT
 import org.piramalswasthya.sakhi.model.InputType.HEADLINE
 import org.piramalswasthya.sakhi.model.InputType.RADIO
 import org.piramalswasthya.sakhi.model.InputType.TEXT_VIEW
+import org.piramalswasthya.sakhi.model.LocationEntity
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class HouseholdFormDataset(context: Context, language: Languages) : Dataset(context, language) {
+class HouseholdFormDataset(context: Context, language: Languages,var preferenceDao: PreferenceDao) : Dataset(context, language) {
+
+    private var villageList: List<LocationEntity> = emptyList()
+
+    fun setVillages(villages: List<LocationEntity>) {
+        villageList = villages
+        val villageNames = villages.map { it.name }.toTypedArray()
+        villageDropdown.entries = villageNames
+        villageDropdown.value = if (villages.size == 1) villageNames[0] else null
+    }
+
     companion object {
         private fun getCurrentDate(): String {
             val calendar = Calendar.getInstance()
@@ -127,12 +142,71 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         required = true
     )
 
+    private val isMitaninVariant = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    private val abhaIdCheck = FormElement(
+        id = 9100,
+        inputType = RADIO,
+        title = resources.getString(R.string.abha_id_check_question),
+        arrayId = -1,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = false,
+        hasDependants = true,
+    )
+
+    private val abhaIdInput = FormElement(
+        id = 9101,
+        inputType = EDIT_TEXT,
+        title = resources.getString(R.string.enter_abha_id_ayushman_card_number),
+        arrayId = -1,
+        required = false,
+        etMaxLength = 30,
+    )
+
+    private val abhaSubmitBtn = FormElement(
+        id = 9102,
+        inputType = BUTTON,
+        title = resources.getString(R.string.btn_submit),
+        required = false,
+        isEnabled = true,
+    )
+
+    fun getAbhaSubmitBtnId(): Int = abhaSubmitBtn.id
+
+    fun getAbhaCardInput(): String? = abhaIdInput.value?.trim()
+
+    private fun validateAbhaOrAyushmanIdOnEditText(formElement: FormElement): Int {
+        val input = formElement.value?.trim().orEmpty()
+        val normalizedInput = input.replace("-", "")
+
+        val abhaPattern = Regex("^[0-9]{14}$")
+        val ayushmanPattern = Regex("^[A-Za-z0-9]{9,14}$")
+
+        formElement.errorText = when {
+            input.isEmpty() -> resources.getString(R.string.form_input_empty_error)
+            normalizedInput.matches(abhaPattern) || input.matches(ayushmanPattern) -> null
+            else -> resources.getString(R.string.abha_ayushman_invalid_format)
+        }
+
+        return -1
+    }
+
+    private val villageDropdown = FormElement(
+        id = 21,
+        inputType = DROPDOWN,
+        title = resources.getString(R.string.nhhr_village),
+        arrayId = -1,
+        entries = emptyArray(),
+        required = true
+    )
+
     suspend fun setupPage(hh: HouseholdCache?) {
 
         val list = mutableListOf<FormElement>()
         val firstPage by lazy {
             listOf(
                 familyHeading,
+                villageDropdown,
                 firstNameHeadOfFamily,
                 lastNameHeadOfFamily,
                 mobileNoHeadOfFamily,
@@ -144,12 +218,25 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
             )
         }
         list.addAll(firstPage)
+        if (isMitaninVariant && (hh == null || hh.householdId == 0L)) {
+            list.add(list.indexOf(villageDropdown), abhaIdCheck)
+        }
+       /* hh?.locationRecord?.let { loc ->
+            villageDropdown.value = loc.village.name
+        }*/
+        hh?.let { savedHh ->
+            if (!savedHh.isDraft || savedHh.householdId != 0L) {
+                savedHh.locationRecord.let { loc ->
+                    villageDropdown.value = loc.village.name
+                }
+            }
+        }
         hh?.family?.let { saved ->
             firstNameHeadOfFamily.value = saved.familyHeadName
             lastNameHeadOfFamily.value = saved.familyName
             mobileNoHeadOfFamily.value = saved.familyHeadPhoneNo.toString()
-            saved.familyHeadName.takeIf { it!!.isNotEmpty() }?.let { firstNameHeadOfFamily.inputType = TEXT_VIEW }
-            saved.familyName.takeIf { it!!.isNotEmpty() }?.let { lastNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyHeadName.takeIf { !it.isNullOrEmpty() }?.let { firstNameHeadOfFamily.inputType = TEXT_VIEW }
+            saved.familyName.takeIf { !it.isNullOrEmpty() }?.let { lastNameHeadOfFamily.inputType = TEXT_VIEW }
             saved.familyHeadPhoneNo.takeIf { it != null }?.let { mobileNoHeadOfFamily.inputType = TEXT_VIEW }
             houseNo.value = saved.houseNo
             wardNo.value = saved.wardNo
@@ -161,18 +248,18 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
 
         val secondPage =
             listOf(
-                houseHoldDetails, residentialArea, typeOfHouse, houseOwnership
+                houseHoldDetails, typeOfHouse, houseOwnership
             )
         list.addAll(secondPage)
         hh?.details?.let { saved ->
-            residentialArea.value = residentialArea.getStringFromPosition(saved.residentialAreaId)
+//            residentialArea.value = residentialArea.getStringFromPosition(saved.residentialAreaId)
             otherResidentialArea.value = saved.otherResidentialArea
             typeOfHouse.value = typeOfHouse.getStringFromPosition(saved.houseTypeId)
             houseOwnership.value = houseOwnership.getStringFromPosition(saved.isHouseOwnedId)
         }
-        if (residentialArea.value == residentialArea.entries!![3]) {
+       /* if (residentialArea.value == residentialArea.entries!![3]) {
             list.add(list.indexOf(residentialArea) + 1, otherResidentialArea)
-        }
+        }*/
         val thirdPage =
             listOf(
                 houseHoldDAmenities,
@@ -216,6 +303,7 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
                 firstNameHeadOfFamily,
                 lastNameHeadOfFamily,
                 mobileNoHeadOfFamily,
+                villageDropdown,
                 houseNo,
                 wardNo,
                 wardName,
@@ -245,7 +333,7 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         required = false
     )
 
-    private val residentialArea = FormElement(
+   /* private val residentialArea = FormElement(
         id = 8,
         inputType = DROPDOWN,
         title = resources.getString(R.string.nhhr_type_residential_area),
@@ -253,7 +341,7 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         entries = resources.getStringArray(R.array.nhhr_type_residential_area_array),
         required = false,
         hasDependants = true
-    )
+    )*/
 
 
     private val otherResidentialArea = FormElement(
@@ -286,19 +374,19 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
     suspend fun setSecondPage(details: HouseholdDetails?) {
         val secondPage by lazy {
             listOf(
-                residentialArea, typeOfHouse, houseOwnership
+                 typeOfHouse, houseOwnership
             )
         }
         val list = secondPage.toMutableList()
         details?.let { saved ->
-            residentialArea.value = residentialArea.getStringFromPosition(saved.residentialAreaId)
+//            residentialArea.value = residentialArea.getStringFromPosition(saved.residentialAreaId)
             otherResidentialArea.value = saved.otherResidentialArea
             typeOfHouse.value = typeOfHouse.getStringFromPosition(saved.houseTypeId)
             houseOwnership.value = houseOwnership.getStringFromPosition(saved.isHouseOwnedId)
         }
-        if (residentialArea.value == residentialArea.entries!!.last()) {
+      /*  if (residentialArea.value == residentialArea.entries!!.last()) {
             list.add(list.indexOf(residentialArea) + 1, otherResidentialArea)
-        }
+        }*/
         setUpPage(list)
     }
 
@@ -455,12 +543,23 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
                 validateMobileNumberOnEditText(mobileNoHeadOfFamily)
             }
 
-            residentialArea.id -> triggerDependants(
+            abhaIdCheck.id -> triggerDependants(
+                source = abhaIdCheck,
+                passedIndex = index,
+                triggerIndex = 0,
+                target = listOf(abhaIdInput, abhaSubmitBtn)
+            )
+
+            abhaIdInput.id -> {
+                validateAbhaOrAyushmanIdOnEditText(abhaIdInput)
+            }
+
+          /*  residentialArea.id -> triggerDependants(
                 source = residentialArea,
                 passedIndex = index,
                 triggerIndex = residentialArea.entries!!.size - 2,
                 target = otherResidentialArea
-            )
+            )*/
 
             fuelForCooking.id -> triggerDependants(
                 source = fuelForCooking,
@@ -519,6 +618,41 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
         }
     }
 
+    suspend fun prefillFromAyushmanCard(member: FamilyMember) {
+        member.name?.trim()?.replace(Regex("\\s+"), " ")?.takeIf { it.isNotEmpty() }?.let { fullName ->
+            val parts = fullName.split(" ")
+            if (parts.size >= 2) {
+                setValueById(firstNameHeadOfFamily.id, parts.dropLast(1).joinToString(" "))
+                setValueById(lastNameHeadOfFamily.id, parts.last())
+                lastNameHeadOfFamily.isEnabled = false
+                updateList(lastNameHeadOfFamily.id, getIndexById(lastNameHeadOfFamily.id))
+            } else {
+                setValueById(firstNameHeadOfFamily.id, fullName)
+            }
+            firstNameHeadOfFamily.isEnabled = false
+            updateList(firstNameHeadOfFamily.id, getIndexById(firstNameHeadOfFamily.id))
+            firstNameHeadOfFamily.errorText = null
+            lastNameHeadOfFamily.errorText = null
+        }
+
+        sanitizeAyushmanMobile(member.mobileNo)?.let { mobile ->
+            setValueById(mobileNoHeadOfFamily.id, mobile)
+            mobileNoHeadOfFamily.isEnabled = false
+            updateList(mobileNoHeadOfFamily.id, getIndexById(mobileNoHeadOfFamily.id))
+            mobileNoHeadOfFamily.errorText = null
+        }
+    }
+
+    private fun sanitizeAyushmanMobile(raw: String?): String? {
+        val digits = raw?.filter { it.isDigit() }.orEmpty()
+        val tenDigit = when {
+            digits.length == 10 -> digits
+            digits.length > 10 -> digits.takeLast(10)
+            else -> return null
+        }
+        return tenDigit.takeIf { it.first() in '6'..'9' }
+    }
+
     override fun mapValues(cacheModel: FormDataModel, pageNumber: Int) {
         when (pageNumber) {
             1 -> {
@@ -550,15 +684,28 @@ class HouseholdFormDataset(context: Context, language: Languages) : Dataset(cont
             family.povertyLine =
                 povertyLine.getEnglishStringFromPosition(family.povertyLineId)
         }
-        (cacheModel as HouseholdCache).family = family
+        val household = cacheModel as HouseholdCache
+        household.family = family
+
+        val selectedVillageName = villageDropdown.value
+        if (!selectedVillageName.isNullOrEmpty()) {
+            val selectedVillage = villageList.find { it.name == selectedVillageName }
+            if (selectedVillage != null) {
+                household.locationRecord = household.locationRecord.copy(
+                    village = selectedVillage
+                )
+            }
+        }
     }
 
     private fun mapValuesForPage2(cacheModel: FormDataModel) {
         val details = HouseholdDetails()
         details.let { details ->
-            details.residentialAreaId = residentialArea.getPosition()
+          /*  details.residentialAreaId = residentialArea.getPosition()
             details.residentialArea =
                 residentialArea.getEnglishStringFromPosition(details.residentialAreaId)
+       */
+            details.residentialArea = preferenceDao.getLocationType()
             details.otherResidentialArea = otherResidentialArea.value
             details.houseTypeId = typeOfHouse.getPosition()
             details.houseType = typeOfHouse.getEnglishStringFromPosition(details.houseTypeId)

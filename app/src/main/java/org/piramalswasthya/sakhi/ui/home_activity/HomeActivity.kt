@@ -1,6 +1,8 @@
 package org.piramalswasthya.sakhi.ui.home_activity
 
 import android.Manifest
+import timber.log.Timber
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -33,6 +35,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -46,7 +49,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
 import com.google.firebase.crashlytics.internal.common.CommonUtils.isRooted
-import com.google.firebase.messaging.FirebaseMessaging
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -72,8 +74,18 @@ import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import org.piramalswasthya.sakhi.ui.home_activity.sync.SyncBottomSheetFragment
+import org.piramalswasthya.sakhi.ui.login_activity.LanguageBottomSheet
 import org.piramalswasthya.sakhi.ui.login_activity.LoginActivity
 import org.piramalswasthya.sakhi.ui.service_location_activity.ServiceLocationActivity
+import org.piramalswasthya.sakhi.model.NotificationNavTarget
+import org.piramalswasthya.sakhi.model.isIncentiveNavTarget
+import org.piramalswasthya.sakhi.utils.PendingNotificationDeeplink
+import org.piramalswasthya.sakhi.utils.notificationDeeplinkFrom
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment
+import org.piramalswasthya.sakhi.ui.notifications.NotificationPanelViewModel
+import org.piramalswasthya.sakhi.utils.BellBadgeHelper
+import org.piramalswasthya.sakhi.utils.FcmTokenUploader
+import org.piramalswasthya.sakhi.utils.FcmTopicManager
 import org.piramalswasthya.sakhi.utils.KeyUtils
 import org.piramalswasthya.sakhi.utils.RoleConstants
 import org.piramalswasthya.sakhi.work.WorkerUtils
@@ -132,6 +144,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private val viewModel: HomeViewModel by viewModels()
 
+    private val notificationViewModel: NotificationPanelViewModel by viewModels()
+
     private val langChooseAlert by lazy {
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
         val languageOptions = mutableListOf(
@@ -140,6 +154,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         )
         if (!isMitanin) {
             languageOptions.add(resources.getString(R.string.assamese) to Languages.ASSAMESE)
+//            languageOptions.add(resources.getString(R.string.text_bangali) to Languages.BANGLA)
+
         }
         val currentLanguageIndex = languageOptions.indexOfFirst { it.second == pref.getCurrentLanguage() }.coerceAtLeast(0)
 
@@ -177,6 +193,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         MaterialAlertDialogBuilder(this).setTitle(resources.getString(R.string.logout))
             .setMessage(str)
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
+                // Tear down the FCM binding BEFORE logout clears the logged-in user from prefs.
+                FcmTokenUploader.clearToken(this)
                 viewModel.logout()
                 ImageUtils.removeAllBenImages(this)
                 WorkerUtils.cancelAllWork(this)
@@ -205,6 +223,28 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         navHostFragment.navController
     }
 
+    /**
+     * Entry point for notification tap deeplinking (nav_id = INCENTIVE_SCREEN). Safe to call from
+     * any state: no-ops (with a log) instead of crashing if the nav graph/host isn't ready or the
+     * destination can't be resolved, since this runs off a background-originated notification tap.
+     */
+    fun navigateToIncentivesFromNotification() {
+        try {
+            Timber.d(
+                "NAVTRACE 4/4 navigating to incentives; current=" +
+                        "${navController.currentDestination?.label}"
+            )
+            if (navController.currentDestination?.id == R.id.incentivesFragment) return
+            navController.navigate(
+                R.id.incentivesFragment,
+                null,
+                NavOptions.Builder().setLaunchSingleTop(true).build()
+            )
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to navigate to incentivesFragment from notification tap")
+        }
+    }
+
     var showMenuHome: Boolean = false
 
     override fun attachBaseContext(newBase: Context) {
@@ -231,15 +271,19 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         TapjackingProtectionHelper.applyWindowSecurity(this)
         FirebaseApp.initializeApp(this)
         FBMessaging.messageUpdate = this
-        FirebaseMessaging.getInstance().subscribeToTopic("All")
+        super.onCreate(savedInstanceState)
+        // NOTE: pref is a Hilt @Inject field — it is only initialized by super.onCreate(),
+        // so any pref access must happen AFTER the call above (otherwise crash on login).
+        FcmTopicManager.subscribe(pref.getLoggedInUser()?.userId)
+        // Register this device's FCM token with the server for the logged-in user.
+        FcmTokenUploader.uploadToken(this)
 //        FirebaseMessaging.getInstance().subscribeToTopic("ANC${pref.getLoggedInUser()?.userId}")
 //        FirebaseMessaging.getInstance().subscribeToTopic("Immunization${pref.getLoggedInUser()?.userId}")
-        super.onCreate(savedInstanceState)
         _binding = ActivityHomeBinding.inflate(layoutInflater)
 
         TapjackingProtectionHelper.enableTouchFiltering(this)
 
-        if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
+        if (pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ANM, true) || pref.getLoggedInUser()?.role.equals(RoleConstants.ROLE_CHO, true)) {
             binding.navView.menu.findItem(R.id.homeFragment).setVisible(false)
             binding.navView.menu.findItem(R.id.supervisorFragment).setVisible(true)
         } else {
@@ -264,6 +308,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.ic_person).circleCrop()
                     .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+            }?: run {
+                viewModel.profilePicUri?.let { savedUri ->
+                    Glide.with(this).load(savedUri)
+                        .signature(ObjectKey(System.currentTimeMillis()))
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_person).circleCrop()
+                        .into(binding.navView.getHeaderView(0).findViewById(R.id.iv_profile_pic))
+                }
             }
         }
         binding.drawerLayout.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.DrawerListener {
@@ -331,7 +384,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 if (now - lastAutoTriggerPushTime >= AUTO_PUSH_DEBOUNCE_MS) {
                     if (isInternetAvailable(this)) {
                         lastAutoTriggerPushTime = now
-                        WorkerUtils.triggerAmritPushWorker(this)
+                        WorkerUtils.triggerAmritPushWorker(this,true)
                     }
                 }
             }
@@ -355,6 +408,49 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         observeAccountDeactivation()
         observeTokenExpiry()
 
+        // Cold start from a notification tap, either straight from our tray PendingIntent or
+        // parked by LoginActivity when the Firebase SDK displayed the notification itself.
+        handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Warm start from a tray tap: the notification Intent uses CLEAR_TOP|SINGLE_TOP, so an existing
+     * instance receives it here rather than being recreated.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationDeeplink(intent)
+    }
+
+    /**
+     * Routes a system-tray notification tap. Mirrors the in-app panel's routing
+     * ([org.piramalswasthya.sakhi.ui.notifications.NotificationPanelFragment]): any
+     * incentive/claim notification lands on ASHA's IncentivesFragment, anything else just opens the
+     * app as before.
+     *
+     * The extras are consumed so a configuration change (which re-delivers the same Intent) can't
+     * navigate a second time.
+     */
+    private fun handleNotificationDeeplink(intent: Intent?) {
+        // Our own tray PendingIntent delivers the context on the Intent; an SDK-displayed
+        // notification tap goes through LoginActivity, which parks it for us.
+        val deeplink = notificationDeeplinkFrom(intent)
+            ?.also { PendingNotificationDeeplink.clear() }
+            ?: PendingNotificationDeeplink.consume()
+            ?: return
+
+        if (deeplink.notificationId > 0L) notificationViewModel.markRead(deeplink.notificationId)
+
+        val target = NotificationNavTarget.fromNavId(deeplink.navTarget)
+        val goToIncentives = target == NotificationNavTarget.INCENTIVE_SCREEN ||
+                target == NotificationNavTarget.INCENTIVE_APPROVAL ||
+                isIncentiveNavTarget(deeplink.navTarget, deeplink.eventType)
+        Timber.d("NAVTRACE 3/4 resolved deeplink=$deeplink route=$goToIncentives")
+        if (!goToIncentives) return
+
+        // Post so the NavHostFragment has committed its start destination on a cold start.
+        binding.root.post { navigateToIncentivesFromNotification() }
     }
 
     private var deactivationDialog: AlertDialog? = null
@@ -391,6 +487,8 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                         .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             dialog.dismiss()
+                            // Tear down the FCM binding BEFORE prefs (and the user) are cleared.
+                            FcmTokenUploader.clearToken(this@HomeActivity)
                             pref.deleteForLogout()
                             WorkerUtils.cancelAllWork(this@HomeActivity)
                             startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
@@ -559,6 +657,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 homeMenu.isVisible = showMenuHome
                 langMenu.isVisible = !showMenuHome
 
+                val notifMenu = menu.findItem(R.id.toolbar_menu_notifications)
+                BellBadgeHelper.bind(
+                    notifMenu,
+                    this@HomeActivity,
+                    notificationViewModel.unreadCount
+                ) {
+                    NotificationPanelFragment.open(supportFragmentManager)
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -569,7 +675,15 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                     }
 
                     R.id.toolbar_menu_language -> {
-                        langChooseAlert.show()
+                        //langChooseAlert.show()
+                        LanguageBottomSheet(pref.getCurrentLanguage()) { selectedLang ->
+                            pref.saveSetLanguage(selectedLang.language)
+                            val restart = Intent(this@HomeActivity, HomeActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            startActivity(restart)
+                            finish()
+                        }.show(supportFragmentManager, "LanguageBottomSheet")
                         return true
                     }
 
@@ -628,12 +742,19 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             headerView.findViewById<TextView>(R.id.tv_nav_name).text =
                 resources.getString(R.string.nav_item_1_text, it.name)
             headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_2_text, it.userName)
+                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
 
 
-            val englishId = String.format(Locale.ENGLISH, "%s", it.userId)
+           // val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
+
+            //If employee id is blank at that time showing userid
+            val empId = pref.getEmployeeId()
+            val englishId = String.format(
+                Locale.ENGLISH, "%s",
+                if (empId.isNullOrBlank()) it.userId.toString() else empId
+            )
             val formatted = HtmlCompat.fromHtml(
-                getString(R.string.nav_item_3_text, englishId),
+                getString(R.string.nav_item_emp_text, englishId),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
@@ -741,9 +862,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
 
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true
@@ -753,9 +879,14 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         binding.navView.menu.findItem(R.id.menu_support).setOnMenuItemClickListener {
             var url = "https://forms.office.com/r/AqY1KqAz3v"
             if (url.isNotEmpty()){
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(url))
-                startActivity(i)
+                try {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.setData(Uri.parse(url))
+                    startActivity(i)
+                } catch (e: ActivityNotFoundException) {
+                    Timber.e(e, "No activity found to handle URL: $url")
+                    Toast.makeText(this, getString(R.string.something_wend_wong_contact_testing), Toast.LENGTH_LONG).show()
+                }
             }
             binding.drawerLayout.close()
             true

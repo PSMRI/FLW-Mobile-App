@@ -79,6 +79,8 @@
         <item name="colorSurface">@color/seed</item>
     </style>
 
+
+
     <style name="Theme.Custom.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
@@ -117,6 +119,10 @@
         <item name="android:textSelectHandle">@drawable/pv_invisible_image</item>
         <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
         <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
+    </style>
+    <style name="CircleImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
 </resources>

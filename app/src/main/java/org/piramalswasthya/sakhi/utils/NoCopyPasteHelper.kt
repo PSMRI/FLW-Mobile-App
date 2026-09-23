@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.utils
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.text.InputType
 import android.view.ActionMode
@@ -12,7 +13,7 @@ import androidx.annotation.RequiresApi
 
 object NoCopyPasteHelper {
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("NewApi")
     fun disableCopyPaste(editText: EditText) {
 
         // Disable long press menu
@@ -32,9 +33,14 @@ object NoCopyPasteHelper {
             }
         }
 
-        editText.apply {
+        /*editText.apply {
             importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
             inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        }*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            editText.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+            editText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         }
 
         // Additional paste block (some devices bypass actionMode)

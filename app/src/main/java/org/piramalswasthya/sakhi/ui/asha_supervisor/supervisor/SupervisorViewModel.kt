@@ -48,6 +48,7 @@ class SupervisorViewModel @Inject constructor(
     private val initEnd = Calendar.getInstance().apply {
         setToStartOfTheDay()
     }.timeInMillis
+    fun getSuperVisorSubname(): String = pref.getLoggedInUser()?.role ?: ""
 
     private val _from = MutableStateFlow(initStart)
     val from: Flow<Long>
@@ -107,6 +108,7 @@ class SupervisorViewModel @Inject constructor(
             ENGLISH -> selectedVillage?.name
             Languages.HINDI -> selectedVillage?.nameHindi ?: selectedVillage?.name
             ASSAMESE -> selectedVillage?.nameAssamese ?: selectedVillage?.name
+            Languages.BANGLA -> selectedVillage?.nameBangla ?: selectedVillage?.name
 
         }
 
@@ -123,7 +125,13 @@ class SupervisorViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-//            _user = pref.getLoggedInUser()!!
+            val loggedInUser = currentUser
+            if (loggedInUser == null) {
+                _navigateToLoginPage.value = true
+                return@launch
+            }
+            userRepo.setFacilityData(loggedInUser.userId)
+
             launch {
                 userRepo.unProcessedRecordCount.collect { value ->
                     _unprocessedRecordsCount.value =
@@ -132,8 +140,9 @@ class SupervisorViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                user = pref.getLoggedInUser()!!
+            val userFound = withContext(Dispatchers.IO) {
+                val loggedInUser = pref.getLoggedInUser() ?: return@withContext false
+                user = loggedInUser
                 _userName = user.name
                 currentLocation = pref.getLocationRecord()
                 _selectedVillage = currentLocation?.village
@@ -152,10 +161,18 @@ class SupervisorViewModel @Inject constructor(
                         villageDropdownEntries =
                             user.villages.map { it.nameAssamese ?: it.name }.toTypedArray()
                     }
+                    Languages.BANGLA -> {
+                        villageDropdownEntries =
+                            user.villages.map { it.nameBangla ?: it.name }.toTypedArray()
+                    }
                 }
-
+                true
             }
-            _state.value = State.SUCCESS
+            if (userFound) {
+                _state.value = State.SUCCESS
+            } else {
+                _navigateToLoginPage.value = true
+            }
         }
     }
 

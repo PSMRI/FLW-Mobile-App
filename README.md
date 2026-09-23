@@ -85,11 +85,16 @@ Assam State.
 
 ## Technologies & Tools Used
 
-- **IDE**: Android Studio.
-- **Database**: Room
+- **IDE**: Android Studio
+- **Local Database**: Room 2.6.1
 - **Languages**: XML, Kotlin, SQL
-- **Architecture & Architectural Components**: MVVM, Android Architectural Components
-- **SDK**: Android SDK 23-34
+- **Architecture & Architectural Components**: MVVM, Repository pattern, ViewModel, LiveData
+- **Dependency Injection**: Hilt
+- **Background Work**: WorkManager 2.10.2
+- **Firebase**: Analytics, Crashlytics, Messaging, and Remote Config
+- **SDK**: Android SDK 23-35
+- **Product flavors**: saksham, sakshamUat, sakshamStag, niramay, xushrukha, mitanin, mitaninUat, mitaninStag
+- **Offline-first support**: data is stored locally in Room and synced with the server when connectivity is available
 
 ## Installation
 
@@ -105,11 +110,11 @@ To run this project, Follow these steps:
 3. Click on 'Open an existing Android Studio project'.
 4. Navigate to the directory where you cloned the project and select the root folder.
 5. Wait for Android Studio to sync the project and download the dependencies.
-6. Once the sync is done, select build variant you want to work on like uatDebug, statingDebug or productionDebug
-7. create folder in \app\src named production, uat or staging as per build variant you want to work and add google JSON file in it.
-7. Clean Project and Rebuild and run project 
-8. you can run the project on an emulator or a physical device.
-9. Try to login with valid Credentials if everything is fine you able to login successfully
+6. Once the sync is done, select the build variant you want to work on, such as sakshamDebug, sakshamUatDebug, or sakshamStagDebug.
+7. Add the `google-services.json` file inside the matching flavor folder under `app/src`, such as `app/src/saksham`, `app/src/sakshamUat`, or `app/src/sakshamStag`.
+8. Clean and rebuild the project.
+9. Run the project on an emulator or physical device.
+10. Try logging in with valid credentials. If the setup is correct, you should be able to log in successfully.
 
 ### Prerequisites
 
@@ -150,26 +155,6 @@ To run this project, Follow these steps:
     - `keystore.jks`
 
 
-## 🔧 Additional Setup Steps (After Cloning)
-
-### 1. Open Project in Android Studio
-Open the cloned project in **Android Studio** and wait for the Gradle sync to complete. This step is required to generate `local.properties` with your Android SDK path.
-
-### 2. Run Setup Script
-Open **Git Bash** and run the following commands:
-
-```bash
-cd "YOUR_PROJECT_PATH/FLW-Mobile-App"
-bash setup.sh
-```
-
-> Replace `YOUR_PROJECT_PATH` with the actual path where you cloned the repository.  
-> Example: `cd "D:/Projects/FLW-Mobile-App"`
-
-### 3. Build & Run in Android Studio
-1. Open the project in **Android Studio**
-2. Switch build variant to **`sakshamUat`** (bottom-left dropdown)
-3. Click **Run**
 
 
 **Configurations:**
@@ -203,11 +188,19 @@ bash setup.sh
         + Once the APK is generated android studio will notify with the location of APK, 
              generally in release folder 
 
+## Code Coverage
+
+```bash
+./gradlew jacocoTestReport
+```
+
+Prints coverage to the console and writes HTML to `app/build/reports/jacoco/jacocoTestReport/html/index.html`.
+
 ## Filing Issues
 
-If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.  
+If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.
 
 ## Join Our Community
 
 We’d love to have you join our community discussions and get real-time support!  
-Join our [Discord server](https://discord.gg/FVQWsf5ENS) to connect with contributors, ask questions, and stay updated.  
+Join our [Discord server](https://discord.gg/FVQWsf5ENS) to connect with contributors, ask questions, and stay updated.

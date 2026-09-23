@@ -3,7 +3,15 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.cba
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,8 +72,9 @@ class CbacFragment : Fragment() {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.missing_field)).create()
     }
     private var isReferralDialogShown = false
-    var referralForReason = "Suspected NCD Case"
-    var referType = "NCD"
+    var referralForReason = ""
+    var referType  = "NCD"
+    var enumType = "NCD"
 
     private val raAlertDialog by lazy {
         AlertDialog.Builder(requireContext()).setTitle(getString(R.string.alert))
@@ -84,25 +93,58 @@ class CbacFragment : Fragment() {
     private var asreferAlertDialog: AlertDialog? = null
 
     private fun buildAsReferAlertDialog(): AlertDialog {
-        return AlertDialog.Builder(requireContext())
-            .setTitle(referType)
+
+        val title = SpannableString(referType).apply {
+            setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle(title)
             .setMessage(getString(R.string.ncd_refer_alert))
             .setCancelable(true)
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            .setPositiveButton(getString(R.string.yes), null)
+            .setNegativeButton(getString(R.string.no), null)
+            .create()
+
+        dialog.setOnShowListener {
+
+            val yesBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val noBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+            yesBtn.setOnClickListener {
                 dialog.dismiss()
                 showReferralDialog(
                     fragment = this,
                     type = referType,
+                    enumType = enumType,
                     reason = referralForReason,
                     benId = viewModel.benId,
                     cbacId = viewModel.cbacId.toLong(),
                     cbacViewModel = viewModel
                 )
             }
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+
+            noBtn.setOnClickListener {
                 dialog.dismiss()
             }
-            .create()
+
+            // Button style
+            yesBtn.isAllCaps = false
+            noBtn.isAllCaps = false
+
+            yesBtn.setPadding(40, 20, 40, 20)
+            noBtn.setPadding(40, 20, 40, 20)
+
+            yesBtn.setBackgroundResource(R.drawable.bg_button_primary)
+            noBtn.setBackgroundResource(R.drawable.bg_button_secondary)
+        }
+
+        return dialog
     }
 
     private val ast2AlertDialog by lazy {
@@ -129,6 +171,58 @@ class CbacFragment : Fragment() {
     private var dialogAlreadyShown = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        referType = getString(R.string.ncd_referral_type)
+        binding.layoutReferralForm.clPatientInformation.visibility = View.GONE
+        binding.layoutReferralForm.btnSubmit.visibility = View.GONE
+        referViewModel.initFromArgs(
+            benId = viewModel.benId,
+            referralReason = referralForReason,
+            cbacId = viewModel.cbacId.toLong(),
+            referralType = referType
+        )
+        val adapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                referViewModel.updateListOnValueChanged(formId, index)
+                binding.layoutReferralForm.form.rvInputForm.adapter?.notifyDataSetChanged()
+
+
+            }, isEnabled = true
+
+        )
+
+        binding.layoutReferralForm.form.rvInputForm.adapter = adapter
+
+        lifecycleScope.launch {
+           repeatOnLifecycle(Lifecycle.State.STARTED) {
+                referViewModel.formList.collect {
+                    adapter.submitList(it)
+                }
+            }
+        }
+
+        binding.layoutReferralForm.btnSubmit.setOnClickListener {
+            referViewModel.saveForm()
+        }
+
+        referViewModel.state.observe(viewLifecycleOwner) {
+            if (it == NCDReferDialogViewModel.State.SAVE_SUCCESS) {
+
+                val referral = referViewModel.referalCache
+//                cbacViewModel.addReferral(referral)
+
+//                val referralType = CbacViewModel.ReferralType.valueOf(referType)
+//                markReferralCompleted(referralType)
+
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.submit),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+        }
+
+
 
         viewModel.isLeprosySuspected.observe(viewLifecycleOwner) { suspected ->
             if (suspected && isInFillMode &&
@@ -137,8 +231,9 @@ class CbacFragment : Fragment() {
             ) {
                 dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
-                referralForReason = "Suspected Leprosy case"
-                referType = "LEPROSY"
+                referralForReason = getString(R.string.tb_suspected_leprosy_case)
+                referType = getString(R.string.suspected_leprosy_case)
+                enumType = "LEPROSY"
                 asreferAlertDialog = buildAsReferAlertDialog()
                 asreferAlertDialog?.show()
 
@@ -277,9 +372,9 @@ class CbacFragment : Fragment() {
             val totalScore = viewModel.raTotalScore.value
                 ?.substringAfter(": ")
                 ?.toIntOrNull() ?: 0
-            referralForReason = "Suspected NCD Case"
-            referType = "NCD"
-
+            referralForReason = getString(R.string.tb_suspected_ncd_case)
+            referType = getString(R.string.ncd_referral_type)
+            enumType = "NCD"
             handleNcdSusBottomInfoDisplay(totalScore)
 
         }
@@ -566,8 +661,10 @@ class CbacFragment : Fragment() {
                 )
                 ast1AlertDialog.show()*/
                 if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
-                    referralForReason = "Suspected TB case"
-                    referType = "TB"
+                    referralForReason = getString(R.string.tb_suspected_form)
+                    referType = getString(R.string.suspected_tb_case)
+
+                    enumType = "TB"
                     asreferAlertDialog = buildAsReferAlertDialog()
                     asreferAlertDialog?.show()
                 }
@@ -1212,8 +1309,9 @@ class CbacFragment : Fragment() {
         }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
-            referralForReason = "Suspected COPD case"
-            referType = "COPD"
+            referralForReason = getString(R.string.tb_suspected_copd_case)
+            referType = getString(R.string.suspected_copd_case)
+            enumType = "COPD"
             if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
                 asreferAlertDialog = buildAsReferAlertDialog()
                 asreferAlertDialog?.show()
@@ -1248,8 +1346,9 @@ class CbacFragment : Fragment() {
             if (it.substring(it.lastIndexOf(' ') + 1).toInt() > 3) {
                 binding.tvTbMoicVisit.visibility = View.VISIBLE
                 if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.GERIATRIC)) {
-                    referralForReason = "further assessment for depression"
-                    referType = "GERIATRIC"
+                    referralForReason = getString(R.string.further_depression)
+                    referType = getString(R.string.geriatic_case)
+                    enumType = "GERIATRIC"
                     asreferAlertDialog = buildAsReferAlertDialog()
                     asreferAlertDialog?.show()
                 }
@@ -1293,9 +1392,10 @@ class CbacFragment : Fragment() {
 
     fun showDialog() {
 
-            if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.HRP))
-                referralForReason = "Part B2: Women Only – Symptom Present"
-                referType = "HRP"
+            if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.CANCER))
+                referralForReason = getString(R.string.suspected_c_case)
+                referType = getString(R.string.c_cancer)
+        enumType = "CANCER"
         asreferAlertDialog = buildAsReferAlertDialog()
         asreferAlertDialog?.show()
 
@@ -1308,7 +1408,7 @@ class CbacFragment : Fragment() {
 
 
 
-    fun showReferralDialog(
+  /*  fun showReferralDialog(
         fragment: Fragment,
         type: String,
         reason: String,
@@ -1372,6 +1472,99 @@ class CbacFragment : Fragment() {
                 cbacViewModel.addReferral(referral)
 
                 val referralType = CbacViewModel.ReferralType.valueOf(type)
+                cbacViewModel.markReferralCompleted(referralType)
+
+                Toast.makeText(
+                    fragment.requireContext(),
+                    fragment.getString(R.string.submit),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }*/
+
+
+    fun showReferralDialog(
+        fragment: Fragment,
+        type: String,
+        enumType: String,
+        reason: String,
+        benId: Long,
+        cbacId: Long,
+        cbacViewModel: CbacViewModel
+    ) {
+        val dialog = Dialog(fragment.requireContext(), R.style.BottomStyleDialog)
+        val binding = FragmentNewFormBinding.inflate(fragment.layoutInflater)
+        dialog.setContentView(binding.root)
+        dialog.setCancelable(true)
+
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (Resources.getSystem().displayMetrics.heightPixels * 0.60).toInt()
+            )
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+
+        referViewModel.initFromArgs(
+            benId = benId,
+            referralReason = reason,
+            cbacId = cbacId,
+            referralType = type
+        )
+
+        binding.benId.text = benId.toString()
+
+        referViewModel.benName.observe(fragment.viewLifecycleOwner) {
+            binding.tvBenName.text = it
+        }
+
+        referViewModel.benAgeGender.observe(fragment.viewLifecycleOwner) {
+            binding.tvAgeGender.text = it
+        }
+
+        val adapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                referViewModel.updateListOnValueChanged(formId, index)
+                binding.form.rvInputForm.adapter?.notifyDataSetChanged()
+            }, isEnabled = true
+        )
+
+        binding.form.rvInputForm.adapter = adapter
+
+        fragment.lifecycleScope.launch {
+            fragment.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                referViewModel.formList.collect {
+                    adapter.submitList(it)
+                }
+            }
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            val result = binding.form.rvInputForm.adapter?.let {
+                (it as FormInputAdapter).validateInput(resources)
+            }
+             if (result == -1) referViewModel.saveForm()
+
+             else {
+                if (result != null) {
+                    binding.form.rvInputForm.scrollToPosition(result)
+                }
+
+            }
+        }
+
+        referViewModel.state.observe(fragment.viewLifecycleOwner) {
+            if (it == NCDReferDialogViewModel.State.SAVE_SUCCESS) {
+                val referral = referViewModel.referalCache
+                cbacViewModel.addReferral(referral)
+
+                val referralType = CbacViewModel.ReferralType.valueOf(enumType)
                 cbacViewModel.markReferralCompleted(referralType)
 
                 Toast.makeText(

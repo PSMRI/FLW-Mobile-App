@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.network.MalariaConfirmedRequestDTO
 import org.piramalswasthya.sakhi.network.MalariaScreeningDTO
 import org.piramalswasthya.sakhi.network.MalariaScreeningRequestDTO
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import org.piramalswasthya.sakhi.utils.Log
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
@@ -188,16 +189,14 @@ class MalariaRepo @Inject constructor(
 
                         val responseStatusCode = jsonObj.getInt("statusCode")
                         val errorMessage = jsonObj.optString("errorMessage", "")
-                        Timber.d("Pull from amrit tb screening data : $responseStatusCode")
+                        Timber.d("Pull from amrit malaria screening data : $responseStatusCode")
+                        Timber.d("Pull from amrit malaria screening data : ${jsonObj.getString("data")}")
                         when (responseStatusCode) {
                             200 -> {
-                                try {
+
                                     val dataObj = jsonObj.getString("data")
                                     saveMalariaScreeningCacheFromResponse(dataObj)
-                                } catch (e: Exception) {
-                                    Timber.d("TB Screening entries not synced $e")
-                                    return@withContext 0
-                                }
+
 
                                 return@withContext 1
                             }
@@ -234,31 +233,70 @@ class MalariaRepo @Inject constructor(
     }
 
     private suspend fun saveMalariaScreeningCacheFromResponse(dataObj: String): MutableList<MalariaScreeningCache> {
+
         val malariaScreeningList = mutableListOf<MalariaScreeningCache>()
-        val malariaLists: List<MalariaScreeningDTO> = if (dataObj.trimStart().startsWith("[")) {
-            Gson().fromJson(dataObj, Array<MalariaScreeningDTO>::class.java)?.toList() ?: emptyList()
-        } else {
-            val requestDTO = Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
-            requestDTO?.malariaLists ?: emptyList()
-        }
-        malariaLists.forEach { malariaScreeningDTO ->
-            malariaScreeningDTO.caseDate?.let {
-                var tbScreeningCache: MalariaScreeningCache? =
-                    malariaDao.getMalariaScreening(
-                        malariaScreeningDTO.benId,
-                        getLongFromDate(malariaScreeningDTO.caseDate),
-                        getLongFromDate(malariaScreeningDTO.caseDate) - 19_800_000
-                    )
-                if (tbScreeningCache == null) {
-                    benDao.getBen(malariaScreeningDTO.benId)?.let {
-                        malariaDao.saveMalariaScreening(malariaScreeningDTO.toCache())
+
+        val malariaLists: List<MalariaScreeningDTO> =
+            if (dataObj.trimStart().startsWith("[")) {
+                Gson().fromJson(dataObj, Array<MalariaScreeningDTO>::class.java)?.toList()
+                    ?: emptyList()
+            } else {
+                val requestDTO =
+                    Gson().fromJson(dataObj, MalariaScreeningRequestDTO::class.java)
+                requestDTO?.malariaLists ?: emptyList()
+            }
+
+        Timber.d("Total malaria records received = ${malariaLists.size}")
+
+        malariaLists.forEach { dto ->
+
+            try {
+
+                if (dto.screeningDate.isBlank()) {
+                    Timber.e("Skipping record. Empty screeningDate for benId=${dto.benId}")
+                    return@forEach
+                }
+
+                val screeningDateLong = getLongFromDate(dto.screeningDate)
+
+                val existingRecord = malariaDao.getMalariaScreening(
+                    dto.benId,
+                    screeningDateLong,
+                    screeningDateLong - 19_800_000
+                )
+
+                if (existingRecord == null) {
+
+                    val ben = benDao.getBen(dto.benId)
+
+                    if (ben != null) {
+
+                        val cache = dto.toCache()
+
+                        malariaDao.saveMalariaScreening(cache)
+
+                        malariaScreeningList.add(cache)
+
+                        Timber.d(
+                            "Malaria screening saved. benId=${dto.benId}, screeningDate=${dto.screeningDate}"
+                        )
+
+                    } else {
+                        Timber.e("Beneficiary not found. benId=${dto.benId}")
                     }
                 }
+
+            } catch (e: Exception) {
+
+                Timber.e(
+                    e,
+                    "Failed record benId=${dto.benId}, screeningDate=${dto.screeningDate}"
+                )
             }
         }
+
         return malariaScreeningList
     }
-
     private suspend fun saveIRSScreeningCacheFromResponse(dataObj: String): MutableList<IRSRoundScreening> {
         val irsScreeningList = mutableListOf<IRSRoundScreening>()
         var requestDTO = Gson().fromJson(dataObj, IRSScreeningRequestDTO::class.java)

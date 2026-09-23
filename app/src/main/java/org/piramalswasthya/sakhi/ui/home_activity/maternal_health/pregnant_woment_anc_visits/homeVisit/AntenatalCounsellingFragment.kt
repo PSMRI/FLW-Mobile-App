@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentAntenatalCounsellingBinding
 import org.piramalswasthya.sakhi.helpers.getDateFromLong
+import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithAncListDomain
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.getDateStrFromLong
@@ -84,7 +85,7 @@ class AntenatalCounsellingFragment : Fragment() {
     private var hasAnyDangerSign = false
     private var isSelectAllChecked = false
     private var lmpDate :Long? =null
-    private var referralForReason = "Suspected high-risk pregnancy"
+   // private var referralForReason = getString(R.string.str_suspected_high_risk_pregnancy)
     private var referType = "Maternal"
 
     override fun onCreateView(
@@ -163,11 +164,11 @@ class AntenatalCounsellingFragment : Fragment() {
                     benList = selectedBen
                     binding.tvPregnantWomanValue.text = benList.ben.benName
                     binding.tvHusbandValue.text = benList.ben.spouseName
-                    binding.tvAgeValue.text = benList.ben.age
+                    binding.tvAgeValue.text = getLocalizedAge(binding.root.context, benList.ben.dob)// benList.ben.age
                     binding.tvRegDateValue.text = benList.ben.regDate
                     binding.tvPhoneValue.text =benList.ben.mobileNo
                     binding.tvLmpValue.text = benList.lmpString
-                    binding.tvWeeksValue.text = benList.weekOfPregnancy.toString()
+                    binding.tvWeeksValue.text = benList.weeksOfPregnancy.toString()
                     binding.tvEddValue.text = benList.eddString
                     lmpDate = try {
                         if (!benList.lmpString.isNullOrBlank()) {
@@ -187,15 +188,16 @@ class AntenatalCounsellingFragment : Fragment() {
             }
         }
 
+
        // setupSelectAllCheckbox()
 
         if (isViewMode) {
             visitNumber = args.visitNumber
 
             binding.btnSave.isVisible = false
-            binding.tvLastVisitValue.text = visitDate
+            binding.tvLastVisitValue.text = visitDate?:"NA"
             binding.cbSelectAll.isVisible = false
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber, visitNumberString = getVisitNumberString(isViewMode, visitNumber))
             lifecycleScope.launch {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
@@ -227,12 +229,16 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
             }
         } else {
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,visitNumber)
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, todayDate, false, langCode,visitNumber,  visitNumberString = getVisitNumberString(!isViewMode, visitNumber))
 
             lifecycleScope.launch {
                 binding.tvLastVisitValue.text = viewModel.getLastVisitDates(benId)
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
+
+                    schema.sections.orEmpty().flatMap { it.fields.orEmpty() }
+                        .find { it.fieldId == "visit_number" }
+                        ?.let { it.value = getString(R.string.visit, viewModel.visitCount.value + 1) }
 
                     val visibleFields = viewModel.getVisibleFields().toMutableList()
                     val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
@@ -280,7 +286,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
 
                 AntenatalCounsellingViewModel.State.SUCCESS -> {
-
+                    viewModel.resetState()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
 
                     Toast.makeText(
@@ -401,7 +407,8 @@ class AntenatalCounsellingFragment : Fragment() {
             .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
                 if(benList.showAddAnc){
-                navigateToAddAncVisitScreen()}
+                    if (isAdded)
+                        navigateToAddAncVisitScreen()}
                 else
                 {   dialog.dismiss()
                     Toast.makeText(
@@ -409,11 +416,13 @@ class AntenatalCounsellingFragment : Fragment() {
                         getString(R.string.next_anc_visit_due),
                         Toast.LENGTH_SHORT
                     ).show()
-                    findNavController().popBackStack()}
+                    if (isAdded)
+                        findNavController().popBackStack()}
             }
             .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
-                findNavController().popBackStack()
+                if (isAdded)
+                    findNavController().popBackStack()
             }
             .setCancelable(false)
             .show()
@@ -559,22 +568,48 @@ class AntenatalCounsellingFragment : Fragment() {
             .show()
     }
 
+//    private fun navigateToAddAncVisitScreen() {
+//        try {
+//            val nextVisitNumber = if (benList?.anc?.isEmpty() == true) 1 else benList?.anc?.maxOf { it.visitNumber }!! + 1
+//
+//            findNavController().navigate(
+//                AntenatalCounsellingFragmentDirections.actionPwAncCounsellingFormFragmentToPwAncFormFragment(
+//                    benId = benId,
+//                    hhId = benList?.ben?.hhId?.toString() ?: "",
+//                    visitNumber = nextVisitNumber
+//                )
+//            )
+//            NavOptions.Builder()
+//                .setPopUpTo(
+//                    R.id.pwAncCounsellingFormFragment, true
+//                )
+//                .build()
+//        } catch (e: Exception) {
+//            Timber.e(e, "Error navigating to Add ANC Visit screen")
+//            findNavController().popBackStack()
+//        }
+//    }
+
     private fun navigateToAddAncVisitScreen() {
         try {
-            val nextVisitNumber = if (benList?.anc?.isEmpty() == true) 1 else benList?.anc?.maxOf { it.visitNumber }!! + 1
+            val nextVisitNumber =
+                if (benList.anc.isEmpty()) 1
+                else benList.anc.maxOf { it.visitNumber } + 1
+
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.pwAncCounsellingFormFragment, true)
+                .build()
 
             findNavController().navigate(
-                AntenatalCounsellingFragmentDirections.actionPwAncCounsellingFormFragmentToPwAncFormFragment(
-                    benId = benId,
-                    hhId = benList?.ben?.hhId?.toString() ?: "",
-                    visitNumber = nextVisitNumber
-                )
+                AntenatalCounsellingFragmentDirections
+                    .actionPwAncCounsellingFormFragmentToPwAncFormFragment(
+                        benId = benId,
+                        hhId = benList.ben.hhId?.toString() ?: "",
+                        visitNumber = nextVisitNumber
+                    ),
+                navOptions
             )
-            NavOptions.Builder()
-                .setPopUpTo(
-                    R.id.pwAncCounsellingFormFragment, true
-                )
-                .build()
+
         } catch (e: Exception) {
             Timber.e(e, "Error navigating to Add ANC Visit screen")
             findNavController().popBackStack()
@@ -678,5 +713,13 @@ class AntenatalCounsellingFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun getVisitNumberString(viewMode: Boolean, visitNumber: Int): String {
+        return if (!viewMode) {
+            getString(R.string.visit, (viewModel.visitCount.value ?: 0) + 1)
+        } else {
+            getString(R.string.visit, visitNumber)
+        }
     }
 }

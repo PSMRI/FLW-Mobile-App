@@ -135,4 +135,53 @@ class CampaignDateUtilTest {
         )
         assertTrue(CampaignDateUtil.isMonthsCompleted(sixMonthsAgo, 5))
     }
+
+    // --- getYearFromDate fallback branches (parse fails, string heuristics kick in) ---
+
+    @Test
+    fun `getYearFromDate leading-year fallback when parse fails`() {
+        // Invalid month so LocalDate.parse fails for every format, but index 4 is a separator
+        assertEquals(2026, CampaignDateUtil.getYearFromDate("2026-13-45"))
+    }
+
+    @Test
+    fun `getYearFromDate trailing-year fallback when parse fails`() {
+        // Invalid day/month so parse fails; year is the trailing token after last separator
+        assertEquals(2099, CampaignDateUtil.getYearFromDate("45/13/2099"))
+    }
+
+    @Test
+    fun `getYearFromDate returns 0 for short unparseable string`() {
+        assertEquals(0, CampaignDateUtil.getYearFromDate("99-99"))
+    }
+
+    // --- formatDateForDisplay ---
+
+    @Test
+    fun `formatDateForDisplay converts iso to display format`() {
+        assertEquals("25-03-2026", CampaignDateUtil.formatDateForDisplay("2026-03-25"))
+    }
+
+    @Test
+    fun `formatDateForDisplay returns empty for null`() {
+        assertEquals("", CampaignDateUtil.formatDateForDisplay(null))
+    }
+
+    @Test
+    fun `formatDateForDisplay returns empty for blank`() {
+        assertEquals("", CampaignDateUtil.formatDateForDisplay("   "))
+    }
+
+    @Test
+    fun `formatDateForDisplay returns original for unparseable input`() {
+        assertEquals("31-12-2026", CampaignDateUtil.formatDateForDisplay("31-12-2026"))
+    }
+
+    // =====================================================
+    // CampaignDateUtil Tests (extended)
+    // =====================================================
+
+    @Test fun `CampaignDateUtil exists`() {
+        assertNotNull(CampaignDateUtil)
+    }
 }

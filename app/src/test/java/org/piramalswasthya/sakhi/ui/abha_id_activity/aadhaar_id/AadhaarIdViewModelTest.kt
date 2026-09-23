@@ -121,8 +121,9 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setAbha does not throw`() {
+    fun `setAbha updates abhaResponse`() {
         viewModel.setAbha("12-3456-7890-1234")
+        assertEquals("12-3456-7890-1234", viewModel.abhaResponse)
     }
 
     // =====================================================
@@ -197,8 +198,14 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setMobileNumber does not throw`() {
+    fun `setMobileNumber updates mobileNumber`() {
         viewModel.setMobileNumber("9876543210")
+        assertEquals("9876543210", viewModel.mobileNumber)
+    }
+
+    @Test
+    fun `mobileNumber defaults to empty string when unset`() {
+        assertEquals("", viewModel.mobileNumber)
     }
 
     // =====================================================
@@ -206,8 +213,14 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setAadhaarNumber does not throw`() {
+    fun `setAadhaarNumber updates aadhaarNumber`() {
         viewModel.setAadhaarNumber("123456789012")
+        assertEquals("123456789012", viewModel.aadhaarNumber)
+    }
+
+    @Test
+    fun `aadhaarNumber defaults to empty string when unset`() {
+        assertEquals("", viewModel.aadhaarNumber)
     }
 
     // =====================================================
@@ -235,8 +248,14 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setOtpTxnId does not throw`() {
+    fun `setOtpTxnId updates otpTxnId`() {
         viewModel.setOtpTxnId("txn123")
+        assertEquals("txn123", viewModel.otpTxnId)
+    }
+
+    @Test
+    fun `otpTxnId defaults to empty string when unset`() {
+        assertEquals("", viewModel.otpTxnId)
     }
 
     // =====================================================
@@ -244,8 +263,14 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setTxnId does not throw`() {
+    fun `setTxnId updates txnId`() {
         viewModel.setTxnId("txn456")
+        assertEquals("txn456", viewModel.txnId)
+    }
+
+    @Test
+    fun `txnId defaults to empty string when unset`() {
+        assertEquals("", viewModel.txnId)
     }
 
     // =====================================================
@@ -253,8 +278,14 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setOTPMsg does not throw`() {
+    fun `setOTPMsg updates otpMobileNumberMessage`() {
         viewModel.setOTPMsg("OTP sent successfully")
+        assertEquals("OTP sent successfully", viewModel.otpMobileNumberMessage)
+    }
+
+    @Test
+    fun `otpMobileNumberMessage defaults to empty string when unset`() {
+        assertEquals("", viewModel.otpMobileNumberMessage)
     }
 
     // =====================================================
@@ -262,8 +293,34 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     // =====================================================
 
     @Test
-    fun `setSelectedAbhaIndex does not throw`() {
+    fun `setSelectedAbhaIndex updates selectedAbhaIndex`() {
         viewModel.setSelectedAbhaIndex("0")
+        assertEquals("0", viewModel.selectedAbhaIndex)
+    }
+
+    @Test
+    fun `selectedAbhaIndex defaults to empty string when unset`() {
+        assertEquals("", viewModel.selectedAbhaIndex)
+    }
+
+    // =====================================================
+    // aadhaarVerificationTypes Tests
+    // =====================================================
+
+    @Test
+    fun `aadhaarVerificationTypes defaults to first value`() {
+        assertEquals("Aadhaar No", viewModel.aadhaarVerificationTypes.value)
+    }
+
+    // =====================================================
+    // selectedNavToggle Tests
+    // =====================================================
+
+    @Test
+    fun `selectedNavToggle has default value and is settable`() {
+        assertEquals("navHostFragmentAadhaarId", viewModel.selectedNavToggle)
+        viewModel.selectedNavToggle = "otherFragment"
+        assertEquals("otherFragment", viewModel.selectedNavToggle)
     }
 
     // =====================================================

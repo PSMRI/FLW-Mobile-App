@@ -54,11 +54,13 @@ class AdolescentListFragment : Fragment() {
         binding.fabEdit.visibility = View.GONE
         val benAdapter = AdolescentHealthListAdapter(
            AdolescentHealthListAdapter.ClickListener { hhId, benId ->
-               findNavController().navigate(
-                   AdolescentListFragmentDirections.actionAdolescentListFragmentToAdolescentHealthFormFragment(
-                       benId = benId
+               if (findNavController().currentDestination?.id == R.id.adolescentListFragment) {
+                   findNavController().navigate(
+                       AdolescentListFragmentDirections.actionAdolescentListFragmentToAdolescentHealthFormFragment(
+                           benId = benId
+                       )
                    )
-               )
+               }
            }, showBeneficiaries = true, showAbha = true)
         binding.rvAny.adapter = benAdapter
 

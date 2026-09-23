@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="imm_name">নাম</string>
+    <string name="last_vaccination_date">সর্বশেষ টিকাদানের তারিখ</string>
+    <string name="no_of_doses_taken">গৃহীত ডোজের সংখ্যা</string>
+    <string name="current_vaccine_details">বর্তমান টিকার বিবরণ</string>
+    <string name="vaccine_name">টিকার নাম</string>
+    <string name="dose_number">ডোজ নম্বর</string>
+    <string name="expected_date">প্রত্যাশিত তারিখ</string>
+    <string name="vaccination_date">টিকাদানের তারিখ</string>
+    <string name="vaccination_place">টিকাদানের স্থান</string>
+    <string name="vaccinated_place">যেখানে টিকা দেওয়া হয়েছে</string>
+    <string name="vaccinated_by">যিনি টিকা দিয়েছেন</string>
+    <string name="date_of_vaccination">টিকাদানের তারিখ</string>
+    <string name="dose_name">ডোজের নাম</string>
+</resources>

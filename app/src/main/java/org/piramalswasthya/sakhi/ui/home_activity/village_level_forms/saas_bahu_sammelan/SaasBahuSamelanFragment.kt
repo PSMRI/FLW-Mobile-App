@@ -21,6 +21,8 @@ import org.piramalswasthya.sakhi.databinding.FragmentSaasBahuSamelanBinding
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.ui.checkFileSize
 import org.piramalswasthya.sakhi.utils.HelperUtil.getMimeFromUri
+import org.piramalswasthya.sakhi.utils.HelperUtil.showFileLoadedMessage
+import org.piramalswasthya.sakhi.utils.HelperUtil.showImageLoadedMessage
 import org.piramalswasthya.sakhi.work.WorkerUtils
 
 
@@ -71,6 +73,13 @@ class SaasBahuSamelanFragment : Fragment() {
                     return
                 }
                 viewModel.setUploadUriFor(lastFileFormId, uri)
+                if (mime.contains("/pdf")) {
+                    showFileLoadedMessage(requireContext())
+
+                } else {
+                    showImageLoadedMessage(requireContext())
+
+                }
                 (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()
             }
         }
@@ -187,14 +196,14 @@ class SaasBahuSamelanFragment : Fragment() {
         if (place?.value.isNullOrEmpty()) { place?.errorText = getString(R.string.form_input_empty_error); valid = false }
         if (participants?.value.isNullOrEmpty()) { participants?.errorText = getString(R.string.form_input_empty_error); valid = false }
 
-        val uploads = list.filter { it.id in 10..14 }
-        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
-        if (uploadCount < 2) {
-            uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
-            valid = false
-        } else {
-            uploads.forEach { it.errorText = null }
-        }
+//        val uploads = list.filter { it.id in 10..14 }
+//        val uploadCount = uploads.count { !it.value.isNullOrEmpty() }
+//        if (uploadCount < 2) {
+//            uploads.forEach { if (it.value.isNullOrEmpty()) it.errorText = getString(R.string.form_input_empty_error) }
+//            valid = false
+//        } else {
+//            uploads.forEach { it.errorText = null }
+//        }
 
         if (!valid) {
             (binding.form.rvInputForm.adapter as? FormInputAdapter)?.notifyDataSetChanged()

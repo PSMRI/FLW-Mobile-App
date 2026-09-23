@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
+    <org.piramalswasthya.sakhi.utils.SafeNestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/ll_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorOnSecondary"
             android:orientation="vertical"
             android:padding="@dimen/padding_normal">
@@ -296,7 +296,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <include
@@ -340,7 +340,7 @@
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </org.piramalswasthya.sakhi.utils.SafeNestedScrollView>
 
 
 
