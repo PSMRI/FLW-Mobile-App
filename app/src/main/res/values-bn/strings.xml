@@ -1377,6 +1377,8 @@
     <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">আপনার নেটওয়ার্ক সেটিংস পরীক্ষা করুন। সংযোগ পুনরুদ্ধার হলে এই ডায়ালগ স্বয়ংক্রিয়ভাবে বন্ধ হয়ে যাবে।</string>
     <string name="add_spouse">স্ত্রী/স্বামী যোগ করুন</string>
     <string name="would_you_like_to_add_spouse">আপনি কি %1$s-এর %2$s যোগ করতে চান?</string>
+    <string name="add_children_title">সন্তান যোগ করুন</string>
+    <string name="would_you_like_to_add_children">আপনি কি সন্তান যোগ করতে চান?</string>
     <string name="str_wife">স্ত্রী</string>
     <string name="str_husband">স্বামী</string>
     <string name="is_medicine_distributed_yes_no">ওষুধ বিতরণ করা হয়েছে? (হ্যাঁ/না)</string>

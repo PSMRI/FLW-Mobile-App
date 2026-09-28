@@ -1514,6 +1514,8 @@
    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
     <string name="add_spouse">Add Spouse</string>
     <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="add_children_title">Add Children</string>
+    <string name="would_you_like_to_add_children">Would you like to add children?</string>
     <string name="str_wife">Wife</string>
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>

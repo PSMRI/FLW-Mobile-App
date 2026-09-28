@@ -30,6 +30,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -98,6 +99,9 @@ class NewBenRegFragment : Fragment() {
     private var latestTmpUri: Uri? = null
     private var frontViewFileUri: Uri? = null
     private  var backViewFileUri: Uri? = null
+
+    // Post-save spouse/child prompt; kept so repeatOnLifecycle restarts can't stack duplicates
+    private var postSaveDialog: AlertDialog? = null
 
 
     var isFavClick = false
@@ -193,7 +197,7 @@ class NewBenRegFragment : Fragment() {
         }
     }
     private fun showAddSpouseAlert() {
-        if (!isAdded) return
+        if (!isAdded || postSaveDialog?.isShowing == true) return
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
@@ -234,32 +238,35 @@ class NewBenRegFragment : Fragment() {
             }
             dialog.cancel()
         }
-        alertDialog.show()
+        postSaveDialog = alertDialog.show()
     }
 
     private fun showAddSChildAlert() {
+        if (!isAdded || postSaveDialog?.isShowing == true) return
         val alertDialog = MaterialAlertDialogBuilder(requireContext()).setCancelable(false)
 
         // Setting Dialog Title
-        alertDialog.setTitle("Add Children")
+        alertDialog.setTitle(getString(R.string.add_children_title))
 
         // Setting Dialog Message
-        alertDialog.setMessage("Would you like to add children's")
+        alertDialog.setMessage(getString(R.string.would_you_like_to_add_children))
 
         // On pressing Settings button
         alertDialog.setPositiveButton(
-            "Yes"
+            resources.getString(R.string.yes)
         ) { dialog, _ ->
-            val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
-            findNavController().navigate(
-                NewBenRegFragmentDirections.actionNewChildAsBenRegFragment(
-                    hhId = viewModel.hhId,
-                    benId = viewModel.benIdFromArgs,
-                    gender = spouseGender,
-                    selectedBenId = viewModel.SelectedbenIdFromArgs.takeIf { it != 0L } ?: viewModel.benIdFromArgs,
-                    relToHeadId = viewModel.relToHeadId
+            if (isAdded && findNavController().currentDestination?.id == R.id.newBenRegFragment) {
+                val spouseGender = if (viewModel.getBenGender() == Gender.FEMALE) 1 else 2
+                findNavController().navigate(
+                    NewBenRegFragmentDirections.actionNewChildAsBenRegFragment(
+                        hhId = viewModel.hhId,
+                        benId = viewModel.benIdFromArgs,
+                        gender = spouseGender,
+                        selectedBenId = viewModel.SelectedbenIdFromArgs.takeIf { it != 0L } ?: viewModel.benIdFromArgs,
+                        relToHeadId = viewModel.relToHeadId
+                    )
                 )
-            )
+            }
             dialog.dismiss()
         }
 
@@ -267,14 +274,17 @@ class NewBenRegFragment : Fragment() {
         alertDialog.setNegativeButton(
             resources.getString(R.string.no)
         ) { dialog, _ ->
-            try {
-                findNavController().navigateUp()
-            } catch (e:Exception){
-                dialog.cancel()
+            // Only pop this screen; a stale dialog must not pop whatever is on top now
+            if (isAdded && findNavController().currentDestination?.id == R.id.newBenRegFragment) {
+                try {
+                    findNavController().navigateUp()
+                } catch (e:Exception){
+                    dialog.cancel()
+                }
             }
             dialog.cancel()
         }
-        alertDialog.show()
+        postSaveDialog = alertDialog.show()
     }
 
     private fun showSettingsAlert() {
@@ -315,9 +325,11 @@ class NewBenRegFragment : Fragment() {
             .setTitle(getString(R.string.abha_not_created_title))
             .setMessage(getString(R.string.abha_not_created_message))
             .setPositiveButton(getString(R.string.yes_dialog)) { dialog, _ ->
-
-                findNavController().popBackStack(R.id.homeFragment, false)
-                startActivity(Intent(requireActivity(), AbhaIdActivity::class.java))
+                // Dialog can outlive the fragment; nav/activity calls throw once detached
+                if (isAdded) {
+                    findNavController().popBackStack(R.id.homeFragment, false)
+                    startActivity(Intent(requireActivity(), AbhaIdActivity::class.java))
+                }
                 dialog.dismiss()
             }
             .setNegativeButton(getString(R.string.no_dialog)) { dialog, _ ->
@@ -866,6 +878,12 @@ class NewBenRegFragment : Fragment() {
             ) != PackageManager.PERMISSION_GRANTED
         ) requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         else if (!isGPSEnabled) showSettingsAlert()
+    }
+
+    override fun onDestroyView() {
+        postSaveDialog?.dismiss()
+        postSaveDialog = null
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
