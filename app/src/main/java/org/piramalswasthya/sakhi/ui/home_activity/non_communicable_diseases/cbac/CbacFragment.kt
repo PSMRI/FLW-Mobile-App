@@ -779,11 +779,13 @@ class CbacFragment : Fragment() {
                 }, thisYear, thisMonth, thisDay
             )
 
-            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-            viewModel.minDate.observe(viewLifecycleOwner) {
-                datePickerDialog.datePicker.minDate = it
-
-            }
+            // minDate is last CBAC + 365 days, which is in the future when the previous CBAC is
+            // under a year old; the helper keeps it from exceeding maxDate (framework crash).
+            HelperUtil.setSafeDateRange(
+                datePickerDialog.datePicker,
+                viewModel.minDate.value,
+                System.currentTimeMillis()
+            )
             datePickerDialog.show()
             datePickerDialog.setOnDismissListener {
                 HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
