@@ -39,6 +39,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class HouseholdMembersFragment : Fragment() {
@@ -154,7 +155,7 @@ class HouseholdMembersFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 HouseholdMembersFragmentDirections
                     .actionHouseholdMembersFragmentToNewBenRegFragment(
                         hhId = hhId,
@@ -355,7 +356,7 @@ class HouseholdMembersFragment : Fragment() {
             clickListener = BenListAdapter.BenClickListener(
                 { item, hhId, benId, relToHeadId ->
                     routeBenFlow(item, benId) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = benId,
@@ -368,7 +369,7 @@ class HouseholdMembersFragment : Fragment() {
                 },
                 clickedWifeBen = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -382,7 +383,7 @@ class HouseholdMembersFragment : Fragment() {
 
                 },clickedHusbandBen = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -396,7 +397,7 @@ class HouseholdMembersFragment : Fragment() {
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -419,7 +420,7 @@ class HouseholdMembersFragment : Fragment() {
                         showEyeSurgeryBottomSheet(benId, hhId, item.benFullName, item.gender, item.age)
                     }
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
                                 hhId = hhId,
                                 benId = benId,
@@ -580,7 +581,7 @@ class HouseholdMembersFragment : Fragment() {
     private fun navigateToDiseaseForm(benId: Long) {
         when (viewModel.diseaseType) {
             IconDataset.Disease.MALARIA.toString() -> {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections
                         .actionHouseholdMembersFragmentToMalariaFormFragment(
                             benId = benId
@@ -589,7 +590,7 @@ class HouseholdMembersFragment : Fragment() {
             }
 
             IconDataset.Disease.KALA_AZAR.toString() -> {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections
                         .actionHouseholdMembersFragmentToKalaAzarFormFragment(
                             benId = benId
@@ -618,7 +619,7 @@ class HouseholdMembersFragment : Fragment() {
                 benId: Long, hhId: Long, eyeSide: String, isViewMode: Boolean,
                 formDataJson: String?, recordId: Int, benName: String, gender: String, age: String
             ) {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
                         benId = benId, hhId = hhId, eyeSide = eyeSide,
                         isViewMode = isViewMode, formDataJson = formDataJson,

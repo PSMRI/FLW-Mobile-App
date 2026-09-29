@@ -71,6 +71,7 @@ import java.util.Locale
 import java.util.Objects
 import java.util.Timer
 import kotlin.math.max
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -266,7 +267,7 @@ class IncentivesFragment : Fragment() {
 
                         setFragmentResult("records_key", bundle)
 
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             R.id.action_incentivesFragment_to_incentiveDetailFragment
                         )
                     }
