@@ -361,17 +361,12 @@ abstract class InAppDb : RoomDatabase() {
             }
 
 
-             val MIGRATION_65_66 = object : Migration(65, 66) {
-                override fun migrate(database: SupportSQLiteDatabase) {
 
-                    addTBScreeningRiskFactorColumns(database)
-
-                }
-
-             }
 
             val MIGRATION_65_66 = object : Migration(65, 66) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    addTBScreeningRiskFactorColumns(database)
+
                     if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
                         database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
                     }
