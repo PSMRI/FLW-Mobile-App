@@ -120,6 +120,9 @@ class CbacFragment : Fragment() {
 
             yesBtn.setOnClickListener {
                 dialog.dismiss()
+                // The alert lives on the activity window and can still be tapped after this
+                // fragment was popped; inflating the referral form then needs an attached fragment.
+                if (!isAdded) return@setOnClickListener
                 showReferralDialog(
                     fragment = this,
                     type = referType,
@@ -1421,6 +1424,12 @@ class CbacFragment : Fragment() {
 
 
     }
+    override fun onDestroyView() {
+        asreferAlertDialog?.dismiss()
+        asreferAlertDialog = null
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         referViewModel.resetState()
