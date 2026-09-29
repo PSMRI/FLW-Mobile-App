@@ -106,8 +106,8 @@ class IconDataset @Inject constructor(
                 Icon(
                     R.drawable.ic_vaccines,
                     resources.getString(R.string.icon_title_imm),
-                    null,
-                    HomeFragmentDirections.actionNavHomeToImmunizationDueFragment(),
+                    recordsRepo.childrenImmunizationListCount,
+                    HomeFragmentDirections.actionNavHomeToChildImmunizationListFragment(),
                 ),
                 Icon(
                     icon = R.drawable.ic__hrp,

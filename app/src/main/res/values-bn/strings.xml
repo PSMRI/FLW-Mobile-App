@@ -1219,6 +1219,23 @@
         <item>দিন ৪</item>
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+        <item>দিন ৫</item>
+        <item>দিন ৬</item>
+        <item>দিন ৭</item>
+        <item>দিন ৮</item>
+        <item>দিন ৯</item>
+        <item>দিন ১০</item>
+        <item>দিন ১১</item>
+        <item>দিন ১২</item>
+        <item>দিন ১৩</item>
+        <item>দিন ১৪</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>দিন ১</item>
         <item>দিন ২</item>
@@ -1524,4 +1541,24 @@
     <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
     <string name="kp_risk_silica_exposure_silicosis">সিলিকার সংস্পর্শ/সিলিকোসিস</string>
     <string name="kp_risk_other">অন্যান্য</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">এই মাসে দেয়</string>
+    <string name="imm_scheduled_next_month">আগামী মাসেৰ জন্য নিৰ্ধাৰিত</string>
+    <string name="imm_dose_stage">ডোজ পৰ্যায়</string>
+    <string name="imm_select_dose_stage">ডোজ পৰ্যায় নিৰ্বাচন কৰুন</string>
+    <string name="imm_no_match_for_filters">নিৰ্বাচিত ফিল্টাৰেৰ সঙ্গে কোনো সুবিধাভোগী মেলেনি।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d সুবিধাভোগী</item>
+        <item quantity="other">%d সুবিধাভোগী</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">পরবর্তী ফলো-আপ %1$s থেকে উপলব্ধ হবে</string>
+    <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">ফলো-আপৰ তাৰিখ হোম ভিজিটৰ তাৰিখৰ আগৰ হ\'ব নোৱাৰে</string>
+    <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_saved_successfully">ফলো-আপ সফলভাবে সংরক্ষণ করা হয়েছে</string>
+    <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পন্ন হয়েছে! পরবর্তী ভিজিটের স্ক্রিনিং শুরু হচ্ছে।</string>
+    <string name="failed_to_save_follow_up">ফলো-আপ সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
 </resources>

@@ -35,8 +35,8 @@
             android:id="@+id/action_nav_home_to_hrpCasesFragment"
             app:destination="@id/hrpCasesFragment" />
         <action
-            android:id="@+id/action_nav_home_to_immunizationDueFragment"
-            app:destination="@id/immunizationDueTypeFragment" />
+            android:id="@+id/action_nav_home_to_childImmunizationListFragment"
+            app:destination="@id/childImmunizationListFragment" />
         <action
             android:id="@+id/action_nav_home_to_ncdFragment"
             app:destination="@id/ncdFragment" />
@@ -1026,6 +1026,10 @@
             android:name="lastItemClick"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="visitId"
+            app:argType="integer"
+            android:defaultValue="-1" />
 
         <action
             android:id="@+id/action_pwAncCounsellingFormFragment_to_pwAncFormFragment"
@@ -1122,6 +1126,9 @@
         <action
             android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
             app:destination="@id/TBConfirmedFormFragment"/>
+        <action
+            android:id="@+id/action_TBConfirmedListFragment_to_TBScreeningListFragment"
+            app:destination="@id/TBScreeningListFragment" />
     </fragment>
     <fragment
         android:id="@+id/TBConfirmedFormFragment"

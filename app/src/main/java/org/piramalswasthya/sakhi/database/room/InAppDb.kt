@@ -370,6 +370,14 @@ abstract class InAppDb : RoomDatabase() {
 
              }
 
+            val MIGRATION_65_66 = object : Migration(65, 66) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
+                        database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+                    }
+                }
+            }
+
             val MIGRATION_64_65 = object : Migration(64, 65) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("DROP VIEW IF EXISTS `BEN_BASIC_CACHE`")

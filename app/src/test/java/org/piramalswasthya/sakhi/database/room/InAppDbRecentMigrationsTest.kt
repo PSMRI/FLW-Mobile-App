@@ -83,6 +83,24 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_65_66 adds the occupational exposure other column to cbac`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_65_66", db)
+
+        assertExecuted("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+    }
+
+    @Test
+    fun `MIGRATION_65_66 skips the column when it already exists`() {
+        val db = mockDb(columns = listOf("cbac_occupational_exposure_other"))
+
+        invokeMigration("MIGRATION_65_66", db)
+
+        assertNotExecuted("ALTER TABLE CBAC")
+    }
+
+    @Test
     fun `MIGRATION_63_64 adds sanitary napkin column to adolescent health`() {
         val db = mockDb()
 

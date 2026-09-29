@@ -18,8 +18,10 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
@@ -39,6 +41,8 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
 
     @MockK private lateinit var context: Context
     @MockK private lateinit var mockResources: Resources
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     @Before
     override fun setUp() {
@@ -795,5 +799,52 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         d.mapValues(cache, 1)
 
         verify { cache.numPrevPregnancy = null }
+    }
+
+    @Test
+    fun `negative blood group auto sets rh negative to yes on mitanin only`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val rhIndex = d.getIndexOfRhNegative()
+        assertTrue(rhIndex >= 0)
+
+        d.setValueById(10, "opt1")
+        d.updateList(10, 1)
+
+        if (isMitanin) {
+            assertEquals("opt0", d.listFlow.value[rhIndex].value)
+        } else {
+            assertNull(d.listFlow.value[rhIndex].value)
+        }
+    }
+
+    @Test
+    fun `positive blood group clears rh negative on mitanin only`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val rhIndex = d.getIndexOfRhNegative()
+        assertTrue(rhIndex >= 0)
+
+        d.setValueById(10, "opt3")
+        d.updateList(10, 3)
+        d.setValueById(10, "opt0")
+        d.updateList(10, 0)
+
+        assertNull(d.listFlow.value[rhIndex].value)
+    }
+
+    @Test
+    fun `every negative blood group position sets rh negative on mitanin`() = runTest {
+        Konstants.negativeBloodGroupPositions.forEach { position ->
+            val d = ds()
+            d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+            val rhIndex = d.getIndexOfRhNegative()
+
+            d.setValueById(10, "opt$position")
+            d.updateList(10, position)
+
+            val expected = if (isMitanin) "opt0" else null
+            assertEquals(expected, d.listFlow.value[rhIndex].value)
+        }
     }
 }

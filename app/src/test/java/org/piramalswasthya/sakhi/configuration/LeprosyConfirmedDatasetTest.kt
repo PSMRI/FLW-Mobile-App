@@ -56,6 +56,14 @@ class LeprosyConfirmedDatasetTest : BaseViewModelTest() {
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { mockResources.getString(any(), any(), any()) } returns "x"
+        every { mockResources.getString(R.string.follow_up_date_is_required) } returns "Follow-up date is required"
+        every { mockResources.getString(R.string.follow_up_date_cannot_be_in_the_future) } returns "Follow-up date cannot be in the future"
+        every { mockResources.getString(R.string.follow_up_date_cannot_be_before_home_visit_date) } returns "Follow-up date cannot be before home visit date"
+        every { mockResources.getString(R.string.treatment_status_is_required) } returns "Treatment status is required"
+        every { mockResources.getString(R.string.treatment_end_date_is_required_when_treatment_status_is_completed) } returns
+                "Treatment end date is required when treatment status is completed"
+        every { mockResources.getString(R.string.next_follow_up_will_be_available_from, any()) } returns
+                "Next follow-up will be available from 01-01-2026"
     }
 
     @Test

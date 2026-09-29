@@ -1341,6 +1341,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+        <item>Day 5</item>
+        <item>Day 6</item>
+        <item>Day 7</item>
+        <item>Day 8</item>
+        <item>Day 9</item>
+        <item>Day 10</item>
+        <item>Day 11</item>
+        <item>Day 12</item>
+        <item>Day 13</item>
+        <item>Day 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>Day 1</item>
         <item>Day 2</item>
@@ -1711,5 +1728,25 @@
 
 
 
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
+    <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">Follow-up date cannot be before home visit date</string>
+    <string name="treatment_status_is_required">Treatment status is required</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">Treatment end date is required when treatment status is completed</string>
+    <string name="follow_up_date_is_required">Follow-up date is required</string>
+    <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
+    <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
+    <string name="failed_to_save_follow_up">Failed to save follow-up</string>
 </resources>
 

@@ -182,7 +182,7 @@ interface AmritApiService {
     ): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/getAll")
-    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedNewRequest): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
@@ -471,7 +471,7 @@ interface AmritApiService {
     @POST("flw-api/maternalCare/ancVisit/counselling/saveAll")
     suspend fun  submitFromANC(
         @Body request: List<FormSubmitRequest>
-    ): Response<Unit>
+    ): Response<com.google.gson.JsonElement>
 
 
     @POST("flw-api/child-care/hbycVisit/getAll")

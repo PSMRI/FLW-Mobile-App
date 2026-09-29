@@ -147,9 +147,12 @@ class TBConfirmedViewModelTest : BaseViewModelTest() {
     )
 
     private fun fillMandatoryFields(vm: TBConfirmedViewModel) {
-        val followUpDateValue = vm.formList.value.first { it.id == 2 }.value
+        val treatmentStartDate = vm.formList.value.first { it.id == 2 }
+        treatmentStartDate.value = todayDateString()
+        vm.updateListOnValueChanged(treatmentStartDate.id, -1)
+        testDispatcher.scheduler.advanceUntilIdle()
         vm.formList.value.first { it.id == 1 }.value = "opt0"
-        vm.formList.value.first { it.id == 4 }.value = followUpDateValue
+        vm.formList.value.first { it.id == 4 }.value = treatmentStartDate.value
     }
 
     // TBConfirmedViewModel.saveForm() nests withContext(Dispatchers.Default) inside

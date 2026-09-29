@@ -688,6 +688,23 @@
         <item>দিন ৪</item>
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+        <item>দিন ৫</item>
+        <item>দিন ৬</item>
+        <item>দিন ৭</item>
+        <item>দিন ৮</item>
+        <item>দিন ৯</item>
+        <item>দিন ১০</item>
+        <item>দিন ১১</item>
+        <item>দিন ১২</item>
+        <item>দিন ১৩</item>
+        <item>দিন ১৪</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>দিন ১</item>
         <item>দিন ২</item>
@@ -1539,4 +1556,24 @@
     <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
     <string name="kp_risk_silica_exposure_silicosis">সিলিকাৰ সংস্পৰ্শ/সিলিকোছিছ</string>
     <string name="kp_risk_other">অন্যান্য</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">এই মাহত দেয়</string>
+    <string name="imm_scheduled_next_month">পৰৰ মাহৰ বাবে নিৰ্ধাৰিত</string>
+    <string name="imm_dose_stage">ডোছ পৰ্যায়</string>
+    <string name="imm_select_dose_stage">ডোছ পৰ্যায় বাছক</string>
+    <string name="imm_no_match_for_filters">বাছনি কৰা ফিল্টাৰৰ সৈতে কোনো হিতাধিকাৰী মিলা নাই।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d হিতাধিকাৰী</item>
+        <item quantity="other">%d হিতাধিকাৰী</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">পৰৱৰ্তী ফলো-আপ %1$s ৰ পৰা উপলব্ধ হ\'ব</string>
+    <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">ফলো-আপৰ তাৰিখ হোম ভিজিটৰ তাৰিখৰ আগৰ হ\'ব নোৱাৰে</string>
+    <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_saved_successfully">ফ’ল’-আপ সফলভাৱে সংৰক্ষণ কৰা হৈছে</string>
+    <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পূৰ্ণ হৈছে! পৰৱৰ্তী ভিজিটৰ স্ক্ৰীনিং আৰম্ভ কৰা হৈছে।</string>
+    <string name="failed_to_save_follow_up">ফ’ল’-আপ সংৰক্ষণ কৰাত বিফল হৈছে</string>
 </resources>

@@ -278,7 +278,7 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
     @Test
     fun `getadolescentHealthCacheFromServer saves new record on inner statusCode 200`() = runTest {
         loggedIn()
-        val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
+        val dtoJson = """[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]"""
         val outer = org.json.JSONObject()
         outer.put("errorMessage", "")
         outer.put("statusCode", 200)
@@ -337,7 +337,7 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
         val outer = org.json.JSONObject()
         outer.put("errorMessage", "")
         outer.put("statusCode", 200)
-        outer.put("data", "not a valid json array")
+        outer.put("data", "[{\"benId\":1,")
         coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
 
         val result = repo.getadolescentHealthCacheFromServer()
@@ -374,7 +374,7 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getadolescentHealthCacheFromServer returns 0 when inner 5000 has no record found`() = runTest {
+    fun `getadolescentHealthCacheFromServer returns -1 when inner 5000 has no record found`() = runTest {
         loggedIn()
         val outer = org.json.JSONObject()
         outer.put("errorMessage", "No record found")
@@ -383,7 +383,7 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
 
         val result = repo.getadolescentHealthCacheFromServer()
 
-        assertEquals(0, result)
+        assertEquals(-1, result)
     }
 
     @Test

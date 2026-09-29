@@ -69,7 +69,7 @@ class DynamicEntityTest {
     // =====================================================
 
     @Test fun `FormSubmitRequest creation`() {
-        val req = FormSubmitRequest("user", "form1", 1L, 2L, "2026-04-14", emptyMap())
+        val req = FormSubmitRequest(null, "user", "form1", 1L, 2L, "2026-04-14", emptyMap())
         assertEquals("user", req.userName)
         assertEquals("form1", req.formId)
         assertEquals(1L, req.beneficiaryId)
@@ -80,22 +80,22 @@ class DynamicEntityTest {
 
     @Test fun `FormSubmitRequest with fields`() {
         val fields = mapOf("name" to "John" as Any?, "age" to 30 as Any?)
-        val req = FormSubmitRequest("user", "form1", 1L, 2L, "2026-04-14", fields)
+        val req = FormSubmitRequest(null, "user", "form1", 1L, 2L, "2026-04-14", fields)
         assertEquals(2, req.fields.size)
         assertEquals("John", req.fields["name"])
         assertEquals(30, req.fields["age"])
     }
 
     @Test fun `FormSubmitRequest copy`() {
-        val req = FormSubmitRequest("user", "form1", 1L, 2L, "date", emptyMap())
+        val req = FormSubmitRequest(null, "user", "form1", 1L, 2L, "date", emptyMap())
         val copy = req.copy(userName = "admin")
         assertEquals("admin", copy.userName)
         assertEquals("form1", copy.formId)
     }
 
     @Test fun `FormSubmitRequest equals`() {
-        val a = FormSubmitRequest("u", "f", 1L, 2L, "d", emptyMap())
-        val b = FormSubmitRequest("u", "f", 1L, 2L, "d", emptyMap())
+        val a = FormSubmitRequest(null, "u", "f", 1L, 2L, "d", emptyMap())
+        val b = FormSubmitRequest(null, "u", "f", 1L, 2L, "d", emptyMap())
         assertEquals(a, b)
     }
 

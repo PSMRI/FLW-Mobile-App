@@ -1144,6 +1144,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>दिन 1</item>
+        <item>दिन 2</item>
+        <item>दिन 3</item>
+        <item>दिन 4</item>
+        <item>दिन 5</item>
+        <item>दिन 6</item>
+        <item>दिन 7</item>
+        <item>दिन 8</item>
+        <item>दिन 9</item>
+        <item>दिन 10</item>
+        <item>दिन 11</item>
+        <item>दिन 12</item>
+        <item>दिन 13</item>
+        <item>दिन 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>दिन 1</item>
         <item>दिन 2</item>
@@ -1500,4 +1517,24 @@
     <string name="kp_risk_tobacco_smoker">तंबाकू/धूम्रपान करने वाला</string>
     <string name="kp_risk_silica_exposure_silicosis">सिलिका के संपर्क में/सिलिकोसिस</string>
     <string name="kp_risk_other">अन्य</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">इस महीने देय</string>
+    <string name="imm_scheduled_next_month">अगले महीने निर्धारित</string>
+    <string name="imm_dose_stage">खुराक चरण</string>
+    <string name="imm_select_dose_stage">खुराक चरण चुनें</string>
+    <string name="imm_no_match_for_filters">चयनित फ़िल्टर से कोई लाभार्थी मेल नहीं खाता।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d लाभार्थी</item>
+        <item quantity="other">%d लाभार्थी</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">अगला फॉलो-अप %1$s से उपलब्ध होगा</string>
+    <string name="follow_up_date_cannot_be_in_the_future">फॉलो-अप की तारीख भविष्य की नहीं हो सकती</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">फॉलो-अप की तारीख होम विजिट की तारीख से पहले नहीं हो सकती</string>
+    <string name="treatment_status_is_required">उपचार की स्थिति आवश्यक है</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">जब उपचार की स्थिति पूर्ण हो, तो उपचार समाप्ति तिथि आवश्यक है</string>
+    <string name="follow_up_date_is_required">फॉलो-अप की तारीख आवश्यक है</string>
+    <string name="follow_up_saved_successfully">फॉलो-अप सफलतापूर्वक सहेजा गया</string>
+    <string name="visit_completed_starting_next_visit_screening">विज़िट पूरी हुई! अगली विज़िट की स्क्रीनिंग शुरू की जा रही है।</string>
+    <string name="failed_to_save_follow_up">फॉलो-अप सहेजने में विफल</string>
 </resources>

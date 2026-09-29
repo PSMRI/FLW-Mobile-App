@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.children
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -32,6 +33,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
@@ -1298,17 +1300,21 @@ class CbacFragment : Fragment() {
                 requireContext(),
                 R.layout.dropdown_item,
                 R.id.tv_dropdown_item_text,
-                resources.getStringArray(R.array.cbac_type_occupational_exposure),
+                resources.getStringArray(Konstants.cbacOccupationalExposureArrayId),
 
 
                 )
         )
+        binding.etExposureOther.doAfterTextChanged {
+            viewModel.setOccExposureOther(it?.toString())
+        }
         binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setFuelType(i)
 
         }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
+            updateExposureOtherVisibility(i + 1)
             referralForReason = getString(R.string.tb_suspected_copd_case)
             referType = getString(R.string.suspected_copd_case)
             enumType = "COPD"
@@ -1321,13 +1327,25 @@ class CbacFragment : Fragment() {
         }
     }
 
+    private fun updateExposureOtherVisibility(posi: Int) {
+        val isOtherSources = posi == Konstants.cbacOtherSourcesPosi
+        binding.tilExposureOther.visibility = if (isOtherSources) View.VISIBLE else View.GONE
+        if (!isOtherSources) binding.etExposureOther.setText("")
+    }
+
     private fun setupRfCopdView(cbac: CbacCache) {
         cbac.cbac_fuel_used_posi.takeIf { it > 0 }?.let {
             binding.actvFuelDropdown.setText(resources.getStringArray(R.array.cbac_type_Cooking_fuel)[it - 1])
         }
         cbac.cbac_occupational_exposure_posi.takeIf { it > 0 }?.let {
-            binding.actvExposureDropdown.setText(resources.getStringArray(R.array.cbac_type_occupational_exposure)[it - 1])
+            val entries = resources.getStringArray(Konstants.cbacOccupationalExposureArrayId)
+            entries.getOrNull(it - 1)?.let { entry ->
+                binding.actvExposureDropdown.setText(entry)
+            }
+            updateExposureOtherVisibility(it)
         }
+        binding.etExposureOther.setText(cbac.cbac_occupational_exposure_other)
+        binding.etExposureOther.isEnabled = false
 
     }
 

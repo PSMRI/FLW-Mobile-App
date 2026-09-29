@@ -868,57 +868,25 @@ fun filterBenHRPTFormList(
     }
 }
 
+/**
+ * Free-text search over the child immunization list: name, mother's name, mobile and the
+ * displayed age.
+ *
+ * FLW-1144 removed a block here that rewrote a Dose Stage label into an age string
+ * ("6 weeks" -> "2 months", "birth dose" -> "1 month" + any age containing "day") and then
+ * substring-matched it against `ben.age`. That was how Dose Stage used to "filter", and it
+ * was wrong twice over: it approximated a dose stage by the child's age, and it matched the
+ * same token against name/mother/mobile, so a name could satisfy a stage filter. Dose Stage
+ * now filters on [VaccineDomain.vaccineCategory] in ChildImmunizationListViewModel, and this
+ * helper does search only.
+ */
 fun filterImmunList(
     list: List<ImmunizationDetailsDomain>,
     text: String
 ): List<ImmunizationDetailsDomain> {
-    val raw = text.trim()
-    if (raw.isEmpty()) return list
-
-    var filterText = raw.lowercase()
-    var alt1 = ""
-    var alt2 = ""
-    var alt3 = ""
-
-    when {
-        filterText.contains("5-6") || filterText.contains("5-6 years") -> {
-            alt1 = "5 years"
-            filterText = "6 years"
-        }
-
-        filterText.contains("16-24") || filterText.contains("16-24 months") -> {
-            alt1 = "1 year"
-            filterText = "2 years"
-        }
-
-        filterText.contains("9-12") || filterText.contains("9-12 months") -> {
-            alt1 = "9 months"
-            alt2 = "10 months"
-            alt3 = "11 months"
-            filterText = "12 months"
-        }
-
-        filterText.contains("6 weeks") -> {
-            alt1 = "1 month"
-            filterText = "2 months"
-        }
-
-        filterText.contains("birth dose") -> {
-            alt1 = "1 day"
-            filterText = "1 month"
-
-            // special case: also match beneficiaries whose age contains "day"
-            return list.filter { imm ->
-                val age = imm.ben.age.lowercase()
-                age.contains("day") || filterForImm(imm, filterText, alt1, alt2, alt3)
-            }
-        }
-
-        filterText.contains("10 weeks") -> filterText = "3 months"
-        filterText.contains("14 weeks") -> filterText = "4 months"
-    }
-
-    return list.filter { filterForImm(it, filterText, alt1, alt2, alt3) }
+    val filterText = text.trim().lowercase()
+    if (filterText.isEmpty()) return list
+    return list.filter { filterForImm(it, filterText) }
 }
 
 fun filterForImm(
@@ -1004,6 +972,44 @@ fun getDateFromLong(time: Long) : Date {
 //    val format = SimpleDateFormat(pattern, Locale.getDefault())
     return date
 }
+
+fun parseHourAndMinute(value: String?): Pair<Int, Int>? {
+    val raw = value?.trim()?.uppercase(Locale.ENGLISH).orEmpty()
+    if (raw.isEmpty()) return null
+
+    val meridiem = when {
+        raw.endsWith("AM") -> "AM"
+        raw.endsWith("PM") -> "PM"
+        else -> null
+    }
+
+    val parts = raw.removeSuffix("AM").removeSuffix("PM").trim().split(":")
+    if (parts.size != 2) return null
+
+    val hour = parts[0].trim().toIntOrNull() ?: return null
+    val minute = parts[1].trim().toIntOrNull() ?: return null
+    if (minute !in 0..59) return null
+
+    return when (meridiem) {
+        "AM" -> if (hour in 1..12) Pair(if (hour == 12) 0 else hour, minute) else null
+        "PM" -> if (hour in 1..12) Pair(if (hour == 12) 12 else hour + 12, minute) else null
+        else -> if (hour in 0..23) Pair(hour, minute) else null
+    }
+}
+
+fun formatTwelveHourTime(hourOfDay: Int, minute: Int): String {
+    val meridiem = if (hourOfDay < 12) "AM" else "PM"
+    val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
+    return String.format(Locale.ENGLISH, "%02d:%02d %s", hour, minute, meridiem)
+}
+
+fun toTwelveHourTime(value: String?): String? =
+    parseHourAndMinute(value)?.let { formatTwelveHourTime(it.first, it.second) }
+
+fun toTwentyFourHourTime(value: String?): String? =
+    parseHourAndMinute(value)?.let {
+        String.format(Locale.ENGLISH, "%02d:%02d", it.first, it.second)
+    }
 fun getPatientTypeByAge(dateOfBirth: Date): String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 

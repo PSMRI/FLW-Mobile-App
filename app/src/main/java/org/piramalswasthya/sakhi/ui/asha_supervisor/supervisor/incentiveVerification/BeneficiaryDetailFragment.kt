@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.BeneficiaryAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.adapter.RejectionReasonAdapter
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.RejectionReason
+import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.isClaimActionable
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ActionState
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.BeneficiaryDetailViewModel
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.BeneficiaryRecordUI
@@ -66,11 +67,14 @@ class BeneficiaryDetailFragment : Fragment() {
         arguments?.getInt("approval_status") ?: 0
     }
 
+    /**
+     * Per-row tick / cross is a Mitanin Trainer flow (BRD §19.3): it needs a per-beneficiary
+     * decision, which only the Mitanin payload carries. Other flavours decide the month as a
+     * whole on [WorkerDetailFragment], so the flavour check here is the feature, not an oversight.
+     */
     private val showRowActions: Boolean
         get() = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true) &&
-                // FLW-1169: OVERDUE stays actionable — the tag never blocks Verify/Reject.
-                workerStatus != "VERIFIED" && workerStatus != "APPROVED" &&
-                workerStatus != "REJECTED"
+                isClaimActionable(workerStatus, workerApprovalStatus)
 
     override fun onCreateView(
         inflater: LayoutInflater,
