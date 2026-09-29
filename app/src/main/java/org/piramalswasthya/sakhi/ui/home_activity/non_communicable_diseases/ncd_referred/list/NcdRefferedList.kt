@@ -65,13 +65,14 @@ class NcdRefferedList : Fragment() {
         binding.filterText.visibility = View.VISIBLE
 
         val benAdapter =
-            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId->
+            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason->
                 if (findNavController().currentDestination?.id == R.id.ncdRefferedList) {
                     findNavController().navigate(
                         NcdRefferedListDirections
                             .actionNcdRefferedListToNCDReferalFormFragment(
                                 benId = benId,
-                                hhId = hhId
+                                hhId = hhId,
+                                referReason = referReason.toString()
                             )
                     )
                 }

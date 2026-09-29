@@ -43,9 +43,16 @@ data class TBScreeningCache(
     var bmi: Boolean? = null,
     var contactWithTBPatient: Boolean? = null,
     var historyOfTBInLastFiveYrs: Boolean? = null,
+    var fatigue: Boolean? = null,
+    var shortBreath: Boolean? = null,
+    var chestPain: Boolean? = null,
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
+    var keyPopulationRiskFactorIds: List<Int>? = null,
+    var keyPopulationRiskFactors: List<String>? = null,
+    var hivStatusId: Int? = null,
+    var hivStatus: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
 ) : FormDataModel {
     fun toDTO(): TBScreeningDTO {
@@ -72,6 +79,13 @@ data class TBScreeningCache(
             sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
             recommandateTest = recommandateTest,
+            keyPopulationRiskFactorIds = keyPopulationRiskFactorIds,
+            keyPopulationRiskFactors = keyPopulationRiskFactors,
+            fatigue = fatigue,
+            shortBreath = shortBreath,
+            chestPain = chestPain,
+            hivStatusId = hivStatusId,
+            hivStatus = hivStatus
 
         )
     }

@@ -3,14 +3,22 @@ package org.piramalswasthya.sakhi.configuration
 import android.content.Context
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.FormElement
+import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.InputType
 import org.piramalswasthya.sakhi.model.TBScreeningCache
+import org.piramalswasthya.sakhi.utils.CommonConstants
 
 class TBScreeningDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
+
+    private var benAgeYears: Int = 0
+
+    private val yesValue get() = resources.getStringArray(R.array.yes_no)[0]
+    private val noValue  get() = resources.getStringArray(R.array.yes_no)[1]
 
     private val symptomaticLabel = FormElement(
         id = 14,
@@ -130,6 +138,13 @@ class TBScreeningDataset(
         required = true,
         hasDependants = false
     )
+
+    private val headingTbHistory = FormElement(
+        id = 14,
+        inputType = InputType.HEADLINE,
+        title = resources.getString(R.string.cbac_histb),
+        required = false
+    )
     private val aSymptomaticLabel = FormElement(
         id = 14,
         inputType = InputType.HEADLINE,
@@ -197,6 +212,85 @@ class TBScreeningDataset(
         hasDependants = false
     )
 
+    private var shortageOfBreath = FormElement(
+        id = 20,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.cbac_breath),
+        entries = resources.getStringArray(R.array.yes_no),
+        doubleStar = false,
+        required = true,
+        hasDependants = false
+    )
+
+    private var fatigue = FormElement(
+        id = 21,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.fatigue),
+        entries = resources.getStringArray(R.array.yes_no),
+        doubleStar = false,
+        required = true,
+        hasDependants = false
+    )
+
+    private var chestPain = FormElement(
+        id = 22,
+        inputType = InputType.RADIO,
+        title = resources.getString(R.string.chestpain),
+        entries = resources.getStringArray(R.array.yes_no),
+        doubleStar = false,
+        required = true,
+        hasDependants = false
+    )
+
+
+    private data class CodedOption(val id: Int, val code: String, val label: String)
+
+    private val riskFactorCodes = CommonConstants.RISK_FACTOR_CODES
+
+    private fun masterRiskFactorOptions(): List<CodedOption> {
+        val labels = resources.getStringArray(R.array.key_population_risk_factor_options)
+        return labels.mapIndexed { index, label ->
+            CodedOption(index + 1, riskFactorCodes.getOrElse(index) { label.uppercase().replace(" ", "_") }, label)
+        }
+    }
+
+    private var isMaleBen: Boolean = false
+    private var isPregnantBen: Boolean = false
+    private var riskFactorOptions: List<CodedOption> = emptyList()
+
+    private val hivStatusOptions: List<CodedOption>
+        get() = listOf(
+            CodedOption(1, "POSITIVE", resources.getString(R.string.positive)),
+            CodedOption(2, "REACTIVE", resources.getString(R.string.reactive)),
+            CodedOption(3, "NEGATIVE", resources.getString(R.string.negative)),
+            CodedOption(4, "UNKNOWN", resources.getString(R.string.unknown))
+        )
+
+    private val riskFactorsHeading = FormElement(
+        id = 17,
+        inputType = InputType.HEADLINE,
+        title = resources.getString(R.string.risk_factors),
+        required = false
+    )
+
+    private val keyPopulationRiskFactors = FormElement(
+        id = 18,
+        inputType = InputType.CHECKBOXES,
+        title = resources.getString(R.string.key_population_risk_factors),
+        entries = emptyArray(),
+        required = true,
+        showAsMultiSelectDialog = true,
+        enableSearchInMultiSelect = true
+    )
+
+    private val hivStatus = FormElement(
+        id = 19,
+        inputType = InputType.DROPDOWN,
+        title = resources.getString(R.string.hiv_status),
+        entries = emptyArray(),
+        required = true
+    )
+
 
     suspend fun setUpPage(ben: BenRegCache?, saved: TBScreeningCache?) {
         val list = mutableListOf(
@@ -208,11 +302,15 @@ class TBScreeningDataset(
             isFever,
             lossOfWeight,
             nightSweats,
+            riseOfFever,
+            lossOfAppetite,
+            chestPain,
+            shortageOfBreath,
+            fatigue,
+            headingTbHistory,
             historyOfTB,
             currentlyTakingDrugs,
             familyHistoryTB,
-            riseOfFever,
-            lossOfAppetite,
             aSymptomaticLabel,
             checkSymptomsLabel1,
             age,
@@ -220,10 +318,41 @@ class TBScreeningDataset(
             tobaccoUser,
             bmi,
             contactWithTBPatient,
-            historyOfTBInLastFiveYrs
+            historyOfTBInLastFiveYrs,
+            riskFactorsHeading,
+            keyPopulationRiskFactors,
+            hivStatus
         )
+
+
+
+        ben?.let {
+            dateOfVisit.min = it.regDate
+            benAgeYears = if (it.dob > 0L) BenBasicCache.getAgeFromDob(it.dob) else it.age
+            isMaleBen = it.gender == Gender.MALE
+            val reproductiveStatus = it.genDetails?.reproductiveStatus
+            isPregnantBen = it.genDetails?.reproductiveStatusId == 1 ||
+                    reproductiveStatus.equals("Yes", ignoreCase = true)
+        }
+        riskFactorOptions = masterRiskFactorOptions().let { all ->
+            if (isMaleBen) all.filter { it.code != "PREGNANCY" && it.code != "LACTATING_MOTHER" } else all
+        }
+        keyPopulationRiskFactors.entries = riskFactorOptions.map { it.label }.toTypedArray()
+        val notApplicableIndex = riskFactorOptions.indexOfFirst { it.code == "NOT_APPLICABLE" }
+        keyPopulationRiskFactors.exclusiveOptionIndices =
+            if (notApplicableIndex >= 0) setOf(notApplicableIndex) else null
+        hivStatus.entries = hivStatusOptions.map { it.label }.toTypedArray()
+
+
         if (saved == null) {
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
+            val pregnancyIndex = riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
+
+            keyPopulationRiskFactors.value = when {
+                isPregnantBen && pregnancyIndex >= 0 -> pregnancyIndex.toString()
+                else -> null
+            }
+            hivStatus.value = null
         } else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
             isCoughing.value =
@@ -289,15 +418,40 @@ class TBScreeningDataset(
                     R.array.yes_no
                 )[1]
 
+            fatigue.value =
+                if (saved.fatigue == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
+                    R.array.yes_no
+                )[1]
+
+            chestPain.value =
+                if (saved.chestPain == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
+                    R.array.yes_no
+                )[1]
+            shortageOfBreath.value =
+                if (saved.shortBreath == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
+                    R.array.yes_no
+                )[1]
+
             historyOfTBInLastFiveYrs.value =
                 if (saved.historyOfTBInLastFiveYrs == true) resources.getStringArray(R.array.yes_no)[0] else resources.getStringArray(
                     R.array.yes_no
                 )[1]
-        }
 
+            val savedIds = saved.keyPopulationRiskFactorIds.orEmpty()
+            val savedCodes = saved.keyPopulationRiskFactors.orEmpty()
+            val selectedIndexes = riskFactorOptions.mapIndexedNotNull { index, option ->
+                val matches = savedIds.contains(option.id) ||
+                        savedCodes.any { it.equals(option.code, true) || it.equals(option.label, true) }
+                if (matches) index else null
+            }
+            keyPopulationRiskFactors.value =
+                if (selectedIndexes.isEmpty()) null else selectedIndexes.sorted().joinToString("|")
 
-        ben?.let {
-            dateOfVisit.min = it.regDate
+            hivStatus.value = hivStatusOptions.firstOrNull {
+                it.id == saved.hivStatusId ||
+                        saved.hivStatus.equals(it.code, true) ||
+                        saved.hivStatus.equals(it.label, true)
+            }?.label
         }
         setUpPage(list)
 
@@ -350,6 +504,20 @@ class TBScreeningDataset(
             }else{
                 form.recommandateTest = "None"
             }
+
+            val selectedRiskFactors = keyPopulationRiskFactors.value
+                ?.split("|")?.mapNotNull { it.toIntOrNull() }
+                ?.mapNotNull { riskFactorOptions.getOrNull(it) }
+                .orEmpty()
+            form.keyPopulationRiskFactorIds = selectedRiskFactors.map { it.id }.takeIf { it.isNotEmpty() }
+            form.keyPopulationRiskFactors = selectedRiskFactors.map { it.code }.takeIf { it.isNotEmpty() }
+
+            val selectedHiv = hivStatusOptions.firstOrNull { it.label == hivStatus.value }
+            form.fatigue = fatigue.value == resources.getStringArray(R.array.yes_no)[0]
+            form.shortBreath = shortageOfBreath.value == resources.getStringArray(R.array.yes_no)[0]
+            form.chestPain = chestPain.value == resources.getStringArray(R.array.yes_no)[0]
+            form.hivStatusId = selectedHiv?.id
+            form.hivStatus = selectedHiv?.code
         }
     }
 

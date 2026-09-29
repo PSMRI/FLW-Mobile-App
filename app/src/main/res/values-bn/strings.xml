@@ -1493,6 +1493,54 @@
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">
     প্রসবের তারিখ শেষ ANC ভিজিটের তারিখের আগে হতে পারে না।
 </string>
+    <string name="risk_factors">ঝুঁকির কারণসমূহ</string>
+    <string name="key_population_risk_factors">মূল জনসংখ্যা / ঝুঁকির কারণসমূহ</string>
+    <string name="positive">পজিটিভ</string>
+    <string name="reactive">রিঅ্যাক্টিভ</string>
+    <string name="negative">নেগেটিভ</string>
+    <string name="hiv_status">এইচআইভি অবস্থা</string>
+    <string name="not_applicable">প্রযোজ্য নয়</string>
+    <string name="fatigue">ক্লান্তি</string>
+    <string name="chestpain">বুকে ব্যথা</string>
+
+    <string name="kp_risk_pregnancy">গর্ভাবস্থা</string>
+    <string name="kp_risk_lactating_mother">স্তন্যদানকারী মা</string>
+    <string name="kp_risk_anti_tnf_treatment">অ্যান্টি-টিএনএফ চিকিৎসা</string>
+    <string name="kp_risk_bronchial_asthma">ব্রঙ্কিয়াল হাঁপানি</string>
+    <string name="kp_risk_cancer">ক্যান্সার</string>
+    <string name="kp_risk_cardiovascular_disorder">কার্ডিওভাসকুলার রোগ</string>
+    <string name="kp_risk_contact_of_known_tb_patients">জানা টিবি রোগীর সংস্পর্শে থাকা ব্যক্তি</string>
+    <string name="kp_risk_copd">সিওপিডি</string>
+    <string name="kp_risk_covid_recovered_patients">কোভিড থেকে সেরে ওঠা রোগী</string>
+    <string name="kp_risk_diabetes">ডায়াবেটিস</string>
+    <string name="kp_risk_dialysis">ডায়ালাইসিস</string>
+    <string name="kp_risk_health_care_worker">স্বাস্থ্যকর্মী</string>
+    <string name="kp_risk_hypertensive">উচ্চ রক্তচাপ</string>
+    <string name="kp_risk_liver_impairment">লিভারের কার্যক্ষমতা হ্রাস</string>
+    <string name="kp_risk_migrant">পরিযায়ী</string>
+    <string name="kp_risk_miner">খনি শ্রমিক</string>
+    <string name="kp_risk_palliative_care">প্যালিয়েটিভ কেয়ার</string>
+    <string name="kp_risk_patient_on_immunosuppressants">ইমিউনোসাপ্রেসেন্ট ওষুধ গ্রহণকারী রোগী</string>
+    <string name="kp_risk_prison">কারাগার</string>
+    <string name="kp_risk_illegal_immigrant">অবৈধ অভিবাসী</string>
+    <string name="kp_risk_renal_impairment">কিডনির কার্যক্ষমতা হ্রাস</string>
+    <string name="kp_risk_transplantation">অঙ্গ প্রতিস্থাপন</string>
+    <string name="kp_risk_urban_slum">শহুরে বস্তি</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">প্রাপ্তবয়স্ক বয়সে বিসিজি টিকার ইতিহাস</string>
+    <string name="kp_risk_undernourished_malnourished">অপুষ্টি (বিএমআই &lt;18.5 কেজি/মি²)</string>
+    <string name="kp_risk_elderly">বয়স্ক (বয়স &gt;60 বছর)</string>
+    <string name="kp_risk_workplace_settings">কর্মস্থল (কয়লা/স্যান্ডব্লাস্টিং/ইটভাটা)</string>
+    <string name="kp_risk_tea_garden_worker">চা-বাগানের শ্রমিক</string>
+    <string name="kp_risk_construction_site_worker">নির্মাণস্থলের শ্রমিক</string>
+    <string name="kp_risk_congregate_settings">একত্রে বসবাসের স্থান</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">নেশামুক্তি কেন্দ্রে আগত ব্যক্তি</string>
+    <string name="kp_risk_indoor_air_pollution">ঘরের ভেতরের বায়ুদূষণের সংস্পর্শে থাকা ব্যক্তি</string>
+    <string name="kp_risk_marginalized_hiv">এইচআইভি ঝুঁকিতে থাকা প্রান্তিক জনগোষ্ঠী</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">মাদকাসক্তি (মদ/ইনজেকশনের মাধ্যমে মাদক গ্রহণকারী)</string>
+    <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
+    <string name="kp_risk_silica_exposure_silicosis">সিলিকার সংস্পর্শ/সিলিকোসিস</string>
+    <string name="kp_risk_other">অন্যান্য</string>
 
     <!-- FLW-1144 Routine Immunization worklist -->
     <string name="imm_due_this_month">এই মাসে দেয়</string>

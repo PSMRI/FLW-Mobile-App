@@ -75,16 +75,20 @@ class NcdReferListAdapterTest {
     }
 
     @Test
-    fun clickListener_invokesLambdaWithBenIdAndHhId() {
+    fun clickListener_invokesLambdaWithBenIdHhIdAndReferReason() {
         var capturedBenId: Long? = null
         var capturedHhId: Long? = null
-        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId ->
+        var capturedReason: String? = null
+        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason ->
             capturedBenId = benId
             capturedHhId = hhId
+            capturedReason = referReason
         }
-        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L))
+        val referral = referalCache(benId = 7L).apply { referralReason = "TB Screening Form" }
+        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L), referral)
         assertEquals(7L, capturedBenId)
         assertEquals(11L, capturedHhId)
+        assertEquals("TB Screening Form", capturedReason)
     }
 
     @Test
@@ -94,7 +98,7 @@ class NcdReferListAdapterTest {
         try {
             val adapter = NcdReferListAdapter(
                 userName = "ASHA",
-                listener = NcdReferListAdapter.NcdReferallickListener { _, _ -> },
+                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _ -> },
                 visible = true
             )
             assertEquals(0, adapter.itemCount)

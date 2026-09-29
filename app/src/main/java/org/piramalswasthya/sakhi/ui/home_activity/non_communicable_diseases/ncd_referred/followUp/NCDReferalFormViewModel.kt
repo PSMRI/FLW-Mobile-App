@@ -1,8 +1,10 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,19 +29,30 @@ import javax.inject.Inject
 @HiltViewModel
 class NCDReferalFormViewModel @Inject constructor(
     private val repository: NCDFollowUpFormRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
     private val _visitHistory = MutableStateFlow<List<NCDReferalFormResponseJsonEntity>>(emptyList())
     val visitHistory: StateFlow<List<NCDReferalFormResponseJsonEntity>> = _visitHistory
 
+    var referReason = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referReason
     var visitNo = 1
     var followUpNo = 0
     var isFollowUpMode = false
     var isViewMode = false
     private var isTreatmentSavedInDb = false
     private val formId = FormConstants.CDTF_001
+
+    private val formIdforTb = FormConstants.Tb_Referral_Follow_Up
+
+    private val isTbForm: Boolean
+        get() = referReason.equals("TB Screening Form", ignoreCase = true) ||
+                referReason.equals("TB Suspected", ignoreCase = true)
+
+    private val activeFormId get() = if (isTbForm) formIdforTb else formId
+
 
     private suspend fun loadVisitHistoryInternal(benId: Long) {
         _visitHistory.value = repository.getAllVisitsByBeneficiary(benId, formId)
@@ -139,8 +152,8 @@ class NCDReferalFormViewModel @Inject constructor(
             resolveNextVisitNumbers()
             resolveTreatmentSavedFlag()
 
-            val schemaDto = repository.getSavedSchema(formId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
-                ?: repository.getFormSchema(formId) ?: return@launch
+            val schemaDto = repository.getSavedSchema(activeFormId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
+                ?: repository.getFormSchema(activeFormId) ?: return@launch
 
             schemaDto.sections.forEach { section ->
                 section.fields.forEach { field ->

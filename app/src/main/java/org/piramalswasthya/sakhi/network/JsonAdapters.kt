@@ -1119,6 +1119,14 @@ data class TBScreeningDTO(
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
+    var keyPopulationRiskFactorIds: List<Int>? = null,
+    var keyPopulationRiskFactors: List<String>? = null,
+    var hivStatusId: Int? = null,
+    var hivStatus: String? = null,
+    var fatigue: Boolean? = null,
+    var shortBreath: Boolean? = null,
+    var chestPain: Boolean? = null,
+
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1143,7 +1151,14 @@ data class TBScreeningDTO(
             sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
             recommandateTest = recommandateTest,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            keyPopulationRiskFactorIds = keyPopulationRiskFactorIds,
+            keyPopulationRiskFactors = keyPopulationRiskFactors,
+            hivStatus = hivStatus,
+            hivStatusId = hivStatusId,
+            fatigue = fatigue,
+            shortBreath = shortBreath,
+            chestPain = chestPain
         )
     }
 }

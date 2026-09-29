@@ -1256,6 +1256,12 @@
         <action
             android:id="@+id/action_cdFragment_to_TBConfirmedListFragment"
             app:destination="@id/TBConfirmedListFragment"/>
+        <action
+            android:id="@+id/action_cdFragment_to_vulnerablePopulationListFragment"
+            app:destination="@id/vulnerablePopulationListFragment"/>
+        <action
+            android:id="@+id/action_cdFragment_to_TPTListFragment"
+            app:destination="@id/TPTListFragment"/>
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"
@@ -2241,6 +2247,10 @@
         <argument
             android:name="hhId"
             app:argType="long" />
+        <argument
+            android:name="referReason"
+            app:argType="string" />
+
 
     </fragment>
     <fragment
@@ -2284,4 +2294,18 @@
             android:id="@+id/action_saasBahuSamelanList_to_saasbahuFormFragment"
             app:destination="@id/saasBahuSamelanFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/vulnerablePopulationListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.vulnerable_population.list.VulnerablePopulationListFragment"
+        android:label="VulnerablePopulationListFragment" >
+
+        <action
+            android:id="@+id/action_vulnerablePopulationListFragment_to_TBScreeningFormFragment"
+            app:destination="@id/TBScreeningFormFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/TPTListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tpt.list.TPTListFragment"
+        android:label="TPTListFragment" />
 </navigation>

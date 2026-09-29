@@ -341,9 +341,32 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+             fun addTBScreeningRiskFactorColumns(database: SupportSQLiteDatabase) {
+                val columns = listOf(
+                    "keyPopulationRiskFactorIds TEXT DEFAULT NULL",
+                    "keyPopulationRiskFactors TEXT DEFAULT NULL",
+                    "hivStatusId INTEGER DEFAULT NULL",
+                    "hivStatus TEXT DEFAULT NULL",
+                    "fatigue INTEGER DEFAULT NULL",
+                    "shortBreath INTEGER DEFAULT NULL",
+                    "chestPain INTEGER DEFAULT NULL"
+
+                )
+                columns.forEach { columnDefinition ->
+                    val columnName = columnDefinition.substringBefore(" ")
+                    if (!columnExists(database, "TB_SCREENING", columnName)) {
+                        database.execSQL("ALTER TABLE TB_SCREENING ADD COLUMN $columnDefinition")
+                    }
+                }
+            }
+
+
+
 
             val MIGRATION_65_66 = object : Migration(65, 66) {
                 override fun migrate(database: SupportSQLiteDatabase) {
+                    addTBScreeningRiskFactorColumns(database)
+
                     if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
                         database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
                     }
