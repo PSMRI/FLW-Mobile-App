@@ -629,9 +629,12 @@ class BlockEditText : FrameLayout {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 val nextView: EditText? = editTexts[index + 1]
                 val prevView: EditText? = editTexts[index - 1]
+                // Moving focus here would end this view's batch edit while its layout still reflects
+                // the old text (IndexOutOfBoundsException in TextView.bringPointIntoView), so hop to
+                // the neighbouring block once the current edit has finished.
                 if (s.length > prevLength && editText.isFocused && editText.selectionStart == getLength(index))
-                    if (s.length == getLength(index) && nextView != null && nextView.text.isEmpty()) nextView.requestFocus()
-                    else if (s.isEmpty() && prevView != null) prevView.requestFocus()
+                    if (s.length == getLength(index) && nextView != null && nextView.text.isEmpty()) nextView.post { nextView.requestFocus() }
+                    else if (s.isEmpty() && prevView != null) prevView.post { prevView.requestFocus() }
                 if (shiftPosition && s.length < getLength(index)) {
                     if (editText.selectionStart == 0 && editText.isFocused && prevView != null) {
                         prevView.requestFocus()
