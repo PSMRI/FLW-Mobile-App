@@ -32,13 +32,14 @@ class NCDReferalFormFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = NCDReferalFormFragmentArgs(benId = 10L, hhId = 20L)
+    private fun args() = NCDReferalFormFragmentArgs(benId = 10L, hhId = 20L, referReason = "TB Screening Form")
 
     @Test
     fun constructor_exposesEveryArgument() {
         val a = args()
         assertEquals(10L, a.benId)
         assertEquals(20L, a.hhId)
+        assertEquals("TB Screening Form", a.referReason)
     }
 
     @Test
@@ -52,6 +53,7 @@ class NCDReferalFormFragmentNavigationTest {
         assertTrue(a.toString().contains("NCDReferalFormFragmentArgs"))
         assertEquals(10L, a.component1())
         assertEquals(20L, a.component2())
+        assertEquals("TB Screening Form", a.component3())
     }
 
     @Test
@@ -67,6 +69,7 @@ class NCDReferalFormFragmentNavigationTest {
         val handle = args().toSavedStateHandle()
         assertEquals(10L, handle.get<Long>("benId"))
         assertEquals(20L, handle.get<Long>("hhId"))
+        assertEquals("TB Screening Form", handle.get<String>("referReason"))
         assertEquals(args(), NCDReferalFormFragmentArgs.fromSavedStateHandle(handle))
     }
 
@@ -79,7 +82,15 @@ class NCDReferalFormFragmentNavigationTest {
 
     @Test
     fun fromSavedStateHandle_throws_whenRequiredArgumentIsNull() {
-        val handle = SavedStateHandle(mapOf<String, Any?>("benId" to null, "hhId" to 20L))
+        val handle = SavedStateHandle(mapOf<String, Any?>("benId" to null, "hhId" to 20L, "referReason" to "x"))
+        assertThrows(IllegalArgumentException::class.java) {
+            NCDReferalFormFragmentArgs.fromSavedStateHandle(handle)
+        }
+    }
+
+    @Test
+    fun fromSavedStateHandle_throws_whenReferReasonIsNull() {
+        val handle = SavedStateHandle(mapOf<String, Any?>("benId" to 10L, "hhId" to 20L, "referReason" to null))
         assertThrows(IllegalArgumentException::class.java) {
             NCDReferalFormFragmentArgs.fromSavedStateHandle(handle)
         }
@@ -90,6 +101,7 @@ class NCDReferalFormFragmentNavigationTest {
         every { bundle.containsKey(any()) } returns true
         every { bundle.getLong("benId") } returns 10L
         every { bundle.getLong("hhId") } returns 20L
+        every { bundle.getString("referReason") } returns "TB Screening Form"
         assertEquals(args(), NCDReferalFormFragmentArgs.fromBundle(bundle))
     }
 
