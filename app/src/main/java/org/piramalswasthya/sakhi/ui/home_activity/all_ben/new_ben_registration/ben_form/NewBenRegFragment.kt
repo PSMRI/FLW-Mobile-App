@@ -693,6 +693,9 @@ class NewBenRegFragment : Fragment() {
     }
 
     private fun hardCodedListUpdate(formId: Int) {
+        // Picker dialogs (age/date) can deliver their value after the view is destroyed; the
+        // ViewModel already has the new value, there is just no list left to refresh.
+        val binding = _binding ?: return
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
                 1008 -> {
