@@ -688,15 +688,15 @@ class BlockEditText : FrameLayout {
                     temp = temp.substring(0, selection) + source + temp.substring(selection)
                     editText.setText(temp.substring(0, mMax))
                     temp = temp.substring(mMax)
-                    if (selection + source.length <= mMax) editText.setSelection(selection + source.length) else {
+                    if (selection + source.length <= mMax) editText.setSelectionSafely(selection + source.length) else {
                         nextView.requestFocus()
-                        nextView.setSelection(0)
+                        nextView.setSelectionSafely(0)
                     }
                     if (temp.isNotEmpty()) {
                         nextView.editableText.insert(0, temp)
                         val nextLength = getLength(index + 1)
-                        nextView.setSelection(if (temp.length < nextLength) temp.length else nextLength)
-                    } else nextView.setSelection(0)
+                        nextView.setSelectionSafely(if (temp.length < nextLength) temp.length else nextLength)
+                    } else nextView.setSelectionSafely(0)
                 }
                 ""
             } else if (keep >= end - start) {
@@ -708,15 +708,15 @@ class BlockEditText : FrameLayout {
                     temp = temp.substring(0, selection) + source + temp.substring(selection)
                     editText.setText(temp.substring(0, mMax))
                     temp = temp.substring(mMax)
-                    if (selection + source.length <= mMax) editText.setSelection(selection + source.length) else {
+                    if (selection + source.length <= mMax) editText.setSelectionSafely(selection + source.length) else {
                         nextView.requestFocus()
-                        nextView.setSelection(0)
+                        nextView.setSelectionSafely(0)
                     }
                     if (temp.isNotEmpty()) {
                         nextView.editableText.insert(0, temp)
                         val nextLength = getLength(index + 1)
-                        nextView.setSelection(if (temp.length < nextLength) temp.length else nextLength)
-                    } else nextView.setSelection(0)
+                        nextView.setSelectionSafely(if (temp.length < nextLength) temp.length else nextLength)
+                    } else nextView.setSelectionSafely(0)
                     return ""
                 }
                 keep += start
@@ -731,6 +731,15 @@ class BlockEditText : FrameLayout {
         }
     }
 
+
+    /**
+     * Inserting overflow into the next block runs that block's own [LengthFilter], which can move or
+     * drop characters, so a cursor position computed from the inserted text can end up past the
+     * block's real length (`setSpan (4 ... 4) ends beyond length 3`). Clamp to what's actually there.
+     */
+    private fun EditText.setSelectionSafely(position: Int) {
+        setSelection(position.coerceIn(0, text.length))
+    }
 
     fun disableCopyPaste() {
         for (i in 0 until editTexts.size()) {
