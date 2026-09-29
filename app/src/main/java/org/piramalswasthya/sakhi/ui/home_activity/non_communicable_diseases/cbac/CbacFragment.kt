@@ -1544,7 +1544,7 @@ class CbacFragment : Fragment() {
             benId = benId,
             referralReason = reason,
             cbacId = cbacId,
-            referralType = type
+            referralType = if (enumType == "COPD" || enumType == "CANCER") "NCD" else enumType
         )
 
         binding.benId.text = benId.toString()
