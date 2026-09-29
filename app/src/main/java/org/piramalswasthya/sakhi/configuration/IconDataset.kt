@@ -769,6 +769,18 @@ class IconDataset @Inject constructor(
             title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
             recordsRepo.tbConfirmedListCount,
             CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
+        ),
+        Icon(
+            icon = R.drawable.ic__abha_logo_v1_24,
+            title = resources.getString(R.string.icon_title_ncd_tbtpreventive_treatment),
+            recordsRepo.tbConfirmedListCount,
+            CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
+        ),
+        Icon(
+            icon = R.drawable.ic_crash,
+            title = resources.getString(R.string.icon_title_ncd_vulnerable_treatment),
+            recordsRepo.tbScreeningRiskfactorListforVulneravilityCount,
+            CdFragmentDirections.actionCdFragmentToVulnerablePopulationListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->

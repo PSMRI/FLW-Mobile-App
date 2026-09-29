@@ -343,6 +343,19 @@ interface BenDao {
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId  and isDeactivate=0 and isDeath=0" + BenListOrder.LIFO)
     fun getAllTbScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithTbScreeningCache>>
 
+
+    @Transaction
+    @Query(
+        "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
+                "INNER JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
+                "WHERE BEN_BASIC_CACHE.villageId = :selectedVillage " +
+                "AND BEN_BASIC_CACHE.isDeactivate = 0 AND BEN_BASIC_CACHE.isDeath = 0 " +
+                "AND TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
+                "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
+                "AND TB_SCREENING.keyPopulationRiskFactors != '[]' " + BenListOrder.LIFO
+    )
+    fun getAllTbScreenedRiskFactorBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
+
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage   and isDeactivate=0 and isDeath=0")
     fun getAllScreeningBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>

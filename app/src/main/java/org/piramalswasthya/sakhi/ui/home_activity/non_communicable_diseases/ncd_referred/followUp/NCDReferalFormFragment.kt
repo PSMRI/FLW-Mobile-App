@@ -40,6 +40,7 @@ class NCDReferalFormFragment : Fragment() {
 
     private var benId = -1L
     private var hhId = -1L
+    private var referReason = ""
 
     private lateinit var formAdapter: FormRendererAdapter
     private lateinit var followUpAdapter: VisitFollowUpAdapter
@@ -111,6 +112,7 @@ class NCDReferalFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         benId = args.benId
         hhId = args.hhId
+        referReason = args.referReason
 
         setupFormRecyclerView()
         setupFollowUpTable()

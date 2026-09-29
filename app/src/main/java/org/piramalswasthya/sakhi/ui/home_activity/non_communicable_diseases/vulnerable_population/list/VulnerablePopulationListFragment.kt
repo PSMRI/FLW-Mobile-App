@@ -1,4 +1,4 @@
-package org.piramalswasthya.sakhi.ui.home_activity.maternal_health.hwc.list
+package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.vulnerable_population.list
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,28 +10,30 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.NcdReferListAdapter
+import org.piramalswasthya.sakhi.adapters.VulnerableListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.databinding.FragmentHwcReferedBinding
-import org.piramalswasthya.sakhi.helpers.EcFilterType
-import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
-import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EcFilterBottomSheetFragment
+import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import javax.inject.Inject
 import kotlin.getValue
 
 @AndroidEntryPoint
-class HwcReferredFragment : Fragment() {
+class VulnerablePopulationListFragment : Fragment() {
+    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
+    private val binding: FragmentDisplaySearchRvButtonBinding
+        get() = _binding!!
 
     @Inject
     lateinit var prefDao: PreferenceDao
-    private val binding: FragmentHwcReferedBinding by lazy {
-        FragmentHwcReferedBinding.inflate(layoutInflater)
-    }
+
+    private val viewModel: VulnerablePopulationViewModel by viewModels()
+
+    private val filterBottomSheet: VulnerableFilterBottomSheet by lazy { VulnerableFilterBottomSheet() }
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
@@ -40,11 +42,12 @@ class HwcReferredFragment : Fragment() {
         viewModel.filterText(lowerValue)
     }
 
-    private val viewModel: HwcReferredViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater, container, false)
+
         return binding.root
     }
 
@@ -53,30 +56,21 @@ class HwcReferredFragment : Fragment() {
 
         binding.btnNextPage.visibility = View.GONE
         binding.filterText.visibility = View.VISIBLE
-        binding.tvSelectedFilter.text = getString(R.string.filter_newest_first)
-        binding.ivFilter.setOnClickListener {
-            EcFilterBottomSheetFragment(viewModel.getCurrentSort()) { selected ->
-                viewModel.setSortFilter(selected)
-                binding.tvSelectedFilter.text = when (selected) {
-                    EcFilterType.NEWEST_FIRST   -> getString(R.string.filter_newest_first)
-                    EcFilterType.OLDEST_FIRST   -> getString(R.string.filter_oldest_first)
-                    EcFilterType.AGE_WISE       -> getString(R.string.filter_age_wise)
-                    EcFilterType.SYNCING_FIRST  -> getString(R.string.filter_syncing_first)
-                    EcFilterType.UNSYNCED_FIRST -> getString(R.string.filter_unsynced_first)
+        val benAdapter = VulnerableListAdapter(
+            VulnerableListAdapter.ClickListener { hhId, benId ->
+                if (findNavController().currentDestination?.id == R.id.vulnerablePopulationListFragment) {
+                    findNavController().navigate(
+                        VulnerablePopulationListFragmentDirections.actionVulnerablePopulationListFragmentToTBScreeningFormFragment(
+                            benId = benId
+                        )
+                    )
                 }
-            }.show(childFragmentManager, "ECFilter")
-        }
-
-//        val benAdapter =
-//            NcdReferListAdapter(viewModel.userName)
-        val benAdapter =
-            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason->
-
-            },false)
+            },
+            viewModel
+        )
         binding.rvAny.adapter = benAdapter
 
-
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -101,6 +95,27 @@ class HwcReferredFragment : Fragment() {
             }
 
         }
+
+        binding.ivFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        binding.ivFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        binding.tvSelectedFilter.setOnClickListener {
+            if (!filterBottomSheet.isVisible)
+                filterBottomSheet.show(childFragmentManager, "ImM")
+        }
+
+        viewModel.selectedFilter.observe(viewLifecycleOwner){
+            if (it!=null){
+                binding.tvSelectedFilter.text = it
+            }
+        }
         binding.searchView.setOnFocusChangeListener { searchView, b ->
             if (b)
                 (searchView as EditText).addTextChangedListener(searchTextWatcher)
@@ -113,18 +128,18 @@ class HwcReferredFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
-                (it as HomeActivity).updateActionBar(
-                    R.drawable.ic__ncd_priority,
-                    getString(R.string.hwc_refer_list)
-                )
-            } else {
-                (it as SupervisorActivity).updateActionBar(
-                    R.drawable.ic__ncd_priority,
-                    getString(R.string.hwc_refer_list)
-                )
-            }
+            (it as HomeActivity).updateActionBar(
+                R.drawable.ic_crash,
+                getString(R.string.icon_title_ncd_vulnerable_treatment)
+            )
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+
 
 }

@@ -1491,4 +1491,52 @@
     <string name="delivery_date_cannot_be_before_last_anc_visit_date">
     প্ৰসৱৰ তাৰিখ শেষৰ ANC ভিজিটৰ তাৰিখতকৈ আগৰ হ\'ব নোৱাৰে।
 </string>
+    <string name="risk_factors">বিপদাশংকাৰ কাৰকসমূহ</string>
+    <string name="key_population_risk_factors">গুৰুত্বপূৰ্ণ জনসংখ্যা / বিপদাশংকাৰ কাৰকসমূহ</string>
+    <string name="positive">পজিটিভ</string>
+    <string name="reactive">ৰিএক্টিভ</string>
+    <string name="negative">নেগেটিভ</string>
+    <string name="hiv_status">এইচআইভি স্থিতি</string>
+    <string name="not_applicable">প্ৰযোজ্য নহয়</string>
+    <string name="fatigue">ভাগৰ</string>
+    <string name="chestpain">বুকুৰ বিষ</string>
+
+    <string name="kp_risk_pregnancy">গৰ্ভাৱস্থা</string>
+    <string name="kp_risk_lactating_mother">স্তন্যদায়ী মাতৃ</string>
+    <string name="kp_risk_anti_tnf_treatment">এণ্টি-টিএনএফ চিকিৎসা</string>
+    <string name="kp_risk_bronchial_asthma">ব্ৰংকিয়েল হাঁপানী</string>
+    <string name="kp_risk_cancer">কেন্সাৰ</string>
+    <string name="kp_risk_cardiovascular_disorder">কাৰ্ডিঅ’ভাস্কুলাৰ ৰোগ</string>
+    <string name="kp_risk_contact_of_known_tb_patients">জ্ঞাত টিবি ৰোগীৰ সংস্পৰ্শত থকা ব্যক্তি</string>
+    <string name="kp_risk_copd">চিঅ’পিডি</string>
+    <string name="kp_risk_covid_recovered_patients">কোভিডৰ পৰা আৰোগ্য হোৱা ৰোগী</string>
+    <string name="kp_risk_diabetes">ডায়েবেটিছ</string>
+    <string name="kp_risk_dialysis">ডায়লাইছিছ</string>
+    <string name="kp_risk_health_care_worker">স্বাস্থ্যকৰ্মী</string>
+    <string name="kp_risk_hypertensive">উচ্চ ৰক্তচাপ</string>
+    <string name="kp_risk_liver_impairment">যকৃতৰ কাৰ্যক্ষমতা হ্ৰাস</string>
+    <string name="kp_risk_migrant">প্ৰব্ৰজনকাৰী</string>
+    <string name="kp_risk_miner">খনি শ্ৰমিক</string>
+    <string name="kp_risk_palliative_care">উপশমমূলক যত্ন</string>
+    <string name="kp_risk_patient_on_immunosuppressants">ইমিউনোছাপ্ৰেছেণ্ট ঔষধ লোৱা ৰোগী</string>
+    <string name="kp_risk_prison">কাৰাগাৰ</string>
+    <string name="kp_risk_illegal_immigrant">অবৈধ প্ৰব্ৰজনকাৰী</string>
+    <string name="kp_risk_renal_impairment">কিডনীৰ কাৰ্যক্ষমতা হ্ৰাস</string>
+    <string name="kp_risk_transplantation">অংগ প্ৰতিস্থাপন</string>
+    <string name="kp_risk_urban_slum">চহৰৰ বস্তি</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">প্ৰাপ্তবয়স্ক অৱস্থাত বিচিজি টিকাকৰণৰ ইতিহাস</string>
+    <string name="kp_risk_undernourished_malnourished">অপুষ্টিত ভোগা (বিএমআই &lt;18.5 কিগ্ৰা/মি²)</string>
+    <string name="kp_risk_elderly">বয়স্ক (বয়স &gt;60 বছৰ)</string>
+    <string name="kp_risk_workplace_settings">কৰ্মস্থান (কয়লা/স্যাণ্ডব্লাষ্টিং/ইটাভাটা)</string>
+    <string name="kp_risk_tea_garden_worker">চাহ বাগানৰ শ্ৰমিক</string>
+    <string name="kp_risk_construction_site_worker">নিৰ্মাণস্থলীৰ শ্ৰমিক</string>
+    <string name="kp_risk_congregate_settings">একেলগে বসবাস কৰা স্থান</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">নিচা মুক্তি কেন্দ্ৰত উপস্থিত থকা ব্যক্তি</string>
+    <string name="kp_risk_indoor_air_pollution">ঘৰৰ ভিতৰৰ বায়ু প্ৰদূষণৰ সংস্পৰ্শত থকা ব্যক্তি</string>
+    <string name="kp_risk_marginalized_hiv">এইচআইভিৰ ঝুঁকিত থকা প্ৰান্তীয় জনগোষ্ঠী</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">মাদকদ্ৰব্যৰ অপব্যৱহাৰ (মদ/ইনজেকশনৰ জৰিয়তে মাদক লোৱা)</string>
+    <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
+    <string name="kp_risk_silica_exposure_silicosis">সিলিকাৰ সংস্পৰ্শ/সিলিকোছিছ</string>
+    <string name="kp_risk_other">অন্যান্য</string>
 </resources>

@@ -9,7 +9,8 @@
     <string name="service_type_dd_block_text">उप जिला</string>
     <string name="service_type_dd_village_text">गांव</string>
     <string name="btn_continue_text">जारी रखें</string>
-
+    <string name="icon_title_ncd_tbtpreventive_treatment">क्षय रोग निवारक उपचार</string>
+    <string name="icon_title_ncd_vulnerable_treatment">सुभेद्य जनसंख्या</string>
     <string name="menu_home">घर</string>
     <string name="menu_home_home">घर</string>
     <string name="menu_home_scheduler">अनुसूचक</string>

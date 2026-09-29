@@ -70,7 +70,7 @@ class PullAdolescentFromWorker @AssistedInject constructor(
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullAdolscentFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullAdolescentFromWorker", "error" to (e.message ?: "Unknown error")))
         }

@@ -10,6 +10,7 @@
     import org.piramalswasthya.sakhi.helpers.getLocalizedAge
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
+    import org.piramalswasthya.sakhi.model.ReferalCache
 
     class NcdReferListAdapter(var userName: String, private val listener: NcdReferallickListener, private val visible: Boolean ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
         BenDiffUtilCallBack
@@ -75,7 +76,7 @@
                 binding.executePendingBindings()
                 binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 binding.btnFollowUp.setOnClickListener {
-                    listener.onClickedFollowUp(item.ben)
+                    listener.onClickedFollowUp(item.ben,item.referalCac)
                 }
                 binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
@@ -94,11 +95,11 @@
 
 
         class NcdReferallickListener(
-            val goToFollowUp: (benId: Long,hhId:Long) -> Unit
+            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?) -> Unit
 
         ) {
-            fun onClickedFollowUp(item: BenBasicDomain) = goToFollowUp(
-                item.benId,item.hhId
+            fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) = goToFollowUp(
+                item.benId,item.hhId,referalCac.referralReason
             )
         }
 

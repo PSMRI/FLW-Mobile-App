@@ -11,7 +11,7 @@
             type="org.piramalswasthya.sakhi.model.BenWithTbScreeningDomain" />
         <variable
             name="clickListener"
-            type="org.piramalswasthya.sakhi.adapters.TbScreeningListAdapter.ClickListener" />
+            type="org.piramalswasthya.sakhi.adapters.VulnerableListAdapter.ClickListener" />
         <variable
             name="father"
             type="Boolean" />
@@ -26,7 +26,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       >
+        >
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_content"

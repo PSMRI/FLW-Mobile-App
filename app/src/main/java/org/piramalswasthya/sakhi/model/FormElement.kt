@@ -43,4 +43,7 @@ data class FormElement(
     val showDrawable: Boolean? = false,
     var secondaryTitle: String? = null,
     var secondaryValue: String? = null,
+    val showAsMultiSelectDialog: Boolean = false,
+    val enableSearchInMultiSelect: Boolean = false,
+    var exclusiveOptionIndices: Set<Int>? = null,
 )

@@ -1617,5 +1617,99 @@
     <string name="incentive_header_activity">Activity</string>
     <string name="incentive_header_no_of_claims">No of Claims</string>
     <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="risk_factors">Risk Factors</string>
+    <string name="key_population_risk_factors">Key Population / Risk Factors</string>
+    <string name="positive">Positive</string>
+    <string name="reactive">Reactive</string>
+    <string name="negative">Negative</string>
+    <string name="hiv_status">HIV Status</string>
+    <string name="not_applicable">Not Applicable</string>
+    <string name="fatigue">fatigue</string>
+    <string name="chestpain">Chest pain</string>
+
+
+    <string name="kp_risk_pregnancy">Pregnancy</string>
+    <string name="kp_risk_lactating_mother">Lactating mother</string>
+    <string name="kp_risk_anti_tnf_treatment">Anti-TNF treatment</string>
+    <string name="kp_risk_bronchial_asthma">Bronchial Asthma</string>
+    <string name="kp_risk_cancer">Cancer</string>
+    <string name="kp_risk_cardiovascular_disorder">Cardiovascular Disorder</string>
+    <string name="kp_risk_contact_of_known_tb_patients">Contact of Known TB Patients</string>
+    <string name="kp_risk_copd">COPD</string>
+    <string name="kp_risk_covid_recovered_patients">COVID recovered patients</string>
+    <string name="kp_risk_diabetes">Diabetes</string>
+    <string name="kp_risk_dialysis">Dialysis</string>
+    <string name="kp_risk_health_care_worker">Health Care Worker</string>
+    <string name="kp_risk_hypertensive">Hypertensive</string>
+    <string name="kp_risk_liver_impairment">Liver Impairment</string>
+    <string name="kp_risk_migrant">Migrant</string>
+    <string name="kp_risk_miner">Miner</string>
+    <string name="kp_risk_palliative_care">Palliative Care</string>
+    <string name="kp_risk_patient_on_immunosuppressants">Patient on immunosuppressants</string>
+    <string name="kp_risk_prison">Prison</string>
+    <string name="kp_risk_illegal_immigrant">Illegal Immigrant</string>
+    <string name="kp_risk_renal_impairment">Renal Impairment</string>
+    <string name="kp_risk_transplantation">Transplantation</string>
+    <string name="kp_risk_urban_slum">Urban Slum</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">H/o Adult BCG Vaccination</string>
+    <string name="kp_risk_undernourished_malnourished">Undernourished / Malnourished (BMI &lt;18.5 kg/m2)</string>
+    <string name="kp_risk_elderly">Elderly (age &gt;60 years)</string>
+    <string name="kp_risk_workplace_settings">Workplace settings (coal/sandblasting/brick kiln)</string>
+    <string name="kp_risk_tea_garden_worker">Tea garden worker</string>
+    <string name="kp_risk_construction_site_worker">Construction site worker</string>
+    <string name="kp_risk_congregate_settings">Congregate settings</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">Attendees of de-addiction centers</string>
+    <string name="kp_risk_indoor_air_pollution">Person exposed to indoor air pollution</string>
+    <string name="kp_risk_marginalized_hiv">Marginalized populations at risk of HIV</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">Substance abuse (alcoholic/intravenous drug users)</string>
+    <string name="kp_risk_tobacco_smoker">Tobacco/smoker</string>
+    <string name="kp_risk_silica_exposure_silicosis">Silica exposure/silicosis</string>
+    <string name="kp_risk_other">Other</string>
+
+    <string-array name="key_population_risk_factor_options">
+        <item>@string/kp_risk_pregnancy</item>
+        <item>@string/kp_risk_lactating_mother</item>
+        <item>@string/kp_risk_anti_tnf_treatment</item>
+        <item>@string/kp_risk_bronchial_asthma</item>
+        <item>@string/kp_risk_cancer</item>
+        <item>@string/kp_risk_cardiovascular_disorder</item>
+        <item>@string/kp_risk_contact_of_known_tb_patients</item>
+        <item>@string/kp_risk_copd</item>
+        <item>@string/kp_risk_covid_recovered_patients</item>
+        <item>@string/kp_risk_diabetes</item>
+        <item>@string/kp_risk_dialysis</item>
+        <item>@string/kp_risk_health_care_worker</item>
+        <item>@string/kp_risk_hypertensive</item>
+        <item>@string/kp_risk_liver_impairment</item>
+        <item>@string/kp_risk_migrant</item>
+        <item>@string/kp_risk_miner</item>
+        <item>@string/kp_risk_palliative_care</item>
+        <item>@string/kp_risk_patient_on_immunosuppressants</item>
+        <item>@string/kp_risk_prison</item>
+        <item>@string/kp_risk_illegal_immigrant</item>
+        <item>@string/kp_risk_renal_impairment</item>
+        <item>@string/kp_risk_transplantation</item>
+        <item>@string/kp_risk_urban_slum</item>
+        <item>@string/kp_risk_ho_adult_bcg_vaccination</item>
+        <item>@string/kp_risk_undernourished_malnourished</item>
+        <item>@string/kp_risk_elderly</item>
+        <item>@string/kp_risk_workplace_settings</item>
+        <item>@string/kp_risk_tea_garden_worker</item>
+        <item>@string/kp_risk_construction_site_worker</item>
+        <item>@string/kp_risk_congregate_settings</item>
+        <item>@string/kp_risk_attendees_of_de_addiction_centers</item>
+        <item>@string/kp_risk_indoor_air_pollution</item>
+        <item>@string/kp_risk_marginalized_hiv</item>
+        <item>@string/kp_risk_lgbtqai</item>
+        <item>@string/kp_risk_substance_abuse</item>
+        <item>@string/kp_risk_tobacco_smoker</item>
+        <item>@string/kp_risk_silica_exposure_silicosis</item>
+        <item>@string/kp_risk_other</item>
+        <item>@string/not_applicable</item>
+    </string-array>
+
+
+
 </resources>
 

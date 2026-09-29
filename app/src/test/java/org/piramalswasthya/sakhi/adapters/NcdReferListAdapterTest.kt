@@ -82,7 +82,7 @@ class NcdReferListAdapterTest {
             capturedBenId = benId
             capturedHhId = hhId
         }
-        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L))
+        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L), item.referalCac)
         assertEquals(7L, capturedBenId)
         assertEquals(11L, capturedHhId)
     }

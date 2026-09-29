@@ -206,7 +206,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 65, exportSchema = false
+    version = 66, exportSchema = false
 )
 
 @TypeConverters(
@@ -341,6 +341,34 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+             fun addTBScreeningRiskFactorColumns(database: SupportSQLiteDatabase) {
+                val columns = listOf(
+                    "keyPopulationRiskFactorIds TEXT DEFAULT NULL",
+                    "keyPopulationRiskFactors TEXT DEFAULT NULL",
+                    "hivStatusId INTEGER DEFAULT NULL",
+                    "hivStatus TEXT DEFAULT NULL",
+                    "fatigue INTEGER DEFAULT NULL",
+                    "shortBreath INTEGER DEFAULT NULL",
+                    "chestPain INTEGER DEFAULT NULL"
+
+                )
+                columns.forEach { columnDefinition ->
+                    val columnName = columnDefinition.substringBefore(" ")
+                    if (!columnExists(database, "TB_SCREENING", columnName)) {
+                        database.execSQL("ALTER TABLE TB_SCREENING ADD COLUMN $columnDefinition")
+                    }
+                }
+            }
+
+
+             val MIGRATION_65_66 = object : Migration(65, 66) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+
+                    addTBScreeningRiskFactorColumns(database)
+
+                }
+
+             }
 
             val MIGRATION_64_65 = object : Migration(64, 65) {
                 override fun migrate(database: SupportSQLiteDatabase) {
@@ -3537,7 +3565,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_61_62,
                         MIGRATION_62_63,
                         MIGRATION_63_64,
-                        MIGRATION_64_65
+                        MIGRATION_64_65,
+                        MIGRATION_65_66
 
 
                     ).build()

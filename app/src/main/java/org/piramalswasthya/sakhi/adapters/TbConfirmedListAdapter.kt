@@ -56,6 +56,9 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
             binding.benWithTb = item
 
+            binding.nikshayLayout.visibility = View.VISIBLE
+            binding.RCHlayout.visibility = View.GONE
+
             binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.INVISIBLE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
@@ -87,7 +90,7 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
             }
 
 
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
