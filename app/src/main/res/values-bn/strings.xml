@@ -1515,4 +1515,5 @@
     <string name="follow_up_saved_successfully">ফলো-আপ সফলভাবে সংরক্ষণ করা হয়েছে</string>
     <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পন্ন হয়েছে! পরবর্তী ভিজিটের স্ক্রিনিং শুরু হচ্ছে।</string>
     <string name="failed_to_save_follow_up">ফলো-আপ সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
+    <string name="speech_to_text_unavailable">এই ডিভাইসে ভয়েস ইনপুট উপলব্ধ নয়</string>
 </resources>

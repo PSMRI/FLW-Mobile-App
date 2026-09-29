@@ -1530,4 +1530,5 @@
     <string name="follow_up_saved_successfully">ফ’ল’-আপ সফলভাৱে সংৰক্ষণ কৰা হৈছে</string>
     <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পূৰ্ণ হৈছে! পৰৱৰ্তী ভিজিটৰ স্ক্ৰীনিং আৰম্ভ কৰা হৈছে।</string>
     <string name="failed_to_save_follow_up">ফ’ল’-আপ সংৰক্ষণ কৰাত বিফল হৈছে</string>
+    <string name="speech_to_text_unavailable">এই ডিভাইচত ভইচ ইনপুট উপলব্ধ নহয়</string>
 </resources>

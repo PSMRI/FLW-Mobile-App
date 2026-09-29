@@ -1656,5 +1656,6 @@
     <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
     <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
     <string name="failed_to_save_follow_up">Failed to save follow-up</string>
+    <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
 </resources>
 
