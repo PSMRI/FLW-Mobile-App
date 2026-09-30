@@ -969,6 +969,8 @@
     <string name="visit_number_label">भ्रमण -%d</string>
     <string name="add_spouse">जीवनसाथी जोड़ें </string>
     <string name="would_you_like_to_add_spouse">क्या आप %1$s के %2$s को जोड़ना चाहते हैं?</string>
+    <string name="add_children_title">बच्चे जोड़ें</string>
+    <string name="would_you_like_to_add_children">क्या आप बच्चों को जोड़ना चाहते हैं?</string>
     <string name="str_wife">पत्नी</string>
     <string name="str_husband">पति</string>
     <string name="is_medicine_distributed_yes_no">क्या दवा वितरित की गई है? (हाँ/नहीं)</string>
@@ -1540,4 +1542,5 @@
     <string name="start_tpt">TPT शुरू करें</string>
     <string name="add_follow_up">फॉलो-अप जोड़ें</string>
     <string name="view_details">विवरण देखें</string>
+    <string name="speech_to_text_unavailable">इस डिवाइस पर वॉइस इनपुट उपलब्ध नहीं है</string>
 </resources>

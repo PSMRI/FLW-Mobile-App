@@ -15,6 +15,7 @@ import dagger.hilt.components.SingletonComponent
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.SakhiApplication
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.NativeLibraryLoader
 import org.piramalswasthya.sakhi.model.NotificationKeys
 import org.piramalswasthya.sakhi.model.notificationEntityFromFcm
 import org.piramalswasthya.sakhi.repositories.NotificationRepository
@@ -45,6 +46,8 @@ class FBMessaging : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        // NotificationRepository opens the SQLCipher DB; skip on an incomplete install
+        if (!NativeLibraryLoader.areRequiredLibrariesAvailable(applicationContext)) return
         val data = remoteMessage.data
         Timber.d("NAVTRACE 0/4 FCM message received: notification=${remoteMessage.notification}, data=$data")
 

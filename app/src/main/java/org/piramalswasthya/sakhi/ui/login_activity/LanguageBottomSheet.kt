@@ -14,13 +14,20 @@ import org.piramalswasthya.sakhi.databinding.BottomSheetLanguageBinding
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.Language
 
+// Defaults give the class the no-arg constructor FragmentManager needs to re-create it after
+// process death; the callback can't survive that, so a re-created sheet just closes itself.
 class LanguageBottomSheet(
-    private val currentLanguage: Languages,
-    private val onLanguageSelected: (Language) -> Unit
+    private val currentLanguage: Languages = Languages.ENGLISH,
+    private val onLanguageSelected: ((Language) -> Unit)? = null
 ) : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetLanguageBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (onLanguageSelected == null) dismissAllowingStateLoss()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -37,7 +44,7 @@ class LanguageBottomSheet(
                 if (selected.isSelected) {
                     dismiss()
                 } else {
-                    onLanguageSelected(selected)
+                    onLanguageSelected?.invoke(selected)
                     dismiss()
                 }
             }

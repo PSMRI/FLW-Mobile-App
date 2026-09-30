@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form
 
+import android.database.sqlite.SQLiteConstraintException
 import android.content.Context
 import android.net.Uri
 import android.os.CountDownTimer
@@ -407,7 +408,7 @@ class NewBenRegViewModel @Inject constructor(
                     }
 
 
-                    if (relToHeadId == 8 || relToHeadId == 9) {
+                    if (relToHeadId == 8 || relToHeadId == 9) try {
                         val benForEcr =
                             benRepo.getBeneficiaryRecord(selectedBeneficiaryIdForEcr, hhId)
                         benForEcr?.let { childBen ->
@@ -472,9 +473,17 @@ class NewBenRegViewModel @Inject constructor(
                                 }
                             }
                         }
+                    } catch (e: SQLiteConstraintException) {
+                        // The sync worker can swap the mother's temporary benId for the server id
+                        // between the read above and this write (FK on ELIGIBLE_COUPLE_REG.benId);
+                        // the child itself is already saved, so don't fail the whole form.
+                        Timber.e(e, "Updating mother's EC record for new child failed")
                     }
 
                     _state.postValue(State.SAVE_SUCCESS)
+                } catch (e: Exception) {
+                    Timber.d("saving Ben data failed!! $e")
+                    _state.postValue(State.SAVE_FAILED)
                 } catch (e: IllegalAccessError) {
                     Timber.d("saving Ben data failed!! $e")
                     _state.postValue(State.SAVE_FAILED)

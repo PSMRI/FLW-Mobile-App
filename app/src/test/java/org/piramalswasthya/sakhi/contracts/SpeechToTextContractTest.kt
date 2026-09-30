@@ -7,10 +7,14 @@ import android.speech.RecognizerIntent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
+import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
+import android.content.ComponentName
+import android.widget.Toast
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
@@ -91,5 +95,24 @@ class SpeechToTextContractTest {
         val result = contract.parseResult(Activity.RESULT_OK, null)
 
         assertEquals("", result)
+    }
+
+    @Test
+    fun getSynchronousResult_isNull_whenARecognizerExists_soTheIntentLaunches() {
+        every { anyConstructed<Intent>().resolveActivity(any()) } returns mockk<ComponentName>()
+
+        assertNull(contract.getSynchronousResult(context, Unit))
+    }
+
+    @Test
+    fun getSynchronousResult_returnsEmptyResult_whenNoRecognizerIsInstalled() {
+        every { anyConstructed<Intent>().resolveActivity(any()) } returns null
+        mockkStatic(Toast::class)
+        every { Toast.makeText(any(), any<Int>(), any()) } returns mockk(relaxed = true)
+
+        val result = contract.getSynchronousResult(context, Unit)
+
+        assertEquals("", result?.value)
+        verify { Toast.makeText(context, any<Int>(), Toast.LENGTH_SHORT) }
     }
 }

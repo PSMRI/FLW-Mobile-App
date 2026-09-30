@@ -47,6 +47,7 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         every { Log.d(any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         every { database.benDao } returns benDao
+        coEvery { referalDao.getReferralType(any(), any()) } returns null
         repo = NcdReferalRepo(referalDao, preferenceDao, userRepo, amritApiService, database)
     }
 
