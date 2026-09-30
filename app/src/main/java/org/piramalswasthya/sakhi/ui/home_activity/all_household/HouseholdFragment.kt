@@ -29,13 +29,20 @@ class HouseholdFragment : Fragment() {
 
     private val viewModel: HouseholdViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
-    private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = RvIconGridBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
