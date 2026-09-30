@@ -23,6 +23,9 @@
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">পরিদর্শনের তারিখ</string>
     <string name="case_date">ম্যালেরিয়া স্ক্রিনিংয়ের তারিখ</string>
+    <string name="start_tpt">TPT শুরু করুন</string>
+    <string name="add_follow_up">ফলো-আপ যোগ করুন</string>
+    <string name="view_details">বিস্তারিত দেখুন</string>
     <string name="start_t_date">চিকিৎসা শুরুর তারিখ</string>
     <string name="treatment_given">প্রদত্ত চিকিৎসা</string>
     <string name="aes_submitted">AES/JS ফর্ম জমা দেওয়া হয়েছে</string>

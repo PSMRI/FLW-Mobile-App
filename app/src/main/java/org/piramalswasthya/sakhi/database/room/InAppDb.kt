@@ -65,6 +65,8 @@ import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
@@ -127,6 +129,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
@@ -203,10 +207,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
         TBConfirmedTreatmentCache::class,
+        TBReferralFollowUpEntity::class,
+        TPTFollowUpEntity::class,
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 66, exportSchema = false
+    version = 68, exportSchema = false
 )
 
 @TypeConverters(
@@ -261,6 +267,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
+    abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
 
@@ -370,6 +378,52 @@ abstract class InAppDb : RoomDatabase() {
                     if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
                         database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
                     }
+                }
+            }
+
+            val MIGRATION_66_67 = object : Migration(66, 67) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `tb_referral_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`referredOnDate` TEXT NOT NULL, " +
+                                "`followUpDate` TEXT NOT NULL, " +
+                                "`followUpStatus` TEXT, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_referral_follow_up_benId_followUpDate` " +
+                                "ON `tb_referral_follow_up` (`benId`, `followUpDate`)"
+                    )
+                }
+            }
+
+            val MIGRATION_67_68 = object : Migration(67, 68) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `tb_tpt_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`visitNo` INTEGER NOT NULL, " +
+                                "`followUpNo` INTEGER NOT NULL, " +
+                                "`treatmentType` TEXT, " +
+                                "`treatmentStartDate` TEXT, " +
+                                "`followUpDate` TEXT, " +
+                                "`formId` TEXT NOT NULL, " +
+                                "`version` INTEGER NOT NULL, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_tpt_follow_up_benId_visitNo_followUpNo` " +
+                                "ON `tb_tpt_follow_up` (`benId`, `visitNo`, `followUpNo`)"
+                    )
                 }
             }
 
@@ -3569,7 +3623,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_62_63,
                         MIGRATION_63_64,
                         MIGRATION_64_65,
-                        MIGRATION_65_66
+                        MIGRATION_65_66,
+                        MIGRATION_66_67,
+                        MIGRATION_67_68
 
 
                     ).build()

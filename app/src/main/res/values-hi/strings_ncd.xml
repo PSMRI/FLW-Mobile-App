@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="referred_on">रेफर करने की तारीख</string>
     <string name="cbac_ask_pat">पूछें कि क्या रोगी को इनमें से कोई लक्षण है</string>
     <string name="cbac_early_detection">भाग B1: प्रारंभिक पहचान</string>
     <string name="cbac_early_detection_2">भाग B2: केवल महिलाओं के लिए</string>

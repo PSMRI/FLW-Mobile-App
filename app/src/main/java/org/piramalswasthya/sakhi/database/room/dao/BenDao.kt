@@ -1016,7 +1016,7 @@ GROUP BY b.benId
 """ + BenListOrder.LIFO_B)
     fun getBenWithReferredCbac(
         selectedVillage: Int,
-        min: Int = Konstants.minAgeForNcd
+        min: Int = Konstants.minAgeForHWCRefferList
     ): Flow<List<BenWithCbacAndReferalCache>>
 
 
@@ -1031,7 +1031,7 @@ GROUP BY b.benId
 """)
      fun getReferredBenCount(
         selectedVillage: Int,
-        min: Int = Konstants.minAgeForNcd
+        min: Int = Konstants.minAgeForHWCRefferList
     ): Flow<Int>
 
     @Query("""

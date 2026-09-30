@@ -95,11 +95,11 @@
 
 
         class NcdReferallickListener(
-            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?) -> Unit
+            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long) -> Unit
 
         ) {
             fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) = goToFollowUp(
-                item.benId,item.hhId,referalCac.referralReason
+                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate
             )
         }
 

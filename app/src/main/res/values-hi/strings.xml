@@ -1537,4 +1537,7 @@
     <string name="follow_up_saved_successfully">फॉलो-अप सफलतापूर्वक सहेजा गया</string>
     <string name="visit_completed_starting_next_visit_screening">विज़िट पूरी हुई! अगली विज़िट की स्क्रीनिंग शुरू की जा रही है।</string>
     <string name="failed_to_save_follow_up">फॉलो-अप सहेजने में विफल</string>
+    <string name="start_tpt">TPT शुरू करें</string>
+    <string name="add_follow_up">फॉलो-अप जोड़ें</string>
+    <string name="view_details">विवरण देखें</string>
 </resources>

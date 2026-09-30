@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="referred_on">প্ৰেৰণৰ তাৰিখ</string>
     <string-array name="tb_submitted_yet">
         <item>ডিএমচি</item>
         <item>এসচি</item>

@@ -5,6 +5,7 @@ object FormConstants {
     const val CDTF_001 = "CDTF_001"
 
     const val Tb_Referral_Follow_Up = "tb_referral_follow_up"
+    const val TB_TPT_FOLLOW_UP = "tb_tpt_follow_up"
     const val ANC_FORM_ID = "anc_form_001"
     const val CHILDREN_UNDER_FIVE_ORS_FORM_ID = "ors_form_001"
     const val PULSE_POLIO_CAMPAIGN_FORM_ID = "pulse_polio_campaign_form"

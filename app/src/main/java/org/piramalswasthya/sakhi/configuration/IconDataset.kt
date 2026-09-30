@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.getTitleRes
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class IconDataset @Inject constructor(
     private val recordsRepo: RecordsRepo,
+    private val recordsRepoTb: TBReferralFollowUpRepository,
     private val preferenceDao: PreferenceDao,
     private val adolescentHealthRepo: AdolescentHealthRepo
 ) {
@@ -773,8 +775,8 @@ class IconDataset @Inject constructor(
         Icon(
             icon = R.drawable.ic__abha_logo_v1_24,
             title = resources.getString(R.string.icon_title_ncd_tbtpreventive_treatment),
-            recordsRepo.tbConfirmedListCount,
-            CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
+            recordsRepoTb.tptListCount,
+            CdFragmentDirections.actionCdFragmentToTPTListFragment()
         ),
         Icon(
             icon = R.drawable.ic_crash,

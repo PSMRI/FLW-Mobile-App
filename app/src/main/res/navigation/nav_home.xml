@@ -2251,6 +2251,10 @@
             android:name="referReason"
             app:argType="string" />
 
+        <argument
+            android:name="referredDate"
+            app:argType="long" />
+
 
     </fragment>
     <fragment
@@ -2307,5 +2311,24 @@
     <fragment
         android:id="@+id/TPTListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tpt.list.TPTListFragment"
-        android:label="TPTListFragment" />
+        android:label="TPTListFragment">
+        <action
+            android:id="@+id/action_TPTListFragment_to_TPTStartFragment"
+            app:destination="@id/TPTStartFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/TPTStartFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tpt.start.TPTStartFragment"
+        android:label="TPTStartFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <argument
+            android:name="referralFollowUpDate"
+            app:argType="string" />
+    </fragment>
 </navigation>
