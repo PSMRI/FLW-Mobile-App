@@ -206,7 +206,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 66, exportSchema = false
+    version = 67, exportSchema = false
 )
 
 @TypeConverters(
@@ -346,6 +346,20 @@ abstract class InAppDb : RoomDatabase() {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
                         database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+                    }
+                }
+            }
+
+            val MIGRATION_66_67 = object : Migration(66, 67) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "BENEFICIARY", "livingPlace")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN livingPlace TEXT")
+                    }
+                    if (!columnExists(database, "BENEFICIARY", "otherLivingPlace")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN otherLivingPlace TEXT")
+                    }
+                    if (!columnExists(database, "BENEFICIARY", "institutionName")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN institutionName TEXT")
                     }
                 }
             }
@@ -3546,7 +3560,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_62_63,
                         MIGRATION_63_64,
                         MIGRATION_64_65,
-                        MIGRATION_65_66
+                        MIGRATION_65_66,
+                        MIGRATION_66_67
 
 
                     ).build()

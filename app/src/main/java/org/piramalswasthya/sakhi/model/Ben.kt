@@ -1361,7 +1361,13 @@ data class BenRegCache(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
-    var isDeactivate: Boolean =false
+    var isDeactivate: Boolean =false,
+
+    // Non-household beneficiaries are registered against householdId = 0. These
+    // values are optional for ordinary household beneficiaries.
+    var livingPlace: String? = null,
+    var otherLivingPlace: String? = null,
+    var institutionName: String? = null
 
     )  : FormDataModel {
 

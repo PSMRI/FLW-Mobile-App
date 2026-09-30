@@ -211,6 +211,7 @@ interface BenDao {
             OR (:source = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+            OR (:source = 5 AND hhId = 0)
         )
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
@@ -246,6 +247,7 @@ interface BenDao {
             OR (:source = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+            OR (:source = 5 AND hhId = 0)
         )
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
@@ -288,6 +290,7 @@ interface BenDao {
             OR (:source = 4 AND gender = 'Female' AND isDeath = 0
                 AND CAST((strftime('%s','now') - dob/1000)/60/60/24/365 AS INTEGER) BETWEEN 20 AND 49
                 AND (reproductiveStatusId = 1 OR reproductiveStatusId = 2))
+            OR (:source = 5 AND hhId = 0)
         )
         AND (:filterType = 0
             OR (:filterType = 1 AND abhaId IS NOT NULL)
@@ -430,6 +433,9 @@ interface BenDao {
 
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage and isDeactivate=0")
     fun getAllBenCount(selectedVillage: Int): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE villageId = :selectedVillage AND hhId = 0 AND isDeactivate = 0")
+    fun getNonHouseholdBenCount(selectedVillage: Int): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE where villageId = :selectedVillage AND isDeactivate=0 AND abhaId IS NOT NULL")
     fun getAllBenWithAbhaCount(selectedVillage: Int): Flow<Int>

@@ -501,7 +501,7 @@ class BenRepo @Inject constructor(
         benCacheList.forEach {
             benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
             benNetworkPostList.add(it.asNetworkPostModel(context, user))
-            householdDao.getHousehold(it.householdId)?.let { household ->
+            if (it.householdId != 0L) householdDao.getHousehold(it.householdId)?.let { household ->
                 householdNetworkPostList.add(household.asNetworkModel(user))
             }
             try {
