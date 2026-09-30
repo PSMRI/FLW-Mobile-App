@@ -23,16 +23,15 @@ class NonHouseholdLivingFragment : Fragment() {
     @Inject lateinit var householdRepo: HouseholdRepo
     @Inject lateinit var preferenceDao: PreferenceDao
 
-    private val places = listOf(
-        "Footpath", "Railway Platform", "Bus Station", "Prison", "Under a Tree",
-        "In a Temple", "In a Mosque", "In a Church", "Any other Praying place",
-        "Educational Institution (School/College)", "Ekalavya School", "Rehabilitation center",
-        "Orphanage Home", "Old Age Home", "Private Hostel", "Govt Hostel", "NGO's Hostel", "Other"
-    )
-    private val institutionPlaces = setOf(
-        "Educational Institution (School/College)", "Rehabilitation center", "Orphanage Home",
-        "Old Age Home", "Private Hostel", "Govt Hostel", "NGO's Hostel"
-    )
+    private val places by lazy {
+        resources.getStringArray(R.array.non_household_living_places).toList()
+    }
+    private val institutionPlaces by lazy {
+        resources.getStringArray(R.array.non_household_institution_places).toSet()
+    }
+    private val otherLivingPlace by lazy {
+        getString(R.string.non_household_living_other)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View =
         inflater.inflate(R.layout.fragment_non_household_living, container, false)
@@ -52,7 +51,7 @@ class NonHouseholdLivingFragment : Fragment() {
             placeLayout.error = null
             otherLayout.error = null
             institutionLayout.error = null
-            other.visibility = if (selected == "Other") View.VISIBLE else View.GONE
+            other.visibility = if (selected == otherLivingPlace) View.VISIBLE else View.GONE
             institution.visibility = if (selected in institutionPlaces) View.VISIBLE else View.GONE
         }
         view.findViewById<View>(R.id.btn_continue).setOnClickListener {
@@ -64,7 +63,7 @@ class NonHouseholdLivingFragment : Fragment() {
                 placeLayout.error = getString(R.string.form_input_empty_error)
                 return@setOnClickListener
             }
-            if (selected == "Other" && otherText.text.isNullOrBlank()) {
+            if (selected == otherLivingPlace && otherText.text.isNullOrBlank()) {
                 otherLayout.error = getString(R.string.form_input_empty_error)
                 return@setOnClickListener
             }

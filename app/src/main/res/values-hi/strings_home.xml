@@ -18,6 +18,41 @@
     <string name="icon_title_household">सभी घरेलू सूची</string>
     <string name="icon_title_households">घरेलू सूची</string>
     <string name="icon_title_non_households">गैर-घरेलू\nसूची</string>
+    <string name="non_households_title">गैर-घरेलू सूची</string>
+    <string name="non_household_living_title">वर्तमान निवास की जानकारी</string>
+    <string name="non_household_living_description">कृपया लाभार्थी के वर्तमान निवास स्थान का विवरण दें।</string>
+    <string name="place_of_current_living">वर्तमान निवास स्थान *</string>
+    <string name="other_places">अन्य जगहें</string>
+    <string name="name_of_institution">संस्थान का नाम *</string>
+    <string-array name="non_household_living_places">
+        <item>पगडंडी</item>
+        <item>रेलवे प्लेटफ़ार्म</item>
+        <item>बस स्टेशन</item>
+        <item>कारागार</item>
+        <item>पेड़ के नीचे</item>
+        <item>एक मंदिर में</item>
+        <item>मस्जिद में</item>
+        <item>एक चर्च में</item>
+        <item>कोई और प्रार्थना स्थल</item>
+        <item>शैक्षिक संस्थान (स्कूल/कॉलेज)</item>
+        <item>एकलव्य स्कूल</item>
+        <item>पुनर्वास केंद्र</item>
+        <item>अनाथालय</item>
+        <item>वृद्धाश्रम</item>
+        <item>निजी हॉस्टल</item>
+        <item>सरकारी हॉस्टल</item>
+        <item>NGO का हॉस्टल</item>
+        <item>अन्य</item>
+    </string-array>
+    <string-array name="non_household_institution_places">
+        <item>शैक्षिक संस्थान (स्कूल/कॉलेज)</item>
+        <item>पुनर्वास केंद्र</item>
+        <item>अनाथालय</item>
+        <item>वृद्धाश्रम</item>
+        <item>निजी हॉस्टल</item>
+        <item>सरकारी हॉस्टल</item>
+        <item>NGO का हॉस्टल</item>
+    </string-array>
     <string name="icon_title_ben">सभी लाभार्थियों की सूची</string>
     <string name="icon_title_ec">लक्ष्य दम्पति सूची</string>
     <string name="icon_title_mc">माता की देखभाल</string>
