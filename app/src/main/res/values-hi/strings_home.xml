@@ -16,6 +16,8 @@
     <string name="til_hint_selected_village">Selected Village</string>
 
     <string name="icon_title_household">सभी घरेलू सूची</string>
+    <string name="icon_title_households">घरेलू सूची</string>
+    <string name="icon_title_non_households">गैर-घरेलू\nसूची</string>
     <string name="icon_title_ben">सभी लाभार्थियों की सूची</string>
     <string name="icon_title_ec">लक्ष्य दम्पति सूची</string>
     <string name="icon_title_mc">माता की देखभाल</string>

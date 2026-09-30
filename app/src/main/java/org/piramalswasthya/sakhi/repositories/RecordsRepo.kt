@@ -79,6 +79,8 @@ class RecordsRepo @Inject constructor(
     val allBenList =
         benDao.getAllBen(selectedVillage).toLifoDomain()
 
+    val nonHouseholdBenListCount = benDao.getNonHouseholdBenCount(selectedVillage)
+
     val childCountsByBen: Flow<Map<Long, Int>> =
         benDao.getChildCountsForAllBen(selectedVillage)
             .map { list -> list.associate { it.benId to it.childCount } }

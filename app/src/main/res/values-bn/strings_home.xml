@@ -24,6 +24,8 @@
     <string name="til_hint_selected_village">নির্বাচিত গ্রাম</string>
 
     <string name="icon_title_household">সব\nপরিবার</string>
+    <string name="icon_title_households">গৃহস্থালি</string>
+    <string name="icon_title_non_households">অ-গৃহস্থালি</string>
     <string name="icon_title_ben">সব\nউপকারভোগী</string>
     <string name="icon_title_ec">যোগ্য\nদম্পতি তালিকা</string>
     <string name="icon_title_mc">মাতৃ স্বাস্থ্য</string>

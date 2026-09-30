@@ -10,6 +10,7 @@ import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.getTitleRes
+import org.piramalswasthya.sakhi.ui.home_activity.all_household.HouseholdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragmentDirections
@@ -65,7 +66,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__hh,
                     resources.getString(R.string.icon_title_household),
                     recordsRepo.hhListCount,
-                    HomeFragmentDirections.actionNavHomeToAllHouseholdFragment()
+                    HomeFragmentDirections.actionNavHomeToHouseholdFragment()
                 ),
                 Icon(
                     R.drawable.ic__ben,
@@ -144,7 +145,7 @@ class IconDataset @Inject constructor(
                     R.drawable.ic__hh,
                     resources.getString(R.string.icon_title_household),
                     recordsRepo.hhListCount,
-                    HomeFragmentDirections.actionNavHomeToAllHouseholdFragment()
+                    HomeFragmentDirections.actionNavHomeToHouseholdFragment()
                 ),
                 Icon(
                     R.drawable.ic__ben,
@@ -480,6 +481,24 @@ class IconDataset @Inject constructor(
             resources.getString(R.string.icon_title_video_tutorial),
             null,
             LmsFragmentDirections.actionLmsFragmentToVideoTutorialFragmet()
+        )
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
+
+    fun getAllHouseholdDataset(resources: Resources) = listOf(
+        Icon(
+            R.drawable.ic__hh,
+            resources.getString(R.string.icon_title_households),
+            recordsRepo.hhListCount,
+            HouseholdFragmentDirections.actionHouseholdFragmentToAllHouseholdFragment()
+        ), Icon(
+            R.drawable.ic__ben,
+            resources.getString(R.string.icon_title_non_households),
+            recordsRepo.nonHouseholdBenListCount,
+            HouseholdFragmentDirections.actionHouseholdFragmentToNonHouseholdFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->

@@ -5,6 +5,8 @@
     <string name="menu_home_home">ঘৰ</string>
     <string name="menu_home_scheduler">সূচীকাৰক</string>
     <string name="icon_title_household">সমস্ত পাৰিবাৰিক তালিকা</string>
+    <string name="icon_title_households">ঘৰুৱা</string>
+    <string name="icon_title_non_households">নন হাউচহোল্ড</string>
     <string name="icon_title_ben">সমস্ত হিতাধিকাৰীৰ তালিকা</string>
     <string name="icon_title_ec">উপযুক্ত দম্পতিৰ তালিকা</string>
     <string name="icon_title_mc">মাকৰ যত্ন</string>

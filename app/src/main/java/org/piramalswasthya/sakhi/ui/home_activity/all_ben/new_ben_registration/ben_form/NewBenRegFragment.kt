@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -70,6 +71,17 @@ class NewBenRegFragment : Fragment() {
 
     private val viewModel: NewBenRegViewModel by viewModels()
 
+    private fun navigateBackFromRegistration() {
+        val navController = findNavController()
+        if (viewModel.hhId == 0L) {
+            if (!navController.popBackStack(R.id.allBenFragment, false)) {
+                navController.navigateUp()
+            }
+        } else {
+            navController.navigateUp()
+        }
+    }
+
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     // The HoF has no in-form ABHA button (captured at household stage), so don't gate its Submit —
@@ -91,7 +103,7 @@ class NewBenRegFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { b ->
             if (b) {
                 requestLocationPermission()
-            } else findNavController().navigateUp()
+            } else navigateBackFromRegistration()
         }
 
 
@@ -228,7 +240,7 @@ class NewBenRegFragment : Fragment() {
             resources.getString(R.string.no)
         ) { dialog, _ ->
             try {
-                findNavController().navigateUp()
+                navigateBackFromRegistration()
             } catch (e:Exception){
                 dialog.cancel()
             }
@@ -268,7 +280,7 @@ class NewBenRegFragment : Fragment() {
             resources.getString(R.string.no)
         ) { dialog, _ ->
             try {
-                findNavController().navigateUp()
+                navigateBackFromRegistration()
             } catch (e:Exception){
                 dialog.cancel()
             }
@@ -299,7 +311,7 @@ class NewBenRegFragment : Fragment() {
             resources.getString(R.string.cancel)
         ) { dialog, _ ->
             try {
-                findNavController().navigateUp()
+                navigateBackFromRegistration()
             } catch (e:Exception) {
                 dialog.cancel()
             }
@@ -346,7 +358,7 @@ class NewBenRegFragment : Fragment() {
         alertBinding.btnNegative.setOnClickListener {
             alertDialog.dismiss()
             try {
-                findNavController().navigateUp()
+                navigateBackFromRegistration()
             }catch (e:Exception){
                 alertDialog.dismiss()
             }
@@ -377,6 +389,16 @@ class NewBenRegFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (viewModel.hhId == 0L) {
+            requireActivity().onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        navigateBackFromRegistration()
+                    }
+                }
+            )
+        }
         binding.cvPatientInformation.visibility = View.GONE
 
         val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -625,7 +647,7 @@ class NewBenRegFragment : Fragment() {
                                   if (isAddingChildren) {
                                           showAddSChildAlert()
                                   } else {
-                                         findNavController().navigateUp()
+                                         navigateBackFromRegistration()
                                      }
                         }
                     }
@@ -847,7 +869,13 @@ class NewBenRegFragment : Fragment() {
         activity?.let {
             (it as HomeActivity).updateActionBar(
                 R.drawable.ic__ben,
-                getString(if (viewModel.isHoF) R.string.title_new_ben_reg_hof else R.string.title_new_ben_reg_non_hof)
+                getString(
+                    when {
+                        viewModel.hhId == 0L -> R.string.beneficiary_registration
+                        viewModel.isHoF -> R.string.title_new_ben_reg_hof
+                        else -> R.string.title_new_ben_reg_non_hof
+                    }
+                )
             )
         }
 
