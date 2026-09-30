@@ -85,7 +85,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
 
                     binding.ivSoftDelete.visibility = View.GONE
-                    binding.button4.visibility = View.INVISIBLE
+                    binding.button4.visibility = if (isDisease) View.INVISIBLE else View.VISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.VISIBLE
                     binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
 
@@ -94,7 +94,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
 
                     binding.ivSoftDelete.visibility = View.VISIBLE
-                    binding.button4.visibility = View.INVISIBLE
+                    binding.button4.visibility = if (isDisease) View.INVISIBLE else View.VISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.GONE
                     binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.holo_green_dark))
 
