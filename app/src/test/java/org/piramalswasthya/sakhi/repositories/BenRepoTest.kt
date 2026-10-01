@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
-import org.json.JSONException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -1665,15 +1664,17 @@ class BenRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `verifyOtp throws JSONException on malformed response body`() = runTest {
+    fun `verifyOtp returns null on malformed response body`() = runTest {
         coEvery { tmcNetworkApiService.validateOtp(any()) } returns successResponse("not-json")
 
-        try {
-            repo.verifyOtp("9999999999", 1234)
-            assertFalse("Should have thrown", true)
-        } catch (e: JSONException) {
-            // expected: verifyOtp does not guard JSONObject parsing with try/catch
-        }
+        assertNull(repo.verifyOtp("9999999999", 1234))
+    }
+
+    @Test
+    fun `verifyOtp returns null when the network call fails`() = runTest {
+        coEvery { tmcNetworkApiService.validateOtp(any()) } throws java.net.UnknownHostException("offline")
+
+        assertNull(repo.verifyOtp("9999999999", 1234))
     }
 
     // =====================================================

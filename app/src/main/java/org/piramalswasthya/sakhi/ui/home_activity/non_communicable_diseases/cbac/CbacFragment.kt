@@ -120,6 +120,9 @@ class CbacFragment : Fragment() {
 
             yesBtn.setOnClickListener {
                 dialog.dismiss()
+                // The alert lives on the activity window and can still be tapped after this
+                // fragment was popped; inflating the referral form then needs an attached fragment.
+                if (!isAdded) return@setOnClickListener
                 showReferralDialog(
                     fragment = this,
                     type = referType,
@@ -779,11 +782,13 @@ class CbacFragment : Fragment() {
                 }, thisYear, thisMonth, thisDay
             )
 
-            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-            viewModel.minDate.observe(viewLifecycleOwner) {
-                datePickerDialog.datePicker.minDate = it
-
-            }
+            // minDate is last CBAC + 365 days, which is in the future when the previous CBAC is
+            // under a year old; the helper keeps it from exceeding maxDate (framework crash).
+            HelperUtil.setSafeDateRange(
+                datePickerDialog.datePicker,
+                viewModel.minDate.value,
+                System.currentTimeMillis()
+            )
             datePickerDialog.show()
             datePickerDialog.setOnDismissListener {
                 HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
@@ -1419,6 +1424,12 @@ class CbacFragment : Fragment() {
 
 
     }
+    override fun onDestroyView() {
+        asreferAlertDialog?.dismiss()
+        asreferAlertDialog = null
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         referViewModel.resetState()
@@ -1533,7 +1544,7 @@ class CbacFragment : Fragment() {
             benId = benId,
             referralReason = reason,
             cbacId = cbacId,
-            referralType = type
+            referralType = if (enumType == "COPD" || enumType == "CANCER") "NCD" else enumType
         )
 
         binding.benId.text = benId.toString()

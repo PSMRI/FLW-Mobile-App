@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import java.util.Calendar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -268,10 +269,27 @@ class PwAncVisitsListFragment : Fragment() {
     }
 
     private fun showDeliveryDatePicker(item: BenWithAncListDomain) {
+        val now = System.currentTimeMillis()
+        val endOfToday = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+        // A future ANC date (bad data / wrong device clock) leaves no valid delivery date, and
+        // CalendarConstraints throws IllegalArgumentException when start is after end.
+        if (item.ancDate > endOfToday) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.delivery_date_cannot_be_before_last_anc_visit_date),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
         val constraints = CalendarConstraints.Builder()
-            .setStart(item.ancDate)
-            .setEnd(System.currentTimeMillis())
+            .setStart(minOf(item.ancDate, now))
+            .setEnd(now)
             .setValidator(
                 CompositeDateValidator.allOf(
                 listOf(
