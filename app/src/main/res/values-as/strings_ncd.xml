@@ -316,5 +316,9 @@
     <string name="ncd_referral_type">এনচিডি</string>
     <string name="suspected_tb_case">টিবি সন্দেহজনক ঘটনা</string>
     <string name="suspected_copd_case">চিঅ\'পিডি সন্দেহজনক ঘটনা</string>
+    <string name="tb_suspected_case_title">সন্দেহজনক টিবি ৰোগী!</string>
+    <string name="tb_alert_collect_sputum">HWCলৈ ৰেফাৰ কৰক আৰু খেকাৰৰ নমুনা সংগ্ৰহ কৰক।</string>
+    <string name="tb_alert_screen_family">HWCলৈ ৰেফাৰ কৰক আৰু পৰিয়ালৰ সকলো সদস্যক পৰীক্ষা কৰিবলৈ ANM/MPWক জনাওক।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">HWCলৈ ৰেফাৰ কৰক, খেকাৰৰ নমুনা সংগ্ৰহ কৰক আৰু পৰিয়ালৰ সকলো সদস্যক পৰীক্ষা কৰিবলৈ ANM/MPWক জনাওক।</string>
 </resources>
 

@@ -316,4 +316,8 @@
     <string name="ncd_referral_type">এনসিডি</string>
     <string name="suspected_tb_case">টিবি সন্দেহজনক ঘটনা</string>
     <string name="suspected_copd_case">সিওপিডি সন্দেহজনক ঘটনা</string>
+    <string name="tb_suspected_case_title">সন্দেহজনক টিবি রোগী!</string>
+    <string name="tb_alert_collect_sputum">HWC-তে রেফার করুন এবং থুতুর নমুনা সংগ্রহ করুন।</string>
+    <string name="tb_alert_screen_family">HWC-তে রেফার করুন এবং পরিবারের সকল সদস্যকে পরীক্ষা করার জন্য ANM/MPW-কে জানান।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">HWC-তে রেফার করুন, থুতুর নমুনা সংগ্রহ করুন এবং পরিবারের সকল সদস্যকে পরীক্ষা করার জন্য ANM/MPW-কে জানান।</string>
 </resources>
