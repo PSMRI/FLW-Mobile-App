@@ -20,12 +20,15 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormNCDFollowUpSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDFollowUpResponse
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
+import java.io.IOException
 import retrofit2.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -267,5 +270,94 @@ class NCDFollowUpFormRepositoryTest : BaseRepositoryTest() {
         )
 
         coVerify { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `getFormSchema skips saving when local schema version is already current`() = runTest {
+        val apiSchema = mockk<FormSchemaDto>(relaxed = true)
+        every { apiSchema.formId } returns "F1"
+        every { apiSchema.version } returns 3
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns true
+        every { apiResponse.data } returns apiSchema
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema("F1", any()) } returns response
+
+        val localEntity = mockk<FormSchemaEntity>(relaxed = true)
+        every { localEntity.version } returns 3
+        every { localEntity.schemaJson } returns """{"formId":"F1","formName":"Form 1","version":3,"sections":[]}"""
+        coEvery { schemaDao.getSchema("F1") } returns localEntity
+
+        assertSame(apiSchema, repo.getFormSchema("F1"))
+        coVerify(exactly = 0) { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `fetchFormsFromServer maps successful response into entities`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userId } returns 1
+        every { user.userName } returns "asha1"
+        every { pref.getLoggedInUser() } returns user
+
+        val submitRequest = FormNCDFollowUpSubmitRequest(
+            id = 1,
+            benId = 10L,
+            hhId = 20L,
+            visitNo = 1,
+            followUpNo = 0,
+            treatmentStartDate = "01-01-2026",
+            followUpDate = null,
+            diagnosisCodes = "D1",
+            formId = "ncd",
+            version = 1,
+            formDataJson = "{}"
+        )
+        val followUpResponse = NCDFollowUpResponse(statusCode = 200, data = listOf(submitRequest))
+        val response = mockk<Response<NCDFollowUpResponse>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns followUpResponse
+        coEvery { api.getAllFormNCDFollowUp(any()) } returns response
+
+        val result = repo.fetchFormsFromServer("ncd", "user")
+
+        assertEquals(1, result.size)
+        assertEquals(10L, result[0].benId)
+        assertTrue(result[0].isSynced)
+    }
+
+    @Test
+    fun `fetchFormsFromServer returns empty list when response unsuccessful`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userId } returns 1
+        every { user.userName } returns "asha1"
+        every { pref.getLoggedInUser() } returns user
+
+        val response = mockk<Response<NCDFollowUpResponse>>()
+        every { response.isSuccessful } returns false
+        coEvery { api.getAllFormNCDFollowUp(any()) } returns response
+
+        val result = repo.fetchFormsFromServer("ncd", "user")
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `fetchFormsFromServer rethrows IOException from api call`() = runTest {
+        val user = mockk<User>(relaxed = true)
+        every { user.userId } returns 1
+        every { user.userName } returns "asha1"
+        every { pref.getLoggedInUser() } returns user
+        coEvery { api.getAllFormNCDFollowUp(any()) } throws IOException("network down")
+
+        var thrown: Throwable? = null
+        try {
+            repo.fetchFormsFromServer("ncd", "user")
+        } catch (e: Throwable) {
+            thrown = e
+        }
+
+        assertTrue(thrown is IOException)
     }
 }

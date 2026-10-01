@@ -113,7 +113,10 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
                 assess,
                 if (recordExists.value == true) pregnancyRegistrationForm else null,
                 ecr,
-                latestTrack?.visitDate
+                latestTrack?.visitDate,
+                benRepo.getChildCountForBen(benId),
+                maternalHealthRepo.getCompletedPregnancyCount(benId),
+                maternalHealthRepo.getLastCompletedRegistrationRecord(benId)
             )
             dataset.updateList(30, getIndexOfHRP())
 
@@ -133,6 +136,8 @@ class PregnancyRegistrationFormViewModel @Inject constructor(
     fun getIndexOfPhysicalObservationLabel() = dataset.getIndexOfPhysicalObservationLabel()
 
     fun getIndexOfObstetricHistoryLabel() = dataset.getIndexOfObstetricHistoryLabel()
+
+    fun getIndexOfRhNegative() = dataset.getIndexOfRhNegative()
 
     fun getIndexOfEdd(): Int = dataset.getIndexOfEdd()
     fun getIndexofLmp(): Int = dataset.getIndexOfLmp()

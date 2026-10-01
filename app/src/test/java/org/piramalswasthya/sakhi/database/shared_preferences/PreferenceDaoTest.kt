@@ -36,6 +36,8 @@ class PreferenceDaoTest {
     private lateinit var context: Context
     private lateinit var prefs: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
+    private lateinit var plainPrefs: SharedPreferences
+    private lateinit var plainEditor: SharedPreferences.Editor
     private lateinit var dao: PreferenceDao
 
     private val keyAmrit = "pref_amrit_api_key"
@@ -57,6 +59,8 @@ class PreferenceDaoTest {
         context = mockk(relaxed = true)
         prefs = mockk(relaxed = true)
         editor = mockk(relaxed = true)
+        plainPrefs = mockk(relaxed = true)
+        plainEditor = mockk(relaxed = true)
 
         every { prefs.edit() } returns editor
         every { editor.putString(any(), any()) } returns editor
@@ -67,6 +71,13 @@ class PreferenceDaoTest {
         every { editor.clear() } returns editor
         every { editor.apply() } just Runs
         every { editor.commit() } returns true
+
+        every { plainPrefs.edit() } returns plainEditor
+        every { plainEditor.putString(any(), any()) } returns plainEditor
+        every { plainEditor.apply() } just Runs
+        every {
+            context.getSharedPreferences("sakhi_plain_prefs", Context.MODE_PRIVATE)
+        } returns plainPrefs
 
         every { context.getString(R.string.PREF_primary_API_KEY) } returns keyAmrit
         every { context.getString(R.string.PREF_D2D_API_KEY) } returns keyD2d
@@ -306,49 +317,68 @@ class PreferenceDaoTest {
     fun `saveSetLanguage stores the language symbol`() {
         dao.saveSetLanguage(Languages.HINDI)
 
-        verify { editor.putString(keyLanguage, "hi") }
+        verify { plainEditor.putString(keyLanguage, "hi") }
     }
 
     @Test
     fun `getCurrentLanguage maps assamese symbol`() {
-        every { prefs.getString(keyLanguage, null) } returns Languages.ASSAMESE.symbol
+        every { plainPrefs.getString(keyLanguage, null) } returns Languages.ASSAMESE.symbol
 
         assertEquals(Languages.ASSAMESE, dao.getCurrentLanguage())
     }
 
     @Test
     fun `getCurrentLanguage maps hindi symbol`() {
-        every { prefs.getString(keyLanguage, null) } returns Languages.HINDI.symbol
+        every { plainPrefs.getString(keyLanguage, null) } returns Languages.HINDI.symbol
 
         assertEquals(Languages.HINDI, dao.getCurrentLanguage())
     }
 
     @Test
     fun `getCurrentLanguage maps english symbol`() {
-        every { prefs.getString(keyLanguage, null) } returns Languages.ENGLISH.symbol
+        every { plainPrefs.getString(keyLanguage, null) } returns Languages.ENGLISH.symbol
 
         assertEquals(Languages.ENGLISH, dao.getCurrentLanguage())
     }
 
     @Test
     fun `getCurrentLanguage maps bangla symbol`() {
-        every { prefs.getString(keyLanguage, null) } returns Languages.BANGLA.symbol
+        every { plainPrefs.getString(keyLanguage, null) } returns Languages.BANGLA.symbol
 
         assertEquals(Languages.BANGLA, dao.getCurrentLanguage())
     }
 
     @Test
     fun `getCurrentLanguage falls back to english for unknown symbol`() {
-        every { prefs.getString(keyLanguage, null) } returns "zz"
+        every { plainPrefs.getString(keyLanguage, null) } returns "zz"
 
         assertEquals(Languages.ENGLISH, dao.getCurrentLanguage())
     }
 
     @Test
     fun `getCurrentLanguage falls back to english when nothing stored`() {
+        every { plainPrefs.getString(keyLanguage, null) } returns null
         every { prefs.getString(keyLanguage, null) } returns null
 
         assertEquals(Languages.ENGLISH, dao.getCurrentLanguage())
+    }
+
+    @Test
+    fun `getCurrentLanguage migrates legacy encrypted value into plain prefs`() {
+        every { plainPrefs.getString(keyLanguage, null) } returns null
+        every { prefs.getString(keyLanguage, null) } returns Languages.HINDI.symbol
+
+        assertEquals(Languages.HINDI, dao.getCurrentLanguage())
+        verify { plainEditor.putString(keyLanguage, Languages.HINDI.symbol) }
+    }
+
+    @Test
+    fun `getCurrentLanguage prefers plain prefs over legacy encrypted value`() {
+        every { plainPrefs.getString(keyLanguage, null) } returns Languages.BANGLA.symbol
+        every { prefs.getString(keyLanguage, null) } returns Languages.HINDI.symbol
+
+        assertEquals(Languages.BANGLA, dao.getCurrentLanguage())
+        verify(exactly = 0) { prefs.getString(keyLanguage, null) }
     }
 
     // ---------------------------------------------------------------

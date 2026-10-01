@@ -107,6 +107,15 @@ data class GetDataPaginatedRequest(
 )
 
 @JsonClass(generateAdapter = true)
+data class GetDataPaginatedNewRequest(
+    val ashaId: Int,
+    val userId: Int,
+    val pageNo: Int,
+    val fromDate: String,
+    val toDate: String
+)
+
+@JsonClass(generateAdapter = true)
 data class GetCBACRequest(
     val createdBy: String,
 )
@@ -195,7 +204,7 @@ data class BenAbhaResponse(
 data class AbhaTokenRequest(
     val clientId: String = KeyUtils.abhaClientID(),
     val clientSecret: String = KeyUtils.abhaClientSecret(),
-    val grantType: String = "Piramal12Piramal"
+    val grantType: String = "client_credentials"
 )
 
 @JsonClass(generateAdapter = true)
@@ -1110,6 +1119,14 @@ data class TBScreeningDTO(
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
+    var keyPopulationRiskFactorIds: List<Int>? = null,
+    var keyPopulationRiskFactors: List<String>? = null,
+    var hivStatusId: Int? = null,
+    var hivStatus: String? = null,
+    var fatigue: Boolean? = null,
+    var shortBreath: Boolean? = null,
+    var chestPain: Boolean? = null,
+
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1134,7 +1151,14 @@ data class TBScreeningDTO(
             sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
             recommandateTest = recommandateTest,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            keyPopulationRiskFactorIds = keyPopulationRiskFactorIds,
+            keyPopulationRiskFactors = keyPopulationRiskFactors,
+            hivStatus = hivStatus,
+            hivStatusId = hivStatusId,
+            fatigue = fatigue,
+            shortBreath = shortBreath,
+            chestPain = chestPain
         )
     }
 }
@@ -1149,6 +1173,7 @@ data class AdolscentHealthDTO(
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
     var sanitaryNapkinDistributed: Boolean? = null,
+    var isSanitaryNapkinUsed: Boolean? = null,
     var noOfPacketsDistributed: Int? = null,
     var place: String? = null,
     var distributionDate: String? = null,

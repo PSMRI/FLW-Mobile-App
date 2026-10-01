@@ -8,12 +8,20 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
@@ -34,6 +42,8 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
     @MockK private lateinit var context: Context
     @MockK private lateinit var mockResources: Resources
 
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
     @Before
     override fun setUp() {
         super.setUp()
@@ -49,6 +59,11 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }
+        // pwrdst_yes_no is a real 2-entry Yes/No array in production; the generic 80-entry
+        // stub above breaks any `entries!!.last()` comparison against it (position-2 value
+        // never equals the 80th generic entry), silently killing the "not first pregnancy"
+        // branch in setUpPage. Override it to mirror production so that branch is reachable.
+        every { mockResources.getStringArray(R.array.pwrdst_yes_no) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { mockResources.getString(any(), any(), any()) } returns "x"
@@ -337,5 +352,499 @@ class PregnantWomanRegistrationDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { d.updateList(88888, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `lmp updateList without a registration date skips the week of pregnancy calculation`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val weekIdx = d.getIndexOfWeeksPregnancy()
+        d.setValueById(7, "01-01-2023")
+        d.updateList(7, 0)
+        if (weekIdx >= 0) {
+            assertNull(d.listFlow.value[weekIdx].value)
+        }
+        val eddIdx = d.getIndexOfEdd()
+        assertTrue(eddIdx >= 0)
+        assertNotNull(d.listFlow.value[eddIdx].value)
+    }
+
+    @Test
+    fun `height at or below 139 flags a short stature reading`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "100")
+        d.updateList(12, 0)
+        assertTrue(d.isHighRisk())
+    }
+
+    @Test
+    fun `height above 139 does not flag a short stature reading`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "170")
+        d.updateList(12, 0)
+        assertFalse(d.isHighRisk())
+    }
+
+    @Test
+    fun `pastIllness selecting a middle option leaves other illness hidden`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, "5")
+        d.updateList(19, 5)
+        assertEquals(-1, d.getIndexById(20))
+        assertEquals("5", d.listFlow.value.first { it.id == 19 }.value)
+    }
+
+    @Test
+    fun `pastIllness selecting none clears the value back to zero`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, "3")
+        d.updateList(19, 3)
+        d.updateList(19, 0)
+        assertEquals("0", d.listFlow.value.first { it.id == 19 }.value)
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    @Test
+    fun `mapValueToBenRegId flags an existing beneficiary as high risk`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(12, "100")
+        d.updateList(12, 0)
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "N"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.isHrpStatus = true }
+    }
+
+    @Test
+    fun `mapValueToBenRegId reports no update for a low risk unchanged beneficiary`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        val updated = d.mapValueToBenRegId(benCache)
+        assertFalse(updated)
+    }
+
+    // The mock resource array for R.array.pwrdst_yes_no was previously a generic 80-entry
+    // array, which meant `isFirstPregnancy.value == isFirstPregnancy.entries!!.last()` in
+    // setUpPage could never be true (position-2 value != 80th generic entry), so the whole
+    // "not first pregnancy" block (previous-pregnancy count, complication dropdown, and its
+    // nested "other complication" text field) was silently dead in every test. Now that the
+    // array is mocked as the real 2-entry ["Yes","No"], a saved record with is1st = false
+    // genuinely reaches that block, and a complication value equal to the array's last entry
+    // reaches the nested "other complication" addition too.
+    @Test
+    fun `saved not-first pregnancy with last complication option surfaces the extra fields`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns false
+        every { s.isHrp } returns false
+        every { s.pastIllness } returns "1"
+        every { s.numPrevPregnancy } returns 3
+        every { s.complicationPrevPregnancy } returns "opt79"
+        every { s.otherComplication } returns "OTHER COMPLICATION TEXT"
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+
+        val prevPregIdx = d.getIndexById(22)
+        val complicationIdx = d.getIndexById(23)
+        val otherComplicationIdx = d.getIndexById(24)
+
+        assertTrue(prevPregIdx >= 0)
+        assertTrue(complicationIdx >= 0)
+        assertTrue(otherComplicationIdx >= 0)
+        assertEquals("3", d.listFlow.value[prevPregIdx].value)
+        assertEquals("opt79", d.listFlow.value[complicationIdx].value)
+        assertEquals("OTHER COMPLICATION TEXT", d.listFlow.value[otherComplicationIdx].value)
+    }
+
+    @Test
+    fun `saved first pregnancy does not surface the not-first-pregnancy fields`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns true
+        every { s.isHrp } returns false
+        every { s.pastIllness } returns "1"
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+        assertEquals(-1, d.getIndexById(24))
+    }
+
+    // dateOfReg is a single class-level FormElement instance reused across setUpPage calls.
+    // Once a saved record populates dateOfReg.value, a *subsequent* setUpPage call sees a
+    // non-null dateOfReg.value at the very top of the method (before ben/saved reassign it),
+    // exercising the `dateOfReg.value?.let { ... }` block that a first-time call never reaches.
+    @Test
+    fun `second setUpPage call sees a dateOfReg value carried over from the prior call`() = runTest {
+        val d = ds()
+        val s = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { s.dateOfRegistration } returns 1_600_000_000_000L
+        every { s.lmpDate } returns 0L
+        every { s.is1st } returns true
+        every { s.isHrp } returns false
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, s, null, null)
+        val dateOfRegIdx = d.getIndexById(1)
+        assertNotNull(d.listFlow.value[dateOfRegIdx].value)
+
+        runCatching { d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null) }
+        assertNotNull(d.listFlow)
+    }
+
+    // pastIllness.value defaults to "0" and setUpPage always reassigns it to a non-null
+    // string, so the `?: mutableSetOf()` elvis fallback inside handleListOnValueChanged's
+    // "else" branch is only reachable if a caller explicitly clears the value to null first.
+    @Test
+    fun `pastIllness update with a cleared value falls back to an empty selection set`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(19, null)
+        d.updateList(19, 5)
+        // pastIllness.value was null going in, so the elvis fallback yields an empty
+        // selection set; with nothing to remove, the recomputed value collapses to "0".
+        assertEquals("0", d.listFlow.value.first { it.id == 19 }.value)
+    }
+
+    @Test
+    fun `mapValuesForAssess maps every populated risk field and leaves age null without a ben`() = runTest {
+        val d = ds()
+        val assess = HRPPregnantAssessCache(
+            benId = 1L,
+            noOfDeliveries = "opt0",
+            timeLessThan18m = "opt1",
+            heightShort = "opt0",
+            rhNegative = "opt1",
+            homeDelivery = "opt0",
+            badObstetric = "opt1",
+            multiplePregnancy = "opt0",
+            lmpDate = 1_000_000_000_000L
+        )
+        d.setUpPage(null, assess, null, null, null)
+
+        val out = HRPPregnantAssessCache(benId = 1L)
+        d.mapValuesForAssess(out, 0)
+
+        assertEquals("opt0", out.noOfDeliveries)
+        assertEquals("opt1", out.timeLessThan18m)
+        assertEquals("opt0", out.heightShort)
+        assertNull(out.age)
+        assertEquals("opt1", out.rhNegative)
+        assertEquals("opt0", out.homeDelivery)
+        assertEquals("opt1", out.badObstetric)
+        assertEquals("opt0", out.multiplePregnancy)
+    }
+
+    @Test
+    fun `mapValueToBenRegId returns true and updates ben when rch id changes`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(2, "1234567890")
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns "9999999999"
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "N"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.rchId = "1234567890" }
+        verify { benCache.isHrpStatus = false }
+        verify(exactly = 0) { benCache.processed = "U" }
+    }
+
+    @Test
+    fun `mapValueToBenRegId sets processed to U when rch id changes and processed was not N`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        d.setValueById(2, "1234567890")
+        val benCache = mockk<BenRegCache>(relaxed = true)
+        every { benCache.rchId } returns null
+        every { benCache.isHrpStatus } returns false
+        every { benCache.processed } returns "P"
+        val updated = d.mapValueToBenRegId(benCache)
+        assertTrue(updated)
+        verify { benCache.processed = "U" }
+    }
+
+    // ---- FLW-824: previous pregnancy details auto-populated from existing family records ----
+    //
+    // Regression guard for the ECR clobber: EligibleCoupleRegistrationDataset.mapValues used to
+    // reset ELIGIBLE_COUPLE_REG.noOfChildren to 0 (the form element is commented out of the
+    // active page), so completing Eligible Couple Registration wiped the child count the
+    // add-children flow had stored, and PWR then defaulted "Is this your 1st pregnancy?" to Yes.
+    // setUpPage now derives the count from the live beneficiary child count / completed
+    // pregnancy records as well, so a zeroed ecr row can no longer force a false "Yes".
+    //
+    // Note on the mocked resources: R.array.maternal_health_past_del_columns is stubbed as the
+    // generic 80-entry array, so entries.first() ("None") is "opt0" and entries.last()
+    // ("Any Other") is "opt79". R.array.pwrdst_yes_no is stubbed as the real ["Yes", "No"].
+
+    private fun completedPregnancy(
+        complication: String?,
+        other: String? = null
+    ): PregnantWomanRegistrationCache {
+        val p = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { p.complicationPrevPregnancy } returns complication
+        every { p.otherComplication } returns other
+        return p
+    }
+
+    @Test
+    fun `no children and no completed pregnancies marks it as the first pregnancy`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 0, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        assertEquals("Yes", d.listFlow.value[d.getIndexById(21)].value)
+        // the previous-pregnancy count and complication dropdown stay off the page
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+    }
+
+    @Test
+    fun `existing children mark it as not the first pregnancy and lock the answer`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val isFirstIdx = d.getIndexById(21)
+        assertEquals("No", d.listFlow.value[isFirstIdx].value)
+        assertFalse(d.listFlow.value[isFirstIdx].isEnabled)
+    }
+
+    @Test
+    fun `two children populate the total number of previous pregnancies as 2`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val prevPregIdx = d.getIndexById(22)
+        assertTrue(prevPregIdx >= 0)
+        assertEquals("2", d.listFlow.value[prevPregIdx].value)
+    }
+
+    @Test
+    fun `a recorded complication on the last completed pregnancy is shown in the dropdown`() =
+        runTest {
+            val d = ds()
+            d.setUpPage(
+                ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+                childCount = 2,
+                completedPregnancyCount = 1,
+                lastCompletedPregnancy = completedPregnancy(complication = "opt5")
+            )
+
+            val complicationIdx = d.getIndexById(23)
+            assertTrue(complicationIdx >= 0)
+            assertEquals("opt5", d.listFlow.value[complicationIdx].value)
+        }
+
+    @Test
+    fun `the last complication option also surfaces the other complication text`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2,
+            completedPregnancyCount = 1,
+            lastCompletedPregnancy = completedPregnancy(
+                complication = "opt79",
+                other = "PREVIOUS OTHER COMPLICATION"
+            )
+        )
+
+        assertEquals("opt79", d.listFlow.value[d.getIndexById(23)].value)
+        val otherIdx = d.getIndexById(24)
+        assertTrue(otherIdx >= 0)
+        assertEquals("PREVIOUS OTHER COMPLICATION", d.listFlow.value[otherIdx].value)
+    }
+
+    @Test
+    fun `no recorded complication falls back to the None option`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        val complicationIdx = d.getIndexById(23)
+        assertTrue(complicationIdx >= 0)
+        assertEquals("opt0", d.listFlow.value[complicationIdx].value)
+        // "Any Other" was not selected, so its free-text field stays off the page
+        assertEquals(-1, d.getIndexById(24))
+    }
+
+    @Test
+    fun `a completed pregnancy with no surviving child still counts as a previous pregnancy`() =
+        runTest {
+            val d = ds()
+            d.setUpPage(
+                ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+                childCount = 0, completedPregnancyCount = 1, lastCompletedPregnancy = null
+            )
+
+            assertEquals("No", d.listFlow.value[d.getIndexById(21)].value)
+            assertEquals("1", d.listFlow.value[d.getIndexById(22)].value)
+        }
+
+    // Pratiksha's comment on FLW-824: switching the answer to "No" by hand used to leave the
+    // previous-pregnancy count blank because handleListOnValueChanged only reset the
+    // complication dropdown. A saved record leaves the radio enabled, so this is the path an
+    // ASHA can actually reach.
+    @Test
+    fun `manually switching to not-first pregnancy prefills the derived history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false),
+            null,
+            saved(lmp = 0L, first = true, hrp = false),
+            ecr(children = 0),
+            null,
+            childCount = 2,
+            completedPregnancyCount = 0,
+            lastCompletedPregnancy = null
+        )
+        // saved + is1st = true, so the count and dropdown start off the page
+        assertEquals(-1, d.getIndexById(22))
+
+        d.setValueById(21, "No")
+        d.updateList(21, 1)
+
+        val prevPregIdx = d.getIndexById(22)
+        assertTrue(prevPregIdx >= 0)
+        assertEquals("2", d.listFlow.value[prevPregIdx].value)
+        assertEquals("opt0", d.listFlow.value[d.getIndexById(23)].value)
+    }
+
+    @Test
+    fun `manually switching back to first pregnancy clears the derived history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false),
+            null,
+            saved(lmp = 0L, first = true, hrp = false),
+            ecr(children = 0),
+            null,
+            childCount = 2,
+            completedPregnancyCount = 0,
+            lastCompletedPregnancy = null
+        )
+        d.setValueById(21, "No")
+        d.updateList(21, 1)
+        assertTrue(d.getIndexById(22) >= 0)
+
+        d.setValueById(21, "Yes")
+        d.updateList(21, 0)
+
+        assertEquals(-1, d.getIndexById(22))
+        assertEquals(-1, d.getIndexById(23))
+    }
+
+    @Test
+    fun `mapValues writes the auto-derived previous pregnancy history`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+        val cache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        d.mapValues(cache, 1)
+
+        verify { cache.is1st = false }
+        verify { cache.numPrevPregnancy = 2 }
+    }
+
+    @Test
+    fun `a zeroed ecr row no longer forces a false first pregnancy`() = runTest {
+        val d = ds()
+        // reproduces the post-ECR-completion state: the row exists but noOfChildren was wiped
+        val wipedEcr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { wipedEcr.noOfChildren } returns 0
+        every { wipedEcr.noOfLiveChildren } returns 2
+
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, wipedEcr, null,
+            childCount = 0, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+
+        assertEquals("No", d.listFlow.value[d.getIndexById(21)].value)
+        assertEquals("2", d.listFlow.value[d.getIndexById(22)].value)
+    }
+
+    @Test
+    fun `mapValues does not blow up when the previous pregnancy count is cleared`() = runTest {
+        val d = ds()
+        d.setUpPage(
+            ben(hrp = false, lastNameNull = false), null, null, ecr(children = 0), null,
+            childCount = 2, completedPregnancyCount = 0, lastCompletedPregnancy = null
+        )
+        d.setValueById(22, "")
+        val cache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        d.mapValues(cache, 1)
+
+        verify { cache.numPrevPregnancy = null }
+    }
+
+    @Test
+    fun `negative blood group auto sets rh negative to yes on mitanin only`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val rhIndex = d.getIndexOfRhNegative()
+        assertTrue(rhIndex >= 0)
+
+        d.setValueById(10, "opt1")
+        d.updateList(10, 1)
+
+        if (isMitanin) {
+            assertEquals("opt0", d.listFlow.value[rhIndex].value)
+        } else {
+            assertNull(d.listFlow.value[rhIndex].value)
+        }
+    }
+
+    @Test
+    fun `positive blood group clears rh negative on mitanin only`() = runTest {
+        val d = ds()
+        d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+        val rhIndex = d.getIndexOfRhNegative()
+        assertTrue(rhIndex >= 0)
+
+        d.setValueById(10, "opt3")
+        d.updateList(10, 3)
+        d.setValueById(10, "opt0")
+        d.updateList(10, 0)
+
+        assertNull(d.listFlow.value[rhIndex].value)
+    }
+
+    @Test
+    fun `every negative blood group position sets rh negative on mitanin`() = runTest {
+        Konstants.negativeBloodGroupPositions.forEach { position ->
+            val d = ds()
+            d.setUpPage(ben(hrp = false, lastNameNull = false), null, null, null, null)
+            val rhIndex = d.getIndexOfRhNegative()
+
+            d.setValueById(10, "opt$position")
+            d.updateList(10, position)
+
+            val expected = if (isMitanin) "opt0" else null
+            assertEquals(expected, d.listFlow.value[rhIndex].value)
+        }
     }
 }

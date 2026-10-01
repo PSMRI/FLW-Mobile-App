@@ -1,22 +1,36 @@
 package org.piramalswasthya.sakhi.repositories
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.slot
+import io.mockk.unmockkObject
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.room.dao.UwinDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -24,7 +38,11 @@ import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.UwinNetwork
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.utils.HelperUtil
 import retrofit2.Response
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UwinRepoTest : BaseRepositoryTest() {
@@ -151,4 +169,467 @@ class UwinRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 0) { uwinDao.replaceAll(any()) }
     }
 
+    private fun successfulResponse(json: String): Response<ResponseBody> {
+        val responseBody = mockk<ResponseBody>(relaxed = true)
+        every { responseBody.string() } returns json
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns true
+        every { response.body() } returns responseBody
+        return response
+    }
+
+    private fun stubParsedResponse(parsed: UwinRepo.UwinGetAllResponse?) {
+        val adapter = mockk<JsonAdapter<UwinRepo.UwinGetAllResponse>>(relaxed = true)
+        every { moshi.adapter(UwinRepo.UwinGetAllResponse::class.java) } returns adapter
+        every { adapter.fromJson(any<String>()) } returns parsed
+    }
+
+    @Test
+    fun `downSyncAndPersist returns without persisting when parsed body is null`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("not json")
+        stubParsedResponse(null)
+
+        repo.downSyncAndPersist()
+
+        coVerify(exactly = 0) { uwinDao.replaceAll(any()) }
+    }
+
+    @Test
+    fun `downSyncAndPersist persists empty list when entries are null`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(data = null, statusCode = 200, status = "OK")
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        assertTrue(slot.captured.isEmpty())
+    }
+
+    @Test
+    fun `downSyncAndPersist persists parsed session with valid meeting date`() = runTest {
+        loggedIn()
+        val item = UwinRepo.UwinServerItem(
+            id = 5,
+            ashaId = 42,
+            meetingDate = "2026-01-15",
+            place = "Village Hall",
+            participants = 10,
+            meetingImages = null
+        )
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(
+                data = UwinRepo.UwinData(entries = listOf(item)),
+                statusCode = 200,
+                status = "OK"
+            )
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        val expectedMillis = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse("2026-01-15")!!.time
+        val persisted = slot.captured.single()
+        assertEquals(5, persisted.id)
+        assertEquals("Village Hall", persisted.place)
+        assertEquals(10, persisted.participantsCount)
+        assertEquals(expectedMillis, persisted.sessionDate)
+        assertEquals("asha", persisted.createdBy)
+        assertEquals("asha", persisted.updatedBy)
+        assertEquals(SyncState.SYNCED, persisted.syncState)
+        assertNull(persisted.uploadedFiles1)
+        assertNull(persisted.uploadedFiles2)
+    }
+
+    @Test
+    fun `downSyncAndPersist sets sessionDate to zero when meeting date is unparseable`() = runTest {
+        loggedIn()
+        val item = UwinRepo.UwinServerItem(
+            id = 6,
+            ashaId = 42,
+            meetingDate = "not-a-date",
+            place = "Field",
+            participants = 3,
+            meetingImages = null
+        )
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(
+                data = UwinRepo.UwinData(entries = listOf(item)),
+                statusCode = 200,
+                status = "OK"
+            )
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        assertEquals(0L, slot.captured.single().sessionDate)
+    }
+
+    @Test
+    fun `downSyncAndPersist sets sessionDate to zero and defaults null fields when meeting date is null`() =
+        runTest {
+            loggedIn()
+            val item = UwinRepo.UwinServerItem(
+                id = null,
+                ashaId = 42,
+                meetingDate = null,
+                place = null,
+                participants = null,
+                meetingImages = null
+            )
+            coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+            stubParsedResponse(
+                UwinRepo.UwinGetAllResponse(
+                    data = UwinRepo.UwinData(entries = listOf(item)),
+                    statusCode = 200,
+                    status = "OK"
+                )
+            )
+            val slot = slot<List<UwinCache>>()
+            coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+            repo.downSyncAndPersist()
+
+            val persisted = slot.captured.single()
+            assertEquals(0L, persisted.sessionDate)
+            assertEquals(0, persisted.id)
+            assertEquals(0, persisted.participantsCount)
+            assertNull(persisted.place)
+        }
+
+    // =====================================================
+    // postUwinSession branch coverage (via successfulResponse / direct stubs)
+    // =====================================================
+
+    @Test
+    fun `postUwinSession marks session synced on statusCode 200`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 11
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify { uwinDao.updateSyncState(11, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession marks session synced when body has id but no statusCode`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 12
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"id":999}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify { uwinDao.updateSyncState(12, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession retries after token refresh and succeeds`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 13
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returnsMany listOf(
+            successfulResponse("""{"statusCode":5002}"""),
+            successfulResponse("""{"statusCode":200}""")
+        )
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify(exactly = 2) {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        }
+        coVerify { uwinDao.updateSyncState(13, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession returns false when token refresh fails`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":5002}""")
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+
+        assertFalse(repo.postUwinSession(network))
+
+        coVerify(exactly = 0) { uwinDao.updateSyncState(any(), any()) }
+    }
+
+    @Test
+    fun `postUwinSession returns false on unexpected statusCode`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":9999}""")
+
+        assertFalse(repo.postUwinSession(network))
+    }
+
+    @Test
+    fun `postUwinSession returns false on unsuccessful http response`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.isSuccessful } returns false
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns response
+
+        assertFalse(repo.postUwinSession(network))
+    }
+
+    @Test
+    fun `postUwinSession returns false when response body is malformed json`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("not-json")
+
+        assertFalse(repo.postUwinSession(network))
+    }
+
+    @Test
+    fun `postUwinSession returns false when the api call throws`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } throws RuntimeException("network down")
+
+        assertFalse(repo.postUwinSession(network))
+    }
+
+    @Test
+    fun `postUwinSession retries on SocketTimeoutException and eventually succeeds`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 14
+        var callCount = 0
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } answers {
+            callCount++
+            if (callCount == 1) throw java.net.SocketTimeoutException("timeout")
+            else successfulResponse("""{"statusCode":200}""")
+        }
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify(exactly = 2) {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        }
+        coVerify { uwinDao.updateSyncState(14, SyncState.SYNCED) }
+    }
+
+    // =====================================================
+    // tryUpsync: non-empty unsynced session loop
+    // =====================================================
+
+    @Test
+    fun `tryUpsync returns true when all unsynced sessions sync successfully`() = runTest {
+        loggedIn()
+        val cache = mockk<UwinCache>(relaxed = true)
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 21
+        every { cache.asDomainModel() } returns network
+        coEvery { uwinDao.getUnsyncedSessions(any()) } returns listOf(cache)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.tryUpsync())
+
+        coVerify { uwinDao.updateSyncState(21, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `downSyncAndPersist swallows per-image decode failures and leaves uploaded files null`() = runTest {
+        loggedIn()
+        val item = UwinRepo.UwinServerItem(
+            id = 7,
+            ashaId = 42,
+            meetingDate = "2026-01-15",
+            place = "Hall",
+            participants = 4,
+            meetingImages = listOf("data:image/png;base64,SGVsbG8=")
+        )
+        coEvery { amritApiService.getAllUwinSessions(any()) } returns successfulResponse("{}")
+        stubParsedResponse(
+            UwinRepo.UwinGetAllResponse(
+                data = UwinRepo.UwinData(entries = listOf(item)),
+                statusCode = 200,
+                status = "OK"
+            )
+        )
+        val slot = slot<List<UwinCache>>()
+        coEvery { uwinDao.replaceAll(capture(slot)) } just Runs
+
+        repo.downSyncAndPersist()
+
+        val persisted = slot.captured.single()
+        assertNull(persisted.uploadedFiles1)
+        assertNull(persisted.uploadedFiles2)
+    }
+
+    @Test
+    fun `postUwinSession swallows multipart build failure and still calls api`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 15
+        every { network.uploadedFiles1 } returns "content://provider/1"
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        coVerify { uwinDao.updateSyncState(15, SyncState.SYNCED) }
+    }
+
+    // =====================================================
+    // buildMultipartFromUris branch coverage
+    // =====================================================
+
+    @After
+    fun releaseMultipartMocks() {
+        unmockkStatic(Uri::class)
+        unmockkObject(HelperUtil)
+    }
+
+    @Test
+    fun `postUwinSession builds a multipart part for an image uri via compressImageToTemp`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 16
+        every { network.uploadedFiles1 } returns "content://provider/photo"
+        every { network.uploadedFiles2 } returns null
+
+        val mockUri = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/photo") } returns mockUri
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri) } returns "image/png"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri, appContext) } returns "photo.png"
+        val tempFile = File.createTempFile("uwin_test_image_", ".png").apply { writeBytes(byteArrayOf(1, 2, 3)) }
+        tempFile.deleteOnExit()
+        every { HelperUtil.compressImageToTemp(mockUri, "photo.png", appContext) } returns tempFile
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertEquals(1, slot.captured.size)
+        coVerify { uwinDao.updateSyncState(16, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession builds multipart parts for non-image uris via copyToTemp`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 17
+        every { network.uploadedFiles1 } returns "content://provider/doc1"
+        every { network.uploadedFiles2 } returns "content://provider/doc2"
+
+        val mockUri1 = mockk<Uri>(relaxed = true)
+        val mockUri2 = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/doc1") } returns mockUri1
+        every { Uri.parse("content://provider/doc2") } returns mockUri2
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri1) } returns null
+        every { contentResolver.getType(mockUri2) } returns "application/pdf"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri1, appContext) } returns null
+        every { HelperUtil.getFileName(mockUri2, appContext) } returns "doc2.pdf"
+        val tempFile1 = File.createTempFile("uwin_test_doc1_", null).apply { writeBytes(byteArrayOf(4, 5)) }
+        val tempFile2 = File.createTempFile("uwin_test_doc2_", ".pdf").apply { writeBytes(byteArrayOf(6, 7)) }
+        tempFile1.deleteOnExit()
+        tempFile2.deleteOnExit()
+        every { HelperUtil.copyToTemp(mockUri1, "upload", appContext) } returns tempFile1
+        every { HelperUtil.copyToTemp(mockUri2, "doc2.pdf", appContext) } returns tempFile2
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertEquals(2, slot.captured.size)
+        coVerify { uwinDao.updateSyncState(17, SyncState.SYNCED) }
+    }
+
+    @Test
+    fun `postUwinSession skips a uri when copyToTemp returns null`() = runTest {
+        loggedIn()
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { network.id } returns 18
+        every { network.uploadedFiles1 } returns "content://provider/missing"
+        every { network.uploadedFiles2 } returns null
+
+        val mockUri = mockk<Uri>(relaxed = true)
+        mockkStatic(Uri::class)
+        every { Uri.parse("content://provider/missing") } returns mockUri
+
+        val contentResolver = mockk<ContentResolver>(relaxed = true)
+        every { appContext.contentResolver } returns contentResolver
+        every { contentResolver.getType(mockUri) } returns "application/octet-stream"
+
+        mockkObject(HelperUtil)
+        every { HelperUtil.getFileName(mockUri, appContext) } returns "upload"
+        every { HelperUtil.copyToTemp(mockUri, "upload", appContext) } returns null
+
+        val slot = slot<List<MultipartBody.Part>>()
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), capture(slot))
+        } returns successfulResponse("""{"statusCode":200}""")
+
+        assertTrue(repo.postUwinSession(network))
+
+        assertTrue(slot.captured.isEmpty())
+    }
+
+    @Test
+    fun `tryUpsync returns false when a session fails to sync`() = runTest {
+        loggedIn()
+        val cache = mockk<UwinCache>(relaxed = true)
+        val network = mockk<UwinNetwork>(relaxed = true)
+        every { cache.asDomainModel() } returns network
+        coEvery { uwinDao.getUnsyncedSessions(any()) } returns listOf(cache)
+        coEvery {
+            amritApiService.saveUwinSession(any(), any(), any(), any(), any(), any())
+        } returns successfulResponse("""{"statusCode":9999}""")
+
+        assertFalse(repo.tryUpsync())
+    }
 }

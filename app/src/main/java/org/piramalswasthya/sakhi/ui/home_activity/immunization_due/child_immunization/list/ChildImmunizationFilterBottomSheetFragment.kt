@@ -43,8 +43,7 @@ class ChildImmunizationFilterBottomSheetFragment : BottomSheetDialogFragment(),I
 
     override fun onClicked(catDataList: String) {
         viewModel.selectedFilter.value = catDataList
-        val englishKey = viewModel.toEnglishCategory(catDataList)
-        viewModel.filterText(englishKey)
+        viewModel.setDoseStage(viewModel.toCategory(catDataList))
         dismiss()
     }
 }

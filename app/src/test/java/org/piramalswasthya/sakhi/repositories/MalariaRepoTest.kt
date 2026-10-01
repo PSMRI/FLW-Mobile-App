@@ -11,6 +11,7 @@ import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -591,5 +592,300 @@ class MalariaRepoTest : BaseRepositoryTest() {
         loggedIn()
         coEvery { api.getScreeningData(any()) } returns resp(500)
         assertEquals(-1, repo.getIRSScreeningDetailsFromServer())
+    }
+
+    // ===================== pull: 5002 refresh succeeds (-2) for screening/confirmed =====================
+
+    @Test
+    fun `screening pull returns -2 on 5002 when refresh succeeds`() = runTest {
+        loggedIn()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":5002,"data":"[]"}""")
+        assertEquals(-2, repo.getMalariaScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull returns -2 on 5002 when refresh succeeds`() = runTest {
+        loggedIn()
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":5002}""")
+        assertEquals(-2, repo.getMalariaConfiremedDetailsFromServer())
+    }
+
+    // ===================== pull: 5000 fallthrough (non "No record found") =====================
+
+    @Test
+    fun `IRS pull returns -1 on 5000 with different error message`() = runTest {
+        loggedIn()
+        coEvery { api.getScreeningData(any()) } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Some other error"}""")
+        assertEquals(-1, repo.getIRSScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `screening pull returns -1 on 5000 with different error message`() = runTest {
+        loggedIn()
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Some other error","data":"[]"}""")
+        assertEquals(-1, repo.getMalariaScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull returns -1 on 5000 with different error message`() = runTest {
+        loggedIn()
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Some other error"}""")
+        assertEquals(-1, repo.getMalariaConfiremedDetailsFromServer())
+    }
+
+    // ===================== IRS pull: exception inside inner-200 processing =====================
+
+    @Test
+    fun `IRS pull returns 0 when data processing throws`() = runTest {
+        loggedIn()
+        coEvery { api.getScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":"not-valid-json","errorMessage":""}""")
+        assertEquals(0, repo.getIRSScreeningDetailsFromServer())
+    }
+
+    // ===================== IRS pull: real round processing branches =====================
+
+    @Test
+    fun `IRS pull saves new round when no existing record and ben found`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getIRSScreening(100L) } returns null
+        coEvery { benDao.getBen(100L) } returns ben
+        coEvery { api.getScreeningData(any()) } returns
+            resp200(
+                """{"statusCode":200,"data":"{\"rounds\":[{\"date\":\"2024-01-01\",\"rounds\":1,\"householdId\":100}]}","errorMessage":""}"""
+            )
+        assertEquals(1, repo.getIRSScreeningDetailsFromServer())
+        coVerify { malariaDao.saveIRSScreening(*anyVararg()) }
+    }
+
+    @Test
+    fun `IRS pull skips round when existing record already present`() = runTest {
+        loggedIn()
+        val existing = mockk<IRSRoundScreening>(relaxed = true)
+        coEvery { malariaDao.getIRSScreening(100L) } returns existing
+        coEvery { api.getScreeningData(any()) } returns
+            resp200(
+                """{"statusCode":200,"data":"{\"rounds\":[{\"date\":\"2024-01-01\",\"rounds\":1,\"householdId\":100}]}","errorMessage":""}"""
+            )
+        assertEquals(1, repo.getIRSScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveIRSScreening(*anyVararg()) }
+    }
+
+    @Test
+    fun `IRS pull skips round when ben not found`() = runTest {
+        loggedIn()
+        coEvery { malariaDao.getIRSScreening(100L) } returns null
+        coEvery { benDao.getBen(100L) } returns null
+        coEvery { api.getScreeningData(any()) } returns
+            resp200(
+                """{"statusCode":200,"data":"{\"rounds\":[{\"date\":\"2024-01-01\",\"rounds\":1,\"householdId\":100}]}","errorMessage":""}"""
+            )
+        assertEquals(1, repo.getIRSScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveIRSScreening(*anyVararg()) }
+    }
+
+    @Test
+    fun `IRS pull skips round when date missing`() = runTest {
+        loggedIn()
+        coEvery { api.getScreeningData(any()) } returns
+            resp200(
+                """{"statusCode":200,"data":"{\"rounds\":[{\"rounds\":1,\"householdId\":100}]}","errorMessage":""}"""
+            )
+        assertEquals(1, repo.getIRSScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveIRSScreening(*anyVararg()) }
+    }
+
+    // ===================== Malaria Screening pull: real DTO processing branches =====================
+
+    private fun malariaScreeningJson(
+        benId: Long = 10L,
+        screeningDate: String = "2024-01-02"
+    ) = """{"id":1,"benId":$benId,"visitId":5,"caseDate":"2024-01-01","houseHoldDetailsId":100,
+        "screeningDate":"$screeningDate","beneficiaryStatus":"Alive","beneficiaryStatusId":1,
+        "dateOfDeath":"2024-01-01","placeOfDeath":"","otherPlaceOfDeath":"","reasonForDeath":"","otherReasonForDeath":"",
+        "rapidDiagnosticTest":"Negative","dateOfRdt":"2024-01-01","slideTestName":"","slideTestPf":"","slideTestPv":"",
+        "dateOfSlideTest":"2024-01-01","dateOfVisitBySupervisor":"2024-01-01","caseStatus":"",
+        "followUpDate":"2024-01-10","createdBy":"asha","malariaTestType":1,"malariaSlideTestType":1}"""
+
+    @Test
+    fun `screening pull saves new record when no existing and ben found`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaScreening(10L, any(), any()) } returns null
+        coEvery { benDao.getBen(10L) } returns ben
+        val data = "[${malariaScreeningJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify { malariaDao.saveMalariaScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips record when existing record present`() = runTest {
+        loggedIn()
+        val existing = mockk<MalariaScreeningCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaScreening(10L, any(), any()) } returns existing
+        val data = "[${malariaScreeningJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips record when ben not found`() = runTest {
+        loggedIn()
+        coEvery { malariaDao.getMalariaScreening(10L, any(), any()) } returns null
+        coEvery { benDao.getBen(10L) } returns null
+        val data = "[${malariaScreeningJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaScreening(any()) }
+    }
+
+    @Test
+    fun `screening pull skips record with blank screeningDate`() = runTest {
+        loggedIn()
+        val data = "[${malariaScreeningJson(screeningDate = "")}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaScreening(any()) }
+        coVerify(exactly = 0) { malariaDao.getMalariaScreening(any(), any(), any()) }
+    }
+
+    @Test
+    fun `screening pull continues past record with invalid date and saves next`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaScreening(10L, any(), any()) } returns null
+        coEvery { benDao.getBen(10L) } returns ben
+        val badRecord = malariaScreeningJson(benId = 99L, screeningDate = "not-a-date")
+        val goodRecord = malariaScreeningJson(benId = 10L)
+        val data = "[$badRecord,$goodRecord]"
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify { malariaDao.saveMalariaScreening(any()) }
+        coVerify(exactly = 0) { malariaDao.getMalariaScreening(99L, any(), any()) }
+    }
+
+    @Test
+    fun `screening pull handles object-wrapped data format`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaScreening(10L, any(), any()) } returns null
+        coEvery { benDao.getBen(10L) } returns ben
+        val data = """{"userId":42,"malariaLists":[${malariaScreeningJson()}]}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaScreeningDetailsFromServer())
+        coVerify { malariaDao.saveMalariaScreening(any()) }
+    }
+
+    // ===================== Malaria Confirmed pull: real DTO processing branches =====================
+
+    private fun malariaConfirmedJson(
+        benId: Long = 20L,
+        includeDate: Boolean = true
+    ): String {
+        val dateField = if (includeDate) "\"dateOfDiagnosis\":\"2024-01-01\"," else ""
+        return """{"benId":$benId,"houseHoldDetailsId":200,$dateField
+            "treatmentStartDate":"2024-01-02","treatmentCompletionDate":"2024-01-10",
+            "treatmentGiven":"ACT","referralDate":"2024-01-03","day":"Day1"}"""
+    }
+
+    @Test
+    fun `confirmed pull saves new record when no existing and ben found`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaConfirmed(20L, any(), any()) } returns null
+        coEvery { benDao.getBen(20L) } returns ben
+        val data = "[${malariaConfirmedJson()}]"
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaConfiremedDetailsFromServer())
+        coVerify { malariaDao.saveMalariaConfirmed(any()) }
+    }
+
+    @Test
+    fun `confirmed pull skips record when existing record present`() = runTest {
+        loggedIn()
+        val existing = mockk<MalariaConfirmedCasesCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaConfirmed(20L, any(), any()) } returns existing
+        val data = "[${malariaConfirmedJson()}]"
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaConfiremedDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaConfirmed(any()) }
+    }
+
+    @Test
+    fun `confirmed pull skips record when ben not found`() = runTest {
+        loggedIn()
+        coEvery { malariaDao.getMalariaConfirmed(20L, any(), any()) } returns null
+        coEvery { benDao.getBen(20L) } returns null
+        val data = "[${malariaConfirmedJson()}]"
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaConfiremedDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaConfirmed(any()) }
+    }
+
+    @Test
+    fun `confirmed pull skips record when dateOfDiagnosis missing`() = runTest {
+        loggedIn()
+        val data = "[${malariaConfirmedJson(includeDate = false)}]"
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaConfiremedDetailsFromServer())
+        coVerify(exactly = 0) { malariaDao.saveMalariaConfirmed(any()) }
+        coVerify(exactly = 0) { malariaDao.getMalariaConfirmed(any(), any(), any()) }
+    }
+
+    @Test
+    fun `confirmed pull handles object-wrapped data format`() = runTest {
+        loggedIn()
+        val ben = mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+        coEvery { malariaDao.getMalariaConfirmed(20L, any(), any()) } returns null
+        coEvery { benDao.getBen(20L) } returns ben
+        val data = """{"userId":42,"malariaFollowListUp":[${malariaConfirmedJson()}]}"""
+        coEvery { api.getMalariaConfirmedData(any()) } returns
+            resp200("""{"statusCode":200,"data":${JSONObject.quote(data)}}""")
+        assertEquals(1, repo.getMalariaConfiremedDetailsFromServer())
+        coVerify { malariaDao.saveMalariaConfirmed(any()) }
+    }
+
+    // ===================== push: malaria confirmed 401 / multiple chunks =====================
+
+    @Test
+    fun `pushUnSyncedRecords handles malaria confirmed 401 with token refresh`() = runTest {
+        loggedIn()
+        coEvery { malariaDao.getMalariaScreening(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { malariaDao.getMalariaConfirmed(SyncState.UNSYNCED) } returns
+            listOf(mockk<MalariaConfirmedCasesCache>(relaxed = true))
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { api.saveMalariaConfirmedData(any()) } returns resp(200, """{"statusCode":401}""")
+        assertTrue(repo.pushUnSyncedRecords())
+    }
+
+    @Test
+    fun `pushUnSyncedRecords processes multiple confirmed chunks`() = runTest {
+        loggedIn()
+        coEvery { malariaDao.getMalariaScreening(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { malariaDao.getMalariaConfirmed(SyncState.UNSYNCED) } returns
+            List(21) { mockk<MalariaConfirmedCasesCache>(relaxed = true) }
+        coEvery { api.saveMalariaConfirmedData(any()) } returns resp(200, """{"statusCode":200}""")
+        assertTrue(repo.pushUnSyncedRecords())
+        coVerify(atLeast = 21) { malariaDao.saveMalariaConfirmed(any()) }
     }
 }

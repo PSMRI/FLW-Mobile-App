@@ -72,8 +72,9 @@ class PwAncFormFragment : Fragment() {
                         } else {
                             viewModel.setImageUriToFormElement(uri)
                             binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
+                                // Null when the result lands while the activity is being re-created
+                                // (list not bound yet); the value is in the ViewModel and renders then.
+                                (this.adapter as? FormInputAdapterWithBgIcon)?.notifyDataSetChanged()
                             }
                         }
 
@@ -86,8 +87,9 @@ class PwAncFormFragment : Fragment() {
                         } else {
                             viewModel.setImageUriToFormElement(uri)
                             binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
+                                // Null when the result lands while the activity is being re-created
+                                // (list not bound yet); the value is in the ViewModel and renders then.
+                                (this.adapter as? FormInputAdapterWithBgIcon)?.notifyDataSetChanged()
                             }
                         }
 
@@ -111,8 +113,9 @@ class PwAncFormFragment : Fragment() {
                         latestTmpUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
                             binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
+                                // Null when the result lands while the activity is being re-created
+                                // (list not bound yet); the value is in the ViewModel and renders then.
+                                (this.adapter as? FormInputAdapterWithBgIcon)?.notifyDataSetChanged()
                             }
                         }
 
@@ -129,8 +132,9 @@ class PwAncFormFragment : Fragment() {
                         backViewFileUri?.let { uri ->
                             viewModel.setImageUriToFormElement(uri)
                             binding.form.rvInputForm.apply {
-                                val adapter = this.adapter as FormInputAdapterWithBgIcon
-                                adapter.notifyDataSetChanged()
+                                // Null when the result lands while the activity is being re-created
+                                // (list not bound yet); the value is in the ViewModel and renders then.
+                                (this.adapter as? FormInputAdapterWithBgIcon)?.notifyDataSetChanged()
                             }
                         }
 

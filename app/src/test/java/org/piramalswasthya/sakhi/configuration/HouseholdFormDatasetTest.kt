@@ -10,6 +10,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -162,6 +163,50 @@ class HouseholdFormDatasetTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `prefillFromAyushmanCard splits a two part name and sanitizes a valid mobile`() = runTest {
+        val ds = newDs()
+        runCatching { ds.setupPage(null) }
+        val member = mockk<FamilyMember>(relaxed = true)
+        every { member.name } returns "John Doe"
+        every { member.mobileNo } returns "9876543210"
+        runCatching { ds.prefillFromAyushmanCard(member) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `prefillFromAyushmanCard keeps a single word name and rejects a short mobile`() = runTest {
+        val ds = newDs()
+        runCatching { ds.setupPage(null) }
+        val member = mockk<FamilyMember>(relaxed = true)
+        every { member.name } returns "Ramesh"
+        every { member.mobileNo } returns "12345"
+        runCatching { ds.prefillFromAyushmanCard(member) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `prefillFromAyushmanCard rejects a mobile starting below six`() = runTest {
+        val ds = newDs()
+        runCatching { ds.setupPage(null) }
+        val member = mockk<FamilyMember>(relaxed = true)
+        every { member.name } returns "  Sunita   Devi  "
+        every { member.mobileNo } returns "5876543210"
+        runCatching { ds.prefillFromAyushmanCard(member) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `prefillFromAyushmanCard handles a null name and an over length mobile`() = runTest {
+        val ds = newDs()
+        runCatching { ds.setupPage(null) }
+        val member = mockk<FamilyMember>(relaxed = true)
+        every { member.name } returns null
+        every { member.mobileNo } returns "919876543210"
+        runCatching { ds.prefillFromAyushmanCard(member) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
     fun `hindi variant construction`() = runTest {
         val ds = HouseholdFormDataset(context, Languages.HINDI, preferenceDao)
         runCatching { ds.setupPage(null) }
@@ -309,5 +354,15 @@ class HouseholdFormDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { ds.updateList(99999, 0) }
         assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `LocationEntity exposes nameBangla and HouseholdFamily exposes rationCardDetails`() {
+        val location = LocationEntity(id = 1, name = "Village", nameBangla = "গ্রাম")
+        assertEquals("গ্রাম", location.nameBangla)
+
+        val family = HouseholdFamily()
+        family.rationCardDetails = "RC12345"
+        assertEquals("RC12345", family.rationCardDetails)
     }
 }

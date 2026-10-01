@@ -5,7 +5,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -37,6 +39,8 @@ class SignInViewModelTest : BaseViewModelTest() {
         super.setUp()
         every { pref.getLoggedInUser() } returns null
         every { userRepo.unProcessedRecordCount } returns flowOf(emptyList())
+        mockkStatic(Dispatchers::class)
+        every { Dispatchers.IO } returns testDispatcher
         viewModel = SignInViewModel(userRepo, database, pref)
     }
 
@@ -75,6 +79,21 @@ class SignInViewModelTest : BaseViewModelTest() {
     @Test
     fun `unprocessedRecordsCount is initially 0`() {
         assertEquals(0, viewModel.unprocessedRecordsCount.value)
+    }
+
+    // =====================================================
+    // logout() Tests
+    // =====================================================
+
+    @Test
+    fun `logout clears db and prefs and sets logoutComplete`() = runTest {
+        every { database.clearAllTables() } returns Unit
+        viewModel.logout()
+        advanceUntilIdle()
+        io.mockk.verify(exactly = 1) { database.clearAllTables() }
+        io.mockk.verify(exactly = 1) { pref.deleteForLogout() }
+        assertNull(viewModel.loggedInUser.value)
+        assertEquals(true, viewModel.logoutComplete.value)
     }
 
     // =====================================================

@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.repositories.MaaMeetingRepo
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
+import timber.log.Timber
 
 @HiltViewModel
 class MaaMeetingFormViewModel @Inject constructor(
@@ -112,8 +113,14 @@ class MaaMeetingFormViewModel @Inject constructor(
 
 
             repo.save(entity)
-            repo.tryUpsync()
-            repo.downSyncAndPersist()
+            // Record is saved locally; an offline/failed sync must not crash the form —
+            // MaaMeetingsPushWorker will upload the UNSYNCED row later.
+            try {
+                repo.tryUpsync()
+                repo.downSyncAndPersist()
+            } catch (e: Exception) {
+                Timber.e(e, "Maa meeting sync after save failed")
+            }
         }
     }
 

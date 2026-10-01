@@ -57,4 +57,11 @@ class HBYCFormDatasetTest : BaseViewModelTest() {
         runCatching { ds.mapValues(mockk<HBYCCache>(relaxed = true), 0) }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `firstPage lists all page fields`() {
+        val ds = HBYCFormDataset(context, Languages.ENGLISH)
+        assertNotNull(ds.firstPage)
+        assert(ds.firstPage.isNotEmpty())
+    }
 }

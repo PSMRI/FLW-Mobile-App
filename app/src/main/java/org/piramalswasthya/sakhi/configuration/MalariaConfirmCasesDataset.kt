@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.configuration
 
 import android.content.Context
 import android.util.Log
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -50,12 +51,16 @@ class MalariaConfirmCasesDataset(
         hasDependants = true
     )
 
+    private val daysPvArrayId =
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) R.array.daysPvMitanin
+        else R.array.daysPv
+
     private var dayWiseTrackingPV = FormElement(
         id = 23,
         inputType = InputType.DROPDOWN,
         title = resources.getString(R.string.day_wise_tracking_pv),
-        arrayId = R.array.daysPv,
-        entries = resources.getStringArray(R.array.daysPv),
+        arrayId = daysPvArrayId,
+        entries = resources.getStringArray(daysPvArrayId),
         required = false,
         hasDependants = true
     )
@@ -96,7 +101,7 @@ class MalariaConfirmCasesDataset(
         if (saved == null) {
             dateOfCase.value = getDateFromLong(System.currentTimeMillis())
             dayWiseTrackingPf.value = resources.getStringArray(R.array.daysPf)[0]
-            dayWiseTrackingPV.value = resources.getStringArray(R.array.daysPv)[0]
+            dayWiseTrackingPV.value = resources.getStringArray(daysPvArrayId)[0]
 
             treatmentGiven.value = getLocalValueInArray(R.array.pf_pv, slideTestName)
             if(treatmentGiven.value == resources.getStringArray(R.array.pf_pv)[0]){
@@ -117,7 +122,7 @@ class MalariaConfirmCasesDataset(
                 dayWiseTrackingPf.value = getLocalValueInArray(R.array.daysPf,saved.day)
             } else {
                 list.add(list.indexOf(treatmentGiven) + 1 ,dayWiseTrackingPV)
-                dayWiseTrackingPV.value = getLocalValueInArray(R.array.daysPv,saved.day)
+                dayWiseTrackingPV.value = getLocalValueInArray(daysPvArrayId,saved.day)
 
             }
             updateCompletionDateLimits()
@@ -176,7 +181,7 @@ class MalariaConfirmCasesDataset(
                 form.day = getEnglishValueInArray(R.array.daysPv, dayWiseTrackingPf.value)
 
             } else {
-                form.day = getEnglishValueInArray(R.array.daysPv, dayWiseTrackingPV.value)
+                form.day = getEnglishValueInArray(daysPvArrayId, dayWiseTrackingPV.value)
 
             }
             form.treatmentCompletionDate= getLongFromDate(dateOfCompletion.value)

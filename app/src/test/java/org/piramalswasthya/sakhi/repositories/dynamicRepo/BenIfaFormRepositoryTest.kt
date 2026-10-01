@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.repositories.dynamicRepo
 
 import android.content.Context
+import android.content.res.AssetManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import com.google.gson.JsonObject
@@ -21,14 +24,20 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.BenIfaFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.dynamicMapper.FormSubmitRequestMapper
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicModel.ApiResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitListResponse
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitRequest
 import org.piramalswasthya.sakhi.model.dynamicModel.HBNCVisitResponse
 import org.piramalswasthya.sakhi.network.AmritApiService
+import java.io.ByteArrayInputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import retrofit2.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -266,5 +275,125 @@ class BenIfaFormRepositoryTest : BaseRepositoryTest() {
         repo.saveDownloadedVisitList(listOf(item), "ifa")
 
         coVerify { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `getFormSchema loads schema from assets when api and db both empty`() = runTest {
+        coEvery { api.fetchFormSchema(any(), any()) } throws RuntimeException("network")
+        coEvery { schemaDao.getSchema(any()) } returns null
+        val json = """{"formId":"F1","formName":"N","version":1,"sections":[]}"""
+        val assetManager = mockk<AssetManager>()
+        every { assetManager.open("hbnc_form_1stday.json") } returns ByteArrayInputStream(json.toByteArray())
+        every { context.assets } returns assetManager
+
+        val result = repo.getFormSchema("F1")
+
+        assertEquals("F1", result?.formId)
+    }
+
+    @Test
+    fun `getFormSchema skips saving when local schema version is already up to date`() = runTest {
+        val apiSchema = mockk<FormSchemaDto>(relaxed = true)
+        every { apiSchema.formId } returns "F1"
+        every { apiSchema.version } returns 2
+        val apiResponse = mockk<ApiResponse<FormSchemaDto>>()
+        every { apiResponse.success } returns true
+        every { apiResponse.data } returns apiSchema
+        val response = mockk<Response<ApiResponse<FormSchemaDto>>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns apiResponse
+        coEvery { api.fetchFormSchema("F1", any()) } returns response
+
+        val localEntity = mockk<FormSchemaEntity>(relaxed = true)
+        every { localEntity.version } returns 2
+        coEvery { schemaDao.getSchema("F1") } returns localEntity
+
+        val result = repo.getFormSchema("F1")
+
+        assertSame(apiSchema, result)
+        coVerify(exactly = 0) { schemaDao.insertOrUpdate(any()) }
+    }
+
+    @Test
+    fun `saveDownloadedVisitList skips item when field processing throws`() = runTest {
+        val badFields = mockk<JsonObject>()
+        every { badFields.entrySet() } throws RuntimeException("bad fields")
+        val item = HBNCVisitResponse(
+            id = 8,
+            houseHoldId = 40L,
+            beneficiaryId = 40L,
+            visitDate = "01-01-2026",
+            eyeSide = "L",
+            fields = badFields
+        )
+
+        repo.saveDownloadedVisitList(listOf(item), "ifa")
+
+        coVerify(exactly = 0) { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `canAddNewVisit returns false when a stored visit is from the current month`() = runTest {
+        val currentMonthVisit = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Calendar.getInstance().time)
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf(
+            """{"visitDate":"$currentMonthVisit"}"""
+        )
+
+        assertFalse(repo.canAddNewVisit(1L))
+    }
+
+    @Test
+    fun `getBottleList defaults missing visit date field to placeholder`() = runTest {
+        coEvery { jsonDao.getFormJsonList(any(), any()) } returns listOf(
+            """{"fields":{"ifa_quantity":"2"}}"""
+        )
+
+        val result = repo.getBottleList(1L, "ifa")
+
+        assertEquals(1, result.size)
+        assertEquals("-", result[0].dateOfProvision)
+    }
+
+    @Test
+    fun `syncFormToServer returns true when mapper produces request and api call succeeds`() = runTest {
+        mockkObject(FormSubmitRequestMapper)
+        val entity = mockk<BenIfaFormResponseJsonEntity>(relaxed = true)
+        val request = mockk<FormSubmitRequest>(relaxed = true)
+        every { FormSubmitRequestMapper.fromEntity(entity, "user") } returns request
+        val response = mockk<Response<Unit>>()
+        every { response.isSuccessful } returns true
+        coEvery { api.submitEyeSurgeryForm("ifa", listOf(request)) } returns response
+
+        assertTrue(repo.syncFormToServer("user", "ifa", entity))
+
+        unmockkObject(FormSubmitRequestMapper)
+    }
+
+    @Test
+    fun `syncFormToServer returns false when api call reports failure`() = runTest {
+        mockkObject(FormSubmitRequestMapper)
+        val entity = mockk<BenIfaFormResponseJsonEntity>(relaxed = true)
+        val request = mockk<FormSubmitRequest>(relaxed = true)
+        every { FormSubmitRequestMapper.fromEntity(entity, "user") } returns request
+        val response = mockk<Response<Unit>>()
+        every { response.isSuccessful } returns false
+        coEvery { api.submitEyeSurgeryForm("ifa", listOf(request)) } returns response
+
+        assertFalse(repo.syncFormToServer("user", "ifa", entity))
+
+        unmockkObject(FormSubmitRequestMapper)
+    }
+
+    @Test
+    fun `syncFormToServer returns false when api call throws`() = runTest {
+        mockkObject(FormSubmitRequestMapper)
+        val entity = mockk<BenIfaFormResponseJsonEntity>(relaxed = true)
+        val request = mockk<FormSubmitRequest>(relaxed = true)
+        every { FormSubmitRequestMapper.fromEntity(entity, "user") } returns request
+        coEvery { api.submitEyeSurgeryForm("ifa", listOf(request)) } throws RuntimeException("net")
+
+        assertFalse(repo.syncFormToServer("user", "ifa", entity))
+
+        unmockkObject(FormSubmitRequestMapper)
     }
 }

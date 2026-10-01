@@ -19,8 +19,10 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,7 +33,21 @@ class HBNCFormViewModel @Inject constructor(
     private val repository: FormRepository,
     private val benRepo: BenRepo,
     private val infantRegRepo: InfantRegRepo,
+    private val referalRepo: NcdReferalRepo,
 ) : ViewModel() {
+
+    private val _referralList = mutableListOf<ReferalCache>()
+
+    fun addReferral(referral: ReferalCache) {
+        _referralList.add(referral)
+    }
+
+    fun hasReferral(): Boolean = _referralList.isNotEmpty()
+
+    fun isDangerSign(fieldId: String, value: Any?): Boolean {
+        val expected = DANGER_SIGNS[fieldId] ?: return false
+        return value?.toString().equals(expected, ignoreCase = true)
+    }
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
@@ -102,12 +118,6 @@ class HBNCFormViewModel @Inject constructor(
             val localSchemaToRender = cachedSchema ?: repository.getFormSchema(formId, lang)?.also { }
 
             if (localSchemaToRender == null) return@launch
-
-            launch {
-                val updatedSchema = repository.getFormSchema(formId, lang)
-                if (updatedSchema != null && (cachedSchemaEntity?.version ?: 0) < updatedSchema.version) {
-                }
-            }
 
             val savedJson = repository.loadFormResponseJson(benId, visitDay)
             val savedFieldValues = if (!savedJson.isNullOrBlank()) {
@@ -181,6 +191,19 @@ class HBNCFormViewModel @Inject constructor(
     companion object {
         private const val OTHER_PLACE_OF_DEATH_ID = 8
         private const val DEFAULT_DEATH_ID = -1
+        const val REFERRAL_TYPE = "CHILD"
+        private val DANGER_SIGNS = mapOf(
+            "urine_passed" to "No",
+            "stool_passed" to "No",
+            "diarrhoea" to "Yes",
+            "vomiting" to "Yes",
+            "convulsions" to "Yes",
+            "activity" to "Lethargic",
+            "sucking" to "Poor",
+            "breathing" to "Difficult",
+            "chest_indrawing" to "Present",
+            "jaundice" to "Yes"
+        )
     }
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val currentSchema = _schema.value ?: return
@@ -195,6 +218,7 @@ class HBNCFormViewModel @Inject constructor(
 
         val visitDate = fieldMap["visit_date"]?.toString() ?: "N/A"
         val isBabyAlive = fieldMap["is_baby_alive"]?.toString().orEmpty()
+        var navigateToCdsr = false
         if (isBabyAlive.equals("No", ignoreCase = true)) {
             val reasonOfDeath = fieldMap["reason_for_death"]?.toString().orEmpty()
             val placeOfDeath = fieldMap["place_of_death"]?.toString().orEmpty()
@@ -216,13 +240,10 @@ class HBNCFormViewModel @Inject constructor(
                         syncState = SyncState.UNSYNCED
                     }
                     benRepo.updateRecord(ben)
-                    _navigateToCdsr.postValue(true)
+                    navigateToCdsr = true
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Failed to update beneficiary death record for benId: $benId")            }
-        }
-        else{
-            _navigateToCdsr.postValue(false)
         }
 
 
@@ -247,6 +268,11 @@ class HBNCFormViewModel @Inject constructor(
         )
 
         repository.insertFormResponse(entity)
+
+        _referralList.forEach { referalRepo.saveReferedNCD(it) }
+        _referralList.clear()
+
+        _navigateToCdsr.postValue(navigateToCdsr)
 
         loadSyncedVisitList(benId)
     }

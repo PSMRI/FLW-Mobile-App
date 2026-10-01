@@ -27,6 +27,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.AlertNewBenBinding
 import org.piramalswasthya.sakhi.databinding.FragmentHouseholdMembersBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
@@ -38,6 +39,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.EyeSurgeryBottomSheetFragment
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class HouseholdMembersFragment : Fragment() {
@@ -52,6 +54,8 @@ class HouseholdMembersFragment : Fragment() {
     private val viewModel: HouseholdMembersViewModel by viewModels()
 
     private var householdMembers: List<BenBasicDomain> = emptyList()
+    private var relationMembers: List<BenRegCache> = emptyList()
+    private var householdMembersLoaded = false
 
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
     private var connectivityManager: ConnectivityManager? = null
@@ -94,19 +98,23 @@ class HouseholdMembersFragment : Fragment() {
                 return@setOnCheckedChangeListener
             }
 
+            if (!householdMembersLoaded) {
+                binding.linearLayout4.visibility = View.GONE
+                binding.actvRth.setAdapter(null)
+                binding.actvRth.text = null
+                return@setOnCheckedChangeListener
+            }
+
             binding.linearLayout4.visibility = View.VISIBLE
             binding.actvRth.text = null
 
-            val relations = when (selectedGender) {
-                Gender.MALE -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female)
-                Gender.TRANSGENDER -> resources.getStringArray(R.array.nbr_relationship_to_head_male)
-                else -> emptyArray()
-            }
-
-            binding.actvRth.setAdapter(
-                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, relations)
+            val relations = filterRelationsForMembers(
+                selectedGender,
+                baseRelationDropdownForMembers(selectedGender),
+                computeHofContextForMembers()
             )
+
+            applyRelationAdapterForMembers(binding, relations)
         }
     }
     private fun setupRelationClickListener(binding: AlertNewBenBinding) {
@@ -147,7 +155,7 @@ class HouseholdMembersFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 HouseholdMembersFragmentDirections
                     .actionHouseholdMembersFragmentToNewBenRegFragment(
                         hhId = hhId,
@@ -179,6 +187,95 @@ class HouseholdMembersFragment : Fragment() {
             binding.rbTrans.id -> 3
             else -> 0
         }
+    }
+
+    private data class HofContextForMembers(
+        val hof: BenRegCache?,
+        val fatherRegistered: Boolean,
+        val motherRegistered: Boolean,
+        val wifeRegistered: Boolean,
+        val husbandRegistered: Boolean,
+        val spouseRegistered: Boolean,
+        val unmarried: Boolean,
+        val married: Boolean
+    )
+
+    private fun baseRelationDropdownForMembers(selectedGender: Gender?): List<String> {
+        val arrayRes = when (selectedGender) {
+            Gender.MALE -> R.array.nbr_relationship_to_head_male
+            Gender.FEMALE -> R.array.nbr_relationship_to_head_female
+            Gender.TRANSGENDER -> R.array.nbr_relationship_to_head_male
+            else -> null
+        }
+        return arrayRes?.let { resources.getStringArray(it).toList() }.orEmpty()
+    }
+
+    private fun computeHofContextForMembers(): HofContextForMembers {
+        val hof = relationMembers.firstOrNull { it.familyHeadRelationPosition == 19 }
+        return HofContextForMembers(
+            hof = hof,
+            fatherRegistered = relationMembers.any { it.familyHeadRelationPosition == 2 },
+            motherRegistered = relationMembers.any { it.familyHeadRelationPosition == 1 },
+            wifeRegistered = relationMembers.any { it.familyHeadRelationPosition == 5 },
+            husbandRegistered = relationMembers.any { it.familyHeadRelationPosition == 6 },
+            spouseRegistered = hof?.isSpouseAdded == true,
+            unmarried = hof?.genDetails?.maritalStatusId == 1,
+            married = hof?.genDetails?.maritalStatusId == 2
+        )
+    }
+
+    private fun filterRelationsForMembers(
+        selectedGender: Gender?,
+        baseList: List<String>,
+        ctx: HofContextForMembers
+    ): List<String> {
+        if (!householdMembersLoaded) return emptyList()
+        if (ctx.hof == null) return baseList
+
+        val list = baseList.toMutableList()
+        val common = resources.getStringArray(R.array.nbr_relationship_to_head)
+        val unmarriedFilter =
+            resources.getStringArray(R.array.nbr_relationship_to_head_unmarried_filter).toSet()
+
+        if (ctx.fatherRegistered) list.remove(common[1])
+        if (ctx.motherRegistered) list.remove(common[0])
+        if (ctx.wifeRegistered) list.remove(common[4])
+        if (ctx.husbandRegistered) list.remove(common[5])
+
+        if (ctx.spouseRegistered) {
+            when (ctx.hof.gender) {
+                Gender.MALE -> list.remove(common[4])
+                Gender.FEMALE -> list.remove(common[5])
+                else -> Unit
+            }
+        }
+
+        if (ctx.unmarried) {
+            list.removeAll(unmarriedFilter)
+        } else if (!ctx.married) {
+            list.remove(common[5])
+            list.remove(common[4])
+        }
+
+        if (ctx.hof.gender == Gender.MALE && selectedGender == Gender.MALE) {
+            list.remove(common[5])
+        }
+
+        if (ctx.hof.gender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
+            list.remove(common[4])
+            list.remove(common[18])
+        }
+
+        return list
+    }
+
+    private fun applyRelationAdapterForMembers(
+        binding: AlertNewBenBinding,
+        items: List<String>
+    ) {
+        binding.actvRth.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+        )
     }
 
     fun showSoftDeleteDialog(benBasicDomain: BenBasicDomain) {
@@ -243,9 +340,12 @@ class HouseholdMembersFragment : Fragment() {
         } else {
             View.GONE
         }
+        binding.fabAddMember.isEnabled = false
 
         binding.fabAddMember.setOnClickListener {
-            addBenAlert?.show()
+            if (householdMembersLoaded) {
+                addBenAlert?.show()
+            }
         }
 
         if (isMitaninFlavor && binding.fabAddMember.visibility == View.VISIBLE) {
@@ -256,7 +356,7 @@ class HouseholdMembersFragment : Fragment() {
             clickListener = BenListAdapter.BenClickListener(
                 { item, hhId, benId, relToHeadId ->
                     routeBenFlow(item, benId) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = benId,
@@ -269,7 +369,7 @@ class HouseholdMembersFragment : Fragment() {
                 },
                 clickedWifeBen = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -283,7 +383,7 @@ class HouseholdMembersFragment : Fragment() {
 
                 },clickedHusbandBen = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewBenRegFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -297,7 +397,7 @@ class HouseholdMembersFragment : Fragment() {
                 },
                 clickedChildben = { item, hhId, benId, relToHeadId ->
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToNewChildAsBenRegistrationFragment(
                                 hhId = hhId,
                                 benId = 0,
@@ -320,7 +420,7 @@ class HouseholdMembersFragment : Fragment() {
                         showEyeSurgeryBottomSheet(benId, hhId, item.benFullName, item.gender, item.age)
                     }
                     if (canProceed(item)) {
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
                                 hhId = hhId,
                                 benId = benId,
@@ -378,6 +478,12 @@ class HouseholdMembersFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+            launch {
+                    relationMembers = viewModel.getMembersForRelationFilter()
+                    householdMembersLoaded = true
+                    binding.fabAddMember.isEnabled = true
+                }
 
                 launch {
                     viewModel.benList.collect {
@@ -475,7 +581,7 @@ class HouseholdMembersFragment : Fragment() {
     private fun navigateToDiseaseForm(benId: Long) {
         when (viewModel.diseaseType) {
             IconDataset.Disease.MALARIA.toString() -> {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections
                         .actionHouseholdMembersFragmentToMalariaFormFragment(
                             benId = benId
@@ -484,7 +590,7 @@ class HouseholdMembersFragment : Fragment() {
             }
 
             IconDataset.Disease.KALA_AZAR.toString() -> {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections
                         .actionHouseholdMembersFragmentToKalaAzarFormFragment(
                             benId = benId
@@ -501,6 +607,9 @@ class HouseholdMembersFragment : Fragment() {
         connectivityManager = null
         addBenAlert?.dismiss()
         addBenAlert = null
+        householdMembersLoaded = false
+        householdMembers = emptyList()
+        relationMembers = emptyList()
         _binding = null
     }
     private fun showEyeSurgeryBottomSheet(benId: Long, hhId: Long, benName: String, gender: String, age: String) {
@@ -510,7 +619,7 @@ class HouseholdMembersFragment : Fragment() {
                 benId: Long, hhId: Long, eyeSide: String, isViewMode: Boolean,
                 formDataJson: String?, recordId: Int, benName: String, gender: String, age: String
             ) {
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     HouseholdMembersFragmentDirections.actionHouseholdMembersFragmentToEyeSurgeryFormFragment(
                         benId = benId, hhId = hhId, eyeSide = eyeSide,
                         isViewMode = isViewMode, formDataJson = formDataJson,

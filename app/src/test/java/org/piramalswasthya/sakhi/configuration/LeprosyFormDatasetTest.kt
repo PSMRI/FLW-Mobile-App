@@ -312,4 +312,79 @@ class LeprosyFormDatasetTest : BaseViewModelTest() {
         val ds = freshScreening()
         assertEquals(0, ds.getIndexOfDate())
     }
+
+    private fun screeningCache(
+        leprosyStatus: String? = "opt2",
+        referToName: String? = "opt3",
+        symptomsPosition: Int? = 0,
+        checklistId: Int? = 0,
+    ) = LeprosyScreeningCache(
+        benId = 7L,
+        houseHoldDetailsId = 9L,
+        createdBy = "tester",
+        modifiedBy = "tester",
+        homeVisitDate = 1_600_000_000_000L,
+        leprosyStatus = leprosyStatus,
+        referToName = referToName,
+        leprosySymptomsPosition = symptomsPosition,
+        currentVisitNumber = 4,
+        recurrentUlcerationId = checklistId,
+        recurrentTinglingId = checklistId,
+        hypopigmentedPatchId = checklistId,
+        thickenedSkinId = checklistId,
+        skinNodulesId = checklistId,
+        recurrentNumbnessId = checklistId,
+        clawingFingersId = checklistId,
+        tinglingNumbnessExtremitiesId = checklistId,
+        inabilityCloseEyelidId = checklistId,
+        difficultyHoldingObjectsId = checklistId,
+        weaknessFeetId = checklistId,
+    )
+
+    @Test
+    fun `saved checklist answers default to no when every stored id is null`() = runTest {
+        val ds = LeprosyFormDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screeningCache(symptomsPosition = null, checklistId = null))
+        for (id in 16..26) assertEquals("opt1", ds.valueOf(id))
+        assertEquals("opt1", ds.valueOf(14))
+    }
+
+    @Test
+    fun `saved checklist answers outside the option range fall back to no`() = runTest {
+        val ds = LeprosyFormDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screeningCache(symptomsPosition = 200, checklistId = 200))
+        for (id in 16..26) assertEquals("opt1", ds.valueOf(id))
+        assertEquals("opt1", ds.valueOf(14))
+    }
+
+    @Test
+    fun `saved status and referral both other insert two free text rows`() = runTest {
+        val ds = LeprosyFormDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screeningCache(leprosyStatus = "opt79", referToName = "opt79"))
+        assertEquals("opt79", ds.valueOf(8))
+        assertEquals("opt79", ds.valueOf(9))
+        assertEquals(2, ds.listFlow.value.count { it.id == 10 })
+    }
+
+    @Test
+    fun `map values falls back to screening for an unknown leprosy status`() = runTest {
+        val ds = freshScreening()
+        ds.setValueById(8, "an unmapped status")
+        ds.setValueById(14, "opt7")
+        val form = screeningCache()
+        ds.mapValues(form, 0)
+        assertEquals("Screening", form.leprosyStatus)
+        assertEquals(1, form.leprosySymptomsPosition)
+        assertEquals(null, form.typeOfLeprosy)
+        assertEquals(5, form.diseaseTypeID)
+    }
+
+    @Test
+    fun `saved page keeps the localized status label when it is not the other option`() = runTest {
+        val ds = LeprosyFormDataset(context, Languages.ENGLISH)
+        ds.setUpPage(null, screeningCache(leprosyStatus = "opt4", referToName = "opt6"))
+        assertEquals("opt4", ds.valueOf(8))
+        assertEquals("opt6", ds.valueOf(9))
+        assertEquals(-1, ds.getIndexById(10))
+    }
 }

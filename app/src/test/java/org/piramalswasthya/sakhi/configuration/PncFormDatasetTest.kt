@@ -16,6 +16,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -170,6 +171,8 @@ class PncFormDatasetTest : BaseViewModelTest() {
     }
 
     // ---- handleListOnValueChanged coverage via public updateList wrapper ----
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
 
     private suspend fun freshCreateForm(): PncFormDataset {
         val ds = PncFormDataset(context, Languages.ENGLISH)
@@ -373,7 +376,11 @@ class PncFormDatasetTest : BaseViewModelTest() {
         verify { form.ifaTabsGiven = 30 }
         verify { form.contraceptionMethod = "opt3" }
         verify { form.remarks = "some remark" }
-        verify { form.deliveryDischargeSummary1 = "uri1" }
+        if (isMitanin) {
+            verify { form.deliveryDischargeSummary1 = null }
+        } else {
+            verify { form.deliveryDischargeSummary1 = "uri1" }
+        }
     }
 
     @Test
@@ -409,10 +416,17 @@ class PncFormDatasetTest : BaseViewModelTest() {
     @Test
     fun `discharge summary indexes resolve after setup`() = runTest {
         val ds = freshCreateForm()
-        assertTrue(ds.getIndexDeliveryDischargeSummary1() >= 0)
-        assertTrue(ds.getIndexDeliveryDischargeSummary2() >= 0)
-        assertTrue(ds.getIndexDeliveryDischargeSummary3() >= 0)
-        assertTrue(ds.getIndexDeliveryDischargeSummary4() >= 0)
+        if (isMitanin) {
+            assertTrue(ds.getIndexDeliveryDischargeSummary1() < 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary2() < 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary3() < 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary4() < 0)
+        } else {
+            assertTrue(ds.getIndexDeliveryDischargeSummary1() >= 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary2() >= 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary3() >= 0)
+            assertTrue(ds.getIndexDeliveryDischargeSummary4() >= 0)
+        }
     }
 
     @Test

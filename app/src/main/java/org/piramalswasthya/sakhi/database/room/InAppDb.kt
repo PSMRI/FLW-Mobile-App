@@ -16,9 +16,7 @@ import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
-import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
-import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
@@ -62,13 +60,13 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseJsonDaoHBYC
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
-import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
 import org.piramalswasthya.sakhi.model.ABHAModel
-import org.piramalswasthya.sakhi.model.MonthlyRecapCache
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.AESScreeningCache
@@ -117,14 +115,6 @@ import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
-import org.piramalswasthya.sakhi.model.BadgeConfigCache
-import org.piramalswasthya.sakhi.model.BadgeEarnedCache
-import org.piramalswasthya.sakhi.model.FormSaveLogCache
-import org.piramalswasthya.sakhi.model.NotifHistoryCache
-import org.piramalswasthya.sakhi.model.NotifTemplateCache
-import org.piramalswasthya.sakhi.model.BadgeStateCache
-import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
-import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 import org.piramalswasthya.sakhi.model.NotificationEntity
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
@@ -139,11 +129,26 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.InfantEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.eye_surgery.EyeSurgeryFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.filariaaMdaCampaign.FilariaMDACampaignFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoNetFormResponseJsonEntity
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
+import org.piramalswasthya.sakhi.database.room.dao.EveningNotifDao
+import org.piramalswasthya.sakhi.database.room.dao.MonthlyRecapDao
+import org.piramalswasthya.sakhi.model.MonthlyRecapCache
+import timber.log.Timber
+import org.piramalswasthya.sakhi.model.BadgeConfigCache
+import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.model.FormSaveLogCache
+import org.piramalswasthya.sakhi.model.NotifHistoryCache
+import org.piramalswasthya.sakhi.model.NotifTemplateCache
+import org.piramalswasthya.sakhi.model.BadgeStateCache
+import org.piramalswasthya.sakhi.model.BadgeStreakFreezeCache
+import org.piramalswasthya.sakhi.model.BadgeSyncLogCache
 
 @Database(
     entities = [
@@ -215,6 +220,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         ANCFormResponseJsonEntity::class,
         FilariaMDACampaignFormResponseJsonEntity::class,
         TBConfirmedTreatmentCache::class,
+        TBReferralFollowUpEntity::class,
+        TPTFollowUpEntity::class,
         NotificationEntity::class,
         //Badges (LLD §4.1)
         BadgeEarnedCache::class,
@@ -230,7 +237,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         MonthlyRecapCache::class
     ],
     views = [BenBasicCache::class],
-    version = 66, exportSchema = false
+    version = 69, exportSchema = false
 )
 
 @TypeConverters(
@@ -275,7 +282,6 @@ abstract class InAppDb : RoomDatabase() {
     abstract val saasBahuSammelanDao: SaasBahuSammelanDao
     abstract val generalOpdDao: GeneralOpdDao
     abstract val maaMeetingDao: MaaMeetingDao
-    abstract val monthlyRecapDao: MonthlyRecapDao
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
@@ -286,6 +292,8 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseDao(): CUFYFormResponseDao
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
+    abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
 
@@ -298,8 +306,8 @@ abstract class InAppDb : RoomDatabase() {
 
     abstract val syncDao: SyncDao
 
+    abstract val monthlyRecapDao: MonthlyRecapDao
     abstract val badgeDao: BadgeDao
-
     abstract val eveningNotifDao: EveningNotifDao
 
     companion object {
@@ -370,68 +378,74 @@ abstract class InAppDb : RoomDatabase() {
 //                }
 //            }
 
+             fun addTBScreeningRiskFactorColumns(database: SupportSQLiteDatabase) {
+                val columns = listOf(
+                    "keyPopulationRiskFactorIds TEXT DEFAULT NULL",
+                    "keyPopulationRiskFactors TEXT DEFAULT NULL",
+                    "hivStatusId INTEGER DEFAULT NULL",
+                    "hivStatus TEXT DEFAULT NULL",
+                    "fatigue INTEGER DEFAULT NULL",
+                    "shortBreath INTEGER DEFAULT NULL",
+                    "chestPain INTEGER DEFAULT NULL"
 
-            // Evening Notification module (Notification LLD §4) — additive only.
-            val MIGRATION_64_65 = object : Migration(64, 65) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    try {
-                        database.execSQL(
-                            """
-                            CREATE TABLE IF NOT EXISTS `notification_templates` (
-                                `templateId` TEXT NOT NULL,
-                                `bucket` TEXT NOT NULL,
-                                `language` TEXT NOT NULL,
-                                `bodyTemplate` TEXT NOT NULL,
-                                `libraryVersion` INTEGER NOT NULL,
-                                PRIMARY KEY(`templateId`)
-                            )
-                            """.trimIndent()
-                        )
-                        database.execSQL(
-                            "CREATE INDEX IF NOT EXISTS `index_notification_templates_bucket_language` " +
-                                    "ON `notification_templates` (`bucket`, `language`)"
-                        )
-                        database.execSQL(
-                            """
-                            CREATE TABLE IF NOT EXISTS `notification_history` (
-                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                `templateId` TEXT NOT NULL,
-                                `shownDate` TEXT NOT NULL,
-                                `bucket` TEXT NOT NULL
-                            )
-                            """.trimIndent()
-                        )
-                        database.execSQL(
-                            "CREATE INDEX IF NOT EXISTS `index_notification_history_bucket` " +
-                                    "ON `notification_history` (`bucket`)"
-                        )
-                        database.execSQL(
-                            """
-                            CREATE TABLE IF NOT EXISTS `form_save_log` (
-                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                `formType` TEXT NOT NULL,
-                                `beneficiaryId` INTEGER NOT NULL,
-                                `ashaWorkerId` INTEGER NOT NULL,
-                                `savedAt` INTEGER NOT NULL,
-                                `dateKey` TEXT NOT NULL
-                            )
-                            """.trimIndent()
-                        )
-                        database.execSQL(
-                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_form_save_log_beneficiaryId_formType_dateKey` " +
-                                    "ON `form_save_log` (`beneficiaryId`, `formType`, `dateKey`)"
-                        )
-                        database.execSQL(
-                            "CREATE INDEX IF NOT EXISTS `index_form_save_log_dateKey` " +
-                                    "ON `form_save_log` (`dateKey`)"
-                        )
-                    } catch (_: Exception) {
+                )
+                columns.forEach { columnDefinition ->
+                    val columnName = columnDefinition.substringBefore(" ")
+                    if (!columnExists(database, "TB_SCREENING", columnName)) {
+                        database.execSQL("ALTER TABLE TB_SCREENING ADD COLUMN $columnDefinition")
                     }
                 }
             }
 
-            // Badges module (LLD §4.1) — additive only, no health-table changes.
-            val MIGRATION_63_64 = object : Migration(63, 64) {
+
+
+
+            val MIGRATION_65_66 = object : Migration(65, 66) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    addTBScreeningRiskFactorColumns(database)
+
+                    if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
+                        database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+                    }
+                }
+            }
+
+            val MIGRATION_67_68 = object : Migration(67, 68) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `tb_tpt_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`visitNo` INTEGER NOT NULL, " +
+                                "`followUpNo` INTEGER NOT NULL, " +
+                                "`treatmentType` TEXT, " +
+                                "`treatmentStartDate` TEXT, " +
+                                "`followUpDate` TEXT, " +
+                                "`formId` TEXT NOT NULL, " +
+                                "`version` INTEGER NOT NULL, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_tpt_follow_up_benId_visitNo_followUpNo` " +
+                                "ON `tb_tpt_follow_up` (`benId`, `visitNo`, `followUpNo`)"
+                    )
+                }
+            }
+
+            /**
+             * Gamification tables, re-homed onto the release-2.13 schema chain.
+             *
+             * These tables first shipped on feature/gamification as migrations 63→66, but
+             * release-2.13 had already used 63→68 for its own changes. Devices on the
+             * release line must follow the release numbering, so the gamification work moves
+             * to a single step on top of it. Every statement is CREATE ... IF NOT EXISTS, so
+             * a test device that already ran the old gamification build (and therefore
+             * already has these tables at version 66) migrates through here harmlessly.
+             */
+            val MIGRATION_68_69 = object : Migration(68, 69) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     try {
                         database.execSQL(
@@ -499,11 +513,200 @@ abstract class InAppDb : RoomDatabase() {
                             )
                             """.trimIndent()
                         )
-                    } catch (_: Exception) {
+
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_templates` (
+                                `templateId` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL,
+                                `language` TEXT NOT NULL,
+                                `bodyTemplate` TEXT NOT NULL,
+                                `libraryVersion` INTEGER NOT NULL,
+                                PRIMARY KEY(`templateId`)
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_templates_bucket_language` " +
+                                    "ON `notification_templates` (`bucket`, `language`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `notification_history` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `templateId` TEXT NOT NULL,
+                                `shownDate` TEXT NOT NULL,
+                                `bucket` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_notification_history_bucket` " +
+                                    "ON `notification_history` (`bucket`)"
+                        )
+                        database.execSQL(
+                            """
+                            CREATE TABLE IF NOT EXISTS `form_save_log` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `formType` TEXT NOT NULL,
+                                `beneficiaryId` INTEGER NOT NULL,
+                                `ashaWorkerId` INTEGER NOT NULL,
+                                `savedAt` INTEGER NOT NULL,
+                                `dateKey` TEXT NOT NULL
+                            )
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_form_save_log_beneficiaryId_formType_dateKey` " +
+                                    "ON `form_save_log` (`beneficiaryId`, `formType`, `dateKey`)"
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_form_save_log_dateKey` " +
+                                    "ON `form_save_log` (`dateKey`)"
+                        )
+
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `MONTHLY_RECAP` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`userId` INTEGER NOT NULL, " +
+                                "`recapYearMonth` INTEGER NOT NULL, " +
+                                "`windowStartMillis` INTEGER NOT NULL, " +
+                                "`windowEndMillis` INTEGER NOT NULL, " +
+                                "`status` TEXT NOT NULL, " +
+                                "`language` TEXT, " +
+                                "`variantSeed` INTEGER NOT NULL, " +
+                                "`snapshotVersion` INTEGER NOT NULL, " +
+                                "`metricsJson` TEXT, " +
+                                "`progressScene` INTEGER NOT NULL, " +
+                                "`totalScenes` INTEGER, " +
+                                "`createdAt` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL, " +
+                                "`startedAt` INTEGER, " +
+                                "`completedAt` INTEGER)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                                "`index_MONTHLY_RECAP_userId_recapYearMonth` " +
+                                "ON `MONTHLY_RECAP` (`userId`, `recapYearMonth`)"
+                    )
+                    } catch (e: Exception) {
+                        Timber.e(e, "Gamification tables migration 68->69 failed")
                     }
                 }
             }
 
+
+             fun recreateBenBasicCacheView(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP VIEW IF EXISTS `BEN_BASIC_CACHE`")
+                database.execSQL(
+                    "CREATE VIEW `BEN_BASIC_CACHE` AS " +
+                            "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.createdDate as createdDate, b.updatedDate as updatedDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob,b.isDeactivate, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
+                            ", b.contactNumber as mobileNo, b.fatherName,h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
+                            ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
+                            ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
+                            ", b.isNewAbha" +
+                            ", IFNULL(cbac.benId IS NOT NULL, 0) as cbacFilled, cbac.syncState as cbacSyncState" +
+                            ", IFNULL(cdr.benId IS NOT NULL, 0) as cdrFilled, cdr.syncState as cdrSyncState" +
+                            ", IFNULL(mdsr.benId IS NOT NULL, 0) as mdsrFilled, mdsr.syncState as mdsrSyncState" +
+                            ", IFNULL(pmsma.benId IS NOT NULL, 0) as pmsmaFilled, pmsma.syncState as pmsmaSyncState" +
+                            ", IFNULL(hbnc.benId IS NOT NULL, 0) as hbncFilled" +
+                            ", IFNULL(hbyc.benId IS NOT NULL, 0) as hbycFilled" +
+                            ", IFNULL(pwr.benId IS NOT NULL, 0) as pwrFilled, pwr.syncState as pwrSyncState" +
+                            ", IFNULL(pwa.pregnantWomanDelivered, 0) as isDelivered, IFNULL(pwa.hrpConfirmed, 0) as pwHrp" +
+                            ", IFNULL(ecr.benId IS NOT NULL, 0) as ecrFilled" +
+                            ", IFNULL(ect.benId IS NOT NULL, 0) as ectFilled" +
+                            ", IFNULL((pwa.maternalDeath OR do.complication = 'DEATH' OR pnc.motherDeath), 0) as isMdsr" +
+                            ", IFNULL(tbsn.benId IS NOT NULL, 0) as tbsnFilled, tbsn.syncState as tbsnSyncState" +
+                            ", IFNULL(tbsp.benId IS NOT NULL, 0) as tbspFilled, tbsp.syncState as tbspSyncState" +
+                            ", IFNULL(ir.motherBenId IS NOT NULL, 0) as irFilled, ir.syncState as irSyncState" +
+                            ", IFNULL(cr.motherBenId IS NOT NULL, 0) as crFilled, cr.syncState as crSyncState" +
+                            ", IFNULL(do.benId IS NOT NULL, 0) as doFilled, do.syncState as doSyncState" +
+                            ", IFNULL((hrppa.benId IS NOT NULL AND hrppa.noOfDeliveries IS NOT NULL AND hrppa.timeLessThan18m IS NOT NULL AND hrppa.heightShort IS NOT NULL AND hrppa.age IS NOT NULL AND hrppa.rhNegative IS NOT NULL AND hrppa.homeDelivery IS NOT NULL AND hrppa.badObstetric IS NOT NULL AND hrppa.multiplePregnancy IS NOT NULL), 0) as hrppaFilled, hrppa.syncState as hrppaSyncState" +
+                            ", IFNULL((hrpnpa.benId IS NOT NULL AND hrpnpa.noOfDeliveries IS NOT NULL AND hrpnpa.timeLessThan18m IS NOT NULL AND hrpnpa.heightShort IS NOT NULL AND hrpnpa.age IS NOT NULL AND hrpnpa.misCarriage IS NOT NULL AND hrpnpa.homeDelivery IS NOT NULL AND hrpnpa.medicalIssues IS NOT NULL AND hrpnpa.pastCSection IS NOT NULL), 0) as hrpnpaFilled, hrpnpa.syncState as hrpnpaSyncState" +
+                            ", IFNULL(hrpmbp.benId IS NOT NULL, 0) as hrpmbpFilled, hrpmbp.syncState as hrpmbpSyncState" +
+                            ", IFNULL(hrpt.benId IS NOT NULL, 0) as hrptFilled, IFNULL(((count(distinct hrpt.id) > 3) OR (((JulianDay('now')) - JulianDay(date(max(hrpt.visitDate)/1000,'unixepoch','localtime'))) < 1)), 0) as hrptrackingDone, hrpt.syncState as hrptSyncState" +
+                            ", IFNULL(hrnpt.benId IS NOT NULL, 0) as hrnptFilled, IFNULL(((JulianDay('now') - JulianDay(date(max(hrnpt.visitDate)/1000,'unixepoch','localtime'))) < 1), 0) as hrnptrackingDone, hrnpt.syncState as hrnptSyncState " +
+                            "FROM BENEFICIARY b " +
+                            "JOIN HOUSEHOLD h ON b.householdId = h.householdId " +
+                            "LEFT OUTER JOIN CBAC cbac ON b.beneficiaryId = cbac.benId " +
+                            "LEFT OUTER JOIN CDR cdr ON b.beneficiaryId = cdr.benId " +
+                            "LEFT OUTER JOIN MDSR mdsr ON b.beneficiaryId = mdsr.benId " +
+                            "LEFT OUTER JOIN PMSMA pmsma ON b.beneficiaryId = pmsma.benId " +
+                            "LEFT OUTER JOIN HBNC hbnc ON b.beneficiaryId = hbnc.benId " +
+                            "LEFT OUTER JOIN HBYC hbyc ON b.beneficiaryId = hbyc.benId " +
+                            "LEFT OUTER JOIN PREGNANCY_REGISTER pwr ON b.beneficiaryId = pwr.benId " +
+                            "LEFT OUTER JOIN PREGNANCY_ANC pwa ON b.beneficiaryId = pwa.benId " +
+                            "LEFT OUTER JOIN pnc_visit pnc ON b.beneficiaryId = pnc.benId " +
+                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_REG ecr ON b.beneficiaryId = ecr.benId " +
+                            "LEFT OUTER JOIN ELIGIBLE_COUPLE_TRACKING ect ON (b.beneficiaryId = ect.benId AND CAST((strftime('%s','now') - ect.visitDate/1000)/60/60/24 AS INTEGER) < 30) " +
+                            "LEFT OUTER JOIN TB_SCREENING tbsn ON b.beneficiaryId = tbsn.benId " +
+                            "LEFT OUTER JOIN TB_SUSPECTED tbsp ON b.beneficiaryId = tbsp.benId " +
+                            "LEFT OUTER JOIN MALARIA_SCREENING masp on b.beneficiaryId = masp.benId " +
+                            "LEFT OUTER JOIN MALARIA_CONFIRMED macp on b.beneficiaryId = macp.benId " +
+                            "LEFT OUTER JOIN HRP_PREGNANT_ASSESS hrppa ON b.beneficiaryId = hrppa.benId " +
+                            "LEFT OUTER JOIN HRP_NON_PREGNANT_ASSESS hrpnpa ON b.beneficiaryId = hrpnpa.benId " +
+                            "LEFT OUTER JOIN HRP_MICRO_BIRTH_PLAN hrpmbp ON b.beneficiaryId = hrpmbp.benId " +
+                            "LEFT OUTER JOIN HRP_NON_PREGNANT_TRACK hrnpt ON b.beneficiaryId = hrnpt.benId " +
+                            "LEFT OUTER JOIN HRP_PREGNANT_TRACK hrpt ON b.beneficiaryId = hrpt.benId " +
+                            "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
+                            "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
+                            "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
+                            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY MAX(IFNULL(b.updatedDate, 0), IFNULL(b.createdDate, 0), IFNULL(b.regDate, 0)) DESC, b.beneficiaryId DESC"
+                )
+            }
+
+            val MIGRATION_64_65 = object : Migration(64, 65) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    recreateBenBasicCacheView(database)
+                }
+            }
+
+            // Several pre-release builds shipped different schemas all labelled 66 (CBAC-only,
+            // TB-only, gamification), so bring every one of them to the same schema idempotently.
+            val MIGRATION_66_67 = object : Migration(66, 67) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // The gamification build still had BEN_BASIC_CACHE in its pre-65 form.
+                    recreateBenBasicCacheView(database)
+
+                    if (!columnExists(database, "Adolescent_Health_Form_Data", "isSanitaryNapkinUsed")) {
+                        database.execSQL("ALTER TABLE Adolescent_Health_Form_Data ADD COLUMN isSanitaryNapkinUsed INTEGER")
+                    }
+
+                    addTBScreeningRiskFactorColumns(database)
+
+                    if (!columnExists(database, "CBAC", "cbac_occupational_exposure_other")) {
+                        database.execSQL("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+                    }
+
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `tb_referral_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`referredOnDate` TEXT NOT NULL, " +
+                                "`followUpDate` TEXT NOT NULL, " +
+                                "`followUpStatus` TEXT, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_referral_follow_up_benId_followUpDate` " +
+                                "ON `tb_referral_follow_up` (`benId`, `followUpDate`)"
+                    )
+                }
+            }
+
+            val MIGRATION_63_64 = object : Migration(63, 64) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        """
+              ALTER TABLE Adolescent_Health_Form_Data
+            ADD COLUMN isSanitaryNapkinUsed INTEGER
+            """.trimIndent()
+                    )
+                }
+            }
             val MIGRATION_62_63 = object : Migration(62, 63) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     try {
@@ -569,48 +772,6 @@ abstract class InAppDb : RoomDatabase() {
                         )
                     } catch (_: Exception) {
                     }
-                }
-            }
-
-            // Monthly Recap foundation: one snapshot per (userId, recapYearMonth).
-            // Additive only — no existing table, data or encryption behaviour changes.
-            //
-            // Renumbered twice. First from 60->61 to 63->64, when release 2.11 merged
-            // into main and upstream had already taken 60->61 (isDeath normalisation),
-            // 61->62 and 62->63 (the NOTIFICATION table). Then from 63->64 to 65->66,
-            // when the badges and evening-notification modules landed on this branch
-            // ahead of it and took 63->64 and 64->65.
-            //
-            // Both times for the same reason: a version number is a promise about what a
-            // phone already sitting on it contains. Reusing one would leave a device that
-            // had migrated to the other module's 64 believing MONTHLY_RECAP exists, and
-            // it would crash on the first recap query rather than fail at upgrade time.
-            val MIGRATION_65_66 = object : Migration(65, 66) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `MONTHLY_RECAP` (" +
-                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "`userId` INTEGER NOT NULL, " +
-                                "`recapYearMonth` INTEGER NOT NULL, " +
-                                "`windowStartMillis` INTEGER NOT NULL, " +
-                                "`windowEndMillis` INTEGER NOT NULL, " +
-                                "`status` TEXT NOT NULL, " +
-                                "`language` TEXT, " +
-                                "`variantSeed` INTEGER NOT NULL, " +
-                                "`snapshotVersion` INTEGER NOT NULL, " +
-                                "`metricsJson` TEXT, " +
-                                "`progressScene` INTEGER NOT NULL, " +
-                                "`totalScenes` INTEGER, " +
-                                "`createdAt` INTEGER NOT NULL, " +
-                                "`updatedAt` INTEGER NOT NULL, " +
-                                "`startedAt` INTEGER, " +
-                                "`completedAt` INTEGER)"
-                    )
-                    database.execSQL(
-                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
-                                "`index_MONTHLY_RECAP_userId_recapYearMonth` " +
-                                "ON `MONTHLY_RECAP` (`userId`, `recapYearMonth`)"
-                    )
                 }
             }
 
@@ -3672,7 +3833,10 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_62_63,
                         MIGRATION_63_64,
                         MIGRATION_64_65,
-                        MIGRATION_65_66
+                        MIGRATION_65_66,
+                        MIGRATION_66_67,
+                        MIGRATION_67_68,
+                        MIGRATION_68_69
 
 
                     ).build()

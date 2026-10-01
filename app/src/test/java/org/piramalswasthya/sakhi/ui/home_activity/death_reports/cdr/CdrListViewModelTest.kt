@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.ui.home_activity.death_reports.cdr
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -79,5 +81,11 @@ class CdrListViewModelTest : BaseViewModelTest() {
         val second = viewModel.benList
         assertNotNull(first)
         assertNotNull(second)
+    }
+
+    @Test
+    fun `benList collects real results once the flow is exercised`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

@@ -1,5 +1,8 @@
 package org.piramalswasthya.sakhi.utils.dynamicFiledValidator
 
+import android.content.Context
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -7,6 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 
@@ -389,5 +393,266 @@ class FieldValidatorTest {
         val field = makeField(type = "text", value = "", required = true, validation = validation)
         val result = FieldValidator.validate(field, null)
         assertFalse(result.isValid)
+    }
+
+    // =====================================================
+    // Required Field Collection Value Tests
+    // =====================================================
+
+    @Test fun `required field with empty collection value fails`() {
+        val field = makeField(required = true, value = emptyList<String>())
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+    }
+
+    @Test fun `required field with non-empty collection value passes`() {
+        val field = makeField(required = true, value = listOf("a", "b"))
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    // =====================================================
+    // Unknown Type With Validation Rules
+    // =====================================================
+
+    @Test fun `unknown type with validation rules still passes`() {
+        val validation = FieldValidation(min = 0f, max = 10f)
+        val field = makeField(type = "custom_widget", value = "42", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    // =====================================================
+    // Date Validation - Invalid Format
+    // =====================================================
+
+    @Test fun `date field with unparseable value fails`() {
+        val validation = FieldValidation()
+        val field = makeField(type = "date", value = "not-a-date", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+        assertTrue(result.errorMessage!!.contains("invalid"))
+    }
+
+    // =====================================================
+    // Date Validation - minDate/maxDate = "dob"
+    // =====================================================
+
+    @Test fun `date field with minDate dob and value before dob fails`() {
+        val validation = FieldValidation(minDate = "dob")
+        val field = makeField(type = "date", value = "05-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, "10-04-2026")
+        assertFalse(result.isValid)
+        assertTrue(result.errorMessage!!.contains("before"))
+    }
+
+    @Test fun `date field with minDate dob and value after dob passes`() {
+        val validation = FieldValidation(minDate = "dob")
+        val field = makeField(type = "date", value = "10-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, "05-04-2026")
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with minDate dob and null dob passes`() {
+        val validation = FieldValidation(minDate = "dob")
+        val field = makeField(type = "date", value = "01-01-2026", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with maxDate dob and value after dob fails`() {
+        val validation = FieldValidation(maxDate = "dob")
+        val field = makeField(type = "date", value = "10-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, "05-04-2026")
+        assertFalse(result.isValid)
+        assertTrue(result.errorMessage!!.contains("after"))
+    }
+
+    @Test fun `date field with maxDate dob and value before dob passes`() {
+        val validation = FieldValidation(maxDate = "dob")
+        val field = makeField(type = "date", value = "05-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, "10-04-2026")
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with maxDate dob and null dob passes`() {
+        val validation = FieldValidation(maxDate = "dob")
+        val field = makeField(type = "date", value = "01-01-2026", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    // =====================================================
+    // Date Validation - minDate/maxDate = "today"
+    // =====================================================
+
+    @Test fun `date field with minDate today and value before today fails`() {
+        val validation = FieldValidation(minDate = "today")
+        val field = makeField(type = "date", value = "10-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, null, "15-04-2026")
+        assertFalse(result.isValid)
+    }
+
+    @Test fun `date field with minDate today and value on today passes`() {
+        val validation = FieldValidation(minDate = "today")
+        val field = makeField(type = "date", value = "15-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, null, "15-04-2026")
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with maxDate today and value after today fails`() {
+        val validation = FieldValidation(maxDate = "today")
+        val field = makeField(type = "date", value = "15-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, null, "10-04-2026")
+        assertFalse(result.isValid)
+    }
+
+    @Test fun `date field with maxDate today and value on today passes`() {
+        val validation = FieldValidation(maxDate = "today")
+        val field = makeField(type = "date", value = "10-04-2026", validation = validation)
+        val result = FieldValidator.validate(field, null, "10-04-2026")
+        assertTrue(result.isValid)
+    }
+
+    // =====================================================
+    // Date Validation - Explicit minDate/maxDate Strings
+    // =====================================================
+
+    @Test fun `date field with explicit minDate string and value before it fails`() {
+        val validation = FieldValidation(minDate = "01-01-2026")
+        val field = makeField(type = "date", value = "01-12-2025", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+    }
+
+    @Test fun `date field with explicit minDate string and value after it passes`() {
+        val validation = FieldValidation(minDate = "01-01-2026")
+        val field = makeField(type = "date", value = "02-01-2026", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with explicit maxDate string and value after it fails`() {
+        val validation = FieldValidation(maxDate = "31-12-2025")
+        val field = makeField(type = "date", value = "01-01-2026", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+    }
+
+    @Test fun `date field with explicit maxDate string and value before it passes`() {
+        val validation = FieldValidation(maxDate = "31-12-2025")
+        val field = makeField(type = "date", value = "30-12-2025", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    @Test fun `date field with validation but no min or max date passes`() {
+        val validation = FieldValidation()
+        val field = makeField(type = "date", value = "01-01-2026", validation = validation)
+        val result = FieldValidator.validate(field, null)
+        assertTrue(result.isValid)
+    }
+
+    // =====================================================
+    // Date Validation - Custom Field Messages (due_date)
+    // =====================================================
+
+    @Test fun `due date field before minDate uses custom message`() {
+        val validation = FieldValidation(minDate = "01-01-2026")
+        val field = makeField(type = "date", value = "01-12-2025", validation = validation).copy(fieldId = "due_date")
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+        assertTrue(result.errorMessage!!.contains("Date of Delivery"))
+    }
+
+    @Test fun `due date field after maxDate uses custom message`() {
+        val validation = FieldValidation(maxDate = "31-12-2025")
+        val field = makeField(type = "date", value = "01-01-2026", validation = validation).copy(fieldId = "due_date")
+        val result = FieldValidator.validate(field, null)
+        assertFalse(result.isValid)
+        assertTrue(result.errorMessage!!.contains("Date of Delivery"))
+    }
+
+    // =====================================================
+    // Context-Backed Error Message Tests
+    // =====================================================
+
+    @Test fun `required field with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_is_required, "Name") } returns "Name is mandatory"
+        val field = makeField(required = true, value = null, label = "Name")
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Name is mandatory", result.errorMessage)
+    }
+
+    @Test fun `text field invalid regex with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_is_invalid, "Code") } returns "Code format wrong"
+        val validation = FieldValidation(regex = "^[0-9]+$")
+        val field = makeField(type = "text", value = "abc", label = "Code", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Code format wrong", result.errorMessage)
+    }
+
+    @Test fun `number field non-numeric with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_must_be_number, "Weight") } returns "Weight invalid number"
+        val validation = FieldValidation(min = 0f, max = 100f)
+        val field = makeField(type = "number", value = "xyz", label = "Weight", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Weight invalid number", result.errorMessage)
+    }
+
+    @Test fun `number field below min with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_min_value, "Age", "18.0") } returns "Age too low"
+        val validation = FieldValidation(min = 18f, max = 100f)
+        val field = makeField(type = "number", value = "10", label = "Age", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Age too low", result.errorMessage)
+    }
+
+    @Test fun `number field above max with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_max_value, "Score", "100.0") } returns "Score too high"
+        val validation = FieldValidation(min = 0f, max = 100f)
+        val field = makeField(type = "number", value = "150", label = "Score", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Score too high", result.errorMessage)
+    }
+
+    @Test fun `date field invalid with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_date_invalid, "DOB") } returns "DOB bad date"
+        val validation = FieldValidation()
+        val field = makeField(type = "date", value = "not-a-date", label = "DOB", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("DOB bad date", result.errorMessage)
+    }
+
+    @Test fun `date field minDate before with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_date_before, "Visit Date", "01-01-2026") } returns "Visit Date too early"
+        val validation = FieldValidation(minDate = "01-01-2026")
+        val field = makeField(type = "date", value = "01-12-2025", label = "Visit Date", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Visit Date too early", result.errorMessage)
+    }
+
+    @Test fun `date field maxDate after with context uses context message`() {
+        val ctx = mockk<Context>(relaxed = true)
+        every { ctx.getString(R.string.field_date_after, "Visit Date", "31-12-2025") } returns "Visit Date too late"
+        val validation = FieldValidation(maxDate = "31-12-2025")
+        val field = makeField(type = "date", value = "01-01-2026", label = "Visit Date", validation = validation)
+        val result = FieldValidator.validate(field, null, context = ctx)
+        assertFalse(result.isValid)
+        assertEquals("Visit Date too late", result.errorMessage)
     }
 }

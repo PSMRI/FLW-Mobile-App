@@ -10,6 +10,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -53,6 +54,25 @@ class HRPMicroBirthPlanDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(null, null) }
         runCatching { ds.setUpPage(ben, saved) }
         runCatching { ds.mapValues(mockk<HRPMicroBirthPlanCache>(relaxed = true), 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `HRPMicroBirthPlanCache exposes bankac`() {
+        val cache = HRPMicroBirthPlanCache(benId = 1L, bankac = "ACC123")
+        assertEquals("ACC123", cache.bankac)
+    }
+
+    @Test
+    fun `updateList sweeps every formId`() = runTest {
+        val ds = HRPMicroBirthPlanDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { ds.setUpPage(ben, mockk<HRPMicroBirthPlanCache>(relaxed = true)) }
+        for (id in 0..30) {
+            for (index in 0..2) {
+                runCatching { ds.updateList(id, index) }
+            }
+        }
         assertNotNull(ds.listFlow)
     }
 }

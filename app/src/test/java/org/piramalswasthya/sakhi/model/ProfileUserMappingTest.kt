@@ -173,6 +173,123 @@ class ProfileUserMappingTest {
         assertTrue(cache.loggedIn)
     }
 
+    @Test fun `UserNetwork asCacheModel passes through location lists`() {
+        val state = LocationEntity(id = 2, name = "State")
+        val district = LocationEntity(id = 3, name = "District")
+        val block = LocationEntity(id = 4, name = "Block")
+        val village = LocationEntity(id = 5, name = "Village")
+        val cache = UserNetwork(
+            userId = 11,
+            userName = "u",
+            password = "p",
+            states = mutableListOf(state),
+            districts = mutableListOf(district),
+            blocks = mutableListOf(block),
+            villages = mutableListOf(village)
+        ).asCacheModel()
+        assertEquals(listOf(state), cache.states)
+        assertEquals(listOf(district), cache.districts)
+        assertEquals(listOf(block), cache.blocks)
+        assertEquals(listOf(village), cache.villages)
+    }
+
+    @Test fun `UserNetwork copy and equality`() {
+        val a = UserNetwork(
+            userId = 11,
+            userName = "u",
+            password = "p",
+            serviceMapId = 1,
+            serviceId = 2,
+            servicePointId = 3,
+            parkingPlaceId = 4,
+            zoneId = 5,
+            vanId = 6,
+            parkingPlaceName = "pp",
+            servicePointName = "sp",
+            zoneName = "zn",
+            country = LocationEntity(id = 1, name = "India"),
+            states = mutableListOf(LocationEntity(id = 2, name = "State")),
+            districts = mutableListOf(LocationEntity(id = 3, name = "District")),
+            blocks = mutableListOf(LocationEntity(id = 4, name = "Block")),
+            villages = mutableListOf(LocationEntity(id = 5, name = "Village")),
+            emergencyContactNo = "12345",
+            userType = "CHO",
+            loggedIn = true
+        )
+        val b = a.copy(userName = "u2")
+        assertEquals("u2", b.userName)
+        assertEquals(a, a.copy())
+        assertEquals(a.hashCode(), a.copy().hashCode())
+        assertTrue(a.toString().contains("UserNetwork"))
+
+        assertFalse(a == a.copy(userId = 999))
+        assertFalse(a == a.copy(userName = "other"))
+        assertFalse(a == a.copy(password = "other"))
+        assertFalse(a == a.copy(serviceMapId = 999))
+        assertFalse(a == a.copy(serviceId = 999))
+        assertFalse(a == a.copy(servicePointId = 999))
+        assertFalse(a == a.copy(parkingPlaceId = 999))
+        assertFalse(a == a.copy(zoneId = 999))
+        assertFalse(a == a.copy(vanId = 999))
+        assertFalse(a == a.copy(parkingPlaceName = "other"))
+        assertFalse(a == a.copy(servicePointName = "other"))
+        assertFalse(a == a.copy(zoneName = "other"))
+        assertFalse(a == a.copy(country = LocationEntity(id = 99, name = "Other")))
+        assertFalse(a == a.copy(states = mutableListOf()))
+        assertFalse(a == a.copy(districts = mutableListOf()))
+        assertFalse(a == a.copy(blocks = mutableListOf()))
+        assertFalse(a == a.copy(villages = mutableListOf()))
+        assertFalse(a == a.copy(emergencyContactNo = "other"))
+        assertFalse(a == a.copy(userType = "other"))
+        assertFalse(a == a.copy(loggedIn = false))
+    }
+
+    @Test fun `UserNetwork getters and setters read back assigned values`() {
+        val u = UserNetwork(userId = 11, userName = "u", password = "p")
+        assertEquals(11, u.userId)
+        assertEquals("p", u.password)
+
+        u.serviceMapId = 101
+        assertEquals(101, u.serviceMapId)
+        u.serviceId = 102
+        assertEquals(102, u.serviceId)
+        u.servicePointId = 103
+        assertEquals(103, u.servicePointId)
+        u.parkingPlaceId = 104
+        assertEquals(104, u.parkingPlaceId)
+        u.zoneId = 105
+        assertEquals(105, u.zoneId)
+        u.vanId = 106
+        assertEquals(106, u.vanId)
+        u.parkingPlaceName = "ppn"
+        assertEquals("ppn", u.parkingPlaceName)
+        u.servicePointName = "spn"
+        assertEquals("spn", u.servicePointName)
+        u.zoneName = "zn"
+        assertEquals("zn", u.zoneName)
+        val loc = LocationEntity(id = 7, name = "Country")
+        u.country = loc
+        assertEquals(loc, u.country)
+        val states = mutableListOf(LocationEntity(id = 8, name = "State"))
+        u.states = states
+        assertEquals(states, u.states)
+        val districts = mutableListOf(LocationEntity(id = 9, name = "District"))
+        u.districts = districts
+        assertEquals(districts, u.districts)
+        val blocks = mutableListOf(LocationEntity(id = 10, name = "Block"))
+        u.blocks = blocks
+        assertEquals(blocks, u.blocks)
+        val villages = mutableListOf(LocationEntity(id = 11, name = "Village"))
+        u.villages = villages
+        assertEquals(villages, u.villages)
+        u.emergencyContactNo = "999"
+        assertEquals("999", u.emergencyContactNo)
+        u.userType = "ANM"
+        assertEquals("ANM", u.userType)
+        u.loggedIn = true
+        assertTrue(u.loggedIn)
+    }
+
     // =====================================================
     // UserDetailsInResponse.toUser(password)
     // =====================================================
@@ -268,7 +385,9 @@ class ProfileUserMappingTest {
 
     @Test fun `ProfileCache asDomainModel wraps activity`() {
         val activity = ProfileActivityCache(id = 77L, name = "P")
-        val domain = ProfileCache(activity = activity).asDomainModel()
+        val cache = ProfileCache(activity = activity)
+        assertSame(activity, cache.activity)
+        val domain = cache.asDomainModel()
         assertSame(activity, domain.activity)
         assertEquals(77L, domain.activity.id)
         assertEquals("P", domain.activity.name)

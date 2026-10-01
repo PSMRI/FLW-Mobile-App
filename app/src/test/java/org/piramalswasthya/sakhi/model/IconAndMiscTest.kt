@@ -1,7 +1,10 @@
 package org.piramalswasthya.sakhi.model
 
+import androidx.navigation.NavDirections
+import io.mockk.mockk
 import org.junit.Assert.*
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.SyncState
 
 class IconAndMiscTest {
 
@@ -111,6 +114,7 @@ class IconAndMiscTest {
     @Test fun `PreviewItem can be created`() {
         val item = PreviewItem(label = "Name", value = "John")
         assertNotNull(item)
+        assertEquals("Name", item.label)
     }
 
     @Test fun `PreviewItem default isImage is false`() {
@@ -198,4 +202,28 @@ class IconAndMiscTest {
     @Test fun `LogLevel has 4 values`() { assertEquals(4, LogLevel.values().size) }
     @Test fun `LogLevel valueOf DEBUG`() { assertEquals(LogLevel.DEBUG, LogLevel.valueOf("DEBUG")) }
     @Test fun `LogLevel valueOf ERROR`() { assertEquals(LogLevel.ERROR, LogLevel.valueOf("ERROR")) }
+
+    @Test fun `HbncIcon uses default title when omitted`() {
+        val icon = HbncIcon(
+            hhId = 1L,
+            benId = 1L,
+            count = 3,
+            isFilled = true,
+            syncState = SyncState.SYNCED,
+            destination = mockk<NavDirections>(relaxed = true)
+        )
+        assertEquals("Day 3", icon.title)
+    }
+
+    @Test fun `HbycIcon uses default title when omitted`() {
+        val icon = HbycIcon(
+            hhId = 1L,
+            benId = 1L,
+            count = 2,
+            isFilled = false,
+            syncState = null,
+            destination = mockk<NavDirections>(relaxed = true)
+        )
+        assertEquals("Month 2", icon.title)
+    }
 }

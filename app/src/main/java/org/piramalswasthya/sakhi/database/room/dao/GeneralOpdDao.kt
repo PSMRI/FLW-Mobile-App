@@ -13,6 +13,6 @@ interface GeneralOpdDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(beneficiaries: List<GeneralOPEDBeneficiary>)
 
-    @Query("SELECT * FROM GENERAL_OPD_ACTIVITY")
+    @Query("SELECT * FROM GENERAL_OPD_ACTIVITY ORDER BY COALESCE(modified_date, visitDate, registrationDate, benVisitDate) DESC, beneficiaryId DESC")
     fun getAll(): Flow<List<GeneralOPEDBeneficiary>>
 }

@@ -5,6 +5,9 @@
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 <string name="about_us">প"িৰামল স্বাস্থ্য সার্বজনীন স্বাস্থ্য বৃদ্ধি কৰাৰ পৰা গড়কীৰাৱৰ ঘপট সন্দৰ্শন কৰা আছে, যিটো ভাৰত সৰকাৰৰ লক্ষ্য সকলৰ বাবে সামীপ্য স্বাস্থ্য দেখৰ সম্পূৰ্ণ হ\'ল আৰু যোগদান কৰা হ\'ল, যাতে সকলোৱে সামীপ্য স্বাস্থ্য দেখৰ পূৰ্তি কৰিব পাৰে। পিৰামল স্বাস্থ্য ভাৰতত সবুজীৰ লক্ষ্য নলাকৰী সংস্থাত এটি - মাতৃ স্বাস্থ্য, শিশু আৰু কিশোৰ স্বাস্থ্য, অসংক্রামক রোগ বাবে শ্ৰেণীবদ্ধ বাচবোৰ দিকৰি যাওৱা কাম কৰাৰ বাবে এটি এটি প্ৰাথমিক সার্বজনীন স্বাস্থ্য যোজনাৰ উপৰত কথাই অসংশয়ী। পিৰামল স্বাস্থ্য পৰা দশকীয়া অবস্থা অৱস্থান অসমৰ অধীনত বাজৰ বৰ্গীয় জনগণৰ প্ৰাথমিক স্বাস্থ্য আৱশ্যকতাৰ উপৰ স্থিতি সম্পৰ্কভাৱে সলনি সলাই পৰা পৰিযোজনাৰ স্থিতি বাৰ পৰা হ\'ল, যি ভাৰতত সবলৈ ন্যায্যতা কৰা বৃদ্ধি কৰা নাইমকাৰী সংগঠনত - ২০ বছৰৰ অন্তৰ্গত বাজৰ আৰু ৩৫ নবাচাৰি সার্বজনীন স্বাস্থ্য সেৱা সমূহৰ মাধ্যমে কৰা হ\'ল আৰু এই পৰা ১০.৭ কৰোড় শ্ৰীৰকাৰীৰ পৰা সেৱা কৰা হ\'ল, যি তাতে গুৰুত্ব দিলে যে তেওঁৰ সেৱাবাবে শেষ গাঁও আৰু শেষ ঘৰৰ দিক পৰা পৰ্যাৱৰণৰ সম্পূৰ্ণ সেৱা নিশ্চিত হৈছে। পিৰামল স্বাস্থ্যৰ বাবে ২২৬০ কৰ্মচাৰী থাকে, যাতে ২৫০ চিকিৎসা ডাক্তৰ থাকে, যি লাভার্থী-মুখী মৌল্য স্থাপন সুচীকৰণৰ আৰু ফলাফল-উদ্দেশ্যবাদী উপায়ে কাম কৰে। গত বারো বছৰৰ দিশত লক্ষ্য স্থাপন কৰা হৈছে, স্থায়ী প্ৰভাৱ পৰা মঞ্চ বানাব বাবে, মডেলিং, পিলটিং আৰু উম্মূখন প্ৰযুক্তি, নীতি, শাসন আৰু সার্বজনীন স্বাস্থ্য প্ৰণালীৰ দায়িত্ব, জ্ঞান আৰু কৰ্মৰ অনুযায়ী সহযোগী হৈ পৰা মঞ্চ হিচাপে পিৰামল স্বাস্থ্য। পিৰামল স্বাস্থ্য প্ৰাথমিক স্বাস্থ্য যত্ন নোলোৱা, প্ৰাপ্য আৰু সকলৰ বাবে নিশ্চিত কৰাৰ বাবে মন্তৱ্য দিছে।</string>
     <string name="about_us_powered">পৰায়ণীত দ্বাৰা </string>
+    <string name="start_tpt">TPT আৰম্ভ কৰক</string>
+    <string name="add_follow_up">পৰৱৰ্তী অনুসৰণ যোগ কৰক</string>
+    <string name="view_details">বিৱৰণ চাওক</string>
     <string name="text_help">
         <b>Q - এই অ্যাপ অফলাইনে উপলব্ধ আছে কি?</b>
         \n হ্যাঁ, অ্যাপটি ডাউনলোড করা এবং লগইন করা হলে, আপনি অফলাইনে ডেটা সংগ্রহ করতে পারেন। দয়া করে নোটিশ করুন যে ডাউনলোড এবং প্রথম লগইনের জন্য ইন্টারনেট প্রয়োজন। \n\n
@@ -95,6 +98,7 @@
     <string name="mdsr_reason_death">কাৰণ নিৰ্দিষ্ট কৰক</string>
     <string name="mdsr_action">পৰাৱৰ্তন কৰা হৈছে</string>
     <string name="str_weight_at_birth_gram">জন্মৰ সময়ত ওজন ( গ্ৰাম )</string>
+    <string name="sanitary_napkin_used">চেনিটাৰী নেপকিন ব্যৱহাৰ কৰা হয় নেকি?</string>
 
     <string name="save_successful">সংরক্ষণ সফল</string>
     <string name="something_wend_wong_contact_testing">কিবা অশুদ্ধ! পৰীক্ষণ কৰক!</string>
@@ -217,6 +221,31 @@
         <item>AHD</item>
         <item>ডিৱৰ্মিং</item>
         <item>NCD ফ\'ল আপ</item>
+        <item>মেলেৰিয়া স্ক্ৰীনিং</item>
+        <item>মেলেৰিয়া নিশ্চিত</item>
+        <item>CDR</item>
+        <item>MDSR</item>
+        <item>চাইল্ড ৰেজিষ্ট্ৰেচন</item>
+        <item>AES স্ক্ৰীনিং</item>
+        <item>কালাজ্বৰ স্ক্ৰীনিং</item>
+        <item>ফাইলেৰিয়া স্ক্ৰীনিং</item>
+        <item>কুষ্ঠ স্ক্ৰীনিং</item>
+        <item>কুষ্ঠ ফ\'ল আপ</item>
+        <item>কিশোৰ স্বাস্থ্য</item>
+        <item>NCD ৰেফাৰ</item>
+        <item>টি বি নিশ্চিত চিকিৎসা</item>
+        <item>পলচ পলিঅ\' অভিযান</item>
+        <item>ORS অভিযান</item>
+        <item>শাহু-বোৱাৰী সন্মিলন</item>
+        <item>MAA বৈঠক</item>
+        <item>UWIN ছেচন</item>
+        <item>পাঁচ বছৰৰ তলৰ শিশু</item>
+        <item>ANC ভ্ৰমণ ইতিহাস</item>
+        <item>চকু অস্ত্ৰোপচাৰ</item>
+        <item>বেন IFA</item>
+        <item>মহাজাল</item>
+        <item>ফাইলেৰিয়া MDA</item>
+        <item>ফাইলেৰিয়া MDA অভিযান</item>
     </string-array>
 
     <string-array name="temp_array">
@@ -237,14 +266,19 @@
     <string name="adolescent_health_form">কিশোৰ স্বাস্থ্য ফৰ্ম</string>
     <string name="beneficiaries_due_for_anc">গৰ্ভাৱস্থাৰ যত্ন (ANC) লৈ বঁটা পাবলগীয়া लाभান্বিত</string>
     <string name="beneficiaries_due_for_immunization">টিকাকৰণৰ বাবে বঁটা পাবলগীয়া লাভান্বিত</string>
+    <string name="women_due_for_anc">ANC ৰ বাবে নিৰ্ধাৰিত মহিলা</string>
+    <string name="children_due_for_immunization">টিকাকৰণৰ বাবে নিৰ্ধাৰিত শিশু</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকিপূৰ্ণ কেচ</string>
-    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
-    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকিপূৰ্ণ অগৰ্ভৱতী মহিলা</string>
+    <string name="suspected_high_risk_pregnant_women">সন্দেহজনক উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
+    <string name="suspected_high_risk_non_pregnant_women">সন্দেহজনক উচ্চ ঝুঁকিপূৰ্ণ অগৰ্ভৱতী মহিলা</string>
+    <string name="confirmed_high_risk_pregnant_women">নিশ্চিত উচ্চ ঝুঁকিপূৰ্ণ গৰ্ভৱতী মহিলা</string>
     <string name="low_birth_weight_babies">কম ওজনৰ নবজাত শিশুসকল</string>
     <string name="str_add_member">সদস্য যোগ কৰক</string>
     <string name="relation_with_hof">গৃহমুৰব্বীৰ সৈতে সম্পৰ্ক</string>
     <string name="str_not_available">উপলব্ধ নহয়</string>
     <string name="add_family_member">পৰিয়ালৰ সদস্য যোগ কৰক</string>
+
+    <string name="head_of_family">পৰিয়ালৰ মুৰব্বী: </string>
 
     <string name="male">পুৰুষ</string>
     <string name="female">মহিলা</string>
@@ -655,6 +689,23 @@
         <item>দিন ২</item>
         <item>দিন ৩</item>
         <item>দিন ৪</item>
+    </string-array>
+
+    <string-array name="daysPvMitanin">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+        <item>দিন ৫</item>
+        <item>দিন ৬</item>
+        <item>দিন ৭</item>
+        <item>দিন ৮</item>
+        <item>দিন ৯</item>
+        <item>দিন ১০</item>
+        <item>দিন ১১</item>
+        <item>দিন ১২</item>
+        <item>দিন ১৩</item>
+        <item>দিন ১৪</item>
     </string-array>
 
     <string-array name="daysPf">
@@ -1392,6 +1443,8 @@
     <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">অনুগ্ৰহ কৰি আপোনাৰ নেটৱৰ্ক ছেটিংছ পৰীক্ষা কৰক। সংযোগ পুনৰ স্থাপন হ’লে এই ডায়লগটো স্বয়ংক্ৰিয়ভাৱে বন্ধ হ’ব।</string>
     <string name="add_spouse">দাম্পত্য সংযোজন কৰক</string>
     <string name="would_you_like_to_add_spouse">আপুনি %1$s ৰ %2$s যোগ কৰিব বিচাৰে নেকি?</string>
+    <string name="add_children_title">সন্তান যোগ কৰক</string>
+    <string name="would_you_like_to_add_children">আপুনি সন্তান যোগ কৰিব বিচাৰে নেকি?</string>
     <string name="str_wife">স্ত্ৰী</string>
     <string name="str_husband">স্বামী</string>
     <string name="is_medicine_distributed_yes_no">ঔষধ বিতৰণ কৰা হৈছে নেকি? (হয়/নহয়)</string>
@@ -1486,4 +1539,76 @@
     <string name="notification_recap_channel_description">আপোনাৰ মাহেকীয়া ৰিকেপ চাবলৈ মনত পেলোৱা</string>
     <string name="notification_recap_title">আপোনাৰ মাহ, ৭৫ ছেকেণ্ডত</string>
     <string name="notification_recap_body">যোৱা মাহৰ আপোনাৰ ৰিকেপ সাজু। চাবলৈ টিপক।</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    প্ৰসৱৰ তাৰিখ শেষৰ ANC ভিজিটৰ তাৰিখতকৈ আগৰ হ\'ব নোৱাৰে।
+</string>
+    <string name="risk_factors">বিপদাশংকাৰ কাৰকসমূহ</string>
+    <string name="key_population_risk_factors">গুৰুত্বপূৰ্ণ জনসংখ্যা / বিপদাশংকাৰ কাৰকসমূহ</string>
+    <string name="positive">পজিটিভ</string>
+    <string name="reactive">ৰিএক্টিভ</string>
+    <string name="negative">নেগেটিভ</string>
+    <string name="hiv_status">এইচআইভি স্থিতি</string>
+    <string name="not_applicable">প্ৰযোজ্য নহয়</string>
+    <string name="fatigue">ভাগৰ</string>
+    <string name="chestpain">বুকুৰ বিষ</string>
+
+    <string name="kp_risk_pregnancy">গৰ্ভাৱস্থা</string>
+    <string name="kp_risk_lactating_mother">স্তন্যদায়ী মাতৃ</string>
+    <string name="kp_risk_anti_tnf_treatment">এণ্টি-টিএনএফ চিকিৎসা</string>
+    <string name="kp_risk_bronchial_asthma">ব্ৰংকিয়েল হাঁপানী</string>
+    <string name="kp_risk_cancer">কেন্সাৰ</string>
+    <string name="kp_risk_cardiovascular_disorder">কাৰ্ডিঅ’ভাস্কুলাৰ ৰোগ</string>
+    <string name="kp_risk_contact_of_known_tb_patients">জ্ঞাত টিবি ৰোগীৰ সংস্পৰ্শত থকা ব্যক্তি</string>
+    <string name="kp_risk_copd">চিঅ’পিডি</string>
+    <string name="kp_risk_covid_recovered_patients">কোভিডৰ পৰা আৰোগ্য হোৱা ৰোগী</string>
+    <string name="kp_risk_diabetes">ডায়েবেটিছ</string>
+    <string name="kp_risk_dialysis">ডায়লাইছিছ</string>
+    <string name="kp_risk_health_care_worker">স্বাস্থ্যকৰ্মী</string>
+    <string name="kp_risk_hypertensive">উচ্চ ৰক্তচাপ</string>
+    <string name="kp_risk_liver_impairment">যকৃতৰ কাৰ্যক্ষমতা হ্ৰাস</string>
+    <string name="kp_risk_migrant">প্ৰব্ৰজনকাৰী</string>
+    <string name="kp_risk_miner">খনি শ্ৰমিক</string>
+    <string name="kp_risk_palliative_care">উপশমমূলক যত্ন</string>
+    <string name="kp_risk_patient_on_immunosuppressants">ইমিউনোছাপ্ৰেছেণ্ট ঔষধ লোৱা ৰোগী</string>
+    <string name="kp_risk_prison">কাৰাগাৰ</string>
+    <string name="kp_risk_illegal_immigrant">অবৈধ প্ৰব্ৰজনকাৰী</string>
+    <string name="kp_risk_renal_impairment">কিডনীৰ কাৰ্যক্ষমতা হ্ৰাস</string>
+    <string name="kp_risk_transplantation">অংগ প্ৰতিস্থাপন</string>
+    <string name="kp_risk_urban_slum">চহৰৰ বস্তি</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">প্ৰাপ্তবয়স্ক অৱস্থাত বিচিজি টিকাকৰণৰ ইতিহাস</string>
+    <string name="kp_risk_undernourished_malnourished">অপুষ্টিত ভোগা (বিএমআই &lt;18.5 কিগ্ৰা/মি²)</string>
+    <string name="kp_risk_elderly">বয়স্ক (বয়স &gt;60 বছৰ)</string>
+    <string name="kp_risk_workplace_settings">কৰ্মস্থান (কয়লা/স্যাণ্ডব্লাষ্টিং/ইটাভাটা)</string>
+    <string name="kp_risk_tea_garden_worker">চাহ বাগানৰ শ্ৰমিক</string>
+    <string name="kp_risk_construction_site_worker">নিৰ্মাণস্থলীৰ শ্ৰমিক</string>
+    <string name="kp_risk_congregate_settings">একেলগে বসবাস কৰা স্থান</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">নিচা মুক্তি কেন্দ্ৰত উপস্থিত থকা ব্যক্তি</string>
+    <string name="kp_risk_indoor_air_pollution">ঘৰৰ ভিতৰৰ বায়ু প্ৰদূষণৰ সংস্পৰ্শত থকা ব্যক্তি</string>
+    <string name="kp_risk_marginalized_hiv">এইচআইভিৰ ঝুঁকিত থকা প্ৰান্তীয় জনগোষ্ঠী</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">মাদকদ্ৰব্যৰ অপব্যৱহাৰ (মদ/ইনজেকশনৰ জৰিয়তে মাদক লোৱা)</string>
+    <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
+    <string name="kp_risk_silica_exposure_silicosis">সিলিকাৰ সংস্পৰ্শ/সিলিকোছিছ</string>
+    <string name="kp_risk_other">অন্যান্য</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">এই মাহত দেয়</string>
+    <string name="imm_scheduled_next_month">পৰৰ মাহৰ বাবে নিৰ্ধাৰিত</string>
+    <string name="imm_dose_stage">ডোছ পৰ্যায়</string>
+    <string name="imm_select_dose_stage">ডোছ পৰ্যায় বাছক</string>
+    <string name="imm_no_match_for_filters">বাছনি কৰা ফিল্টাৰৰ সৈতে কোনো হিতাধিকাৰী মিলা নাই।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d হিতাধিকাৰী</item>
+        <item quantity="other">%d হিতাধিকাৰী</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">পৰৱৰ্তী ফলো-আপ %1$s ৰ পৰা উপলব্ধ হ\'ব</string>
+    <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">ফলো-আপৰ তাৰিখ হোম ভিজিটৰ তাৰিখৰ আগৰ হ\'ব নোৱাৰে</string>
+    <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_saved_successfully">ফ’ল’-আপ সফলভাৱে সংৰক্ষণ কৰা হৈছে</string>
+    <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পূৰ্ণ হৈছে! পৰৱৰ্তী ভিজিটৰ স্ক্ৰীনিং আৰম্ভ কৰা হৈছে।</string>
+    <string name="failed_to_save_follow_up">ফ’ল’-আপ সংৰক্ষণ কৰাত বিফল হৈছে</string>
+    <string name="speech_to_text_unavailable">এই ডিভাইচত ভইচ ইনপুট উপলব্ধ নহয়</string>
 </resources>

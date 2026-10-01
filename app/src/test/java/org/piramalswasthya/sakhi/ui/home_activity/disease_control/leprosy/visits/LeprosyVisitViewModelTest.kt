@@ -167,6 +167,7 @@ class LeprosyVisitViewModelTest : BaseViewModelTest() {
         assertEquals(true, vm.recordExists.value)
         assertEquals("Visit - 2", vm.visitInfo.value)
         assertEquals(false, vm.isBeneficaryStatusDeath.value)
+        assertNotNull(vm.benAgeGender.value)
     }
 
     @Test
