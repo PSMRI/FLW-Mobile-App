@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.adapters
 
 import android.os.Looper
+import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import io.mockk.every
 import io.mockk.mockk
@@ -87,5 +88,17 @@ class HouseHoldListAdapterTest {
         } finally {
             unmockkStatic(Looper::class)
         }
+    }
+
+    @Test
+    fun button4Visibility_isVisibleOutsideDiseaseModulesEvenIfEarlierLogicHidIt() {
+        assertEquals(View.VISIBLE, button4Visibility(isDisease = false, diseaseModuleVisibility = View.INVISIBLE))
+        assertEquals(View.VISIBLE, button4Visibility(isDisease = false, diseaseModuleVisibility = View.GONE))
+    }
+
+    @Test
+    fun button4Visibility_preservesDiseaseModuleVisibility() {
+        assertEquals(View.GONE, button4Visibility(isDisease = true, diseaseModuleVisibility = View.GONE))
+        assertEquals(View.INVISIBLE, button4Visibility(isDisease = true, diseaseModuleVisibility = View.INVISIBLE))
     }
 }

@@ -32,7 +32,7 @@ class NCDReferalFormFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = NCDReferalFormFragmentArgs(benId = 10L, hhId = 20L, referReason = "TB Screening Form")
+    private fun args() = NCDReferalFormFragmentArgs(benId = 10L, hhId = 20L, referReason = "TB Screening Form", referredDate = 30L)
 
     @Test
     fun constructor_exposesEveryArgument() {
@@ -40,6 +40,7 @@ class NCDReferalFormFragmentNavigationTest {
         assertEquals(10L, a.benId)
         assertEquals(20L, a.hhId)
         assertEquals("TB Screening Form", a.referReason)
+        assertEquals(30L, a.referredDate)
     }
 
     @Test
@@ -54,6 +55,7 @@ class NCDReferalFormFragmentNavigationTest {
         assertEquals(10L, a.component1())
         assertEquals(20L, a.component2())
         assertEquals("TB Screening Form", a.component3())
+        assertEquals(30L, a.component4())
     }
 
     @Test
@@ -102,6 +104,7 @@ class NCDReferalFormFragmentNavigationTest {
         every { bundle.getLong("benId") } returns 10L
         every { bundle.getLong("hhId") } returns 20L
         every { bundle.getString("referReason") } returns "TB Screening Form"
+        every { bundle.getLong("referredDate") } returns 30L
         assertEquals(args(), NCDReferalFormFragmentArgs.fromBundle(bundle))
     }
 

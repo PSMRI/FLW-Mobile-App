@@ -85,7 +85,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
 
                     binding.ivSoftDelete.visibility = View.GONE
-                    binding.button4.visibility = if (isDisease) View.INVISIBLE else View.VISIBLE
+                    binding.button4.visibility = View.INVISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.VISIBLE
                     binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
 
@@ -94,7 +94,7 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                     binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
 
                     binding.ivSoftDelete.visibility = View.VISIBLE
-                    binding.button4.visibility = if (isDisease) View.INVISIBLE else View.VISIBLE
+                    binding.button4.visibility = View.INVISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.GONE
                     binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.holo_green_dark))
 
@@ -103,6 +103,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
             } else {
                 binding.ivSoftDelete.visibility = View.GONE
             }
+
+            binding.button4.visibility = button4Visibility(isDisease, binding.button4.visibility)
 
 //Requirement change In offline also ben registration in mitanin should happen
 //            if (gateNewBenOnInternet) {
@@ -146,3 +148,6 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
         fun onClickSoftDeleteHh(item: HouseHoldBasicDomain) = softDeleteHh(item)
     }
 }
+
+internal fun button4Visibility(isDisease: Boolean, diseaseModuleVisibility: Int): Int =
+    if (isDisease) diseaseModuleVisibility else View.VISIBLE

@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 
 /**
  * Deep coverage test for [IconDataset]. IconDataset is not a Dataset (no listFlow); its many
@@ -50,6 +51,9 @@ class IconDatasetTest : BaseViewModelTest() {
     private lateinit var preferenceDao: PreferenceDao
 
     @MockK
+    private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
+
+    @MockK
     private lateinit var adolescentHealthRepo: AdolescentHealthRepo
 
     @MockK
@@ -71,7 +75,7 @@ class IconDatasetTest : BaseViewModelTest() {
         every { anyConstructed<RotateAnimation>().repeatCount = any() } just Runs
     }
 
-    private fun ds() = IconDataset(recordsRepo, preferenceDao, adolescentHealthRepo)
+    private fun ds() = IconDataset(recordsRepo, tbReferralFollowUpRepository, preferenceDao, adolescentHealthRepo)
 
     @Test
     fun `getImmunizationDataset and getVillageLevelFormsDataset apply colorPrimary on single item lists`() {

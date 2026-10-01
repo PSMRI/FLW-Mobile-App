@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSectionDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -34,6 +35,7 @@ import java.util.Locale
 class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var repository: NCDFollowUpFormRepository
+    @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
     @MockK private lateinit var context: Context
 
     private lateinit var viewModel: NCDReferalFormViewModel
@@ -46,8 +48,9 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
         repository,
+        tbReferralFollowUpRepository,
         context,
-        SavedStateHandle(mapOf("benId" to 1L, "hhId" to 2L, "referReason" to referReason))
+        SavedStateHandle(mapOf("benId" to 1L, "hhId" to 2L, "referReason" to referReason, "referredDate" to 0L))
     )
 
     @Test
@@ -174,6 +177,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
         history: List<NCDReferalFormResponseJsonEntity> = emptyList(),
         cached: FormSchemaEntity? = null
     ) {
+        coEvery { tbReferralFollowUpRepository.getVisits(any()) } returns emptyList()
         coEvery { repository.getAllVisitsByBeneficiary(any(), any()) } returns history
         coEvery { repository.getSavedSchema(any()) } returns cached
         coEvery { repository.getFormSchema(any()) } returns dto
