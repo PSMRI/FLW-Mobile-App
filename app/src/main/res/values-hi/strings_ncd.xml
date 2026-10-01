@@ -311,5 +311,9 @@
     <string name="ncd_referral_type">एनसीडी</string>
     <string name="suspected_tb_case">टीबी संदिग्ध मामला</string>
     <string name="suspected_copd_case">सीओपीडी संदिग्ध मामला</string>
+    <string name="tb_suspected_case_title">संदिग्ध टीबी मामला!</string>
+    <string name="tb_alert_collect_sputum">एचडब्ल्यूसी (HWC) को रेफर करें और बलगम का नमूना लें।</string>
+    <string name="tb_alert_screen_family">एचडब्ल्यूसी (HWC) को रेफर करें और परिवार के सभी सदस्यों की जांच के लिए एएनएम/एमपीडब्ल्यू को सूचित करें।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">एचडब्ल्यूसी (HWC) को रेफर करें, बलगम का नमूना लें और परिवार के सभी सदस्यों की जांच के लिए एएनएम/एमपीडब्ल्यू को सूचित करें।</string>
 </resources>
 

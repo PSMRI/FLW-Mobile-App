@@ -681,6 +681,50 @@ class CbacFragment : Fragment() {
 
     }
 
+    // FLW-343: a "Yes" on any one (*) question asks for a sputum sample, a "Yes" on any one (**)
+    // question asks for family screening, and a "Yes" in both groups shows the combined message.
+    private fun handleTbAlert(yesSelected: Boolean) {
+        val anyAst1Yes = listOf(
+            binding.cbacHistb,
+            binding.cbacCoughing,
+            binding.cbacBlsputum,
+            binding.cbacFeverwks,
+            binding.cbacLsweight,
+            binding.cbacNtswets
+        ).any { it.rbYes.isChecked }
+        val anyAst2Yes = listOf(
+            binding.cbacFhTb,
+            binding.cbacTakingTbDrug
+        ).any { it.rbYes.isChecked }
+
+        isSuspected = anyAst1Yes
+
+        if (!isInFillMode || !yesSelected) return
+
+        val message = when {
+            anyAst1Yes && anyAst2Yes -> R.string.tb_alert_collect_sputum_and_screen_family
+            anyAst1Yes -> R.string.tb_alert_collect_sputum
+            anyAst2Yes -> R.string.tb_alert_screen_family
+            else -> return
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.tb_suspected_case_title))
+            .setMessage(getString(message))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+            .setOnDismissListener {
+                if (!isAdded || !anyAst1Yes) return@setOnDismissListener
+                if (!viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB)) {
+                    referralForReason = getString(R.string.tb_suspected_form)
+                    referType = getString(R.string.suspected_tb_case)
+                    enumType = "TB"
+                    asreferAlertDialog = buildAsReferAlertDialog()
+                    asreferAlertDialog?.show()
+                }
+            }
+            .show()
+    }
+
     private fun handleAst0Alert() {
         if (
             binding.cbacHistb.cbacEdRg.checkedRadioButtonId != -1 &&
@@ -914,6 +958,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFhTb(2)
             }
 //            handleAst2Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacTakingTbDrug.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -921,6 +966,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setTakingTbDrug(2)
             }
 //            handleAst2Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacHistb.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -928,6 +974,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setHisTb(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacCoughing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -935,6 +982,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setCoughing(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacBlsputum.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -942,6 +990,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setBloodSputum(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacFeverwks.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -949,6 +998,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFeverWks(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacLsweight.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -956,13 +1006,15 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setLsWt(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacNtswets.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setNtSwets(1)
                 R.id.rb_no -> viewModel.setNtSwets(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
 
         }
         binding.cbacRecurrentUlceration.cbacEdRg.setOnCheckedChangeListener { _, id ->

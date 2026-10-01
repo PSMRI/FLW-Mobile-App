@@ -319,4 +319,8 @@
     <string name="ncd_referral_type">NCD</string>
     <string name="suspected_tb_case">Suspected TB Case</string>
     <string name="suspected_copd_case">Suspected COPD Case</string>
+    <string name="tb_suspected_case_title">Suspected TB Case!</string>
+    <string name="tb_alert_collect_sputum">Refer to HWC and collect the Sputum sample.</string>
+    <string name="tb_alert_screen_family">Refer to HWC and inform ANM/MPW to screen all family members.</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">Refer to HWC and collect the Sputum sample, and inform ANM/MPW to screen all family members.</string>
 </resources>
