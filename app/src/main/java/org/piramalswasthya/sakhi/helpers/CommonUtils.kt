@@ -32,6 +32,7 @@ import org.piramalswasthya.sakhi.model.GeneralOPEDBeneficiary
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
 import org.piramalswasthya.sakhi.model.InfantRegDomain
 import org.piramalswasthya.sakhi.model.PregnantWomenVisitDomain
+import org.piramalswasthya.sakhi.model.dynamicEntity.BenWithTbReferralFollowUpDomain
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
@@ -665,6 +666,26 @@ fun filterInfantDomainList(
     }
 }
 
+
+ fun filterBeneficiaries(
+    list: List<BenWithTbReferralFollowUpDomain>,
+    filterText: String
+): List<BenWithTbReferralFollowUpDomain> {
+    if (filterText.isBlank()) return list
+    val query = filterText.trim().lowercase().replace(" ", "")
+    return list.filter { item ->
+        val ben = item.ben
+        ben.benId.toString().contains(query) ||
+                ben.age.lowercase().contains(query) ||
+                ben.familyHeadName.lowercase().replace(" ", "").contains(query) ||
+                ben.benFullName.lowercase().replace(" ", "").contains(query) ||
+                ben.spouseName?.lowercase()?.replace(" ", "")?.contains(query) == true ||
+                ben.fatherName?.lowercase()?.replace(" ", "")?.contains(query) == true ||
+                ben.mobileNo.contains(query) ||
+                ben.gender.lowercase().contains(query) ||
+                ben.rchId?.takeIf { it.all(Char::isDigit) }?.contains(query) == true
+    }
+}
 
 fun filterTbScreeningList(
     list: List<BenWithTbScreeningDomain>,

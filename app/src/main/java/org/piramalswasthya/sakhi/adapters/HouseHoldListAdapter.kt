@@ -104,6 +104,8 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
                 binding.ivSoftDelete.visibility = View.GONE
             }
 
+            binding.button4.visibility = button4Visibility(isDisease, binding.button4.visibility)
+
 //Requirement change In offline also ben registration in mitanin should happen
 //            if (gateNewBenOnInternet) {
 //                val ctx = binding.root.context
@@ -146,3 +148,6 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
         fun onClickSoftDeleteHh(item: HouseHoldBasicDomain) = softDeleteHh(item)
     }
 }
+
+internal fun button4Visibility(isDisease: Boolean, diseaseModuleVisibility: Int): Int =
+    if (isDisease) diseaseModuleVisibility else View.VISIBLE

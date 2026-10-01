@@ -70,7 +70,7 @@ class HwcReferredFragment : Fragment() {
 //        val benAdapter =
 //            NcdReferListAdapter(viewModel.userName)
         val benAdapter =
-            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason->
+            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason,referredDate->
 
             },false)
         binding.rvAny.adapter = benAdapter
