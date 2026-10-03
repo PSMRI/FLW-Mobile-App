@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id
 
+import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -18,7 +19,7 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = AadhaarIdViewModel()
+        viewModel = AadhaarIdViewModel(SavedStateHandle())
     }
 
     // =====================================================
@@ -330,7 +331,7 @@ class AadhaarIdViewModelTest : BaseViewModelTest() {
     @Test
     fun `State enum has all expected values`() {
         val values = AadhaarIdViewModel.State.values()
-        assertEquals(7, values.size)
+        assertEquals(14, values.size)
     }
 
     @Test

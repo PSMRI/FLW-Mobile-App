@@ -133,4 +133,10 @@
             <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
         </intent>
     </queries>
+
+    <queries>
+        <package android:name="in.ndhm.phr.debug" />
+        <package android:name="in.ndhm.phr" />
+    </queries>
+
 </manifest>
