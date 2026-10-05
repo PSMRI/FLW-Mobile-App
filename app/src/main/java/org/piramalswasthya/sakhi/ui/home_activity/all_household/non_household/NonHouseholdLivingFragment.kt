@@ -30,7 +30,7 @@ class NonHouseholdLivingFragment : Fragment() {
         resources.getStringArray(R.array.non_household_institution_places).toSet()
     }
     private val otherLivingPlace by lazy {
-        getString(R.string.non_household_living_other)
+        getString(R.string.other)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View =

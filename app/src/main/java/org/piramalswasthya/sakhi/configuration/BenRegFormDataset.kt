@@ -732,6 +732,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
+            if (isNonHouseholdMode) {
+                institutionName.value = saved.institutionName
+            }
+
 
             reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let { statusId ->
                 when (statusId) {
@@ -864,6 +868,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
         if (!isKid() && !hasThirdPage()) {
             list.remove(rchId)
+        }
+
+        if (isNonHouseholdMode && institutionName.value?.isNotBlank() == true && !list.contains(institutionName)) {
+            list.add(list.indexOf(livingPlace) + 1, institutionName)
         }
 
         setUpPage(list)
@@ -1097,6 +1105,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
+            if (isNonHousehold) {
+                institutionName.value = saved.institutionName
+            }
+
         }
 
         // HoF auto-fill from ABHA/Ayushman details captured during household registration.
@@ -1153,6 +1165,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
+        }
+        if (isNonHousehold && institutionName.value?.isNotBlank() == true && !list.contains(institutionName)) {
+            list.add(list.indexOf(livingPlace) + 1, institutionName)
         }
         if (hasThirdPage()) {
             updateReproductiveOptionsBasedOnAgeGender(formId = reproductiveStatus.id)
