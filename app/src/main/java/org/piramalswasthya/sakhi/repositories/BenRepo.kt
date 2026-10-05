@@ -924,7 +924,7 @@ class BenRepo @Inject constructor(
                                             age = benDataObj.getInt("age").toString(),
                                             mobileNo = benDataObj.getString("contact_number"),
                                             fatherName = benDataObj.getString("fatherName"),
-                                            familyHeadName = houseDataObj.getString("familyHeadName"),
+                                            familyHeadName = houseDataObj.optString("familyHeadName", ""),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
@@ -1114,7 +1114,25 @@ class BenRepo @Inject constructor(
                     if (benExists) {
                         continue
                     }
-                    val hhExists = householdDao.getHousehold(hhId) != null
+                    // Non-household beneficiaries use householdId = 0. Recreate the
+                    // local placeholder household after a reinstall so the foreign key
+                    // remains valid when the beneficiary is inserted.
+                    if (hhId == 0L && householdDao.getHousehold(0L) == null) {
+                        val location = preferenceDao.getLocationRecord()
+                        if (location != null) {
+                            householdDao.upsert(
+                                HouseholdCache(
+                                    householdId = 0L,
+                                    ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                                    locationRecord = location,
+                                    processed = "P",
+                                    isDraft = true
+                                )
+                            )
+                        }
+                    }
+
+                    val hhExists = hhId == 0L || householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
@@ -1472,6 +1490,11 @@ class BenRepo @Inject constructor(
                                 doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
                                 noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
+                                // Non-household beneficiary details returned by the downsync API.
+                                livingPlace = benDataObj.optString("placeOfCurrentLiving", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
+                                institutionName = benDataObj.optString("institutionName", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
                             )
                         )
 
