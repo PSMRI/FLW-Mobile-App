@@ -67,6 +67,61 @@ class TPTStartViewModelTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun loadForm_whenTreatmentIsCompleted_restoresSavedVisitAndMakesFormReadOnly() = runTest {
+        val repository = mockk<TPTStartRepository>(relaxed = true)
+        val completedVisit = org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity(
+            benId = 474849020466,
+            houseHoldId = 12345,
+            visitNo = 1,
+            followUpNo = 2,
+            treatmentType = "1HP",
+            treatmentStartDate = "29-09-2026",
+            followUpDate = "30-10-2026",
+            fieldsJson = """{
+                "treatment_completed":"Yes",
+                "follow_up_date":"30-10-2026",
+                "monthly_follow_up":"Month-2",
+                "visit_notes":"Treatment course completed"
+            }"""
+        )
+        coEvery { repository.getFollowUps(474849020466) } returns listOf(completedVisit)
+        coEvery { repository.getFormSchema(any()) } returns FormSchemaDto(
+            formId = "tb_tpt_follow_up",
+            formName = "TPT Follow-up",
+            sections = listOf(FormSectionDto(fields = listOf(
+                FormFieldDto(fieldId = "treatment_completed", type = "radio"),
+                FormFieldDto(fieldId = "follow_up_date", type = "date"),
+                FormFieldDto(fieldId = "monthly_follow_up", type = "dropdown"),
+                FormFieldDto(fieldId = "visit_notes", type = "text")
+            )))
+        )
+        val viewModel = TPTStartViewModel(
+            repository,
+            mockk(relaxed = true),
+            SavedStateHandle(mapOf(
+                "benId" to 474849020466L,
+                "hhId" to 12345L,
+                "referralFollowUpDate" to "2026-09-29 00:00:00"
+            ))
+        )
+
+        viewModel.loadForm()
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.isTreatmentCompleted)
+        val fields = viewModel.getVisibleFields()
+        assertEquals("Yes", fields.first { it.fieldId == "treatment_completed" }.value)
+        assertEquals("30-10-2026", fields.first { it.fieldId == "follow_up_date" }.value)
+        assertEquals("Month-2", fields.first { it.fieldId == "monthly_follow_up" }.value)
+        assertEquals("Treatment course completed", fields.first { it.fieldId == "visit_notes" }.value)
+        assertEquals(true, fields.all { !it.isEditable })
+
+        viewModel.saveFormResponses(fields)
+
+        coVerify(exactly = 0) { repository.saveLocally(any()) }
+    }
+
+    @Test
     fun isFollowUpLimitReached_allowsSecondMonthForShortRegimen() = runTest {
         val history = (1..6).map { month ->
             org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity(

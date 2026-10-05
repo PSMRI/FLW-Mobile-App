@@ -12,8 +12,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -81,6 +83,35 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         runCatching { ds.updateBen(mockk<BenRegCache>(relaxed = true)) }
         runCatching { ds.getIndexOfDate() }
         assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `asymptomatic value follows localized symptom answers and is saved`() = runTest {
+        val translatedYes = "हाँ"
+        val translatedNo = "नहीं"
+        every { mockResources.getStringArray(R.array.yes_no) } returns arrayOf(translatedYes, translatedNo)
+
+        val dataset = TBScreeningDataset(context, Languages.HINDI)
+        dataset.setUpPage(null, null)
+
+        val screeningSymptoms = dataset.listFlow.value.filter {
+            it.id in setOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 22)
+        }
+        val asymptomaticField = dataset.listFlow.value.first { it.id == 16 }
+
+        assertNull(asymptomaticField.value)
+
+        screeningSymptoms.forEach { it.value = translatedNo }
+        dataset.updateList(screeningSymptoms.first().id, 1)
+        assertEquals(translatedYes, asymptomaticField.value)
+
+        screeningSymptoms.first().value = translatedYes
+        dataset.updateList(screeningSymptoms.first().id, 0)
+        assertEquals(translatedNo, asymptomaticField.value)
+
+        val cache = TBScreeningCache(benId = 1L)
+        dataset.mapValues(cache)
+        assertEquals(translatedNo, cache.asymptomatic)
     }
 
     @Test

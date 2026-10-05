@@ -129,10 +129,25 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `updateListOnValueChanged does not crash`() {
-        viewModel.updateListOnValueChanged(1, 0)
+    fun `updateListOnValueChanged recalculates and refreshes asymptomatic field`() {
         testDispatcher.scheduler.advanceUntilIdle()
-        assertNotNull(viewModel.formList)
+        val symptomIds = setOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 22)
+        val symptoms = viewModel.formList.value.filter { it.id in symptomIds }
+        symptoms.forEach { it.value = "No" }
+
+        viewModel.updateListOnValueChanged(symptoms.first().id, 1)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val asymptomaticIndex = viewModel.formList.value.indexOfFirst { it.id == 16 }
+        assertEquals("Yes", viewModel.formList.value[asymptomaticIndex].value)
+        assertEquals(asymptomaticIndex, viewModel.asymptomaticRefresh.value)
+
+        symptoms.first().value = "Yes"
+        viewModel.updateListOnValueChanged(symptoms.first().id, 0)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("No", viewModel.formList.value[asymptomaticIndex].value)
+        assertEquals(asymptomaticIndex, viewModel.asymptomaticRefresh.value)
     }
 
     @Test
