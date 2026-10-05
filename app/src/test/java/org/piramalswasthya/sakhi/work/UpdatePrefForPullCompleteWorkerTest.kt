@@ -13,6 +13,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -20,6 +21,8 @@ class UpdatePrefForPullCompleteWorkerTest : BaseRepositoryTest() {
 
     private val context: Context = mockk(relaxed = true)
     private val preferenceDao: PreferenceDao = mockk(relaxed = true)
+    // the badges module logs a sync week from this worker
+    private val badgeDao: BadgeDao = mockk(relaxed = true)
 
     @Before
     fun stubLoggedInUser() {
@@ -29,7 +32,7 @@ class UpdatePrefForPullCompleteWorkerTest : BaseRepositoryTest() {
     private fun worker(attempt: Int = 0): UpdatePrefForPullCompleteWorker {
         val params = mockk<WorkerParameters>(relaxed = true)
         every { params.runAttemptCount } returns attempt
-        return UpdatePrefForPullCompleteWorker(context, params, preferenceDao)
+        return UpdatePrefForPullCompleteWorker(context, params, preferenceDao, badgeDao)
     }
 
     @Test
