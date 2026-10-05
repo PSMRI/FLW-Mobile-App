@@ -729,6 +729,9 @@
                                     normalizedTptDateField in setOf(
                                         "treatmentstartdate", "followupdate", "actualcompletiondate"
                                     )
+                                val isTbReferralFollowUpDate =
+                                    formId == FormConstants.Tb_Referral_Follow_Up &&
+                                        field.fieldId == "follow_up_date"
 
                                 if (field.fieldId == "ifa_provision_date") {
                                     minDate = minVisitDate
@@ -744,7 +747,7 @@
                                     }
                                 }
                                 else {
-                                    if (isTptDateField) {
+                                    if (isTptDateField || isTbReferralFollowUpDate) {
                                             minDate = field.validation?.minDate?.let { minDateValue ->
                                                 listOf("dd-MM-yyyy", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss")
                                                     .firstNotNullOfOrNull { pattern ->

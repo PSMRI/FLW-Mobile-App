@@ -87,13 +87,16 @@ class TPTStartFragment : Fragment() {
         binding.followupHeading.isVisible = hasSchedule
         binding.includeFollowupTable.root.isVisible = hasSchedule
         followUpAdapter.submitList(visits)
-        binding.btnSave.isVisible = !viewModel.isFollowUpLimitReached()
+        binding.btnSave.isVisible = !viewModel.isTreatmentCompleted && !viewModel.isFollowUpLimitReached()
     }
 
     private fun observeForm() {
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
-                if (schema != null) formAdapter.updateFields(viewModel.getVisibleFields())
+                if (schema != null) {
+                    formAdapter.updateFields(viewModel.getVisibleFields())
+                    updateFollowUpHistory()
+                }
             }
         }
         lifecycleScope.launch {

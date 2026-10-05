@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentNcdReferalFollowUpFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.Log
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
@@ -152,7 +153,8 @@ class NCDReferalFormFragment : Fragment() {
                         ?.findViewWithTag<android.view.View>("field_error_tv")
                         ?.visibility = android.view.View.GONE
                 }
-            }
+            },
+            formId = if (viewModel.isTbForm) FormConstants.Tb_Referral_Follow_Up else null
         )
 
         binding.recyclerView.apply {

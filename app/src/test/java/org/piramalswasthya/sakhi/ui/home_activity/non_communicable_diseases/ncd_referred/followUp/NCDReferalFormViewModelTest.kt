@@ -24,6 +24,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSectionDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
@@ -36,6 +38,8 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var repository: NCDFollowUpFormRepository
     @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
+    @MockK private lateinit var tbRepo: TBRepo
+    @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var context: Context
 
     private lateinit var viewModel: NCDReferalFormViewModel
@@ -49,6 +53,8 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
     private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
         repository,
         tbReferralFollowUpRepository,
+        tbRepo,
+        benRepo,
         context,
         SavedStateHandle(mapOf("benId" to 1L, "hhId" to 2L, "referReason" to referReason, "referredDate" to 0L))
     )

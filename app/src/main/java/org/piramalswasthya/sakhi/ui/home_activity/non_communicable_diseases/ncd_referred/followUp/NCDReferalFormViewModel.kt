@@ -15,14 +15,19 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
+import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -31,6 +36,8 @@ import javax.inject.Inject
 class NCDReferalFormViewModel @Inject constructor(
     private val repository: NCDFollowUpFormRepository,
     private val tbReferralFollowUpRepository: TBReferralFollowUpRepository,
+    private val tbRepo: TBRepo,
+    private val benRepo: BenRepo,
     @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -317,7 +324,9 @@ class NCDReferalFormViewModel @Inject constructor(
                     fieldsJson = JSONObject(fieldsMap).toString()
                 )
             )
+            updateTbBeneficiaryStatus(benId, fieldsMap["follow_up_status"]?.toString())
             _tbVisitHistory.value = tbReferralFollowUpRepository.getVisits(benId)
+            WorkerUtils.triggerAmritPushWorker(context)
             return
         }
 
@@ -362,6 +371,31 @@ class NCDReferalFormViewModel @Inject constructor(
 
     }
 
+    private suspend fun updateTbBeneficiaryStatus(benId: Long, selectedStatus: String?) {
+        val status = selectedStatus.orEmpty().trim().uppercase(Locale.ROOT)
+            .replace(Regex("[^A-Z0-9]+"), "_").trim('_')
+        val isConfirmed = status.contains("DOTS") || status.contains("CONFIRMED")
+        val isTptRecommendation = status.contains("TPT")
+        val isNoTptRequired = status.contains("NO_TPT") || status.contains("NOT_REQUIRED")
+        if (!isConfirmed && !isTptRecommendation && !isNoTptRequired) return
+
+        val beneficiary = benRepo.getBenFromId(benId) ?: return
+        val suspectedCase = tbRepo.getTBSuspected(benId)
+            ?: if (isConfirmed) TBSuspectedCache(benId = beneficiary.beneficiaryId) else null
+        suspectedCase?.let { suspected ->
+            suspected.isConfirmed = isConfirmed
+            suspected.isTBConfirmed = isConfirmed
+            suspected.syncState = SyncState.UNSYNCED
+            tbRepo.saveTBSuspected(suspected)
+        }
+
+        beneficiary.suspectedTb = "Yes"
+        beneficiary.confirmedTb = if (isConfirmed) "Yes" else "No"
+        if (beneficiary.processed != "N") beneficiary.processed = "U"
+        beneficiary.syncState = SyncState.UNSYNCED
+        benRepo.updateRecord(beneficiary)
+    }
+
     private fun normalizeTbFieldValue(fieldId: String, value: Any?): Any? {
         if (value !is String || (fieldId != "referred_on_date" && fieldId != "follow_up_date")) return value
         val date = listOf("dd-MM-yyyy", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -396,7 +430,11 @@ class NCDReferalFormViewModel @Inject constructor(
                     FieldValidation(
                         min = it.min,
                         max = it.max,
-                        minDate = it.minDate,
+                        minDate = if (isTbForm && field.fieldId == "follow_up_date") {
+                            getReferredDateForUi() ?: it.minDate
+                        } else {
+                            it.minDate
+                        },
                         maxDate = it.maxDate,
                         maxLength = it.maxLength,
                         regex = it.regex,
@@ -406,13 +444,15 @@ class NCDReferalFormViewModel @Inject constructor(
                         afterField = it.afterField,
                         beforeField = it.beforeField
                     )
-                }
+                } ?: if (isTbForm && field.fieldId == "follow_up_date") {
+                    FieldValidation(minDate = getReferredDateForUi())
+                } else null
 
                 FormField(
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.optionItems(),
+                    options = OptionItemParser.parse(field.options),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = validation,
