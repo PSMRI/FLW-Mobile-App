@@ -373,7 +373,9 @@ class InfantRegistrationDataset(
 
             isSncu.id -> {
                 val isYes = isSncu.value == isSncu.entries!![0]
-                if(isYes){
+                if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+                    -1
+                } else if(isYes){
                     triggerDependants(
                         source = isSncu,
                         addItems = listOf(deliveryDischargeSummary1,deliveryDischargeSummary2,deliveryDischargeSummary3,deliveryDischargeSummary4),
