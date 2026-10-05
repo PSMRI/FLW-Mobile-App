@@ -25,7 +25,7 @@ import org.piramalswasthya.sakhi.utils.HelperUtil
 
 /**
  * Deep coverage test for [TBScreeningDataset]: exercises setUpPage (create + edit),
- * (referHwcFacility, isSymptomatic, isAsymptomatic, isTbSuspected, isTbSuspectedFamily,
+ * (referHwcFacility, isTbSuspected, isTbSuspectedFamily,
  * getIndexOfDate). Each builder call wrapped in runCatching.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -60,8 +60,6 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         runCatching { ds.mapValues(mockk<TBScreeningCache>(relaxed = true), 1) }
         runCatching { ds.updateBen(mockk<BenRegCache>(relaxed = true)) }
         runCatching { ds.referHwcFacility() }
-        runCatching { ds.isSymptomatic() }
-        runCatching { ds.isAsymptomatic() }
         runCatching { ds.isTbSuspected() }
         runCatching { ds.isTbSuspectedFamily() }
         runCatching { ds.getIndexOfDate() }
@@ -76,8 +74,6 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(ben, saved) }
         runCatching { ds.mapValues(mockk<TBScreeningCache>(relaxed = true), 0) }
         runCatching { ds.referHwcFacility() }
-        runCatching { ds.isSymptomatic() }
-        runCatching { ds.isAsymptomatic() }
         runCatching { ds.isTbSuspected() }
         runCatching { ds.isTbSuspectedFamily() }
         runCatching { ds.updateBen(mockk<BenRegCache>(relaxed = true)) }
