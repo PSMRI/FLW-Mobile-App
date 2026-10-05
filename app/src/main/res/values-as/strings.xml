@@ -1322,6 +1322,8 @@
     <string name="tb_asymptomatic_symptoms">লক্ষণবিহীন টিবি স্ক্ৰিনিং</string>
     <string name="tb_rise_of_fever">সন্ধিয়া জ্বৰ বৃদ্ধি</string>
     <string name="tb_loss_of_appetite">ভোক কমি যোৱা</string>
+    <string name="tb_child_failure_to_gain_weight">শিশুৰ ওজন বৃদ্ধি নোহোৱা</string>
+    <string name="tb_child_decreased_activity">শিশুৰ কাৰ্যকলাপ বা খেলাধূলাৰ আগ্ৰহ কমি যোৱা</string>
     <string name="tb_age_more_than_60">৬০ বছৰৰ ওপৰত বয়স</string>
     <string name="tb_diabetic">ডায়েবেটিক</string>
     <string name="tb_tobacco_user">তামাক ব্যৱহাৰকাৰী</string>

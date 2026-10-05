@@ -1502,6 +1502,8 @@
     <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
     <string name="tb_rise_of_fever">Rise of fever in evening</string>
     <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_child_failure_to_gain_weight">Failure to gain weight (in children)</string>
+    <string name="tb_child_decreased_activity">Decreased activity or playfulness (in children)</string>
     <string name="tb_age_more_than_60">Age more than 60 years</string>
     <string name="tb_diabetic">Diabetic</string>
     <string name="tb_tobacco_user">Tobacco user</string>

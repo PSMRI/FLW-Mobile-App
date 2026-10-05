@@ -212,7 +212,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 68, exportSchema = false
+    version = 69, exportSchema = false
 )
 
 @TypeConverters(
@@ -403,6 +403,21 @@ abstract class InAppDb : RoomDatabase() {
                         "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_tpt_follow_up_benId_visitNo_followUpNo` " +
                                 "ON `tb_tpt_follow_up` (`benId`, `visitNo`, `followUpNo`)"
                     )
+                }
+            }
+
+            val MIGRATION_68_69 = object : Migration(68, 69) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    val columns = listOf(
+                        "failureToGainWeight INTEGER DEFAULT NULL",
+                        "decreasedActivityOrPlayfulness INTEGER DEFAULT NULL"
+                    )
+                    columns.forEach { columnDefinition ->
+                        val columnName = columnDefinition.substringBefore(" ")
+                        if (!columnExists(database, "TB_SCREENING", columnName)) {
+                            database.execSQL("ALTER TABLE TB_SCREENING ADD COLUMN $columnDefinition")
+                        }
+                    }
                 }
             }
 
@@ -3645,7 +3660,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_64_65,
                         MIGRATION_65_66,
                         MIGRATION_66_67,
-                        MIGRATION_67_68
+                        MIGRATION_67_68,
+                        MIGRATION_68_69
 
 
                     ).build()

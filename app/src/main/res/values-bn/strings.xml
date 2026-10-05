@@ -1368,6 +1368,8 @@
     <string name="tb_asymptomatic_symptoms">উপসর্গহীন লক্ষণ</string>
     <string name="tb_rise_of_fever">সন্ধ্যায় জ্বর বৃদ্ধি</string>
     <string name="tb_loss_of_appetite">ক্ষুধামন্দা</string>
+    <string name="tb_child_failure_to_gain_weight">শিশুদের ওজন না বাড়া</string>
+    <string name="tb_child_decreased_activity">শিশুদের কার্যকলাপ বা খেলাধুলায় আগ্রহ কমে যাওয়া</string>
     <string name="tb_age_more_than_60">৬০ বছরের বেশি বয়স</string>
     <string name="tb_diabetic">ডায়াবেটিক</string>
     <string name="tb_tobacco_user">তামাক ব্যবহারকারী</string>
