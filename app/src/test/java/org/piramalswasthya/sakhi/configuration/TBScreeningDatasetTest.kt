@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.R
@@ -108,6 +109,41 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         val cache = TBScreeningCache(benId = 1L)
         dataset.mapValues(cache)
         assertEquals(translatedNo, cache.asymptomatic)
+    }
+
+    @Test
+    fun `child symptoms are shown only for beneficiaries aged zero through fifteen`() = runTest {
+        val translatedYes = "हाँ"
+        val translatedNo = "नहीं"
+        every { mockResources.getStringArray(R.array.yes_no) } returns arrayOf(translatedYes, translatedNo)
+
+        val child = mockk<BenRegCache>(relaxed = true)
+        every { child.dob } returns 0L
+        every { child.age } returns 15
+        val childDataset = TBScreeningDataset(context, Languages.ENGLISH)
+        childDataset.setUpPage(child, null)
+
+        val childQuestions = childDataset.listFlow.value.filter { it.id == 23 || it.id == 24 }
+        assertEquals(2, childQuestions.size)
+        assertTrue(childQuestions.all { it.required })
+        childQuestions[0].value = translatedYes
+        childQuestions[1].value = translatedNo
+        val cache = TBScreeningCache(benId = 1L)
+        childDataset.mapValues(cache)
+        assertEquals(true, cache.failureToGainWeight)
+        assertEquals(false, cache.decreasedActivityOrPlayfulness)
+        childDataset.setUpPage(child, cache)
+        val restoredChildQuestions = childDataset.listFlow.value.filter { it.id == 23 || it.id == 24 }
+        assertEquals(translatedYes, restoredChildQuestions[0].value)
+        assertEquals(translatedNo, restoredChildQuestions[1].value)
+
+        val olderBeneficiary = mockk<BenRegCache>(relaxed = true)
+        every { olderBeneficiary.dob } returns 0L
+        every { olderBeneficiary.age } returns 16
+        val adultDataset = TBScreeningDataset(context, Languages.ENGLISH)
+        adultDataset.setUpPage(olderBeneficiary, null)
+
+        assertTrue(adultDataset.listFlow.value.none { it.id == 23 || it.id == 24 })
     }
 
     @Test

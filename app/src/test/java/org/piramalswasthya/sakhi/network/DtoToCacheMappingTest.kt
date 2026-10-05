@@ -326,11 +326,14 @@ class DtoToCacheMappingTest {
             id = 1L, benId = 66L, visitDate = null,
             coughMoreThan2Weeks = true, bloodInSputum = false, feverMoreThan2Weeks = true,
             lossOfWeight = false, nightSweats = true, historyOfTb = false,
-            takingAntiTBDrugs = false, familySufferingFromTB = true
+            takingAntiTBDrugs = false, familySufferingFromTB = true,
+            failureToGainWeight = true, decreasedActivityOrPlayfulness = false
         ).toCache()
         assertEquals(66L, cache.benId)
         assertEquals(true, cache.coughMoreThan2Weeks)
         assertEquals(true, cache.familySufferingFromTB)
+        assertEquals(true, cache.failureToGainWeight)
+        assertEquals(false, cache.decreasedActivityOrPlayfulness)
     }
 
     // ---------------- AdolscentHealthDTO ----------------

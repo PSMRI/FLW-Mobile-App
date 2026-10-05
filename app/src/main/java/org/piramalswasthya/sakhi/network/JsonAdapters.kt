@@ -1126,6 +1126,8 @@ data class TBScreeningDTO(
     var fatigue: Boolean? = null,
     var shortBreath: Boolean? = null,
     var chestPain: Boolean? = null,
+    var failureToGainWeight: Boolean? = null,
+    var decreasedActivityOrPlayfulness: Boolean? = null,
 
 ) {
     fun toCache(): TBScreeningCache {
@@ -1158,7 +1160,9 @@ data class TBScreeningDTO(
             hivStatusId = hivStatusId,
             fatigue = fatigue,
             shortBreath = shortBreath,
-            chestPain = chestPain
+            chestPain = chestPain,
+            failureToGainWeight = failureToGainWeight,
+            decreasedActivityOrPlayfulness = decreasedActivityOrPlayfulness
         )
     }
 }

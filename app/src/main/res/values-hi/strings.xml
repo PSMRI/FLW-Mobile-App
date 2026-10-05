@@ -959,6 +959,8 @@
     <string name="tb_asymptomatic_symptoms">बिना लक्षण वाले लोगों की टीबी जांच</string>
     <string name="tb_rise_of_fever">रोजाना शाम को तेज बुखार आता है?</string>
     <string name="tb_loss_of_appetite">भूख कम लगना</string>
+    <string name="tb_child_failure_to_gain_weight">बच्चों में वजन न बढ़ना</string>
+    <string name="tb_child_decreased_activity">बच्चों की गतिविधि या खेलने-कूदने में कमी</string>
     <string name="tb_age_more_than_60">उम्र 60 वर्ष से अधिक</string>
     <string name="tb_diabetic">मधुमेह रोगी</string>
     <string name="tb_tobacco_user">तंबाकू सेवन करने वाला</string>
