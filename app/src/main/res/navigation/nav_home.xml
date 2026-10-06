@@ -1311,21 +1311,6 @@
             android:name="relToHeadId"
             app:argType="integer" />
         <argument
-            android:name="livingPlace"
-            android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="string" />
-        <argument
-            android:name="otherLivingPlace"
-            android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="string" />
-        <argument
-            android:name="institutionName"
-            android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="string" />
-        <argument
             android:name="benId"
             android:defaultValue="0L"
             app:argType="long" />
@@ -1341,6 +1326,21 @@
             android:name="isAddSpouse"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="livingPlace"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="otherLivingPlace"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="institutionName"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
         <action
             android:id="@+id/action_newBenRegFragment_self"
             app:destination="@id/newBenRegFragment"
