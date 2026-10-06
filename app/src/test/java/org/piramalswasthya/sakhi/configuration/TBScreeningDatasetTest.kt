@@ -21,7 +21,10 @@ import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.BenRegGen
+import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.TBScreeningCache
+import org.piramalswasthya.sakhi.utils.CommonConstants
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
 /**
@@ -47,6 +50,8 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { "opt$it" }
+        every { mockResources.getStringArray(R.array.key_population_risk_factor_options) } returns
+                Array(CommonConstants.RISK_FACTOR_CODES.size) { "risk$it" }
         every { mockResources.getString(any()) } returns "x"
         every { mockResources.getString(any(), any()) } returns "x"
         every { mockResources.getString(any(), any(), any()) } returns "x"
@@ -144,6 +149,67 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         adultDataset.setUpPage(olderBeneficiary, null)
 
         assertTrue(adultDataset.listFlow.value.none { it.id == 23 || it.id == 24 })
+    }
+
+    @Test
+    fun `pregnancy and elderly risk factors are auto selected on create and edit`() = runTest {
+        val beneficiary = mockk<BenRegCache>(relaxed = true)
+        every { beneficiary.gender } returns Gender.FEMALE
+        every { beneficiary.dob } returns 0L
+        every { beneficiary.age } returns 60
+        every { beneficiary.genDetails } returns BenRegGen(reproductiveStatusId = 2)
+        val dataset = TBScreeningDataset(context, Languages.ENGLISH)
+
+        dataset.setUpPage(beneficiary, null)
+        assertEquals(setOf("PREGNANCY", "ELDERLY"), selectedRiskFactorCodes(dataset, false))
+
+        val saved = TBScreeningCache(benId = 1L).apply {
+            keyPopulationRiskFactors = listOf("OTHER")
+        }
+        dataset.setUpPage(beneficiary, saved)
+        assertEquals(
+            setOf("OTHER", "PREGNANCY", "ELDERLY"),
+            selectedRiskFactorCodes(dataset, false)
+        )
+    }
+
+    @Test
+    fun `male beneficiaries do not receive pregnancy or lactating options`() = runTest {
+        val beneficiary = mockk<BenRegCache>(relaxed = true)
+        every { beneficiary.gender } returns Gender.MALE
+        every { beneficiary.dob } returns 0L
+        every { beneficiary.age } returns 35
+        val dataset = TBScreeningDataset(context, Languages.ENGLISH)
+
+        dataset.setUpPage(beneficiary, null)
+
+        val options = dataset.listFlow.value.first { it.id == 18 }
+        assertEquals(CommonConstants.RISK_FACTOR_CODES.size - 2, options.entries?.size)
+        assertEquals(emptySet<String>(), selectedRiskFactorCodes(dataset, true))
+    }
+
+    @Test
+    fun `not applicable removes other saved risk factor selections`() = runTest {
+        val dataset = TBScreeningDataset(context, Languages.ENGLISH)
+        val saved = TBScreeningCache(benId = 1L).apply {
+            keyPopulationRiskFactors = listOf("NOT_APPLICABLE", "OTHER")
+        }
+
+        dataset.setUpPage(null, saved)
+
+        assertEquals(setOf("NOT_APPLICABLE"), selectedRiskFactorCodes(dataset, false))
+        assertNotNull(dataset.listFlow.value.first { it.id == 18 }.exclusiveOptionIndices)
+    }
+
+    private fun selectedRiskFactorCodes(dataset: TBScreeningDataset, isMale: Boolean): Set<String> {
+        val element = dataset.listFlow.value.first { it.id == 18 }
+        val availableCodes = if (isMale) {
+            CommonConstants.RISK_FACTOR_CODES.filterNot {
+                it == "PREGNANCY" || it == "LACTATING_MOTHER"
+            }
+        } else CommonConstants.RISK_FACTOR_CODES
+        return element.value.orEmpty().split("|").mapNotNull { it.toIntOrNull() }
+            .mapNotNull { availableCodes.getOrNull(it) }.toSet()
     }
 
     @Test

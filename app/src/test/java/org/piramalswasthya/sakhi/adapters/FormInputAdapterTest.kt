@@ -53,6 +53,20 @@ class FormInputAdapterTest {
     }
 
     @Test
+    fun exclusiveMultiSelectChoice_disablesOtherOptionsUntilDeselected() {
+        val exclusiveIndices = setOf(3)
+        val checkedItems = booleanArrayOf(false, true, false, true, false)
+
+        assertTrue(isMultiSelectOptionEnabled(exclusiveIndices, checkedItems, 3))
+        assertFalse(isMultiSelectOptionEnabled(exclusiveIndices, checkedItems, 1))
+        assertFalse(isMultiSelectOptionEnabled(exclusiveIndices, checkedItems, 4))
+
+        checkedItems[3] = false
+        assertTrue(isMultiSelectOptionEnabled(exclusiveIndices, checkedItems, 1))
+        assertTrue(isMultiSelectOptionEnabled(exclusiveIndices, checkedItems, 4))
+    }
+
+    @Test
     fun imageClickListener_invokesLambdaWithFormId() {
         var captured: Int? = null
         val listener = FormInputAdapter.ImageClickListener { formId -> captured = formId }

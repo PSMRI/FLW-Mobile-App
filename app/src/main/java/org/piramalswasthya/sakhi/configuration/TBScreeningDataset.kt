@@ -321,8 +321,12 @@ class TBScreeningDataset(
             benAgeYears = if (it.dob > 0L) BenBasicCache.getAgeFromDob(it.dob) else it.age
             isMaleBen = it.gender == Gender.MALE
             val reproductiveStatus = it.genDetails?.reproductiveStatus
-            isPregnantBen = it.genDetails?.reproductiveStatusId == 1 ||
-                    reproductiveStatus.equals("Yes", ignoreCase = true)
+            val pregnantStatusLabels = listOfNotNull(
+                resources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1),
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1)
+            )
+            isPregnantBen = it.genDetails?.reproductiveStatusId == 2 ||
+                    pregnantStatusLabels.any { label -> reproductiveStatus.equals(label, ignoreCase = true) }
         }
         showChildSymptoms = ben != null && benAgeYears in 0..15
         childFailureToGainWeight.value = if (showChildSymptoms) {
@@ -372,12 +376,8 @@ class TBScreeningDataset(
 
         if (saved == null) {
             dateOfVisit.value = getDateFromLong(System.currentTimeMillis())
-            val pregnancyIndex = riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
-
-            keyPopulationRiskFactors.value = when {
-                isPregnantBen && pregnancyIndex >= 0 -> pregnancyIndex.toString()
-                else -> null
-            }
+            keyPopulationRiskFactors.value = withAutomaticRiskFactors(emptyList())
+                .takeIf { it.isNotEmpty() }?.joinToString("|")
             hivStatus.value = null
         } else {
             dateOfVisit.value = getDateFromLong(saved.visitDate)
@@ -428,8 +428,9 @@ class TBScreeningDataset(
                         savedCodes.any { it.equals(option.code, true) || it.equals(option.label, true) }
                 if (matches) index else null
             }
-            keyPopulationRiskFactors.value =
-                if (selectedIndexes.isEmpty()) null else selectedIndexes.sorted().joinToString("|")
+            val normalizedSelections = withAutomaticRiskFactors(selectedIndexes)
+            keyPopulationRiskFactors.value = normalizedSelections
+                .takeIf { it.isNotEmpty() }?.joinToString("|")
 
             hivStatus.value = hivStatusOptions.firstOrNull {
                 it.id == saved.hivStatusId ||
@@ -440,6 +441,24 @@ class TBScreeningDataset(
         aSymptomaticLabel.value = computeAsymptomaticValue()
         setUpPage(list)
 
+    }
+
+    private fun withAutomaticRiskFactors(selectedIndexes: Collection<Int>): List<Int> {
+        val exclusiveIndices = keyPopulationRiskFactors.exclusiveOptionIndices.orEmpty()
+        if (selectedIndexes.any { it in exclusiveIndices }) {
+            return selectedIndexes.filter { it in exclusiveIndices }.distinct().sorted()
+        }
+
+        val selected = selectedIndexes.toMutableSet()
+        if (isPregnantBen) {
+            riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (benAgeYears >= 60) {
+            riskFactorOptions.indexOfFirst { it.code == "ELDERLY" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        return selected.sorted()
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
