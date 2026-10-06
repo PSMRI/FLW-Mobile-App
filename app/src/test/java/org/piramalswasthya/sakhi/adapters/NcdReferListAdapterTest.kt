@@ -42,7 +42,7 @@ class NcdReferListAdapterTest {
     )
 
     private fun benWithCbacRefer(benId: Long = 1L, records: List<org.piramalswasthya.sakhi.model.CbacCache> = emptyList()) =
-        BenWithCbacReferDomain(benBasic(benId = benId), records, referalCache(benId = benId))
+        BenWithCbacReferDomain(benBasic(benId = benId), records, referalCache(benId = benId), emptyList())
 
     @Suppress("UNCHECKED_CAST")
     private fun diffCallback(): DiffUtil.ItemCallback<BenWithCbacReferDomain> {
