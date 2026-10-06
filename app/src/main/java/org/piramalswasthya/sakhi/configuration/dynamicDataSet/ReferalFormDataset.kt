@@ -17,8 +17,8 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         id = 1,
         inputType = DROPDOWN,
         title = resources.getString(R.string.referal_facility),
-        arrayId = R.array.new_referral_facility,
-        entries = resources.getStringArray(R.array.new_referral_facility),
+        arrayId = R.array.TB_referral_facility,
+        entries = resources.getStringArray(R.array.TB_referral_facility),
         required = true,
         hasDependants = true
     )
@@ -72,9 +72,10 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     var referralTypes = ""
     suspend fun setUpPage(referral : String , referralType : String) {
         val list = mutableListOf(
+            referDate,
             healthCenter,
             reasonForReferal,
-            referDate
+
             )
         referralTypes = referralType
         referDate.value = getDateFromLong(System.currentTimeMillis())

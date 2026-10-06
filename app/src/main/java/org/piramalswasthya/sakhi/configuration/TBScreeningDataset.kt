@@ -342,7 +342,7 @@ class TBScreeningDataset(
             nightSweats,
             chestPain,
             shortageOfBreath,
-            fatigue
+            fatigue,
         )
         if (showChildSymptoms) {
             list.add(childFailureToGainWeight)
@@ -350,11 +350,11 @@ class TBScreeningDataset(
         }
         list.addAll(
             listOf(
+                aSymptomaticLabel,
                 headingTbHistory,
                 historyOfTB,
                 currentlyTakingDrugs,
                 familyHistoryTB,
-                aSymptomaticLabel,
                 riskFactorsHeading,
                 keyPopulationRiskFactors,
                 hivStatus

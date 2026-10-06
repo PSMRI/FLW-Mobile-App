@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -90,6 +91,21 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
                 }
             }
 
+            if (item.ben.isDeath) {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+                )
+                if (item.tbConfirmedList.isEmpty()) {
+                    binding.btnFormTb.visibility = View.GONE
+                } else {
+                    binding.btnFormTb.visibility = View.VISIBLE
+
+                }
+            } else {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+                )
+            }
 
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.btnFamilyMembers.setBackgroundColor(binding.root.resources.getColor(R.color.pending_orange))

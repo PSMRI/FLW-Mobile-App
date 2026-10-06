@@ -13,6 +13,7 @@ import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -668,12 +669,17 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val ben: BenBasicCache
+    val ben: BenBasicCache,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbFollowUp : List<TBReferralFollowUpEntity>
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral
+            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp
         )
     }
 }
@@ -682,6 +688,7 @@ data class BenWithCbacReferDomain(
     val ben: BenBasicDomain,
     val savedCbacRecords: List<CbacCache>,
     val referalCac : ReferalCache,
+    val tbrefferalFollowUp : List<TBReferralFollowUpEntity>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
                 .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
