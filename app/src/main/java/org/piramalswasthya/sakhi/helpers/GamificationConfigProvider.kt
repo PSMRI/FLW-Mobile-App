@@ -63,9 +63,14 @@ class GamificationConfigProvider @Inject constructor() {
 
     /**
      * Call once, early (SakhiApplication.onCreate), off the main thread. A failed
-     * or slow fetch is NOT an error here — [remoteConfig] already holds the
-     * fail-closed XML defaults until a fetch succeeds, so every caller of
-     * [isMechanicEnabled] is safe to use immediately after the app starts.
+     * or slow fetch is NOT an error here — [remoteConfig] already holds the XML
+     * defaults until a fetch succeeds, so every caller of [isMechanicEnabled] is
+     * safe to use immediately after the app starts.
+     *
+     * Those defaults are ON. The console is therefore the kill switch rather than
+     * the on switch: a phone that never reaches Firebase runs the feature, and
+     * turning it off for everyone means publishing `gamification_master_enabled`
+     * as false and waiting out the one-hour fetch interval.
      */
     fun primeAsync() {
         if (BuildConfig.DEBUG) return // debug never reads Remote Config at all

@@ -47,8 +47,9 @@ interface MonthlyRecapAvailabilityProvider {
  * `isMechanicEnabled` call already folds allowlist membership in), and
  * [MonthlyRecapGates.configFresh] is true whenever a user is logged in — a
  * fetch failure does not need its own flag because Remote Config already falls
- * back to the fail-closed XML defaults on failure, which [configProvider]
- * reads regardless of fetch outcome.
+ * back to the XML defaults on failure, which [configProvider] reads regardless of
+ * fetch outcome. Those defaults are ON, so a fetch that never succeeds leaves the
+ * recap available rather than hidden.
  */
 class LocalMonthlyRecapAvailability @Inject constructor(
     private val clock: RecapClock,
