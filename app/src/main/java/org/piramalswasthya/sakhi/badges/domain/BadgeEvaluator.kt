@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -17,6 +18,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import org.piramalswasthya.sakhi.model.BadgeStateCache
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -45,11 +47,28 @@ class BadgeEvaluator @Inject constructor(
     @Volatile
     private var lastRunAt = 0L
 
+    /** A trigger arrived inside the throttle window and still owes a pass. */
+    @Volatile
+    private var runPending = false
+
+    /**
+     * Throttled, but trailing-edge: a trigger inside the window is remembered and
+     * served once the window closes, instead of being dropped. Dropping it meant a
+     * save made within ten seconds of app launch — the seventh HBNC visit, a last
+     * vaccine — produced no award until something else happened to trigger a run.
+     */
     suspend fun evaluateAll() = withContext(Dispatchers.IO) {
+        val waited = mutex.withLock {
+            val since = System.currentTimeMillis() - lastRunAt
+            if (since < RUN_THROTTLE_MS) {
+                if (runPending) return@withContext      // someone is already waiting
+                runPending = true
+                RUN_THROTTLE_MS - since
+            } else 0L
+        }
+        if (waited > 0) delay(waited)
         mutex.withLock {
-            // collapse the burst of triggers at app launch (bus + workers)
-            // into one pass — full table scans are costly on low-end devices
-            if (System.currentTimeMillis() - lastRunAt < RUN_THROTTLE_MS) return@withLock
+            runPending = false
             lastRunAt = System.currentTimeMillis()
             val userId = try {
                 pref.getLoggedInUser()?.userId
@@ -127,6 +146,10 @@ class BadgeEvaluator @Inject constructor(
                     // in-app game-style overlay for each newly earned badge
                     newRows.forEach { celebrations.publish(it.badgeId, it.level) }
                 }
+                // Upload now rather than at the next app launch: the shelf on her
+                // other phone is only as fresh as the last push, and a badge earned
+                // mid-session used to sit here until the app was restarted.
+                if (insertedIds.any { it != -1L }) WorkerUtils.triggerBadgeSync(context)
             }
             if (isBackfillRun) pref.isBadgeBackfillDone = true
             Timber.d("Badges: evaluated ${states.size} badges, ${earned.size} candidate awards")

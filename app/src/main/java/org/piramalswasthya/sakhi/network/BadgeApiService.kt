@@ -60,9 +60,11 @@ data class BadgeEarnedDTO(
      * opaque digest for per-case awards, and empty for streak and cumulative badges. Never a
      * beneficiary identifier — see [org.piramalswasthya.sakhi.badges.domain.AwardKeys].
      *
-     * Defaulted so a server that predates the field still deserialises.
+     * Nullable as well as defaulted: a server that predates the field omits it, but one
+     * that has the column and no value sends an explicit null, which a non-null String
+     * rejects — and that failed the whole restore, not just the one row.
      */
-    val awardKey: String = ""
+    val awardKey: String? = null
 )
 
 @JsonClass(generateAdapter = true)
