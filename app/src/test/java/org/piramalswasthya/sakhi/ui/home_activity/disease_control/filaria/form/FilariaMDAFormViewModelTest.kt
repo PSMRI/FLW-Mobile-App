@@ -17,6 +17,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.model.BottleItem
 import org.piramalswasthya.sakhi.model.dynamicEntity.ConditionalLogic
+import org.piramalswasthya.sakhi.model.dynamicEntity.FieldValidationDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FilariaMDA.FilariaMDAFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
@@ -80,14 +81,16 @@ class FilariaMDAFormViewModelTest : BaseViewModelTest() {
         id: String,
         default: Any? = null,
         conditional: ConditionalLogic? = null,
-        options: Any? = null
+        options: Any? = null,
+        validation: FieldValidationDto? = null
     ) = FormFieldDto(
         fieldId = id,
         label = id,
         type = "text",
         options = options,
         conditional = conditional,
-        default = default
+        default = default,
+        validation = validation
     )
 
     private fun mdaSchema(vararg fields: FormFieldDto) = FormSchemaDto(
@@ -378,6 +381,38 @@ class FilariaMDAFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `saveFormResponses returns false when repository throws`() = runTest {
+        stubMda(
+            mdaSchema(mdaField("mda_distribution_date")),
+            savedJson = """{"fields":{"mda_distribution_date":"01-05-2024"}}"""
+        )
+        viewModel.loadFormSchema(2L, "MDA_01", viewMode = false)
+        advanceUntilIdle()
+        coEvery { repository.insertFormResponse(any()) } throws RuntimeException("db error")
+
+        val result = viewModel.saveFormResponses(1L, 2L)
+        advanceUntilIdle()
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `saveFormResponses falls back to an empty month key when the distribution date is missing`() = runTest {
+        stubMda(
+            mdaSchema(mdaField("symptom_detail")),
+            savedJson = """{"fields":{"symptom_detail":"none"}}"""
+        )
+        viewModel.loadFormSchema(2L, "MDA_01", viewMode = false)
+        advanceUntilIdle()
+        coEvery { repository.insertFormResponse(any()) } returns true
+
+        viewModel.saveFormResponses(1L, 2L)
+        advanceUntilIdle()
+
+        coVerify { repository.insertFormResponse(any()) }
+    }
+
+    @Test
     fun `getVisibleFields maps visible fields only`() = runTest {
         stubMda(
             mdaSchema(
@@ -393,5 +428,35 @@ class FilariaMDAFormViewModelTest : BaseViewModelTest() {
         assertEquals(1, fields.size)
         assertEquals("has_symptom", fields.first().fieldId)
         assertEquals(2, fields.first().options?.size)
+    }
+
+    @Test
+    fun `getVisibleFields maps the full validation block`() = runTest {
+        stubMda(
+            mdaSchema(
+                mdaField(
+                    "age",
+                    validation = FieldValidationDto(
+                        min = 1f,
+                        max = 120f,
+                        maxLength = 3,
+                        regex = "\\d+",
+                        errorMessage = "invalid",
+                        decimalPlaces = 0,
+                        maxSizeMB = 5,
+                        afterField = "dob",
+                        beforeField = "gender"
+                    )
+                )
+            )
+        )
+        viewModel.loadFormSchema(2L, "MDA_01", viewMode = false)
+        advanceUntilIdle()
+
+        val fields = viewModel.getVisibleFields()
+
+        assertEquals(1, fields.size)
+        assertEquals(120f, fields.first().validation?.max)
+        assertEquals("invalid", fields.first().validation?.errorMessage)
     }
 }

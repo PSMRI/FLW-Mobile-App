@@ -50,12 +50,24 @@ class MaternalHealthRepo @Inject constructor(
 
         benDao.moveExpiredPregnantWomenToECT(
             currentTime = System.currentTimeMillis(),
-            expiryMillis = TimeUnit.DAYS.toMillis(340)
+            expiryMillis = Konstants.pregnancyExpiryMillis
         )
     }
     suspend fun getSavedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
         return withContext(Dispatchers.IO) {
             maternalHealthDao.getSavedRecord(benId)
+        }
+    }
+
+    suspend fun getCompletedPregnancyCount(benId: Long): Int {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getCompletedPregnancyCount(benId)
+        }
+    }
+
+    suspend fun getLastCompletedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getLastCompletedRecord(benId)
         }
     }
 
@@ -168,7 +180,7 @@ class MaternalHealthRepo @Inject constructor(
     private val selectedVillage = preferenceDao.getLocationRecord()!!.village.id
 
     val ancDueCount =
-        benDao.getAllRegisteredPregnancyWomenList(selectedVillage)
+        benDao.getAllRegisteredPregnancyWomenList(selectedVillage, Konstants.pregnancyExpiryMillis)
             .map { list ->
                 list.count { isAncDue(it) }
             }
@@ -644,7 +656,8 @@ class MaternalHealthRepo @Inject constructor(
         benId: Long,
         visitNumber: Int,
         isDelivered: Boolean,
-        userName: String
+        userName: String,
+        delivaryDate : Long
     ) {
 
         val todayDate = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
@@ -663,7 +676,7 @@ class MaternalHealthRepo @Inject constructor(
                     frontFilePath = "",
                     backFilePath = "",
                     isActive = true,
-                    ancDate = Dataset.Companion.getLongFromDate(todayDate),
+                    ancDate = delivaryDate,
                     visitDate = Dataset.Companion.getLongFromDate(todayDate),
 
                 )

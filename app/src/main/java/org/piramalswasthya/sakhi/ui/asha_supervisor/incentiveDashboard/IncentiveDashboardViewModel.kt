@@ -24,9 +24,13 @@ class IncentiveDashboardViewModel @Inject constructor(
 
     private val _dashboardData = MutableLiveData<DashboardUiState>()
     val dashboardData: LiveData<DashboardUiState> = _dashboardData
+
+
+    private val _subCenterData= MutableLiveData<SubCenterUiState>()
+    val subCenterData: LiveData<SubCenterUiState> = _subCenterData
     fun getSuperVisorSubname(): String = preferenceDao.getLoggedInUser()?.role ?: ""
 
-    fun fetchDashboard(month: Int, year: Int, isRetry: Boolean = false) {
+    fun fetchDashboard(month: Int, year: Int, subcenterId : Int, isRetry: Boolean = false) {
         viewModelScope.launch {
             _dashboardData.value = DashboardUiState.Loading
             try {
@@ -37,7 +41,7 @@ class IncentiveDashboardViewModel @Inject constructor(
                 }
 
                 val response = apiService.getAshaSupervisorDashboard(
-                    mapOf("month" to month, "year" to year)
+                    mapOf("month" to month, "year" to year, "facilityId"  to subcenterId)
                 )
 
                 if (response.isSuccessful) {
@@ -50,7 +54,7 @@ class IncentiveDashboardViewModel @Inject constructor(
                         }
                         parsed?.statusCode == 401 || parsed?.statusCode == 5002 -> {
                             if (!isRetry && userRepo.refreshTokenTmc(user.userName, user.password)) {
-                                fetchDashboard(month, year, isRetry = true)
+                                fetchDashboard(month, year,subcenterId, isRetry = true)
                             } else {
                                 _dashboardData.value = DashboardUiState.Error("Session expired, please login again")
                             }
@@ -64,7 +68,7 @@ class IncentiveDashboardViewModel @Inject constructor(
                 } else {
                     if (response.code() == 401 && !isRetry) {
                         if (userRepo.refreshTokenTmc(user.userName, user.password)) {
-                            fetchDashboard(month, year, isRetry = true)
+                            fetchDashboard(month, year,subcenterId, isRetry = true)
                             return@launch
                         }
                     }
@@ -79,10 +83,72 @@ class IncentiveDashboardViewModel @Inject constructor(
             }
         }
     }
+
+    fun getSubcenter(month: Int, year: Int, isRetry: Boolean = false) {
+        viewModelScope.launch {
+            _subCenterData.value = SubCenterUiState.Loading
+            try {
+                val user = preferenceDao.getLoggedInUser()
+                if (user == null) {
+                    _subCenterData.value = SubCenterUiState.Error("User not logged in")
+                    return@launch
+                }
+
+                val response = apiService.getSubCenterDashboard(
+                    mapOf("month" to month, "year" to year)
+                )
+
+                if (response.isSuccessful) {
+                    val jsonString = response.body()?.string()
+                    val parsed = Gson().fromJson(jsonString, DashboardResponse::class.java)
+
+                    when {
+                        parsed?.status == "Success" && parsed.data != null -> {
+                            _subCenterData.value = SubCenterUiState.Success(parsed.data)
+                        }
+                        parsed?.statusCode == 401 || parsed?.statusCode == 5002 -> {
+                            if (!isRetry && userRepo.refreshTokenTmc(user.userName, user.password)) {
+                                getSubcenter(month, year, isRetry = true)
+                            } else {
+                                _subCenterData.value = SubCenterUiState.Error("Session expired, please login again")
+                            }
+                        }
+                        else -> {
+                            _subCenterData.value = SubCenterUiState.Error(
+                                parsed?.errorMessage ?: "Something went wrong"
+                            )
+                        }
+                    }
+                } else {
+                    if (response.code() == 401 && !isRetry) {
+                        if (userRepo.refreshTokenTmc(user.userName, user.password)) {
+                            getSubcenter(month, year, isRetry = true)
+                            return@launch
+                        }
+                    }
+                    _subCenterData.value = SubCenterUiState.Error("Server error: ${response.code()}")
+                }
+            } catch (e: SocketTimeoutException) {
+                _subCenterData.value = SubCenterUiState.Error("Timeout error, please try again")
+            } catch (e: Exception) {
+                _subCenterData.value = SubCenterUiState.Error(
+                    e.message ?: "Unknown error occurred"
+                )
+            }
+        }
+    }
+
 }
 
 sealed class DashboardUiState {
     object Loading : DashboardUiState()
     data class Success(val data: DashboardData) : DashboardUiState()
     data class Error(val message: String) : DashboardUiState()
+}
+
+
+sealed class SubCenterUiState {
+    object Loading : SubCenterUiState()
+    data class Success(val data: DashboardData) : SubCenterUiState()
+    data class Error(val message: String) : SubCenterUiState()
 }

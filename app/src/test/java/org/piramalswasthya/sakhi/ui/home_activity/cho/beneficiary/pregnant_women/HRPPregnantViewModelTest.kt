@@ -3,10 +3,12 @@ package org.piramalswasthya.sakhi.ui.home_activity.cho.beneficiary.pregnant_wome
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -23,6 +25,7 @@ class HRPPregnantViewModelTest : BaseViewModelTest() {
     override fun setUp() {
         super.setUp()
         every { recordsRepo.hrpPregnantWomenList } returns flowOf(emptyList())
+        every { recordsRepo.hrpTrackingPregList } returns flowOf(emptyList())
         viewModel = HRPPregnantViewModel(recordsRepo)
     }
 
@@ -59,5 +62,11 @@ class HRPPregnantViewModelTest : BaseViewModelTest() {
     fun `filterText with empty string does not throw`() = runTest {
         viewModel.filterText("")
         advanceUntilIdle()
+    }
+
+    @Test
+    fun `benList collects real results once the flow is exercised`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

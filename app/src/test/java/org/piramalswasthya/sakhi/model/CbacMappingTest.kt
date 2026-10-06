@@ -21,7 +21,13 @@ class CbacMappingTest {
     private fun baseCache() = CbacCache(
         benId = 1L,
         ashaId = 1,
-        syncState = SyncState.UNSYNCED
+        syncState = SyncState.UNSYNCED,
+        cbac_age_posi = 1,
+        cbac_smoke_posi = 1,
+        cbac_alcohol_posi = 1,
+        cbac_waist_posi = 1,
+        cbac_pa_posi = 1,
+        cbac_familyhistory_posi = 1
     )
 
     // ---------------- String?.toMillisOrNull ----------------
@@ -111,5 +117,62 @@ class CbacMappingTest {
         assertEquals("No", post.cbacCough2weeks)
         assertNotNull(post.cbacWaistFemale)
         assertNull(post.cbacWaistMale)
+    }
+
+    @Test
+    fun `asPostModel maps transgender gender to both waist fields null`() {
+        val cache = baseCache().apply {
+            cbac_waist_posi = 1
+        }
+
+        val post = cache.asPostModel(hhId = 5L, benGender = Gender.TRANSGENDER, resources = resources())
+
+        assertNull(post.cbacWaistMale)
+        assertNull(post.cbacWaistFemale)
+        assertNull(post.cbacWaistMaleScore)
+        assertNull(post.cbacWaistFemaleScore)
+    }
+
+    @Test
+    fun `asPostModel falls back to default text when yes-no position is neither one nor two`() {
+        val cache = baseCache().apply {
+            cbac_sortnesofbirth_pos = 0
+            cbac_lumpinbreast_pos = 0
+        }
+
+        val post = cache.asPostModel(hhId = 5L, benGender = Gender.FEMALE, resources = resources())
+
+        assertEquals("label", post.cbacShortnessBreath)
+        assertNull(post.cbacLumpBreast)
+    }
+
+    @Test
+    fun `asPostModel maps zero position scored fields to empty strings`() {
+        val cache = baseCache().apply {
+            cbac_fuel_used_posi = 0
+            cbac_occupational_exposure_posi = 0
+            cbac_little_interest_posi = 0
+            cbac_feeling_down_posi = 0
+        }
+
+        val post = cache.asPostModel(hhId = 5L, benGender = Gender.MALE, resources = resources())
+
+        assertEquals("", post.CbacCookingOil)
+        assertEquals("", post.CbacOccupationalExposure)
+        assertEquals("", post.CbacLittleInterestPleasure)
+        assertEquals("", post.CbacDepressedhopeless)
+        assertEquals(0, post.CbacCookingOilScore)
+        assertEquals(0, post.CbacOccupationalExposureScore)
+    }
+
+    @Test
+    fun `asPostModel maps isReffered true to isRefer true`() {
+        val cache = baseCache().apply {
+            isReffered = true
+        }
+
+        val post = cache.asPostModel(hhId = 5L, benGender = Gender.MALE, resources = resources())
+
+        assertEquals(true, post.isRefer)
     }
 }

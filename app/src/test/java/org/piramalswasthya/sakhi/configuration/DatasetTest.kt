@@ -201,6 +201,41 @@ class DatasetTest : BaseViewModelTest() {
 
         suspend fun exposeEmitAlertError(res: Int) = emitAlertErrorMessage(res)
 
+        fun exposeSetResources(r: Resources) {
+            resources = r
+        }
+
+        fun exposeSetEnglishResources(r: Resources) {
+            englishResources = r
+        }
+
+        // ---- calls that OMIT a defaulted parameter, to hit the real Dataset $default bridges ----
+        fun exposeTriggerReverseNoSide(
+            source: FormElement,
+            passedIndex: Int,
+            triggerIndex: Int,
+            target: List<FormElement>
+        ) = triggerDependantsReverse(source, passedIndex, triggerIndex, target)
+
+        fun exposeTriggerForHideNoSide(
+            source: FormElement,
+            passedIndex: Int,
+            triggerIndex: Int,
+            target: FormElement
+        ) = triggerforHide(source, passedIndex, triggerIndex, target)
+
+        fun exposeTriggerSingleNoSide(
+            source: FormElement,
+            passedIndex: Int,
+            triggerIndex: Int,
+            target: FormElement
+        ) = triggerDependants(source, passedIndex, triggerIndex, target)
+
+        fun exposeAgeAndAgeUnitFromDobNoOptionals(dob: Long) =
+            assignValuesToAgeAndAgeUnitFromDob(dob)
+
+        fun vUploadsDefaultMin(uploads: List<FormElement>) = validateUploads(uploads)
+
         // ---- validators ----
         fun vEmpty(e: FormElement) = validateEmptyOnEditText(e)
         fun vAllCaps(e: FormElement) = validateAllCapsOrSpaceOnEditText(e)
@@ -1275,4 +1310,203 @@ class DatasetTest : BaseViewModelTest() {
         assertEquals(Languages.ASSAMESE, ds(Languages.ASSAMESE).currentLanguage)
         assertEquals(Languages.BANGLA, ds(Languages.BANGLA).currentLanguage)
     }
+
+    @Test
+    fun `charset validators leave an unrelated pre-existing error untouched`() {
+        val d = ds()
+
+        val alphaSpace = el(1, value = "JOHN DOE").apply { errorText = "other error" }
+        d.vAlphaSpace(alphaSpace)
+        assertEquals("other error", alphaSpace.errorText)
+
+        val alphaSpecial = el(2, value = "JOHN.DOE").apply { errorText = "other error" }
+        d.vAlphaSpecial(alphaSpecial)
+        assertEquals("other error", alphaSpecial.errorText)
+
+        val alphaNumericSpace = el(3, value = "AB 12").apply { errorText = "other error" }
+        d.vAlphaNumericSpace(alphaNumericSpace)
+        assertEquals("other error", alphaNumericSpace.errorText)
+
+        val alphaNumeric = el(4, value = "AB12").apply { errorText = "other error" }
+        d.vAlphaNumeric(alphaNumeric)
+        assertEquals("other error", alphaNumeric.errorText)
+
+        val abha = el(5, value = "12345678901234").apply { errorText = "other error" }
+        d.vAbha(abha)
+        assertEquals("other error", abha.errorText)
+
+        val ifsc = el(6, value = "SBIN0001234").apply { errorText = "other error" }
+        d.vIfsc(ifsc)
+        assertEquals("other error", ifsc.errorText)
+
+        val noAlphaSpace = el(7, value = "12345").apply { errorText = "other error" }
+        d.vNoAlphaSpace(noAlphaSpace)
+        assertEquals("other error", noAlphaSpace.errorText)
+    }
+
+    @Test
+    fun `position lookups treat a null entries array safely`() {
+        val d = ds()
+        val noEntries = el(1, value = "b")
+
+        assertEquals(0, d.exposePosition(noEntries))
+        assertNull(d.exposeStringFromPosition(noEntries, 1))
+        assertNull(d.exposeSpauseFromPosition(noEntries, 0))
+        assertNull(d.exposeSpauseFromPosition(noEntries, 1))
+    }
+
+    @Test
+    fun `validateUploads only flags the still-empty slots while under the minimum`() {
+        val d = ds()
+        val filled = el(1, value = "already-uploaded")
+        val empty = el(2)
+
+        assertEquals(0, d.vUploads(listOf(filled, empty), 2))
+        assertNull(filled.errorText)
+        assertEquals("err", empty.errorText)
+    }
+
+    // =====================================================================================
+    // resources property setters (protected var, exercised via the Probe subclass)
+    // =====================================================================================
+
+    @Test
+    fun `resources and englishResources can be reassigned after construction`() {
+        val d = ds()
+        val other = mockResources
+        d.exposeSetResources(other)
+        d.exposeSetEnglishResources(other)
+        assertEquals("opt5", d.getLocalValueInArray(1, "opt5"))
+    }
+
+    // =====================================================================================
+    // default-argument bridge constructors (triggerDependants*/validateUploads/$default)
+    // =====================================================================================
+
+    @Test
+    fun `triggerDependantsReverse omitting the side effect list uses its default null`() = runTest {
+        val d = ds()
+        val source = el(1)
+        val t1 = el(10, value = "a")
+        d.exposeSetUpPage(listOf(source))
+
+        assertEquals(0, d.exposeTriggerReverseNoSide(source, 5, 0, listOf(t1)))
+        assertTrue(d.exposeElements().contains(t1))
+        assertEquals(0, d.exposeTriggerReverseNoSide(source, 0, 0, listOf(t1)))
+        assertNull(t1.value)
+    }
+
+    @Test
+    fun `triggerforHide omitting the side effect list uses its default null`() = runTest {
+        val d = ds()
+        val source = el(1)
+        val target = el(10, value = "v")
+        d.exposeSetUpPage(listOf(source, target))
+
+        assertEquals(0, d.exposeTriggerForHideNoSide(source, 0, 0, target))
+        assertFalse(d.exposeElements().contains(target))
+        assertNull(target.value)
+    }
+
+    @Test
+    fun `triggerDependants single target omitting the side effect list uses its default null`() =
+        runTest {
+            val d = ds()
+            val source = el(1)
+            val target = el(10, value = "v")
+            d.exposeSetUpPage(listOf(source))
+
+            assertEquals(0, d.exposeTriggerSingleNoSide(source, 2, 2, target))
+            assertTrue(d.exposeElements().contains(target))
+            assertEquals(0, d.exposeTriggerSingleNoSide(source, 1, 2, target))
+            assertNull(target.value)
+        }
+
+    @Test
+    fun `triggerDependants single target skips side effect elements not present in the list`() =
+        runTest {
+            val d = ds()
+            val source = el(1)
+            val target = el(10, value = "v")
+            val absentSide = el(20, value = "still-here")
+            d.exposeSetUpPage(listOf(source, target))
+
+            val idx = d.exposeTriggerSingle(source, 1, 2, target, listOf(absentSide))
+            assertEquals(0, idx)
+            assertNull(target.value)
+            assertEquals("still-here", absentSide.value)
+        }
+
+    @Test
+    fun `assignValuesToAgeAndAgeUnitFromDob omitting both optional args uses their defaults`() {
+        val d = ds()
+        val dob = Calendar.getInstance().apply { add(Calendar.YEAR, -5) }.timeInMillis
+        assertEquals(-1, d.exposeAgeAndAgeUnitFromDobNoOptionals(dob))
+    }
+
+    @Test
+    fun `validateUploads omitting minRequired defaults to two`() {
+        val d = ds()
+        val a = el(1, value = "x")
+        val b = el(2)
+        assertEquals(0, d.vUploadsDefaultMin(listOf(a, b)))
+        assertEquals("err", b.errorText)
+    }
+
+    // =====================================================================================
+    // additional branch coverage: char-class helpers and hindi/assamese ranges
+    // =====================================================================================
+
+    @Test
+    fun `validateAllCapsOrSpaceOnEditText leaves a required empty field's error untouched`() {
+        val d = ds()
+        val requiredEmpty = el(1, required = true, allCaps = true).apply { errorText = "stale" }
+        d.vAllCaps(requiredEmpty)
+        assertEquals("stale", requiredEmpty.errorText)
+    }
+
+    @Test
+    fun `validateEditTextWithTextNonNumericHindiEnabled accepts assamese script text`() {
+        val d = ds()
+        val assamese = el(1, value = "রাম")
+        d.vNonNumericHindi(assamese)
+        assertEquals("রাম", assamese.value)
+        assertNull(assamese.errorText)
+    }
+
+    @Test
+    fun `validateAllCapsOrSpaceOnEditTextWithHindiEnabled accepts assamese script text`() {
+        val d = ds()
+        val assamese = el(1, value = "রাম", allCaps = true)
+        d.vAllCapsHindi(assamese)
+        assertEquals("রাম", assamese.value)
+        assertNull(assamese.errorText)
+    }
+
+    @Test
+    fun `getEnglishStringFromPosition resolves the last valid index and rejects one past it`() {
+        val d = ds()
+        val e = el(1, entries = arrayOf("a", "b"))
+        assertEquals("opt79", d.exposeEnglishStringFromPosition(e, 80))
+        assertNull(d.exposeEnglishStringFromPosition(e, 81))
+    }
+
+    @Test
+    fun `validateDoubleUpto1DecimalPlaces treats an empty value as valid`() {
+        val d = ds()
+        val empty = el(1).apply { errorText = "stale" }
+        d.vDouble1Dp(empty)
+        assertNull(empty.errorText)
+    }
+
+    @Test
+    fun `getLocalValueInArray falls back to a localized-only entry`() {
+        val hindiOnlyResources = io.mockk.mockk<Resources>()
+        every { HelperUtil.getLocalizedResources(context, Languages.HINDI) } returns hindiOnlyResources
+        every { hindiOnlyResources.getStringArray(1) } returns arrayOf("स्थानीय")
+
+        val d = ds(Languages.HINDI)
+        assertEquals("स्थानीय", d.getLocalValueInArray(1, "स्थानीय"))
+    }
+
 }

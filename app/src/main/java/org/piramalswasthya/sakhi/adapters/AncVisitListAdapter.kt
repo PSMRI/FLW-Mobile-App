@@ -212,4 +212,7 @@ class AncVisitListAdapter(
         fun showHomeVisit(item: BenWithAncListDomain) = showHomeVisit?.invoke(item.ben.benId)
 
     }
+
+
+
 }

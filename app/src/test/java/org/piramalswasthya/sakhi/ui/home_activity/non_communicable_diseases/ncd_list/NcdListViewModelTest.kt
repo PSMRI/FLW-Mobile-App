@@ -3,11 +3,13 @@ package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -116,5 +118,11 @@ class NcdListViewModelTest : BaseViewModelTest() {
         viewModel.filterText("b")
         advanceUntilIdle()
         assertNotNull(viewModel.benList)
+    }
+
+    @Test
+    fun `benList collects the combined and filtered list`() = runTest {
+        val result = viewModel.benList.first()
+        assertTrue(result.isEmpty())
     }
 }

@@ -22,12 +22,18 @@ import org.junit.Assert.assertTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import io.mockk.coVerify
+import io.mockk.Runs
+import io.mockk.just
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.HouseholdCache
+import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
@@ -88,6 +94,7 @@ class NewChildBenViewModelTest : BaseViewModelTest() {
 
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
+        every { Dispatchers.Default } returns testDispatcher
 
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -334,5 +341,155 @@ class NewChildBenViewModelTest : BaseViewModelTest() {
         val vm = buildVm()
         runCatching { vm.updateValueByIdAndReturnListIndex(12, "2") }
         assertNotNull(vm.formList)
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // saveForm
+    // ----------------------------------------------------------------------------------------
+
+    private fun sampleLocationRecord() = LocationRecord(
+        country = LocationEntity(1, "India"),
+        state = LocationEntity(2, "State"),
+        district = LocationEntity(3, "District"),
+        block = LocationEntity(4, "Block"),
+        village = LocationEntity(5, "Village")
+    )
+
+    @Test
+    fun `saveForm creates a new child record and persists the ecr form on success`() = runTest {
+        val selectedBenId = 33L
+        val household = mockk<HouseholdCache>(relaxed = true)
+        every { household.locationRecord } returns sampleLocationRecord()
+        every { household.benId } returns 0L
+        coEvery { benRepo.getHousehold(any()) } returns household
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns null
+        every { ben.isConsent } returns false
+        every { ben.gender } returns null
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns null
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns ben
+
+        val selectedBen = mockk<BenRegCache>(relaxed = true)
+        every { selectedBen.beneficiaryId } returns selectedBenId
+        every { selectedBen.householdId } returns 1L
+        every { selectedBen.lastName } returns "DEVI"
+        every { selectedBen.contactNumber } returns 9999999999L
+        every { selectedBen.community } returns "GEN"
+        every { selectedBen.communityId } returns 1
+        every { selectedBen.firstName } returns "MOTHER"
+        every { selectedBen.genDetails } returns null
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns listOf(selectedBen)
+
+        val savedEcr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        coEvery { ecrRepo.getSavedRecord(any()) } returns savedEcr
+
+        coEvery { benRepo.getMinBenId() } returns 0L
+        coEvery { benRepo.persistRecord(any()) } just Runs
+        coEvery { benRepo.updateBeneficiaryChildrenAdded(any(), any(), any()) } just Runs
+        coEvery { ecrRepo.persistRecord(any()) } just Runs
+
+        val vm = buildVm(hhId = 1L, selectedBenId = selectedBenId)
+        advanceUntilIdle()
+
+        vm.updateValueByIdAndReturnListIndex(12, "1")
+        vm.updateListOnValueChanged(12, 0)
+        advanceUntilIdle()
+
+        vm.updateValueByIdAndReturnListIndex(111, "BABYNAME")
+        vm.updateValueByIdAndReturnListIndex(17, "01-01-2020")
+        vm.updateValueByIdAndReturnListIndex(18, "5")
+        vm.updateValueByIdAndReturnListIndex(19, "opt0")
+
+        vm.saveForm()
+        advanceUntilIdle()
+
+        assertEquals(NewChildBenViewModel.State.SAVE_SUCCESS, vm.state.value)
+        coVerify { benRepo.persistRecord(any()) }
+        coVerify { benRepo.updateBeneficiaryChildrenAdded(1L, selectedBenId, SyncState.UNSYNCED) }
+        coVerify { ecrRepo.persistRecord(savedEcr) }
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // setUpPage success path / ben-derived helpers
+    // ----------------------------------------------------------------------------------------
+
+    private fun stubSuccessfulSetup(
+        selectedBenId: Long,
+        maritalStatusId: Int? = null,
+        gender: org.piramalswasthya.sakhi.model.Gender? = org.piramalswasthya.sakhi.model.Gender.MALE,
+        childListNonEmpty: Boolean = false
+    ) {
+        val household = mockk<HouseholdCache>(relaxed = true)
+        every { household.locationRecord } returns sampleLocationRecord()
+        every { household.benId } returns 0L
+        coEvery { benRepo.getHousehold(any()) } returns household
+
+        val genDetails = if (maritalStatusId != null)
+            mockk<org.piramalswasthya.sakhi.model.BenRegGen>(relaxed = true).also {
+                every { it.maritalStatusId } returns maritalStatusId
+            } else null
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.isDeath } returns false
+        every { ben.genDetails } returns genDetails
+        every { ben.isConsent } returns false
+        every { ben.gender } returns gender
+        every { ben.firstName } returns "KID"
+        every { ben.lastName } returns "LASTNAME"
+        coEvery { benRepo.getBeneficiaryRecord(any(), any()) } returns ben
+
+        val selectedBen = mockk<BenRegCache>(relaxed = true)
+        every { selectedBen.beneficiaryId } returns selectedBenId
+        coEvery { benRepo.getBenListFromHousehold(any()) } returns listOf(selectedBen)
+
+        if (childListNonEmpty) {
+            val child = mockk<BenRegCache>(relaxed = true)
+            coEvery { benRepo.getChildBenListFromHousehold(any(), any(), any()) } returns listOf(child)
+        }
+    }
+
+    @Test
+    fun `getBenGender and getBenName reflect the loaded beneficiary`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, gender = org.piramalswasthya.sakhi.model.Gender.MALE)
+
+        val vm = buildVm(selectedBenId = 33L)
+        advanceUntilIdle()
+
+        assertEquals(org.piramalswasthya.sakhi.model.Gender.MALE, vm.getBenGender())
+        assertEquals("KID LASTNAME", vm.getBenName())
+    }
+
+    @Test
+    fun `isHoFMarried is true when head of family and marital status id is 2`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, maritalStatusId = 2)
+
+        val vm = buildVm(selectedBenId = 33L, relToHeadId = 18)
+        advanceUntilIdle()
+
+        assertTrue(vm.isHoFMarried())
+    }
+
+    @Test
+    fun `isHoFMarried is false when not head of family`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, maritalStatusId = 2)
+
+        val vm = buildVm(selectedBenId = 33L, relToHeadId = 8)
+        advanceUntilIdle()
+
+        assertFalse(vm.isHoFMarried())
+    }
+
+    @Test
+    fun `setUpPage marks recordExists true when children already exist`() = runTest {
+        stubSuccessfulSetup(selectedBenId = 33L, childListNonEmpty = true)
+
+        val vm = buildVm(selectedBenId = 33L)
+        advanceUntilIdle()
+
+        assertEquals(true, vm.recordExists.value)
+        assertEquals(1, vm.oldChildCount)
     }
 }

@@ -8,7 +8,10 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -16,6 +19,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ChildRegistrationDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -23,10 +27,21 @@ import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenBasicCache
+import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
+import org.piramalswasthya.sakhi.model.BenWithECRCache
+import org.piramalswasthya.sakhi.model.BenWithEcTrackingCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
+import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.LocationEntity
+import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.utils.HelperUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecordsRepoTest : BaseRepositoryTest() {
@@ -38,6 +53,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var vaccineDao: ImmunizationDao
     @MockK private lateinit var maternalHealthDao: MaternalHealthDao
     @MockK private lateinit var childRegistrationDao: ChildRegistrationDao
+    @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var pref: PreferenceDao
 
     private lateinit var repo: RecordsRepo
@@ -50,7 +66,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
         every { pref.getLocationRecord() } returns locationRecord()
         repo = RecordsRepo(
             context, householdDao, benDao, ancHomeVisitDao,
-            vaccineDao, maternalHealthDao, childRegistrationDao, pref
+            vaccineDao, maternalHealthDao, childRegistrationDao, benRepo, pref
         )
     }
 
@@ -84,7 +100,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `getHomeVisitUiState blocks add and allows view at nine visits`() = runTest {
-        val visits = List(9) { mockk<ANCFormResponseJsonEntity>(relaxed = true) }
+        val visits = List(9) { homeVisitMock(visitDate = "01-01-2020") }
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(5L) } returns visits
 
         val state = repo.getHomeVisitUiState(5L)
@@ -94,9 +110,8 @@ class RecordsRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getHomeVisitUiState allows add when last visit older than thirty days`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns "01-01-2020"
+    fun `getHomeVisitUiState allows add when last visit is in an earlier calendar month`() = runTest {
+        val visit = homeVisitMock(visitDate = "01-01-2020")
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(5L) } returns listOf(visit)
 
         val state = repo.getHomeVisitUiState(5L)
@@ -104,6 +119,43 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertTrue(state.canAddHomeVisit)
         assertTrue(state.canViewHomeVisit)
     }
+
+    @Test
+    fun `getHomeVisitUiState blocks add when the last visit was under thirty days ago`() =
+        runTest {
+            val visit = homeVisitMock(visitDate = dateString(lastDayOfPreviousMonth()))
+            coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(12L) } returns listOf(visit)
+
+            val state = repo.getHomeVisitUiState(12L)
+
+            assertFalse(state.canAddHomeVisit)
+        }
+
+    @Test
+    fun `getHomeVisitUiState counts every anc form row`() = runTest {
+        val otherForm = homeVisitMock(visitDate = dateString(System.currentTimeMillis()))
+        every { otherForm.formId } returns "anc_form_002"
+        coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(9L) } returns listOf(otherForm)
+
+        val state = repo.getHomeVisitUiState(9L)
+
+        assertFalse(state.canAddHomeVisit)
+        assertTrue(state.canViewHomeVisit)
+    }
+
+    private fun homeVisitMock(visitDate: String): ANCFormResponseJsonEntity =
+        mockk<ANCFormResponseJsonEntity>(relaxed = true).also {
+            every { it.formId } returns "anc_form_001"
+            every { it.visitDate } returns visitDate
+        }
+
+    private fun dateString(millis: Long): String =
+        SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(java.util.Date(millis))
+
+    private fun lastDayOfPreviousMonth(): Long = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_MONTH, 1)
+        add(Calendar.DAY_OF_MONTH, -1)
+    }.timeInMillis
 
     // ---------------- search delegations ----------------
 
@@ -171,7 +223,77 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.getRegisteredPmsmaWomenList())
         assertNotNull(repo.getRegisteredPregnantWomanList())
         assertNotNull(repo.getHighRiskPregnantWomanList())
+        assertNotNull(repo.getHrpConfirmedPregnantWomanList())
         assertNotNull(repo.getAbortionPregnantWomanList())
+    }
+
+    private fun benWithAncVisit(
+        hrpConfirmed: Boolean?,
+        hrpConfirmedBy: String?,
+        isActive: Boolean = true,
+        maternalDeath: Boolean? = null
+    ): BenWithAncVisitCache {
+        val anc = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { anc.hrpConfirmed } returns hrpConfirmed
+        every { anc.hrpConfirmedBy } returns hrpConfirmedBy
+        every { anc.isActive } returns isActive
+        every { anc.maternalDeath } returns maternalDeath
+        val cache = mockk<BenWithAncVisitCache>(relaxed = true)
+        every { cache.savedAncRecords } returns listOf(anc)
+        every { cache.asDomainModel() } returns mockk(relaxed = true)
+        return cache
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList includes woman with confirmed hrp and identifier`() =
+        runTest {
+            every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
+                    flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = "MO")))
+            assertEquals(1, repo.getHrpConfirmedPregnantWomanList().first().size)
+        }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes woman without identifier`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
+                flowOf(listOf(benWithAncVisit(hrpConfirmed = true, hrpConfirmedBy = " ")))
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes woman when hrp not confirmed`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
+                flowOf(listOf(benWithAncVisit(hrpConfirmed = false, hrpConfirmedBy = "MO")))
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes inactive anc record`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
+                flowOf(
+                    listOf(
+                        benWithAncVisit(
+                            hrpConfirmed = true,
+                            hrpConfirmedBy = "MO",
+                            isActive = false
+                        )
+                    )
+                )
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
+    }
+
+    @Test
+    fun `getHrpConfirmedPregnantWomanList excludes maternal death`() = runTest {
+        every { benDao.getAllRegisteredPregnancyWomenList(any(), any()) } returns
+                flowOf(
+                    listOf(
+                        benWithAncVisit(
+                            hrpConfirmed = true,
+                            hrpConfirmedBy = "MO",
+                            maternalDeath = true
+                        )
+                    )
+                )
+        assertTrue(repo.getHrpConfirmedPregnantWomanList().first().isEmpty())
     }
 
     @Test
@@ -199,8 +321,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `getHomeVisitUiState allows add when last visit date is null`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns ""
+        val visit = homeVisitMock(visitDate = "")
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(7L) } returns listOf(visit)
 
         val state = repo.getHomeVisitUiState(7L)
@@ -252,7 +373,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `tb and malaria and leprosy count vals are built`() {
-        assertNotNull(repo.tbScreeningList)
+        assertNotNull(repo.tbScreeningList(10L))
         assertNotNull(repo.tbScreeningListCount)
         assertNotNull(repo.tbSuspectedList)
         assertNotNull(repo.tbSuspectedListCount)
@@ -326,10 +447,79 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.hrpNonPregnantWomenListCount)
         assertNotNull(repo.hrpTrackingNonPregList)
         assertNotNull(repo.hrpTrackingNonPregListCount)
+        assertNotNull(repo.hrpConfirmedPregListCount)
         assertNotNull(repo.lowWeightBabiesCount)
         assertNotNull(repo.hrpCases)
         assertNotNull(repo.hrpCount)
         assertNotNull(repo.hrpNonPCount)
+    }
+
+    private fun ectCache(benId: Long, records: List<EligibleCoupleTrackingCache>): BenWithEcTrackingCache {
+        val cache = mockk<BenWithEcTrackingCache>(relaxed = true)
+        val ben = mockk<BenBasicCache>(relaxed = true)
+        every { ben.benId } returns benId
+        every { cache.ben } returns ben
+        every { cache.savedECTRecords } returns records
+        every { cache.asDomainModel(any(), any()) } returns mockk(relaxed = true)
+        return cache
+    }
+
+    private fun ectRecord(benId: Long, visitDate: Long = 0L, lmpDate: Long = 0L) = EligibleCoupleTrackingCache(
+        benId = benId,
+        visitDate = visitDate,
+        lmpDate = lmpDate,
+        createdBy = "asha",
+        updatedBy = "asha",
+        syncState = SyncState.SYNCED
+    )
+
+    private fun newRecordsRepo() = RecordsRepo(
+        context, householdDao, benDao, ancHomeVisitDao,
+        vaccineDao, maternalHealthDao, childRegistrationDao, benRepo, pref
+    )
+
+    @Test
+    fun `eligibleCoupleTrackingNonFollowUpList keeps only visits stale between 90 and 365 days`() = runTest {
+        val now = System.currentTimeMillis()
+        val staleVisit = ectRecord(1, visitDate = now - TimeUnit.DAYS.toMillis(120))
+        val recentVisit = ectRecord(2, visitDate = now - TimeUnit.DAYS.toMillis(10))
+        val tooOldVisit = ectRecord(4, visitDate = now - TimeUnit.DAYS.toMillis(400))
+
+        every { benDao.getAllEligibleTrackingList(any(), any(), any()) } returns flowOf(
+            listOf(
+                ectCache(1, listOf(staleVisit)),
+                ectCache(2, listOf(recentVisit)),
+                ectCache(3, emptyList()),
+                ectCache(4, listOf(tooOldVisit))
+            )
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleTrackingNonFollowUpList.first()
+
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `eligibleCoupleTrackingMissedPeriodList keeps records with lmp over 35 days old`() = runTest {
+        val now = System.currentTimeMillis()
+        val overdueLmp = ectRecord(1, lmpDate = now - TimeUnit.DAYS.toMillis(40))
+        val recentLmp = ectRecord(2, lmpDate = now - TimeUnit.DAYS.toMillis(5))
+        val noLmp = ectRecord(3, lmpDate = 0L)
+
+        every { benDao.getAllEligibleTrackingList(any(), any(), any()) } returns flowOf(
+            listOf(
+                ectCache(1, listOf(overdueLmp)),
+                ectCache(2, listOf(recentLmp)),
+                ectCache(3, listOf(noLmp)),
+                ectCache(4, emptyList())
+            )
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleTrackingMissedPeriodList.first()
+
+        assertEquals(1, result.size)
     }
 
     // ---------------- vals not covered by Extra3 ----------------
@@ -343,19 +533,131 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.maxAgeInDaysForFifteenMonths)
     }
 
-    // ---------------- getHomeVisitUiState within-thirty-days branch ----------------
+    // ---------------- eligibleCoupleMissedPeriodList ----------------
+
+    private fun ecrCache(benId: Long, lmpDate: Long): BenWithECRCache {
+        val ben = mockk<BenBasicCache>(relaxed = true)
+        every { ben.benId } returns benId
+        val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
+        every { ecr.lmpDate } returns lmpDate
+        val cache = mockk<BenWithECRCache>(relaxed = true)
+        every { cache.ben } returns ben
+        every { cache.ecr } returns ecr
+        every { cache.asDomainModel(any()) } returns mockk(relaxed = true)
+        return cache
+    }
 
     @Test
-    fun `getHomeVisitUiState blocks add when last visit is within thirty days`() = runTest {
-        val visit = mockk<ANCFormResponseJsonEntity>(relaxed = true)
-        every { visit.visitDate } returns "10-07-2026"
+    fun `eligibleCoupleMissedPeriodList keeps only records with lmp over 35 days old`() = runTest {
+        val now = System.currentTimeMillis()
+        val overdueLmp = ecrCache(1, now - TimeUnit.DAYS.toMillis(40))
+        val recentLmp = ecrCache(2, now - TimeUnit.DAYS.toMillis(5))
+        val noLmp = ecrCache(3, 0L)
+        val noEcr = mockk<BenWithECRCache>(relaxed = true)
+        every { noEcr.ben } returns mockk(relaxed = true) { every { benId } returns 4L }
+        every { noEcr.ecr } returns null
+
+        every { benDao.getAllEligibleRegistrationList(any(), any(), any()) } returns flowOf(
+            listOf(overdueLmp, recentLmp, noLmp, noEcr)
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleMissedPeriodList.first()
+
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `eligibleCoupleMissedPeriodListCount reflects filtered size`() = runTest {
+        val now = System.currentTimeMillis()
+        every { benDao.getAllEligibleRegistrationList(any(), any(), any()) } returns flowOf(
+            listOf(ecrCache(1, now - TimeUnit.DAYS.toMillis(40)))
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleMissedPeriodListCount.first()
+
+        assertEquals(1, result)
+    }
+
+    // ---------------- hrpCount / hrpNonPCount ----------------
+
+    @Test
+    fun `hrpCount counts only high risk pregnancy assess records`() = runTest {
+        val high = mockk<org.piramalswasthya.sakhi.model.HRPPregnantAssessCache>(relaxed = true)
+        every { high.isHighRisk } returns true
+        val low = mockk<org.piramalswasthya.sakhi.model.HRPPregnantAssessCache>(relaxed = true)
+        every { low.isHighRisk } returns false
+        every { maternalHealthDao.getAllPregnancyAssessRecords() } returns flowOf(listOf(high, low))
+
+        val result = newRecordsRepo().hrpCount.first()
+
+        assertEquals(1, result)
+    }
+
+    @Test
+    fun `hrpNonPCount counts only high risk non pregnancy assess records`() = runTest {
+        val high = mockk<org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache>(relaxed = true)
+        every { high.isHighRisk } returns true
+        val low = mockk<org.piramalswasthya.sakhi.model.HRPNonPregnantAssessCache>(relaxed = true)
+        every { low.isHighRisk } returns false
+        every { maternalHealthDao.getAllNonPregnancyAssessRecords() } returns flowOf(listOf(high, low, high))
+
+        val result = newRecordsRepo().hrpNonPCount.first()
+
+        assertEquals(2, result)
+    }
+
+    // ---------------- eligibleCoupleTrackingList ----------------
+
+    @Test
+    fun `eligibleCoupleTrackingList maps every record through asDomainModel`() = runTest {
+        every { benDao.getAllEligibleTrackingList(any(), any(), any()) } returns flowOf(
+            listOf(ectCache(1, emptyList()), ectCache(2, emptyList()))
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleTrackingList.first()
+
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `eligibleCoupleTrackingListCount reflects mapped size`() = runTest {
+        every { benDao.getAllEligibleTrackingList(any(), any(), any()) } returns flowOf(
+            listOf(ectCache(1, emptyList()))
+        )
+        every { benDao.getChildCountsForAllBen(any()) } returns flowOf(emptyList())
+
+        val result = newRecordsRepo().eligibleCoupleTrackingListCount.first()
+
+        assertEquals(1, result)
+    }
+
+    // ---------------- getHomeVisitUiState same-calendar-month branch ----------------
+
+    @Test
+    fun `getHomeVisitUiState blocks add when a visit already exists this calendar month`() = runTest {
+        val visit = homeVisitMock(visitDate = dateString(System.currentTimeMillis()))
         coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(11L) } returns listOf(visit)
-        every { HelperUtil.parseDateToMillis(any()) } returns System.currentTimeMillis()
 
         val state = repo.getHomeVisitUiState(11L)
 
         assertFalse(state.canAddHomeVisit)
         assertTrue(state.canViewHomeVisit)
+    }
+
+    @Test
+    fun `getHomeVisitUiState blocks add for any day within the current calendar month`() = runTest {
+        val firstOfThisMonth = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }.timeInMillis
+        val visit = homeVisitMock(visitDate = dateString(firstOfThisMonth))
+        coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(13L) } returns listOf(visit)
+
+        val state = repo.getHomeVisitUiState(13L)
+
+        assertFalse(state.canAddHomeVisit)
     }
 
 }

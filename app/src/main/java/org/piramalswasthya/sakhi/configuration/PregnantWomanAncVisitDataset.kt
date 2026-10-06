@@ -722,8 +722,8 @@ class PregnantWomanAncVisitDataset(
                         in Konstants.minAnc4Week..Konstants.maxAnc4Week -> 4
                         else -> 0
                     }
-                    if (isAborted.value == isAborted.entries!!.first() &&
-                        maternalDeath.value == maternalDeath.entries!!.first()
+                    if (isAborted.value != isAborted.entries!!.last() &&
+                        maternalDeath.value != maternalDeath.entries!!.last()
                     ) {
                         ancVisit.value = calcVisitNumber.toString()
 

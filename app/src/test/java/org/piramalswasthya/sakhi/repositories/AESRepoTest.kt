@@ -237,6 +237,59 @@ class AESRepoTest : BaseRepositoryTest() {
         assertEquals(-1, repo.getAESScreeningDetailsFromServer())
     }
 
+    @Test
+    fun `pull inserts new aes entry when not cached and ben exists`() = runTest {
+        loggedIn()
+        val innerData = """[{"benId":10,"visitDate":"2024-01-01","houseHoldDetailsId":1,"dateOfDeath":"2024-01-01","createdDate":"2024-01-01"}]"""
+        val outer = """{"statusCode":200,"errorMessage":"","data":${com.google.gson.Gson().toJson(innerData)}}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns jsonResponse(outer)
+        coEvery { aesDao.getAESScreening(10L, any(), any()) } returns null
+        coEvery { benDao.getBen(10L) } returns mockk(relaxed = true)
+        coEvery { aesDao.saveAESScreening(any()) } returns Unit
+
+        assertEquals(1, repo.getAESScreeningDetailsFromServer())
+        coVerify { aesDao.saveAESScreening(match { it.benId == 10L }) }
+    }
+
+    @Test
+    fun `pull skips insert when aes entry already cached`() = runTest {
+        loggedIn()
+        val innerData = """[{"benId":11,"visitDate":"2024-01-01","houseHoldDetailsId":1,"dateOfDeath":"2024-01-01","createdDate":"2024-01-01"}]"""
+        val outer = """{"statusCode":200,"errorMessage":"","data":${com.google.gson.Gson().toJson(innerData)}}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns jsonResponse(outer)
+        coEvery { aesDao.getAESScreening(11L, any(), any()) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getAESScreeningDetailsFromServer())
+        coVerify(exactly = 0) { aesDao.saveAESScreening(any()) }
+    }
+
+    @Test
+    fun `pull skips insert when ben does not exist locally`() = runTest {
+        loggedIn()
+        val innerData = """[{"benId":12,"visitDate":"2024-01-01","houseHoldDetailsId":1,"dateOfDeath":"2024-01-01","createdDate":"2024-01-01"}]"""
+        val outer = """{"statusCode":200,"errorMessage":"","data":${com.google.gson.Gson().toJson(innerData)}}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns jsonResponse(outer)
+        coEvery { aesDao.getAESScreening(12L, any(), any()) } returns null
+        coEvery { benDao.getBen(12L) } returns null
+
+        assertEquals(1, repo.getAESScreeningDetailsFromServer())
+        coVerify(exactly = 0) { aesDao.saveAESScreening(any()) }
+    }
+
+    @Test
+    fun `pull parses object-wrapped aesJeLists payload`() = runTest {
+        loggedIn()
+        val innerData = """{"userId":1,"aesJeLists":[{"benId":13,"visitDate":"2024-01-01","houseHoldDetailsId":1,"dateOfDeath":"2024-01-01","createdDate":"2024-01-01"}]}"""
+        val outer = """{"statusCode":200,"errorMessage":"","data":${com.google.gson.Gson().toJson(innerData)}}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns jsonResponse(outer)
+        coEvery { aesDao.getAESScreening(13L, any(), any()) } returns null
+        coEvery { benDao.getBen(13L) } returns mockk(relaxed = true)
+        coEvery { aesDao.saveAESScreening(any()) } returns Unit
+
+        assertEquals(1, repo.getAESScreeningDetailsFromServer())
+        coVerify { aesDao.saveAESScreening(match { it.benId == 13L }) }
+    }
+
     // ---------------- pushUnSyncedRecords chunk when-branches ----------------
 
     @Test

@@ -272,7 +272,8 @@ data class HouseholdBasicCache(
             headFullName = "${household.family?.familyHeadName} ${household.family?.familyName ?: ""}",
             numMembers = numMembers,
             isDeactivate = household.isDeactivate,
-            createdTimeStamp = household.createdTimeStamp
+            createdTimeStamp = household.createdTimeStamp,
+            updatedTimeStamp = household.updatedTimeStamp
 
         )
     }
@@ -287,5 +288,6 @@ data class HouseHoldBasicDomain(
     val numMembers: Int,
     var isDeactivate: Boolean =false,
     var createdTimeStamp: Long? = null,
+    var updatedTimeStamp: Long? = null,
 
     )

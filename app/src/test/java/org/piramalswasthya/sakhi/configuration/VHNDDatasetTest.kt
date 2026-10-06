@@ -11,7 +11,9 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
@@ -33,6 +35,7 @@ class VHNDDatasetTest : BaseViewModelTest() {
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.i(any(), any()) } returns 0
+        every { Log.w(any<String>(), any<String>()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
@@ -103,5 +106,136 @@ class VHNDDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(populatedCache()) }
         runCatching { ds.mapValues(mockk<VHNDCache>(relaxed = true), 1) }
         assertNotNull(ds.listFlow)
+    }
+
+    // ===================== added: handleListOnValueChanged coverage =====================
+    // None of the pre-existing tests ever call updateList, so every branch of
+    // handleListOnValueChanged (place / the three attendee-count fields / the else fallback) was
+    // entirely unexecuted. updateList dispatches purely on formId regardless of whether that
+    // element is actually present in the currently built list, so these are reachable even though
+    // the mitanin-only fields (noOfPWAttended etc.) are never added to the list under this flavor.
+
+    @Test
+    fun `updateList validates the place field both empty and populated`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.setValueById(3, ""); ds.updateList(3, 0) }
+        runCatching { ds.setValueById(3, "VALID PLACE NAME"); ds.updateList(3, 0) }
+        runCatching { ds.setValueById(3, "bad🚫name"); ds.updateList(3, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `updateList validates every attendee count field`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        for (id in listOf(4, 5, 6, 7)) {
+            runCatching { ds.setValueById(id, ""); ds.updateList(id, 0) }
+            runCatching { ds.setValueById(id, "5"); ds.updateList(id, 0) }
+        }
+        runCatching { ds.updateList(999, 0) }
+        assertNotNull(ds.listFlow)
+    }
+
+    // setUpPage(): pic1/pic2 only default to "default" the first time they are blank; calling
+    // setUpPage a second time on the same instance hits the "already has a value" skip branch.
+    @Test
+    fun `setUpPage a second time skips the image-placeholder defaulting`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.setUpPage(null) }
+        runCatching { ds.setUpPage(populatedCache()) }
+        assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `setUpPage defaults beneficiary count to zero when cache value is null`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = mockk<VHNDCache>(relaxed = true)
+        every { cache.vhndDate } returns "01-01-2024"
+        every { cache.place } returns "opt3"
+        every { cache.noOfBeneficiariesAttended } returns null
+        every { cache.image1 } returns "uri1"
+        every { cache.image2 } returns "uri2"
+        ds.setUpPage(cache)
+        val beneficiaryField = ds.listFlow.value.first { it.id == 4 }
+        assertEquals("0", beneficiaryField.value)
+    }
+
+    @Test
+    fun `setUpPage resets whitespace-only image values back to default`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(null) }
+        val blankUri1 = mockk<Uri>(relaxed = true)
+        every { blankUri1.toString() } returns " "
+        val blankUri2 = mockk<Uri>(relaxed = true)
+        every { blankUri2.toString() } returns "   "
+        runCatching { ds.setImageUriToFormElement(1, blankUri1) }
+        runCatching { ds.setImageUriToFormElement(2, blankUri2) }
+        runCatching { ds.setUpPage(null) }
+        assertNotNull(ds.listFlow)
+    }
+
+    // ===================== added: real round-trip coverage via a real VHNDCache =====================
+    // Every pre-existing "populated cache" test used a relaxed mockk<VHNDCache>() for both the
+    // input to setUpPage() and the output of mapValues(), so no test ever verified an actual
+    // computed value survived the getLocalValueInArray/getEnglishValueInArray/getPosition round
+    // trip (mockk relaxed mocks don't persist values written through property setters the way a
+    // real data class does). These tests use real VHNDCache instances end to end so the
+    // assertions check actual state, not just "doesn't throw".
+    //
+    // NOTE ON A STRUCTURAL LIMIT IN THIS CLASS: every mitanin-only branch here is gated behind
+    // `BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)` (the extra list fields in
+    // setUpPage, the whole populated-cache mitanin block, the whole mitanin block in mapValues,
+    // and therefore the private toCsv() helper it exclusively calls). Coverage for this project is
+    // measured against the "niramayDebug" variant (see app/jacoco.gradle, default coverageVariant),
+    // whose BuildConfig.FLAVOR is the compile-time constant "niramay" - it can never equal
+    // "mitanin" in that variant, and MockK cannot intercept a plain getstatic read of a
+    // `public static final String` field (only method calls), so this condition cannot be forced
+    // true from a unit test without editing app/src/main. All of that gated code is therefore
+    // permanently unreachable for the coverage numbers this ticket is measured against; no test
+    // added here (or addable without touching src/main) can move it from "missed" to "covered".
+
+    @Test
+    fun `mapValues writes real computed values back to cache using a real VHNDCache`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = VHNDCache(
+            id = 1,
+            vhndDate = "20-02-2024",
+            place = "opt7",
+            noOfBeneficiariesAttended = 15,
+            image1 = "img1.jpg",
+            image2 = "img2.jpg"
+        )
+        ds.setUpPage(cache)
+
+        val result = VHNDCache(id = 1, vhndDate = "")
+        ds.mapValues(result, 0)
+
+        assertEquals("20-02-2024", result.vhndDate)
+        assertEquals("opt7", result.place)
+        assertEquals(8, result.vhndPlaceId)
+        assertEquals(15, result.noOfBeneficiariesAttended)
+        assertEquals("img1.jpg", result.image1)
+        assertEquals("img2.jpg", result.image2)
+    }
+
+    @Test
+    fun `setUpPage and mapValues resolve to null when place value is not present in resource array`() = runTest {
+        val ds = VHNDDataset(context, Languages.ENGLISH)
+        val cache = VHNDCache(
+            id = 2,
+            vhndDate = "01-01-2024",
+            place = "totally-unmatched-place-value",
+            noOfBeneficiariesAttended = 3
+        )
+        ds.setUpPage(cache)
+        val placeField = ds.listFlow.value.first { it.id == 3 }
+        assertNull(placeField.value)
+
+        val result = VHNDCache(id = 2, vhndDate = "")
+        ds.mapValues(result, 0)
+        assertNull(result.place)
+        assertEquals(0, result.vhndPlaceId)
     }
 }

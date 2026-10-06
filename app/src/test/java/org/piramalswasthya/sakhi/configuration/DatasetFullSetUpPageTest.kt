@@ -11,6 +11,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -227,6 +228,19 @@ class DatasetFullSetUpPageTest : BaseViewModelTest() {
     // =====================================================
     // Household (largest single builder = setupPage)
     // =====================================================
+
+    @Test
+    fun `HRPNonPregnantAssessCache and HRPPregnantAssessCache expose mutable id and visitDate`() {
+        val nonPregnant = HRPNonPregnantAssessCache(benId = 1L)
+        nonPregnant.visitDate = 123456L
+        assertEquals(123456L, nonPregnant.visitDate)
+
+        val pregnant = HRPPregnantAssessCache(benId = 1L)
+        pregnant.id = 7
+        pregnant.visitDate = 654321L
+        assertEquals(7, pregnant.id)
+        assertEquals(654321L, pregnant.visitDate)
+    }
 
     @Test
     fun `HouseholdFormDataset setupPage builds page with saved household`() = runTest {

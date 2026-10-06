@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="incomplete_install_title">ऐप इंस्टॉलेशन अधूरा है</string>
+    <string name="incomplete_install_message">इस फ़ोन पर ऐप के लिए ज़रूरी कुछ फ़ाइलें मौजूद नहीं हैं। कृपया ऐप को अनइंस्टॉल करें और Google Play Store से दोबारा इंस्टॉल करें। शेयर की गई APK फ़ाइल से इंस्टॉल न करें।</string>
+    <string name="incomplete_install_open_play_store">Play Store खोलें</string>
+    <string name="incomplete_install_exit">बाहर निकलें</string>
+</resources>

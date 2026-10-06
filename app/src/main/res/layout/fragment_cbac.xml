@@ -1016,6 +1016,29 @@
                                     tools:text="ABB" />
                             </com.google.android.material.textfield.TextInputLayout>
 
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_exposure_other"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/til_exposure_dropdown"
+                                android:layout_marginTop="@dimen/margin_normal"
+                                android:hint="@string/cbac_other_sources_detail"
+                                android:importantForAccessibility="yes"
+                                android:labelFor="@id/et_exposure_other"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_exposure_other"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="exposure_other"
+                                    android:inputType="textCapSentences|textMultiLine"
+                                    android:maxLength="255"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
 
                         </RelativeLayout>
 

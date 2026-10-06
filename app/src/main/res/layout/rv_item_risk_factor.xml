@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="riskFactor"
+            type="String" />
+    </data>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_small"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="5dp"
+        android:elevation="1dp"
+        android:backgroundTint="@color/unclaimed_pink"
+        android:background="@drawable/background_rectangle_lighter_grey_30"
+        android:paddingHorizontal="@dimen/padding_small"
+        android:paddingVertical="4dp"
+        android:text="@{riskFactor}"
+        android:padding="5dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textColor="#000000"
+        tools:text="Migrant worker" />
+
+</layout>

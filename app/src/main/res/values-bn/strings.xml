@@ -24,6 +24,9 @@
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">পরিদর্শনের তারিখ</string>
     <string name="case_date">ম্যালেরিয়া স্ক্রিনিংয়ের তারিখ</string>
+    <string name="start_tpt">TPT শুরু করুন</string>
+    <string name="add_follow_up">ফলো-আপ যোগ করুন</string>
+    <string name="view_details">বিস্তারিত দেখুন</string>
     <string name="start_t_date">চিকিৎসা শুরুর তারিখ</string>
     <string name="treatment_given">প্রদত্ত চিকিৎসা</string>
     <string name="aes_submitted">AES/JS ফর্ম জমা দেওয়া হয়েছে</string>
@@ -31,6 +34,8 @@
     <string name="date_of_referal">রেফারেলের তারিখ</string>
     <string name="death_date">মৃত্যুর তারিখ</string>
     <string name="home_visit_date">বাড়ি পরিদর্শনের তারিখ</string>
+    <string name="sanitary_napkin_used">স্যানিটারি প্যাড ব্যবহার করা হয় কি?</string>
+
     <string name="home_visit_date_screening">বাড়ি পরিদর্শনের তারিখ (স্ক্রিনিংয়ের তারিখ)</string>
     <string name="visit_date">পরিদর্শনের তারিখ</string>
     <string name="home_visit_date_mda_program">বাড়ি পরিদর্শনের তারিখ (MDA প্রোগ্রাম)</string>
@@ -134,6 +139,7 @@
     <string name="tv_gender_ph">লিঙ্গ</string>
     <string name="tv_father_name_ph">পিতার নাম</string>
     <string name="tv_husband_name_ph">স্বামীর নাম</string>
+    <string name="head_of_family">পরিবারের প্রধান: </string>
     <string name="tv_spouse_name_ph">স্ত্রী/স্বামীর নাম</string>
     <string name="tv_family_head_name_ph">পরিবারের প্রধানের নাম</string>
     <string name="tv_date_of_death">মৃত্যুর তারিখ</string>
@@ -357,10 +363,13 @@
     <string name="to_do_list">করণীয় তালিকা</string>
     <string name="beneficiaries_due_for_anc">ANC-এর জন্য প্রাপ্য সুবিধাভোগী</string>
     <string name="beneficiaries_due_for_immunization">টিকার জন্য প্রাপ্য সুবিধাভোগী</string>
+    <string name="women_due_for_anc">ANC-এর জন্য প্রাপ্য মহিলা</string>
+    <string name="children_due_for_immunization">টিকার জন্য প্রাপ্য শিশু</string>
     <string name="_0">০</string>
     <string name="high_risk_cases">উচ্চ ঝুঁকির কেস</string>
-    <string name="high_risk_pregnant_women">উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
-    <string name="high_risk_non_pregnant_women">উচ্চ ঝুঁকির অ-গর্ভবতী মহিলা</string>
+    <string name="suspected_high_risk_pregnant_women">সন্দেহভাজন উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
+    <string name="suspected_high_risk_non_pregnant_women">সন্দেহভাজন উচ্চ ঝুঁকির অ-গর্ভবতী মহিলা</string>
+    <string name="confirmed_high_risk_pregnant_women">নিশ্চিত উচ্চ ঝুঁকির গর্ভবতী মহিলা</string>
     <string name="high_risk_babies">উচ্চ ঝুঁকির শিশু</string>
     <string name="low_birth_weight_babies">কম জন্ম ওজনের শিশু</string>
     <string name="registration_date">নিবন্ধনের তারিখ</string>
@@ -1214,6 +1223,23 @@
         <item>দিন ৪</item>
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>দিন ১</item>
+        <item>দিন ২</item>
+        <item>দিন ৩</item>
+        <item>দিন ৪</item>
+        <item>দিন ৫</item>
+        <item>দিন ৬</item>
+        <item>দিন ৭</item>
+        <item>দিন ৮</item>
+        <item>দিন ৯</item>
+        <item>দিন ১০</item>
+        <item>দিন ১১</item>
+        <item>দিন ১২</item>
+        <item>দিন ১৩</item>
+        <item>দিন ১৪</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>দিন ১</item>
         <item>দিন ২</item>
@@ -1355,6 +1381,8 @@
     <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">আপনার নেটওয়ার্ক সেটিংস পরীক্ষা করুন। সংযোগ পুনরুদ্ধার হলে এই ডায়ালগ স্বয়ংক্রিয়ভাবে বন্ধ হয়ে যাবে।</string>
     <string name="add_spouse">স্ত্রী/স্বামী যোগ করুন</string>
     <string name="would_you_like_to_add_spouse">আপনি কি %1$s-এর %2$s যোগ করতে চান?</string>
+    <string name="add_children_title">সন্তান যোগ করুন</string>
+    <string name="would_you_like_to_add_children">আপনি কি সন্তান যোগ করতে চান?</string>
     <string name="str_wife">স্ত্রী</string>
     <string name="str_husband">স্বামী</string>
     <string name="is_medicine_distributed_yes_no">ওষুধ বিতরণ করা হয়েছে? (হ্যাঁ/না)</string>
@@ -1472,4 +1500,77 @@
     <string name="notification_recap_channel_description">আপনার মাসিক রিক্যাপ দেখার একটি মাসিক অনুস্মারক</string>
     <string name="notification_recap_title">আপনার মাস, ৭৫ সেকেন্ডে</string>
     <string name="notification_recap_body">গত মাসের আপনার রিক্যাপ প্রস্তুত। দেখতে ট্যাপ করুন।</string>
+
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">
+    প্রসবের তারিখ শেষ ANC ভিজিটের তারিখের আগে হতে পারে না।
+</string>
+    <string name="risk_factors">ঝুঁকির কারণসমূহ</string>
+    <string name="key_population_risk_factors">মূল জনসংখ্যা / ঝুঁকির কারণসমূহ</string>
+    <string name="positive">পজিটিভ</string>
+    <string name="reactive">রিঅ্যাক্টিভ</string>
+    <string name="negative">নেগেটিভ</string>
+    <string name="hiv_status">এইচআইভি অবস্থা</string>
+    <string name="not_applicable">প্রযোজ্য নয়</string>
+    <string name="fatigue">ক্লান্তি</string>
+    <string name="chestpain">বুকে ব্যথা</string>
+
+    <string name="kp_risk_pregnancy">গর্ভাবস্থা</string>
+    <string name="kp_risk_lactating_mother">স্তন্যদানকারী মা</string>
+    <string name="kp_risk_anti_tnf_treatment">অ্যান্টি-টিএনএফ চিকিৎসা</string>
+    <string name="kp_risk_bronchial_asthma">ব্রঙ্কিয়াল হাঁপানি</string>
+    <string name="kp_risk_cancer">ক্যান্সার</string>
+    <string name="kp_risk_cardiovascular_disorder">কার্ডিওভাসকুলার রোগ</string>
+    <string name="kp_risk_contact_of_known_tb_patients">জানা টিবি রোগীর সংস্পর্শে থাকা ব্যক্তি</string>
+    <string name="kp_risk_copd">সিওপিডি</string>
+    <string name="kp_risk_covid_recovered_patients">কোভিড থেকে সেরে ওঠা রোগী</string>
+    <string name="kp_risk_diabetes">ডায়াবেটিস</string>
+    <string name="kp_risk_dialysis">ডায়ালাইসিস</string>
+    <string name="kp_risk_health_care_worker">স্বাস্থ্যকর্মী</string>
+    <string name="kp_risk_hypertensive">উচ্চ রক্তচাপ</string>
+    <string name="kp_risk_liver_impairment">লিভারের কার্যক্ষমতা হ্রাস</string>
+    <string name="kp_risk_migrant">পরিযায়ী</string>
+    <string name="kp_risk_miner">খনি শ্রমিক</string>
+    <string name="kp_risk_palliative_care">প্যালিয়েটিভ কেয়ার</string>
+    <string name="kp_risk_patient_on_immunosuppressants">ইমিউনোসাপ্রেসেন্ট ওষুধ গ্রহণকারী রোগী</string>
+    <string name="kp_risk_prison">কারাগার</string>
+    <string name="kp_risk_illegal_immigrant">অবৈধ অভিবাসী</string>
+    <string name="kp_risk_renal_impairment">কিডনির কার্যক্ষমতা হ্রাস</string>
+    <string name="kp_risk_transplantation">অঙ্গ প্রতিস্থাপন</string>
+    <string name="kp_risk_urban_slum">শহুরে বস্তি</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">প্রাপ্তবয়স্ক বয়সে বিসিজি টিকার ইতিহাস</string>
+    <string name="kp_risk_undernourished_malnourished">অপুষ্টি (বিএমআই &lt;18.5 কেজি/মি²)</string>
+    <string name="kp_risk_elderly">বয়স্ক (বয়স &gt;60 বছর)</string>
+    <string name="kp_risk_workplace_settings">কর্মস্থল (কয়লা/স্যান্ডব্লাস্টিং/ইটভাটা)</string>
+    <string name="kp_risk_tea_garden_worker">চা-বাগানের শ্রমিক</string>
+    <string name="kp_risk_construction_site_worker">নির্মাণস্থলের শ্রমিক</string>
+    <string name="kp_risk_congregate_settings">একত্রে বসবাসের স্থান</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">নেশামুক্তি কেন্দ্রে আগত ব্যক্তি</string>
+    <string name="kp_risk_indoor_air_pollution">ঘরের ভেতরের বায়ুদূষণের সংস্পর্শে থাকা ব্যক্তি</string>
+    <string name="kp_risk_marginalized_hiv">এইচআইভি ঝুঁকিতে থাকা প্রান্তিক জনগোষ্ঠী</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">মাদকাসক্তি (মদ/ইনজেকশনের মাধ্যমে মাদক গ্রহণকারী)</string>
+    <string name="kp_risk_tobacco_smoker">তামাক/ধূমপায়ী</string>
+    <string name="kp_risk_silica_exposure_silicosis">সিলিকার সংস্পর্শ/সিলিকোসিস</string>
+    <string name="kp_risk_other">অন্যান্য</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">এই মাসে দেয়</string>
+    <string name="imm_scheduled_next_month">আগামী মাসেৰ জন্য নিৰ্ধাৰিত</string>
+    <string name="imm_dose_stage">ডোজ পৰ্যায়</string>
+    <string name="imm_select_dose_stage">ডোজ পৰ্যায় নিৰ্বাচন কৰুন</string>
+    <string name="imm_no_match_for_filters">নিৰ্বাচিত ফিল্টাৰেৰ সঙ্গে কোনো সুবিধাভোগী মেলেনি।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d সুবিধাভোগী</item>
+        <item quantity="other">%d সুবিধাভোগী</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">পরবর্তী ফলো-আপ %1$s থেকে উপলব্ধ হবে</string>
+    <string name="follow_up_date_cannot_be_in_the_future">ফলো-আপৰ তাৰিখ ভৱিষ্যতৰ হ\'ব নোৱাৰে</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">ফলো-আপৰ তাৰিখ হোম ভিজিটৰ তাৰিখৰ আগৰ হ\'ব নোৱাৰে</string>
+    <string name="treatment_status_is_required">চিকিৎসাৰ স্থিতি প্ৰয়োজনীয়</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">চিকিৎসাৰ স্থিতি সম্পূৰ্ণ হ\'লে চিকিৎসা সমাপ্তিৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_date_is_required">ফলো-আপৰ তাৰিখ প্ৰয়োজনীয়</string>
+    <string name="follow_up_saved_successfully">ফলো-আপ সফলভাবে সংরক্ষণ করা হয়েছে</string>
+    <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পন্ন হয়েছে! পরবর্তী ভিজিটের স্ক্রিনিং শুরু হচ্ছে।</string>
+    <string name="failed_to_save_follow_up">ফলো-আপ সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
+    <string name="speech_to_text_unavailable">এই ডিভাইসে ভয়েস ইনপুট উপলব্ধ নয়</string>
 </resources>

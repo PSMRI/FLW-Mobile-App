@@ -402,10 +402,13 @@
     <string name="to_do_list">To Do List</string>
     <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
     <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="women_due_for_anc">Women due for ANC</string>
+    <string name="children_due_for_immunization">Children due for Immunization</string>
     <string name="_0">0</string>
     <string name="high_risk_cases">High Risk Cases</string>
-    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
-    <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
+    <string name="suspected_high_risk_pregnant_women">Suspected High Risk Pregnant Woman</string>
+    <string name="suspected_high_risk_non_pregnant_women">Suspected High Risk Non Pregnant Woman</string>
+    <string name="confirmed_high_risk_pregnant_women">Confirmed High Risk Pregnant Woman</string>
     <string name="high_risk_babies">High Risk Babies</string>
     <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
     <string name="registration_date">Registration Date</string>
@@ -643,6 +646,7 @@
     <string name="ahd_ifa_tablet_quantity">Quantity of IFA Tablets</string>
     <string name="ahd_menstrual_hygiene_awareness">Menstrual Hygiene Awareness</string>
     <string name="ahd_sanitary_napkin_distributed">Sanitary Napkin Distributed</string>
+    <string name="sanitary_napkin_used">Is sanitary pad used</string>
     <string name="ahd_no_of_packets_distributed">No. of Packets Distributed</string>
     <string name="ahd_referred_to_health_facility">Referred to Health Facility</string>
     <string name="ahd_counseling_provided">Counseling Provided</string>
@@ -781,6 +785,31 @@
         <item>AHD</item>
         <item>Deworming</item>
         <item>NCD Follow Up</item>
+        <item>Malaria Screening</item>
+        <item>Malaria Confirmed</item>
+        <item>CDR</item>
+        <item>MDSR</item>
+        <item>Child Reg</item>
+        <item>AES Screening</item>
+        <item>Kala Azar Screening</item>
+        <item>Filaria Screening</item>
+        <item>Leprosy Screening</item>
+        <item>Leprosy Follow Up</item>
+        <item>Adolescent Health</item>
+        <item>NCD Refer</item>
+        <item>TB Confirmed Treatment</item>
+        <item>Pulse Polio Campaign</item>
+        <item>ORS Campaign</item>
+        <item>Saas Bahu Sammelan</item>
+        <item>MAA Meeting</item>
+        <item>UWIN Session</item>
+        <item>Children Under Five</item>
+        <item>ANC Visit History</item>
+        <item>Eye Surgery</item>
+        <item>Ben IFA</item>
+        <item>Mosquito Net</item>
+        <item>Filaria MDA</item>
+        <item>Filaria MDA Campaign</item>
     </string-array>
 
     <string-array name="place_array">
@@ -942,7 +971,7 @@
     <string name="newAbha">New</string>
     <string name="oldAbha">Old</string>
     <string name="home_visit_number">Home Visit %d</string>
-    <string name="hwc_referred_list">HWC Referred List</string>
+    <string name="hwc_referred_list">Referral List</string>
     <string name="vhsnc_meeting_date">VHSNC meeting Date</string>
     <string name="place_of_vhsnc_meeting">Place of VHSNC meeting</string>
     <string name="village_name">Village Name</string>
@@ -1313,6 +1342,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+        <item>Day 5</item>
+        <item>Day 6</item>
+        <item>Day 7</item>
+        <item>Day 8</item>
+        <item>Day 9</item>
+        <item>Day 10</item>
+        <item>Day 11</item>
+        <item>Day 12</item>
+        <item>Day 13</item>
+        <item>Day 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>Day 1</item>
         <item>Day 2</item>
@@ -1430,6 +1476,11 @@
     <string name="pending_0">Pending: 0</string>
     <string name="rejected_0">Rejected: 0</string>
     <string name="overdue_0">Overdue: 0</string>
+    <string name="approve">Approve</string>
+    <string name="no_beneficiaries_found">No records found</string>
+    <string name="approve_or_reject_row_hint">Approve or reject this activity directly using ✓ / ✕.</string>
+    <string name="claim_summary">%1$d · ₹%2$d</string>
+    <string name="claim_date">Date: %1$s</string>
     <string name="total_ashas">Total ASHAs</string>
     <string name="total_mitanins">Total Mitanins</string>
     <string name="select_month">Select Month</string>
@@ -1464,6 +1515,8 @@
    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
     <string name="add_spouse">Add Spouse</string>
     <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="add_children_title">Add Children</string>
+    <string name="would_you_like_to_add_children">Would you like to add children?</string>
     <string name="str_wife">Wife</string>
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
@@ -1519,6 +1572,8 @@
     <string name="str_dose">Dose</string>
     <string name="str_no_more_dose">No More Doses</string>
 
+    <string name="head_of_family">Head of Family: </string>
+
     <string name="str_delete_household_msg">Are you sure you want to delete</string>
     <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
     <string name="str_pls_allow_permissions">Please allow permissions first</string>
@@ -1567,6 +1622,7 @@
     <string name="all_sub_centre">All Sub centre</string>
     <string name="activity_claimed">Activity claimed\n</string>
     <string name="total_claimed_amount">Total claimed amount.</string>
+    <string name="claims_count_placeholder">%1$d claims</string>
     <string name="monthly_summary">Monthly Summary</string>
     <string name="verified_text">Verified</string>
     <string name="verified_date_txt">Verified Date: %1$s</string>
@@ -1575,6 +1631,106 @@
     <string name="rejected_date_txt">Rejected Date: %1$s</string>
     <string name="reason_txt">Reason: %1$s %2$s</string>
     <string name="unclaimed_txt">Unclaimed</string>
+    <string name="delivery_date_cannot_be_before_last_anc_visit_date">Delivery date cannot be before last ANC visit date</string>
+    <!-- FLW-1171: month verification table headers (were hardcoded in the layout) -->
+    <string name="incentive_header_serial_no">S.No</string>
+    <string name="incentive_header_activity">Activity</string>
+    <string name="incentive_header_no_of_claims">No of Claims</string>
+    <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="risk_factors">Risk Factors</string>
+    <string name="key_population_risk_factors">Key Population / Risk Factors</string>
+    <string name="positive">Positive</string>
+    <string name="reactive">Reactive</string>
+    <string name="negative">Negative</string>
+    <string name="hiv_status">HIV Status</string>
+    <string name="not_applicable">Not Applicable</string>
+    <string name="fatigue">fatigue</string>
+    <string name="chestpain">Chest pain</string>
+
+
+    <string name="kp_risk_pregnancy">Pregnancy</string>
+    <string name="kp_risk_lactating_mother">Lactating mother</string>
+    <string name="kp_risk_anti_tnf_treatment">Anti-TNF treatment</string>
+    <string name="kp_risk_bronchial_asthma">Bronchial Asthma</string>
+    <string name="kp_risk_cancer">Cancer</string>
+    <string name="kp_risk_cardiovascular_disorder">Cardiovascular Disorder</string>
+    <string name="kp_risk_contact_of_known_tb_patients">Contact of Known TB Patients</string>
+    <string name="kp_risk_copd">COPD</string>
+    <string name="kp_risk_covid_recovered_patients">COVID recovered patients</string>
+    <string name="kp_risk_diabetes">Diabetes</string>
+    <string name="kp_risk_dialysis">Dialysis</string>
+    <string name="kp_risk_health_care_worker">Health Care Worker</string>
+    <string name="kp_risk_hypertensive">Hypertensive</string>
+    <string name="kp_risk_liver_impairment">Liver Impairment</string>
+    <string name="kp_risk_migrant">Migrant</string>
+    <string name="kp_risk_miner">Miner</string>
+    <string name="kp_risk_palliative_care">Palliative Care</string>
+    <string name="kp_risk_patient_on_immunosuppressants">Patient on immunosuppressants</string>
+    <string name="kp_risk_prison">Prison</string>
+    <string name="kp_risk_illegal_immigrant">Illegal Immigrant</string>
+    <string name="kp_risk_renal_impairment">Renal Impairment</string>
+    <string name="kp_risk_transplantation">Transplantation</string>
+    <string name="kp_risk_urban_slum">Urban Slum</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">H/o Adult BCG Vaccination</string>
+    <string name="kp_risk_undernourished_malnourished">Undernourished / Malnourished (BMI &lt;18.5 kg/m2)</string>
+    <string name="kp_risk_elderly">Elderly (age &gt;60 years)</string>
+    <string name="kp_risk_workplace_settings">Workplace settings (coal/sandblasting/brick kiln)</string>
+    <string name="kp_risk_tea_garden_worker">Tea garden worker</string>
+    <string name="kp_risk_construction_site_worker">Construction site worker</string>
+    <string name="kp_risk_congregate_settings">Congregate settings</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">Attendees of de-addiction centers</string>
+    <string name="kp_risk_indoor_air_pollution">Person exposed to indoor air pollution</string>
+    <string name="kp_risk_marginalized_hiv">Marginalized populations at risk of HIV</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">Substance abuse (alcoholic/intravenous drug users)</string>
+    <string name="kp_risk_tobacco_smoker">Tobacco/smoker</string>
+    <string name="kp_risk_silica_exposure_silicosis">Silica exposure/silicosis</string>
+    <string name="kp_risk_other">Other</string>
+
+    <string-array name="key_population_risk_factor_options">
+        <item>@string/kp_risk_pregnancy</item>
+        <item>@string/kp_risk_lactating_mother</item>
+        <item>@string/kp_risk_anti_tnf_treatment</item>
+        <item>@string/kp_risk_bronchial_asthma</item>
+        <item>@string/kp_risk_cancer</item>
+        <item>@string/kp_risk_cardiovascular_disorder</item>
+        <item>@string/kp_risk_contact_of_known_tb_patients</item>
+        <item>@string/kp_risk_copd</item>
+        <item>@string/kp_risk_covid_recovered_patients</item>
+        <item>@string/kp_risk_diabetes</item>
+        <item>@string/kp_risk_dialysis</item>
+        <item>@string/kp_risk_health_care_worker</item>
+        <item>@string/kp_risk_hypertensive</item>
+        <item>@string/kp_risk_liver_impairment</item>
+        <item>@string/kp_risk_migrant</item>
+        <item>@string/kp_risk_miner</item>
+        <item>@string/kp_risk_palliative_care</item>
+        <item>@string/kp_risk_patient_on_immunosuppressants</item>
+        <item>@string/kp_risk_prison</item>
+        <item>@string/kp_risk_illegal_immigrant</item>
+        <item>@string/kp_risk_renal_impairment</item>
+        <item>@string/kp_risk_transplantation</item>
+        <item>@string/kp_risk_urban_slum</item>
+        <item>@string/kp_risk_ho_adult_bcg_vaccination</item>
+        <item>@string/kp_risk_undernourished_malnourished</item>
+        <item>@string/kp_risk_elderly</item>
+        <item>@string/kp_risk_workplace_settings</item>
+        <item>@string/kp_risk_tea_garden_worker</item>
+        <item>@string/kp_risk_construction_site_worker</item>
+        <item>@string/kp_risk_congregate_settings</item>
+        <item>@string/kp_risk_attendees_of_de_addiction_centers</item>
+        <item>@string/kp_risk_indoor_air_pollution</item>
+        <item>@string/kp_risk_marginalized_hiv</item>
+        <item>@string/kp_risk_lgbtqai</item>
+        <item>@string/kp_risk_substance_abuse</item>
+        <item>@string/kp_risk_tobacco_smoker</item>
+        <item>@string/kp_risk_silica_exposure_silicosis</item>
+        <item>@string/kp_risk_other</item>
+        <item>@string/not_applicable</item>
+    </string-array>
+
+
+    <!-- Notifications -->
 
     <!-- Monthly Recap dashboard strip (Phase 1) -->
     <string name="monthly_recap_title">Monthly Recap</string>
@@ -1619,5 +1775,28 @@
     <string name="notification_recap_channel_description">A monthly reminder to watch your personal recap</string>
     <string name="notification_recap_title">Your month, in 75 seconds</string>
     <string name="notification_recap_body">Your recap for last month is ready. Tap to watch it.</string>
-</resources>
 
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
+    <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">Follow-up date cannot be before home visit date</string>
+    <string name="treatment_status_is_required">Treatment status is required</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">Treatment end date is required when treatment status is completed</string>
+    <string name="follow_up_date_is_required">Follow-up date is required</string>
+    <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
+    <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
+    <string name="failed_to_save_follow_up">Failed to save follow-up</string>
+    <string name="start_tpt">START TPT</string>
+    <string name="add_follow_up">Add Follow Up</string>
+    <string name="view_details">View Details</string>
+    <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
+</resources>

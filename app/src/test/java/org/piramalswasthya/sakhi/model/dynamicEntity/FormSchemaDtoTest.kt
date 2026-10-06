@@ -226,6 +226,11 @@ class FormSchemaDtoTest {
         assertEquals(50f, copy.max)
     }
 
+    @Test fun `FieldValidationDto with incremental`() {
+        val validation = FieldValidationDto(incremental = true)
+        assertTrue(validation.incremental == true)
+    }
+
     // =====================================================
     // OptionItem Tests
     // =====================================================

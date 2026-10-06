@@ -275,6 +275,7 @@ data class IncentiveGrouped(
     val activityName: String,
     val totalAmount: Long,
     val count: Int,
+    val approvalStatus: Int = 102,
     val groupName: String,
     val description: String,
     val activity: IncentiveActivityCache,

@@ -33,6 +33,59 @@ class DtoToCacheMappingTest {
         assertEquals(30, cache.ifaQuantity)
     }
 
+    @Test fun `HRPPregnantTrackDTO toCache maps all remaining optional lab and risk fields`() {
+        val cache = HRPPregnantTrackDTO(
+            id = 5, benId = 11L, visitDate = "01-01-2024",
+            rdPmsa = "Neg", rdDengue = "Neg", rdFilaria = "Neg",
+            severeAnemia = "No", hemoglobinTest = "Done", ifaGiven = "Yes", ifaQuantity = 30,
+            pregInducedHypertension = "No", systolic = 120, diastolic = 80,
+            gestDiabetesMellitus = "No", bloodGlucoseTest = "Done", fbg = 90, rbg = 110, ppbg = 130,
+            fastingOgtt = 95, after2hrsOgtt = 140, hypothyrodism = "No", polyhydromnios = "No",
+            oligohydromnios = "No", antepartumHem = "No", malPresentation = "No", hivsyph = "Neg",
+            visit = "v1"
+        ).toCache()
+        assertEquals("Neg", cache.rdPmsa)
+        assertEquals("Neg", cache.rdDengue)
+        assertEquals("Neg", cache.rdFilaria)
+        assertEquals("No", cache.severeAnemia)
+        assertEquals("Done", cache.hemoglobinTest)
+        assertEquals("Yes", cache.ifaGiven)
+        assertEquals("No", cache.pregInducedHypertension)
+        assertEquals("No", cache.gestDiabetesMellitus)
+        assertEquals("Done", cache.bloodGlucoseTest)
+        assertEquals(90, cache.fbg)
+        assertEquals(110, cache.rbg)
+        assertEquals(130, cache.ppbg)
+        assertEquals(95, cache.fastingOgtt)
+        assertEquals(140, cache.after2hrsOgtt)
+        assertEquals("No", cache.hypothyrodism)
+        assertEquals("No", cache.polyhydromnios)
+        assertEquals("No", cache.oligohydromnios)
+        assertEquals("No", cache.antepartumHem)
+        assertEquals("No", cache.malPresentation)
+        assertEquals("Neg", cache.hivsyph)
+    }
+
+    @Test fun `HRPPregnantTrackDTO generated members consistent when fully populated`() {
+        val dto = HRPPregnantTrackDTO(
+            id = 5, benId = 11L, visitDate = "01-01-2024",
+            rdPmsa = "Neg", rdDengue = "Neg", rdFilaria = "Neg",
+            severeAnemia = "No", hemoglobinTest = "Done", ifaGiven = "Yes", ifaQuantity = 30,
+            pregInducedHypertension = "No", systolic = 120, diastolic = 80,
+            gestDiabetesMellitus = "No", bloodGlucoseTest = "Done", fbg = 90, rbg = 110, ppbg = 130,
+            fastingOgtt = 95, after2hrsOgtt = 140, hypothyrodism = "No", polyhydromnios = "No",
+            oligohydromnios = "No", antepartumHem = "No", malPresentation = "No", hivsyph = "Neg",
+            visit = "v1"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(hivsyph = "Pos"))
+        assertEquals("Neg", dto.hivsyph)
+        assertEquals(5, dto.id)
+    }
+
     // ---------------- HRPPregnantAssessDTO ----------------
     @Test fun `HRPPregnantAssessDTO toCache maps benId and isHighRisk`() {
         val cache = HRPPregnantAssessDTO(
@@ -56,6 +109,50 @@ class DtoToCacheMappingTest {
         assertEquals("P", cache.processed)
     }
 
+    @Test fun `HRPMicroBirthPlanDTO toCache maps all remaining contact and facility fields`() {
+        val cache = HRPMicroBirthPlanDTO(
+            id = 2, benId = 33L, nearestSc = "SC1", bloodGroup = "O+",
+            contactNumber1 = "999", contactNumber2 = "888", scHosp = "Hosp",
+            usg = "Done", block = "Block1", nearestPhc = "PHC1", nearestFru = "FRU1",
+            bloodDonors1 = "D1", bloodDonors2 = "D2", birthCompanion = "Comp",
+            careTaker = "Care", communityMember = "CM", communityMemberContact = "777",
+            modeOfTransportation = "Ambulance"
+        ).toCache()
+        assertEquals(0, cache.id)
+        assertEquals("SC1", cache.nearestSc)
+        assertEquals("999", cache.contactNumber1)
+        assertEquals("888", cache.contactNumber2)
+        assertEquals("Hosp", cache.scHosp)
+        assertEquals("Done", cache.usg)
+        assertEquals("Block1", cache.block)
+        assertEquals("PHC1", cache.nearestPhc)
+        assertEquals("FRU1", cache.nearestFru)
+        assertEquals("D1", cache.bloodDonors1)
+        assertEquals("D2", cache.bloodDonors2)
+        assertEquals("Comp", cache.birthCompanion)
+        assertEquals("Care", cache.careTaker)
+        assertEquals("CM", cache.communityMember)
+        assertEquals("777", cache.communityMemberContact)
+        assertEquals("Ambulance", cache.modeOfTransportation)
+    }
+
+    @Test fun `HRPMicroBirthPlanDTO generated members consistent when fully populated`() {
+        val dto = HRPMicroBirthPlanDTO(
+            id = 2, benId = 33L, nearestSc = "SC1", bloodGroup = "O+",
+            contactNumber1 = "999", contactNumber2 = "888", scHosp = "Hosp",
+            usg = "Done", block = "Block1", nearestPhc = "PHC1", nearestFru = "FRU1",
+            bloodDonors1 = "D1", bloodDonors2 = "D2", birthCompanion = "Comp",
+            careTaker = "Care", communityMember = "CM", communityMemberContact = "777",
+            modeOfTransportation = "Ambulance"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(modeOfTransportation = "Bike"))
+        assertEquals("Ambulance", dto.modeOfTransportation)
+    }
+
     // ---------------- HRPNonPregnantTrackDTO ----------------
     @Test fun `HRPNonPregnantTrackDTO toCache maps benId and passthrough`() {
         val cache = HRPNonPregnantTrackDTO(
@@ -64,6 +161,46 @@ class DtoToCacheMappingTest {
         assertEquals(44L, cache.benId)
         assertEquals("yes", cache.anemia)
         assertEquals("no", cache.isPregnant)
+    }
+
+    @Test fun `HRPNonPregnantTrackDTO toCache maps all remaining vitals and lab fields`() {
+        val cache = HRPNonPregnantTrackDTO(
+            id = 3, benId = 44L, visitDate = "01-01-2024",
+            anemia = "No", hypertension = "No", systolic = 118, diastolic = 76,
+            diabetes = "No", bloodGlucoseTest = "Done", fbg = 88, rbg = 100, ppbg = 120,
+            severeAnemia = "No", hemoglobinTest = "Done", ifaGiven = "Yes", ifaQuantity = 30,
+            fp = "Yes", lmp = "01-01-2024", missedPeriod = "No", isPregnant = "No"
+        ).toCache()
+        assertEquals("No", cache.hypertension)
+        assertEquals(118, cache.systolic)
+        assertEquals(76, cache.diastolic)
+        assertEquals("No", cache.diabetes)
+        assertEquals("Done", cache.bloodGlucoseTest)
+        assertEquals(88, cache.fbg)
+        assertEquals(100, cache.rbg)
+        assertEquals(120, cache.ppbg)
+        assertEquals("No", cache.severeAnemia)
+        assertEquals("Done", cache.hemoglobinTest)
+        assertEquals("Yes", cache.ifaGiven)
+        assertEquals(30, cache.ifaQuantity)
+        assertEquals("Yes", cache.fp)
+        assertEquals("No", cache.missedPeriod)
+    }
+
+    @Test fun `HRPNonPregnantTrackDTO generated members consistent when fully populated`() {
+        val dto = HRPNonPregnantTrackDTO(
+            id = 3, benId = 44L, visitDate = "01-01-2024",
+            anemia = "No", hypertension = "No", systolic = 118, diastolic = 76,
+            diabetes = "No", bloodGlucoseTest = "Done", fbg = 88, rbg = 100, ppbg = 120,
+            severeAnemia = "No", hemoglobinTest = "Done", ifaGiven = "Yes", ifaQuantity = 30,
+            fp = "Yes", lmp = "01-01-2024", missedPeriod = "No", isPregnant = "No"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(missedPeriod = "Yes"))
+        assertEquals("No", dto.missedPeriod)
     }
 
     // ---------------- HRPNonPregnantAssessDTO ----------------
@@ -83,6 +220,69 @@ class DtoToCacheMappingTest {
         assertEquals("Center", cache.place)
         assertEquals(5, cache.noOfBeneficiariesAttended)
         assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
+    @Test fun `VHNDDTO toCache maps all remaining images and education fields`() {
+        val cache = VHNDDTO(
+            id = 1, vhndDate = "01-01-2024", place = "Center", noOfBeneficiariesAttended = 5,
+            Image1 = "img1.png", Image2 = "img2.png", vhndPlaceId = 9,
+            pregnantWomenAnc = "Yes", lactatingMothersPnc = "Yes", childrenImmunization = "Yes",
+            knowledgeBalancedDiet = "Yes", careDuringPregnancy = "Yes",
+            importanceBreastfeeding = "Yes", complementaryFeeding = "Yes",
+            hygieneSanitation = "Yes", familyPlanningHealthcare = "Yes", selectAllEducation = true
+        ).toCache()
+        assertEquals("img1.png", cache.image1)
+        assertEquals("img2.png", cache.image2)
+        assertEquals(9, cache.vhndPlaceId)
+        assertEquals("Yes", cache.pregnantWomenAnc)
+        assertEquals("Yes", cache.lactatingMothersPnc)
+        assertEquals("Yes", cache.childrenImmunization)
+        assertEquals("Yes", cache.knowledgeBalancedDiet)
+        assertEquals("Yes", cache.careDuringPregnancy)
+        assertEquals("Yes", cache.importanceBreastfeeding)
+        assertEquals("Yes", cache.complementaryFeeding)
+        assertEquals("Yes", cache.hygieneSanitation)
+        assertEquals("Yes", cache.familyPlanningHealthcare)
+    }
+
+    @Test(expected = NullPointerException::class)
+    fun `VHNDDTO toCache throws when vhndDate is null`() {
+        VHNDDTO(vhndDate = null).toCache()
+    }
+
+    private fun vhndDto() = VHNDDTO(vhndDate = "01-01-2024", place = "Center", noOfBeneficiariesAttended = 5)
+
+    @Test fun `VHNDDTO generated members behave consistently`() {
+        val dto = vhndDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("VHNDDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(place = "Other"))
+        assertEquals("01-01-2024", dto.vhndDate)
+        assertEquals("Center", dto.place)
+        assertEquals(5, dto.noOfBeneficiariesAttended)
+        assertEquals(false, dto.selectAllEducation)
+    }
+
+    @Test fun `VHNDDTO generated members consistent when fully populated`() {
+        val dto = VHNDDTO(
+            id = 1, vhndDate = "01-01-2024", place = "Center", noOfBeneficiariesAttended = 5,
+            Image1 = "img1.png", Image2 = "img2.png", vhndPlaceId = 9,
+            pregnantWomenAnc = "Yes", lactatingMothersPnc = "Yes", childrenImmunization = "Yes",
+            knowledgeBalancedDiet = "Yes", careDuringPregnancy = "Yes",
+            importanceBreastfeeding = "Yes", complementaryFeeding = "Yes",
+            hygieneSanitation = "Yes", familyPlanningHealthcare = "Yes", selectAllEducation = true
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(selectAllEducation = false))
+        assertEquals(true, dto.selectAllEducation)
     }
 
     // ---------------- VHNCDTO ----------------
@@ -141,6 +341,66 @@ class DtoToCacheMappingTest {
         assertEquals(77L, cache.benId)
         assertEquals("Good", cache.healthStatus)
         assertEquals(4, cache.quantityOfIfaTablets)
+    }
+
+    @Test fun `AdolscentHealthDTO toCache maps all remaining counseling and referral fields`() {
+        val cache = AdolscentHealthDTO(
+            id = 1, userID = 2, benId = 77L, visitDate = "01-01-2024", healthStatus = "Good",
+            ifaTabletDistributed = true, quantityOfIfaTablets = 4,
+            menstrualHygieneAwarenessGiven = true, sanitaryNapkinDistributed = true,
+            isSanitaryNapkinUsed = true, noOfPacketsDistributed = 6, place = "Center",
+            distributionDate = "01-01-2024", referredToHealthFacility = "Yes",
+            counselingProvided = true, counselingType = "Group", followUpDate = "02-01-2024",
+            referralStatus = "Done"
+        ).toCache()
+        assertEquals(true, cache.ifaTabletDistributed)
+        assertEquals(true, cache.menstrualHygieneAwarenessGiven)
+        assertEquals(true, cache.sanitaryNapkinDistributed)
+        assertEquals(6, cache.noOfPacketsDistributed)
+        assertEquals("Center", cache.place)
+        assertEquals("Yes", cache.referredToHealthFacility)
+        assertEquals(true, cache.counselingProvided)
+        assertEquals("Group", cache.counselingType)
+        assertEquals("Done", cache.referralStatus)
+    }
+
+    private fun adolscentHealthDto() = AdolscentHealthDTO(
+        benId = 77L, visitDate = "01-01-2024", healthStatus = "Good", quantityOfIfaTablets = 4
+    )
+
+    @Test fun `AdolscentHealthDTO generated members behave consistently`() {
+        val dto = adolscentHealthDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("AdolscentHealthDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(healthStatus = "Poor"))
+        assertEquals(77L, dto.benId)
+        assertEquals("01-01-2024", dto.visitDate)
+        assertEquals(4, dto.quantityOfIfaTablets)
+    }
+
+    @Test fun `AdolscentHealthDTO generated members consistent when fully populated`() {
+        val dto = AdolscentHealthDTO(
+            id = 1, userID = 2, benId = 77L, visitDate = "01-01-2024", healthStatus = "Good",
+            ifaTabletDistributed = true, quantityOfIfaTablets = 4,
+            menstrualHygieneAwarenessGiven = true, sanitaryNapkinDistributed = true,
+            isSanitaryNapkinUsed = true, noOfPacketsDistributed = 6, place = "Center",
+            distributionDate = "01-01-2024", referredToHealthFacility = "Yes",
+            counselingProvided = true, counselingType = "Group", followUpDate = "02-01-2024",
+            referralStatus = "Done"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(isSanitaryNapkinUsed = false))
+        assertEquals(1, dto.id)
+        assertEquals(2, dto.userID)
+        assertEquals(true, dto.isSanitaryNapkinUsed)
     }
 
     // ---------------- TBSuspectedDTO ----------------
@@ -342,6 +602,43 @@ class DtoToCacheMappingTest {
         assertEquals(true, cache.nightSweats)
     }
 
+    @Test fun `TBScreeningDTO toCache maps extended risk assessment fields`() {
+        val cache = tbScreeningDto().copy(
+            riseOfFever = true, lossOfAppetite = true, age = true, diabetic = true,
+            tobaccoUser = true, bmi = true, contactWithTBPatient = true,
+            historyOfTBInLastFiveYrs = true, sympotomatic = "Yes", asymptomatic = "No",
+            recommandateTest = "CBNAAT"
+        ).toCache()
+        assertEquals(true, cache.riseOfFever)
+        assertEquals(true, cache.lossOfAppetite)
+        assertEquals(true, cache.age)
+        assertEquals(true, cache.diabetic)
+        assertEquals(true, cache.tobaccoUser)
+        assertEquals(true, cache.bmi)
+        assertEquals(true, cache.contactWithTBPatient)
+        assertEquals(true, cache.historyOfTBInLastFiveYrs)
+        assertEquals("Yes", cache.sympotomatic)
+        assertEquals("No", cache.asymptomatic)
+        assertEquals("CBNAAT", cache.recommandateTest)
+    }
+
+    @Test fun `TBScreeningDTO generated members consistent when fully populated`() {
+        val dto = tbScreeningDto().copy(
+            riseOfFever = true, lossOfAppetite = true, age = true, diabetic = true,
+            tobaccoUser = true, bmi = true, contactWithTBPatient = true,
+            historyOfTBInLastFiveYrs = true, sympotomatic = "Yes", asymptomatic = "No",
+            recommandateTest = "CBNAAT"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(recommandateTest = "Other"))
+        assertEquals("Yes", dto.sympotomatic)
+        assertEquals("No", dto.asymptomatic)
+        assertEquals("CBNAAT", dto.recommandateTest)
+    }
+
     private fun aesScreeningDto() = AESScreeningDTO(
         benId = 100L, visitDate = "01-01-2024", houseHoldDetailsId = 200L,
         dateOfDeath = "01-01-2024", createdDate = "01-01-2024", aesJeCaseStatus = "Active"
@@ -363,6 +660,48 @@ class DtoToCacheMappingTest {
         assertEquals("01-01-2024", dto.visitDate)
         assertEquals("01-01-2024", dto.dateOfDeath)
         assertEquals("01-01-2024", dto.createdDate)
+    }
+
+    @Test fun `AESScreeningDTO toCache maps all remaining death and referral fields`() {
+        val cache = aesScreeningDto().copy(
+            beneficiaryStatus = "Alive", beneficiaryStatusId = 2, placeOfDeath = "Home",
+            otherPlaceOfDeath = "Other", reasonForDeath = "Illness", otherReasonForDeath = "Other",
+            referredTo = 5, referToName = "Dr Smith", otherReferredFacility = "Facility1",
+            diseaseTypeID = 3, createdBy = "creator", followUpPoint = 2
+        ).toCache()
+        assertEquals("Alive", cache.beneficiaryStatus)
+        assertEquals(2, cache.beneficiaryStatusId)
+        assertEquals("Home", cache.placeOfDeath)
+        assertEquals("Other", cache.otherPlaceOfDeath)
+        assertEquals("Illness", cache.reasonForDeath)
+        assertEquals("Other", cache.otherReasonForDeath)
+        assertEquals(5, cache.referredTo)
+        assertEquals("Dr Smith", cache.referToName)
+        assertEquals("Facility1", cache.otherReferredFacility)
+        assertEquals(3, cache.diseaseTypeID)
+        assertEquals("creator", cache.createdBy)
+        assertEquals(2, cache.followUpPoint)
+    }
+
+    @Test fun `AESScreeningDTO toCache maps referToName to string literal null when unset`() {
+        val cache = aesScreeningDto().copy(referToName = null).toCache()
+        assertEquals("null", cache.referToName)
+    }
+
+    @Test fun `AESScreeningDTO generated members consistent when fully populated`() {
+        val dto = aesScreeningDto().copy(
+            beneficiaryStatus = "Alive", beneficiaryStatusId = 2, placeOfDeath = "Home",
+            otherPlaceOfDeath = "Other", reasonForDeath = "Illness", otherReasonForDeath = "Other",
+            referredTo = 5, referToName = "Dr Smith", otherReferredFacility = "Facility1",
+            diseaseTypeID = 3, createdBy = "creator", followUpPoint = 2
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(followUpPoint = 9))
+        assertEquals("Alive", dto.beneficiaryStatus)
+        assertEquals("Dr Smith", dto.referToName)
     }
 
     private fun kalazarScreeningDto() = KALAZARScreeningDTO(
@@ -403,5 +742,333 @@ class DtoToCacheMappingTest {
         assertEquals("Dr", cache.referToName)
         assertEquals("F", cache.otherReferredFacility)
         assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
+    @Test fun `KALAZARScreeningDTO toCache maps optional identifier fields`() {
+        val cache = kalazarScreeningDto().copy(
+            id = 4, beneficiaryStatusId = 2, referredTo = 6, diseaseTypeID = 3, followUpPoint = 1
+        ).toCache()
+        assertEquals(2, cache.beneficiaryStatusId)
+        assertEquals(6, cache.referredTo)
+        assertEquals(3, cache.diseaseTypeID)
+        assertEquals(1, cache.followUpPoint)
+    }
+
+    @Test fun `KALAZARScreeningDTO generated members consistent when identifiers differ`() {
+        val dto = kalazarScreeningDto().copy(
+            id = 4, beneficiaryStatusId = 2, referredTo = 6, diseaseTypeID = 3, followUpPoint = 1
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(followUpPoint = 9))
+        assertEquals(4, dto.id)
+        assertEquals(2, dto.beneficiaryStatusId)
+        assertEquals(6, dto.referredTo)
+        assertEquals(3, dto.diseaseTypeID)
+    }
+
+    // =====================================================
+    // Additional branch coverage (nullable / boolean / equals-position combinations)
+    // =====================================================
+
+    // ---------------- HRPPregnantTrackDTO ----------------
+    @Test fun `HRPPregnantTrackDTO toCache maps mixed optional fields with partial nulls`() {
+        val cache = HRPPregnantTrackDTO(
+            benId = 12L, visitDate = "05-05-2024", rdPmsa = "Pos", rdDengue = null,
+            severeAnemia = null, hemoglobinTest = "Done", gestDiabetesMellitus = null,
+            fbg = 100, hypothyrodism = null, visit = "v3"
+        ).toCache()
+        assertEquals("Pos", cache.rdPmsa)
+        assertEquals(null, cache.rdDengue)
+        assertEquals("Done", cache.hemoglobinTest)
+        assertEquals(null, cache.severeAnemia)
+        assertEquals(100, cache.fbg)
+        assertEquals(null, cache.gestDiabetesMellitus)
+    }
+
+    @Test fun `HRPPregnantTrackDTO toCache handles null visit with non-null visitDate`() {
+        val cache = HRPPregnantTrackDTO(benId = 13L, visitDate = "06-06-2024", visit = null).toCache()
+        assertEquals(13L, cache.benId)
+        assertEquals(null, cache.visit)
+    }
+
+    @Test fun `HRPPregnantTrackDTO generated members consistent when middle field differs`() {
+        val dto = HRPPregnantTrackDTO(
+            id = 5, benId = 11L, visitDate = "01-01-2024",
+            rdPmsa = "Neg", rdDengue = "Neg", rdFilaria = "Neg",
+            severeAnemia = "No", hemoglobinTest = "Done", ifaGiven = "Yes", ifaQuantity = 30,
+            pregInducedHypertension = "No", systolic = 120, diastolic = 80,
+            gestDiabetesMellitus = "No", bloodGlucoseTest = "Done", fbg = 90, rbg = 110, ppbg = 130,
+            fastingOgtt = 95, after2hrsOgtt = 140, hypothyrodism = "No", polyhydromnios = "No",
+            oligohydromnios = "No", antepartumHem = "No", malPresentation = "No", hivsyph = "Neg",
+            visit = "v1"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertNotEquals(dto, dto.copy(gestDiabetesMellitus = "Yes"))
+        assertNotEquals(dto, dto.copy(fbg = 999))
+    }
+
+    @Test fun `HRPPregnantTrackDTO copy overrides multiple fields independently`() {
+        val dto = hrpPregnantTrackDto().copy(rdFilaria = "Pos", malPresentation = "Yes")
+        assertEquals("Pos", dto.rdFilaria)
+        assertEquals("Yes", dto.malPresentation)
+        assertEquals(11L, dto.benId)
+    }
+
+    // ---------------- KALAZARScreeningDTO ----------------
+    @Test fun `KALAZARScreeningDTO toCache maps null kalaAzarCaseStatus`() {
+        val cache = kalazarScreeningDto().copy(kalaAzarCaseStatus = null).toCache()
+        assertEquals(null, cache.kalaAzarCaseStatus)
+    }
+
+    @Test fun `KALAZARScreeningDTO generated members consistent when early field differs`() {
+        val dto = kalazarScreeningDto()
+        assertNotEquals(dto, dto.copy(visitDate = "09-09-2024"))
+    }
+
+    @Test fun `KALAZARScreeningDTO generated members consistent when middle field differs`() {
+        val dto = kalazarScreeningDto()
+        assertNotEquals(dto, dto.copy(rapidDiagnosticTest = "Pos"))
+        assertNotEquals(dto, dto.copy(dateOfRdt = "10-10-2024"))
+    }
+
+    @Test fun `KALAZARScreeningDTO toCache maps default optional identifiers when unset`() {
+        val dto = KALAZARScreeningDTO(
+            benId = 200L, visitDate = "01-01-2024", houseHoldDetailsId = 900L,
+            beneficiaryStatus = "Alive", dateOfDeath = "01-01-2024", placeOfDeath = "x",
+            otherPlaceOfDeath = "x", reasonForDeath = "x", otherReasonForDeath = "x",
+            rapidDiagnosticTest = "Neg", dateOfRdt = "01-01-2024", referToName = "Dr",
+            otherReferredFacility = "F", createdDate = "01-01-2024", createdBy = "creator"
+        )
+        val cache = dto.toCache()
+        assertEquals(0, cache.beneficiaryStatusId)
+        assertEquals(0, cache.referredTo)
+        assertEquals(0, cache.diseaseTypeID)
+        assertEquals(0, cache.followUpPoint)
+        assertEquals("", cache.kalaAzarCaseStatus)
+    }
+
+    // ---------------- HRPMicroBirthPlanDTO ----------------
+    @Test fun `HRPMicroBirthPlanDTO toCache always resets id to zero and processed to P`() {
+        val cache = HRPMicroBirthPlanDTO(id = 9, benId = 33L, bloodGroup = "AB+").toCache()
+        assertEquals(0, cache.id)
+        assertEquals("P", cache.processed)
+        assertEquals("AB+", cache.bloodGroup)
+    }
+
+    @Test fun `HRPMicroBirthPlanDTO toCache maps mixed partial optional fields`() {
+        val cache = HRPMicroBirthPlanDTO(
+            benId = 40L, nearestSc = "SC2", bloodGroup = null, contactNumber1 = "111",
+            scHosp = null, block = "B2", bloodDonors1 = null, careTaker = "Care2"
+        ).toCache()
+        assertEquals("SC2", cache.nearestSc)
+        assertEquals(null, cache.bloodGroup)
+        assertEquals("111", cache.contactNumber1)
+        assertEquals(null, cache.scHosp)
+        assertEquals("B2", cache.block)
+        assertEquals("Care2", cache.careTaker)
+    }
+
+    @Test fun `HRPMicroBirthPlanDTO generated members consistent when middle field differs`() {
+        val dto = hrpMicroBirthPlanDto()
+        assertNotEquals(dto, dto.copy(nearestPhc = "PHC2"))
+        assertNotEquals(dto, dto.copy(careTaker = "Other"))
+    }
+
+    // ---------------- AESScreeningDTO ----------------
+    @Test fun `AESScreeningDTO toCache maps benId with default optional fields unset`() {
+        val dto = AESScreeningDTO(
+            benId = 150L, visitDate = "01-01-2024", houseHoldDetailsId = 250L,
+            dateOfDeath = "01-01-2024", createdDate = "01-01-2024"
+        )
+        val cache = dto.toCache()
+        assertEquals(150L, cache.benId)
+        assertEquals("", cache.aesJeCaseStatus)
+        assertEquals(0, cache.beneficiaryStatusId)
+        assertEquals(1, cache.followUpPoint)
+        assertEquals(null, cache.beneficiaryStatus)
+    }
+
+    @Test fun `AESScreeningDTO generated members consistent when middle field differs`() {
+        val dto = aesScreeningDto()
+        assertNotEquals(dto, dto.copy(dateOfDeath = "02-02-2024"))
+        assertNotEquals(dto, dto.copy(houseHoldDetailsId = 999L))
+    }
+
+    // ---------------- HRPNonPregnantTrackDTO ----------------
+    @Test fun `HRPNonPregnantTrackDTO toCache handles visitDate set and lmp null`() {
+        val cache = HRPNonPregnantTrackDTO(
+            benId = 45L, visitDate = "07-07-2024", lmp = null, anemia = "No", isPregnant = "No"
+        ).toCache()
+        assertEquals(45L, cache.benId)
+        assertEquals(0L, cache.lmp)
+    }
+
+    @Test fun `HRPNonPregnantTrackDTO toCache handles visitDate null and lmp set`() {
+        val cache = HRPNonPregnantTrackDTO(
+            benId = 46L, visitDate = null, lmp = "08-08-2024", anemia = "No", isPregnant = "No"
+        ).toCache()
+        assertEquals(0L, cache.visitDate)
+        assertNotNull(cache.lmp)
+    }
+
+    @Test fun `HRPNonPregnantTrackDTO generated members consistent when middle field differs`() {
+        val dto = hrpNonPregnantTrackDto()
+        assertNotEquals(dto, dto.copy(diabetes = "Yes"))
+        assertNotEquals(dto, dto.copy(bloodGlucoseTest = "Done"))
+    }
+
+    // ---------------- TBScreeningDTO ----------------
+    @Test fun `TBScreeningDTO generated members consistent when middle field differs`() {
+        val dto = tbScreeningDto()
+        assertNotEquals(dto, dto.copy(nightSweats = false))
+        assertNotEquals(dto, dto.copy(historyOfTb = true))
+    }
+
+    @Test fun `TBScreeningDTO toCache maps default extended fields as null`() {
+        val cache = tbScreeningDto().toCache()
+        assertEquals(null, cache.riseOfFever)
+        assertEquals(null, cache.sympotomatic)
+        assertEquals(66L, cache.benId)
+    }
+
+    // ---------------- AdolscentHealthDTO ----------------
+    @Test fun `AdolscentHealthDTO toCache does not propagate isSanitaryNapkinUsed to cache`() {
+        val cache = adolscentHealthDto().copy(isSanitaryNapkinUsed = true).toCache()
+        assertEquals(null, cache.isSanitaryNapkinUsed)
+    }
+
+    @Test fun `AdolscentHealthDTO generated members consistent when middle field differs`() {
+        val dto = adolscentHealthDto()
+        assertNotEquals(dto, dto.copy(place = "Other Place"))
+        assertNotEquals(dto, dto.copy(noOfPacketsDistributed = 99))
+    }
+
+    @Test fun `AdolscentHealthDTO defaults id and userID to null when unset`() {
+        val dto = adolscentHealthDto()
+        assertEquals(null, dto.id)
+        assertEquals(null, dto.userID)
+    }
+
+    // ---------------- FilariaScreeningDTO ----------------
+    @Test(expected = NullPointerException::class)
+    fun `FilariaScreeningDTO toCache throws when sufferingFromFilariasis is null`() {
+        FilariaScreeningDTO(
+            benId = 110L, mdaHomeVisitDate = "01-01-2024", houseHoldDetailsId = 310L,
+            createdDate = "2024-01-01T00:00:00.000+05:30", sufferingFromFilariasis = null
+        ).toCache()
+    }
+
+    @Test fun `FilariaScreeningDTO toCache maps null diseaseTypeID directly without exception`() {
+        val cache = FilariaScreeningDTO(
+            benId = 111L, mdaHomeVisitDate = "01-01-2024", houseHoldDetailsId = 311L,
+            createdDate = "2024-01-01T00:00:00.000+05:30", sufferingFromFilariasis = true,
+            diseaseTypeID = null
+        ).toCache()
+        assertEquals(null, cache.diseaseTypeID)
+    }
+
+    @Test fun `FilariaScreeningDTO toCache does not propagate filariasisCaseCount to cache`() {
+        val cache = FilariaScreeningDTO(
+            benId = 112L, mdaHomeVisitDate = "01-01-2024", houseHoldDetailsId = 312L,
+            createdDate = "2024-01-01T00:00:00.000+05:30", sufferingFromFilariasis = false,
+            filariasisCaseCount = "5"
+        ).toCache()
+        assertEquals(null, cache.filariasisCaseCount)
+        assertEquals(false, cache.sufferingFromFilariasis)
+    }
+
+    @Test fun `FilariaScreeningDTO toCache converts unset optional fields to string literal null`() {
+        val cache = FilariaScreeningDTO(
+            benId = 113L, mdaHomeVisitDate = "01-01-2024", houseHoldDetailsId = 313L,
+            createdDate = "2024-01-01T00:00:00.000+05:30", sufferingFromFilariasis = true,
+            doseStatus = null, affectedBodyPart = null, otherDoseStatusDetails = null
+        ).toCache()
+        assertEquals("null", cache.doseStatus)
+        assertEquals("null", cache.affectedBodyPart)
+        assertEquals("null", cache.otherDoseStatusDetails)
+        assertEquals("", cache.medicineSideEffect)
+        assertEquals("", cache.otherSideEffectDetails)
+        assertEquals("", cache.createdBy)
+    }
+
+    @Test fun `FilariaScreeningDTO toCache maps all optional fields when populated`() {
+        val cache = FilariaScreeningDTO(
+            benId = 114L, mdaHomeVisitDate = "01-01-2024", houseHoldDetailsId = 314L,
+            createdDate = "2024-01-01T00:00:00.000+05:30", sufferingFromFilariasis = false,
+            doseStatus = "Complete", affectedBodyPart = "Leg", otherDoseStatusDetails = "Details",
+            medicineSideEffect = "Nausea", otherSideEffectDetails = "None", createdBy = "creator",
+            diseaseTypeID = 2
+        ).toCache()
+        assertEquals("Complete", cache.doseStatus)
+        assertEquals("Leg", cache.affectedBodyPart)
+        assertEquals("Details", cache.otherDoseStatusDetails)
+        assertEquals("Nausea", cache.medicineSideEffect)
+        assertEquals("None", cache.otherSideEffectDetails)
+        assertEquals("creator", cache.createdBy)
+        assertEquals(2, cache.diseaseTypeID)
+        assertEquals(false, cache.sufferingFromFilariasis)
+    }
+
+    // ---------------- HRPPregnantAssessDTO ----------------
+    @Test fun `HRPPregnantAssessDTO toCache maps all remaining risk factor fields`() {
+        val cache = HRPPregnantAssessDTO(
+            id = 3, benId = 22L, noOfDeliveries = "Yes", timeLessThan18m = "No",
+            heightShort = "Yes", age = "No", rhNegative = "Yes", homeDelivery = "No",
+            badObstetric = "Yes", multiplePregnancy = "No",
+            lmpDate = "01-01-2024", edd = "01-08-2024", isHighRisk = true, visitDate = "01-02-2024"
+        ).toCache()
+        assertEquals(22L, cache.benId)
+        assertEquals("Yes", cache.noOfDeliveries)
+        assertEquals("No", cache.timeLessThan18m)
+        assertEquals("Yes", cache.heightShort)
+        assertEquals("No", cache.age)
+        assertEquals("Yes", cache.rhNegative)
+        assertEquals("No", cache.homeDelivery)
+        assertEquals("Yes", cache.badObstetric)
+        assertEquals("No", cache.multiplePregnancy)
+        assertNotNull(cache.lmpDate)
+        assertNotNull(cache.edd)
+        assertNotNull(cache.visitDate)
+        assertEquals(true, cache.isHighRisk)
+    }
+
+    private fun hrpPregnantAssessDto() = HRPPregnantAssessDTO(
+        benId = 22L, lmpDate = null, edd = null, visitDate = null, isHighRisk = true
+    )
+
+    @Test fun `HRPPregnantAssessDTO generated members behave consistently`() {
+        val dto = hrpPregnantAssessDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("HRPPregnantAssessDTO"))
+        assertFalse(dto.equals(null))
+        assertFalse(dto.equals("x"))
+        assertNotEquals(dto, dto.copy(benId = 23L))
+        assertEquals(22L, dto.benId)
+        assertEquals(true, dto.isHighRisk)
+    }
+
+    @Test fun `HRPPregnantAssessDTO generated members consistent when fully populated`() {
+        val dto = HRPPregnantAssessDTO(
+            id = 3, benId = 22L, noOfDeliveries = "Yes", timeLessThan18m = "No",
+            heightShort = "Yes", age = "No", rhNegative = "Yes", homeDelivery = "No",
+            badObstetric = "Yes", multiplePregnancy = "No",
+            lmpDate = "01-01-2024", edd = "01-08-2024", isHighRisk = true, visitDate = "01-02-2024"
+        )
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertNotEquals(dto, dto.copy(badObstetric = "No"))
+        assertNotEquals(dto, dto.copy(rhNegative = "No"))
+        assertEquals("Yes", dto.badObstetric)
+        assertEquals(3, dto.id)
     }
 }

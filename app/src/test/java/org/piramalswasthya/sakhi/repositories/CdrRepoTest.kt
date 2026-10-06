@@ -1,12 +1,14 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.util.Log
+import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -16,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.CdrDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.CDRCache
@@ -259,5 +262,154 @@ class CdrRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getCdrData(any()) } returns nullBodyResponse()
 
         assertEquals(-1, repo.getCdrFromServer())
+    }
+
+    // =====================================================
+    // processNewCdr() -> postCdrForm() branch coverage
+    // =====================================================
+
+    @Test
+    fun `processNewCdr marks record unsynced when no user logged in`() = runTest {
+        coEvery { preferenceDao.getLoggedInUser() } returns null
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(exactly = 0) { amritApiService.postCdrForm(any()) }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced on unrecognized inner statusCode`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        val json = """{"statusCode":9999,"errorMessage":""}"""
+        coEvery { amritApiService.postCdrForm(any()) } returns jsonResponse(json)
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced when statusCode key is missing from response`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        val json = """{"errorMessage":""}"""
+        coEvery { amritApiService.postCdrForm(any()) } returns jsonResponse(json)
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced when inner response body is null on 200`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        coEvery { amritApiService.postCdrForm(any()) } returns nullBodyResponse()
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced when server keeps returning 401`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        val json = """{"statusCode":401,"errorMessage":""}"""
+        coEvery { amritApiService.postCdrForm(any()) } returns jsonResponse(json)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(exactly = 1) { amritApiService.postCdrForm(any()) }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced on malformed json response`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        coEvery { amritApiService.postCdrForm(any()) } returns jsonResponse("not-json")
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewCdr marks unsynced when postCdrForm network call times out repeatedly`() = runTest {
+        loggedIn()
+        val record = mockk<CDRCache>(relaxed = true)
+        every { record.asPostModel() } returns mockk<CDRPost>(relaxed = true)
+        coEvery { cdrDao.getAllUnprocessedCdr() } returns listOf(record)
+        coEvery { cdrDao.update(record) } returns Unit
+        coEvery { amritApiService.postCdrForm(any()) } throws SocketTimeoutException("timeout")
+
+        val result = repo.processNewCdr()
+
+        assertTrue(result)
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(atLeast = 4) { amritApiService.postCdrForm(any()) }
+    }
+
+    // =====================================================
+    // getCdrFromServer() -> saveCdrCacheFromResponse() branch coverage
+    // =====================================================
+
+    @Test
+    fun `getCdrFromServer inserts new cdr entries not already cached`() = runTest {
+        loggedIn()
+        val dataJson = """[{"id":1,"benId":10}]"""
+        val outerJson = """{"statusCode":200,"errorMessage":"","data":${Gson().toJson(dataJson)}}"""
+        coEvery { amritApiService.getCdrData(any()) } returns jsonResponse(outerJson)
+        coEvery { cdrDao.getCDR(10L) } returns null
+        coEvery { cdrDao.upsert(any()) } returns Unit
+
+        val result = repo.getCdrFromServer()
+
+        assertEquals(1, result)
+        coVerify { cdrDao.upsert(match { it.benId == 10L }) }
+    }
+
+    @Test
+    fun `getCdrFromServer skips cdr entries already cached locally`() = runTest {
+        loggedIn()
+        val dataJson = """[{"id":1,"benId":10}]"""
+        val outerJson = """{"statusCode":200,"errorMessage":"","data":${Gson().toJson(dataJson)}}"""
+        coEvery { amritApiService.getCdrData(any()) } returns jsonResponse(outerJson)
+        val existing = mockk<CDRCache>(relaxed = true)
+        coEvery { cdrDao.getCDR(10L) } returns existing
+
+        val result = repo.getCdrFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { cdrDao.upsert(any()) }
     }
 }

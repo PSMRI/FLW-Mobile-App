@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="incomplete_install_title">App installation incomplete</string>
+    <string name="incomplete_install_message">Some files needed by this app are missing on this phone. Please uninstall the app and install it again from Google Play Store. Do not install it from a shared APK file.</string>
+    <string name="incomplete_install_open_play_store">Open Play Store</string>
+    <string name="incomplete_install_exit">Exit</string>
+</resources>

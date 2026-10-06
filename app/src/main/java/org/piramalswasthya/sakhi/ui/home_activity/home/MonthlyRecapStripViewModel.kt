@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -45,7 +44,12 @@ class MonthlyRecapStripViewModel @Inject constructor(
     private val refreshTrigger = MutableStateFlow(0)
 
     val stripState: LiveData<MonthlyRecapStripState> =
-        combine(refreshTrigger, recapRepo.observeCurrentRecap()) { _, recap -> recap }
+        // Re-subscribe on refresh rather than combining with a single subscription:
+        // observeCurrentRecap() resolves "previous month" when collection starts, so a
+        // long-lived subscription kept watching the old month's row once the date
+        // rolled over, and the strip showed that month's stale READY/RESUME/REPLAY.
+        refreshTrigger
+            .flatMapLatest { recapRepo.observeCurrentRecap() }
             .flatMapLatest { recap ->
                 flow {
                     val visible = availability.isAvailable() && storyGate.hasStory()

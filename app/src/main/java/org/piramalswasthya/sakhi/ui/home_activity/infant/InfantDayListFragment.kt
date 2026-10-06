@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class InfantDayListFragment : Fragment() {
@@ -68,7 +69,7 @@ class InfantDayListFragment : Fragment() {
                     isViewMode = !card.isEditable,
                     formId = HBNC_FORM_ID
                 )
-            findNavController().navigate(action)
+            findNavController().safeNavigate(action)
         }
         binding.recyclerVisitCards.adapter = visitAdapter
 
@@ -124,7 +125,7 @@ class InfantDayListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__infant,
+                R.drawable.new_born_baby_icon,
                 getString(R.string.hbnc)
             )
         }

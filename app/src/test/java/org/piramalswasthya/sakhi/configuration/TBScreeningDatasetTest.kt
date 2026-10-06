@@ -10,10 +10,12 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
@@ -79,6 +81,13 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
         runCatching { ds.updateBen(mockk<BenRegCache>(relaxed = true)) }
         runCatching { ds.getIndexOfDate() }
         assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `TBScreeningCache setSyncState updates state`() = runTest {
+        val cache = TBScreeningCache(benId = 1L)
+        cache.syncState = SyncState.SYNCED
+        assertEquals(SyncState.SYNCED, cache.syncState)
     }
 
     @Test

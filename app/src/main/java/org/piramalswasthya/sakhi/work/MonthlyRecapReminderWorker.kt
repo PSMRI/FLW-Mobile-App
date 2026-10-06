@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.RecapNotificationState
+import org.piramalswasthya.sakhi.helpers.RecapStoryGate
 import org.piramalswasthya.sakhi.helpers.isMonthlyRecapWindowOpen
 import org.piramalswasthya.sakhi.repositories.MonthlyRecapRepo
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -50,6 +51,7 @@ class MonthlyRecapReminderWorker @AssistedInject constructor(
     private val recapRepo: MonthlyRecapRepo,
     private val configProvider: GamificationConfigProvider,
     private val pref: PreferenceDao,
+    private val storyGate: RecapStoryGate,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -87,8 +89,13 @@ class MonthlyRecapReminderWorker @AssistedInject constructor(
             Result.success() // outside days 1..7: nothing to freeze or announce
         } else {
             val recap = recapRepo.getOrCreateCurrentRecap()
+            // A snapshot row is not the same as a recap she can watch: readiness gates
+            // (full pull, install older than the month) and an empty month both leave the
+            // strip hidden. Announcing one then sent her to a dashboard with nothing on it,
+            // so the story is composed first and the notification follows it.
             if (recap != null &&
-                !RecapNotificationState.hasNotified(appContext, user.userId, recap.recapYearMonth)
+                !RecapNotificationState.hasNotified(appContext, user.userId, recap.recapYearMonth) &&
+                storyGate.hasStory()
             ) {
                 postReminder()
                 RecapNotificationState.markNotified(appContext, user.userId, recap.recapYearMonth)

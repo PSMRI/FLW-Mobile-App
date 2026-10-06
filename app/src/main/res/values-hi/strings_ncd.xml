@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="referred_on">रेफर करने की तारीख</string>
     <string name="cbac_ask_pat">पूछें कि क्या रोगी को इनमें से कोई लक्षण है</string>
     <string name="cbac_early_detection">भाग B1: प्रारंभिक पहचान</string>
     <string name="cbac_early_detection_2">भाग B2: केवल महिलाओं के लिए</string>
@@ -60,6 +61,7 @@
     <string name="cbac_no">नहीं</string>
     <string name="cbac_risk_Factors_COPD">भाग C: दीर्घकालिक अवरोधक फेफड़ों की बीमारी (COPD) का जोखिम कारक</string>
     <string name="cbac_occupational_exposure">व्यावसायिक जोखिम</string>
+    <string name="cbac_other_sources_detail">कृपया बताएं (वैकल्पिक)</string>
     <string name="cbac_PHQ2">भाग D: PHQ2 (मानसिक स्वास्थ्य)</string>
     <string name="cbac_last_two_weeks">पिछले दो हफ़्तों से क्या आप निम्नलिखित समस्या से परेशान हैं?</string>
     <string name="cbac_little_interest">काम करने में कम रुचि या आनंद?</string>
@@ -263,6 +265,12 @@
         <item>कूड़ा-कचरा-पत्तियाँ जलाना</item>
         <item>धुएं, गैस और धूल के संपर्क वाले उद्योगों में काम करना जैसे ईंट भट्टे और कांच के कारखाने।</item>
     </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>फसल अवशेष जलाना</item>
+        <item>कूड़ा-कचरा-पत्तियाँ जलाना</item>
+        <item>धुएं, गैस और धूल के संपर्क वाले उद्योगों में काम करना जैसे ईंट भट्टे और कांच के कारखाने।</item>
+        <item>अन्य स्रोत</item>
+    </string-array>
 
     <string-array name="tb_test_result">
         <item>सकारात्मक</item>
@@ -283,6 +291,7 @@
     <string name="cat_geriatric">वृद्धावस्था</string>
     <string name="cat_hrp">एचआरपी</string>
     <string name="cat_maternal">मातृ</string>
+    <string name="cat_child">बच्चा</string>
 
     <string name="select_years">वर्ष चुनें</string>
     <string name="years_35">35 वर्ष</string>
@@ -295,5 +304,16 @@
     <string name="years_70">70 वर्ष</string>
     <string name="years_75">75 वर्ष</string>
     <string name="years_80">80 वर्ष</string>
+
+    <string name="suspected_leprosy_case">कुष्ठ रोग संदिग्ध मामला</string>
+    <string name="suspected_newborn_complication">संदिग्ध नवजात जटिलता</string>
+    <string name="suspected_illness_young_child">छोटे बच्चे में संदिग्ध बीमारी</string>
+    <string name="ncd_referral_type">एनसीडी</string>
+    <string name="suspected_tb_case">टीबी संदिग्ध मामला</string>
+    <string name="suspected_copd_case">सीओपीडी संदिग्ध मामला</string>
+    <string name="tb_suspected_case_title">संदिग्ध टीबी मामला!</string>
+    <string name="tb_alert_collect_sputum">एचडब्ल्यूसी (HWC) को रेफर करें और बलगम का नमूना लें।</string>
+    <string name="tb_alert_screen_family">एचडब्ल्यूसी (HWC) को रेफर करें और परिवार के सभी सदस्यों की जांच के लिए एएनएम/एमपीडब्ल्यू को सूचित करें।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">एचडब्ल्यूसी (HWC) को रेफर करें, बलगम का नमूना लें और परिवार के सभी सदस्यों की जांच के लिए एएनएम/एमपीडब्ल्यू को सूचित करें।</string>
 </resources>
 

@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import java.net.SocketTimeoutException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -19,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.InfantRegDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -288,5 +290,112 @@ class InfantRegRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.postInfantRegForm(any()) } returns
             jsonResponse("""{"statusCode":7777,"errorMessage":""}""")
         assertTrue(repo.processNewInfantRegister())
+    }
+
+    @Test
+    fun `processNewInfantRegister marks unsynced when beneficiary not found`() = runTest {
+        loggedIn()
+        val record = mockk<InfantRegCache>(relaxed = true)
+        coEvery { infantRegDao.getAllUnprocessedInfantReg() } returns listOf(record)
+        coEvery { benDao.getBen(any()) } returns null
+
+        assertTrue(repo.processNewInfantRegister())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(exactly = 0) { amritApiService.postInfantRegForm(any()) }
+    }
+
+    @Test
+    fun `processNewInfantRegister marks unsynced when response has no statusCode field`() = runTest {
+        loggedIn()
+        val record = mockk<InfantRegCache>(relaxed = true)
+        coEvery { infantRegDao.getAllUnprocessedInfantReg() } returns listOf(record)
+        coEvery { benDao.getBen(any()) } returns mockk(relaxed = true)
+        coEvery { amritApiService.postInfantRegForm(any()) } returns
+            jsonResponse("""{"errorMessage":"weird"}""")
+
+        assertTrue(repo.processNewInfantRegister())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewInfantRegister does not retry when 5002 refresh throws timeout inside body parsing`() = runTest {
+        // NOTE: SocketTimeoutException IS-A IOException, and the `throw SocketTimeoutException()`
+        // inside the 401/5002 branch is caught by this method's own inner `catch (e: IOException)`
+        // before the outer `catch (e: SocketTimeoutException)` retry handler ever sees it, so the
+        // retry never actually happens for this path. Asserting the real single-call outcome.
+        loggedIn()
+        val record = mockk<InfantRegCache>(relaxed = true)
+        coEvery { infantRegDao.getAllUnprocessedInfantReg() } returns listOf(record)
+        coEvery { benDao.getBen(any()) } returns mockk(relaxed = true)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+        coEvery { amritApiService.postInfantRegForm(any()) } returns
+            jsonResponse("""{"statusCode":5002,"errorMessage":""}""")
+
+        assertTrue(repo.processNewInfantRegister())
+
+        coVerify(exactly = 1) { amritApiService.postInfantRegForm(any()) }
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewInfantRegister retries then exhausts retries on genuine socket timeout from api call`() = runTest {
+        loggedIn()
+        val record = mockk<InfantRegCache>(relaxed = true)
+        coEvery { infantRegDao.getAllUnprocessedInfantReg() } returns listOf(record)
+        coEvery { benDao.getBen(any()) } returns mockk(relaxed = true)
+        coEvery { amritApiService.postInfantRegForm(any()) } throws SocketTimeoutException("t")
+
+        assertTrue(repo.processNewInfantRegister())
+
+        coVerify(exactly = 4) { amritApiService.postInfantRegForm(any()) }
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    // ---------------- saveInfantRegCacheFromResponse ----------------
+
+    private fun infantRegEntryJson(): String =
+        """{"benId":1,"childBenId":2,"isActive":true,"babyIndex":1,"weight":3.2,"createdBy":"asha","updatedBy":"asha","createdDate":"2024-01-15"}"""
+
+    private fun pullOuterJson(dataJson: String): String {
+        val outer = org.json.JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataJson)
+        return outer.toString()
+    }
+
+    @Test
+    fun `pull saves new record when no cache exists yet`() = runTest {
+        loggedIn()
+        val dataJson = "[${infantRegEntryJson()}]"
+        coEvery { amritApiService.getInfantRegData(any()) } returns jsonResponse(pullOuterJson(dataJson))
+        coEvery { infantRegDao.getInfantReg(1L, 1) } returns null
+
+        assertEquals(1, repo.getInfantRegFromServer())
+
+        coVerify(exactly = 1) { infantRegDao.saveInfantReg(any()) }
+    }
+
+    @Test
+    fun `pull skips save when infant reg cache already exists`() = runTest {
+        loggedIn()
+        val dataJson = "[${infantRegEntryJson()}]"
+        coEvery { amritApiService.getInfantRegData(any()) } returns jsonResponse(pullOuterJson(dataJson))
+        coEvery { infantRegDao.getInfantReg(1L, 1) } returns mockk<InfantRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getInfantRegFromServer())
+
+        coVerify(exactly = 0) { infantRegDao.saveInfantReg(any()) }
+    }
+
+    @Test
+    fun `pull returns 0 when data payload is malformed`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.getInfantRegData(any()) } returns
+            jsonResponse(pullOuterJson("not a valid json"))
+
+        assertEquals(0, repo.getInfantRegFromServer())
     }
 }

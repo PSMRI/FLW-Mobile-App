@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
@@ -24,6 +25,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSectionDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -32,6 +35,7 @@ import java.util.Locale
 class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var repository: NCDFollowUpFormRepository
+    @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
     @MockK private lateinit var context: Context
 
     private lateinit var viewModel: NCDReferalFormViewModel
@@ -39,7 +43,54 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = NCDReferalFormViewModel(repository, context)
+        viewModel = buildViewModel("Suspected NCD case")
+    }
+
+    private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
+        repository,
+        tbReferralFollowUpRepository,
+        context,
+        SavedStateHandle(mapOf("benId" to 1L, "hhId" to 2L, "referReason" to referReason, "referredDate" to 0L))
+    )
+
+    @Test
+    fun `referReason is read from the saved state handle`() {
+        assertEquals("Suspected NCD case", viewModel.referReason)
+    }
+
+    @Test
+    fun `loadFormSchema uses the NCD form id for a non TB referral`() = runTest {
+        stubNcd(defaultNcdSchema())
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        coVerify { repository.getSavedSchema(FormConstants.CDTF_001) }
+        coVerify(exactly = 0) { repository.getSavedSchema(FormConstants.Tb_Referral_Follow_Up) }
+    }
+
+    @Test
+    fun `loadFormSchema uses the TB follow up form id for a TB screening referral`() = runTest {
+        viewModel = buildViewModel("TB Screening Form")
+        stubNcd(defaultNcdSchema())
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        coVerify { repository.getSavedSchema(FormConstants.Tb_Referral_Follow_Up) }
+        coVerify { repository.getFormSchema(FormConstants.Tb_Referral_Follow_Up) }
+    }
+
+    @Test
+    fun `loadFormSchema uses the TB follow up form id for a TB suspected referral ignoring case`() = runTest {
+        viewModel = buildViewModel("tb suspected")
+        stubNcd(defaultNcdSchema())
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        coVerify { repository.getSavedSchema(FormConstants.Tb_Referral_Follow_Up) }
+        coVerify(exactly = 0) { repository.getSavedSchema(FormConstants.CDTF_001) }
     }
 
     @Test
@@ -126,6 +177,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
         history: List<NCDReferalFormResponseJsonEntity> = emptyList(),
         cached: FormSchemaEntity? = null
     ) {
+        coEvery { tbReferralFollowUpRepository.getVisits(any()) } returns emptyList()
         coEvery { repository.getAllVisitsByBeneficiary(any(), any()) } returns history
         coEvery { repository.getSavedSchema(any()) } returns cached
         coEvery { repository.getFormSchema(any()) } returns dto

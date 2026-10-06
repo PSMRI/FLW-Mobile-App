@@ -58,7 +58,7 @@ enum class BenStatus {
 // In your BenBasicCache.kt file, REPLACE the old @DatabaseView with this one.
 @DatabaseView(
     viewName = "BEN_BASIC_CACHE",
-    value = "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob,b.isDeactivate, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
+    value = "SELECT b.beneficiaryId as benId,b.isMarried,b.noOfAliveChildren, b.noOfChildren, b.doYouHavechildren ,b.isConsent as isConsent, b.motherName as motherName, b.householdId as hhId, b.regDate, b.createdDate as createdDate, b.updatedDate as updatedDate, b.firstName as benName, b.lastName as benSurname, b.gender, b.dob as dob,b.isDeactivate, b.isDeath,b.isDeathValue,b.dateOfDeath,b.timeOfDeath,b.reasonOfDeath,b.reasonOfDeathId,b.placeOfDeath,b.placeOfDeathId,b.otherPlaceOfDeath,b.isSpouseAdded,b.isChildrenAdded, b.familyHeadRelationPosition as relToHeadId" +
             ", b.contactNumber as mobileNo, b.fatherName,h.fam_familyHeadName as familyHeadName, b.gen_spouseName as spouseName, b.rchId, b.gen_lastMenstrualPeriod as lastMenstrualPeriod" +
             ", b.isHrpStatus as hrpStatus, b.syncState, b.gen_reproductiveStatusId as reproductiveStatusId, b.isKid, b.immunizationStatus" +
             ", b.loc_village_id as villageId, b.abha_healthIdNumber as abhaId" +
@@ -109,7 +109,7 @@ enum class BenStatus {
             "LEFT OUTER JOIN DELIVERY_OUTCOME do ON b.beneficiaryId = do.benId " +
             "LEFT OUTER JOIN INFANT_REG ir ON b.beneficiaryId = ir.motherBenId " +
             "LEFT OUTER JOIN CHILD_REG cr ON b.beneficiaryId = cr.motherBenId " +
-            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY b.updatedDate DESC"
+            "WHERE b.isDraft = 0 GROUP BY b.beneficiaryId ORDER BY MAX(IFNULL(b.updatedDate, 0), IFNULL(b.createdDate, 0), IFNULL(b.regDate, 0)) DESC, b.beneficiaryId DESC"
 )
 @Parcelize
 data class BenBasicCache(
@@ -193,8 +193,11 @@ data class BenBasicCache(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
-    var isDeactivate: Boolean =false
+    var isDeactivate: Boolean =false,
+    val createdDate: Long? = null,
+    val updatedDate: Long? = null
 ) : Parcelable {
+    fun lifoMillis(): Long = maxOf(updatedDate ?: 0L, createdDate ?: 0L, regDate)
     companion object {
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
         fun getAgeFromDob(dob: Long): Int {
@@ -309,10 +312,10 @@ data class BenBasicCache(
             noOfAliveChildren = noOfAliveChildren,
             noOfChildren = noOfChildren,
             doYouHavechildren = doYouHavechildren,
-            isDeactivate = isDeactivate
-
-
-
+            isDeactivate = isDeactivate,
+            createdDate = createdDate,
+            updatedDate = updatedDate,
+            regDateMillis = regDate
         )
     }
 
@@ -341,7 +344,10 @@ data class BenBasicCache(
             noOfAliveChildren = noOfAliveChildren,
             noOfChildren = noOfChildren,
             doYouHavechildren = doYouHavechildren,
-            reproductiveStatusId = reproductiveStatusId
+            reproductiveStatusId = reproductiveStatusId,
+            createdDate = createdDate,
+            updatedDate = updatedDate,
+            regDateMillis = regDate
         )
     }
 
@@ -891,12 +897,16 @@ data class BenBasicDomain(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
-    var isDeactivate: Boolean =false
+    var isDeactivate: Boolean =false,
+    val createdDate: Long? = null,
+    val updatedDate: Long? = null,
+    val regDateMillis: Long = 0L
 
 ) : Parcelable{
+    fun lifoMillis(): Long = maxOf(updatedDate ?: 0L, createdDate ?: 0L, regDateMillis)
     val dobString: String
-        get() = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
-            .format(java.util.Date(dob))
+        get() = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+            .format(Date(dob))
 }
 
 

@@ -21,13 +21,20 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.model.NotificationDomain
+import org.piramalswasthya.sakhi.model.NotificationNavTarget
+import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import timber.log.Timber
 
 /**
  * Full-screen notification panel. Added over `android.R.id.content` via [open] so it can be shown
  * from both HomeActivity (ASHA) and SupervisorActivity (Supervisor/CHO/ANM) without touching
  * either nav graph. Back button / close button pop it off the back stack.
  *
- * Phase 1: tap marks-as-read only (no navigation — deeplinking arrives in T17).
+ * Tap always marks-as-read; it additionally deeplinks for the nav_id targets handled in
+ * [onNotificationTapped] (currently INCENTIVE_SCREEN → ASHA's `IncentivesFragment`). Unhandled/
+ * unknown nav_id values, or a host activity that doesn't support a given target, fall through to
+ * mark-read only — never a crash.
  */
 @AndroidEntryPoint
 class NotificationPanelFragment : Fragment() {
@@ -55,7 +62,7 @@ class NotificationPanelFragment : Fragment() {
         view.findViewById<android.widget.ImageView>(R.id.iv_back).setOnClickListener { close() }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { close() }
 
-        adapter = NotificationAdapter { item -> viewModel.markRead(item.notificationId) }
+        adapter = NotificationAdapter { item -> onNotificationTapped(item) }
         rv.layoutManager = LinearLayoutManager(requireContext())
         rv.adapter = adapter
 
@@ -88,8 +95,51 @@ class NotificationPanelFragment : Fragment() {
         ViewCompat.requestApplyInsets(root)
     }
 
+    /**
+     * Pops this panel by name rather than blindly popping the top entry: a second tap (or a back
+     * press landing on an already-closing panel) would otherwise pop whatever else sits on the
+     * activity's back stack.
+     */
     private fun close() {
-        parentFragmentManager.popBackStack()
+        parentFragmentManager.popBackStack(TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+
+    /**
+     * Tap always marks-as-read regardless of the routing target. If the target has a handler for the
+     * current host, the panel is closed and the host navigates; otherwise this is a no-op beyond
+     * mark-read (unknown target, or a role/host that doesn't support it).
+     *
+     * ASHA (HomeActivity) has exactly one incentive screen, so any incentive/claim notification
+     * routes there — including `INCENTIVE_APPROVAL`, which the backend also sends to ASHAs, and
+     * unrecognised target keys on an otherwise incentive-related notification
+     * ([NotificationDomain.isIncentiveRelated]). Without that fallback a naming mismatch between
+     * `navId`, `redirect` and the mobile enum silently does nothing on tap.
+     */
+    private fun onNotificationTapped(item: NotificationDomain) {
+        viewModel.markRead(item.notificationId)
+        val isAshaHost = activity is HomeActivity
+        when (NotificationNavTarget.fromNavId(item.navTarget)) {
+            NotificationNavTarget.INCENTIVE_SCREEN -> navigateToIncentivesScreen()
+            // Supervisor-side verification screen isn't wired yet; on an ASHA device the same
+            // notification means "your claim was acted on" → the ASHA incentives screen.
+            NotificationNavTarget.INCENTIVE_APPROVAL -> if (isAshaHost) navigateToIncentivesScreen()
+            NotificationNavTarget.NONE -> {
+                if (isAshaHost && item.isIncentiveRelated) {
+                    Timber.d("Unrecognised nav target '${item.navTarget}'; routing incentive notification to IncentivesFragment")
+                    navigateToIncentivesScreen()
+                }
+            }
+        }
+    }
+
+    private fun navigateToIncentivesScreen() {
+        val homeActivity = activity as? HomeActivity
+        if (homeActivity == null) {
+            Timber.w("INCENTIVE_SCREEN nav_id tapped but host is not HomeActivity; skipping navigation")
+            return
+        }
+        close()
+        homeActivity.navigateToIncentivesFromNotification()
     }
 
     private fun attachSwipeToDismiss(rv: RecyclerView) {
