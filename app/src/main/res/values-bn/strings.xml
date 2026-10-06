@@ -1365,8 +1365,9 @@
     <string name="delivery_discharge_summary_4">প্রসব ছাড়পত্র সারসংক্ষেপ ৪</string>
     <string name="symptomatic_tb_screening">লক্ষণ-ভিত্তিক TB স্ক্রিনিং</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">ব্যক্তির এই লক্ষণগুলোর কোনোটি আছে কিনা পরীক্ষা করুন:</string>
-    <string name="tb_asymptomatic_symptoms">উপসর্গহীন লক্ষণ</string>
+    <string name="tb_asymptomatic_symptoms">উপকারভোগীর কোনো উপসর্গ নেই</string>
     <string name="tb_rise_of_fever">সন্ধ্যায় জ্বর বৃদ্ধি</string>
+    <string name="refer">রেফার করুন</string>
     <string name="tb_loss_of_appetite">ক্ষুধামন্দা</string>
     <string name="tb_child_failure_to_gain_weight">শিশুদের ওজন না বাড়া</string>
     <string name="tb_child_decreased_activity">শিশুদের কার্যকলাপ বা খেলাধুলায় আগ্রহ কমে যাওয়া</string>
@@ -1569,4 +1570,15 @@
     <string name="visit_completed_starting_next_visit_screening">ভিজিট সম্পন্ন হয়েছে! পরবর্তী ভিজিটের স্ক্রিনিং শুরু হচ্ছে।</string>
     <string name="failed_to_save_follow_up">ফলো-আপ সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
     <string name="speech_to_text_unavailable">এই ডিভাইসে ভয়েস ইনপুট উপলব্ধ নয়</string>
+    <string name="start_follow_up">ফলো-আপ শুরু করুন</string>
+    <string name="view_follow_up">ফলো-আপ দেখুন</string>
+    <string-array name="TB_referral_facility">
+        <item>যক্ষ্মা ইউনিট (TU)</item>
+        <item>HWC-সাবসেন্টার</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>জেলা হাসপাতাল</item>
+        <item>জেলা যক্ষ্মা কেন্দ্র (DTC)</item>
+        <item>সরকারি মেডিকেল কলেজ</item>
+    </string-array>
 </resources>

@@ -65,6 +65,7 @@ import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.InputType
+
 import org.piramalswasthya.sakhi.model.InputType.AGE_PICKER
 import org.piramalswasthya.sakhi.model.InputType.CHECKBOXES
 import org.piramalswasthya.sakhi.model.InputType.DATE_PICKER
@@ -89,6 +90,17 @@ import timber.log.Timber
 import java.util.Calendar
 import java.util.Locale
 
+internal fun isMultiSelectOptionEnabled(
+    exclusiveIndices: Set<Int>?,
+    checkedItems: BooleanArray,
+    optionIndex: Int
+): Boolean {
+    if (exclusiveIndices.isNullOrEmpty()) return true
+    val selectedExclusiveIndex = exclusiveIndices.firstOrNull {
+        checkedItems.getOrElse(it) { false }
+    } ?: return true
+    return optionIndex == selectedExclusiveIndex
+}
 
 class FormInputAdapter(
     private val imageClickListener: ImageClickListener? = null,
@@ -799,8 +811,17 @@ class FormInputAdapter(
                         val view = super.getView(position, convertView, parent) as CheckedTextView
                         val originalIndex = filteredIndices[position]
                         view.isChecked = checkedItems[originalIndex]
+                        view.isEnabled = isMultiSelectOptionEnabled(
+                            item.exclusiveOptionIndices, checkedItems, originalIndex
+                        )
+                        view.alpha = if (view.isEnabled) 1f else 0.5f
                         return view
                     }
+
+                    override fun isEnabled(position: Int): Boolean =
+                        isMultiSelectOptionEnabled(
+                            item.exclusiveOptionIndices, checkedItems, filteredIndices[position]
+                        )
                 }
                 listView.adapter = adapter
                 filteredIndices.forEachIndexed { position, originalIndex ->
@@ -816,6 +837,9 @@ class FormInputAdapter(
 
             listView.setOnItemClickListener { _, _, position, _ ->
                 val originalIndex = filteredIndices[position]
+                if (!isMultiSelectOptionEnabled(item.exclusiveOptionIndices, checkedItems, originalIndex)) {
+                    return@setOnItemClickListener
+                }
                 val newCheckedState = listView.isItemChecked(position)
                 checkedItems[originalIndex] = newCheckedState
                 applyExclusiveSelection(item, checkedItems, originalIndex, newCheckedState)

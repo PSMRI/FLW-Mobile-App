@@ -244,7 +244,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
         val referral = ReferalCache(benId = id, type = type, syncState = SyncState.SYNCED)
         val cache = mockk<BenWithCbacAndReferalCache>(relaxed = true)
         every { cache.referral } returns referral
-        every { cache.asDomainModel() } returns BenWithCbacReferDomain(domain, emptyList(), referral)
+        every { cache.asDomainModel() } returns BenWithCbacReferDomain(domain, emptyList(), referral, emptyList())
         return cache
     }
 

@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -87,6 +88,23 @@ class TbSuspectedListAdapter(
                     binding.spouse = item.ben.spouseName != "Not Available"
                     binding.husband = false
                 }
+            }
+
+            if (item.ben.isDeath) {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+                )
+                if (item.tbSuspected ==  null) {
+                    binding.btnFormTb.visibility = View.GONE
+                } else {
+                    binding.btnFormTb.visibility = View.VISIBLE
+
+                }
+
+            } else {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+                )
             }
 
             binding.btnFormTb.text = if (item.tbSuspected == null) binding.root.resources.getString(R.string.track) else binding.root.resources.getString(R.string.view)
