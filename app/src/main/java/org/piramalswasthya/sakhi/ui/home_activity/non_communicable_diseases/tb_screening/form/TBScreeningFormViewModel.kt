@@ -65,6 +65,10 @@ class TBScreeningFormViewModel @Inject constructor(
     val recordExists: LiveData<Boolean>
         get() = _recordExists
 
+    private val _asymptomaticRefresh = MutableLiveData<Int>()
+    val asymptomaticRefresh: LiveData<Int>
+        get() = _asymptomaticRefresh
+
     //    private lateinit var user: UserDomain
     private val dataset =
         TBScreeningDataset(context, preferenceDao.getCurrentLanguage())
@@ -135,6 +139,9 @@ class TBScreeningFormViewModel @Inject constructor(
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
             dataset.updateList(formId, index)
+            if (dataset.isAsymptomaticDriver(formId)) {
+                _asymptomaticRefresh.value = dataset.getIndexOfAsymptomatic()
+            }
         }
 
     }
@@ -201,6 +208,7 @@ class TBScreeningFormViewModel @Inject constructor(
     fun getIndexOfDate(): Int {
         return dataset.getIndexOfDate()
     }
+    fun getIndexOfAsymptomatic(): Int = dataset.getIndexOfAsymptomatic()
 
 }
 

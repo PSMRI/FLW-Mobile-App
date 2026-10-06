@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.utils.RoleConstants
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import timber.log.Timber
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -150,7 +151,7 @@ class AllHouseholdFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
                     hhId = viewModel.selectedHouseholdId,
                     relToHeadId = relIndex,
@@ -268,8 +269,10 @@ class AllHouseholdFragment : Fragment() {
         }
         viewModel.navigateToNewHouseholdRegistration.observe(viewLifecycleOwner) {
             if (it) {
-                findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
+                // Reset first: a double tap on "next page" posts a second `true` that would
+                // otherwise fire after we've already left this destination.
                 viewModel.navigateToNewHouseholdRegistrationCompleted()
+                findNavController().safeNavigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
             }
         }
 

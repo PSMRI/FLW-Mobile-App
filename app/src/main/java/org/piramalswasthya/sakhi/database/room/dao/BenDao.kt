@@ -343,8 +343,21 @@ interface BenDao {
     fun getAllBenGenderCount(selectedVillage: Int, gender: String): Flow<Int>
 
     @Transaction
-    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId  and isDeactivate=0 and isDeath=0" + BenListOrder.LIFO)
+    @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage and hhId = :hhId" + BenListOrder.LIFO)
     fun getAllTbScreeningBen(selectedVillage: Int,hhId: Long): Flow<List<BenWithTbScreeningCache>>
+
+
+    @Transaction
+    @Query(
+        "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
+                "INNER JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
+                "WHERE BEN_BASIC_CACHE.villageId = :selectedVillage " +
+                "AND BEN_BASIC_CACHE.isDeactivate = 0 AND BEN_BASIC_CACHE.isDeath = 0 " +
+                "AND TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
+                "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
+                "AND TB_SCREENING.keyPopulationRiskFactors != '[]' " + BenListOrder.LIFO
+    )
+    fun getAllTbScreenedRiskFactorBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
 
     @Transaction
     @Query("SELECT * FROM BEN_BASIC_CACHE where villageId = :selectedVillage   and isDeactivate=0 and isDeath=0")
@@ -1002,14 +1015,14 @@ GROUP BY b.benId
     SELECT  r.*, b.*
    FROM BEN_BASIC_CACHE b
    INNER JOIN NCD_REFER r ON b.benId = r.benId
-   WHERE CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-     AND b.reproductiveStatusId != 2
+   WHERE ((CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
+     AND b.reproductiveStatusId != 2) OR r.type IN ('CHILD', 'MATERNAL'))
      AND b.villageId = :selectedVillage
      AND b.isDeactivate = 0
 """ + BenListOrder.LIFO_B)
     fun getBenWithReferredCbac(
         selectedVillage: Int,
-        min: Int = Konstants.minAgeForNcd
+        min: Int = Konstants.minAgeForHWCRefferList
     ): Flow<List<BenWithCbacAndReferalCache>>
 
 
@@ -1017,14 +1030,14 @@ GROUP BY b.benId
   SELECT COUNT(b.benId)
     FROM BEN_BASIC_CACHE b
     INNER JOIN NCD_REFER r ON b.benId = r.benId
-      AND CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-      AND b.reproductiveStatusId != 2
+      AND ((CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
+      AND b.reproductiveStatusId != 2) OR r.type IN ('CHILD', 'MATERNAL'))
       AND b.villageId = :selectedVillage
       AND b.isDeactivate=0
 """)
      fun getReferredBenCount(
         selectedVillage: Int,
-        min: Int = Konstants.minAgeForNcd
+        min: Int = Konstants.minAgeForHWCRefferList
     ): Flow<Int>
 
     @Query("""

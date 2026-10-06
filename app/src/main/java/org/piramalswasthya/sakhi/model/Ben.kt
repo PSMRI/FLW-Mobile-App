@@ -1485,6 +1485,8 @@ data class BenRegCache(
             createdBy = createdBy!!,
             createdDate = getDateTimeStringFromLong(createdDate!!)!!,
             ncdPriority = ncdPriority,
+            suspected_tb = suspectedTb,
+            confirmed_tb = confirmedTb,
             guidelineId = guidelineId ?: "0",
             villageName = locationRecord.village.name,
             currSubDistrictId = locationRecord.block.id,

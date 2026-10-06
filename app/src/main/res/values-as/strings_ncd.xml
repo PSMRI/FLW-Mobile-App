@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="referred_on">প্ৰেৰণৰ তাৰিখ</string>
     <string-array name="tb_submitted_yet">
         <item>ডিএমচি</item>
         <item>এসচি</item>
@@ -295,6 +296,7 @@
     <string name="cat_geriatric">বৃদ্ধজন</string>
     <string name="cat_hrp">উচ্চ ঝুঁকিপূর্ণ গৰ্ভাৱস্থা</string>
     <string name="cat_maternal">মাতৃ</string>
+    <string name="cat_child">শিশু</string>
 
     <string name="select_years">বছৰ বাছনি কৰক</string>
     <string name="years_35">৩৫ বছৰ</string>
@@ -309,8 +311,14 @@
     <string name="years_80">৮০ বছৰ</string>
 
     <string name="suspected_leprosy_case">কুষ্ঠ ৰোগৰ সন্দেহজনক ঘটনা</string>
+    <string name="suspected_newborn_complication">সন্দেহজনক নবজাতক জটিলতা</string>
+    <string name="suspected_illness_young_child">শিশুৰ সন্দেহজনক ৰোগ</string>
     <string name="ncd_referral_type">এনচিডি</string>
     <string name="suspected_tb_case">টিবি সন্দেহজনক ঘটনা</string>
     <string name="suspected_copd_case">চিঅ\'পিডি সন্দেহজনক ঘটনা</string>
+    <string name="tb_suspected_case_title">সন্দেহজনক টিবি ৰোগী!</string>
+    <string name="tb_alert_collect_sputum">HWCলৈ ৰেফাৰ কৰক আৰু খেকাৰৰ নমুনা সংগ্ৰহ কৰক।</string>
+    <string name="tb_alert_screen_family">HWCলৈ ৰেফাৰ কৰক আৰু পৰিয়ালৰ সকলো সদস্যক পৰীক্ষা কৰিবলৈ ANM/MPWক জনাওক।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">HWCলৈ ৰেফাৰ কৰক, খেকাৰৰ নমুনা সংগ্ৰহ কৰক আৰু পৰিয়ালৰ সকলো সদস্যক পৰীক্ষা কৰিবলৈ ANM/MPWক জনাওক।</string>
 </resources>
 

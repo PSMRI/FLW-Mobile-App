@@ -116,6 +116,8 @@
     <string name="icon_title_sr">সমীক্ষা ৰেজিষ্টাৰ</string>
     <string name="icon_title_ahd_list">AHD ফৰ্মৰ তালিকা</string>
     <string name="loginusername">প্ৰৱেশ ব্যৱহাৰকাৰীৰ নাম</string>
+    <string name="icon_title_ncd_tbtpreventive_treatment">যক্ষ্মা প্ৰতিৰোধমূলক চিকিৎসা</string>
+    <string name="icon_title_ncd_vulnerable_treatment">দুৰ্বল জনগোষ্ঠী</string>
     <string name="asha_empid">ASHA কৰ্মচাৰীৰ ID</string>
     <string name="menu_supervisor">আশা নিৰীক্ষক</string>
     <string name="place">স্থান</string>

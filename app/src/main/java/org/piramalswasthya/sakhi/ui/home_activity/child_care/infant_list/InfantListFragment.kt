@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.databinding.AlertFilterBinding
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchAndToggleRvButtonBinding
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class InfantListFragment : Fragment() {
@@ -87,7 +88,7 @@ class InfantListFragment : Fragment() {
 
         benAdapter = InfantListAdapter(
             InfantListAdapter.InfantListClickListener { benId, hhId ->
-                findNavController().navigate(
+                findNavController().safeNavigate(
                     InfantListFragmentDirections.actionInfantListFragmentToInfantFormFragment(
                         benId = benId,
                         hhId = hhId,

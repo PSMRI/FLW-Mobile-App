@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBNC_FORM_ID
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class InfantDayListFragment : Fragment() {
@@ -68,7 +69,7 @@ class InfantDayListFragment : Fragment() {
                     isViewMode = !card.isEditable,
                     formId = HBNC_FORM_ID
                 )
-            findNavController().navigate(action)
+            findNavController().safeNavigate(action)
         }
         binding.recyclerVisitCards.adapter = visitAdapter
 

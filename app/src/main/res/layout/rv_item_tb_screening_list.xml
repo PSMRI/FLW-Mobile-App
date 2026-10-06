@@ -353,6 +353,17 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/riskfactRV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
+                    >
+
+                </androidx.recyclerview.widget.RecyclerView>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_form_tb"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"

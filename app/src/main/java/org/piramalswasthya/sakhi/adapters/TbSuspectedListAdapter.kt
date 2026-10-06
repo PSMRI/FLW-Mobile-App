@@ -54,7 +54,10 @@ class TbSuspectedListAdapter(
                 binding.btnFormTb.visibility = View.VISIBLE
             }
 
+
             binding.benWithTb = item
+            binding.nikshayLayout.visibility = View.VISIBLE
+            binding.RCHlayout.visibility = View.GONE
 
             binding.ivSyncState.visibility = if (item.tbSuspected == null) View.INVISIBLE else View.VISIBLE
 

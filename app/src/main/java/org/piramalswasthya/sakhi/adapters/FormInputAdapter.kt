@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.adapters
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -23,12 +24,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.CheckedTextView
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -589,12 +595,19 @@ class FormInputAdapter(
         ) {
             binding.form = item
             binding.llChecks.removeAllViews()
+            val effectiveEnabled = isEnabled && item.isEnabled
+
 
             val selectedIndexes = item.value
                 ?.split("|")
                 ?.mapNotNull { it.toIntOrNull() }
                 ?.toMutableSet()
                 ?: mutableSetOf()
+
+            if (item.showAsMultiSelectDialog) {
+                bindMultiSelectDialog(item, effectiveEnabled, selectedIndexes, formValueListener)
+                return
+            }
 
             item.entries?.forEachIndexed { index, text ->
 
@@ -626,7 +639,238 @@ class FormInputAdapter(
             binding.executePendingBindings()
         }
 
+
+        private fun bindMultiSelectDialog(
+            item: FormElement,
+            effectiveEnabled: Boolean,
+            selectedIndexes: MutableSet<Int>,
+            formValueListener: FormValueListener?
+        ) {
+            binding.tvTitle.visibility = View.GONE
+            binding.llChecks.visibility = View.GONE
+            binding.tilMultiSelect.visibility = View.VISIBLE
+            val title = item.title ?: ""
+            val hintText = when {
+                item.required && item.doubleStar -> SpannableString("$title **").apply {
+                    setSpan(
+                        ForegroundColorSpan(Color.parseColor("#B00020")),
+                        length - 2,
+                        length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                item.required -> SpannableString("$title *").apply {
+                    setSpan(
+                        ForegroundColorSpan(Color.parseColor("#B00020")),
+                        length - 1,
+                        length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                else -> title
+            }
+            binding.tilMultiSelect.hint = hintText
+            binding.tilMultiSelect.isEnabled = effectiveEnabled
+            binding.etMultiSelect.isEnabled = effectiveEnabled
+            binding.etMultiSelect.isClickable = effectiveEnabled
+            binding.etMultiSelect.isFocusable = false
+            binding.etMultiSelect.setText(selectedIndexes.toDisplayText(item))
+            binding.tilMultiSelect.error = item.errorText
+
+            val showDialog = View.OnClickListener {
+                if (!effectiveEnabled) return@OnClickListener
+                val labels = item.entries ?: emptyArray()
+                val checkedItems = BooleanArray(labels.size) { index -> selectedIndexes.contains(index) }
+
+                if (item.enableSearchInMultiSelect) {
+                    showSearchableMultiSelectDialog(
+                        item,
+                        labels,
+                        checkedItems,
+                        selectedIndexes,
+                        formValueListener
+                    )
+                } else {
+                    AlertDialog.Builder(binding.root.context)
+                        .setTitle(item.title)
+                        .setMultiChoiceItems(labels, checkedItems) { dialog, which, isChecked ->
+                            applyExclusiveSelection(item, checkedItems, which, isChecked)
+                            val listView = (dialog as? AlertDialog)?.listView
+                            checkedItems.indices.forEach { idx -> listView?.setItemChecked(idx, checkedItems[idx]) }
+                        }
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            applyMultiSelectResult(item, checkedItems, selectedIndexes, formValueListener)
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                }
+            }
+            binding.etMultiSelect.setOnClickListener(showDialog)
+            binding.tilMultiSelect.setEndIconOnClickListener(showDialog)
+            binding.executePendingBindings()
+        }
+
+        private fun applyExclusiveSelection(
+            item: FormElement,
+            checkedItems: BooleanArray,
+            which: Int,
+            isChecked: Boolean
+        ) {
+            val exclusiveIndices = item.exclusiveOptionIndices ?: return
+            if (isChecked && exclusiveIndices.contains(which)) {
+                checkedItems.indices.forEach { idx ->
+                    checkedItems[idx] = idx == which
+                }
+            } else if (isChecked && exclusiveIndices.isNotEmpty()) {
+                exclusiveIndices.forEach { idx -> checkedItems[idx] = false }
+                checkedItems[which] = true
+            } else {
+                checkedItems[which] = false
+            }
+        }
+
+        private fun applyMultiSelectResult(
+            item: FormElement,
+            checkedItems: BooleanArray,
+            selectedIndexes: MutableSet<Int>,
+            formValueListener: FormValueListener?
+        ) {
+            selectedIndexes.clear()
+            checkedItems.forEachIndexed { index, checked ->
+                if (checked) selectedIndexes.add(index)
+            }
+            item.value =
+                if (selectedIndexes.isEmpty()) null
+                else selectedIndexes.sorted().joinToString("|")
+            item.errorText = null
+            binding.tilMultiSelect.error = null
+            binding.clRi.setBackgroundResource(0)
+            binding.etMultiSelect.setText(selectedIndexes.toDisplayText(item))
+            formValueListener?.onValueChanged(item, -1)
+        }
+
+        private fun showSearchableMultiSelectDialog(
+            item: FormElement,
+            labels: Array<String>,
+            checkedItems: BooleanArray,
+            selectedIndexes: MutableSet<Int>,
+            formValueListener: FormValueListener?
+        ) {
+            val context = binding.root.context
+            val density = context.resources.displayMetrics.density
+            val maxListHeightPx = (context.resources.displayMetrics.heightPixels * 0.58f).toInt()
+            val rowHeightPx = (48 * density).toInt()
+            val container = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding((20 * density).toInt(), (8 * density).toInt(), (20 * density).toInt(), 0)
+            }
+            val searchInput = EditText(context).apply {
+                hint = context.getString(R.string.household_search)
+                setSingleLine(true)
+            }
+            val listView = ListView(context).apply {
+                choiceMode = ListView.CHOICE_MODE_MULTIPLE
+            }
+            container.addView(
+                searchInput,
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            )
+            container.addView(
+                listView,
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0
+                )
+            )
+
+            var filteredIndices = labels.indices.toList()
+
+            fun refreshFilteredList(query: String) {
+                filteredIndices = labels.indices.filter { labels[it].contains(query, ignoreCase = true) }
+                val adapter = object : ArrayAdapter<String>(
+                    context,
+                    android.R.layout.simple_list_item_multiple_choice,
+                    filteredIndices.map { labels[it] }
+                ) {
+                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getView(position, convertView, parent) as CheckedTextView
+                        val originalIndex = filteredIndices[position]
+                        view.isChecked = checkedItems[originalIndex]
+                        return view
+                    }
+                }
+                listView.adapter = adapter
+                filteredIndices.forEachIndexed { position, originalIndex ->
+                    listView.setItemChecked(position, checkedItems[originalIndex])
+                }
+                // Keep the native button panel below the scrollable list on every screen size.
+                listView.layoutParams = listView.layoutParams.apply {
+                    height = minOf(filteredIndices.size * rowHeightPx, maxListHeightPx)
+                }
+            }
+
+            refreshFilteredList("")
+
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val originalIndex = filteredIndices[position]
+                val newCheckedState = listView.isItemChecked(position)
+                checkedItems[originalIndex] = newCheckedState
+                applyExclusiveSelection(item, checkedItems, originalIndex, newCheckedState)
+                refreshFilteredList(searchInput.text?.toString().orEmpty())
+            }
+
+            searchInput.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+                override fun afterTextChanged(s: Editable?) {
+                    refreshFilteredList(s?.toString().orEmpty())
+                }
+            })
+
+            val dialog = AlertDialog.Builder(context)
+                .setTitle(item.title)
+                .setView(container)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    applyMultiSelectResult(item, checkedItems, selectedIndexes, formValueListener)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+
+            dialog.window?.setLayout(
+                (context.resources.displayMetrics.widthPixels * 0.9f).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            val buttonPadding = (16 * density).toInt()
+            val actionTextColor = ContextCompat.getColor(context, R.color.md_theme_light_primary)
+            listOf(AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_POSITIVE).forEach { which ->
+                dialog.getButton(which).apply {
+                    // Match the original dialog's text-button actions and prevent overlap.
+                    background = null
+                    minWidth = 0
+                    minimumWidth = 0
+                    setTextColor(actionTextColor)
+                    setPadding(buttonPadding, 0, buttonPadding, 0)
+                }
+            }
+            (dialog.getButton(AlertDialog.BUTTON_NEGATIVE).layoutParams as? ViewGroup.MarginLayoutParams)
+                ?.let { params ->
+                    params.marginEnd = buttonPadding
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).layoutParams = params
+                }
+        }
+
+        private fun Set<Int>.toDisplayText(item: FormElement): String =
+            sorted()
+                .mapNotNull { index -> item.entries?.getOrNull(index) }
+                .joinToString(", ")
+
+
     }
+
 
     class ButtonInputViewHolder private constructor(private val binding: RvItemFormBtnBinding) :
         ViewHolder(binding.root) {

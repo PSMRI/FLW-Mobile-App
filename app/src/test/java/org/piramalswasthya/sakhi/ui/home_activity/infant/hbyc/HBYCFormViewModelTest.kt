@@ -29,6 +29,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -41,13 +42,14 @@ class HBYCFormViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var repository: FormRepository
     @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var infantRegRepo: InfantRegRepo
+    @MockK(relaxed = true) private lateinit var referalRepo: NcdReferalRepo
 
     private lateinit var viewModel: HBYCFormViewModel
 
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = HBYCFormViewModel(repository, benRepo, infantRegRepo)
+        viewModel = HBYCFormViewModel(repository, benRepo, infantRegRepo, referalRepo)
     }
 
     // =====================================================
@@ -398,7 +400,7 @@ class HBYCFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `loadFormSchema resolves visibility from the dependency default value`() = runTest {
+    fun `loadFormSchema hides dependent fields until the radio dependency is answered`() = runTest {
         stubSchema(
             schemaOf(
                 fieldOf("is_baby_alive", type = "radio", defaultValue = "Yes"),
@@ -409,7 +411,7 @@ class HBYCFormViewModelTest : BaseViewModelTest() {
         viewModel.loadFormSchema(benIdFixture, formIdFixture, "3 Months", false, dobFixture, "en")
         advanceUntilIdle()
 
-        assertTrue(fieldNamed("growth_chart").visible)
+        assertFalse(fieldNamed("growth_chart").visible)
     }
 
     @Test

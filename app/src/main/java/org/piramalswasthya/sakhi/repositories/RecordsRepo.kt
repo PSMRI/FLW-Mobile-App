@@ -187,6 +187,13 @@ class RecordsRepo @Inject constructor(
 
     val tbScreeningListCount = allScreeningList.map { it.size }
 
+
+    var tbScreeningRiskfactorListforVulneravility = benDao.getAllTbScreenedRiskFactorBen(selectedVillage)
+        .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbScreeningDomainModel() } }
+
+    val tbScreeningRiskfactorListforVulneravilityCount = tbScreeningRiskfactorListforVulneravility.map { it.size }
+
+
     val tbSuspectedList = benDao.getTbScreeningList(selectedVillage)
         .map { list -> list.sortedByBenLifo { it.ben }.map { it.asTbSuspectedDomainModel() } }
     val tbSuspectedListCount = tbSuspectedList.map { it.size }

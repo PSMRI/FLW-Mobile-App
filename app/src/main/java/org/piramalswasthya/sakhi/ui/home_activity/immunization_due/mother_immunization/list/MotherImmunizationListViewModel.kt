@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
@@ -25,13 +25,14 @@ class MotherImmunizationListViewModel @Inject constructor(
 
 ) : ViewModel() {
     private val pastRecords = vaccineDao.getBenWithImmunizationRecords()
-    private lateinit var vaccinesList: List<Vaccine>
+    /** Mother vaccine master list; null until loaded, so the details flow waits for it. */
+    private val loadedVaccines = MutableStateFlow<List<Vaccine>?>(null)
 
-    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+    val benWithVaccineDetails = pastRecords.combine(loadedVaccines.filterNotNull()) { vaccineIdList, vaccines ->
         vaccineIdList.map { cache ->
             val ageMillis = getTodayMillis() - cache.lmp
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccinesList.filter {
+                vaccineStateList = vaccines.filter {
                     it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
                     VaccineDomain(
@@ -67,7 +68,7 @@ class MotherImmunizationListViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.MOTHER)
+                loadedVaccines.value = vaccineDao.getVaccinesForCategory(ImmunizationCategory.MOTHER)
             }
         }
     }

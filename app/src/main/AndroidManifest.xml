@@ -128,5 +128,9 @@
     <queries>
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />
+        <!-- Lets SpeechToTextContract see whether a speech recognizer exists (Android 11+). -->
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+        </intent>
     </queries>
 </manifest>
