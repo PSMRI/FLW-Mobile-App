@@ -102,6 +102,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
     private var timeStampDateOfMarriageFromSpouse: Long? = null
     private var savedMarriageDateOnEdit: Long? = null
     private var isHoF: Boolean = false
+    private var isNonHouseholdMode: Boolean = false
     private var isAddSppouse: Int = 0
 
     private var isAddSpouse: Boolean = false
@@ -349,6 +350,20 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         max = 9999999999,
         min = 6000000000
     )
+    private val livingPlace = FormElement(
+        id = 10014,
+        inputType = TEXT_VIEW,
+        title = resources.getString(R.string.place_of_current_living),
+        arrayId = -1,
+        required = false
+    )
+    private val institutionName = FormElement(
+        id = 10015,
+        inputType = TEXT_VIEW,
+        title = resources.getString(R.string.name_of_institution),
+        arrayId = -1,
+        required = false
+    )
 
 
     private val relationToHeadListDefault =
@@ -593,7 +608,13 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         )
     }
 
-    suspend fun setFirstPageToRead(ben: BenRegCache?, familyHeadPhoneNo: Long?) {
+    suspend fun setFirstPageToRead(
+        ben: BenRegCache?,
+        familyHeadPhoneNo: Long?,
+        isNonHousehold: Boolean = false
+    ) {
+        isNonHouseholdMode = isNonHousehold
+
         val list = mutableListOf(
             pic,
             dateOfReg,
@@ -601,16 +622,25 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             lastName,
             agePopup,
             gender,
-            maritalStatus,
             fatherName,
             motherName,
-            relationToHead,
-            mobileNoOfRelation,
             contactNumber,
-            community,
-            religion,
-            rchId,
         )
+
+        if (!isNonHousehold) {
+            list.add(6, maritalStatus)
+            list.add(9, relationToHead)
+            list.add(10, mobileNoOfRelation)
+        } else {
+            livingPlace.value = ben?.otherLivingPlace ?: ben?.livingPlace
+            list.add(livingPlace)
+            ben?.institutionName?.takeIf { it.isNotBlank() }?.let {
+                institutionName.value = it
+                list.add(institutionName)
+            }
+        }
+
+        list.addAll(listOf(community, religion, rchId))
 
         this.familyHeadPhoneNo = familyHeadPhoneNo?.toString()
 
@@ -701,6 +731,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             typeOfSchool.value =
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
+
+            if (isNonHouseholdMode) {
+                institutionName.value = saved.institutionName
+            }
 
 
             reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let { statusId ->
@@ -836,6 +870,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             list.remove(rchId)
         }
 
+        if (isNonHouseholdMode && institutionName.value?.isNotBlank() == true && !list.contains(institutionName)) {
+            list.add(list.indexOf(livingPlace) + 1, institutionName)
+        }
+
         setUpPage(list)
     }
 
@@ -866,8 +904,13 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
     suspend fun setPageForHof(
         ben: BenRegCache?,
         household: HouseholdCache,
-        abhaMember: FamilyMember? = null
+        abhaMember: FamilyMember? = null,
+        isNonHousehold: Boolean = false,
+        nonHouseholdLivingPlace: String? = null,
+        nonHouseholdInstitutionName: String? = null,
+        nonHouseholdOtherLivingPlace: String? = null
     ) {
+        isNonHouseholdMode = isNonHousehold
         val list = mutableListOf(
             pic,
             dateOfReg,
@@ -880,22 +923,27 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 //        if (isMitaninVariant && ben == null) {
 //            list.add(list.indexOf(dateOfReg), abhaIdCheck)
 //        }
-        if (!isMitaninVariant) {
+        if (!isMitaninVariant && !isNonHousehold) {
             list.addAll(listOf(tempraryContactNo, tempraryContactNoBelongsto, sendOtpBtn))
         }
-        list.addAll(listOf(
-            agePopup,
-            gender,
-            maritalStatus,
-            fatherName,
-            motherName,
-            contactNumber,
-            community,
-            religion,
-            rchId,
-        ))
+        list.addAll(listOf(agePopup, gender))
+        if (!isNonHousehold) list.add(maritalStatus)
+        list.addAll(listOf(fatherName, motherName, contactNumber))
+        if (isNonHousehold) {
+            livingPlace.value = nonHouseholdOtherLivingPlace ?: nonHouseholdLivingPlace
+            list.add(livingPlace)
+            nonHouseholdInstitutionName?.takeIf { it.isNotBlank() }?.let {
+                institutionName.value = it
+                list.add(institutionName)
+            }
+        }
+        list.addAll(listOf(community, religion, rchId))
         this.familyHeadPhoneNo = household.family?.familyHeadPhoneNo?.toString()
         this.benIfDataExist = ben
+        // The shared dependency handler can add maritalStatus again when age or
+        // gender changes. Mark it as a read-only/hidden dependency for the
+        // non-household variant so those updates cannot reinsert it.
+        maritalStatus.inputType = if (isNonHousehold) TEXT_VIEW else DROPDOWN
         if (!isMitaninVariant) {
             tempraryContactNoBelongsto.value =
                 tempraryContactNoBelongsto.getStringFromPosition(1)
@@ -1057,6 +1105,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 typeOfSchool.getStringFromPosition(saved.kidDetails?.typeOfSchoolId ?: 0)
             rchId.value = saved.rchId
 
+            if (isNonHousehold) {
+                institutionName.value = saved.institutionName
+            }
+
         }
 
         // HoF auto-fill from ABHA/Ayushman details captured during household registration.
@@ -1113,6 +1165,9 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
         if (!isKid() and !hasThirdPage()) {
             list.remove(rchId)
+        }
+        if (isNonHousehold && institutionName.value?.isNotBlank() == true && !list.contains(institutionName)) {
+            list.add(list.indexOf(livingPlace) + 1, institutionName)
         }
         if (hasThirdPage()) {
             updateReproductiveOptionsBasedOnAgeGender(formId = reproductiveStatus.id)
@@ -2916,7 +2971,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         ) != -1
 
         val listChanged3 =
-            if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+            if (isNonHouseholdMode || maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                 if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
                     fatherName.required = false
@@ -2968,7 +3023,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             } != -1
 
         val listChanged4 =
-            if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+            if (isNonHouseholdMode || maritalStatus.inputType == TEXT_VIEW) -1 else {
                 if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent || gender.value == gender.entries!![1]) {
                     triggerDependants(
                         source = religion,
@@ -3425,7 +3480,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             ) != -1
 
             val listChanged3 =
-                if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+                if (isNonHouseholdMode || maritalStatus.inputType == TEXT_VIEW) -1 else {
 
                     if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent) {
                         fatherName.required = false
@@ -3475,7 +3530,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 } != -1
 
             val listChanged4 =
-                if (maritalStatus.inputType == TEXT_VIEW) -1 else {
+                if (isNonHouseholdMode || maritalStatus.inputType == TEXT_VIEW) -1 else {
                     if (getYearsFromDate(agePopup.value.toString()) <= Konstants.maxAgeForAdolescent || gender.value == gender.entries!![1]) {
                         triggerDependants(
                             source = religion,

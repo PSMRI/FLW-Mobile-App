@@ -97,6 +97,8 @@ class BenListAdapter(
             } else {
                 binding.ivCall.visibility = View.GONE
             }
+            binding.ivNonHousehold.visibility =
+                if (item.hhId == 0L) View.VISIBLE else View.GONE
 
             binding.age.text = getLocalizedAge(context, item.dob)
             val isMatched = benIdList.contains(item.benId)
@@ -119,7 +121,11 @@ class BenListAdapter(
 
             var gender = item.gender.toString()
 
-            if (item.relToHeadId == 19) {
+            if (item.hhId == 0L) {
+                // Non-household beneficiaries do not have a household head.
+                binding.HOF.visibility = View.GONE
+                binding.llHof.visibility = View.GONE
+            } else if (item.relToHeadId == 19) {
                 binding.llHof.visibility = View.GONE
                 binding.HOF.visibility = View.VISIBLE
             } else {

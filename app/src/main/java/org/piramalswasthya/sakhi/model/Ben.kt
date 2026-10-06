@@ -1361,7 +1361,13 @@ data class BenRegCache(
     var doYouHavechildren: Boolean = false,
     var noOfChildren: Int = 0,
     var noOfAliveChildren: Int = 0,
-    var isDeactivate: Boolean =false
+    var isDeactivate: Boolean =false,
+
+    // Non-household beneficiaries are registered against householdId = 0. These
+    // values are optional for ordinary household beneficiaries.
+    var livingPlace: String? = null,
+    var otherLivingPlace: String? = null,
+    var institutionName: String? = null
 
     )  : FormDataModel {
 
@@ -1564,7 +1570,12 @@ data class BenRegCache(
             // ABHA / family id are now sent on the syncDataToAmrit request (BenPost)
             // instead of the registrarBeneficaryRegistrationNew request.
             abhaId = healthIdDetails?.healthIdNumber?.takeIf { it.isNotBlank() && it != "undefined" },
-            familyId = healthIdDetails?.familyId?.takeIf { it.isNotBlank() }
+            familyId = healthIdDetails?.familyId?.takeIf { it.isNotBlank() },
+
+            // These fields are populated for non-household beneficiaries and are
+            // sent by syncDataToAmrit. Prefer the entered value when "Other" is selected.
+            placeOfCurrentLiving = otherLivingPlace ?: livingPlace,
+            institutionName = institutionName?.takeIf { it.isNotBlank() }
 
 
         )

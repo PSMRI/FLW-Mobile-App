@@ -25,6 +25,43 @@
     <string name="til_hint_selected_village">নির্বাচিত গ্রাম</string>
 
     <string name="icon_title_household">সব\nপরিবার</string>
+    <string name="icon_title_households">গৃহস্থালি</string>
+    <string name="icon_title_non_households">অ-গৃহস্থালি</string>
+    <string name="non_households_title">অ-গৃহস্থালি</string>
+    <string name="non_household_living_title">বর্তমান বসবাসের তথ্য</string>
+    <string name="non_household_living_description">অনুগ্রহ করে সুবিধাভোগীর বর্তমান বাসস্থানের বিবরণ প্রদান করুন।</string>
+    <string name="place_of_current_living">বর্তমান বসবাসের স্থান *</string>
+    <string name="other_places">অন্যান্য স্থান</string>
+    <string name="name_of_institution">প্রতিষ্ঠানের নাম *</string>
+    <string-array name="non_household_living_places">
+        <item>Footpath</item>
+        <item>রেলওয়ে প্ল্যাটফর্ম</item>
+        <item>বাস স্টেশন</item>
+        <item>কারাগার</item>
+        <item>একটি গাছের নিচে</item>
+        <item>একটি মন্দিরে</item>
+        <item>একটি মসজিদে</item>
+        <item>একটি গির্জায়</item>
+        <item>অন্য কোনো প্রার্থনার স্থান</item>
+        <item>শিক্ষা প্রতিষ্ঠান (স্কুল/কলেজ)</item>
+        <item>একলব্য স্কুল</item>
+        <item>পুনর্বাসন কেন্দ্র</item>
+        <item>এতিমখানা</item>
+        <item>বৃদ্ধাশ্রম</item>
+        <item>ব্যক্তিগত হোস্টেল</item>
+        <item>সরকারি ছাত্রাবাস</item>
+        <item>এনজিও-র হোস্টেল</item>
+        <item>অন্যান্য</item>
+    </string-array>
+    <string-array name="non_household_institution_places">
+        <item>শিক্ষা প্রতিষ্ঠান (স্কুল/কলেজ)</item>
+        <item>পুনর্বাসন কেন্দ্র</item>
+        <item>এতিমখানা</item>
+        <item>বৃদ্ধাশ্রম</item>
+        <item>ব্যক্তিগত হোস্টেল</item>
+        <item>সরকারি ছাত্রাবাস</item>
+        <item>এনজিও-র হোস্টেল</item>
+    </string-array>
     <string name="icon_title_ben">সব\nউপকারভোগী</string>
     <string name="icon_title_ec">যোগ্য\nদম্পতি তালিকা</string>
     <string name="icon_title_mc">মাতৃ স্বাস্থ্য</string>
