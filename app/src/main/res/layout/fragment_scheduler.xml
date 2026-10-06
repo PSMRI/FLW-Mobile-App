@@ -63,7 +63,7 @@
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/vp_impact_badges"
                         android:layout_width="match_parent"
-                        android:layout_height="84dp"
+                        android:layout_height="185dp"
                         android:layout_marginTop="@dimen/padding_small" />
 
                     <!-- explicit prev/next controls + position counter -->
