@@ -3,10 +3,12 @@
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
+    import androidx.core.content.ContextCompat
     import androidx.recyclerview.widget.DiffUtil
     import androidx.recyclerview.widget.ListAdapter
     import androidx.recyclerview.widget.RecyclerView
-    import org.piramalswasthya.sakhi.databinding.RvItemNcdReferBinding
+import org.piramalswasthya.sakhi.databinding.RvItemNcdReferBinding
+import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.helpers.getLocalizedAge
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
@@ -73,8 +75,36 @@
                     }
                 }
 
+                if (item.ben.isDeath) {
+                    binding.contstraintLayoutV.setBackgroundColor(
+                        ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+                    )
+                        binding.btnFollowUp.visibility = View.INVISIBLE
+
+                } else {
+                    binding.contstraintLayoutV.setBackgroundColor(
+                        ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+                    )
+                    binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
+//                    binding.btnFollowUp.setBackgroundColor(binding.root.resources.getColor(if (item.tbrefferalFollowUp == null || item.tbrefferalFollowUp.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+
+                    val isFollowUpPending = item.tbrefferalFollowUp.isNullOrEmpty()
+
+                    binding.btnFollowUp.apply {
+                        text = context.getString(
+                            if (isFollowUpPending) R.string.start_follow_up else R.string.view_follow_up
+                        )
+                        setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                if (isFollowUpPending) android.R.color.holo_red_dark else android.R.color.holo_green_dark
+                            )
+                        )
+                    }
+
+                }
+
                 binding.executePendingBindings()
-                binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 binding.btnFollowUp.setOnClickListener {
                     listener.onClickedFollowUp(item.ben,item.referalCac)
                 }

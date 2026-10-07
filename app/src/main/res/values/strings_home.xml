@@ -18,6 +18,43 @@
     <string name="menu_home_scheduler">Dashboard</string>
     <string name="til_hint_selected_village">Selected Village</string>
     <string name="icon_title_household">All\nHousehold</string>
+    <string name="icon_title_households">Household</string>
+    <string name="icon_title_non_households">Non\nHousehold</string>
+    <string name="non_households_title">Non Households</string>
+    <string name="non_household_living_title">Current Living Information</string>
+    <string name="non_household_living_description">Please provide the beneficiary\'s current living place details.</string>
+    <string name="place_of_current_living">Place of Current Living *</string>
+    <string name="other_places">Other places</string>
+    <string-array name="non_household_living_places">
+        <item>Footpath</item>
+        <item>Railway Platform</item>
+        <item>Bus Station</item>
+        <item>Prison</item>
+        <item>Under a Tree</item>
+        <item>In a Temple</item>
+        <item>In a Mosque</item>
+        <item>In a Church</item>
+        <item>Any other Praying place</item>
+        <item>Educational Institution (School/College)</item>
+        <item>Ekalavya School</item>
+        <item>Rehabilitation center</item>
+        <item>Orphanage Home</item>
+        <item>Old Age Home</item>
+        <item>Private Hostel</item>
+        <item>Govt Hostel</item>
+        <item>NGO\'s Hostel</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="non_household_institution_places">
+        <item>Educational Institution (School/College)</item>
+        <item>Rehabilitation center</item>
+        <item>Orphanage Home</item>
+        <item>Old Age Home</item>
+        <item>Private Hostel</item>
+        <item>Govt Hostel</item>
+        <item>NGO\'s Hostel</item>
+    </string-array>
+    <string name="name_of_institution">Name of Institution *</string>
     <string name="icon_title_ben">All\nBeneficiaries</string>
     <string name="icon_title_ec">Eligible\nCouple List</string>
     <string name="icon_title_mc">Maternal Health</string>

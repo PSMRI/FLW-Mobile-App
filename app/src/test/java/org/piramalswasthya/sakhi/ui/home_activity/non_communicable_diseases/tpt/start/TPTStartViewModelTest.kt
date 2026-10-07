@@ -49,6 +49,7 @@ class TPTStartViewModelTest : BaseRepositoryTest() {
 
         viewModel.saveFormResponses(
             listOf(
+                field("treatment_completed", "Yes"),
                 field("tpt_outcome", "Death"),
                 field("date_of_death", "30-09-2026"),
                 field("place_of_death", "Home"),
@@ -64,6 +65,93 @@ class TPTStartViewModelTest : BaseRepositoryTest() {
         verify { beneficiary.processed = "U" }
         verify { beneficiary.syncState = org.piramalswasthya.sakhi.database.room.SyncState.UNSYNCED }
         coVerify(exactly = 1) { benRepo.updateRecord(beneficiary) }
+    }
+
+    @Test
+    fun loadForm_whenDeathOutcomeSelected_showsDefaultDeathReasonAsReadOnlyText() = runTest {
+        val repository = mockk<TPTStartRepository>(relaxed = true)
+        coEvery { repository.getFollowUps(474849020466) } returns emptyList()
+        coEvery { repository.getFormSchema(any()) } returns deathOutcomeSchema()
+        val viewModel = TPTStartViewModel(
+            repository,
+            mockk(relaxed = true),
+            SavedStateHandle(mapOf(
+                "benId" to 474849020466L,
+                "hhId" to 12345L,
+                "referralFollowUpDate" to "2026-09-29 00:00:00"
+            ))
+        )
+
+        viewModel.loadForm()
+        advanceUntilIdle()
+
+        val reason = viewModel.getVisibleFields().first { it.fieldId == "reason_for_death" }
+        assertEquals("text", reason.type)
+        assertEquals("Tuberculosis", reason.value)
+        assertEquals(false, reason.isEditable)
+
+        viewModel.updateFieldValue("treatment_completed", "No")
+        assertEquals(false, viewModel.getVisibleFields().any { it.fieldId == "reason_for_death" })
+
+        viewModel.updateFieldValue("treatment_completed", "Yes")
+        val restoredReason = viewModel.getVisibleFields().first { it.fieldId == "reason_for_death" }
+        assertEquals("Tuberculosis", restoredReason.value)
+        assertEquals(false, restoredReason.isEditable)
+    }
+
+    @Test
+    fun loadForm_whenTreatmentIsCompleted_restoresSavedVisitAndMakesFormReadOnly() = runTest {
+        val repository = mockk<TPTStartRepository>(relaxed = true)
+        val completedVisit = org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity(
+            benId = 474849020466,
+            houseHoldId = 12345,
+            visitNo = 1,
+            followUpNo = 2,
+            treatmentType = "1HP",
+            treatmentStartDate = "29-09-2026",
+            followUpDate = "30-10-2026",
+            fieldsJson = """{
+                "treatment_completed":"Yes",
+                "follow_up_date":"30-10-2026",
+                "monthly_follow_up":"Month-2",
+                "visit_notes":"Treatment course completed"
+            }"""
+        )
+        coEvery { repository.getFollowUps(474849020466) } returns listOf(completedVisit)
+        coEvery { repository.getFormSchema(any()) } returns FormSchemaDto(
+            formId = "tb_tpt_follow_up",
+            formName = "TPT Follow-up",
+            sections = listOf(FormSectionDto(fields = listOf(
+                FormFieldDto(fieldId = "treatment_completed", type = "radio"),
+                FormFieldDto(fieldId = "follow_up_date", type = "date"),
+                FormFieldDto(fieldId = "monthly_follow_up", type = "dropdown"),
+                FormFieldDto(fieldId = "visit_notes", type = "text")
+            )))
+        )
+        val viewModel = TPTStartViewModel(
+            repository,
+            mockk(relaxed = true),
+            SavedStateHandle(mapOf(
+                "benId" to 474849020466L,
+                "hhId" to 12345L,
+                "referralFollowUpDate" to "2026-09-29 00:00:00"
+            ))
+        )
+
+        viewModel.loadForm()
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.isTreatmentCompleted)
+        val fields = viewModel.getVisibleFields()
+        assertEquals("Yes", fields.first { it.fieldId == "treatment_completed" }.value)
+        assertEquals("30-10-2026", fields.first { it.fieldId == "follow_up_date" }.value)
+        assertEquals("Month-2", fields.first { it.fieldId == "monthly_follow_up" }.value)
+        assertEquals("Treatment course completed", fields.first { it.fieldId == "visit_notes" }.value)
+        assertEquals(true, fields.all { !it.isEditable })
+
+        viewModel.saveFormResponses(fields)
+
+        coVerify(exactly = 0) { repository.saveLocally(any()) }
     }
 
     @Test
@@ -118,10 +206,15 @@ class TPTStartViewModelTest : BaseRepositoryTest() {
         formId = "tb_tpt_follow_up",
         formName = "TPT Follow-up",
         sections = listOf(FormSectionDto(fields = listOf(
-            FormFieldDto(fieldId = "tpt_outcome", type = "dropdown"),
+            FormFieldDto(fieldId = "treatment_completed", type = "radio", value = "Yes"),
+            FormFieldDto(fieldId = "tpt_outcome", type = "dropdown", value = "Death"),
             FormFieldDto(fieldId = "date_of_death", type = "date"),
             FormFieldDto(fieldId = "place_of_death", type = "dropdown"),
-            FormFieldDto(fieldId = "reason_for_death", type = "dropdown")
+            FormFieldDto(
+                fieldId = "reason_for_death",
+                type = "text",
+                defaultValue = "Tuberculosis"
+            )
         )))
     )
 

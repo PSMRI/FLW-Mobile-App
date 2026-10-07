@@ -525,6 +525,18 @@
         <item>যক্ষ্মা ইউনিট</item>
     </string-array>
 
+    <string name="start_follow_up">ফলো-আপ আৰম্ভ কৰক</string>
+    <string name="view_follow_up">ফলো-আপ চাওক</string>
+    <string-array name="TB_referral_facility">
+        <item>যক্ষ্মা ইউনিট (TU)</item>
+        <item>HWC-উপকেন্দ্ৰ</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>জিলা যক্ষ্মা কেন্দ্ৰ (DTC)</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
+    </string-array>
+
     <string-array name="referral_facility">
         <item>জিলা টিবি কেন্দ্ৰ (DTC)</item>
         <item>এইচডব্লিউচি</item>
@@ -1319,9 +1331,12 @@
     <string name="ahd_distribution_date">তাৰিখ</string>
     <string name="symptomatic_tb_screening">লক্ষণযুক্ত টিবি স্ক্ৰিনিং</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">এইবোৰ লক্ষণৰ যিকোনো এটা আছে নে পৰীক্ষা কৰক</string>
-    <string name="tb_asymptomatic_symptoms">লক্ষণবিহীন টিবি স্ক্ৰিনিং</string>
+    <string name="tb_asymptomatic_symptoms">হিতাধিকাৰীৰ কোনো লক্ষণ নাই</string>
     <string name="tb_rise_of_fever">সন্ধিয়া জ্বৰ বৃদ্ধি</string>
+    <string name="refer">ৰেফাৰ কৰক</string>
     <string name="tb_loss_of_appetite">ভোক কমি যোৱা</string>
+    <string name="tb_child_failure_to_gain_weight">শিশুৰ ওজন বৃদ্ধি নোহোৱা</string>
+    <string name="tb_child_decreased_activity">শিশুৰ কাৰ্যকলাপ বা খেলাধূলাৰ আগ্ৰহ কমি যোৱা</string>
     <string name="tb_age_more_than_60">৬০ বছৰৰ ওপৰত বয়স</string>
     <string name="tb_diabetic">ডায়েবেটিক</string>
     <string name="tb_tobacco_user">তামাক ব্যৱহাৰকাৰী</string>

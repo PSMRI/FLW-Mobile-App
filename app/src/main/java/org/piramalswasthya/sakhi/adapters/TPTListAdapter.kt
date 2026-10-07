@@ -104,11 +104,11 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             }
 
             if (item.ben.isDeath) {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
+                binding.contstraintLayoutV.setBackgroundColor(
                     ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
                 )
             } else {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
+                binding.contstraintLayoutV.setBackgroundColor(
                     ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
                 )
             }

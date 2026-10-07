@@ -46,6 +46,8 @@ data class TBScreeningCache(
     var fatigue: Boolean? = null,
     var shortBreath: Boolean? = null,
     var chestPain: Boolean? = null,
+    var failureToGainWeight: Boolean? = null,
+    var decreasedActivityOrPlayfulness: Boolean? = null,
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
@@ -84,8 +86,10 @@ data class TBScreeningCache(
             fatigue = fatigue,
             shortBreath = shortBreath,
             chestPain = chestPain,
+            failureToGainWeight = failureToGainWeight,
+            decreasedActivityOrPlayfulness = decreasedActivityOrPlayfulness,
             hivStatusId = hivStatusId,
-            hivStatus = hivStatus
+            hivStatus = hivStatus,
 
         )
     }

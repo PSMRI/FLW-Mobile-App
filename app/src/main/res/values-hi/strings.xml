@@ -956,9 +956,12 @@
     <string name="delivery_discharge_summary_4">प्रसव छुट्टी सारांश 4</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
     <string name="symptomatic_tb_screening">टीबी के लक्षणों की जांच</string>
-    <string name="tb_asymptomatic_symptoms">बिना लक्षण वाले लोगों की टीबी जांच</string>
+    <string name="tb_asymptomatic_symptoms">लाभार्थी में कोई लक्षण नहीं हैं</string>
+    <string name="refer">रेफर करें</string>
     <string name="tb_rise_of_fever">रोजाना शाम को तेज बुखार आता है?</string>
     <string name="tb_loss_of_appetite">भूख कम लगना</string>
+    <string name="tb_child_failure_to_gain_weight">बच्चों में वजन न बढ़ना</string>
+    <string name="tb_child_decreased_activity">बच्चों की गतिविधि या खेलने-कूदने में कमी</string>
     <string name="tb_age_more_than_60">उम्र 60 वर्ष से अधिक</string>
     <string name="tb_diabetic">मधुमेह रोगी</string>
     <string name="tb_tobacco_user">तंबाकू सेवन करने वाला</string>
@@ -1204,6 +1207,17 @@
         <item name="hbnc_assisted">सहायता प्राप्त प्रसव</item>
     </string-array>
 
+    <string name="start_follow_up">फॉलो-अप शुरू करें</string>
+    <string name="view_follow_up">फॉलो-अप देखें</string>
+    <string-array name="TB_referral_facility">
+        <item>क्षय रोग इकाई (TU)</item>
+        <item>HWC-उप केंद्र</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>जिला अस्पताल</item>
+        <item>जिला क्षय रोग केंद्र (DTC)</item>
+        <item>सरकारी मेडिकल कॉलेज</item>
+    </string-array>
     <string-array name="hbnc_started_breastfeeding">
         <item name="hbnc_breastfeeding_time_1">एक घंटे के भीतर</item>
         <item name="hbnc_breastfeeding_time_2">1 - 4 घंटे</item>

@@ -213,7 +213,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         NotificationEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 68, exportSchema = false
+    version = 70, exportSchema = false
 )
 
 @TypeConverters(
@@ -404,6 +404,35 @@ abstract class InAppDb : RoomDatabase() {
                         "CREATE UNIQUE INDEX IF NOT EXISTS `index_tb_tpt_follow_up_benId_visitNo_followUpNo` " +
                                 "ON `tb_tpt_follow_up` (`benId`, `visitNo`, `followUpNo`)"
                     )
+                }
+            }
+
+            val MIGRATION_68_69 = object : Migration(68, 69) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    val columns = listOf(
+                        "failureToGainWeight INTEGER DEFAULT NULL",
+                        "decreasedActivityOrPlayfulness INTEGER DEFAULT NULL"
+                    )
+                    columns.forEach { columnDefinition ->
+                        val columnName = columnDefinition.substringBefore(" ")
+                        if (!columnExists(database, "TB_SCREENING", columnName)) {
+                            database.execSQL("ALTER TABLE TB_SCREENING ADD COLUMN $columnDefinition")
+                        }
+                    }
+                }
+            }
+
+            val MIGRATION_69_70 = object : Migration(69, 70) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "BENEFICIARY", "livingPlace")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN livingPlace TEXT")
+                    }
+                    if (!columnExists(database, "BENEFICIARY", "otherLivingPlace")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN otherLivingPlace TEXT")
+                    }
+                    if (!columnExists(database, "BENEFICIARY", "institutionName")) {
+                        database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN institutionName TEXT")
+                    }
                 }
             }
 
@@ -3650,7 +3679,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_64_65,
                         MIGRATION_65_66,
                         MIGRATION_66_67,
-                        MIGRATION_67_68
+                        MIGRATION_67_68,
+                        MIGRATION_68_69,
+                        MIGRATION_69_70
 
 
                     ).addCallback(DbOpenTraceCallback(appContext)).build()

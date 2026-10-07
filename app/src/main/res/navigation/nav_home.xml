@@ -20,6 +20,9 @@
             android:id="@+id/action_nav_home_to_allHouseholdFragment"
             app:destination="@id/allHouseholdFragment" />
         <action
+            android:id="@+id/action_nav_home_to_householdFragment"
+            app:destination="@id/householdFragment" />
+        <action
             android:id="@+id/action_nav_home_to_childCareFragment"
             app:destination="@id/childCareFragment" />
         <action
@@ -110,6 +113,23 @@
             app:destination="@id/malariaSuspectedListFragment" />
     </fragment>
     <fragment
+        android:id="@+id/householdFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.HouseholdFragment"
+        android:label="@string/icon_title_household"
+        tools:layout="@layout/fragment_display_search_rv_button">
+        <action
+            android:id="@+id/action_householdFragment_to_allHouseholdFragment"
+            app:destination="@id/allHouseholdFragment" />
+        <action
+            android:id="@+id/action_householdFragment_to_nonHouseholdFragment"
+            app:destination="@id/allBenFragment">
+            <argument
+                android:name="source"
+                android:defaultValue="5"
+                app:argType="integer" />
+        </action>
+    </fragment>
+    <fragment
         android:id="@+id/allBenFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragment"
         android:label="@string/icon_title_ben"
@@ -126,10 +146,22 @@
         <action
             android:id="@+id/action_allBenFragment_to_benIfaFormFragment"
             app:destination="@id/benIfaFormFragment" />
+        <action
+            android:id="@+id/action_allBenFragment_to_nonHouseholdLivingFragment"
+            app:destination="@id/nonHouseholdLivingFragment" />
         <argument
             android:name="source"
             android:defaultValue="0"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/nonHouseholdLivingFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.all_household.non_household.NonHouseholdLivingFragment"
+        android:label="@string/non_household_living_title"
+        tools:layout="@layout/fragment_non_household_living">
+        <action
+            android:id="@+id/action_nonHouseholdLivingFragment_to_newBenRegFragment"
+            app:destination="@id/newBenRegFragment" />
     </fragment>
     <fragment
         android:id="@+id/abhaBenFragment"
@@ -1294,6 +1326,21 @@
             android:name="isAddSpouse"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="livingPlace"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="otherLivingPlace"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="institutionName"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string" />
         <action
             android:id="@+id/action_newBenRegFragment_self"
             app:destination="@id/newBenRegFragment"

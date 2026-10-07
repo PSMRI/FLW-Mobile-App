@@ -133,7 +133,11 @@ class AllBenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnNextPage.visibility = View.GONE
+        val isNonHousehold = args.source == 5
+        binding.btnNextPage.visibility = if (isNonHousehold) View.VISIBLE else View.GONE
+        if (isNonHousehold) {
+            binding.btnNextPage.text = getString(R.string.add_beneficiary)
+        }
 
         viewModelEyeSurgery.loadAllBenIds()
 
@@ -293,7 +297,11 @@ class AllBenFragment : Fragment() {
         }
 
         binding.btnNextPage.setOnClickListener {
-            findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
+            if (isNonHousehold) {
+                findNavController().navigate(R.id.action_allBenFragment_to_nonHouseholdLivingFragment)
+            } else {
+                findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
+            }
         }
         binding.ibSearch.visibility = View.VISIBLE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
@@ -373,7 +381,7 @@ class AllBenFragment : Fragment() {
                     } else if (args.source == 2) {
                         getString(R.string.icon_title_rchs)
                     } else {
-                        getString(R.string.icon_title_ben)
+                        if (args.source == 5) getString(R.string.non_households_title) else getString(R.string.icon_title_ben)
                     }
                 )
             } else {
@@ -383,6 +391,8 @@ class AllBenFragment : Fragment() {
                         getString(R.string.icon_title_abhas)
                     } else if (args.source == 2) {
                         getString(R.string.icon_title_rchs)
+                    } else if (args.source == 5) {
+                        getString(R.string.non_households_title)
                     } else {
                         getString(R.string.icon_title_ben)
                     }

@@ -70,6 +70,7 @@
 
                 val shouldUpdate = oldField == null ||
                         oldField.value != newField.value ||
+                        oldField.defaultValue != newField.defaultValue ||
                         oldField.validation != newField.validation ||
                         oldField.isEditable != newField.isEditable ||
                         oldField.errorMessage != newField.errorMessage ||
@@ -377,14 +378,26 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value as? String ?: "")
+                            val textValue = field.value as? String ?: ""
+                            val displayValue = if (
+                                formId == FormConstants.TB_TPT_FOLLOW_UP &&
+                                field.fieldId.equals("reason_for_death", ignoreCase = true) &&
+                                textValue.equals("Tuberculosis", ignoreCase = true)
+                            ) context.getString(R.string.tuberculosis) else textValue
+                            setText(displayValue)
                             inputType = InputType.TYPE_CLASS_TEXT
-                            isEnabled = !isViewOnly
+                            isEnabled = !isViewOnly && field.isEditable
+                            if (!field.isEditable || isViewOnly) {
+                                keyListener = null
+                                isFocusable = false
+                                isFocusableInTouchMode = false
+                                isCursorVisible = false
+                            }
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
                             setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
                         }
 
-                        if (!isViewOnly) {
+                        if (!isViewOnly && field.isEditable) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
@@ -729,6 +742,9 @@
                                     normalizedTptDateField in setOf(
                                         "treatmentstartdate", "followupdate", "actualcompletiondate"
                                     )
+                                val isTbReferralFollowUpDate =
+                                    formId == FormConstants.Tb_Referral_Follow_Up &&
+                                        field.fieldId == "follow_up_date"
 
                                 if (field.fieldId == "ifa_provision_date") {
                                     minDate = minVisitDate
@@ -744,7 +760,7 @@
                                     }
                                 }
                                 else {
-                                    if (isTptDateField) {
+                                    if (isTptDateField || isTbReferralFollowUpDate) {
                                             minDate = field.validation?.minDate?.let { minDateValue ->
                                                 listOf("dd-MM-yyyy", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss")
                                                     .firstNotNullOfOrNull { pattern ->
