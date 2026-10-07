@@ -737,27 +737,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             }
 
 
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let { statusId ->
-                when (statusId) {
-                    5 -> {
-                        if (saved.isMarried) {
-                            reproductiveStatus.entries?.lastOrNull()
-
-                        } else {
-                            resources.getString(R.string.dd_ag)
-                        }
-                    }
-                    6-> {
-                        if (saved.isMarried) {
-                            reproductiveStatus.entries?.lastOrNull()
-
-                        } else {
-                            ""
-                        }
-                    }
-                    else -> reproductiveStatus.getStringFromPosition(statusId)
-                }
-            }
+            reproductiveStatus.value = getReadModeReproductiveStatus(saved)
 
             // Restore haveChildren value for married females
             val maritalStatusIdForChildren = saved.genDetails?.maritalStatusId
@@ -797,8 +777,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             motherName.required = false
         }
 
+        // Divorced: wife / spouse name stay optional; husband name is mandatory (FLW-1199).
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![2]) {
-            husbandName.required = false
             wifeName.required = false
             spouseName.required = false
         }
@@ -1438,8 +1418,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             motherName.required = false
 
         }
+        // Divorced: wife / spouse name stay optional; husband name is mandatory (FLW-1199).
         if (maritalStatus.value == maritalStatus.entries!![2]) {
-            husbandName.required = false
             wifeName.required = false
             spouseName.required = false
 
@@ -2505,8 +2485,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                     }
 
                     else -> {
-                        husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        // Husband name is mandatory for Divorced too (FLW-1199); wife / spouse name stay optional when Divorced.
+                        husbandName.required = true
                         wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        spouseName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.allCaps = true
                         fatherName.required = false
                         motherName.required = false
@@ -3052,6 +3034,37 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             R.array.nbr_reproductive_status_array5
         ).firstNotNullOfOrNull { getEnglishValueInArray(it, localized) } ?: localized
     }
+
+    /**
+     * Status of Women for the read-only page. The stored English label is authoritative (edit mode
+     * restores from it too): the numeric id is re-mapped on push/pull (Ben.asPostModel, BenRepo pull)
+     * and never lined up with the default option array, so decoding it here showed wrong or blank
+     * values (FLW-1152, FLW-1199). The id branch is a fallback for records saved without a label.
+     */
+    private fun getReadModeReproductiveStatus(saved: BenRegCache): String? {
+        val gen = saved.genDetails ?: return null
+        val isUnmarried = gen.maritalStatusId == 1
+        val storedEnglish = gen.reproductiveStatus?.trim()?.takeIf { it.isNotEmpty() && it != "null" }
+        if (storedEnglish != null) {
+            // Sterilisation recorded against an unmarried woman is stale data and stays hidden.
+            if (storedEnglish == "Permanently Sterilised" && isUnmarried) return ""
+            return localizeReproductiveStatus(storedEnglish)
+        }
+        return when (val statusId = gen.reproductiveStatusId) {
+            5 -> if (saved.isMarried) reproductiveStatus.entries?.lastOrNull() else resources.getString(R.string.dd_ag)
+            6 -> if (isUnmarried) "" else localizeReproductiveStatus("Permanently Sterilised")
+            else -> reproductiveStatus.getStringFromPosition(statusId)
+        }
+    }
+
+    private fun localizeReproductiveStatus(english: String): String =
+        listOf(
+            R.array.nbr_reproductive_status_array1,
+            R.array.nbr_reproductive_status_array2,
+            R.array.nbr_reproductive_status_array3,
+            R.array.nbr_reproductive_status_array4,
+            R.array.nbr_reproductive_status_array5
+        ).firstNotNullOfOrNull { getLocalValueInArray(it, english) } ?: english
 
     private fun validateReproductiveStatusField(genderIsFemale: Boolean, age: Int): Int {
         val reproEnglish = getReproductiveStatusEnglishValue()
