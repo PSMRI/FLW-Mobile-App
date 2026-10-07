@@ -5,6 +5,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
@@ -73,6 +74,12 @@ android {
 
         debug {
             // uses default debug keystore; no changes needed
+            // Skip Performance Monitoring bytecode instrumentation (automatic
+            // OkHttp/URLConnection traces) to keep debug builds fast. Custom
+            // traces from PerfTracer still record.
+            FirebasePerformance {
+                instrumentationEnabled false
+            }
         }
     }
     flavorDimensions "default"
@@ -196,6 +203,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
     implementation 'androidx.test.ext:junit-ktx:1.2.1'
     implementation "androidx.security:security-crypto:1.0.0"
     implementation 'com.google.crypto.tink:tink-android:1.18.0'

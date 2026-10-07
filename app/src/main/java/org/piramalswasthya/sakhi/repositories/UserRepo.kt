@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.model.PeerAtFacility
 import org.piramalswasthya.sakhi.model.SyncStatusCache
@@ -41,7 +42,15 @@ class UserRepo @Inject constructor(
 
 
 
-    suspend fun authenticateUser(userName: String, password: String): NetworkResponse<User?> {
+    // "login" trace: token + user/role setup, split by outcome so failed logins do not skew timing.
+    suspend fun authenticateUser(userName: String, password: String): NetworkResponse<User?> =
+        PerfTracer.trace("login") { trace ->
+            authenticate(userName, password).also {
+                trace?.putAttribute("result", if (it is NetworkResponse.Success) "success" else "error")
+            }
+        }
+
+    private suspend fun authenticate(userName: String, password: String): NetworkResponse<User?> {
         return withContext(Dispatchers.IO) {
             try {
                 val userId = getTokenAmrit(userName, password)

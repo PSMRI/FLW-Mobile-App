@@ -28,29 +28,37 @@ object RoomDbEncryptionHelper {
         }
     }
 
+    // "db_encrypt_check" trace: runs on app start, a known ANR source (canOpenWithKey).
+    // The "outcome" attribute separates the fast key check from a full encryption pass.
     fun encryptIfNeeded(
         context: Context,
         dbName: String,
         passphrase: CharArray
-    ) {
+    ): Unit = PerfTracer.trace<Unit>("db_encrypt_check") { trace ->
         ensureSqlCipherLoaded(context)
 
         val dbFile = context.getDatabasePath(dbName)
-        if (!dbFile.exists()) return
+        if (!dbFile.exists()) {
+            trace?.putAttribute("outcome", "no_db")
+            return@trace
+        }
 
         if (isPlainSqlite(dbFile)) {
             Log.d(TAG, "Plain DB detected via header check. Encrypting...")
+            trace?.putAttribute("outcome", "encrypted_plain_db")
             encryptPlainDb(dbFile, passphrase)
-            return
+            return@trace
         }
 
 
         if (canOpenWithKey(dbFile, passphrase)) {
             Log.d(TAG, "DB already encrypted with current key")
-            return
+            trace?.putAttribute("outcome", "key_ok")
+            return@trace
         }
 
 
+        trace?.putAttribute("outcome", "reset")
         Log.w(TAG, "DB encrypted with unknown key or corrupted. Deleting for fresh start.")
         dbFile.delete()
         File(dbFile.parent, "$dbName-encrypted").let { if (it.exists()) it.delete() }

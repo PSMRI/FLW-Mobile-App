@@ -62,6 +62,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDa
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
@@ -3571,6 +3572,10 @@ abstract class InAppDb : RoomDatabase() {
                 if (instance == null) {
                     val isDebug = appContext.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
 
+                    // "db_open" trace: Room opens lazily, so this runs from here to the first
+                    // open, migrations included; DbOpenTraceCallback stops it.
+                    PerfTracer.startOpen(PerfTracer.DB_OPEN, restart = true)
+
                     val builder = Room.databaseBuilder(
                         appContext,
                         InAppDb::class.java,
@@ -3648,7 +3653,7 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_67_68
 
 
-                    ).build()
+                    ).addCallback(DbOpenTraceCallback(appContext)).build()
 
                     INSTANCE = instance
                 }
@@ -3656,5 +3661,37 @@ abstract class InAppDb : RoomDatabase() {
 
             }
         }
+    }
+}
+
+/**
+ * Stops the "db_open" trace on the first open. The "kind" attribute separates a fresh install
+ * ("created") and an app update that ran migrations ("upgraded") from an ordinary open, using
+ * the schema version recorded on the previous open. "unknown" is the first open after this
+ * tracing shipped, when no previous version was recorded yet.
+ */
+private class DbOpenTraceCallback(private val context: Context) : RoomDatabase.Callback() {
+
+    private var created = false
+
+    override fun onCreate(db: SupportSQLiteDatabase) {
+        created = true
+    }
+
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        val prefs = context.getSharedPreferences("perf_trace", Context.MODE_PRIVATE)
+        val lastVersion = prefs.getInt(KEY_DB_VERSION, -1)
+        val kind = when {
+            created -> "created"
+            lastVersion == -1 -> "unknown"
+            lastVersion < db.version -> "upgraded"
+            else -> "normal"
+        }
+        prefs.edit().putInt(KEY_DB_VERSION, db.version).apply()
+        PerfTracer.stopOpen(PerfTracer.DB_OPEN, mapOf("kind" to kind))
+    }
+
+    private companion object {
+        const val KEY_DB_VERSION = "db_version"
     }
 }
