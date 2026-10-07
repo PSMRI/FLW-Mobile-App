@@ -367,7 +367,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
 
     private val relationToHeadListDefault =
-        resources.getStringArray(R.array.nbr_relationship_to_head_src)
+        resources.getStringArray(R.array.nbr_relationship_to_head_src).toMutableList().apply {
+            resources.getStringArray(R.array.nbr_relationship_to_head)
+                .filterNot { contains(it) }
+                .forEach(::add)
+        }.toTypedArray()
 
     private val relationToHeadListMale =
         resources.getStringArray(R.array.nbr_relationship_to_head_male)
@@ -380,7 +384,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         inputType = TEXT_VIEW,
         title = resources.getString(R.string.nbr_rel_to_head),
         arrayId = R.array.nbr_relationship_to_head_src,
-        entries = resources.getStringArray(R.array.nbr_relationship_to_head_src),
+        entries = relationToHeadListDefault,
         required = true,
 //        hasDependants = true,
     )
@@ -1248,7 +1252,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 TRANSGENDER -> R.array.nbr_marital_status_male_array
             }
 //            gender.inputType = TEXT_VIEW
-            relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
+            relationToHead.value = relationToHeadListDefault.getOrNull(relationToHeadId)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
             }
@@ -1273,7 +1277,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
             relationToHeadId == 11 || relationToHeadId == 17 || relationToHeadId == 2 ||
             relationToHeadId == 18 || relationToHeadId == 14 ||
-            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16) hoF?.let {
+            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16 ||
+            relationToHeadId == 21) hoF?.let {
             setUpPageforOthers(it,hoFSpouse,selectedben,list)
         }
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
@@ -1375,7 +1380,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
 //            relationToHead.entries = relationToHeadListDefault
-            relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
+            relationToHead.value = relationToHeadListDefault.getOrNull(relationToHeadId)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
             }
@@ -3139,10 +3144,21 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             ben.fatherName = fatherName.value
             ben.motherName = motherName.value
             ben.familyHeadRelationPosition = if (isHoF) 19 else {
-                relationToHeadListDefault.indexOf(relationToHead.value) + 1
+                val sourceRelationPosition = relationToHeadListDefault.indexOf(relationToHead.value)
+                if (sourceRelationPosition >= 0) {
+                    sourceRelationPosition + 1
+                } else {
+                    resources.getStringArray(R.array.nbr_relationship_to_head)
+                        .indexOf(relationToHead.value) + 1
+                }
             }
-            ben.familyHeadRelation =
-                getEnglishValueInArray(R.array.nbr_relationship_to_head_src, relationToHead.value)
+            ben.familyHeadRelation = getEnglishValueInArray(
+                R.array.nbr_relationship_to_head_src,
+                relationToHead.value
+            ) ?: getEnglishValueInArray(
+                R.array.nbr_relationship_to_head,
+                relationToHead.value
+            ) ?: relationToHead.value
             ben.familyHeadRelationOther = otherRelationToHead.value
             ben.mobileNoOfRelationId = if (isHoF) 1 else mobileNoOfRelation.getPosition()
             ben.tempMobileNoOfRelationId = if (isMitaninVariant) 0 else if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()
