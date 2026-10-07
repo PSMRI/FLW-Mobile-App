@@ -349,13 +349,21 @@ interface BenDao {
 
     @Transaction
     @Query(
-        "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
-                "INNER JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
+                "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
+                "LEFT JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
+                "LEFT JOIN ncd_referal_all_visit ON BEN_BASIC_CACHE.benId = ncd_referal_all_visit.benId " +
                 "WHERE BEN_BASIC_CACHE.villageId = :selectedVillage " +
                 "AND BEN_BASIC_CACHE.isDeactivate = 0 AND BEN_BASIC_CACHE.isDeath = 0 " +
-                "AND TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
+                "AND (" +
+                "(TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
-                "AND TB_SCREENING.keyPopulationRiskFactors != '[]' " + BenListOrder.LIFO
+                "AND TB_SCREENING.keyPopulationRiskFactors != '[]') " +
+                "OR BEN_BASIC_CACHE.reproductiveStatusId IN (2, 3) " +
+                "OR (BEN_BASIC_CACHE.dob IS NOT NULL AND " +
+                "CAST((strftime('%s','now') - BEN_BASIC_CACHE.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +
+                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%hypertension%' " +
+                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%diabetes%'" +
+                ") " + BenListOrder.LIFO
     )
     fun getAllTbScreenedRiskFactorBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
 

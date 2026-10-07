@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.TBScreeningDTO
 
 @Entity(
@@ -107,14 +108,21 @@ data class BenWithTbScreeningCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val tbSuspected: TBSuspectedCache?
+    val tbSuspected: TBSuspectedCache?,
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList()
 
     ) {
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
         return BenWithTbScreeningDomain(
             ben = ben.asBasicDomainModel(),
             tb = tb,
-            tbSuspected = tbSuspected
+            tbSuspected = tbSuspected,
+            ncdReferralVisits = ncdReferralVisits
         )
     }
 }
@@ -122,5 +130,6 @@ data class BenWithTbScreeningCache(
 data class BenWithTbScreeningDomain(
     val ben: BenBasicDomain,
     val tb: TBScreeningCache?,
-    val tbSuspected: TBSuspectedCache?
+    val tbSuspected: TBSuspectedCache?,
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList()
 )

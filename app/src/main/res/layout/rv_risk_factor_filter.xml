@@ -14,7 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cMainLayout"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:background="@drawable/tab_selection"

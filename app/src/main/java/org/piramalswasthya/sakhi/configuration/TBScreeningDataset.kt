@@ -278,6 +278,7 @@ class TBScreeningDataset(
 
     private var isMaleBen: Boolean = false
     private var isPregnantBen: Boolean = false
+    private var isLactatingBen: Boolean = false
     private var riskFactorOptions: List<CodedOption> = emptyList()
 
     private val hivStatusOptions: List<CodedOption>
@@ -325,8 +326,14 @@ class TBScreeningDataset(
                 resources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1),
                 englishResources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1)
             )
+            val lactatingStatusLabels = listOfNotNull(
+                resources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(2),
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(2)
+            )
             isPregnantBen = it.genDetails?.reproductiveStatusId == 2 ||
                     pregnantStatusLabels.any { label -> reproductiveStatus.equals(label, ignoreCase = true) }
+            isLactatingBen = it.genDetails?.reproductiveStatusId == 3 ||
+                    lactatingStatusLabels.any { label -> reproductiveStatus.equals(label, ignoreCase = true) }
         }
         showChildSymptoms = ben != null && benAgeYears in 0..15
         childFailureToGainWeight.value = if (showChildSymptoms) {
@@ -452,6 +459,10 @@ class TBScreeningDataset(
         val selected = selectedIndexes.toMutableSet()
         if (isPregnantBen) {
             riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (isLactatingBen) {
+            riskFactorOptions.indexOfFirst { it.code == "LACTATING_MOTHER" }
                 .takeIf { it >= 0 }?.let(selected::add)
         }
         if (benAgeYears >= 60) {
