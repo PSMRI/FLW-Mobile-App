@@ -30,6 +30,38 @@ class CbacMappingTest {
         cbac_familyhistory_posi = 1
     )
 
+    @Test
+    fun `CBAC answers map to vulnerable population risk factors`() {
+        val cache = baseCache().apply {
+            cbac_smoke_posi = 2
+            cbac_alcohol_posi = 2
+            cbac_fuel_used_posi = 5
+            cbac_occupational_exposure_posi = 3
+        }
+
+        assertEquals(
+            setOf(
+                "TOBACCO_SMOKER",
+                "SUBSTANCE_ABUSE",
+                "INDOOR_AIR_POLLUTION_EXPOSURE",
+                "WORKPLACE_SETTINGS"
+            ),
+            cache.vulnerabilityRiskFactorCodes()
+        )
+    }
+
+    @Test
+    fun `CBAC never alcohol LPG and unrelated occupational answers do not add risk factors`() {
+        val cache = baseCache().apply {
+            cbac_smoke_posi = 1
+            cbac_alcohol_posi = 1
+            cbac_fuel_used_posi = 6
+            cbac_occupational_exposure_posi = 2
+        }
+
+        assertEquals(emptySet<String>(), cache.vulnerabilityRiskFactorCodes())
+    }
+
     // ---------------- String?.toMillisOrNull ----------------
 
     @Test

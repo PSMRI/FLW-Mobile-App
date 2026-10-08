@@ -147,6 +147,10 @@ class VulnerableListAdapter(
                     }?.label
                 }
 
+                item.cbac?.vulnerabilityRiskFactorCodes().orEmpty().mapNotNullTo(this) { code ->
+                    options.firstOrNull { it.code.equals(code, ignoreCase = true) }?.label
+                }
+
                 val automaticRiskFactorCodes = buildList {
                     when (item.ben.reproductiveStatusId) {
                         2 -> add("PREGNANCY")

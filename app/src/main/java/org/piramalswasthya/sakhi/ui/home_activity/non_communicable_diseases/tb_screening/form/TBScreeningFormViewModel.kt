@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManag
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.CbacRepo
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import timber.log.Timber
@@ -30,6 +31,7 @@ class TBScreeningFormViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val tbRepo: TBRepo,
     private val benRepo: BenRepo,
+    private val cbacRepo: CbacRepo,
     private val referralStatusManager: ReferralStatusManager,
     private val referalRepo: NcdReferalRepo
 ) : ViewModel() {
@@ -108,12 +110,18 @@ class TBScreeningFormViewModel @Inject constructor(
             val ncdDiagnoses = referalRepo.getNcdFollowUpVisits(benId)
                 .mapNotNull { it.diagnosisCodes }
                 .joinToString(",")
+            val cbac = cbacRepo.getLastFilledCbac(benId)
+            val cbacRiskFactors = cbac?.vulnerabilityRiskFactorCodes().orEmpty()
             dataset.setUpPage(
                 ben,
                 if (recordExists.value == true) tbScreeningCache else null,
                 hasHypertension = ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
                         ncdDiagnoses.contains("hypertensive", ignoreCase = true),
-                hasDiabetes = ncdDiagnoses.contains("diabetes", ignoreCase = true)
+                hasDiabetes = ncdDiagnoses.contains("diabetes", ignoreCase = true),
+                hasTobaccoUser = "TOBACCO_SMOKER" in cbacRiskFactors,
+                hasAlcoholRiskFactor = "SUBSTANCE_ABUSE" in cbacRiskFactors,
+                hasIndoorAirPollution = "INDOOR_AIR_POLLUTION_EXPOSURE" in cbacRiskFactors,
+                hasWorkplaceSettings = "WORKPLACE_SETTINGS" in cbacRiskFactors
             )
 
         }

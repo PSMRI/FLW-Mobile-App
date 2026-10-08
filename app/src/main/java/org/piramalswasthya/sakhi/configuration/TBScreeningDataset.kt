@@ -281,6 +281,10 @@ class TBScreeningDataset(
     private var isLactatingBen: Boolean = false
     private var hasHypertension: Boolean = false
     private var hasDiabetes: Boolean = false
+    private var hasTobaccoUser: Boolean = false
+    private var hasAlcoholRiskFactor: Boolean = false
+    private var hasIndoorAirPollution: Boolean = false
+    private var hasWorkplaceSettings: Boolean = false
     private var riskFactorOptions: List<CodedOption> = emptyList()
 
     private val hivStatusOptions: List<CodedOption>
@@ -321,10 +325,18 @@ class TBScreeningDataset(
         ben: BenRegCache?,
         saved: TBScreeningCache?,
         hasHypertension: Boolean = false,
-        hasDiabetes: Boolean = false
+        hasDiabetes: Boolean = false,
+        hasTobaccoUser: Boolean = false,
+        hasAlcoholRiskFactor: Boolean = false,
+        hasIndoorAirPollution: Boolean = false,
+        hasWorkplaceSettings: Boolean = false
     ) {
         this.hasHypertension = hasHypertension
         this.hasDiabetes = hasDiabetes
+        this.hasTobaccoUser = hasTobaccoUser
+        this.hasAlcoholRiskFactor = hasAlcoholRiskFactor
+        this.hasIndoorAirPollution = hasIndoorAirPollution
+        this.hasWorkplaceSettings = hasWorkplaceSettings
         benAgeYears = 0
         ben?.let {
             dateOfVisit.min = it.regDate
@@ -472,6 +484,19 @@ class TBScreeningDataset(
             }
         } else if (contactWithTbIndex >= 0) {
             selected.remove(contactWithTbIndex)
+        }
+        val automaticRiskFactorCodes = buildList {
+            if (hasTobaccoUser) add("TOBACCO_SMOKER")
+            if (hasAlcoholRiskFactor) add("SUBSTANCE_ABUSE")
+            if (hasIndoorAirPollution) add("INDOOR_AIR_POLLUTION_EXPOSURE")
+            if (hasWorkplaceSettings) add("WORKPLACE_SETTINGS")
+        }
+        automaticRiskFactorCodes.forEach { code ->
+            riskFactorOptions.indexOfFirst { it.code == code }
+                .takeIf { it >= 0 }?.let { index ->
+                    selected.removeAll(exclusiveIndices)
+                    selected.add(index)
+                }
         }
         if (selected.any { it in exclusiveIndices }) {
             return selectedIndexes.filter { it in exclusiveIndices }.distinct().sorted()

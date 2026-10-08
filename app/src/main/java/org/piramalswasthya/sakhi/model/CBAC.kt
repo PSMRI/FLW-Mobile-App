@@ -133,6 +133,13 @@ data class CbacCache(
 
 ) {
 
+    fun vulnerabilityRiskFactorCodes(): Set<String> = buildSet {
+        if (cbac_smoke_posi in 2..3) add("TOBACCO_SMOKER")
+        if (cbac_alcohol_posi == 2) add("SUBSTANCE_ABUSE")
+        if (cbac_fuel_used_posi in 1..5) add("INDOOR_AIR_POLLUTION_EXPOSURE")
+        if (cbac_occupational_exposure_posi == 3) add("WORKPLACE_SETTINGS")
+    }
+
     fun asPostModel(
         hhId: Long,
         benGender: Gender,

@@ -54,8 +54,10 @@ class VulnerablePopulationViewModel @Inject constructor(
                             ncdDiagnoses.contains("hypertensive", ignoreCase = true)
                     else -> false
                 }
+                val hasCbacRiskFactor = riskCode in
+                        item.cbac?.vulnerabilityRiskFactorCodes().orEmpty()
 
-                hasSavedRiskFactor || hasNcdDiagnosis || when (riskCode) {
+                hasSavedRiskFactor || hasNcdDiagnosis || hasCbacRiskFactor || when (riskCode) {
                     "PREGNANCY" -> item.ben.reproductiveStatusId == 2
                     "LACTATING_MOTHER" -> item.ben.reproductiveStatusId == 3
                     "ELDERLY" -> item.ben.ageInt > 60

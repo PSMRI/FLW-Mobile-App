@@ -358,6 +358,11 @@ interface BenDao {
                 "(TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '[]') " +
+                "OR EXISTS (SELECT 1 FROM CBAC WHERE CBAC.benId = BEN_BASIC_CACHE.benId " +
+                "AND (CBAC.cbac_smoke_posi IN (2, 3) " +
+                "OR CBAC.cbac_alcohol_posi = 2 " +
+                "OR CBAC.cbac_fuel_used_posi BETWEEN 1 AND 5 " +
+                "OR CBAC.cbac_occupational_exposure_posi = 3)) " +
                 "OR BEN_BASIC_CACHE.reproductiveStatusId IN (2, 3) " +
                 "OR (BEN_BASIC_CACHE.dob IS NOT NULL AND " +
                 "CAST((strftime('%s','now') - BEN_BASIC_CACHE.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +

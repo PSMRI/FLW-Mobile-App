@@ -174,6 +174,33 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `CBAC tobacco alcohol fuel and workplace risks are auto selected`() = runTest {
+        val dataset = TBScreeningDataset(context, Languages.ENGLISH)
+        val saved = TBScreeningCache(benId = 1L).apply {
+            keyPopulationRiskFactors = listOf("NOT_APPLICABLE")
+        }
+
+        dataset.setUpPage(
+            ben = null,
+            saved = saved,
+            hasTobaccoUser = true,
+            hasAlcoholRiskFactor = true,
+            hasIndoorAirPollution = true,
+            hasWorkplaceSettings = true
+        )
+
+        assertEquals(
+            setOf(
+                "TOBACCO_SMOKER",
+                "SUBSTANCE_ABUSE",
+                "INDOOR_AIR_POLLUTION_EXPOSURE",
+                "WORKPLACE_SETTINGS"
+            ),
+            selectedRiskFactorCodes(dataset, isMale = false)
+        )
+    }
+
+    @Test
     fun `male beneficiaries do not receive pregnancy or lactating options`() = runTest {
         val beneficiary = mockk<BenRegCache>(relaxed = true)
         every { beneficiary.gender } returns Gender.MALE
