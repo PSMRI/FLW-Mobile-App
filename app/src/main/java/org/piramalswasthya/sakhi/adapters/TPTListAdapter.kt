@@ -59,6 +59,10 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             binding.tvTptFollowUpHistory.visibility = if (history.isEmpty()) View.GONE else View.VISIBLE
             binding.tvTptFollowUpHistory.text = history.joinToString(separator = "\n", prefix = "Follow-up history\n")
 
+            val isDeceased = item.ben.isDeath || tptFollowUpMarkedDeath(item.followUpHistory)
+            binding.btnFormTb.visibility = if (!isDeceased) View.VISIBLE else View.GONE
+            binding.btnFormTb.alpha = if (isDeceased) 0.5f else 1f
+
             when (tptFollowUpAction(item.followUpHistory)) {
                 TPTFollowUpAction.VIEW_DETAILS -> {
                     binding.btnFormTb.text = binding.root.context.getString(R.string.view_details)
@@ -159,3 +163,17 @@ internal fun tptFollowUpAction(history: List<TPTFollowUpEntity>): TPTFollowUpAct
 
 internal fun tptFollowUpSyncStatus(history: List<TPTFollowUpEntity>): Boolean? =
     history.takeIf { it.isNotEmpty() }?.all { it.isSynced }
+
+internal fun tptFollowUpMarkedDeath(history: List<TPTFollowUpEntity>): Boolean =
+    history.any { visit ->
+        runCatching {
+            val fields = JSONObject(visit.fieldsJson)
+            fields.keys().asSequence().any { key ->
+                val normalizedKey = key.filter(Char::isLetterOrDigit).lowercase()
+                val isOutcomeField = normalizedKey.contains("tptoutcome") ||
+                        normalizedKey.contains("treatmentoutcome")
+                isOutcomeField && fields.optString(key).trim().lowercase() in
+                        setOf("death", "deceased", "died")
+            }
+        }.getOrDefault(false)
+    }

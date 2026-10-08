@@ -57,7 +57,7 @@ class VulnerableListAdapter(
                 adapter = riskFactorAdapter
             }
 
-            riskFactorAdapter.submitList(getRiskFactor(item.tb?.keyPopulationRiskFactors?:emptyList(), viewModel))
+            riskFactorAdapter.submitList(getRiskFactor(item, viewModel))
             val params = binding.btnFormTb.layoutParams as ConstraintLayout.LayoutParams
 
             params.topToBottom = ConstraintLayout.LayoutParams.UNSET
@@ -133,17 +133,49 @@ class VulnerableListAdapter(
 
         }
 
-        private fun getRiskFactor(savedCodes: List<String>,viewModel: VulnerablePopulationViewModel)  : List<String>
-            {
+        private fun getRiskFactor(
+            item: BenWithTbScreeningDomain,
+            viewModel: VulnerablePopulationViewModel
+        ): List<String> {
+            val options = viewModel.masterRiskFactorOptions()
+            val savedCodes = item.tb?.keyPopulationRiskFactors.orEmpty()
 
-                val options = viewModel.masterRiskFactorOptions()
-
-                return savedCodes.mapNotNull { savedCode ->
+            return buildList {
+                savedCodes.mapNotNullTo(this) { savedCode ->
                     options.firstOrNull { option ->
-                        option.code == savedCode
+                        option.code.equals(savedCode, ignoreCase = true)
                     }?.label
                 }
-            }
+
+                item.cbac?.vulnerabilityRiskFactorCodes().orEmpty().mapNotNullTo(this) { code ->
+                    options.firstOrNull { it.code.equals(code, ignoreCase = true) }?.label
+                }
+
+                val automaticRiskFactorCodes = buildList {
+                    when (item.ben.reproductiveStatusId) {
+                        2 -> add("PREGNANCY")
+                        3 -> add("LACTATING_MOTHER")
+                    }
+                    if (item.ben.ageInt > 60) add("ELDERLY")
+
+                    val ncdDiagnoses = item.ncdReferralVisits.joinToString(",") {
+                        it.diagnosisCodes.orEmpty()
+                    }
+                    if (ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
+                        ncdDiagnoses.contains("hypertensive", ignoreCase = true)
+                    ) {
+                        add("HYPERTENSIVE")
+                    }
+                    if (ncdDiagnoses.contains("diabetes", ignoreCase = true)) {
+                        add("DIABETES")
+                    }
+                }
+
+                automaticRiskFactorCodes.mapNotNullTo(this) { code ->
+                    options.firstOrNull { it.code.equals(code, ignoreCase = true) }?.label
+                }
+            }.distinct()
+        }
 
 
     }

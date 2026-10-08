@@ -1173,6 +1173,10 @@ data class AdolscentHealthDTO(
     var benId:Long,
     var visitDate: String,
     var healthStatus: String? = null,
+    @com.google.gson.annotations.SerializedName(
+        value = "ifaTabletDistributed",
+        alternate = ["ifaTabletDistribution"]
+    )
     var ifaTabletDistributed: Boolean? = null,
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
