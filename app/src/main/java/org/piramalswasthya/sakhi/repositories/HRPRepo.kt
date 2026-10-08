@@ -360,34 +360,14 @@ class HRPRepo @Inject constructor(
                     Timber.d("Skipping HRP micro birth plan entry with invalid benId=${entry.benId}")
                     continue
                 }
-                entry.nearestSc?.let {
-                    val hrpMicroBirthPlanCache = database.hrpDao.getMicroBirthPlan(entry.benId)
-                    if (hrpMicroBirthPlanCache == null) {
-                        database.hrpDao.saveRecord(entry.toCache())
-                    } else {
-
-                        hrpMicroBirthPlanCache.apply {
-                            nearestSc = nearestSc ?: entry.nearestSc
-                            bloodGroup = bloodGroup ?: entry.bloodGroup
-                            contactNumber1 = contactNumber1 ?: entry.contactNumber1
-                            contactNumber2 = contactNumber2 ?: entry.contactNumber2
-                            scHosp = scHosp ?: entry.scHosp
-                            usg = usg ?: entry.usg
-                            block = block ?: entry.block
-                            nearestPhc = nearestPhc ?: entry.nearestPhc
-                            nearestFru = nearestFru ?: entry.nearestFru
-                            bloodDonors1 = bloodDonors1 ?: entry.bloodDonors1
-                            bloodDonors2 = bloodDonors2 ?: entry.bloodDonors2
-                            birthCompanion = birthCompanion ?: entry.birthCompanion
-                            careTaker = careTaker ?: entry.careTaker
-                            communityMember = communityMember ?: entry.communityMember
-                            communityMemberContact = communityMemberContact ?: entry.communityMemberContact
-                            modeOfTransportation = modeOfTransportation ?: entry.modeOfTransportation
-                        }
-
-
-                        database.hrpDao.saveRecord(hrpMicroBirthPlanCache)
-                    }
+                val existing = database.hrpDao.getMicroBirthPlan(entry.benId)
+                val serverCache = entry.toCache()
+                if (existing == null) {
+                    database.hrpDao.saveRecord(serverCache)
+                } else {
+                    // Keep the local Room primary key, but refresh every form field
+                    // from the server, including fields whose server value is null.
+                    database.hrpDao.saveRecord(serverCache.copy(id = existing.id))
                 }
             } catch (e: java.lang.Exception) {
                 Timber.d("cannot save entry $dto due to : $e")
