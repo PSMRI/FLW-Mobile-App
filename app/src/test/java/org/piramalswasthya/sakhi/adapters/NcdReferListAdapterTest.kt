@@ -42,7 +42,7 @@ class NcdReferListAdapterTest {
     )
 
     private fun benWithCbacRefer(benId: Long = 1L, records: List<org.piramalswasthya.sakhi.model.CbacCache> = emptyList()) =
-        BenWithCbacReferDomain(benBasic(benId = benId), records, referalCache(benId = benId))
+        BenWithCbacReferDomain(benBasic(benId = benId), records, referalCache(benId = benId), emptyList())
 
     @Suppress("UNCHECKED_CAST")
     private fun diffCallback(): DiffUtil.ItemCallback<BenWithCbacReferDomain> {
@@ -75,16 +75,26 @@ class NcdReferListAdapterTest {
     }
 
     @Test
-    fun clickListener_invokesLambdaWithBenIdAndHhId() {
+    fun clickListener_invokesLambdaWithBenIdHhIdAndReferReason() {
         var capturedBenId: Long? = null
         var capturedHhId: Long? = null
-        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId ->
+        var capturedReason: String? = null
+        var capturedReferredDate: Long? = null
+        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate ->
             capturedBenId = benId
             capturedHhId = hhId
+            capturedReason = referReason
+            capturedReferredDate = referredDate
         }
-        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L))
+        val referral = referalCache(benId = 7L).apply {
+            referralReason = "TB Screening Form"
+            revisitDate = 123L
+        }
+        listener.onClickedFollowUp(benBasic(benId = 7L, hhId = 11L), referral)
         assertEquals(7L, capturedBenId)
         assertEquals(11L, capturedHhId)
+        assertEquals("TB Screening Form", capturedReason)
+        assertEquals(123L, capturedReferredDate)
     }
 
     @Test
@@ -94,7 +104,7 @@ class NcdReferListAdapterTest {
         try {
             val adapter = NcdReferListAdapter(
                 userName = "ASHA",
-                listener = NcdReferListAdapter.NcdReferallickListener { _, _ -> },
+                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _ -> },
                 visible = true
             )
             assertEquals(0, adapter.itemCount)

@@ -222,7 +222,7 @@ class VLFRepo @Inject constructor(
                     MultipartBody.Part.createFormData("formDataJson", null, formDataJsonBody)
                 )
 
-                val imageParts = withContext(Dispatchers.IO) {photoUris.mapNotNull { photoData ->
+                val imageParts = photoUris.mapNotNull { photoData ->
                     try {
                         val file: File? = when {
                             photoData.startsWith("data:image/") || photoData.contains(",") -> {
@@ -256,7 +256,6 @@ class VLFRepo @Inject constructor(
                         Timber.e(e, "Error processing image: $photoData")
                         null
                     }
-                }
                 }
                 multipartParts.addAll(imageParts)
 
@@ -1493,17 +1492,12 @@ class VLFRepo @Inject constructor(
         return combine(vhnd, vhnc, phc, ahd, deworming) { vhndList, vhncList, phcList, ahdList, dewormingCount ->
 
             fun isInCurrentMonth(dateStr: String?): Boolean {
-                if (dateStr.isNullOrBlank()) return false
-                val parsedDate = try {
-                    LocalDate.parse(dateStr, formatIndian)
-                } catch (e: java.time.format.DateTimeParseException) {
-                    try {
-                        LocalDate.parse(dateStr, formatIso)
-                    } catch (e2: java.time.format.DateTimeParseException) {
-                        null
-                    }
+                return try {
+                    val date = LocalDate.parse(dateStr, formatter)
+                    YearMonth.from(date) == current
+                } catch (e: Exception) {
+                    false
                 }
-                return parsedDate != null && YearMonth.from(parsedDate) == current
             }
 
             mapOf(

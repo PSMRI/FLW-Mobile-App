@@ -54,10 +54,25 @@ class AncHomeVisitAdapterTest {
     @Test
     fun clickListener_onViewClick_invokesLambdaWithItem() {
         var captured: HomeVisitDomain? = null
-        val listener = AncHomeVisitAdapter.HomeVisitClickListener { item -> captured = item }
+        var capturedIsLast: Boolean? = null
+        val listener = AncHomeVisitAdapter.HomeVisitClickListener { item, isLast ->
+            captured = item
+            capturedIsLast = isLast
+        }
         val item = visit(id = 3)
-        listener.onViewClick(item)
+        listener.onViewClick(item, true)
         assertEquals(item, captured)
+        assertEquals(true, capturedIsLast)
+    }
+
+    @Test
+    fun clickListener_onViewClick_passesIsLastFalseForEarlierVisits() {
+        var capturedIsLast: Boolean? = null
+        val listener = AncHomeVisitAdapter.HomeVisitClickListener { _, isLast ->
+            capturedIsLast = isLast
+        }
+        listener.onViewClick(visit(id = 4), false)
+        assertEquals(false, capturedIsLast)
     }
 
     @Test

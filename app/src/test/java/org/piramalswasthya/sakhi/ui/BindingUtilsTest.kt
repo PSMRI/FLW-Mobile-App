@@ -731,7 +731,7 @@ class BindingUtilsTest {
     fun `setSyncState shows unsynced and is clickable`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncState(SyncState.UNSYNCED)
-        verify { view.setImageResource(R.drawable.ic_unsynced) }
+        verify { view.setImageResource(R.drawable.cloud_off) }
         verify { view.isClickable = true }
         verify { view.visibility = View.VISIBLE }
     }
@@ -740,7 +740,7 @@ class BindingUtilsTest {
     fun `setSyncState shows syncing and starts the rotate animation`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncState(SyncState.SYNCING)
-        verify { view.setImageResource(R.drawable.ic_syncing) }
+        verify { view.setImageResource(R.drawable.cloud_sync) }
         verify { view.isClickable = false }
         verify { view.startAnimation(any()) }
     }
@@ -749,7 +749,7 @@ class BindingUtilsTest {
     fun `setSyncState shows synced and is not clickable`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncState(SyncState.SYNCED)
-        verify { view.setImageResource(R.drawable.ic_synced) }
+        verify { view.setImageResource(R.drawable.cloud_upload) }
         verify { view.isClickable = false }
     }
 
@@ -764,7 +764,7 @@ class BindingUtilsTest {
     fun `setSyncStateForBen shows unsynced and is clickable`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncStateForBen(SyncState.UNSYNCED)
-        verify { view.setImageResource(R.drawable.ic_unsynced) }
+        verify { view.setImageResource(R.drawable.cloud_off) }
         verify { view.isClickable = true }
     }
 
@@ -772,7 +772,7 @@ class BindingUtilsTest {
     fun `setSyncStateForBen shows syncing and starts the rotate animation`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncStateForBen(SyncState.SYNCING)
-        verify { view.setImageResource(R.drawable.ic_syncing) }
+        verify { view.setImageResource(R.drawable.cloud_sync) }
         verify { view.isClickable = false }
         verify { view.startAnimation(any()) }
     }
@@ -781,7 +781,7 @@ class BindingUtilsTest {
     fun `setSyncStateForBen shows synced and is not clickable`() {
         val view = mockk<ImageView>(relaxed = true)
         view.setSyncStateForBen(SyncState.SYNCED)
-        verify { view.setImageResource(R.drawable.ic_synced) }
+        verify { view.setImageResource(R.drawable.cloud_upload) }
         verify { view.isClickable = false }
     }
 

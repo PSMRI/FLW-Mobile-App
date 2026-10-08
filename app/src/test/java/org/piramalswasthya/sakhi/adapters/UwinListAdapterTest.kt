@@ -21,7 +21,9 @@ class UwinListAdapterTest {
         place = "Place",
         participantsCount = participantsCount,
         createdBy = "asha",
+        createdDate = 0L,
         updatedBy = "asha",
+        updatedDate = 0L,
         syncState = SyncState.UNSYNCED
     )
 

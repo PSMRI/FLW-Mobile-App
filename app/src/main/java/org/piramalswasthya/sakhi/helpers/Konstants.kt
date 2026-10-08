@@ -1,8 +1,17 @@
 package org.piramalswasthya.sakhi.helpers
 
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import java.util.concurrent.TimeUnit
 
 object Konstants {
+
+    val cbacOccupationalExposureArrayId: Int
+        get() = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true))
+            R.array.cbac_type_occupational_exposure_mitanin
+        else R.array.cbac_type_occupational_exposure
+
+    const val cbacOtherSourcesPosi: Int = 4
 
     val minMillisBwtweenCbacFiling: Long = TimeUnit.DAYS.toMillis(365)
     const val amritTokenTimeoutDuration: Int = 100
@@ -27,6 +36,7 @@ object Konstants {
     const val maxAgeForEligibleCouple: Int = 49
     const val minAgeForNcd: Int = 30
     const val minAgeForReproductiveAge: Int = 15
+    const val minAgeForHWCRefferList: Int = 15
     const val maxAgeForReproductiveAge: Int = 49
     const val maxAgeForInfant: Int = 61
     const val minAgeForChild: Int = 91
@@ -57,6 +67,11 @@ object Konstants {
 
     const val english = "ENGLISH"
     const val minWeekToShowDelivered = 23
+
+    //PW-Registration
+    val negativeBloodGroupPositions = setOf(1, 3, 5, 7)
+
+    fun isNegativeBloodGroup(position: Int) = position in negativeBloodGroupPositions
 
 
     const val babyLowWeight: Double = 2500.0

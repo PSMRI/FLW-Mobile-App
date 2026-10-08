@@ -40,7 +40,8 @@ class PullAdolescentFromWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
     override suspend fun doWork(): Result {
-        return try {            withContext(Dispatchers.IO) {
+        return try {
+            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
                 val startPage =
@@ -70,7 +71,7 @@ class PullAdolescentFromWorker @AssistedInject constructor(
             }
 
         } catch (e: java.lang.Exception) {
-            Timber.e("Error occurred in PullTBFromAmritWorker $e ${e.stackTrace}")
+            Timber.e("Error occurred in PullAdolscentFromAmritWorker $e ${e.stackTrace}")
 
             Result.failure(workDataOf("worker_name" to "PullAdolescentFromWorker", "error" to (e.message ?: "Unknown error")))
         }

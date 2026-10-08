@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list
 
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,8 +25,17 @@ class TBScreeningListViewModelTest : BaseViewModelTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        every { recordsRepo.tbScreeningList } returns flowOf(emptyList())
-        viewModel = TBScreeningListViewModel(recordsRepo)
+        every { recordsRepo.tbScreeningList(hhId = 10L) } returns flowOf(emptyList())
+        viewModel = TBScreeningListViewModel(
+            recordsRepo,
+            SavedStateHandle(
+                mapOf(
+                    "hhId" to 10L,
+                    "fromDisease" to 0,
+                    "diseaseType" to "TB"
+                )
+            )
+        )
     }
 
     // =====================================================

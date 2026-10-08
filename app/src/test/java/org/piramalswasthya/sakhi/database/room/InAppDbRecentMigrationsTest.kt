@@ -83,6 +83,51 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_66_67 adds tb screening columns on a device that ran the cbac-only 65_66`() {
+        val db = mockDb(columns = listOf("cbac_occupational_exposure_other"))
+
+        invokeMigration("MIGRATION_66_67", db)
+
+        assertExecuted("ALTER TABLE TB_SCREENING ADD COLUMN keyPopulationRiskFactorIds TEXT DEFAULT NULL")
+        assertExecuted("ALTER TABLE TB_SCREENING ADD COLUMN chestPain INTEGER DEFAULT NULL")
+        assertNotExecuted("ALTER TABLE CBAC")
+    }
+
+    @Test
+    fun `MIGRATION_66_67 adds no columns when every column already exists`() {
+        val db = mockDb(
+            columns = listOf(
+                "keyPopulationRiskFactorIds", "keyPopulationRiskFactors", "hivStatusId",
+                "hivStatus", "fatigue", "shortBreath", "chestPain",
+                "cbac_occupational_exposure_other", "isSanitaryNapkinUsed"
+            )
+        )
+
+        invokeMigration("MIGRATION_66_67", db)
+
+        assertNotExecuted("ALTER TABLE")
+        assertExecuted("CREATE VIEW `BEN_BASIC_CACHE`")
+    }
+
+    @Test
+    fun `MIGRATION_65_66 adds the occupational exposure other column to cbac`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_65_66", db)
+
+        assertExecuted("ALTER TABLE CBAC ADD COLUMN cbac_occupational_exposure_other TEXT")
+    }
+
+    @Test
+    fun `MIGRATION_65_66 skips the column when it already exists`() {
+        val db = mockDb(columns = listOf("cbac_occupational_exposure_other"))
+
+        invokeMigration("MIGRATION_65_66", db)
+
+        assertNotExecuted("ALTER TABLE CBAC")
+    }
+
+    @Test
     fun `MIGRATION_63_64 adds sanitary napkin column to adolescent health`() {
         val db = mockDb()
 

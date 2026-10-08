@@ -21,21 +21,20 @@
             android:id="@+id/ashaProfileFragment"
             android:icon="@drawable/ic_person"
             android:title="@string/asha_profile" />
-        <item
-            android:id="@+id/dashboardFragment"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/dashboard" />
     </group>
 
     <group>
         <item
             android:id="@+id/sync_pending_records"
             android:checkable="false"
-            android:icon="@drawable/ic_synced"
+            android:icon="@drawable/cloud_upload"
             android:title="@string/sync_records" />
     </group>
 
-
+    <!--        <item-->
+    <!--            android:id="@+id/dashboardFragment"-->
+    <!--            android:icon="@drawable/ic_dashboard"-->
+    <!--            android:title="Dashboard" />-->
 <!--    <group>-->
 <!--        <item-->
 <!--            android:id="@+id/abha_id_activity"-->
@@ -105,7 +104,7 @@
         <item
             android:id="@+id/syncDashboardFragment"
             android:checkable="false"
-            android:icon="@drawable/ic_syncing"
+            android:icon="@drawable/cloud_sync"
             android:title="@string/sync_dashboard" />
 
         <item

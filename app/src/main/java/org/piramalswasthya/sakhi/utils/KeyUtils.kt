@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.utils
 
+import org.piramalswasthya.sakhi.helpers.NativeLibraryLoader
 import timber.log.Timber
 
 
@@ -14,29 +15,34 @@ import timber.log.Timber
  */
 object KeyUtils {
 
-    private const val NATIVE_JNI_LIB_NAME = "sakhi"
+    private const val NATIVE_JNI_LIB_NAME = NativeLibraryLoader.SAKHI
 
     init {
         try {
-            System.loadLibrary(NATIVE_JNI_LIB_NAME)
+            NativeLibraryLoader.load(NATIVE_JNI_LIB_NAME)
         } catch (e: UnsatisfiedLinkError) {
             Timber.tag("KeyUtils").e(e, "Failed to load native library")
+            throw RuntimeException("Failed to load native library: $NATIVE_JNI_LIB_NAME", e)
         }
+
     }
 
-    fun encryptedPassKey(): String = "dummy_key"
 
-    fun abhaClientSecret(): String = "dummy_secret"
+    external fun encryptedPassKey(): String
 
-    fun abhaClientID(): String = "dummy_client"
+    external fun abhaClientSecret(): String
 
-    fun baseTMCUrl(): String = "https://example.com/"
+    external fun abhaClientID(): String
 
-    fun baseAbhaUrl(): String = "https://example.com/"
+    external fun baseTMCUrl(): String
 
-    fun abhaTokenUrl(): String = "https://example.com/"
+    external fun baseAbhaUrl(): String
 
-    fun abhaAuthUrl(): String = "https://example.com/"
+    external fun abhaTokenUrl(): String
 
-    fun chatUrl(): String = "https://example.com/"
+    external fun abhaAuthUrl(): String
+
+    external fun chatUrl(): String
+
+
 }

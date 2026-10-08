@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.followUp
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,12 +15,19 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
-import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
+import org.piramalswasthya.sakhi.model.TBSuspectedCache
+import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
+import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -27,22 +35,40 @@ import javax.inject.Inject
 @HiltViewModel
 class NCDReferalFormViewModel @Inject constructor(
     private val repository: NCDFollowUpFormRepository,
-    @ApplicationContext private val context: Context
+    private val tbReferralFollowUpRepository: TBReferralFollowUpRepository,
+    private val tbRepo: TBRepo,
+    private val benRepo: BenRepo,
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
     private val _visitHistory = MutableStateFlow<List<NCDReferalFormResponseJsonEntity>>(emptyList())
     val visitHistory: StateFlow<List<NCDReferalFormResponseJsonEntity>> = _visitHistory
+    private val _tbVisitHistory = MutableStateFlow<List<TBReferralFollowUpEntity>>(emptyList())
 
+    var referReason = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referReason
+    var referredDate = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referredDate
     var visitNo = 1
     var followUpNo = 0
     var isFollowUpMode = false
     var isViewMode = false
+    var isTbFormAlreadyFilled = false
     private var isTreatmentSavedInDb = false
     private val formId = FormConstants.CDTF_001
 
+    private val formIdforTb = FormConstants.Tb_Referral_Follow_Up
+
+     val isTbForm: Boolean
+        get() = referReason.equals("TB Screening Form", ignoreCase = true) ||
+                referReason.equals("TB Suspected", ignoreCase = true) ||
+                referReason.equals(context.getString(R.string.tb_suspected_form), ignoreCase = true)
+
+    private val activeFormId get() = if (isTbForm) formIdforTb else formId
+
+
     private suspend fun loadVisitHistoryInternal(benId: Long) {
-        _visitHistory.value = repository.getAllVisitsByBeneficiary(benId, formId)
+        _visitHistory.value = repository.getAllVisitsByBeneficiary(benId, activeFormId)
     }
     private fun resolveNextVisitNumbers() {
         val list = _visitHistory.value
@@ -135,65 +161,123 @@ class NCDReferalFormViewModel @Inject constructor(
 
     fun loadFormSchema(benId: Long) {
         viewModelScope.launch {
-            loadVisitHistoryInternal(benId)
-            resolveNextVisitNumbers()
-            resolveTreatmentSavedFlag()
+            if (isTbForm) {
+                _tbVisitHistory.value = tbReferralFollowUpRepository.getVisits(benId)
+            } else {
+                loadVisitHistoryInternal(benId)
+                resolveNextVisitNumbers()
+                resolveTreatmentSavedFlag()
+            }
 
-            val schemaDto = repository.getSavedSchema(formId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
-                ?: repository.getFormSchema(formId) ?: return@launch
+            val schemaDto = repository.getSavedSchema(activeFormId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
+                ?: repository.getFormSchema(activeFormId) ?: return@launch
 
-            schemaDto.sections.forEach { section ->
-                section.fields.forEach { field ->
-                    when (field.fieldId) {
-                        "visit_label" -> {
-                            field.value = "Visit-$visitNo"
-                            field.isEditable = false
-                            field.visible = true
-                        }
-                        "follow_up_no" -> field.value = followUpNo.toString()
-                        "follow_up_date" -> {
-                            field.visible = isFollowUpMode && isTreatmentSavedInDb
-                            field.isEditable = field.visible && !isViewMode
-                            if (isFollowUpMode && isTreatmentSavedInDb) {
-                                val lastFollowUp = getLastFollowUp()
-                                val lastFollowUpStr = lastFollowUp?.followUpDate ?: getLastMainVisit()?.treatmentStartDate ?: "null"
-                                val nextFollowUp = getNextFollowUpMinDate()
-//                                field.value = nextFollowUp
-                                field.value = null
+            if (isTbForm) {
+                Log.e("isComing","TbForm")
+
+                schemaDto.sections.forEach { section ->
+                    section.fields.forEach { field ->
+                        when (field.fieldId) {
+
+                            "referred_on_date" -> {
+                                field.value = getReferredDateForUi()
+                                field.isEditable = false
+                                field.visible = false
                             }
-                        }
-                        else -> {
-                            field.visible = true
-                            field.isEditable = !isViewMode
+                            "follow_up_date" -> {
+                                field.isEditable = !isViewMode
+                            }
+                            else -> field.isEditable = !isViewMode
                         }
                     }
                 }
-            }
 
-            if (isFollowUpMode) {
-                getLastMainVisit()?.let { visit ->
-                    val storedFields = JSONObject(visit.formDataJson).optJSONObject("fields") ?: JSONObject()
+                val lastTbVisit = _tbVisitHistory.value.maxByOrNull { it.followUpDate }
+                isTbFormAlreadyFilled = lastTbVisit != null
+                lastTbVisit?.let { lastVisit ->
+                    val savedFields = JSONObject(lastVisit.fieldsJson)
                     schemaDto.sections.forEach { section ->
                         section.fields.forEach { field ->
-                            when (field.fieldId) {
-                                "diagnosis" -> {
-                                    val diagValue = storedFields.opt("diagnosis")
-                                    field.value = when (diagValue) {
-                                        is org.json.JSONArray -> (0 until diagValue.length()).map { diagValue.getString(it) }
-                                        is String -> diagValue.split(",").map { it.trim() }
-                                        else -> emptyList<String>()
+                            if (savedFields.has(field.fieldId)) {
+                                val savedValue = savedFields.opt(field.fieldId)
+                                field.value = when {
+                                    savedValue == JSONObject.NULL -> null
+                                    savedValue is org.json.JSONArray -> (0 until savedValue.length()).map { index ->
+                                        savedValue.opt(index).takeUnless { it == JSONObject.NULL }
                                     }
-                                    field.isEditable = false
+                                    else -> savedValue
                                 }
-                                "treatment_start_date" -> {
-                                    field.value = storedFields.optString(field.fieldId)
-                                    field.isEditable = false
+                                if (field.fieldId == "referred_on_date" || field.fieldId == "follow_up_date") {
+                                    field.value = formatTbDateForUi(field.value?.toString()) ?: field.value
+                                }
+                            }
+                            if (field.fieldId == "referred_on_date") {
+                                field.value = getReferredDateForUi()
+                            }
+                            field.isEditable = !isViewMode && !isTbFormAlreadyFilled
+                        }
+                    }
+                }
+
+            } else {
+                schemaDto.sections.forEach { section ->
+                    section.fields.forEach { field ->
+                        when (field.fieldId) {
+                            "visit_label" -> {
+                                field.value = "Visit-$visitNo"
+                                field.isEditable = false
+                                field.visible = true
+                            }
+                            "follow_up_no" -> field.value = followUpNo.toString()
+                            "follow_up_date" -> {
+                                field.visible = isFollowUpMode && isTreatmentSavedInDb
+                                field.isEditable = field.visible && !isViewMode
+                                if (isFollowUpMode && isTreatmentSavedInDb) {
+                                    val lastFollowUp = getLastFollowUp()
+                                    val lastFollowUpStr = lastFollowUp?.followUpDate ?: getLastMainVisit()?.treatmentStartDate ?: "null"
+                                    val nextFollowUp = getNextFollowUpMinDate()
+//                                field.value = nextFollowUp
+                                    field.value = null
+                                }
+                            }
+                            else -> {
+                                field.visible = true
+                                field.isEditable = !isViewMode
+                            }
+                        }
+                    }
+                }
+
+                if (isFollowUpMode) {
+                    getLastMainVisit()?.let { visit ->
+                        val storedFields = JSONObject(visit.formDataJson).optJSONObject("fields") ?: JSONObject()
+                        schemaDto.sections.forEach { section ->
+                            section.fields.forEach { field ->
+                                when (field.fieldId) {
+                                    "diagnosis" -> {
+                                        val diagValue = storedFields.opt("diagnosis")
+                                        field.value = when (diagValue) {
+                                            is org.json.JSONArray -> (0 until diagValue.length()).map { diagValue.getString(it) }
+                                            is String -> diagValue.split(",").map { it.trim() }
+                                            else -> emptyList<String>()
+                                        }
+                                        field.isEditable = false
+                                    }
+                                    "treatment_start_date" -> {
+                                        field.value = storedFields.optString(field.fieldId)
+                                        field.isEditable = false
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+
+
+
+
 
             _schema.value = schemaDto
         }
@@ -218,6 +302,34 @@ class NCDReferalFormViewModel @Inject constructor(
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val schema = _schema.value ?: return
+        if (isTbForm) {
+            val fieldsMap = schema.sections.flatMap { it.fields }
+                .filter { it.visible }
+                .associate { it.fieldId to normalizeTbFieldValue(it.fieldId, it.value) }
+                .toMutableMap()
+            val referredOnDate = normalizeTbFieldValue(
+                "referred_on_date",
+                getReferredDateForUi()
+            )?.toString().orEmpty()
+            fieldsMap["referred_on_date"] = referredOnDate
+            val followUpDate = fieldsMap["follow_up_date"]?.toString().orEmpty()
+            if (followUpDate.isBlank()) return
+            tbReferralFollowUpRepository.save(
+                TBReferralFollowUpEntity(
+                    benId = benId,
+                    houseHoldId = hhId,
+                    referredOnDate = referredOnDate,
+                    followUpDate = followUpDate,
+                    followUpStatus = fieldsMap["follow_up_status"]?.toString(),
+                    fieldsJson = JSONObject(fieldsMap).toString()
+                )
+            )
+            updateTbBeneficiaryStatus(benId, fieldsMap["follow_up_status"]?.toString())
+            _tbVisitHistory.value = tbReferralFollowUpRepository.getVisits(benId)
+            WorkerUtils.triggerAmritPushWorker(context)
+            return
+        }
+
         resolveNextVisitNumbers()
 
         val fieldsMap = schema.sections.flatMap { it.fields }.associate { field ->
@@ -249,7 +361,7 @@ class NCDReferalFormViewModel @Inject constructor(
             followUpDate = if (isFollowUpMode && isTreatmentSavedInDb)
                 formatDateForSave(fieldsMap["follow_up_date"]?.toString()) else null,
             diagnosisList = diagnosisList,
-            formId = formId,
+            formId = activeFormId,
             formJson = wrappedJson.toString(),
             version = schema.version
         )
@@ -258,6 +370,58 @@ class NCDReferalFormViewModel @Inject constructor(
         NCDFollowUpSyncWorker.enqueue(context)
 
     }
+
+    private suspend fun updateTbBeneficiaryStatus(benId: Long, selectedStatus: String?) {
+        val status = selectedStatus.orEmpty().trim().uppercase(Locale.ROOT)
+            .replace(Regex("[^A-Z0-9]+"), "_").trim('_')
+        val isConfirmed = status.contains("DOTS") || status.contains("CONFIRMED")
+        val isTptRecommendation = status.contains("TPT")
+        val isNoTptRequired = status.contains("NO_TPT") || status.contains("NOT_REQUIRED")
+        if (!isConfirmed && !isTptRecommendation && !isNoTptRequired) return
+
+        val beneficiary = benRepo.getBenFromId(benId) ?: return
+        val suspectedCase = tbRepo.getTBSuspected(benId)
+            ?: if (isConfirmed) TBSuspectedCache(benId = beneficiary.beneficiaryId) else null
+        suspectedCase?.let { suspected ->
+            suspected.isConfirmed = isConfirmed
+            suspected.isTBConfirmed = isConfirmed
+            suspected.syncState = SyncState.UNSYNCED
+            tbRepo.saveTBSuspected(suspected)
+        }
+
+        beneficiary.suspectedTb = "Yes"
+        beneficiary.confirmedTb = if (isConfirmed) "Yes" else "No"
+        if (beneficiary.processed != "N") beneficiary.processed = "U"
+        beneficiary.syncState = SyncState.UNSYNCED
+        benRepo.updateRecord(beneficiary)
+    }
+
+    private fun normalizeTbFieldValue(fieldId: String, value: Any?): Any? {
+        if (value !is String || (fieldId != "referred_on_date" && fieldId != "follow_up_date")) return value
+        val date = listOf("dd-MM-yyyy", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            .firstNotNullOfOrNull { pattern ->
+                try {
+                    SimpleDateFormat(pattern, Locale.ENGLISH).apply { isLenient = false }.parse(value)
+                } catch (_: Exception) { null }
+            } ?: return value
+        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).format(date)
+    }
+
+    private fun formatTbDateForUi(value: String?): String? {
+        if (value.isNullOrBlank()) return null
+        val date = listOf("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd", "dd-MM-yyyy")
+            .firstNotNullOfOrNull { pattern ->
+                try {
+                    SimpleDateFormat(pattern, Locale.ENGLISH).apply { isLenient = false }.parse(value)
+                } catch (_: Exception) { null }
+            } ?: return null
+        return SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(date)
+    }
+
+    private fun getReferredDateForUi(): String? =
+        referredDate.takeIf { it > 0L }?.let {
+            SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(Date(it))
+        }
     fun getVisibleFields(): List<FormField> {
         return _schema.value?.sections?.flatMap { section ->
             section.fields.filter { it.visible }.map { field ->
@@ -266,7 +430,11 @@ class NCDReferalFormViewModel @Inject constructor(
                     FieldValidation(
                         min = it.min,
                         max = it.max,
-                        minDate = it.minDate,
+                        minDate = if (isTbForm && field.fieldId == "follow_up_date") {
+                            getReferredDateForUi() ?: it.minDate
+                        } else {
+                            it.minDate
+                        },
                         maxDate = it.maxDate,
                         maxLength = it.maxLength,
                         regex = it.regex,
@@ -276,13 +444,15 @@ class NCDReferalFormViewModel @Inject constructor(
                         afterField = it.afterField,
                         beforeField = it.beforeField
                     )
-                }
+                } ?: if (isTbForm && field.fieldId == "follow_up_date") {
+                    FieldValidation(minDate = getReferredDateForUi())
+                } else null
 
                 FormField(
                     fieldId = field.fieldId,
                     label = field.label,
                     type = field.type,
-                    options = field.optionItems(),
+                    options = OptionItemParser.parse(field.options),
                     isRequired = field.required,
                     placeholder = field.placeholder,
                     validation = validation,
@@ -324,6 +494,7 @@ class NCDReferalFormViewModel @Inject constructor(
     data class FollowUpDateError(val resId: Int, val formatArgs: Array<Any> = emptyArray(), val scrollIndex: Int = 0)
 
     fun getFollowUpDateErrorFromUI(): FollowUpDateError? {
+        if (isTbForm) return null
         val fields = getVisibleFields()
         val followUpField = fields.firstOrNull { it.fieldId == "follow_up_date" } ?: return null
         val followUpDateStr = followUpField.value as? String

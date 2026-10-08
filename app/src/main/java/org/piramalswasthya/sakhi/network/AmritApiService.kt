@@ -5,6 +5,8 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormNCDFollowUpSubmitRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpApiRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDFollowUpResponse
@@ -182,13 +184,29 @@ interface AmritApiService {
     ): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/getAll")
-    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
+    suspend fun getAdolescentHealthData(@Body userDetail: GetDataPaginatedNewRequest): Response<ResponseBody>
 
     @POST("flw-api/adolescentHealth/saveAll")
     suspend fun saveAdolescentHealthData(@Body adolescentHealthRequestDTO: AdolescentHealthRequestDTO): Response<ResponseBody>
 
     @POST("flw-api/tb/suspected/saveAll")
     suspend fun saveTBSuspectedData(@Body tbSuspectedRequestDTO: TBSuspectedRequestDTO): Response<ResponseBody>
+
+    @POST("flw-api/tb/referralFollowUp/save")
+    suspend fun saveTBReferralFollowUp(
+        @Body request: TBReferralFollowUpRequest
+    ): Response<ResponseBody>
+
+    @POST("flw-api/tb/referralFollowUp/getAll")
+    suspend fun getTBReferralFollowUps(
+        @Body userDetail: GetDataPaginatedRequest
+    ): Response<ResponseBody>
+
+    @POST("flw-api/tb/tptFollowUp/save")
+    suspend fun saveTPTFollowUp(@Body request: TPTFollowUpApiRequest): Response<ResponseBody>
+
+    @POST("flw-api/tb/tptFollowUp/getAll")
+    suspend fun getTPTFollowUps(@Body userDetail: GetDataPaginatedRequest): Response<ResponseBody>
 
     @POST("flw-api/tb/confirmed/save")
     suspend fun saveTBConfirmedData(@Body tbConfirmedRequestDTO: TBConfirmedRequestDTO): Response<ResponseBody>
@@ -471,7 +489,7 @@ interface AmritApiService {
     @POST("flw-api/maternalCare/ancVisit/counselling/saveAll")
     suspend fun  submitFromANC(
         @Body request: List<FormSubmitRequest>
-    ): Response<Unit>
+    ): Response<com.google.gson.JsonElement>
 
 
     @POST("flw-api/child-care/hbycVisit/getAll")

@@ -32,12 +32,12 @@ class CdFragmentDirectionsTest {
 
     @Test
     fun actionCdFragmentToTBScreeningListFragment_buildsDirections() {
-        val d = CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
+        val d = CdFragmentDirections.actionCdFragmentToTBScreeningListFragment(hhId = 10L, fromDisease = 1, diseaseType = "<value>")
         assertNotNull(d)
         assertTrue(d.actionId != 0)
         assertNotNull(d.arguments)
         assertTrue(d.toString().isNotEmpty())
-        val same = CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
+        val same = CdFragmentDirections.actionCdFragmentToTBScreeningListFragment( hhId = 10L, fromDisease = 1, diseaseType = "<value>")
         assertEquals(d, same)
         assertEquals(d.hashCode(), same.hashCode())
         assertFalse(d.equals(null))

@@ -226,6 +226,7 @@
     <string name="irs_on">मलेरिया रोकथाम छिड़काव चालू</string>
     <string name="ben_pending_sync">सिंक लंबित</string>
     <string name="tv_husband_name_ph">पति का नाम</string>
+    <string name="head_of_family">परिवार का मुखिया: </string>
     <string name="tv_spouse_name_ph">पति/पत्नी का नाम</string>
     <string name="tv_spouse">जीवनसाथी</string>
     <string name="chat_error">आपके चैट बॉट को लोड करने में कुछ त्रुटि हुई है</string>
@@ -342,9 +343,12 @@
     <string name="to_do_list">कार्य सूची</string>
     <string name="beneficiaries_due_for_anc">एएनसी के लिए लाभार्थी बकाया</string>
     <string name="beneficiaries_due_for_immunization">टीकाकरण के लिए देय लाभार्थी</string>
+    <string name="women_due_for_anc">एएनसी के लिए देय महिलाएं</string>
+    <string name="children_due_for_immunization">टीकाकरण के लिए देय बच्चे</string>
     <string name="high_risk_cases">खतरे के लक्षण वाले मामले</string>
-    <string name="high_risk_pregnant_women">खतरे के लक्षण वाली गर्भवती महिलाएं</string>
-    <string name="high_risk_non_pregnant_women">खतरे के लक्षण वाली गैर-गर्भवती महिलाएं</string>
+    <string name="suspected_high_risk_pregnant_women">संदिग्ध खतरे के लक्षण वाली गर्भवती महिला</string>
+    <string name="suspected_high_risk_non_pregnant_women">संदिग्ध खतरे के लक्षण वाली गैर-गर्भवती महिला</string>
+    <string name="confirmed_high_risk_pregnant_women">पुष्ट खतरे के लक्षण वाली गर्भवती महिला</string>
     <string name="high_risk_babies">खतरे के लक्षण वाले शिशु</string>
     <string name="low_birth_weight_babies">कम वजन वाले शिशु</string>
     <string name="registration_date">पंजीकरण तिथि</string>
@@ -952,9 +956,12 @@
     <string name="delivery_discharge_summary_4">प्रसव छुट्टी सारांश 4</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">जांचें कि व्यक्ति में इनमें से कोई लक्षण है या नहीं</string>
     <string name="symptomatic_tb_screening">टीबी के लक्षणों की जांच</string>
-    <string name="tb_asymptomatic_symptoms">बिना लक्षण वाले लोगों की टीबी जांच</string>
+    <string name="tb_asymptomatic_symptoms">लाभार्थी में कोई लक्षण नहीं हैं</string>
+    <string name="refer">रेफर करें</string>
     <string name="tb_rise_of_fever">रोजाना शाम को तेज बुखार आता है?</string>
     <string name="tb_loss_of_appetite">भूख कम लगना</string>
+    <string name="tb_child_failure_to_gain_weight">बच्चों में वजन न बढ़ना</string>
+    <string name="tb_child_decreased_activity">बच्चों की गतिविधि या खेलने-कूदने में कमी</string>
     <string name="tb_age_more_than_60">उम्र 60 वर्ष से अधिक</string>
     <string name="tb_diabetic">मधुमेह रोगी</string>
     <string name="tb_tobacco_user">तंबाकू सेवन करने वाला</string>
@@ -965,6 +972,8 @@
     <string name="visit_number_label">भ्रमण -%d</string>
     <string name="add_spouse">जीवनसाथी जोड़ें </string>
     <string name="would_you_like_to_add_spouse">क्या आप %1$s के %2$s को जोड़ना चाहते हैं?</string>
+    <string name="add_children_title">बच्चे जोड़ें</string>
+    <string name="would_you_like_to_add_children">क्या आप बच्चों को जोड़ना चाहते हैं?</string>
     <string name="str_wife">पत्नी</string>
     <string name="str_husband">पति</string>
     <string name="is_medicine_distributed_yes_no">क्या दवा वितरित की गई है? (हाँ/नहीं)</string>
@@ -1140,6 +1149,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>दिन 1</item>
+        <item>दिन 2</item>
+        <item>दिन 3</item>
+        <item>दिन 4</item>
+        <item>दिन 5</item>
+        <item>दिन 6</item>
+        <item>दिन 7</item>
+        <item>दिन 8</item>
+        <item>दिन 9</item>
+        <item>दिन 10</item>
+        <item>दिन 11</item>
+        <item>दिन 12</item>
+        <item>दिन 13</item>
+        <item>दिन 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>दिन 1</item>
         <item>दिन 2</item>
@@ -1181,6 +1207,17 @@
         <item name="hbnc_assisted">सहायता प्राप्त प्रसव</item>
     </string-array>
 
+    <string name="start_follow_up">फॉलो-अप शुरू करें</string>
+    <string name="view_follow_up">फॉलो-अप देखें</string>
+    <string-array name="TB_referral_facility">
+        <item>क्षय रोग इकाई (TU)</item>
+        <item>HWC-उप केंद्र</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>जिला अस्पताल</item>
+        <item>जिला क्षय रोग केंद्र (DTC)</item>
+        <item>सरकारी मेडिकल कॉलेज</item>
+    </string-array>
     <string-array name="hbnc_started_breastfeeding">
         <item name="hbnc_breastfeeding_time_1">एक घंटे के भीतर</item>
         <item name="hbnc_breastfeeding_time_2">1 - 4 घंटे</item>
@@ -1448,4 +1485,76 @@
     <string name="incentive_header_activity">गतिविधि</string>
     <string name="incentive_header_no_of_claims">दावों की संख्या</string>
     <string name="incentive_header_amount_claimed">दावा राशि (रु.)</string>
+    <string name="risk_factors">जोखिम कारक</string>
+    <string name="key_population_risk_factors">प्रमुख जनसंख्या / जोखिम कारक</string>
+    <string name="positive">पॉजिटिव</string>
+    <string name="reactive">रिएक्टिव</string>
+    <string name="negative">नेगेटिव</string>
+    <string name="hiv_status">एचआईवी स्थिति</string>
+    <string name="not_applicable">लागू नहीं</string>
+    <string name="fatigue">थकान</string>
+    <string name="chestpain">सीने में दर्द</string>
+
+    <string name="kp_risk_pregnancy">गर्भावस्था</string>
+    <string name="kp_risk_lactating_mother">स्तनपान कराने वाली माँ</string>
+    <string name="kp_risk_anti_tnf_treatment">एंटी-टीएनएफ उपचार</string>
+    <string name="kp_risk_bronchial_asthma">ब्रोंकियल अस्थमा (दमा)</string>
+    <string name="kp_risk_cancer">कैंसर</string>
+    <string name="kp_risk_cardiovascular_disorder">हृदय-संवहनी विकार</string>
+    <string name="kp_risk_contact_of_known_tb_patients">ज्ञात टीबी रोगियों के संपर्क में रहने वाले</string>
+    <string name="kp_risk_copd">सीओपीडी</string>
+    <string name="kp_risk_covid_recovered_patients">कोविड से ठीक हुए मरीज़</string>
+    <string name="kp_risk_diabetes">मधुमेह</string>
+    <string name="kp_risk_dialysis">डायलिसिस</string>
+    <string name="kp_risk_health_care_worker">स्वास्थ्य कर्मी</string>
+    <string name="kp_risk_hypertensive">उच्च रक्तचाप</string>
+    <string name="kp_risk_liver_impairment">लिवर की खराबी</string>
+    <string name="kp_risk_migrant">प्रवासी</string>
+    <string name="kp_risk_miner">खनिक</string>
+    <string name="kp_risk_palliative_care">उपशामक देखभाल</string>
+    <string name="kp_risk_patient_on_immunosuppressants">प्रतिरक्षा-दमनकारी दवाएँ लेने वाले मरीज़</string>
+    <string name="kp_risk_prison">कारागार</string>
+    <string name="kp_risk_illegal_immigrant">अवैध प्रवासी</string>
+    <string name="kp_risk_renal_impairment">गुर्दे की खराबी</string>
+    <string name="kp_risk_transplantation">अंग प्रत्यारोपण</string>
+    <string name="kp_risk_urban_slum">शहरी मलिन बस्ती</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">वयस्क बीसीजी टीकाकरण का इतिहास</string>
+    <string name="kp_risk_undernourished_malnourished">कुपोषित (बीएमआई &lt;18.5 किग्रा/मी²)</string>
+    <string name="kp_risk_elderly">वृद्ध (आयु &gt;60 वर्ष)</string>
+    <string name="kp_risk_workplace_settings">कार्यस्थल (कोयला/सैंडब्लास्टिंग/ईंट भट्ठा)</string>
+    <string name="kp_risk_tea_garden_worker">चाय बागान श्रमिक</string>
+    <string name="kp_risk_construction_site_worker">निर्माण स्थल श्रमिक</string>
+    <string name="kp_risk_congregate_settings">सामूहिक आवास स्थल</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">नशा मुक्ति केंद्रों में आने वाले लोग</string>
+    <string name="kp_risk_indoor_air_pollution">घर के अंदर वायु प्रदूषण के संपर्क में रहने वाला व्यक्ति</string>
+    <string name="kp_risk_marginalized_hiv">एचआईवी के जोखिम वाली हाशिए की आबादी</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">मादक पदार्थों का सेवन (शराब/नशीली दवाओं का इंजेक्शन लेने वाले)</string>
+    <string name="kp_risk_tobacco_smoker">तंबाकू/धूम्रपान करने वाला</string>
+    <string name="kp_risk_silica_exposure_silicosis">सिलिका के संपर्क में/सिलिकोसिस</string>
+    <string name="kp_risk_other">अन्य</string>
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">इस महीने देय</string>
+    <string name="imm_scheduled_next_month">अगले महीने निर्धारित</string>
+    <string name="imm_dose_stage">खुराक चरण</string>
+    <string name="imm_select_dose_stage">खुराक चरण चुनें</string>
+    <string name="imm_no_match_for_filters">चयनित फ़िल्टर से कोई लाभार्थी मेल नहीं खाता।</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d लाभार्थी</item>
+        <item quantity="other">%d लाभार्थी</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">अगला फॉलो-अप %1$s से उपलब्ध होगा</string>
+    <string name="follow_up_date_cannot_be_in_the_future">फॉलो-अप की तारीख भविष्य की नहीं हो सकती</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">फॉलो-अप की तारीख होम विजिट की तारीख से पहले नहीं हो सकती</string>
+    <string name="treatment_status_is_required">उपचार की स्थिति आवश्यक है</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">जब उपचार की स्थिति पूर्ण हो, तो उपचार समाप्ति तिथि आवश्यक है</string>
+    <string name="follow_up_date_is_required">फॉलो-अप की तारीख आवश्यक है</string>
+    <string name="follow_up_saved_successfully">फॉलो-अप सफलतापूर्वक सहेजा गया</string>
+    <string name="visit_completed_starting_next_visit_screening">विज़िट पूरी हुई! अगली विज़िट की स्क्रीनिंग शुरू की जा रही है।</string>
+    <string name="failed_to_save_follow_up">फॉलो-अप सहेजने में विफल</string>
+    <string name="start_tpt">TPT शुरू करें</string>
+    <string name="add_follow_up">फॉलो-अप जोड़ें</string>
+    <string name="view_details">विवरण देखें</string>
+    <string name="speech_to_text_unavailable">इस डिवाइस पर वॉइस इनपुट उपलब्ध नहीं है</string>
 </resources>

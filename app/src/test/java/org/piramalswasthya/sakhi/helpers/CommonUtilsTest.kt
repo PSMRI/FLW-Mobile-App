@@ -394,6 +394,7 @@ class CommonUtilsTest {
         every { b.hhId } returns hhId
         every { b.abhaId } returns abhaId
         every { b.dob } returns dob
+        every { b.lifoMillis() } returns 0L
         return b
     }
 
@@ -1107,40 +1108,25 @@ class CommonUtilsTest {
         assertEquals(1, filterImmunList(list, "98765").size)
     }
 
-    @Test fun `filterImmunList 5-6 branch matches 5 years`() {
-        val list = listOf(mkImm(age = "5 years"), mkImm(age = "3 years"))
-        assertEquals(1, filterImmunList(list, "5-6").size)
+    @Test fun `filterImmunList matches by age text`() {
+        // filterForImm strips spaces from the query but not from the age, so the stored age
+        // has to be space-free for a multi-word query to hit.
+        val list = listOf(mkImm(age = "5years"), mkImm(age = "3years"))
+        assertEquals(1, filterImmunList(list, "5 years").size)
     }
 
-    @Test fun `filterImmunList 16-24 branch matches 1 year`() {
-        val list = listOf(mkImm(age = "1 year 6 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "16-24").size)
-    }
-
-    @Test fun `filterImmunList 9-12 branch matches 10 months`() {
-        val list = listOf(mkImm(age = "10 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "9-12").size)
-    }
-
-    @Test fun `filterImmunList 6 weeks branch matches 1 month`() {
+    // FLW-1144: filterImmunList no longer rewrites a Dose Stage label into an age string.
+    // A stage typed as free text is now just a search term - it must not silently return
+    // children selected by age. Dose Stage filtering moved to the ViewModel, where it
+    // matches on VaccineDomain.vaccineCategory.
+    @Test fun `filterImmunList does not treat a dose stage label as an age filter`() {
         val list = listOf(mkImm(age = "1 month"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "6 weeks").size)
+        assertEquals(0, filterImmunList(list, "6 weeks").size)
     }
 
-    @Test fun `filterImmunList birth dose branch matches day age`() {
+    @Test fun `filterImmunList does not map birth dose onto day-aged children`() {
         val list = listOf(mkImm(age = "5 days"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "birth dose").size)
-    }
-
-    @Test fun `filterImmunList 10 weeks branch matches 3 months`() {
-        // filterForImm strips spaces from the token, so age must match "3months"
-        val list = listOf(mkImm(age = "3months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "10 weeks").size)
-    }
-
-    @Test fun `filterImmunList 14 weeks branch matches 4 months`() {
-        val list = listOf(mkImm(age = "4months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "14 weeks").size)
+        assertEquals(0, filterImmunList(list, "birth dose").size)
     }
 
     // ===============================================================
@@ -1151,6 +1137,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val ecr = mockk<EligibleCoupleRegCache>(relaxed = true)
         every { ecr.createdDate } returns created
+        every { ecr.updatedDate } returns created
         every { ecr.syncState } returns sync
         val item = mockk<BenWithEcrDomain>(relaxed = true)
         every { item.ben } returns ben
@@ -1174,6 +1161,8 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val rec = mockk<ECTDomain>(relaxed = true)
         every { rec.syncState } returns sync
+        every { rec.created } returns ectDate
+        every { rec.visited } returns ectDate
         val item = mockk<BenWithEctListDomain>(relaxed = true)
         every { item.ben } returns ben
         every { item.ectDate } returns ectDate
@@ -1199,6 +1188,7 @@ class CommonUtilsTest {
         every { item.ben } returns ben
         every { item.pncDate } returns pncDate
         every { item.syncState } returns sync
+        every { item.savedPncRecords } returns emptyList()
         return item
     }
 
@@ -1215,6 +1205,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val pwr = mockk<PregnantWomanRegistrationCache>(relaxed = true)
         every { pwr.createdDate } returns created
+        every { pwr.updatedDate } returns created
         every { pwr.syncState } returns sync
         val item = mockk<BenWithPwrDomain>(relaxed = true)
         every { item.ben } returns ben
@@ -1244,6 +1235,8 @@ class CommonUtilsTest {
         every { item.ancDate } returns ancDate
         every { item.abortionDate } returns abortionDate
         every { item.syncState } returns sync
+        every { item.savedAncRecords } returns emptyList()
+        every { item.pwr } returns null
         return item
     }
 
@@ -1269,6 +1262,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val infant = mockk<InfantRegCache>(relaxed = true)
         every { infant.createdDate } returns created
+        every { infant.updatedDate } returns created
         every { infant.syncState } returns sync
         val item = mockk<ChildRegDomain>(relaxed = true)
         every { item.motherBen } returns ben
@@ -1289,6 +1283,7 @@ class CommonUtilsTest {
         val ben = mkBen(benId = benId, dob = dob)
         val ir = mockk<InfantRegCache>(relaxed = true)
         every { ir.createdDate } returns created
+        every { ir.updatedDate } returns created
         val item = mockk<InfantRegDomain>(relaxed = true)
         every { item.motherBen } returns ben
         every { item.savedIr } returns ir
@@ -1350,7 +1345,8 @@ class CommonUtilsTest {
         val domain = BenWithCbacReferDomain(
             ben = mkBen(benName = "Asha"),
             savedCbacRecords = emptyList(),
-            referalCac = refer
+            referalCac = refer,
+            tbrefferalFollowUp = emptyList()
         )
         assertTrue(domain.savedCbacRecords.isEmpty())
         assertEquals(refer, domain.referalCac)
@@ -1763,16 +1759,16 @@ class CommonUtilsTest {
         assertTrue(filterForImm(imm, "12 months", "9 months", "10 months", "11 months"))
     }
 
-    @Test fun `filterImmunList 9-12 branch matches the third alternate 11 months`() {
+    // FLW-1144: "9-12" and "birth dose" used to be rewritten into age queries here. They are
+    // now plain search terms and match nothing on age alone.
+    @Test fun `filterImmunList treats a stage range as a literal search term`() {
         val list = listOf(mkImm(age = "11 months"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "9-12").size)
+        assertEquals(0, filterImmunList(list, "9-12").size)
     }
 
-    @Test fun `filterImmunList birth dose branch matches the one month fallback`() {
-        // "birth dose" rewrites the query to "1 month" with "1 day" as an alternate,
-        // and additionally lets through anyone whose age mentions days.
-        val list = listOf(mkImm(age = "1month"), mkImm(age = "5 years"))
-        assertEquals(1, filterImmunList(list, "birth dose").size)
+    @Test fun `filterImmunList still matches a name that contains the query`() {
+        val list = listOf(mkImm(age = "1month", benName = "Rani"), mkImm(age = "5 years"))
+        assertEquals(1, filterImmunList(list, "rani").size)
     }
 
     // ===============================================================
@@ -1878,5 +1874,79 @@ class CommonUtilsTest {
             if (days > 0) append(" $days ").append(if (days == 1) "Day" else "Days")
         }
         assertEquals(expected, getLocalizedAge(ageContext(), dobCal.timeInMillis))
+    }
+
+    @Test
+    fun `parseHourAndMinute reads the twenty four hour values already stored`() {
+        assertEquals(Pair(15, 55), parseHourAndMinute("15:55"))
+        assertEquals(Pair(14, 5), parseHourAndMinute("14:5"))
+        assertEquals(Pair(0, 0), parseHourAndMinute("0:0"))
+        assertEquals(Pair(23, 59), parseHourAndMinute("23:59"))
+    }
+
+    @Test
+    fun `parseHourAndMinute reads the twelve hour format`() {
+        assertEquals(Pair(15, 55), parseHourAndMinute("03:55 PM"))
+        assertEquals(Pair(3, 55), parseHourAndMinute("03:55 AM"))
+        assertEquals(Pair(15, 55), parseHourAndMinute("3:55 pm"))
+        assertEquals(Pair(0, 30), parseHourAndMinute("12:30 AM"))
+        assertEquals(Pair(12, 30), parseHourAndMinute("12:30 PM"))
+    }
+
+    @Test
+    fun `parseHourAndMinute returns null instead of throwing on unreadable values`() {
+        assertNull(parseHourAndMinute(null))
+        assertNull(parseHourAndMinute(""))
+        assertNull(parseHourAndMinute("   "))
+        assertNull(parseHourAndMinute("morning"))
+        assertNull(parseHourAndMinute("10"))
+        assertNull(parseHourAndMinute("10:20:30"))
+        assertNull(parseHourAndMinute("24:00"))
+        assertNull(parseHourAndMinute("10:60"))
+        assertNull(parseHourAndMinute("13:00 PM"))
+        assertNull(parseHourAndMinute("00:30 AM"))
+    }
+
+    @Test
+    fun `formatTwelveHourTime pads both parts and appends the meridiem`() {
+        assertEquals("12:00 AM", formatTwelveHourTime(0, 0))
+        assertEquals("12:05 AM", formatTwelveHourTime(0, 5))
+        assertEquals("09:05 AM", formatTwelveHourTime(9, 5))
+        assertEquals("12:30 PM", formatTwelveHourTime(12, 30))
+        assertEquals("06:00 PM", formatTwelveHourTime(18, 0))
+        assertEquals("11:59 PM", formatTwelveHourTime(23, 59))
+    }
+
+    @Test
+    fun `toTwelveHourTime converts a stored value for display`() {
+        assertEquals("02:30 PM", toTwelveHourTime("14:30"))
+        assertEquals("02:05 PM", toTwelveHourTime("14:5"))
+        assertEquals("02:30 PM", toTwelveHourTime("02:30 PM"))
+        assertNull(toTwelveHourTime(null))
+        assertNull(toTwelveHourTime("not a time"))
+    }
+
+    @Test
+    fun `toTwentyFourHourTime sends back the format the server already receives`() {
+        assertEquals("00:05", toTwentyFourHourTime("12:05 AM"))
+        assertEquals("18:00", toTwentyFourHourTime("06:00 PM"))
+        assertEquals("14:30", toTwentyFourHourTime("02:30 PM"))
+        assertEquals("02:30", toTwentyFourHourTime("02:30 AM"))
+        assertEquals("12:00", toTwentyFourHourTime("12:00 PM"))
+        assertEquals("14:30", toTwentyFourHourTime("14:30"))
+        assertEquals("14:05", toTwentyFourHourTime("14:5"))
+        assertNull(toTwentyFourHourTime(null))
+        assertNull(toTwentyFourHourTime("not a time"))
+    }
+
+    @Test
+    fun `a picked time survives the display and push round trip`() {
+        listOf(0 to 5, 9 to 30, 12 to 0, 18 to 0, 23 to 59).forEach { (hour, minute) ->
+            val displayed = formatTwelveHourTime(hour, minute)
+            assertEquals(
+                String.format(Locale.ENGLISH, "%02d:%02d", hour, minute),
+                toTwentyFourHourTime(displayed)
+            )
+        }
     }
 }

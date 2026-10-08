@@ -12,7 +12,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import org.piramalswasthya.sakhi.database.room.dao.IncentiveDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
-import org.piramalswasthya.sakhi.helpers.retryWithBackoff
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.setToEndOfTheDay
 import org.piramalswasthya.sakhi.model.IncentiveActivityListRequest
 import org.piramalswasthya.sakhi.model.IncentiveActivityNetwork
@@ -44,68 +44,64 @@ class IncentiveRepo @Inject constructor(
     val activity_list = incentiveDao.getAllActivity()
 
 
-    suspend fun pullAndSaveAllIncentiveActivities(user: User, retryCount: Int = 3): Boolean {
+    suspend fun pullAndSaveAllIncentiveActivities(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                retryWithBackoff {
-                    val currentLang = preferenceDao.getCurrentLanguage().symbol
-                    val stateId = user.state.id
-                    val districtId = user.district.id
-                    val requestBody = IncentiveActivityListRequest(stateId, districtId, currentLang)
-                    val response = amritApiService.getAllIncentiveActivities(requestBody = requestBody)
-                    val statusCode = response.code()
-                    if (statusCode == 200) {
-                        val responseString = response.body()?.string()
-                        if (responseString != null) {
-                            val jsonObj = JSONObject(responseString)
+                val currentLang = preferenceDao.getCurrentLanguage().symbol
+                val stateId = user.state.id
+                val districtId = user.district.id
+                val requestBody = IncentiveActivityListRequest(stateId, districtId, currentLang)
+                val response = amritApiService.getAllIncentiveActivities(requestBody = requestBody)
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
 
-                            val errorMessage = jsonObj.getString("errorMessage")
-                            val responseStatusCode = jsonObj.getInt("statusCode")
-                            Timber.d("Pull from amrit incentives data : $responseStatusCode")
-                            when (responseStatusCode) {
-                                200 -> {
-                                    try {
-                                        val dataObj = jsonObj.getString("data")
-                                        saveIncentiveMasterData(dataObj)
-                                    } catch (e: Exception) {
-                                        Timber.d("Incentive master data not synced $e")
-                                        return@retryWithBackoff false
-                                    }
-
-                                    return@retryWithBackoff true
+                        val errorMessage = jsonObj.getString("errorMessage")
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull from amrit incentives data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    saveIncentiveMasterData(dataObj)
+                                } catch (e: Exception) {
+                                    Timber.d("Incentive master data not synced $e")
+                                    return@withContext false
                                 }
 
-                                401, 5002 -> {
-                                    if (userRepo.refreshTokenTmc(
-                                            user.userName, user.password
-                                        )
-                                    ) throw SocketTimeoutException("Refreshed Token!")
-                                    else throw IllegalStateException("User Logged out!!")
-                                }
+                                return@withContext true
+                            }
 
-                                5000 -> {
-                                    if (errorMessage == "No record found") return@retryWithBackoff true
-                                }
+                            401,  5002 -> {
+                                if (userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
 
-                                else -> {
-                                    throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
-                                }
+                            5000 -> {
+                                if (errorMessage == "No record found") return@withContext true
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
                             }
                         }
                     }
-                    true
                 }
+
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                if (retryCount > 0) {
-                    return@withContext pullAndSaveAllIncentiveActivities(user,retryCount - 1)
-                } else {
-                    return@withContext false
-                }
+                pullAndSaveAllIncentiveActivities(user)
+                return@withContext true
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
-                false
+                return@withContext false
             }
+            true
         }
     }
 
@@ -119,74 +115,81 @@ class IncentiveRepo @Inject constructor(
 
     }
 
-    suspend fun pullAndSaveAllIncentiveRecords(user: User,retryCount: Int = 3): Boolean {
+    suspend fun pullAndSaveAllIncentiveRecords(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                retryWithBackoff {
-                    val requestBody = IncentiveRecordListRequest(
-                        user.userId,
-                        getDateTimeStringFromLong(
-                            preferenceDao.lastIncentivePullTimestamp
-                        )!!,
-                        getDateTimeStringFromLong(
-                            Calendar.getInstance().setToEndOfTheDay().timeInMillis
-                        )!!,
-                        villageID = user.state.id
-                    )
-                    val response = amritApiService.getAllIncentiveRecords(requestBody = requestBody)
-                    val statusCode = response.code()
-                    if (statusCode == 200) {
-                        val responseString = response.body()?.string()
-                        if (responseString != null) {
-                            val jsonObj = JSONObject(responseString)
+                val localRecordCount = incentiveDao.getRecordCount()
+                val fromTimestamp = if (localRecordCount == 0) {
+                    Konstants.defaultTimeStamp
+                } else {
+                    preferenceDao.lastIncentivePullTimestamp
+                }
+                Timber.d(
+                    "Incentive record pull: localRecordCount=$localRecordCount, " +
+                        "cursor=${preferenceDao.lastIncentivePullTimestamp}, " +
+                        "fromTimestamp=$fromTimestamp (default=${Konstants.defaultTimeStamp})"
+                )
 
-                            val errorMessage = jsonObj.getString("errorMessage")
-                            val responseStatusCode = jsonObj.getInt("statusCode")
-                            Timber.d("Pull from amrit incentives data : $responseStatusCode")
-                            when (responseStatusCode) {
-                                200 -> {
-                                    try {
-                                        val dataObj = jsonObj.getString("data")
-                                        saveIncentiveRecordsData(dataObj)
-                                    } catch (e: Exception) {
-                                        Timber.d("Incentive master data not synced $e")
-                                        return@retryWithBackoff false
-                                    }
+                val requestBody = IncentiveRecordListRequest(
+                    user.userId,
+                    getDateTimeStringFromLong(
+                        fromTimestamp
+                    )!!,
+                    getDateTimeStringFromLong(
+                        Calendar.getInstance().setToEndOfTheDay().timeInMillis
+                    )!!,
+                    villageID = user.state.id
+                )
+                val response = amritApiService.getAllIncentiveRecords(requestBody = requestBody)
+                val statusCode = response.code()
+                if (statusCode == 200) {
+                    val responseString = response.body()?.string()
+                    if (responseString != null) {
+                        val jsonObj = JSONObject(responseString)
 
-                                    return@retryWithBackoff true
+                        val errorMessage = jsonObj.getString("errorMessage")
+                        val responseStatusCode = jsonObj.getInt("statusCode")
+                        Timber.d("Pull from amrit incentives data : $responseStatusCode")
+                        when (responseStatusCode) {
+                            200 -> {
+                                try {
+                                    val dataObj = jsonObj.getString("data")
+                                    saveIncentiveRecordsData(dataObj)
+                                } catch (e: Exception) {
+                                    Timber.d("Incentive master data not synced $e")
+                                    return@withContext false
                                 }
 
-                                401, 5002 -> {
-                                    if (userRepo.refreshTokenTmc(
-                                            user.userName, user.password
-                                        )
-                                    ) throw SocketTimeoutException("Refreshed Token!")
-                                    else throw IllegalStateException("User Logged out!!")
-                                }
+                                return@withContext true
+                            }
 
-                                5000 -> {
-                                    if (errorMessage == "No record found") return@retryWithBackoff true
-                                }
+                            401,  5002 -> {
+                                if (userRepo.refreshTokenTmc(
+                                        user.userName, user.password
+                                    )
+                                ) throw SocketTimeoutException("Refreshed Token!")
+                                else throw IllegalStateException("User Logged out!!")
+                            }
 
-                                else -> {
-                                    throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
-                                }
+                            5000 -> {
+                                if (errorMessage == "No record found") return@withContext true
+                            }
+
+                            else -> {
+                                throw IllegalStateException("$responseStatusCode received, don't know what todo!?")
                             }
                         }
                     }
-                    true
                 }
             } catch (e: SocketTimeoutException) {
                 Timber.e("incentives error : $e")
-                if (retryCount > 0) {
-                    return@withContext pullAndSaveAllIncentiveRecords(user, retryCount - 1)
-                } else {
-                    return@withContext false
-                }
+                pullAndSaveAllIncentiveRecords(user)
+                return@withContext true
             } catch (e: Exception) {
                 Timber.d("Caught $e at incentives!")
-                false
+                return@withContext false
             }
+            true
         }
     }
 

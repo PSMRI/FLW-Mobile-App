@@ -110,8 +110,8 @@ class BeneficiaryDetailViewModelTest : BaseViewModelTest() {
 
         val records = (viewModel.uiState.value as BeneficiaryUiState.Success).records
         assertEquals(2, records.size)
-        assertEquals(true, records[0].isApproved)
-        assertEquals(false, records[1].isApproved)
+        assertEquals(true, records.first { it.id == 1L }.isApproved)
+        assertEquals(false, records.first { it.id == 2L }.isApproved)
     }
 
     @Test

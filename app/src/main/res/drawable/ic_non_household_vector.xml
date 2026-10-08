@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Vector version keeps the house-with-cross icon sharp at every screen density. -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M18,250L256,18L494,250M76,238L76,470L287,470M205,470L205,350L270,350L270,470"
+        android:strokeColor="@color/md_theme_light_primary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="44" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M384,274a108,108 0,1,0 0,216a108,108 0,1,0 0,-216"
+        android:strokeColor="#F44336"
+        android:strokeLineCap="round"
+        android:strokeWidth="44" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M328,328L440,440M440,328L328,440"
+        android:strokeColor="#F44336"
+        android:strokeLineCap="round"
+        android:strokeWidth="44" />
+</vector>

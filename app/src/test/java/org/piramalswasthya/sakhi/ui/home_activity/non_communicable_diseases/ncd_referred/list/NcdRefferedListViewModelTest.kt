@@ -16,6 +16,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -37,6 +38,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var mockResources: Resources
 
     private lateinit var viewModel: NcdRefferedListViewModel
+    private val expectedCategoryCount = if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) 8 else 7
 
     @Before
     override fun setUp() {
@@ -51,6 +53,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
         every { mockResources.getString(R.string.cat_geriatric) } returns "GERIATRIC"
         every { mockResources.getString(R.string.cat_hrp) } returns "HRP"
         every { mockResources.getString(R.string.cat_maternal) } returns "MATERNAL"
+        every { mockResources.getString(R.string.cat_child) } returns "CHILD"
         val user = mockk<User>(relaxed = true)
         every { user.userId } returns 456
         every { user.name } returns "TestUser"
@@ -152,7 +155,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
     @Test
     fun `categoryData returns 7 categories`() {
         val categories = viewModel.categoryData()
-        assertEquals(7, categories.size)
+        assertEquals(expectedCategoryCount, categories.size)
         assertEquals("ALL", categories[0])
         assertEquals("NCD", categories[1])
         assertEquals("TB", categories[2])
@@ -166,7 +169,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
     fun `categoryData clears and rebuilds on each call`() {
         viewModel.categoryData()
         val categories = viewModel.categoryData()
-        assertEquals(7, categories.size)
+        assertEquals(expectedCategoryCount, categories.size)
     }
 
     @Test
@@ -174,7 +177,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
         val first = viewModel.categoryData()
         first.add("EXTRA")
         val second = viewModel.categoryData()
-        assertEquals(7, second.size)
+        assertEquals(expectedCategoryCount, second.size)
         assertEquals("ALL", second[0])
         assertEquals("MATERNAL", second[6])
     }
@@ -241,7 +244,7 @@ class NcdRefferedListViewModelTest : BaseViewModelTest() {
         val referral = ReferalCache(benId = id, type = type, syncState = SyncState.SYNCED)
         val cache = mockk<BenWithCbacAndReferalCache>(relaxed = true)
         every { cache.referral } returns referral
-        every { cache.asDomainModel() } returns BenWithCbacReferDomain(domain, emptyList(), referral)
+        every { cache.asDomainModel() } returns BenWithCbacReferDomain(domain, emptyList(), referral, emptyList())
         return cache
     }
 

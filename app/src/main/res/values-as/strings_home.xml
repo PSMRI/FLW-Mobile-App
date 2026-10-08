@@ -5,6 +5,43 @@
     <string name="menu_home_home">ঘৰ</string>
     <string name="menu_home_scheduler">সূচীকাৰক</string>
     <string name="icon_title_household">সমস্ত পাৰিবাৰিক তালিকা</string>
+    <string name="icon_title_households">ঘৰুৱা</string>
+    <string name="icon_title_non_households">নন হাউচহোল্ড</string>
+    <string name="non_households_title">নন হাউচহোল্ড</string>
+    <string name="non_household_living_title">বৰ্তমানৰ জীৱনৰ তথ্য</string>
+    <string name="non_household_living_description">অনুগ্ৰহ কৰি হিতাধিকাৰীৰ বৰ্তমানৰ বাসস্থানৰ সবিশেষ জনাব।</string>
+    <string name="place_of_current_living">বৰ্তমানৰ বাসস্থান *</string>
+    <string name="other_places">আন ঠাইত</string>
+    <string name="name_of_institution">প্ৰতিষ্ঠানৰ নাম *</string>
+    <string-array name="non_household_living_places">
+        <item>ফুটপাথ</item>
+        <item>ৰেলৱে প্লেটফৰ্ম</item>
+        <item>বাছ ষ্টেচন</item>
+        <item>কাৰাগাৰ</item>
+        <item>গছৰ তলত</item>
+        <item>এটা মন্দিৰত</item>
+        <item>এটা মছজিদত</item>
+        <item>এটা গীৰ্জাত</item>
+        <item>আন যিকোনো প্ৰাৰ্থনা স্থান</item>
+        <item>শিক্ষানুষ্ঠান (বিদ্যালয়/মহাবিদ্যালয়)</item>
+        <item>একলব্য বিদ্যালয়</item>
+        <item>পুনৰ্বাসন কেন্দ্ৰ</item>
+        <item>অনাথ আশ্ৰম ঘৰ</item>
+        <item>বৃদ্ধাশ্ৰম</item>
+        <item>ব্যক্তিগত হোষ্টেল</item>
+        <item>চৰকাৰী হোষ্টেল</item>
+        <item>এন জি অ\'ৰ হোষ্টেল</item>
+        <item>অন্যান্য</item>
+    </string-array>
+    <string-array name="non_household_institution_places">
+        <item>শিক্ষানুষ্ঠান (বিদ্যালয়/মহাবিদ্যালয়)</item>
+        <item>পুনৰ্বাসন কেন্দ্ৰ</item>
+        <item>অনাথ আশ্ৰম ঘৰ</item>
+        <item>বৃদ্ধাশ্ৰম</item>
+        <item>ব্যক্তিগত হোষ্টেল</item>
+        <item>চৰকাৰী হোষ্টেল</item>
+        <item>এন জি অ\'ৰ হোষ্টেল</item>
+    </string-array>
     <string name="icon_title_ben">সমস্ত হিতাধিকাৰীৰ তালিকা</string>
     <string name="icon_title_ec">উপযুক্ত দম্পতিৰ তালিকা</string>
     <string name="icon_title_mc">মাকৰ যত্ন</string>
@@ -79,6 +116,8 @@
     <string name="icon_title_sr">সমীক্ষা ৰেজিষ্টাৰ</string>
     <string name="icon_title_ahd_list">AHD ফৰ্মৰ তালিকা</string>
     <string name="loginusername">প্ৰৱেশ ব্যৱহাৰকাৰীৰ নাম</string>
+    <string name="icon_title_ncd_tbtpreventive_treatment">যক্ষ্মা প্ৰতিৰোধমূলক চিকিৎসা</string>
+    <string name="icon_title_ncd_vulnerable_treatment">দুৰ্বল জনগোষ্ঠী</string>
     <string name="asha_empid">ASHA কৰ্মচাৰীৰ ID</string>
     <string name="menu_supervisor">আশা নিৰীক্ষক</string>
     <string name="place">স্থান</string>

@@ -17,8 +17,8 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         id = 1,
         inputType = DROPDOWN,
         title = resources.getString(R.string.referal_facility),
-        arrayId = R.array.new_referral_facility,
-        entries = resources.getStringArray(R.array.new_referral_facility),
+        arrayId = R.array.TB_referral_facility,
+        entries = resources.getStringArray(R.array.TB_referral_facility),
         required = true,
         hasDependants = true
     )
@@ -52,12 +52,30 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         max = System.currentTimeMillis(),
     )
 
+    private val referralReasonResIds = listOf(
+        R.string.tb_suspected_ncd_case,
+        R.string.tb_suspected_leprosy_case,
+        R.string.tb_suspected_copd_case,
+        R.string.tb_suspected_form,
+        R.string.further_depression,
+        R.string.suspected_c_case,
+        R.string.tb_screening_form,
+        R.string.suspected_newborn_complication,
+        R.string.suspected_illness_young_child
+    )
+
+    private fun toEnglishReferralReason(reason: String?): String? {
+        val resId = referralReasonResIds.firstOrNull { resources.getString(it) == reason } ?: return reason
+        return englishResources.getString(resId)
+    }
+
     var referralTypes = ""
     suspend fun setUpPage(referral : String , referralType : String) {
         val list = mutableListOf(
+            referDate,
             healthCenter,
             reasonForReferal,
-            referDate
+
             )
         referralTypes = referralType
         referDate.value = getDateFromLong(System.currentTimeMillis())
@@ -93,7 +111,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     ) {
         (cacheModel as ReferalCache).let { form ->
             form.revisitDate = getLongFromDate(referDate.value)
-            form.referralReason = reasonForReferal.value
+            form.referralReason = toEnglishReferralReason(reasonForReferal.value)
             form.refrredToAdditionalServiceList = listOf("FLW")
             form.referredToInstituteID = healthCenter.getPosition()
             form.referredToInstituteName = healthCenter.getEnglishStringFromPosition(healthCenter.getPosition())

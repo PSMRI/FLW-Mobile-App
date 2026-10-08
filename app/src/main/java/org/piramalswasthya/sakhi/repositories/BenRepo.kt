@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.sortedByLifo
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
@@ -195,7 +196,7 @@ class BenRepo @Inject constructor(
 
 
     fun getBenBasicListFromHousehold(hhId: Long): Flow<List<BenBasicDomain>> {
-        return benDao.getAllBasicBenForHousehold(hhId).map { it.map { it.asBasicDomainModel() } }
+        return benDao.getAllBasicBenForHousehold(hhId).map { it.sortedByLifo().map { it.asBasicDomainModel() } }
 
     }
 
@@ -500,7 +501,7 @@ class BenRepo @Inject constructor(
         benCacheList.forEach {
             benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
             benNetworkPostList.add(it.asNetworkPostModel(context, user))
-            householdDao.getHousehold(it.householdId)?.let { household ->
+            if (it.householdId != 0L) householdDao.getHousehold(it.householdId)?.let { household ->
                 householdNetworkPostList.add(household.asNetworkModel(user))
             }
             try {
@@ -923,7 +924,7 @@ class BenRepo @Inject constructor(
                                             age = benDataObj.getInt("age").toString(),
                                             mobileNo = benDataObj.getString("contact_number"),
                                             fatherName = benDataObj.getString("fatherName"),
-                                            familyHeadName = houseDataObj.getString("familyHeadName"),
+                                            familyHeadName = houseDataObj.optString("familyHeadName", ""),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
@@ -934,6 +935,18 @@ class BenRepo @Inject constructor(
                                             isChildrenAdded = false,
                                             isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
+                                            createdDate = try {
+                                                if (benDataObj.has("createdDate") && !benDataObj.isNull("createdDate"))
+                                                    getLongFromDate(benDataObj.getString("createdDate")) else null
+                                            } catch (_: Exception) { null },
+                                            updatedDate = try {
+                                                if (benDataObj.has("updatedDate") && !benDataObj.isNull("updatedDate"))
+                                                    getLongFromDate(benDataObj.getString("updatedDate")) else null
+                                            } catch (_: Exception) { null },
+                                            regDateMillis = try {
+                                                if (benDataObj.has("registrationDate") && !benDataObj.isNull("registrationDate"))
+                                                    getLongFromDate(benDataObj.getString("registrationDate")) else 0L
+                                            } catch (_: Exception) { 0L },
                                         )
                                     )
                                 }
@@ -950,6 +963,7 @@ class BenRepo @Inject constructor(
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
                                 benDao.upsert(*benCacheList.toTypedArray())
 
+                                benDataList.sortByDescending { it.lifoMillis() }
                                 Timber.d("GeTBenDataList: $pageSize $benDataList")
                                 return@withContext Pair(pageSize, benDataList)
                             }
@@ -1100,7 +1114,25 @@ class BenRepo @Inject constructor(
                     if (benExists) {
                         continue
                     }
-                    val hhExists = householdDao.getHousehold(hhId) != null
+                    // Non-household beneficiaries use householdId = 0. Recreate the
+                    // local placeholder household after a reinstall so the foreign key
+                    // remains valid when the beneficiary is inserted.
+                    if (hhId == 0L && householdDao.getHousehold(0L) == null) {
+                        val location = preferenceDao.getLocationRecord()
+                        if (location != null) {
+                            householdDao.upsert(
+                                HouseholdCache(
+                                    householdId = 0L,
+                                    ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                                    locationRecord = location,
+                                    processed = "P",
+                                    isDraft = true
+                                )
+                            )
+                        }
+                    }
+
+                    val hhExists = hhId == 0L || householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
@@ -1458,6 +1490,11 @@ class BenRepo @Inject constructor(
                                 doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
                                 noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
+                                // Non-household beneficiary details returned by the downsync API.
+                                livingPlace = benDataObj.optString("placeOfCurrentLiving", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
+                                institutionName = benDataObj.optString("institutionName", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
                             )
                         )
 
@@ -1828,31 +1865,37 @@ class BenRepo @Inject constructor(
     }
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
-        val validateOtp = ValidateOtpRequest(otp,mobileNo)
-        val response = tmcNetworkApiService.validateOtp(validateOtp)
-        if (response.isSuccessful) {
-            val responseBody = response.body()?.string()
-            val json = JSONObject(responseBody.toString())
-            val statusCode = json.getInt("statusCode")
-            when (statusCode) {
-                200 -> {
-                    val jsonObj = JSONObject(responseBody)
-                    val data = jsonObj.getJSONObject("data").toString()
-                    val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
-                    NewBenRegViewModel.isOtpVerified = true
-                    return myResponse
-                }
+        try {
+            val validateOtp = ValidateOtpRequest(otp,mobileNo)
+            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                val json = JSONObject(responseBody.toString())
+                val statusCode = json.getInt("statusCode")
+                when (statusCode) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                        NewBenRegViewModel.isOtpVerified = true
+                        return myResponse
+                    }
 
-                500, 502, 5000, 5002 -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
+                    500, 502, 5000, 5002 -> {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
                     }
                 }
-
-                else -> {
-                    NetworkResult.Error(0, responseBody.toString())
-                }
             }
+        } catch (e: Exception) {
+            // Offline / DNS / timeout while verifying: report "not verified" instead of crashing
+            // the registration form (sendOtp/resendOtp already do the same).
+            Timber.e(e, "verifyOtp failed")
         }
 
         return null

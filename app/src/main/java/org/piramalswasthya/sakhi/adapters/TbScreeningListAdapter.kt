@@ -46,9 +46,11 @@ class TbScreeningListAdapter(
         ) {
             binding.benWithTb = item
 
-            if(item.tb?.historyOfTb == true){
+             binding.nikshayLayout.visibility = View.VISIBLE
+             binding.RCHlayout.visibility = View.GONE
+          /*  if(item.tb?.historyOfTb == true){
                 binding.cvContent.visibility = View.GONE
-            }
+            } */
 
             binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
 
@@ -80,7 +82,14 @@ class TbScreeningListAdapter(
                 }
             }
 
+
+            binding.status.setImageResource(
+                if (item.tb == null) R.drawable.ic_crossed_circle
+                else R.drawable.ic_verified
+            )
+
             binding.btnFormTb.text = if (item.tb == null) binding.root.context.getString(R.string.screen) else binding.root.context.getString(R.string.view_screen)
+
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)

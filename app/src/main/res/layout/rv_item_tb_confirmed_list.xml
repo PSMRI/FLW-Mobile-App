@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="benWithTb"
             type="org.piramalswasthya.sakhi.model.BenWithTbSuspectedDomain" />
@@ -38,7 +40,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/contstraintLayoutV"
+                >
 
                 <LinearLayout
                     android:id="@+id/ll_title_tb_suspected_list_bar"
@@ -64,6 +68,16 @@
                         app:drawableLeftCompat="@drawable/ic__hh"
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
+                    <ImageView
+                        android:id="@+id/iv_isDeath"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:visibility="@{benWithTb.ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                        android:contentDescription="@string/iv_death_indicator"
+                        android:src="@drawable/ic_death" />
+
 
                     <ImageView
                         android:id="@+id/iv_sync_state"
@@ -73,7 +87,8 @@
                         android:layout_marginHorizontal="@dimen/padding_small"
                         android:contentDescription="@string/iv_sync_state_tv"
                         app:syncState="@{benWithTb.latestTbSyncState}"
-                        tools:src="@drawable/ic_synced" />
+                        tools:src="@drawable/cloud_upload"
+                        app:iconTint="@android:color/holo_green_dark" />
 
                 </LinearLayout>
 
@@ -246,6 +261,8 @@
                                 tools:text="3546464466" />
                         </LinearLayout>
 
+
+
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -270,6 +287,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/RCHlayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -291,6 +309,30 @@
                                 android:textColor="?attr/colorOnPrimary"
                                 tools:text="511616166" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/nikshayLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            android:padding="@dimen/padding_small">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nikshay_id"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                android:textColor="?attr/colorOnPrimary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{benWithTb.tbSuspected.nikshayId}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorOnPrimary"
+                                tools:text="511616166" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -303,6 +345,24 @@
 
                     </LinearLayout>
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_family_members"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:text="@string/view_family_members"
+                    android:onClick="@{()-> clickListener.onFamilyMembers(benWithTb)}"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:drawableLeft="@drawable/ic__ben"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_form_tb"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_tb_suspected_list_Layout"
+                    tools:backgroundTint="@color/overdue_dark_orange" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_form_tb"

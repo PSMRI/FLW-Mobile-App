@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="referred_on">রেফার করার তারিখ</string>
     <string name="radio_title_cbac">%1s<![CDATA[<font color="#B00020"> *</font>]]></string>
     <string name="radio_title_cbac_ds">%1s<![CDATA[<font color="#B00020"> **</font>]]></string>
     <string name="radio_title_cbac_alt">%1s<![CDATA[<font color="#99cc00"> *</font>]]></string>
@@ -271,6 +272,12 @@
         <item>আবর্জনা – পাতা পোড়ানো</item>
         <item>ইটভাটা ও কাচের কারখানার মতো ধোঁয়া, গ্যাস এবং ধুলোর সংস্পর্শে থাকা শিল্পে কাজ করা</item>
     </string-array>
+    <string-array name="cbac_type_occupational_exposure_mitanin">
+        <item>ফসলের অবশিষ্টাংশ পোড়ানো</item>
+        <item>আবর্জনা – পাতা পোড়ানো</item>
+        <item>ইটভাটা ও কাচের কারখানার মতো ধোঁয়া, গ্যাস এবং ধুলোর সংস্পর্শে থাকা শিল্পে কাজ করা</item>
+        <item>অন্যান্য উৎস</item>
+    </string-array>
     <string-array name="cbac_li">
         <item>একদমই না</item>
         <item>কয়েক দিন</item>
@@ -290,6 +297,7 @@
     <string name="cat_geriatric">বার্ধক্য</string>
     <string name="cat_hrp">এইচআরপি</string>
     <string name="cat_maternal">মাতৃস্বাস্থ্য</string>
+    <string name="cat_child">শিশু</string>
 
     <string name="select_years">বছর নির্বাচন করুন</string>
     <string name="years_35">৩৫ বছর</string>
@@ -303,7 +311,13 @@
     <string name="years_75">৭৫ বছর</string>
     <string name="years_80">৮০ বছর</string>
     <string name="suspected_leprosy_case">কুষ্ঠ রোগ সন্দেহজনক ঘটনা</string>
+    <string name="suspected_newborn_complication">সন্দেহজনক নবজাতক জটিলতা</string>
+    <string name="suspected_illness_young_child">শিশুর সন্দেহজনক অসুখ</string>
     <string name="ncd_referral_type">এনসিডি</string>
     <string name="suspected_tb_case">টিবি সন্দেহজনক ঘটনা</string>
     <string name="suspected_copd_case">সিওপিডি সন্দেহজনক ঘটনা</string>
+    <string name="tb_suspected_case_title">সন্দেহজনক টিবি রোগী!</string>
+    <string name="tb_alert_collect_sputum">HWC-তে রেফার করুন এবং থুতুর নমুনা সংগ্রহ করুন।</string>
+    <string name="tb_alert_screen_family">HWC-তে রেফার করুন এবং পরিবারের সকল সদস্যকে পরীক্ষা করার জন্য ANM/MPW-কে জানান।</string>
+    <string name="tb_alert_collect_sputum_and_screen_family">HWC-তে রেফার করুন, থুতুর নমুনা সংগ্রহ করুন এবং পরিবারের সকল সদস্যকে পরীক্ষা করার জন্য ANM/MPW-কে জানান।</string>
 </resources>

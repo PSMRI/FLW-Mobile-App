@@ -112,6 +112,9 @@ class NewBenRegFragmentNavigationTest {
         every { bundle.containsKey(any()) } returns true
         every { bundle.getLong("hhId") } returns 10L
         every { bundle.getInt("relToHeadId") } returns 21
+        every { bundle.getString("livingPlace") } returns null
+        every { bundle.getString("otherLivingPlace") } returns null
+        every { bundle.getString("institutionName") } returns null
         every { bundle.getLong("benId") } returns 30L
         every { bundle.getLong("selectedBenId") } returns 40L
         every { bundle.getInt("gender") } returns 51

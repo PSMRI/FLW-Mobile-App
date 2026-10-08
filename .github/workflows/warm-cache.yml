@@ -37,15 +37,22 @@ jobs:
 
     steps:
       # Resolved at runtime so new release branches (2.13, 2.14, ...) are picked
-      # up automatically. sort -V is a version sort, so release-2.10 correctly
-      # ranks above release-2.9 where a plain sort would not.
+      # up automatically. Picks the release-* branch with the most recent commit,
+      # not the highest version name: a version sort chose the stale
+      # release-3.6.2 (old AGP, no network_security_config) and failed nightly.
+      # tree:0 + depth=1 fetches only the tip commit of each branch.
       - name: Resolve branch to warm
         id: target
         run: |
           BRANCH="${{ inputs.branch }}"
           if [ -z "$BRANCH" ]; then
-            BRANCH=$(git ls-remote --heads "https://github.com/${{ github.repository }}.git" 'refs/heads/release-*' \
-              | sed 's#.*refs/heads/##' | sort -V | tail -n1)
+            git init -q branch-probe
+            git -C branch-probe fetch -q --depth=1 --filter=tree:0 \
+              "https://github.com/${{ github.repository }}.git" \
+              '+refs/heads/release-*:refs/remotes/origin/release-*'
+            BRANCH=$(git -C branch-probe for-each-ref --sort=-committerdate \
+              --format='%(refname:lstrip=3)' refs/remotes/origin | head -n1)
+            rm -rf branch-probe
           fi
           if [ -z "$BRANCH" ]; then
             BRANCH="${{ github.event.repository.default_branch }}"

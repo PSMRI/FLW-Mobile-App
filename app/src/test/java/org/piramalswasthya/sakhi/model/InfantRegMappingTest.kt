@@ -237,8 +237,7 @@ class InfantRegMappingTest {
         assertEquals("Yes", cache.isSNCU)
         assertEquals("P", cache.processed)
         assertEquals(SyncState.SYNCED, cache.syncState)
-        // gender is intentionally not mapped by toCacheModel()
-        assertNull(cache.gender)
+        assertEquals(Gender.FEMALE, cache.gender)
     }
 
     @Test

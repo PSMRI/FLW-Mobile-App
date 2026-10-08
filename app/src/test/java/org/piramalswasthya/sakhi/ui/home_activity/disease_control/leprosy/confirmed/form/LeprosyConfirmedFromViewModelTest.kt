@@ -68,6 +68,11 @@ class LeprosyConfirmedFromViewModelTest : BaseViewModelTest() {
         mockkObject(HelperUtil); every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
         every { context.resources } returns mockResources
         every { mockResources.getStringArray(any()) } returns Array(80) { i -> "opt$i" }; every { mockResources.getString(any()) } returns ""
+        every { mockResources.getString(R.string.follow_up_date_is_required) } returns "Follow-up date is required"
+        every { mockResources.getString(R.string.follow_up_date_cannot_be_in_the_future) } returns "Follow-up date cannot be in the future"
+        every { mockResources.getString(R.string.follow_up_date_cannot_be_before_home_visit_date) } returns "Follow-up date cannot be before home visit date"
+        every { mockResources.getString(R.string.treatment_status_is_required) } returns "Treatment status is required"
+        every { mockResources.getString(R.string.treatment_end_date_is_required_when_treatment_status_is_completed) } returns "Treatment end date is required when treatment status is completed"
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         every { preferenceDao.getLoggedInUser() } returns mockk(relaxed = true)
         coEvery { benRepo.getBenFromId(any()) } returns null

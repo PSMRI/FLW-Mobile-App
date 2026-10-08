@@ -150,12 +150,6 @@ android {
         viewBinding true
     }
 
-//    externalNativeBuild {
-//        cmake {
-//            path file("src/main/cpp/CMakeLists.txt")
-//        }
-//    }
-//    ndkVersion '29.0.14033849'
     externalNativeBuild {
         cmake {
             path file("src/main/cpp/CMakeLists.txt")
@@ -329,6 +323,8 @@ dependencies {
     implementation 'com.google.android.play:app-update:2.1.0'
 
     implementation "net.zetetic:sqlcipher-android:4.13.0"
+    // Recovers native libs the PackageManager failed to extract (UnsatisfiedLinkError on load)
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
     implementation "androidx.sqlite:sqlite:2.4.0"
 }
 

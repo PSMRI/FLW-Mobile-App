@@ -79,11 +79,103 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- FLW-1144: quick worklist buckets. Single-select; re-tapping the active one clears it. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:layout_marginTop="@dimen/_6sdp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_due_this_month"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardElevation="0dp"
+                app:strokeWidth="@dimen/_1sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_8sdp">
+
+                    <TextView
+                        android:id="@+id/tv_due_this_month_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/imm_due_this_month"
+                        android:textSize="@dimen/_11sdp" />
+
+                    <TextView
+                        android:id="@+id/tv_due_this_month_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textSize="@dimen/_13sdp"
+                        tools:text="4" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_next_month"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardElevation="0dp"
+                app:strokeWidth="@dimen/_1sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_8sdp">
+
+                    <TextView
+                        android:id="@+id/tv_next_month_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/imm_scheduled_next_month"
+                        android:textSize="@dimen/_11sdp" />
+
+                    <TextView
+                        android:id="@+id/tv_next_month_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textSize="@dimen/_13sdp"
+                        tools:text="2" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/imm_dose_stage"
+                android:textColor="@color/md_theme_light_shadow" />
 
             <TextView
                 android:id="@+id/tvSelectedFilter"
@@ -91,7 +183,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:fontFamily="@font/roboto_medium"
-                android:text="6-13 Weeks"
+                android:text="@string/all"
                 android:textColor="@color/md_theme_light_shadow" />
 
             <ImageView
@@ -105,6 +197,16 @@
                 android:layout_marginEnd="@dimen/_10sdp"/>
 
         </LinearLayout>
+
+        <!-- FLW-1144: "12 beneficiaries · Due for this month · 9-12 Months" -->
+        <TextView
+            android:id="@+id/tv_result_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textColor="@color/md_theme_light_shadow"
+            android:textSize="@dimen/_11sdp"
+            tools:text="4 beneficiaries · Due for this month" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list"

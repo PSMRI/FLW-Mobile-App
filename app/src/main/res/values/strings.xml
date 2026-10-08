@@ -20,7 +20,7 @@
     <string name="radio_title" translatable="false">%s<span> *</span></string>
     <string name="radio_title_ds">%s<span> **</span></string>
     <string name="tracking_date">Date of Visit</string>
-    <string name="case_date">Malaria Screening Date</string>
+    <string name="case_date">Maleria Screening Date</string>
     <string name="start_t_date">Date of Starting Treatment</string>
     <string name="treatment_given">Treatment Given</string>
     <string name="aes_submitted">AES/JS Form submitted</string>
@@ -30,15 +30,14 @@
     <string name="home_visit_date">Home Visit Date</string>
     <string name="home_visit_date_screening">Home Visit Date (Screening Date)</string>
     <string name="visit_date">Visit Date</string>
-    <string name="home_visit_date_mda_program">Home Visit Date (MDA Program)</string>
+    <string name="home_visit_date_mda_program">Home Visit Date(MDA Program)</string>
     <string name="case_date_malaria">Malaria Case Status Date</string>
     <string name="aes_case_status_date">AES / JE Case Status Date</string>
     <string name="case_status">Case Status</string>
     <string name="m_test_type">Malaria Test Type</string>
     <string name="place_of_Death">Place of Death</string>
     <string name="reason_of_Death">Reason for Death</string>
-    <string name="beneficiary_status">Beneficiary Status</string>
-    <string name="aes_case_status">AES / JE Case Status</string>
+    <string name="aes_case_status">AES / JE  Case Status</string>
     <string name="mdsr_form">MDSR</string>
     <string name="mdsr_district">District</string>
     <string name="mdsr_state">State</string>
@@ -48,7 +47,7 @@
     <string name="mdsr_age">Age</string>
     <string name="mdsr_date_of_deceased">Date of death</string>
     <string name="mdsr_address">Address</string>
-    <string name="mdsr_husband_name">Husband's name</string>
+    <string name="mdsr_husband_name">Husband’s name</string>
     <string name="mdsr_cause">Cause of death</string>
     <string name="mdsr_maternal">Maternal</string>
     <string name="mdsr_non_maternal">Non-maternal</string>
@@ -59,14 +58,17 @@
     <string name="mdsr_reason_death">specify reasons</string>
     <string name="mdsr_action">Action taken</string>
     <string name="refer_to">Referred To</string>
+    <string name="refer">Refer</string>
+    <string name="start_follow_up">Start Follow-up</string>
+    <string name="view_follow_up">View Follow-up</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
     <string name="type_of_leprocy">Type of leprosy confirmed</string>
     <string name="treatment_start_date">Treatment Start Date</string>
     <string name="dose_status">DEC and Albendazole Dose Status</string>
     <string name="is_medicine_distributed">Is medicine Distributed</string>
-    <string name="body_part">Which part of Body</string>
-    <string name="medicine_side_effect">Medicine Side Effect</string>
+    <string name="body_part">Which part of Body	</string>
+    <string name="medicine_side_effect">Medicine  Side Effect</string>
 
     <string name="filaria_submitted">Filaria Form submitted</string>
     <string name="leprosy_submitted">Leprosy Form submitted</string>
@@ -217,6 +219,17 @@
         <item>Tuberculosis Unit</item>
     </string-array>
 
+    <string-array name="TB_referral_facility">
+        <item>Tuberculosis Unit(TU)</item>
+        <item>HWC-Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>District TB Centre (DTC)</item>
+        <item>Govt. Medical Collage</item>
+
+    </string-array>
+
     <string-array name="referral_facility">
         <item>District TB Centre (DTC)</item>
         <item>HWC</item>
@@ -259,7 +272,7 @@
         <item>Item 6</item>
     </string-array>
 
-    <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India's vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
+    <string name="about_us">Piramal Swasthya is focusing on bridging the gaps of Public Healthcare by supplementing and complementing Government of India’s vision to meet Universal Health Care for all. Piramal Swasthya is one of the largest not-for-profit organizations in India - in the primary public health care space with a focus on Maternal health, Child and Adolescent Health, Non-communicable diseases. Piramal Swasthya has over a decade-long experience in operating several healthcare innovations at scale, which are addressing the primary health care needs of most underserved and marginalized populations across India. Piramal Swasthya is operational in 20 states in India through 35 innovative public health care delivery programs and has served more than 10.7 Crore beneficiaries thus far, with its services designed to reach the last village and the last household. Piramal Swasthya employs 2260 employees including 250 medical doctors who work around the core value of Seva Bhav (beneficiary-centricity) through an outcome oriented approach. Over the last twelve years, the focus has been on, Building platforms for sustainable impact at scale, Innovations to scale as a journey, Influencing policies, governance, and accountability of the public health care system as a knowledge and implementation partner of the NITI Aayog. Innovation in the form of intervention design, modelling, piloting and scaling-up those pilots has been an approach at Piramal Swasthya. Piramal Swasthya is committed to make primary healthcare not only affordable, accessible and available to all, but also to ensure that it is complete, continuous and comprehensive.</string>
     <string name="about_us_powered">Powered By</string>
     <string name="text_help"> <b>Q - Is this app available offline?</b> \n Yes, once the app is downloaded and login is completed, you can use the app offline to collect the data. Please not for downloading and first login, internet is required. \n\n
         <b>Q - Is it mandatory to fill all the details?</b> \n No, it is not mandatory to fill all the details. But there are few fields which are marked by asterisk (star-shaped symbol * ) and it is mandatory to fill them otherwise you will not be able submit the details. \n\n
@@ -402,10 +415,13 @@
     <string name="to_do_list">To Do List</string>
     <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
     <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="women_due_for_anc">Women due for ANC</string>
+    <string name="children_due_for_immunization">Children due for Immunization</string>
     <string name="_0">0</string>
     <string name="high_risk_cases">High Risk Cases</string>
-    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
-    <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
+    <string name="suspected_high_risk_pregnant_women">Suspected High Risk Pregnant Woman</string>
+    <string name="suspected_high_risk_non_pregnant_women">Suspected High Risk Non Pregnant Woman</string>
+    <string name="confirmed_high_risk_pregnant_women">Confirmed High Risk Pregnant Woman</string>
     <string name="high_risk_babies">High Risk Babies</string>
     <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
     <string name="registration_date">Registration Date</string>
@@ -527,7 +543,7 @@
     <string name="aes_screening_form">AES Form</string>
     <string name="filaria_screening_form">Filaria Form</string>
     <string name="leprosy_screening_form">Leprosy Form</string>
-    <string name="follow_up_form">Follow-up Form</string>
+    <string name="follow_up_form">Follow-up  Form</string>
     <string name="tb_suspected_form">Suspected TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
@@ -545,7 +561,7 @@
 
     <string name="save_successful">Save Successful</string>
     <string name="otp_resent">OTP Resent</string>
-    <string name="something_wend_wong_contact_testing">Something went wrong! Contact testing!</string>
+    <string name="something_wend_wong_contact_testing">Something wend wong! Contact testing!</string>
     <string name="error_input">Error Input</string>
     <string name="exit_application">Exit Application</string>
     <string name="do_you_want_to_exit_application">Do you want to exit application</string>
@@ -703,7 +719,7 @@
     <string name="bottle_number">Bottle Number</string>
     <string name="s_no">S. No</string>
     <string name="follow_up_date">Follow Up Dates</string>
-    <string name="last_follow_up_date">Last Follow Up Date</string>
+    <string name="last_follow_up_date">Last Follow Up Date"</string>
     <string name="referred_to">Referred to</string>
     <string name="bottle_distribution">Bottle Distribution</string>
     <string name="child_rch_id">Child RCH ID</string>
@@ -840,7 +856,7 @@
     <string name="str_suppliments_given_to_child">Supplements given to the child according to age</string>
     <string name="str_by_height_length">By height / length (color inscribed in mcp card)</string>
     <string name="str_no_of_children_weighing_less">Number of children weighing less than –3SD orange color indicated in MCCP card referred to VHSND/PHC/NRC</string>
-    <string name="str_weight_acc_to_child">Weight according to child's age (color inscribed in MCP card)</string>
+    <string name="str_weight_acc_to_child">Weight according to child’s age (color inscribed in MCP card)</string>
     <string name="str_delay_constraint_found">Delay / constraint found in the physical and mental development of the child according to age</string>
     <string name="str_if_yes_then_health_institute">If yes then Health Institute R.B.S.K. Team / A.N.M. referred to</string>
     <string name="str_vit_a_suppliment">Vitamin – A supplements given to the child according to age</string>
@@ -997,11 +1013,11 @@
     <string name="number_of_lactating_mothers_attended">Number of Lactating Mothers attended</string>
     <string name="during_breastfeeding_counseling_check_list">During Breastfeeding Counseling check list</string>
     <string name="the_baby_should_be_breastfed_immediately_within_the_first_hour_of_birth">The baby should be breastfed immediately within the first hour of birth</string>
-    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother's milk for the first 6 months.</string>
-    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother's milk, nutritious complementary food should be given.</string>
+    <string name="the_baby_should_be_given_only_mother_s_milk_for_the_first_6_months">The baby should be given only mother’s milk for the first 6 months.</string>
+    <string name="after_6_months_along_with_mother_s_milk_nutritious_complementary_food_should_be_given">After 6 months, along with mother’s milk, nutritious complementary food should be given.</string>
     <string name="breastfeeding_should_be_continued_for_2_years_or_more">Breastfeeding should be continued for 2 years or more.</string>
     <string name="the_family_should_support_and_encourage_the_mother">The family should support and encourage the mother</string>
-    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother's milk is the best for the complete development of the baby.</string>
+    <string name="mother_s_milk_is_the_best_for_the_complete_development_of_the_baby">Mother’s milk is the best for the complete development of the baby.</string>
     <string name="information_was_given_about_kmc_kangaroo_mother_care">Information was given about KMC (Kangaroo Mother Care).</string>
     <string name="place_of_maa_meeting">Place of MAA Meeting</string>
     <string name="number_of_out_of_school_children_sent_to_anganwad">Number of Out-of-school Children sent to Anganwad</string>
@@ -1339,6 +1355,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+        <item>Day 5</item>
+        <item>Day 6</item>
+        <item>Day 7</item>
+        <item>Day 8</item>
+        <item>Day 9</item>
+        <item>Day 10</item>
+        <item>Day 11</item>
+        <item>Day 12</item>
+        <item>Day 13</item>
+        <item>Day 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>Day 1</item>
         <item>Day 2</item>
@@ -1480,9 +1513,11 @@
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
     <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
-    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
+    <string name="tb_asymptomatic_symptoms">Beneficiary is Asymptomatic</string>
     <string name="tb_rise_of_fever">Rise of fever in evening</string>
     <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_child_failure_to_gain_weight">Failure to gain weight (in children)</string>
+    <string name="tb_child_decreased_activity">Decreased activity or playfulness (in children)</string>
     <string name="tb_age_more_than_60">Age more than 60 years</string>
     <string name="tb_diabetic">Diabetic</string>
     <string name="tb_tobacco_user">Tobacco user</string>
@@ -1495,6 +1530,8 @@
    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
     <string name="add_spouse">Add Spouse</string>
     <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="add_children_title">Add Children</string>
+    <string name="would_you_like_to_add_children">Would you like to add children?</string>
     <string name="str_wife">Wife</string>
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
@@ -1540,223 +1577,17 @@
     <string name="mobile_no_of_cho">Mobile No. of CHO</string>
     <string name="name_of_aww">Name of AWW</string>
     <string name="mobile_no_aww">Mobile No. AWW</string>
-    </string-array>
-
-    <string-array name="daysPv">
-        <item>Day 1</item>
-        <item>Day 2</item>
-        <item>Day 3</item>
-        <item>Day 4</item>
-
-    </string-array>
-
-    <string-array name="daysPf">
-        <item>Day 1</item>
-        <item>Day 2</item>
-        <item>Day 3</item>
-
-    </string-array>
-
-    <string-array name="dec_albendazole_array">
-        <item>T</item>
-        <item>P</item>
-        <item>Y</item>
-        <item>S</item>
-        <item>H</item>
-        <item>A</item>
-        <item>R</item>
-        <item>L</item>
-        <item>O</item>
-    </string-array>
-
-    <string-array name="body_part_male">
-        <item>Right Hand</item>
-        <item>Left Hand</item>
-        <item>Right Leg</item>
-        <item>Left Leg</item>
-        <item>Hydrocele</item>
-        <item>Other</item>
-    </string-array>
-
-    <string-array name="body_part_female">
-        <item>Right Hand</item>
-        <item>Left Hand</item>
-        <item>Right Leg</item>
-        <item>Left Leg</item>
-        <item>Right Side Breast</item>
-        <item>Left Side Breast</item>
-        <item>Other</item>
-    </string-array>
-
-    <string-array name="follow_up_array">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-
-    </string-array>
-
-    <string-array name="side_effect_of_medicine">
-        <item>F (Fever)</item>
-        <item>H (Headache)</item>
-        <item>B (Body Pain)</item>
-        <item>V (Vomiting)</item>
-        <item>N (Najala)</item>
-        <item>O (Other)</item>
-        <item>None</item>
-    </string-array>
-
-    <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
-    <string name="screening">Screening</string>
-    <string name="suspected">Suspected</string>
-    <string name="malaria_confirmed">Confirmed</string>
-    <string name="malaria_not_confirmed">Not Confirmed</string>
-    <string name="malaria_treatment_started">Treatment Started</string>
-    <string name="gallery">Gallery</string>
-    <string name="documents">Documents</string>
-    <string name="choose_pdf_or_doc">Choose Pdf or Doc</string>
-    <string name="upload_files">Upload Files</string>
-    <string name="choose_upload_source">Choose Upload Source</string>
-
-    <!-- Sync Dashboard -->
-    <string name="sync_dashboard">Sync Dashboard</string>
-    <string name="sync_dashboard_tab_status">Status</string>
-    <string name="sync_dashboard_tab_logs">Logs</string>
-    <string name="sync_dashboard_records_synced">%1$d / %2$d records synced</string>
-    <string name="sync_dashboard_worker_running">Sync Running (%1$d / %2$d workers)</string>
-    <string name="sync_dashboard_worker_idle">Idle</string>
-    <string name="sync_dashboard_worker_complete">Complete</string>
-    <string name="sync_dashboard_worker_failed">Failed: %1$d worker(s) - tap to see details</string>
-    <string name="sync_dashboard_no_logs">No sync logs yet. Trigger a sync to see activity.</string>
-    <string name="sync_dashboard_clear_logs">Clear Logs</string>
-    <string name="sync_dashboard_export_logs">Export Logs</string>
-    <string name="sync_dashboard_no_log_files">No log files to export</string>
-    <string name="form_name">Form Name</string>
-    <string name="no_records_found_hh">No Household records found. Please start registering households by clicking on the button below.</string>
-    <string name="something_went_wrong_nunable_to_connect_to_server_ntry_again_later">Something went wrong !\nUnable to connect to server !\nTry again later!</string>
-    <string name="try_again">Try Again!</string>
-    <string name="no_of_childrens">No of children</string>
-    <string name="marriage_date">Marriage Date</string>
-    <string name="children_details">Children Details</string>
-    <string name="bank_details">Bank Details</string>
-
-    <string name="camera">Camera</string>
-
-    <string name="sub_center_under_you_4">Sub-Center Under You</string>
-    <string name="incentive_verification">Incentive Verification</string>
-    <string name="no_activities_found">No activities found</string>
-    <string name="supervisor_id">Supervisor ID:</string>
-    <string name="activity">Activity</string>
-    <string name="amount_rs">Amount (Rs.)</string>
-    <string name="i_have_verified_supporting_documents_on_asha_s_device">I have verified supporting documents on ASHA\'s device</string>
-    <string name="verify">✓ Verify</string>
-    <string name="reject">✕ Reject</string>
-    <string name="reason_for_rejection">Reason for Rejection</string>
-    <string name="confirm_rejection">Confirm Rejection</string>
-    <string name="search_asha">Search ASHA....</string>
-    <string name="asha_monthly_detail">ASHA Monthly Detail</string>
-    <string name="jan_2026">Jan, 2026</string>
-    <string name="verified_0">Verified: 0</string>
-    <string name="pending_0">Pending: 0</string>
-    <string name="rejected_0">Rejected: 0</string>
-    <string name="overdue_0">Overdue: 0</string>
-    <string name="total_ashas">Total ASHAs</string>
-    <string name="select_month">Select Month</string>
-    <string name="pending">Pending</string>
-    <string name="overdue">OverDue</string>
-    <string name="rejected">Rejected</string>
-    <string name="claim">Claim</string>
-    <string name="date_of_delivery">Date of Delivery</string>
-    <string name="any_danger_signs">Any Danger Signs?\n</string>
-    <string name="any_high_risk_identified">Any High-risk identified?</string>
-    <string name="delivery_discharge_summary_1">Delivery Discharge Summary 1</string>
-    <string name="delivery_discharge_summary_2">Delivery Discharge Summary 2</string>
-    <string name="delivery_discharge_summary_3">Delivery Discharge Summary 3</string>
-    <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
-    <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
-    <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
-    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
-    <string name="tb_rise_of_fever">Rise of fever in evening</string>
-    <string name="tb_loss_of_appetite">Loss of Appetite</string>
-    <string name="tb_age_more_than_60">Age more than 60 years</string>
-    <string name="tb_diabetic">Diabetic</string>
-    <string name="tb_tobacco_user">Tobacco user</string>
-    <string name="tb_bmi_less_than_18_5">BMI &lt; 18.5</string>
-    <string name="tb_contact_with_patient_on_treatment">Contact with TB patient on treatment</string>
-    <string name="tb_history_last_5_years">Last 5 years history of TB</string>
-    <string name="visit_leprosy">Visit</string>
-    <string name="visit_number_label">Visit -%d</string>
-    <string name="add_spouse">Add Spouse</string>
-    <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
-    <string name="str_wife">Wife</string>
-    <string name="str_husband">Husband</string>
-    <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
-    <string name="distribution_date">Distribution Date</string>
-
-    <string name="filter_sort_by">Sort By</string>
-    <string name="filter_newest_first">Newest First</string>
-    <string name="filter_oldest_first">Oldest First</string>
-    <string name="filter_age_wise">Age Wise</string>
-    <string name="filter_syncing_first">Syncing Data First</string>
-    <string name="filter_unsynced_first">Un-Synced First</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="value_cannot_be_empty">Value cannot be empty</string>
-    <string name="enter_a_valid_number">Enter a valid number</string>
-    <string name="allowed_range">Allowed range: %1$d to %2$d</string>
-    <string name="minimum_allowed_value">Minimum allowed value: %1$d</string>
-    <string name="_ok">OK</string>
-    <string name="do_you_want_to_upload_delivery_discharge_summary">Do you want to upload \"Delivery Discharge Summary\" photo copy to claim your Incentive.</string>
-    <string name="pnc_form">PNC Form</string>
-    <string name="bp_invalid_format">Invalid format. Should be like 123/56</string>
-    <string name="bp_systole_less_than">Systole should not be less than %d</string>
-    <string name="bp_systole_greater_than">Systole should not be greater than %d</string>
-    <string name="bp_diastole_less_than">Diastole should not be less than %d</string>
-    <string name="bp_diastole_greater_than">Diastole should not be greater than %d</string>
-    <string name="bp_diastole_greater_than_systole">Diastole cannot be greater than systole</string>
-    <string name="weight_enter_in_grams">Please enter weight in grams</string>
-    <string name="weight_cannot_be_zero">Weight cannot be 0</string>
-    <string name="weight_enter_in_grams_example">Please enter weight in grams (e.g. 2500)</string>
-    <string name="weight_min_500">Weight must be at least 500 grams</string>
-    <string name="weight_max_7000">Weight should not be greater than 7000 grams</string>
-
-    <string name="dynamic_form_select">Select %s</string>
-    <string name="error_invalid_visit_date">Invalid visit date</string>
-    <string name="error_visit_date_after_today">Visit Date cannot be after today\'s date</string>
-    <string name="error_visit_date_after_previous">Visit Date must be after previous visit (%s)</string>
-    <string name="alternate_mobile_no">Alternate Mobile No.</string>
-    <string name="father_or_spouse">Father or Spouse</string>
-    <string name="date_of_joining">Date of Joining</string>
-    <string name="population_covered_under_asha">Population Covered under ASHA</string>
-    <string name="asha_supervisor_name">Asha Supervisor Name</string>
-    <string name="asha_supervisor_contact_no">Asha Supervisor Contact No.</string>
-    <string name="cho_name">CHO Name</string>
-    <string name="mobile_no_of_cho">Mobile No. of CHO</string>
-    <string name="name_of_aww">Name of AWW</string>
-    <string name="mobile_no_aww">Mobile No. AWW</string>
     <string name="name_of_anm1">Name of ANM1</string>
     <string name="mobile_number_of_anm1">Mobile Number of ANM1</string>
     <string name="name_of_anm2">Name of ANM2</string>
     <string name="mobile_number_of_anm2">Mobile Number of ANM2</string>
-    <string name="asha_dashboard">ASHA Dashboard</string>
-    <string name="asha_dashboard_summary">Current maternal health workload from offline records.</string>
-    <string name="total_anc_women">Total ANC Women</string>
-    <string name="delivery_due_list">Delivery Due List</string>
-    <string name="total_delivery_women">Total Delivery Women</string>
-    <string name="pnc_women">PNC Women</string>
-
-    <string name="coverage">Coverage</string>
-    <string name="maternal_health">Maternal Health</string>
-    <plurals name="pending_sync">
-        <item quantity="one">%d record pending sync</item>
-        <item quantity="other">%d records pending sync</item>
-    </plurals>
     <string name="str_delete_household">Delete Household</string>
     <string name="str_delete_beneficiary">Delete Beneficiary</string>
     <string name="str_dose_one">Dose-1</string>
     <string name="str_dose">Dose</string>
     <string name="str_no_more_dose">No More Doses</string>
+
+    <string name="head_of_family">Head of Family: </string>
 
     <string name="str_delete_household_msg">Are you sure you want to delete</string>
     <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
@@ -1821,4 +1652,123 @@
     <string name="incentive_header_activity">Activity</string>
     <string name="incentive_header_no_of_claims">No of Claims</string>
     <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="risk_factors">Risk Factors</string>
+    <string name="key_population_risk_factors">Key Population / Risk Factors</string>
+    <string name="positive">Positive</string>
+    <string name="reactive">Reactive</string>
+    <string name="negative">Negative</string>
+    <string name="hiv_status">HIV Status</string>
+    <string name="not_applicable">Not Applicable</string>
+    <string name="fatigue">Fatigue</string>
+    <string name="chestpain">Chest pain</string>
+
+
+    <string name="kp_risk_pregnancy">Pregnancy</string>
+    <string name="kp_risk_lactating_mother">Lactating mother</string>
+    <string name="kp_risk_anti_tnf_treatment">Anti-TNF treatment</string>
+    <string name="kp_risk_bronchial_asthma">Bronchial Asthma</string>
+    <string name="kp_risk_cancer">Cancer</string>
+    <string name="kp_risk_cardiovascular_disorder">Cardiovascular Disorder</string>
+    <string name="kp_risk_contact_of_known_tb_patients">Contact of Known TB Patients</string>
+    <string name="kp_risk_copd">COPD</string>
+    <string name="kp_risk_covid_recovered_patients">COVID recovered patients</string>
+    <string name="kp_risk_diabetes">Diabetes</string>
+    <string name="kp_risk_dialysis">Dialysis</string>
+    <string name="kp_risk_health_care_worker">Health Care Worker</string>
+    <string name="kp_risk_hypertensive">Hypertensive</string>
+    <string name="kp_risk_liver_impairment">Liver Impairment</string>
+    <string name="kp_risk_migrant">Migrant</string>
+    <string name="kp_risk_miner">Miner</string>
+    <string name="kp_risk_palliative_care">Palliative Care</string>
+    <string name="kp_risk_patient_on_immunosuppressants">Patient on immunosuppressants</string>
+    <string name="kp_risk_prison">Prison</string>
+    <string name="kp_risk_illegal_immigrant">Illegal Immigrant</string>
+    <string name="kp_risk_renal_impairment">Renal Impairment</string>
+    <string name="kp_risk_transplantation">Transplantation</string>
+    <string name="kp_risk_urban_slum">Urban Slum</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">H/o Adult BCG Vaccination</string>
+    <string name="kp_risk_undernourished_malnourished">Undernourished / Malnourished (BMI &lt;18.5 kg/m2)</string>
+    <string name="kp_risk_elderly">Elderly (age &gt;60 years)</string>
+    <string name="kp_risk_workplace_settings">Workplace settings (coal/sandblasting/brick kiln)</string>
+    <string name="kp_risk_tea_garden_worker">Tea garden worker</string>
+    <string name="kp_risk_construction_site_worker">Construction site worker</string>
+    <string name="kp_risk_congregate_settings">Congregate settings</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">Attendees of de-addiction centers</string>
+    <string name="kp_risk_indoor_air_pollution">Person exposed to indoor air pollution</string>
+    <string name="kp_risk_marginalized_hiv">Marginalized populations at risk of HIV</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">Substance abuse (alcoholic/intravenous drug users)</string>
+    <string name="kp_risk_tobacco_smoker">Tobacco/smoker</string>
+    <string name="kp_risk_silica_exposure_silicosis">Silica exposure/silicosis</string>
+    <string name="kp_risk_other">Other</string>
+
+    <string-array name="key_population_risk_factor_options">
+        <item>@string/kp_risk_pregnancy</item>
+        <item>@string/kp_risk_lactating_mother</item>
+        <item>@string/kp_risk_anti_tnf_treatment</item>
+        <item>@string/kp_risk_bronchial_asthma</item>
+        <item>@string/kp_risk_cancer</item>
+        <item>@string/kp_risk_cardiovascular_disorder</item>
+        <item>@string/kp_risk_contact_of_known_tb_patients</item>
+        <item>@string/kp_risk_copd</item>
+        <item>@string/kp_risk_covid_recovered_patients</item>
+        <item>@string/kp_risk_diabetes</item>
+        <item>@string/kp_risk_dialysis</item>
+        <item>@string/kp_risk_health_care_worker</item>
+        <item>@string/kp_risk_hypertensive</item>
+        <item>@string/kp_risk_liver_impairment</item>
+        <item>@string/kp_risk_migrant</item>
+        <item>@string/kp_risk_miner</item>
+        <item>@string/kp_risk_palliative_care</item>
+        <item>@string/kp_risk_patient_on_immunosuppressants</item>
+        <item>@string/kp_risk_prison</item>
+        <item>@string/kp_risk_illegal_immigrant</item>
+        <item>@string/kp_risk_renal_impairment</item>
+        <item>@string/kp_risk_transplantation</item>
+        <item>@string/kp_risk_urban_slum</item>
+        <item>@string/kp_risk_ho_adult_bcg_vaccination</item>
+        <item>@string/kp_risk_undernourished_malnourished</item>
+        <item>@string/kp_risk_elderly</item>
+        <item>@string/kp_risk_workplace_settings</item>
+        <item>@string/kp_risk_tea_garden_worker</item>
+        <item>@string/kp_risk_construction_site_worker</item>
+        <item>@string/kp_risk_congregate_settings</item>
+        <item>@string/kp_risk_attendees_of_de_addiction_centers</item>
+        <item>@string/kp_risk_indoor_air_pollution</item>
+        <item>@string/kp_risk_marginalized_hiv</item>
+        <item>@string/kp_risk_lgbtqai</item>
+        <item>@string/kp_risk_substance_abuse</item>
+        <item>@string/kp_risk_tobacco_smoker</item>
+        <item>@string/kp_risk_silica_exposure_silicosis</item>
+        <item>@string/kp_risk_other</item>
+        <item>@string/not_applicable</item>
+    </string-array>
+
+
+
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
+    <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
+    <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>
+    <string name="follow_up_date_cannot_be_before_home_visit_date">Follow-up date cannot be before home visit date</string>
+    <string name="treatment_status_is_required">Treatment status is required</string>
+    <string name="treatment_end_date_is_required_when_treatment_status_is_completed">Treatment end date is required when treatment status is completed</string>
+    <string name="follow_up_date_is_required">Follow-up date is required</string>
+    <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
+    <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
+    <string name="failed_to_save_follow_up">Failed to save follow-up</string>
+    <string name="start_tpt">START TPT</string>
+    <string name="add_follow_up">Add Follow Up</string>
+    <string name="view_details">View Details</string>
+    <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
 </resources>
+
