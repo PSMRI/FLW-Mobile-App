@@ -279,6 +279,8 @@ class TBScreeningDataset(
     private var isMaleBen: Boolean = false
     private var isPregnantBen: Boolean = false
     private var isLactatingBen: Boolean = false
+    private var hasHypertension: Boolean = false
+    private var hasDiabetes: Boolean = false
     private var riskFactorOptions: List<CodedOption> = emptyList()
 
     private val hivStatusOptions: List<CodedOption>
@@ -315,7 +317,14 @@ class TBScreeningDataset(
     )
 
 
-    suspend fun setUpPage(ben: BenRegCache?, saved: TBScreeningCache?) {
+    suspend fun setUpPage(
+        ben: BenRegCache?,
+        saved: TBScreeningCache?,
+        hasHypertension: Boolean = false,
+        hasDiabetes: Boolean = false
+    ) {
+        this.hasHypertension = hasHypertension
+        this.hasDiabetes = hasDiabetes
         benAgeYears = 0
         ben?.let {
             dateOfVisit.min = it.regDate
@@ -463,6 +472,14 @@ class TBScreeningDataset(
         }
         if (isLactatingBen) {
             riskFactorOptions.indexOfFirst { it.code == "LACTATING_MOTHER" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (hasHypertension) {
+            riskFactorOptions.indexOfFirst { it.code == "HYPERTENSIVE" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (hasDiabetes) {
+            riskFactorOptions.indexOfFirst { it.code == "DIABETES" }
                 .takeIf { it >= 0 }?.let(selected::add)
         }
         if (benAgeYears >= 60) {

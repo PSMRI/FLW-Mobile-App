@@ -101,9 +101,15 @@ class TBScreeningFormViewModel @Inject constructor(
                 _recordExists.value = false
             }
 
+            val ncdDiagnoses = referalRepo.getNcdFollowUpVisits(benId)
+                .mapNotNull { it.diagnosisCodes }
+                .joinToString(",")
             dataset.setUpPage(
                 ben,
-                if (recordExists.value == true) tbScreeningCache else null
+                if (recordExists.value == true) tbScreeningCache else null,
+                hasHypertension = ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
+                        ncdDiagnoses.contains("hypertensive", ignoreCase = true),
+                hasDiabetes = ncdDiagnoses.contains("diabetes", ignoreCase = true)
             )
 
         }
