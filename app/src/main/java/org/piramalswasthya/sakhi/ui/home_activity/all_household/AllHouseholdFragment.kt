@@ -139,8 +139,12 @@ class AllHouseholdFragment : Fragment() {
         addBenAlert = alert
 
         alertBinding.btnOk.setOnClickListener {
-            val relIndex = resources.getStringArray(R.array.nbr_relationship_to_head_src)
-                .indexOf(alertBinding.actvRth.text.toString())
+            val selectedRelation = alertBinding.actvRth.text.toString()
+            val sourceRelations = resources.getStringArray(R.array.nbr_relationship_to_head_src)
+            val canonicalRelations = resources.getStringArray(R.array.nbr_relationship_to_head)
+            val relationOptions = sourceRelations.toList() +
+                canonicalRelations.filter { it !in sourceRelations }
+            val relIndex = relationOptions.indexOf(selectedRelation)
 
             val gender = genderIntFromRadioId(alertBinding)
 

@@ -367,7 +367,11 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
 
 
     private val relationToHeadListDefault =
-        resources.getStringArray(R.array.nbr_relationship_to_head_src)
+        resources.getStringArray(R.array.nbr_relationship_to_head_src).toMutableList().apply {
+            resources.getStringArray(R.array.nbr_relationship_to_head)
+                .filterNot { contains(it) }
+                .forEach(::add)
+        }.toTypedArray()
 
     private val relationToHeadListMale =
         resources.getStringArray(R.array.nbr_relationship_to_head_male)
@@ -380,7 +384,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         inputType = TEXT_VIEW,
         title = resources.getString(R.string.nbr_rel_to_head),
         arrayId = R.array.nbr_relationship_to_head_src,
-        entries = resources.getStringArray(R.array.nbr_relationship_to_head_src),
+        entries = relationToHeadListDefault,
         required = true,
 //        hasDependants = true,
     )
@@ -737,27 +741,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             }
 
 
-            reproductiveStatus.value = saved.genDetails?.reproductiveStatusId?.let { statusId ->
-                when (statusId) {
-                    5 -> {
-                        if (saved.isMarried) {
-                            reproductiveStatus.entries?.lastOrNull()
-
-                        } else {
-                            resources.getString(R.string.dd_ag)
-                        }
-                    }
-                    6-> {
-                        if (saved.isMarried) {
-                            reproductiveStatus.entries?.lastOrNull()
-
-                        } else {
-                            ""
-                        }
-                    }
-                    else -> reproductiveStatus.getStringFromPosition(statusId)
-                }
-            }
+            reproductiveStatus.value = getReadModeReproductiveStatus(saved)
 
             // Restore haveChildren value for married females
             val maritalStatusIdForChildren = saved.genDetails?.maritalStatusId
@@ -797,8 +781,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             motherName.required = false
         }
 
+        // Divorced: wife / spouse name stay optional; husband name is mandatory (FLW-1199).
         if (maritalStatus.entries != null && maritalStatus.value == maritalStatus.entries!![2]) {
-            husbandName.required = false
             wifeName.required = false
             spouseName.required = false
         }
@@ -1248,7 +1232,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                 TRANSGENDER -> R.array.nbr_marital_status_male_array
             }
 //            gender.inputType = TEXT_VIEW
-            relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
+            relationToHead.value = relationToHeadListDefault.getOrNull(relationToHeadId)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
             }
@@ -1273,7 +1257,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         if (relationToHeadId == 9 ||  relationToHeadId == 19 || relationToHeadId == 13 ||
             relationToHeadId == 11 || relationToHeadId == 17 || relationToHeadId == 2 ||
             relationToHeadId == 18 || relationToHeadId == 14 ||
-            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16) hoF?.let {
+            relationToHeadId == 10 || relationToHeadId == 12 || relationToHeadId == 16 ||
+            relationToHeadId == 21) hoF?.let {
             setUpPageforOthers(it,hoFSpouse,selectedben,list)
         }
         if (relationToHeadId == 8 || relationToHeadId == 9) hoF?.let {
@@ -1375,7 +1360,7 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             otherMobileNoOfRelation.value = saved.mobileOthers
             contactNumber.value = saved.contactNumber.toString()
 //            relationToHead.entries = relationToHeadListDefault
-            relationToHead.value = relationToHead.getStringFromPosition(relationToHeadId + 1)
+            relationToHead.value = relationToHeadListDefault.getOrNull(relationToHeadId)
             if (relationToHeadId == relationToHead.entries!!.lastIndex) {
                 list.add(list.indexOf(relationToHead) + 1, otherRelationToHead)
             }
@@ -1438,8 +1423,8 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             motherName.required = false
 
         }
+        // Divorced: wife / spouse name stay optional; husband name is mandatory (FLW-1199).
         if (maritalStatus.value == maritalStatus.entries!![2]) {
-            husbandName.required = false
             wifeName.required = false
             spouseName.required = false
 
@@ -2505,8 +2490,10 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
                     }
 
                     else -> {
-                        husbandName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        // Husband name is mandatory for Divorced too (FLW-1199); wife / spouse name stay optional when Divorced.
+                        husbandName.required = true
                         wifeName.required = maritalStatus.value != maritalStatus.entries!![2]
+                        spouseName.required = maritalStatus.value != maritalStatus.entries!![2]
                         wifeName.allCaps = true
                         fatherName.required = false
                         motherName.required = false
@@ -3053,6 +3040,37 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
         ).firstNotNullOfOrNull { getEnglishValueInArray(it, localized) } ?: localized
     }
 
+    /**
+     * Status of Women for the read-only page. The stored English label is authoritative (edit mode
+     * restores from it too): the numeric id is re-mapped on push/pull (Ben.asPostModel, BenRepo pull)
+     * and never lined up with the default option array, so decoding it here showed wrong or blank
+     * values (FLW-1152, FLW-1199). The id branch is a fallback for records saved without a label.
+     */
+    private fun getReadModeReproductiveStatus(saved: BenRegCache): String? {
+        val gen = saved.genDetails ?: return null
+        val isUnmarried = gen.maritalStatusId == 1
+        val storedEnglish = gen.reproductiveStatus?.trim()?.takeIf { it.isNotEmpty() && it != "null" }
+        if (storedEnglish != null) {
+            // Sterilisation recorded against an unmarried woman is stale data and stays hidden.
+            if (storedEnglish == "Permanently Sterilised" && isUnmarried) return ""
+            return localizeReproductiveStatus(storedEnglish)
+        }
+        return when (val statusId = gen.reproductiveStatusId) {
+            5 -> if (saved.isMarried) reproductiveStatus.entries?.lastOrNull() else resources.getString(R.string.dd_ag)
+            6 -> if (isUnmarried) "" else localizeReproductiveStatus("Permanently Sterilised")
+            else -> reproductiveStatus.getStringFromPosition(statusId)
+        }
+    }
+
+    private fun localizeReproductiveStatus(english: String): String =
+        listOf(
+            R.array.nbr_reproductive_status_array1,
+            R.array.nbr_reproductive_status_array2,
+            R.array.nbr_reproductive_status_array3,
+            R.array.nbr_reproductive_status_array4,
+            R.array.nbr_reproductive_status_array5
+        ).firstNotNullOfOrNull { getLocalValueInArray(it, english) } ?: english
+
     private fun validateReproductiveStatusField(genderIsFemale: Boolean, age: Int): Int {
         val reproEnglish = getReproductiveStatusEnglishValue()
         if ((genderIsFemale &&
@@ -3139,10 +3157,21 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             ben.fatherName = fatherName.value
             ben.motherName = motherName.value
             ben.familyHeadRelationPosition = if (isHoF) 19 else {
-                relationToHeadListDefault.indexOf(relationToHead.value) + 1
+                val sourceRelationPosition = relationToHeadListDefault.indexOf(relationToHead.value)
+                if (sourceRelationPosition >= 0) {
+                    sourceRelationPosition + 1
+                } else {
+                    resources.getStringArray(R.array.nbr_relationship_to_head)
+                        .indexOf(relationToHead.value) + 1
+                }
             }
-            ben.familyHeadRelation =
-                getEnglishValueInArray(R.array.nbr_relationship_to_head_src, relationToHead.value)
+            ben.familyHeadRelation = getEnglishValueInArray(
+                R.array.nbr_relationship_to_head_src,
+                relationToHead.value
+            ) ?: getEnglishValueInArray(
+                R.array.nbr_relationship_to_head,
+                relationToHead.value
+            ) ?: relationToHead.value
             ben.familyHeadRelationOther = otherRelationToHead.value
             ben.mobileNoOfRelationId = if (isHoF) 1 else mobileNoOfRelation.getPosition()
             ben.tempMobileNoOfRelationId = if (isMitaninVariant) 0 else if (isHoF) 1 else tempraryContactNoBelongsto.getPosition()

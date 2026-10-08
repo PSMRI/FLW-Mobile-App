@@ -353,6 +353,14 @@ class NewBenRegViewModel @Inject constructor(
                         benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED)
                     } else if (isAddspouse == 1) {
                         benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs,SyncState.UNSYNCED)
+                    } else if (ben.familyHeadRelationPosition == 1 || ben.familyHeadRelationPosition == 2) {
+                        val spousePosition = if (ben.familyHeadRelationPosition == 1) 2 else 1
+                        benRepo.getBenListFromHousehold(ben.householdId)
+                            .firstOrNull { it.familyHeadRelationPosition == spousePosition && it.beneficiaryId != ben.beneficiaryId }
+                            ?.let { spouse ->
+                                ben.isSpouseAdded = true
+                                benRepo.updateBeneficiarySpouseAdded(ben.householdId, spouse.beneficiaryId, SyncState.UNSYNCED)
+                            }
                     }
                     if (isHoF) {
                         if (ben.gender == Gender.MALE) {
