@@ -461,11 +461,22 @@ class TBScreeningDataset(
 
     private fun withAutomaticRiskFactors(selectedIndexes: Collection<Int>): List<Int> {
         val exclusiveIndices = keyPopulationRiskFactors.exclusiveOptionIndices.orEmpty()
-        if (selectedIndexes.any { it in exclusiveIndices }) {
+        val selected = selectedIndexes.toMutableSet()
+        val contactWithTbIndex = riskFactorOptions.indexOfFirst {
+            it.code == "CONTACT_OF_KNOWN_TB_PATIENTS"
+        }
+        if (familyHistoryTB.value == yesValue) {
+            if (contactWithTbIndex >= 0) {
+                selected.removeAll(exclusiveIndices)
+                selected.add(contactWithTbIndex)
+            }
+        } else if (contactWithTbIndex >= 0) {
+            selected.remove(contactWithTbIndex)
+        }
+        if (selected.any { it in exclusiveIndices }) {
             return selectedIndexes.filter { it in exclusiveIndices }.distinct().sorted()
         }
 
-        val selected = selectedIndexes.toMutableSet()
         if (isPregnantBen) {
             riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
                 .takeIf { it >= 0 }?.let(selected::add)
@@ -490,6 +501,13 @@ class TBScreeningDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+        if (formId == familyHistoryTB.id) {
+            val selectedIndexes = keyPopulationRiskFactors.value
+                ?.split("|")?.mapNotNull { it.toIntOrNull() }
+                .orEmpty()
+            keyPopulationRiskFactors.value = withAutomaticRiskFactors(selectedIndexes)
+                .takeIf { it.isNotEmpty() }?.joinToString("|")
+        }
         if (!isAsymptomaticDriver(formId)) return -1
         aSymptomaticLabel.value = computeAsymptomaticValue()
         return listFlow.value.indexOf(aSymptomaticLabel).takeIf { it >= 0 } ?: -1
@@ -654,4 +672,7 @@ class TBScreeningDataset(
         return getIndexById(dateOfVisit.id)
     }
     fun getIndexOfAsymptomatic(): Int = listFlow.value.indexOf(aSymptomaticLabel)
+    fun getFamilyhistoryTB(): Int = listFlow.value.indexOf(familyHistoryTB)
+    fun getFamilyHistoryTbFormId(): Int = familyHistoryTB.id
+    fun getIndexOfRiskFactors(): Int = listFlow.value.indexOf(keyPopulationRiskFactors)
 }

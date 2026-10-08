@@ -95,9 +95,14 @@ class TBScreeningFormFragment : Fragment() {
                         if (it.isNotEmpty()) {
                             val dateIndex = viewModel.getIndexOfDate()
                             val asymptomaticIdx = viewModel.getIndexOfAsymptomatic()
+                            val familyHistoryTb = viewModel.getHistoryTB()
+                            val riskFactorsIndex = viewModel.getIndexOfRiskFactors()
+
                             adapter.submitList(it) {
                                 if (dateIndex >= 0) adapter.notifyItemChanged(dateIndex)
                                 if (asymptomaticIdx >= 0) adapter.notifyItemChanged(asymptomaticIdx)
+                                if (familyHistoryTb >= 0) adapter.notifyItemChanged(familyHistoryTb)
+                                if (riskFactorsIndex >= 0) adapter.notifyItemChanged(riskFactorsIndex)
                             }
                         }
 
@@ -106,6 +111,14 @@ class TBScreeningFormFragment : Fragment() {
             }
         }
         viewModel.asymptomaticRefresh.observe(viewLifecycleOwner) { position ->
+            if (position >= 0) {
+                binding.form.rvInputForm.post {
+                    formAdapter?.takeIf { position < it.itemCount }
+                        ?.notifyItemChanged(position)
+                }
+            }
+        }
+        viewModel.riskFactorsRefresh.observe(viewLifecycleOwner) { position ->
             if (position >= 0) {
                 binding.form.rvInputForm.post {
                     formAdapter?.takeIf { position < it.itemCount }
