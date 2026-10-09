@@ -214,7 +214,8 @@ enum class VaccineState {
 
 data class ImmunizationPost(
     val id: Long = 0,
-    val beneficiaryId: Long,
+    val beneficiaryId: Long = 0,
+    val beneficiaryRegId: Long? = null,
     val vaccineId: Int,
     var vaccineName: String = "",
     val receivedDate: String? = null,
@@ -227,7 +228,7 @@ data class ImmunizationPost(
     var mcpCardSummary1 : String ? = null,
     var mcpCardSummary2 : String ? = null
 ) {
-    fun toCacheModel(): ImmunizationCache {
+    fun toCacheModel(beneficiaryId: Long = this.beneficiaryId): ImmunizationCache {
         return ImmunizationCache(
             id = id,
             beneficiaryId = beneficiaryId,
