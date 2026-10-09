@@ -11,6 +11,9 @@ import org.piramalswasthya.sakhi.model.*
 @Dao
 interface BenDao {
 
+    @Query("SELECT beneficiaryId FROM BENEFICIARY WHERE benRegId = :benRegId LIMIT 1")
+    suspend fun getBeneficiaryIdByRegId(benRegId: Long): Long?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(vararg ben: BenRegCache)
 

@@ -214,7 +214,8 @@ enum class VaccineState {
 
 data class ImmunizationPost(
     val id: Long = 0,
-    val beneficiaryId: Long,
+    val beneficiaryId: Long? = null,
+    val beneficiaryRegId: Long? = null,
     val vaccineId: Int,
     var vaccineName: String = "",
     val receivedDate: String? = null,
@@ -230,7 +231,7 @@ data class ImmunizationPost(
     fun toCacheModel(): ImmunizationCache {
         return ImmunizationCache(
             id = id,
-            beneficiaryId = beneficiaryId,
+            beneficiaryId = requireNotNull(beneficiaryId) { "Immunization beneficiaryId is required" },
             vaccineId = vaccineId,
             date = getLongFromDate(receivedDate),
 //            placeId = 0,
