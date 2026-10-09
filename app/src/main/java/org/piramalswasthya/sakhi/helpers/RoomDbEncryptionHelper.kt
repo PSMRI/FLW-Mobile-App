@@ -5,11 +5,17 @@ import android.util.Log
 import net.zetetic.database.sqlcipher.SQLiteDatabase
 import java.io.File
 import java.io.FileInputStream
+import java.security.MessageDigest
 
 object RoomDbEncryptionHelper {
 
     private const val TAG = "RoomDbEncryptionHelper"
     private val SQLITE_MAGIC = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)
+
+    // Remembers that the current key already opened this DB, so later starts skip
+    // canOpenWithKey (full SQLCipher key derivation, a main-thread ANR source).
+    private const val MARKER_PREFS = "room_db_key_check"
+    private const val KEY_VERIFIED_HASH = "verified_key_hash"
 
     private fun ensureSqlCipherLoaded(context: Context) {
         NativeLibraryLoader.init(context)
@@ -47,19 +53,26 @@ object RoomDbEncryptionHelper {
             Log.d(TAG, "Plain DB detected via header check. Encrypting...")
             trace?.putAttribute("outcome", "encrypted_plain_db")
             encryptPlainDb(dbFile, passphrase)
+            markKeyVerified(context, passphrase)
             return@trace
         }
 
+        if (isKeyVerified(context, passphrase)) {
+            trace?.putAttribute("outcome", "key_cached")
+            return@trace
+        }
 
         if (canOpenWithKey(dbFile, passphrase)) {
             Log.d(TAG, "DB already encrypted with current key")
             trace?.putAttribute("outcome", "key_ok")
+            markKeyVerified(context, passphrase)
             return@trace
         }
 
 
         trace?.putAttribute("outcome", "reset")
         Log.w(TAG, "DB encrypted with unknown key or corrupted. Deleting for fresh start.")
+        clearKeyVerified(context)
         dbFile.delete()
         File(dbFile.parent, "$dbName-encrypted").let { if (it.exists()) it.delete() }
     }
@@ -122,6 +135,37 @@ object RoomDbEncryptionHelper {
         }
         Log.d(TAG, "Encryption complete. DB version set to $dbVersion")
     }
+
+    /**
+     * Call when the encrypted DB fails to open, so the next start runs the full key check
+     * (and the reset path) again instead of trusting the stored marker.
+     */
+    fun clearKeyVerified(context: Context) {
+        // commit(): may run from the crash handler just before the process dies.
+        markerPrefs(context).edit().remove(KEY_VERIFIED_HASH).commit()
+    }
+
+    /** True when [e] or a cause is SQLite's "file is not a database" (wrong key or corrupt file). */
+    fun isNotADatabaseError(e: Throwable): Boolean =
+        generateSequence(e) { it.cause }.take(10).any {
+            it.message?.contains("file is not a database", ignoreCase = true) == true
+        }
+
+    private fun isKeyVerified(context: Context, passphrase: CharArray): Boolean =
+        markerPrefs(context).getString(KEY_VERIFIED_HASH, null) == keyHash(passphrase)
+
+    private fun markKeyVerified(context: Context, passphrase: CharArray) {
+        markerPrefs(context).edit().putString(KEY_VERIFIED_HASH, keyHash(passphrase)).apply()
+    }
+
+    private fun markerPrefs(context: Context) =
+        context.getSharedPreferences(MARKER_PREFS, Context.MODE_PRIVATE)
+
+    // One-way hash of a 72-char random passphrase: identifies the key without exposing it.
+    private fun keyHash(passphrase: CharArray): String =
+        MessageDigest.getInstance("SHA-256")
+            .digest(String(passphrase).toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
 
     private fun canOpenWithKey(dbFile: File, passphrase: CharArray): Boolean {
         var db: SQLiteDatabase? = null

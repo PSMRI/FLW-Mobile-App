@@ -40,6 +40,9 @@
     import java.text.SimpleDateFormat
     import java.util.*
 
+    // Longest side of image previews in the form; the stored image itself is unchanged.
+    private const val PREVIEW_MAX_PX = 512
+
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
         private var isViewOnly: Boolean = false,
@@ -183,7 +186,9 @@
                             try {
                                 val base64String = filePath.substringAfter(",", filePath)
                                 val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                                val bitmap = decodeSampled { opts ->
+                                    BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size, opts)
+                                }
                                 imageView.setImageBitmap(bitmap)
                             } catch (e: Exception) {
                                 Timber.e(e, "Failed to decode base64 image")
@@ -193,13 +198,32 @@
 
                         else -> {
                             val uri = Uri.parse(filePath)
-                            imageView.setImageURI(uri)
+                            val bitmap = decodeSampled { opts ->
+                                context.contentResolver.openInputStream(uri)?.use {
+                                    BitmapFactory.decodeStream(it, null, opts)
+                                }
+                            }
+                            if (bitmap != null) imageView.setImageBitmap(bitmap) else imageView.setImageURI(uri)
                         }
                     }
                 } catch (e: Exception) {
                     Timber.tag("FormRendererAdapter").e(e, "Failed to load file: $filePath")
                     imageView.setImageResource(R.drawable.ic_doc_upload)
                 }
+            }
+
+            /**
+             * Decodes a thumbnail-sized bitmap: a bounds pass, then a sampled pass. The form
+             * shows a small preview, and full-size decodes on every rebind caused OOM / GC ANRs.
+             */
+            private fun decodeSampled(decode: (BitmapFactory.Options) -> android.graphics.Bitmap?): android.graphics.Bitmap? {
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                decode(bounds)
+                var sample = 1
+                while (bounds.outWidth / (sample * 2) >= PREVIEW_MAX_PX &&
+                    bounds.outHeight / (sample * 2) >= PREVIEW_MAX_PX
+                ) sample *= 2
+                return decode(BitmapFactory.Options().apply { inSampleSize = sample })
             }
 
             fun clear() {

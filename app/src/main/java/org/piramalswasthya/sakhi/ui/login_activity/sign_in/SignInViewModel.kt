@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.database.room.InAppDb
@@ -74,7 +75,7 @@ class SignInViewModel @Inject constructor(
             pref.deleteForLogout()
             pref.setLastSyncedTimeStamp(Konstants.defaultTimeStamp)
             _loggedInUser.value = null
-            Thread.sleep(2000)
+            delay(2000)
             _logoutComplete.value = true
         }
     }

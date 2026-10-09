@@ -88,27 +88,27 @@ class FilariaMdaCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "camera_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val base64String = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToBase64(uri, "camera_image", context)
 
-        if (currentImageField?.fieldId == "mda_photos") {
-            if (base64String != null && campaignPhotosList.size < 2) {
-                campaignPhotosList.add(base64String)
-                currentImageField?.value = campaignPhotosList.toList()
-                currentImageField?.errorMessage = null
-                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            if (currentImageField?.fieldId == "mda_photos") {
+                if (base64String != null && campaignPhotosList.size < 2) {
+                    campaignPhotosList.add(base64String)
+                    currentImageField?.value = campaignPhotosList.toList()
+                    currentImageField?.errorMessage = null
+                    viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+                }
+            } else {
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
+                }
             }
-        } else {
-            currentImageField?.apply {
-                value = base64String
-                errorMessage = null
-                viewModel.updateFieldValue(fieldId, value)
-            }
+            adapter.updateFields(viewModel.getVisibleFields())
+            adapter.notifyDataSetChanged()
+            showImageLoadedMessage(requireContext())
         }
-        adapter.updateFields(viewModel.getVisibleFields())
-        adapter.notifyDataSetChanged()
-        showImageLoadedMessage(requireContext())
-
     }
 
     private fun handleImageSelection(uri: Uri) {
@@ -124,27 +124,28 @@ class FilariaMdaCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp(uri, "selected_image", context)
-        val base64String = compressedFile?.let { org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64(it) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val base64String = org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToBase64(uri, "selected_image", context)
 
-        if (currentImageField?.fieldId == "mda_photos") {
-            if (base64String != null && campaignPhotosList.size < 2) {
-                campaignPhotosList.add(base64String)
-                currentImageField?.value = campaignPhotosList.toList()
-                currentImageField?.errorMessage = null
-                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            if (currentImageField?.fieldId == "mda_photos") {
+                if (base64String != null && campaignPhotosList.size < 2) {
+                    campaignPhotosList.add(base64String)
+                    currentImageField?.value = campaignPhotosList.toList()
+                    currentImageField?.errorMessage = null
+                    viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+                }
+            } else {
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
+                }
             }
-        } else {
-            currentImageField?.apply {
-                value = base64String
-                errorMessage = null
-                viewModel.updateFieldValue(fieldId, value)
-            }
+            adapter.updateFields(viewModel.getVisibleFields())
+            adapter.notifyDataSetChanged()
+            showFileLoadedMessage(requireContext())
+
         }
-        adapter.updateFields(viewModel.getVisibleFields())
-        adapter.notifyDataSetChanged()
-        showFileLoadedMessage(requireContext())
-
     }
 
     private fun showImagePickerDialog() {

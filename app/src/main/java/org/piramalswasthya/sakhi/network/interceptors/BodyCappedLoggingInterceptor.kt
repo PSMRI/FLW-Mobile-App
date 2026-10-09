@@ -3,6 +3,8 @@ package org.piramalswasthya.sakhi.network.interceptors
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import timber.log.Timber
+import java.io.IOException
 
 /**
  * [HttpLoggingInterceptor] at [HttpLoggingInterceptor.Level.BODY] copies the whole request body into
@@ -25,13 +27,39 @@ class BodyCappedLoggingInterceptor(
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val bodyLength = chain.request().body?.contentLength() ?: 0L
+        val request = chain.request()
+        val bodyLength = request.body?.contentLength() ?: 0L
         val delegate =
             if (bodyLength in 0..maxLoggedBodyBytes) bodyLogger else headersLogger
-        return delegate.intercept(chain)
+
+        val response = try {
+            delegate.intercept(chain)
+        } catch (e: IOException) {
+            // Timeouts / no network: the delegate logs "HTTP FAILED" at debug; repeat it at
+            // error level so every failed call stands out in logcat and the sync log.
+            Timber.tag(TAG).e("API FAILED %s %s: %s", request.method, request.url.encodedPath, e.toString())
+            throw e
+        }
+
+        // Every non-2xx reply is logged with its error body at error level. This also covers
+        // oversized uploads, where the delegate logs headers only and the error text was lost.
+        if (!response.isSuccessful) {
+            val errorBody = try {
+                response.peekBody(MAX_ERROR_BODY_BYTES).string()
+            } catch (_: Exception) {
+                ""
+            }
+            Timber.tag(TAG).e(
+                "API FAILED %s %s -> HTTP %d: %s",
+                request.method, request.url.encodedPath, response.code, errorBody
+            )
+        }
+        return response
     }
 
     companion object {
         const val MAX_LOGGED_BODY_BYTES = 1024L * 1024L // 1 MB
+        private const val MAX_ERROR_BODY_BYTES = 4L * 1024L // same cap as LoggingInterceptor
+        private const val TAG = "OkHttp"
     }
 }

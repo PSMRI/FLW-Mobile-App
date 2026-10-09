@@ -236,6 +236,19 @@ class AccountDeactivationInterceptorTest {
     }
 
     @Test
+    fun `large response is not parsed and stays fully readable downstream`() {
+        // A big sync page: over the 16 KB peek cap, so it is skipped rather than copied and parsed.
+        val padding = "x".repeat(32 * 1024)
+        val body = """{"statusCode":5002,"errorMessage":"account deactivated","data":"$padding"}"""
+        server.enqueue(MockResponse().setBody(body))
+
+        val response = buildClient().newCall(Request.Builder().url(server.url("/")).build()).execute()
+
+        assertEquals(body, response.body?.string())
+        verify(exactly = 0) { deactivationManager.emitIfCooldownPassed(any()) }
+    }
+
+    @Test
     fun `preserves request url through interceptor`() {
         server.enqueue(MockResponse().setBody("ok"))
 
