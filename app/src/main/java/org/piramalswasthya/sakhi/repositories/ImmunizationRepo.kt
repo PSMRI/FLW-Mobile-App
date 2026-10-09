@@ -120,22 +120,21 @@ class ImmunizationRepo @Inject constructor(
         immunizationList.forEach { immunizationDTO ->
             try {
                 // Some server rows omit beneficiaryId but include beneficiaryRegId.
-                val beneficiaryId = immunizationDTO.beneficiaryId
+                val beneficiaryId = immunizationDTO.beneficiaryId.takeIf { it > 0 }
                     ?: immunizationDTO.beneficiaryRegId?.let { benDao.getBeneficiaryIdByRegId(it) }
                 if (beneficiaryId == null || immunizationDTO.vaccineId <= 0) {
                     Timber.w("Skipping immunization ${immunizationDTO.id}: missing beneficiary or vaccine ID")
                     return@forEach
                 }
 
-                val normalizedDTO = immunizationDTO.copy(beneficiaryId = beneficiaryId)
-                val byServerId = normalizedDTO.id.takeIf { it > 0 }
-                    ?.let { immunizationDao.getImmunizationRecordById(it) }
-                val existing = byServerId ?: immunizationDao.getImmunizationRecord(
+                val existing = immunizationDao.getImmunizationRecord(
                     beneficiaryId,
-                    normalizedDTO.vaccineId
+                    immunizationDTO.vaccineId
                 )
                 if (existing == null) {
-                    immunizationDao.addImmunizationRecord(normalizedDTO.toCacheModel())
+                    immunizationDao.addImmunizationRecord(
+                        immunizationDTO.toCacheModel(beneficiaryId)
+                    )
                 }
             } catch (e: Exception) {
                 // Keep one bad row from aborting the rest of the response.

@@ -475,4 +475,62 @@ class ImmunizationRepoTest : BaseRepositoryTest() {
 
         coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(any()) }
     }
+
+    @Test
+    fun `getImmunizationDetails resolves beneficiaryId from beneficiaryRegId`() = runTest {
+        loggedIn()
+        val dataJson = """[{"id":12200407,"beneficiaryRegId":10468635,"vaccineId":44,"createdBy":"asha","modifiedBy":"asha"}]"""
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { benDao.getBeneficiaryIdByRegId(10468635L) } returns 947898815759L
+        coEvery { immunizationDao.getImmunizationRecord(947898815759L, 44) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(any()) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { benDao.getBeneficiaryIdByRegId(10468635L) }
+        coVerify(exactly = 1) {
+            immunizationDao.addImmunizationRecord(match {
+                it.id == 12200407L && it.beneficiaryId == 947898815759L && it.vaccineId == 44
+            })
+        }
+    }
+
+    @Test
+    fun `getImmunizationDetails continues saving after a row without beneficiary IDs`() = runTest {
+        loggedIn()
+        val dataJson = """[
+            {"id":12200433,"vaccineId":1,"createdBy":"asha","modifiedBy":"asha"},
+            {"id":12200434,"beneficiaryId":670641581091,"vaccineId":3,"createdBy":"asha","modifiedBy":"asha"}
+        ]"""
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(670641581091L, 3) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(any()) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(any()) }
+        coVerify(exactly = 0) { benDao.getBeneficiaryIdByRegId(any()) }
+    }
+
+    @Test
+    fun `getImmunizationDetails continues saving after one Room insert fails`() = runTest {
+        loggedIn()
+        val dataJson = """[
+            {"id":101,"beneficiaryId":1,"vaccineId":2,"createdBy":"asha","modifiedBy":"asha"},
+            {"id":102,"beneficiaryId":2,"vaccineId":3,"createdBy":"asha","modifiedBy":"asha"}
+        ]"""
+        coEvery { amritApiService.getChildImmunizationDetails(any()) } returns
+            Response.success(jsonBody(immunizationOuterJson(dataJson)))
+        coEvery { immunizationDao.getImmunizationRecord(any(), any()) } returns null
+        coEvery { immunizationDao.addImmunizationRecord(match { it.id == 101L }) } throws
+            IllegalStateException("Foreign key failure")
+        coEvery { immunizationDao.addImmunizationRecord(match { it.id == 102L }) } returns Unit
+
+        assertEquals(1, repo.getImmunizationDetailsFromServer())
+
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(match { it.id == 101L }) }
+        coVerify(exactly = 1) { immunizationDao.addImmunizationRecord(match { it.id == 102L }) }
+    }
 }
