@@ -651,7 +651,7 @@ GROUP BY b.benId
     ): Flow<Int>
 
     @Transaction
-    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0 and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage and not exists (select 1 from PREGNANCY_REGISTER expired where expired.benId = ben.benId and expired.active = 1 and (strftime('%s','now') * 1000) > (expired.lmpDate + :pregnancyExpiryMillis))")
+    @Query("SELECT ben.* FROM BEN_BASIC_CACHE ben left outer join pregnancy_register  pr on pr.benId = ben.benId  WHERE reproductiveStatusId = 2 and isDeactivate =0 and isDeath = 0 and (pr.benId is null or pr.active = 1) and villageId=:selectedVillage and not exists (select 1 from PREGNANCY_REGISTER expired where expired.benId = ben.benId and expired.active = 1 and (strftime('%s','now') * 1000) > (expired.lmpDate + :pregnancyExpiryMillis))")
     fun getAllPregnancyWomenList(
         selectedVillage: Int,
         pregnancyExpiryMillis: Long
@@ -665,17 +665,17 @@ GROUP BY b.benId
     ): Flow<List<BenWithPwrCache>>
 
     @Transaction
-    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and villageId=:selectedVillage" + BenListOrder.LIFO)
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and isDeath =0 and villageId=:selectedVillage" + BenListOrder.LIFO)
     fun getAllPregnancyWomenForHRList(selectedVillage: Int): Flow<List<BenWithHRPACache>>
 
     @Transaction
-    @Query("SELECT count(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and villageId=:selectedVillage")
+    @Query("SELECT count(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 2 and isDeactivate=0 and isDeath =0 and villageId=:selectedVillage")
     fun getAllPregnancyWomenForHRListCount(selectedVillage: Int): Flow<Int>
 
 
     @Query("""
         SELECT COUNT(*) FROM BEN_BASIC_CACHE ben
-        WHERE reproductiveStatusId = 2 and isDeactivate = 0 and villageId = :selectedVillage
+        WHERE reproductiveStatusId = 2 and isDeactivate = 0 and isDeath =0 and villageId = :selectedVillage
         and not exists (
             select 1 from PREGNANCY_REGISTER expired
             where expired.benId = ben.benId and expired.active = 1
@@ -715,7 +715,7 @@ GROUP BY b.benId
     fun getAllDeliveredWomenListCount(selectedVillage: Int): Flow<Int>
 
     @Transaction
-    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 1 and  isDeactivate=0  and gender = 'FEMALE' and villageId=:selectedVillage" + BenListOrder.LIFO)
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 1 and  isDeactivate=0 and isDeath =0  and gender = 'FEMALE' and villageId=:selectedVillage" + BenListOrder.LIFO)
     fun getAllNonPregnancyWomenList(selectedVillage: Int): Flow<List<BenWithHRNPACache>>
 
     @Query("SELECT COUNT(*) FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 1 and gender = 'FEMALE' and isDeactivate=0 and isDeath=0 and villageId=:selectedVillage")
@@ -965,7 +965,7 @@ GROUP BY b.benId
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE isKid = 1 or reproductiveStatusId in (2, 3) and villageId=:selectedVillage and  isDeactivate=0 " + BenListOrder.LIFO)
     fun getAllImmunizationDueList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE hrpStatus = 1 and villageId=:selectedVillage and  isDeactivate=0 " + BenListOrder.LIFO)
+    @Query("SELECT * FROM BEN_BASIC_CACHE WHERE hrpStatus = 1 and villageId=:selectedVillage and  isDeactivate=0 and isDeath=0" + BenListOrder.LIFO)
     fun getAllHrpCasesList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 4 and hhId = :hhId" + BenListOrder.LIFO)
@@ -996,7 +996,7 @@ GROUP BY b.benId
     @Query("SELECT * FROM BEN_BASIC_CACHE WHERE reproductiveStatusId = 4 and villageId=:selectedVillage and  isDeactivate=0 " + BenListOrder.LIFO)
     fun getAllMotherImmunizationList(selectedVillage: Int): Flow<List<BenBasicCache>>
 
-    @Query("select ben.* from ben_basic_cache ben inner join  pregnancy_register pwr on ben.benId = pwr.benId left  outer join pregnancy_anc pwa on ben.benId = pwa.benId where ben.villageId = :villageId and ben.isDeactivate=0 and pwr.isHrp =1 or pwa.hrpConfirmed = 1" + BenListOrder.LIFO_BEN)
+    @Query("select ben.* from ben_basic_cache ben inner join  pregnancy_register pwr on ben.benId = pwr.benId left  outer join pregnancy_anc pwa on ben.benId = pwa.benId where ben.villageId = :villageId and ben.isDeactivate=0  and isDeath =0 and pwr.isHrp =1 or pwa.hrpConfirmed = 1" + BenListOrder.LIFO_BEN)
     fun getHrpCases(villageId: Int): Flow<List<BenBasicCache>>
 
     @Query("select * from BEN_BASIC_CACHE b inner join tb_screening t on  b.benId = t.benId where villageId = :villageId and tbsnFilled = 1 and (t.bloodInSputum =1 or t.coughMoreThan2Weeks = 1 or feverMoreThan2Weeks = 1 or nightSweats = 1 or lossOfWeight = 1 or historyOfTb = 1)" + BenListOrder.LIFO_B)
@@ -1092,24 +1092,24 @@ GROUP BY b.benId
 
 
     @Transaction
-    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate = 0 and gender = 'FEMALE' and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1)" + BenListOrder.LIFO)
+    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate = 0 and isDeath =0 and gender = 'FEMALE' and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1)" + BenListOrder.LIFO)
     fun getAllHRPTrackingPregList(villageId: Int): Flow<List<BenWithHRPTrackingCache>>
 
     @Transaction
     @Query("select * from BEN_BASIC_CACHE where benId = :benId;")
     fun getHRPTrackingPregForBen(benId: Long): BenWithHRPTrackingCache
 
-    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate=0 and gender = 'FEMALE' and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1);")
+    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate=0 and isDeath =0 and gender = 'FEMALE' and benId in (select benId from HRP_PREGNANT_ASSESS where isHighRisk = 1);")
     fun getAllHRPTrackingPregListCount(villageId: Int): Flow<Int>
 
-    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate=0 and gender = 'FEMALE' and benId in (select benId from PREGNANCY_ANC where isActive = 1 and hrpConfirmed = 1 and hrpConfirmedBy is not null and trim(hrpConfirmedBy) != '');")
+    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 2 and isDeactivate=0 and isDeath =0 and gender = 'FEMALE' and benId in (select benId from PREGNANCY_ANC where isActive = 1 and hrpConfirmed = 1 and hrpConfirmedBy is not null and trim(hrpConfirmedBy) != '');")
     fun getAllHRPConfirmedPregListCount(villageId: Int): Flow<Int>
 
     @Transaction
-    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 1 and  isDeactivate=0 and gender = 'FEMALE' and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1)" + BenListOrder.LIFO)
+    @Query("select * from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 1 and  isDeactivate=0 and isDeath =0 and gender = 'FEMALE' and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1)" + BenListOrder.LIFO)
     fun getAllHRPTrackingNonPregList(villageId: Int): Flow<List<BenWithHRNPTrackingCache>>
 
-    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 1 and isDeactivate=0 and gender = 'FEMALE' and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1);")
+    @Query("select count(*) from BEN_BASIC_CACHE where villageId = :villageId and reproductiveStatusId = 1 and isDeactivate=0  and isDeath =0 and gender = 'FEMALE' and benId in (select benId from HRP_NON_PREGNANT_ASSESS where isHighRisk = 1);")
     fun getAllHRPTrackingNonPregListCount(villageId: Int): Flow<Int>
 
     @Query(
