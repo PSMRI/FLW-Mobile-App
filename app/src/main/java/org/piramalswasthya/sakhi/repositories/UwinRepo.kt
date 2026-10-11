@@ -53,8 +53,8 @@ class UwinRepo @Inject constructor(
     private val maxRetries = 3
     fun getAllLocalRecords() = uwinDao.getAllUwinRecords()
 
-    suspend fun insertLocalRecord(record: UwinCache) = withContext(Dispatchers.IO) {
-        uwinDao.insert(record)
+    suspend fun insertLocalRecord(record: UwinCache): Boolean = withContext(Dispatchers.IO) {
+        uwinDao.insertIfDateAvailable(record)
     }
 
     suspend fun updateLocalRecord(record: UwinCache) = withContext(Dispatchers.IO) {
