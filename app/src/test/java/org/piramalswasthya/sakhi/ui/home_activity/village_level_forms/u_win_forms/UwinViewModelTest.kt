@@ -177,7 +177,7 @@ class UwinViewModelTest : BaseViewModelTest() {
             syncState = SyncState.UNSYNCED
         )
         coEvery { uwinRepo.getUwinById(5) } returns cache
-        coEvery { uwinRepo.insertLocalRecord(any()) } returns Unit
+        coEvery { uwinRepo.insertLocalRecord(any()) } returns true
         viewModel.prepareForm(saved = true, id = 5)
         advanceUntilIdle()
         viewModel.saveForm()
@@ -185,5 +185,22 @@ class UwinViewModelTest : BaseViewModelTest() {
         assertEquals(UwinViewModel.State.SAVE_SUCCESS, viewModel.state.value)
         unmockkStatic(Dispatchers::class)
         coVerify { uwinRepo.insertLocalRecord(any()) }
+    }
+
+    @Test
+    fun `saveForm blocks a second session on the same date`() = runTest {
+        coEvery { uwinRepo.insertLocalRecord(any()) } returns false
+        viewModel.prepareForm(saved = false)
+        advanceUntilIdle()
+        viewModel.formList.value.first { it.id == 117 }.value = "01-01-2024"
+        viewModel.formList.value.first { it.id == 118 }.value = "Yes"
+        viewModel.formList.value.first { it.id == 119 }.value = "12"
+
+        viewModel.saveForm()
+        advanceUntilIdle()
+        unmockkStatic(Dispatchers::class)
+
+        assertEquals(UwinViewModel.State.DUPLICATE_DATE, viewModel.state.value)
+        coVerify(exactly = 1) { uwinRepo.insertLocalRecord(any()) }
     }
 }

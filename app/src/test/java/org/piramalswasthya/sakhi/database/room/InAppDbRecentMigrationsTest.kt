@@ -83,6 +83,17 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_70_71 adds server IDs and removes one-per-day unique index`() {
+        val db = mockDb(tableExists = true)
+
+        invokeMigration("MIGRATION_70_71", db)
+
+        assertExecuted("ALTER TABLE children_under_five_all_visit ADD COLUMN serverId INTEGER")
+        assertExecuted("DROP INDEX IF EXISTS `index_children_under_five_all_visit_benId_hhId_visitDate_formId`")
+        assertExecuted("CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_serverId_formId`")
+    }
+
+    @Test
     fun `MIGRATION_66_67 adds tb screening columns on a device that ran the cbac-only 65_66`() {
         val db = mockDb(columns = listOf("cbac_occupational_exposure_other"))
 
