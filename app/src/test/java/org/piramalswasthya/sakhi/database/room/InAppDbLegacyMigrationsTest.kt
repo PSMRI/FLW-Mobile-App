@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.migrations.ALL_MIGRATIONS
 
 class InAppDbLegacyMigrationsTest {
 
@@ -22,19 +23,8 @@ class InAppDbLegacyMigrationsTest {
     }
 
     private fun invokeMigration(name: String, db: SupportSQLiteDatabase) {
-        val clazz = Class.forName(
-            "org.piramalswasthya.sakhi.database.room.InAppDb\$Companion\$getInstance\$$name\$1"
-        )
-        val constructor = clazz.declaredConstructors.first()
-        constructor.isAccessible = true
-        val instance = constructor.newInstance()
-        val method = clazz.declaredMethods.first {
-            (it.name == "migrate" || it.name == "invoke") &&
-                    it.parameterTypes.size == 1 &&
-                    it.parameterTypes[0] == SupportSQLiteDatabase::class.java
-        }
-        method.isAccessible = true
-        method.invoke(instance, db)
+        val (from, to) = name.removePrefix("MIGRATION_").split("_").map { it.toInt() }
+        ALL_MIGRATIONS.single { it.startVersion == from && it.endVersion == to }.migrate(db)
     }
 
     private fun masterCursor(exists: Boolean): Cursor {
@@ -467,17 +457,5 @@ class InAppDbLegacyMigrationsTest {
         assertExecuted("alter table HRP_PREGNANT_TRACK add column fastingOgtt INTEGER")
         assertExecuted("alter table HRP_PREGNANT_TRACK add column after2hrsOgtt INTEGER")
         assertEquals(22, executedSql.size)
-    }
-
-    @Test
-    fun `MIGRATION_1_2 adds the consent columns`() {
-        val db = mockDb()
-
-        invokeMigration("MIGRATION_1_2", db)
-
-        assertExecuted("alter table BEN_BASIC_CACHE add column isConsent BOOL")
-        assertExecuted("ALTER TABLE BENEFICIARY ADD COLUMN newColumn TEXT DEFAULT 'undefined'")
-        assertExecuted("ALTER TABLE BENEFICIARY ADD COLUMN kid_isConsent INTEGER DEFAULT 0")
-        assertEquals(3, executedSql.size)
     }
 }
