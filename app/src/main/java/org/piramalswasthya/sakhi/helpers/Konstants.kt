@@ -63,7 +63,8 @@ object Konstants {
 
 
     //PNC-EC cycle
-    const val pncEcGap: Long = 45
+    const val pncEcGap: Long = 60
+    const val maxAgeForLowWeightInfantRegisterDays: Long = 45
 
     const val pregnancyExpiryDays: Long = 340
     const val pregnancyExpiryMillis: Long = pregnancyExpiryDays * 24 * 60 * 60 * 1000
