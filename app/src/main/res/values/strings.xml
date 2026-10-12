@@ -1770,5 +1770,12 @@
     <string name="add_follow_up">Add Follow Up</string>
     <string name="view_details">View Details</string>
     <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
+    <string name="link_household">Link Household</string>
+    <string name="link_to_existing_household">Link to Existing Household</string>
+    <string name="create_new_household">Create New Household</string>
+    <string name="select_household">Select Household</string>
+    <string name="search_household_hint">Search by name or ID...</string>
+    <string name="select_relationship_to_hof">Select Relationship to HOF</string>
+    <string name="beneficiary_linked_successfully">Beneficiary linked successfully</string>
 </resources>
 

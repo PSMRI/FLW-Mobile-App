@@ -63,6 +63,41 @@ class BenRegFormDataset(var context: Context, language: Languages) : Dataset(con
             return Pair(years, months)
         }
 
+        fun isRelationAgeEligible(
+            relationPosition: Int,
+            memberAge: Int,
+            hofAge: Int,
+            spouseAge: Int? = null,
+            hofAgeAtMarriage: Int = 0,
+            spouseAgeAtMarriage: Int? = null,
+        ): Boolean {
+            if (memberAge < 0 || hofAge < 0) return true
+            return when (relationPosition) {
+                1, 2, 11, 12, 13, 14 ->
+                    memberAge >= hofAge + Konstants.minAgeForGenBen
+
+                7, 8, 9, 10, 15, 16, 17, 18 -> {
+                    if (relationPosition == 9 || relationPosition == 10) {
+                        val minParentAge = spouseAge?.let { minOf(hofAge, it) } ?: hofAge
+                        val minAgeAtMarriage = spouseAgeAtMarriage?.let {
+                            minOf(hofAgeAtMarriage, it)
+                        } ?: hofAgeAtMarriage
+                        val (maxYears, maxMonths) = calculateMaxSonAge(
+                            minParentAge,
+                            0,
+                            minAgeAtMarriage,
+                            7
+                        )
+                        memberAge * 12 <= maxYears * 12 + maxMonths
+                    } else {
+                        memberAge + Konstants.minAgeForGenBen <= hofAge
+                    }
+                }
+
+                else -> true
+            }
+        }
+
 
         private fun getCurrentDateString(): String {
             val calendar = Calendar.getInstance()
