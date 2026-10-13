@@ -84,8 +84,6 @@ object Konstants {
     const val pregnancyExpiryDays: Long = 340
     const val pregnancyExpiryMillis: Long = pregnancyExpiryDays * 24 * 60 * 60 * 1000
 
-    const val pregnancyExpiryDays: Long = 340
-    const val pregnancyExpiryMillis: Long = pregnancyExpiryDays * 24 * 60 * 60 * 1000
 
 
     const val defaultTimeStamp = 1577817001000L
