@@ -35,9 +35,9 @@ class IrsRoundListAdapterTest {
     @Test
     fun areContentsTheSame_usesFullEquality() {
         val callback = diffCallback()
-        val old = IRSRoundScreening(id = 1, rounds = 2, householdId = 100L)
-        val same = IRSRoundScreening(id = 1, rounds = 2, householdId = 100L)
-        val different = IRSRoundScreening(id = 1, rounds = 3, householdId = 100L)
+        val old = IRSRoundScreening(id = 1, date = 1_000L, rounds = 2, householdId = 100L)
+        val same = IRSRoundScreening(id = 1, date = 1_000L, rounds = 2, householdId = 100L)
+        val different = IRSRoundScreening(id = 1, date = 1_000L, rounds = 3, householdId = 100L)
         assertTrue(callback.areContentsTheSame(old, same))
         assertFalse(callback.areContentsTheSame(old, different))
     }
