@@ -225,12 +225,19 @@ class InfantRegRepo @Inject constructor(
     private suspend fun saveInfantRegCacheFromResponse(dataObj: String): List<InfantRegPost> {
         var infantRegList = Gson().fromJson(dataObj, Array<InfantRegPost>::class.java).toList()
         infantRegList.forEach { infantReg ->
-            infantReg.createdDate?.let {
-                var infantRegCache: InfantRegCache? =
-                    infantRegDao.getInfantReg(infantReg.benId, infantReg.babyIndex)
-                if (infantRegCache == null) {
-                    infantRegDao.saveInfantReg(infantReg.toCacheModel())
+            try {
+                infantReg.createdDate?.let {
+                    var infantRegCache: InfantRegCache? =
+                        infantRegDao.getInfantReg(infantReg.benId, infantReg.babyIndex)
+                    if (infantRegCache == null) {
+                        infantRegDao.saveInfantReg(infantReg.toCacheModel())
+                    }
                 }
+            } catch (e: Exception) {
+                Timber.e(
+                    e,
+                    "Infant registration pull failed for benId: ${infantReg.benId} babyIndex: ${infantReg.babyIndex}"
+                )
             }
         }
         return infantRegList

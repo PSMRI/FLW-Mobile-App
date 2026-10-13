@@ -20,7 +20,9 @@ class TBScreeningCacheTest {
         historyOfTb = false,
         sympotomatic = "yes",
         asymptomatic = "no",
-        recommandateTest = "sputum"
+        recommandateTest = "sputum",
+        failureToGainWeight = true,
+        decreasedActivityOrPlayfulness = false
     )
 
     @Test
@@ -36,6 +38,8 @@ class TBScreeningCacheTest {
         assertEquals(true, dto.coughMoreThan2Weeks)
         assertEquals(false, dto.bloodInSputum)
         assertEquals(true, dto.feverMoreThan2Weeks)
+        assertEquals(true, dto.failureToGainWeight)
+        assertEquals(false, dto.decreasedActivityOrPlayfulness)
     }
 
     @Test

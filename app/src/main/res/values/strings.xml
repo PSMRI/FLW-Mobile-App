@@ -58,6 +58,9 @@
     <string name="mdsr_reason_death">specify reasons</string>
     <string name="mdsr_action">Action taken</string>
     <string name="refer_to">Referred To</string>
+    <string name="refer">Refer</string>
+    <string name="start_follow_up">Start Follow-up</string>
+    <string name="view_follow_up">View Follow-up</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
     <string name="type_of_leprocy">Type of leprosy confirmed</string>
@@ -214,6 +217,17 @@
         <item>District Hospital</item>
         <item>Medical College Hospital</item>
         <item>Tuberculosis Unit</item>
+    </string-array>
+
+    <string-array name="TB_referral_facility">
+        <item>Tuberculosis Unit(TU)</item>
+        <item>HWC-Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>District TB Centre (DTC)</item>
+        <item>Govt. Medical Collage</item>
+
     </string-array>
 
     <string-array name="referral_facility">
@@ -401,10 +415,13 @@
     <string name="to_do_list">To Do List</string>
     <string name="beneficiaries_due_for_anc">Beneficiaries due for ANC</string>
     <string name="beneficiaries_due_for_immunization">Beneficiaries due for Immunization</string>
+    <string name="women_due_for_anc">Women due for ANC</string>
+    <string name="children_due_for_immunization">Children due for Immunization</string>
     <string name="_0">0</string>
     <string name="high_risk_cases">High Risk Cases</string>
-    <string name="high_risk_pregnant_women">High Risk Pregnant Women</string>
-    <string name="high_risk_non_pregnant_women">High Risk Non Preg Women</string>
+    <string name="suspected_high_risk_pregnant_women">Suspected High Risk Pregnant Woman</string>
+    <string name="suspected_high_risk_non_pregnant_women">Suspected High Risk Non Pregnant Woman</string>
+    <string name="confirmed_high_risk_pregnant_women">Confirmed High Risk Pregnant Woman</string>
     <string name="high_risk_babies">High Risk Babies</string>
     <string name="low_birth_weight_babies">Low Birth Weight Babies</string>
     <string name="registration_date">Registration Date</string>
@@ -715,6 +732,7 @@
     <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
+    <string name="uwin_session_already_submitted_for_date">A U-WIN session has already been submitted for this date.</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
     <string name="number_of_families_label">Number Of Families : %s</string>
     <string name="number_of_children_label">Number Of Children : %s</string>
@@ -1338,6 +1356,23 @@
 
     </string-array>
 
+    <string-array name="daysPvMitanin">
+        <item>Day 1</item>
+        <item>Day 2</item>
+        <item>Day 3</item>
+        <item>Day 4</item>
+        <item>Day 5</item>
+        <item>Day 6</item>
+        <item>Day 7</item>
+        <item>Day 8</item>
+        <item>Day 9</item>
+        <item>Day 10</item>
+        <item>Day 11</item>
+        <item>Day 12</item>
+        <item>Day 13</item>
+        <item>Day 14</item>
+    </string-array>
+
     <string-array name="daysPf">
         <item>Day 1</item>
         <item>Day 2</item>
@@ -1479,9 +1514,11 @@
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
     <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
-    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
+    <string name="tb_asymptomatic_symptoms">Beneficiary is Asymptomatic</string>
     <string name="tb_rise_of_fever">Rise of fever in evening</string>
     <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_child_failure_to_gain_weight">Failure to gain weight (in children)</string>
+    <string name="tb_child_decreased_activity">Decreased activity or playfulness (in children)</string>
     <string name="tb_age_more_than_60">Age more than 60 years</string>
     <string name="tb_diabetic">Diabetic</string>
     <string name="tb_tobacco_user">Tobacco user</string>
@@ -1494,6 +1531,8 @@
    <string name="please_check_your_network_settings_this_dialog_will_close_automatically_when_connectivity_is_restored">Please check your network settings. This dialog will close automatically when connectivity is restored.</string>
     <string name="add_spouse">Add Spouse</string>
     <string name="would_you_like_to_add_spouse">Would you like to add %1$s\'s %2$s?</string>
+    <string name="add_children_title">Add Children</string>
+    <string name="would_you_like_to_add_children">Would you like to add children?</string>
     <string name="str_wife">Wife</string>
     <string name="str_husband">Husband</string>
     <string name="is_medicine_distributed_yes_no">Is Medicine Distributed? (Yes/No)</string>
@@ -1548,6 +1587,8 @@
     <string name="str_dose_one">Dose-1</string>
     <string name="str_dose">Dose</string>
     <string name="str_no_more_dose">No More Doses</string>
+
+    <string name="head_of_family">Head of Family: </string>
 
     <string name="str_delete_household_msg">Are you sure you want to delete</string>
     <string name="str_hof_cant_delete">Head of Family cannot be deleted when other members exist.</string>
@@ -1612,6 +1653,111 @@
     <string name="incentive_header_activity">Activity</string>
     <string name="incentive_header_no_of_claims">No of Claims</string>
     <string name="incentive_header_amount_claimed">Amount claimed (Rs.)</string>
+    <string name="risk_factors">Risk Factors</string>
+    <string name="key_population_risk_factors">Key Population / Risk Factors</string>
+    <string name="positive">Positive</string>
+    <string name="reactive">Reactive</string>
+    <string name="negative">Negative</string>
+    <string name="hiv_status">HIV Status</string>
+    <string name="not_applicable">Not Applicable</string>
+    <string name="fatigue">Fatigue</string>
+    <string name="chestpain">Chest pain</string>
+
+
+    <string name="kp_risk_pregnancy">Pregnancy</string>
+    <string name="kp_risk_lactating_mother">Lactating mother</string>
+    <string name="kp_risk_anti_tnf_treatment">Anti-TNF treatment</string>
+    <string name="kp_risk_bronchial_asthma">Bronchial Asthma</string>
+    <string name="kp_risk_cancer">Cancer</string>
+    <string name="kp_risk_cardiovascular_disorder">Cardiovascular Disorder</string>
+    <string name="kp_risk_contact_of_known_tb_patients">Contact of Known TB Patients</string>
+    <string name="kp_risk_copd">COPD</string>
+    <string name="kp_risk_covid_recovered_patients">COVID recovered patients</string>
+    <string name="kp_risk_diabetes">Diabetes</string>
+    <string name="kp_risk_dialysis">Dialysis</string>
+    <string name="kp_risk_health_care_worker">Health Care Worker</string>
+    <string name="kp_risk_hypertensive">Hypertensive</string>
+    <string name="kp_risk_liver_impairment">Liver Impairment</string>
+    <string name="kp_risk_migrant">Migrant</string>
+    <string name="kp_risk_miner">Miner</string>
+    <string name="kp_risk_palliative_care">Palliative Care</string>
+    <string name="kp_risk_patient_on_immunosuppressants">Patient on immunosuppressants</string>
+    <string name="kp_risk_prison">Prison</string>
+    <string name="kp_risk_illegal_immigrant">Illegal Immigrant</string>
+    <string name="kp_risk_renal_impairment">Renal Impairment</string>
+    <string name="kp_risk_transplantation">Transplantation</string>
+    <string name="kp_risk_urban_slum">Urban Slum</string>
+    <string name="kp_risk_ho_adult_bcg_vaccination">H/o Adult BCG Vaccination</string>
+    <string name="kp_risk_undernourished_malnourished">Undernourished / Malnourished (BMI &lt;18.5 kg/m2)</string>
+    <string name="kp_risk_elderly">Elderly (age &gt;60 years)</string>
+    <string name="kp_risk_workplace_settings">Workplace settings (coal/sandblasting/brick kiln)</string>
+    <string name="kp_risk_tea_garden_worker">Tea garden worker</string>
+    <string name="kp_risk_construction_site_worker">Construction site worker</string>
+    <string name="kp_risk_congregate_settings">Congregate settings</string>
+    <string name="kp_risk_attendees_of_de_addiction_centers">Attendees of de-addiction centers</string>
+    <string name="kp_risk_indoor_air_pollution">Person exposed to indoor air pollution</string>
+    <string name="kp_risk_marginalized_hiv">Marginalized populations at risk of HIV</string>
+    <string name="kp_risk_lgbtqai">LGBTQAI++</string>
+    <string name="kp_risk_substance_abuse">Substance abuse (alcoholic/intravenous drug users)</string>
+    <string name="kp_risk_tobacco_smoker">Tobacco/smoker</string>
+    <string name="kp_risk_silica_exposure_silicosis">Silica exposure/silicosis</string>
+    <string name="kp_risk_other">Other</string>
+
+    <string-array name="key_population_risk_factor_options">
+        <item>@string/kp_risk_pregnancy</item>
+        <item>@string/kp_risk_lactating_mother</item>
+        <item>@string/kp_risk_anti_tnf_treatment</item>
+        <item>@string/kp_risk_bronchial_asthma</item>
+        <item>@string/kp_risk_cancer</item>
+        <item>@string/kp_risk_cardiovascular_disorder</item>
+        <item>@string/kp_risk_contact_of_known_tb_patients</item>
+        <item>@string/kp_risk_copd</item>
+        <item>@string/kp_risk_covid_recovered_patients</item>
+        <item>@string/kp_risk_diabetes</item>
+        <item>@string/kp_risk_dialysis</item>
+        <item>@string/kp_risk_health_care_worker</item>
+        <item>@string/kp_risk_hypertensive</item>
+        <item>@string/kp_risk_liver_impairment</item>
+        <item>@string/kp_risk_migrant</item>
+        <item>@string/kp_risk_miner</item>
+        <item>@string/kp_risk_palliative_care</item>
+        <item>@string/kp_risk_patient_on_immunosuppressants</item>
+        <item>@string/kp_risk_prison</item>
+        <item>@string/kp_risk_illegal_immigrant</item>
+        <item>@string/kp_risk_renal_impairment</item>
+        <item>@string/kp_risk_transplantation</item>
+        <item>@string/kp_risk_urban_slum</item>
+        <item>@string/kp_risk_ho_adult_bcg_vaccination</item>
+        <item>@string/kp_risk_undernourished_malnourished</item>
+        <item>@string/kp_risk_elderly</item>
+        <item>@string/kp_risk_workplace_settings</item>
+        <item>@string/kp_risk_tea_garden_worker</item>
+        <item>@string/kp_risk_construction_site_worker</item>
+        <item>@string/kp_risk_congregate_settings</item>
+        <item>@string/kp_risk_attendees_of_de_addiction_centers</item>
+        <item>@string/kp_risk_indoor_air_pollution</item>
+        <item>@string/kp_risk_marginalized_hiv</item>
+        <item>@string/kp_risk_lgbtqai</item>
+        <item>@string/kp_risk_substance_abuse</item>
+        <item>@string/kp_risk_tobacco_smoker</item>
+        <item>@string/kp_risk_silica_exposure_silicosis</item>
+        <item>@string/kp_risk_other</item>
+        <item>@string/not_applicable</item>
+    </string-array>
+
+
+
+
+    <!-- FLW-1144 Routine Immunization worklist -->
+    <string name="imm_due_this_month">Due for this month</string>
+    <string name="imm_scheduled_next_month">Scheduled for next month</string>
+    <string name="imm_dose_stage">Dose Stage</string>
+    <string name="imm_select_dose_stage">Select Dose Stage</string>
+    <string name="imm_no_match_for_filters">No beneficiaries match the selected filters.</string>
+    <plurals name="imm_beneficiary_count">
+        <item quantity="one">%d beneficiary</item>
+        <item quantity="other">%d beneficiaries</item>
+    </plurals>
     <string name="next_follow_up_will_be_available_from">Next follow-up will be available from %1$s</string>
     <string name="follow_up_date_cannot_be_in_the_future">Follow-up date cannot be in the future</string>
     <string name="follow_up_date_cannot_be_before_home_visit_date">Follow-up date cannot be before home visit date</string>
@@ -1621,5 +1767,16 @@
     <string name="follow_up_saved_successfully">Follow-up saved successfully</string>
     <string name="visit_completed_starting_next_visit_screening">Visit completed! Starting next visit screening.</string>
     <string name="failed_to_save_follow_up">Failed to save follow-up</string>
+    <string name="start_tpt">START TPT</string>
+    <string name="add_follow_up">Add Follow Up</string>
+    <string name="view_details">View Details</string>
+    <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
+    <string name="link_household">Link Household</string>
+    <string name="link_to_existing_household">Link to Existing Household</string>
+    <string name="create_new_household">Create New Household</string>
+    <string name="select_household">Select Household</string>
+    <string name="search_household_hint">Search by name or ID...</string>
+    <string name="select_relationship_to_hof">Select Relationship to HOF</string>
+    <string name="beneficiary_linked_successfully">Beneficiary linked successfully</string>
 </resources>
 

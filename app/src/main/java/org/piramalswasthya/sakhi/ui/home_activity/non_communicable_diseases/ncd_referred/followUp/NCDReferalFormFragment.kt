@@ -29,7 +29,12 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentNcdReferalFollowUpFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.Log
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
+import org.piramalswasthya.sakhi.work.WorkerUtils
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.collections.map
 
 @AndroidEntryPoint
@@ -40,6 +45,7 @@ class NCDReferalFormFragment : Fragment() {
 
     private var benId = -1L
     private var hhId = -1L
+    private var referReason = ""
 
     private lateinit var formAdapter: FormRendererAdapter
     private lateinit var followUpAdapter: VisitFollowUpAdapter
@@ -111,6 +117,7 @@ class NCDReferalFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         benId = args.benId
         hhId = args.hhId
+        referReason = args.referReason
 
         setupFormRecyclerView()
         setupFollowUpTable()
@@ -146,7 +153,8 @@ class NCDReferalFormFragment : Fragment() {
                         ?.findViewWithTag<android.view.View>("field_error_tv")
                         ?.visibility = android.view.View.GONE
                 }
-            }
+            },
+            formId = if (viewModel.isTbForm) FormConstants.Tb_Referral_Follow_Up else null
         )
 
         binding.recyclerView.apply {
@@ -248,6 +256,7 @@ class NCDReferalFormFragment : Fragment() {
                 withContext(Dispatchers.IO) {
                     viewModel.saveFormResponses(benId, hhId)
                 }
+                WorkerUtils.triggerAmritPushWorker(requireContext())
                 findNavController().popBackStack()
             } catch (_: Exception) {
             }
@@ -292,17 +301,36 @@ class NCDReferalFormFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 schema?.let {
-                    val visibleFields = viewModel.getVisibleFields()
+                    if (viewModel.isTbForm) {
+                        val visibleFields = viewModel.getVisibleFields()
 
-                    visibleFields.forEach { f ->
-                        if (f.fieldId == "visit_label") {
-                            f.value = getString(R.string.visit_format, viewModel.visitNo)
+                        binding.referredOnContainer.isVisible = true
+                        args.referredDate.let {
+                            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
+                            binding.tvReferredOnValue.text = sdf.format(Date(it))
                         }
+
+                        formAdapter.updateFields(visibleFields)
+                        binding.btnSave.isVisible = !viewModel.isViewMode && !viewModel.isTbFormAlreadyFilled
+                        binding.fabEdit.isVisible = viewModel.isViewMode && !viewModel.isTbFormAlreadyFilled
+                        binding.followupHeading.isGone = true
+                        binding.includeBottleTable.root.isGone = true
+
+                    } else {
+                        val visibleFields = viewModel.getVisibleFields()
+                        binding.referredOnContainer.isGone = true
+
+                        visibleFields.forEach { f ->
+                            if (f.fieldId == "visit_label") {
+                                f.value = getString(R.string.visit_format, viewModel.visitNo)
+                            }
+                        }
+
+                        formAdapter.updateFields(visibleFields)
+                        binding.btnSave.isVisible = !viewModel.isViewMode
+                        binding.fabEdit.isVisible = viewModel.isViewMode
                     }
 
-                    formAdapter.updateFields(visibleFields)
-                    binding.btnSave.isVisible = !viewModel.isViewMode
-                    binding.fabEdit.isVisible = viewModel.isViewMode
                 }
             }
         }

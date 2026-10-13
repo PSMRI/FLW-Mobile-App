@@ -324,6 +324,9 @@ class TBConfirmedDatasetTest : BaseViewModelTest() {
     @Test
     fun `expected completion date computed for medium and long regimens`() = runTest {
         val ds = freshCreatePage()
+        ds.setValueById(2, "01-01-2024")
+        ds.updateList(2, 0)
+
         ds.setValueById(1, "opt1")
         ds.updateList(1, 0)
         var expected = ds.listFlow.value.first { it.id == 3 }

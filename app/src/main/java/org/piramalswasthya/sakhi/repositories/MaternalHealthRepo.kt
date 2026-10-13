@@ -59,6 +59,18 @@ class MaternalHealthRepo @Inject constructor(
         }
     }
 
+    suspend fun getCompletedPregnancyCount(benId: Long): Int {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getCompletedPregnancyCount(benId)
+        }
+    }
+
+    suspend fun getLastCompletedRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
+        return withContext(Dispatchers.IO) {
+            maternalHealthDao.getLastCompletedRecord(benId)
+        }
+    }
+
     suspend fun getLatestActiveRegistrationRecord(benId: Long): PregnantWomanRegistrationCache? {
         return withContext(Dispatchers.IO) {
             maternalHealthDao.getSavedActiveRecord(benId)
@@ -597,6 +609,15 @@ class MaternalHealthRepo @Inject constructor(
                     maternalHealthDao.getSavedRecord(ancDTO.benId, ancDTO.ancVisit)
                 if (hasBen && ancCache == null) {
                     maternalHealthDao.saveRecord(ancDTO.toAncCache(context))
+                } else if (hasBen && ancCache != null &&
+                    (ancDTO.isHrpConfirmed != null || ancDTO.hrpIdentifiedBy != null)
+                ) {
+                    maternalHealthDao.updateANC(
+                        ancCache.copy(
+                            hrpConfirmed = ancDTO.isHrpConfirmed ?: ancCache.hrpConfirmed,
+                            hrpConfirmedBy = ancDTO.hrpIdentifiedBy ?: ancCache.hrpConfirmedBy
+                        )
+                    )
                 }
                 if (hasBen && ancDTO.isBabyDelivered == true) {
                     ben?.let { benRecord ->

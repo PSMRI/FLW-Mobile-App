@@ -62,6 +62,7 @@ class AntenatalCounsellingFragment : Fragment() {
     var isViewMode = false
     var visitDate = ""
     var visitNumber = 1
+    private var isLastVisit = false
     private lateinit var adapter: FormRendererAdapter
     private var allBenList: List<BenWithAncListDomain> = emptyList()
     private lateinit var benList: BenWithAncListDomain
@@ -103,6 +104,7 @@ class AntenatalCounsellingFragment : Fragment() {
         benId = args.benId
         isViewMode = args.viewMode
         visitDate = args.visitDate ?: " "
+        isLastVisit = args.lastItemClick
        // visitNumber = args.visitNumber
 
 
@@ -180,8 +182,6 @@ class AntenatalCounsellingFragment : Fragment() {
                         Timber.e(e, "Error parsing LMP date: ${benList.lmpString}")
                         null
                     }
-
-                    calculateAndSetMotherAge()
                 } else {
                     Timber.e("Beneficiary not found for benId=$benId")
                 }
@@ -195,12 +195,14 @@ class AntenatalCounsellingFragment : Fragment() {
             visitNumber = args.visitNumber
 
             binding.btnSave.isVisible = false
+            binding.fabEdit.isVisible = isLastVisit
             binding.tvLastVisitValue.text = visitDate?:"NA"
             binding.cbSelectAll.isVisible = false
-            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber, visitNumberString = getVisitNumberString(isViewMode, visitNumber))
+            viewModel.loadFormSchema(benId, ANC_FORM_ID, visitDate, true, langCode,visitNumber, visitNumberString = getVisitNumberString(isViewMode, visitNumber), visitId = args.visitId)
             lifecycleScope.launch {
                 viewModel.schema.collectLatest { schema ->
                     if (schema == null) return@collectLatest
+                    if (viewModel.isEditing()) return@collectLatest
                     val visibleFields = viewModel.getVisibleFields().toMutableList()
                     val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
                     val maxVisitDate = viewModel.getMaxVisitDate()
@@ -286,6 +288,7 @@ class AntenatalCounsellingFragment : Fragment() {
                 }
 
                 AntenatalCounsellingViewModel.State.SUCCESS -> {
+                    val wasEditing = viewModel.isEditing()
                     viewModel.resetState()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
 
@@ -295,7 +298,11 @@ class AntenatalCounsellingFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    showContinueAncVisitDialog()
+                    if (wasEditing) {
+                        findNavController().popBackStack()
+                    } else {
+                        showContinueAncVisitDialog()
+                    }
                 }
 
                 AntenatalCounsellingViewModel.State.FAIL -> {
@@ -309,6 +316,51 @@ class AntenatalCounsellingFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener { handleFormSubmission() }
+        binding.fabEdit.setOnClickListener { enterEditMode() }
+    }
+
+    private fun enterEditMode() {
+        lifecycleScope.launch {
+            if (!viewModel.enableEditMode(benId, args.visitId, visitDate)) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.something_went_wrong_try_again),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@launch
+            }
+
+            isViewMode = false
+            binding.fabEdit.isVisible = false
+            binding.btnSave.isVisible = true
+
+            val minVisitDate = lmpDate?.let { getDateFromLong(it) } ?: viewModel.getMinVisitDate()
+            val maxVisitDate = viewModel.getMaxVisitDate()
+
+            adapter = FormRendererAdapter(
+                viewModel.getVisibleFields(AntenatalCounsellingViewModel.VISIT_DATE_FIELD_IDS)
+                    .toMutableList(),
+                isViewOnly = false,
+                minVisitDate = minVisitDate,
+                maxVisitDate = maxVisitDate,
+                isSNCU = viewModel.isSNCU.value ?: false,
+                onValueChanged = { field, value ->
+                    if (value != "pick_image") {
+                        field.value = value
+                        viewModel.updateFieldValue(field.fieldId, value)
+                        adapter.updateFields(
+                            viewModel.getVisibleFields(
+                                AntenatalCounsellingViewModel.VISIT_DATE_FIELD_IDS
+                            )
+                        )
+                    }
+                },
+                onShowAlert = null,
+                formId = FormConstants.ANC_FORM_ID
+            )
+
+            binding.recyclerView.adapter = adapter
+        }
     }
 
 
@@ -318,23 +370,6 @@ class AntenatalCounsellingFragment : Fragment() {
             restoreFormState()
             shouldRestoreFormState = false
             isReturningFromReferral = false
-        }
-    }
-
-    private fun calculateAndSetMotherAge() {
-        try {
-            val ageText = binding.tvAgeValue.text.toString()
-            val ageStr = ageText.replace(" years", "").replace(" yrs", "").replace(" year", "").trim()
-            val age = ageStr.toIntOrNull()
-
-            if (age != null) {
-                viewModel.setMotherAge(age)
-                Timber.d("Mother's age set to: $age")
-            } else {
-                Timber.e("Could not parse age from: $ageText")
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error calculating mother's age")
         }
     }
 

@@ -8,13 +8,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.piramalswasthya.sakhi.databinding.BottomSheetEcFilterBinding
 import org.piramalswasthya.sakhi.helpers.EcFilterType
 
+// Defaults give the class the no-arg constructor FragmentManager needs to re-create it after
+// process death; the callback can't survive that, so a re-created sheet just closes itself.
 class EcFilterBottomSheetFragment(
-    private val currentFilter: EcFilterType,
-    private val onFilterSelected: (EcFilterType) -> Unit
+    private val currentFilter: EcFilterType = EcFilterType.NEWEST_FIRST,
+    private val onFilterSelected: ((EcFilterType) -> Unit)? = null
 ) : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetEcFilterBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (onFilterSelected == null) dismissAllowingStateLoss()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,7 +50,7 @@ class EcFilterBottomSheetFragment(
                 binding.rbUnsynced.id -> EcFilterType.UNSYNCED_FIRST
                 else                  -> EcFilterType.NEWEST_FIRST
             }
-            onFilterSelected(selected)
+            onFilterSelected?.invoke(selected)
             dismiss()
         }
 

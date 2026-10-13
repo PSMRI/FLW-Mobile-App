@@ -1130,6 +1130,50 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `getAncVisitDetailsFromServer stores HRP confirmation fields for new visit`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":606,"ancVisit":1,"isActive":true,"createdDate":"2024-01-01","isHrpConfirmed":true,"hrpIdentifiedBy":"CHO","createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+        coEvery { benDao.getBen(606L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.getSavedRecord(606L, 1) } returns null
+        val saved = slot<PregnantWomanAncCache>()
+        coEvery { maternalHealthDao.saveRecord(capture(saved)) } returns Unit
+
+        assertEquals(1, repo.getAncVisitDetailsFromServer())
+
+        assertEquals(true, saved.captured.hrpConfirmed)
+        assertEquals("CHO", saved.captured.hrpConfirmedBy)
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer updates HRP fields on existing visit`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":607,"ancVisit":1,"isActive":true,"createdDate":"2024-01-01","isHrpConfirmed":true,"hrpIdentifiedBy":"CHO","createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+        coEvery { benDao.getBen(607L) } returns mockk(relaxed = true)
+        val existing = PregnantWomanAncCache(
+            benId = 607L,
+            visitNumber = 1,
+            hrpConfirmed = false,
+            hrpConfirmedBy = "ANM",
+            createdBy = "asha",
+            updatedBy = "asha",
+            syncState = SyncState.SYNCED,
+            frontFilePath = null,
+            backFilePath = null
+        )
+        coEvery { maternalHealthDao.getSavedRecord(607L, 1) } returns existing
+        val updated = slot<PregnantWomanAncCache>()
+        coEvery { maternalHealthDao.updateANC(capture(updated)) } returns Unit
+
+        assertEquals(1, repo.getAncVisitDetailsFromServer())
+
+        assertEquals(true, updated.captured.hrpConfirmed)
+        assertEquals("CHO", updated.captured.hrpConfirmedBy)
+        assertEquals("ANM", existing.hrpConfirmedBy)
+    }
+
+    @Test
     fun `getAncVisitDetailsFromServer marks ben as postnatal mother when baby delivered and status not already set`() = runTest {
         loggedInUser()
         val ancArrayJson = """[{"benId":602,"ancVisit":2,"isActive":true,"createdDate":"2024-01-01","isBabyDelivered":true,"createdBy":"asha","updatedBy":"asha"}]"""

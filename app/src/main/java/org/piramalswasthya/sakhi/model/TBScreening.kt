@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.TBScreeningDTO
 
 @Entity(
@@ -43,9 +44,18 @@ data class TBScreeningCache(
     var bmi: Boolean? = null,
     var contactWithTBPatient: Boolean? = null,
     var historyOfTBInLastFiveYrs: Boolean? = null,
+    var fatigue: Boolean? = null,
+    var shortBreath: Boolean? = null,
+    var chestPain: Boolean? = null,
+    var failureToGainWeight: Boolean? = null,
+    var decreasedActivityOrPlayfulness: Boolean? = null,
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
+    var keyPopulationRiskFactorIds: List<Int>? = null,
+    var keyPopulationRiskFactors: List<String>? = null,
+    var hivStatusId: Int? = null,
+    var hivStatus: String? = null,
     var syncState: SyncState = SyncState.UNSYNCED,
 ) : FormDataModel {
     fun toDTO(): TBScreeningDTO {
@@ -72,6 +82,15 @@ data class TBScreeningCache(
             sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
             recommandateTest = recommandateTest,
+            keyPopulationRiskFactorIds = keyPopulationRiskFactorIds,
+            keyPopulationRiskFactors = keyPopulationRiskFactors,
+            fatigue = fatigue,
+            shortBreath = shortBreath,
+            chestPain = chestPain,
+            failureToGainWeight = failureToGainWeight,
+            decreasedActivityOrPlayfulness = decreasedActivityOrPlayfulness,
+            hivStatusId = hivStatusId,
+            hivStatus = hivStatus,
 
         )
     }
@@ -85,16 +104,40 @@ data class BenWithTbScreeningCache(
     )
     val tb: TBScreeningCache?,
 
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbSuspected: TBSuspectedCache?,
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val cbacRecords: List<CbacCache> = emptyList()
+
     ) {
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
         return BenWithTbScreeningDomain(
             ben = ben.asBasicDomainModel(),
-            tb = tb
+            tb = tb,
+            tbSuspected = tbSuspected,
+            ncdReferralVisits = ncdReferralVisits,
+            cbac = cbacRecords.maxByOrNull { it.fillDate }
         )
     }
 }
 
 data class BenWithTbScreeningDomain(
     val ben: BenBasicDomain,
-    val tb: TBScreeningCache?
+    val tb: TBScreeningCache?,
+    val tbSuspected: TBSuspectedCache?,
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
+    val cbac: CbacCache? = null
 )

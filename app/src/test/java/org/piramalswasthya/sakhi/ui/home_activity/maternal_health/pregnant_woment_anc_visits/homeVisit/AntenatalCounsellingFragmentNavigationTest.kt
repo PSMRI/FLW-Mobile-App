@@ -32,7 +32,7 @@ class AntenatalCounsellingFragmentNavigationTest {
         unmockkConstructor(Bundle::class)
     }
 
-    private fun args() = AntenatalCounsellingFragmentArgs(benId = 10L, visitNumber = 21, viewMode = true, visitDate = "v4", lastItemClick = true)
+    private fun args() = AntenatalCounsellingFragmentArgs(benId = 10L, visitNumber = 21, viewMode = true, visitDate = "v4", lastItemClick = true, visitId = 7)
 
     @Test
     fun constructor_exposesEveryArgument() {
@@ -42,6 +42,7 @@ class AntenatalCounsellingFragmentNavigationTest {
         assertEquals(true, a.viewMode)
         assertEquals("v4", a.visitDate)
         assertEquals(true, a.lastItemClick)
+        assertEquals(7, a.visitId)
     }
 
     @Test
@@ -111,6 +112,7 @@ class AntenatalCounsellingFragmentNavigationTest {
         every { bundle.getBoolean("viewMode") } returns true
         every { bundle.getString("visitDate") } returns "v4"
         every { bundle.getBoolean("lastItemClick") } returns true
+        every { bundle.getInt("visitId") } returns 7
         assertEquals(args(), AntenatalCounsellingFragmentArgs.fromBundle(bundle))
     }
 
@@ -120,12 +122,14 @@ class AntenatalCounsellingFragmentNavigationTest {
         every { bundle.containsKey("viewMode") } returns false
         every { bundle.containsKey("visitDate") } returns false
         every { bundle.containsKey("lastItemClick") } returns false
+        every { bundle.containsKey("visitId") } returns false
         every { bundle.getLong("benId") } returns 10L
         every { bundle.getInt("visitNumber") } returns 21
         val a = AntenatalCounsellingFragmentArgs.fromBundle(bundle)
         assertEquals(false, a.viewMode)
         assertEquals("", a.visitDate)
         assertEquals(false, a.lastItemClick)
+        assertEquals(-1, a.visitId)
     }
 
     @Test

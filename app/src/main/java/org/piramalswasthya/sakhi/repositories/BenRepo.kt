@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponse
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.helpers.sortedByLifo
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.network.*
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.new_ben_registration.ben_form.NewBenRegViewModel
@@ -50,6 +51,16 @@ class BenRepo @Inject constructor(
     private val formResponseJsonDao: FormResponseJsonDao,
     private val provideCUFYFormResponseJsonDao: CUFYFormResponseJsonDao
 ) {
+
+    private suspend fun persistDownsyncHouseholds(households: List<HouseholdCache>) {
+        households.forEach { household ->
+            if (householdDao.getHousehold(household.householdId) == null) {
+                householdDao.upsert(household)
+            } else {
+                householdDao.update(household)
+            }
+        }
+    }
 
     private val processNewBenMutex = Mutex()
     private enum class UploadResult { SUCCESS, FAILED, PAYLOAD_TOO_LARGE }
@@ -195,7 +206,7 @@ class BenRepo @Inject constructor(
 
 
     fun getBenBasicListFromHousehold(hhId: Long): Flow<List<BenBasicDomain>> {
-        return benDao.getAllBasicBenForHousehold(hhId).map { it.map { it.asBasicDomainModel() } }
+        return benDao.getAllBasicBenForHousehold(hhId).map { it.sortedByLifo().map { it.asBasicDomainModel() } }
 
     }
 
@@ -306,6 +317,70 @@ class BenRepo @Inject constructor(
     suspend fun updateRecord(ben: BenRegCache) {
         withContext(Dispatchers.IO) {
             benDao.updateBen(ben)
+        }
+    }
+
+    suspend fun linkBeneficiaryToHousehold(benId: Long, householdId: Long, relation: String, relationPosition: Int) {
+        withContext(Dispatchers.IO) {
+            val ben = benDao.getBen(benId) ?: return@withContext
+            if (householdDao.getHousehold(0L) == null) {
+                preferenceDao.getLocationRecord()?.let { location ->
+                    householdDao.upsert(
+                        HouseholdCache(
+                            householdId = 0L,
+                            ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                            locationRecord = location,
+                            processed = "P",
+                            isDraft = true
+                        )
+                    )
+                }
+            }
+            ben.householdId = householdId
+            ben.familyHeadRelation = relation
+            ben.familyHeadRelationPosition = relationPosition
+            if (relationPosition == 5 || relationPosition == 6) {
+                val hof = getBenListFromHousehold(householdId)
+                    .firstOrNull { it.familyHeadRelationPosition == 19 }
+                if (hof != null) {
+                    val genDetails = ben.genDetails ?: BenRegGen()
+                    genDetails.maritalStatus = "Married"
+                    genDetails.maritalStatusId = 2
+                    genDetails.spouseName = hof.firstName
+                    ben.genDetails = genDetails
+                    ben.isMarried = true
+                    ben.isSpouseAdded = true
+
+                    val hofGenDetails = hof.genDetails ?: BenRegGen()
+                    hofGenDetails.maritalStatus = "Married"
+                    hofGenDetails.maritalStatusId = 2
+                    hofGenDetails.spouseName = ben.firstName
+                    hof.genDetails = hofGenDetails
+                    hof.isMarried = true
+                    hof.isSpouseAdded = true
+                    hof.processed = "U"
+                    hof.serverUpdatedStatus = 2
+                    hof.syncState = SyncState.UNSYNCED
+                    benDao.updateBen(hof)
+                }
+            }
+            ben.isDraft = false
+            ben.processed = "U"
+            ben.serverUpdatedStatus = 2
+            ben.syncState = SyncState.UNSYNCED
+            benDao.updateBen(ben)
+            if (relationPosition == 19) {
+                householdDao.getHousehold(householdId)?.let { household ->
+                    val family = household.family ?: HouseholdFamily()
+                    family.familyHeadName = ben.firstName
+                    family.familyName = ben.lastName
+                    family.familyHeadPhoneNo = ben.contactNumber
+                    household.family = family
+                    household.processed = "U"
+                    household.serverUpdatedStatus = 2
+                    householdDao.update(household)
+                }
+            }
         }
     }
 
@@ -500,7 +575,7 @@ class BenRepo @Inject constructor(
         benCacheList.forEach {
             benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
             benNetworkPostList.add(it.asNetworkPostModel(context, user))
-            householdDao.getHousehold(it.householdId)?.let { household ->
+            if (it.householdId != 0L) householdDao.getHousehold(it.householdId)?.let { household ->
                 householdNetworkPostList.add(household.asNetworkModel(user))
             }
             try {
@@ -778,10 +853,8 @@ class BenRepo @Inject constructor(
 //                                HelperUtil.allPagesContent.append("\n")
 
                                 try {
-                                    householdDao.upsert(
-                                        *getHouseholdCacheFromServerResponse(
-                                            responseString
-                                        ).toTypedArray()
+                                    persistDownsyncHouseholds(
+                                        getHouseholdCacheFromServerResponse(responseString)
                                     )
                                 } catch (e: Exception) {
                                     Timber.d("HouseHold entries not synced $e")
@@ -923,7 +996,7 @@ class BenRepo @Inject constructor(
                                             age = benDataObj.getInt("age").toString(),
                                             mobileNo = benDataObj.getString("contact_number"),
                                             fatherName = benDataObj.getString("fatherName"),
-                                            familyHeadName = houseDataObj.getString("familyHeadName"),
+                                            familyHeadName = houseDataObj.optString("familyHeadName", ""),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
@@ -934,14 +1007,24 @@ class BenRepo @Inject constructor(
                                             isChildrenAdded = false,
                                             isMarried = false,
                                             reproductiveStatusId =  benDataObj.getInt("reproductiveStatusId"),
+                                            createdDate = try {
+                                                if (benDataObj.has("createdDate") && !benDataObj.isNull("createdDate"))
+                                                    getLongFromDate(benDataObj.getString("createdDate")) else null
+                                            } catch (_: Exception) { null },
+                                            updatedDate = try {
+                                                if (benDataObj.has("updatedDate") && !benDataObj.isNull("updatedDate"))
+                                                    getLongFromDate(benDataObj.getString("updatedDate")) else null
+                                            } catch (_: Exception) { null },
+                                            regDateMillis = try {
+                                                if (benDataObj.has("registrationDate") && !benDataObj.isNull("registrationDate"))
+                                                    getLongFromDate(benDataObj.getString("registrationDate")) else 0L
+                                            } catch (_: Exception) { 0L },
                                         )
                                     )
                                 }
                                 try {
-                                    householdDao.upsert(
-                                        *getHouseholdCacheFromServerResponse(
-                                            responseString
-                                        ).toTypedArray()
+                                    persistDownsyncHouseholds(
+                                        getHouseholdCacheFromServerResponse(responseString)
                                     )
                                 } catch (e: Exception) {
                                     Timber.d("HouseHold entries not synced $e")
@@ -950,6 +1033,7 @@ class BenRepo @Inject constructor(
                                 val benCacheList = getBenCacheFromServerResponse(responseString)
                                 benDao.upsert(*benCacheList.toTypedArray())
 
+                                benDataList.sortByDescending { it.lifoMillis() }
                                 Timber.d("GeTBenDataList: $pageSize $benDataList")
                                 return@withContext Pair(pageSize, benDataList)
                             }
@@ -1100,7 +1184,25 @@ class BenRepo @Inject constructor(
                     if (benExists) {
                         continue
                     }
-                    val hhExists = householdDao.getHousehold(hhId) != null
+                    // Non-household beneficiaries use householdId = 0. Recreate the
+                    // local placeholder household after a reinstall so the foreign key
+                    // remains valid when the beneficiary is inserted.
+                    if (hhId == 0L && householdDao.getHousehold(0L) == null) {
+                        val location = preferenceDao.getLocationRecord()
+                        if (location != null) {
+                            householdDao.upsert(
+                                HouseholdCache(
+                                    householdId = 0L,
+                                    ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                                    locationRecord = location,
+                                    processed = "P",
+                                    isDraft = true
+                                )
+                            )
+                        }
+                    }
+
+                    val hhExists = hhId == 0L || householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
@@ -1458,6 +1560,11 @@ class BenRepo @Inject constructor(
                                 doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
                                 noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
+                                // Non-household beneficiary details returned by the downsync API.
+                                livingPlace = benDataObj.optString("placeOfCurrentLiving", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
+                                institutionName = benDataObj.optString("institutionName", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
                             )
                         )
 
@@ -1828,31 +1935,37 @@ class BenRepo @Inject constructor(
     }
 
     suspend fun verifyOtp(mobileNo: String,otp:Int): ValidateOtpResponse? {
-        val validateOtp = ValidateOtpRequest(otp,mobileNo)
-        val response = tmcNetworkApiService.validateOtp(validateOtp)
-        if (response.isSuccessful) {
-            val responseBody = response.body()?.string()
-            val json = JSONObject(responseBody.toString())
-            val statusCode = json.getInt("statusCode")
-            when (statusCode) {
-                200 -> {
-                    val jsonObj = JSONObject(responseBody)
-                    val data = jsonObj.getJSONObject("data").toString()
-                    val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
-                    NewBenRegViewModel.isOtpVerified = true
-                    return myResponse
-                }
+        try {
+            val validateOtp = ValidateOtpRequest(otp,mobileNo)
+            val response = tmcNetworkApiService.validateOtp(validateOtp)
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                val json = JSONObject(responseBody.toString())
+                val statusCode = json.getInt("statusCode")
+                when (statusCode) {
+                    200 -> {
+                        val jsonObj = JSONObject(responseBody)
+                        val data = jsonObj.getJSONObject("data").toString()
+                        val myResponse = Gson().fromJson(responseBody, ValidateOtpResponse::class.java)
+                        NewBenRegViewModel.isOtpVerified = true
+                        return myResponse
+                    }
 
-                500, 502, 5000, 5002 -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
+                    500, 502, 5000, 5002 -> {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Please enter valid OTP.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    else -> {
+                        NetworkResult.Error(0, responseBody.toString())
                     }
                 }
-
-                else -> {
-                    NetworkResult.Error(0, responseBody.toString())
-                }
             }
+        } catch (e: Exception) {
+            // Offline / DNS / timeout while verifying: report "not verified" instead of crashing
+            // the registration form (sendOtp/resendOtp already do the same).
+            Timber.e(e, "verifyOtp failed")
         }
 
         return null

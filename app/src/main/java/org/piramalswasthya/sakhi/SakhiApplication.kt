@@ -10,12 +10,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.firebase.FirebaseApp
+import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.helpers.CrashHandler
+import org.piramalswasthya.sakhi.helpers.NativeLibraryLoader
 import org.piramalswasthya.sakhi.helpers.SyncLogFileWriter
 import org.piramalswasthya.sakhi.helpers.SyncLogManager
 import org.piramalswasthya.sakhi.helpers.SyncLogTree
@@ -30,8 +32,9 @@ class SakhiApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    // Lazy so Hilt injection doesn't open the SQLCipher DB before native libs are verified
     @Inject
-    lateinit var database: InAppDb
+    lateinit var databaseLazy: Lazy<InAppDb>
 
     @Inject
     lateinit var syncLogManager: SyncLogManager
@@ -45,7 +48,13 @@ class SakhiApplication : Application(), Configuration.Provider {
             .build()
 
     override fun onCreate() {
+        NativeLibraryLoader.init(this)
         super.onCreate()
+        if (!NativeLibraryLoader.areRequiredLibrariesAvailable(this)) {
+            // Incomplete install (e.g. side-loaded base APK without its ABI split). Skip all
+            // DB/KeyUtils init; LoginActivity shows a reinstall prompt instead of crashing.
+            return
+        }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         val builder = VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
@@ -126,6 +135,7 @@ class SakhiApplication : Application(), Configuration.Provider {
     }
 
     private suspend fun recoverOrphanedSyncStates() {
+        val database = databaseLazy.get()
         // Reset all records stuck in SYNCING (ordinal 1) back to UNSYNCED (ordinal 0).
         // No sync can be in progress at app startup, so any SYNCING record is orphaned.
         database.benDao.resetSyncingToUnsynced()

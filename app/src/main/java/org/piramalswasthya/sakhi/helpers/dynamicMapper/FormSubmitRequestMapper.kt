@@ -47,21 +47,37 @@ object FormSubmitRequestMapper {
             return mapCommon(entity.formDataJson, userName)
     }
     fun formEntity(entity: ANCFormResponseJsonEntity, userName: String): FormSubmitRequest? {
-        return  mapCommon(entity.formDataJson,userName)
+        return  mapCommon(entity.formDataJson, userName, readServerRecordId(entity.formDataJson))
     }
 
-    private fun mapCommon(formDataJson: String, userName: String): FormSubmitRequest? {
+    private fun readServerRecordId(formDataJson: String): Long? {
+        return try {
+            JSONObject(formDataJson).optJSONObject("fields")
+                ?.optLong("id", 0L)
+                ?.takeIf { it > 0L }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun mapCommon(
+        formDataJson: String,
+        userName: String,
+        recordId: Long? = null
+    ): FormSubmitRequest? {
         return try {
             val jsonObj = JSONObject(formDataJson)
             val fieldsObj = jsonObj.optJSONObject("fields")
 
             val type = object : TypeToken<Map<String, Any?>>() {}.type
             val fieldsMap: Map<String, Any?> = Gson().fromJson(fieldsObj.toString(), type)
-            val englishFieldsMap = fieldsMap.mapValues { (_, v) ->
-                if (v is String) StringMappingUtil.convertDigits(v) else v
-            }
+            val englishFieldsMap = (if (recordId != null) fieldsMap - "id" else fieldsMap)
+                .mapValues { (_, v) ->
+                    if (v is String) StringMappingUtil.convertDigits(v) else v
+                }
 
             FormSubmitRequest(
+                id = recordId,
                 userName = userName,
                 formId = jsonObj.optString("formId"),
                 beneficiaryId = jsonObj.optLong("beneficiaryId"),

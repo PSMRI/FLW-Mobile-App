@@ -11,18 +11,9 @@ object RoomDbEncryptionHelper {
     private const val TAG = "RoomDbEncryptionHelper"
     private val SQLITE_MAGIC = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)
 
-    @Volatile
-    private var libsLoaded = false
-
-    private fun ensureSqlCipherLoaded() {
-        if (!libsLoaded) {
-            synchronized(this) {
-                if (!libsLoaded) {
-                    System.loadLibrary("sqlcipher")
-                    libsLoaded = true
-                }
-            }
-        }
+    private fun ensureSqlCipherLoaded(context: Context) {
+        NativeLibraryLoader.init(context)
+        NativeLibraryLoader.load(NativeLibraryLoader.SQLCIPHER)
     }
 
 
@@ -42,7 +33,7 @@ object RoomDbEncryptionHelper {
         dbName: String,
         passphrase: CharArray
     ) {
-        ensureSqlCipherLoaded()
+        ensureSqlCipherLoaded(context)
 
         val dbFile = context.getDatabasePath(dbName)
         if (!dbFile.exists()) return

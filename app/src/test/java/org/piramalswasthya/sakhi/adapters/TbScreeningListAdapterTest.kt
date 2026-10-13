@@ -34,7 +34,7 @@ class TbScreeningListAdapterTest {
     )
 
     private fun item(benId: Long = 1L, hhId: Long = 1L) =
-        BenWithTbScreeningDomain(ben = benBasic(benId, hhId), tb = null)
+        BenWithTbScreeningDomain(ben = benBasic(benId, hhId), tb = null,tbSuspected = null)
 
     @Suppress("UNCHECKED_CAST")
     private fun diffCallback(): DiffUtil.ItemCallback<BenWithTbScreeningDomain> {

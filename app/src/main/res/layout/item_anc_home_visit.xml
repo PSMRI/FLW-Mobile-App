@@ -65,7 +65,8 @@
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/sync_status"
             syncState="@{visit.syncState}"
-            tools:src="@drawable/ic_synced" />
+            tools:src="@drawable/cloud_upload"
+            app:iconTint="@android:color/holo_green_dark" />
 
     </LinearLayout>
 

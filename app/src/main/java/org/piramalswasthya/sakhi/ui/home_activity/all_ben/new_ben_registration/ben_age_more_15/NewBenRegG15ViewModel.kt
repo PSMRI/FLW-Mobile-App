@@ -162,6 +162,10 @@ class NewBenRegG15ViewModel @Inject constructor(
                     }
                     benRepo.persistRecord(ben)
                     _state.postValue(State.SAVE_SUCCESS)
+                } catch (e: Exception) {
+                    // e.g. persistRecord's "Failed to save beneficiary image" - report, don't crash.
+                    Timber.d("saving Ben data failed!! $e")
+                    _state.postValue(State.SAVE_FAILED)
                 } catch (e: IllegalAccessError) {
                     Timber.d("saving Ben data failed!! $e")
                     _state.postValue(State.SAVE_FAILED)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
@@ -96,6 +97,8 @@ class BenListAdapter(
             } else {
                 binding.ivCall.visibility = View.GONE
             }
+            binding.ivNonHousehold.visibility =
+                if (item.hhId == 0L) View.VISIBLE else View.GONE
 
             binding.age.text = getLocalizedAge(context, item.dob)
             val isMatched = benIdList.contains(item.benId)
@@ -118,10 +121,17 @@ class BenListAdapter(
 
             var gender = item.gender.toString()
 
-            if (item.relToHeadId == 19) {
+            if (item.hhId == 0L) {
+                // Non-household beneficiaries do not have a household head.
+                binding.HOF.visibility = View.GONE
+                binding.llHof.visibility = View.GONE
+            } else if (item.relToHeadId == 19) {
+                binding.llHof.visibility = View.GONE
                 binding.HOF.visibility = View.VISIBLE
             } else {
                 binding.HOF.visibility = View.GONE
+                binding.llHof.visibility = View.VISIBLE
+                binding.tvHofName.text = item.familyHeadName
             }
 
             if (item.dob != null) {
@@ -155,11 +165,19 @@ class BenListAdapter(
                     "adult" -> {
                         when (gender) {
                             Gender.MALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                                if (item.age >= "60"){
+                                    binding.ivHhLogo.setImageResource(R.drawable.elderly_man)
+                                }else{
+                                    binding.ivHhLogo.setImageResource(R.drawable.ic_males)
+                                }
                             }
 
                             Gender.FEMALE.name -> {
-                                binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
+                                if (item.age >= "60"){
+                                    binding.ivHhLogo.setImageResource(R.drawable.elderly_woman)
+                                }else{
+                                    binding.ivHhLogo.setImageResource(R.drawable.ic_icon_female_2)
+                                }
                             }
 
                             else -> {

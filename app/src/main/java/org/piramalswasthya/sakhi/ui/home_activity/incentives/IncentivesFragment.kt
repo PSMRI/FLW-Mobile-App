@@ -71,6 +71,7 @@ import java.util.Locale
 import java.util.Objects
 import java.util.Timer
 import kotlin.math.max
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -266,7 +267,7 @@ class IncentivesFragment : Fragment() {
 
                         setFragmentResult("records_key", bundle)
 
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             R.id.action_incentivesFragment_to_incentiveDetailFragment
                         )
                     }
@@ -1229,6 +1230,9 @@ class IncentivesFragment : Fragment() {
 
 
     private fun showFile(uri: Uri) {
+        // Called from the download Snackbar's action, which can still be tapped after this
+        // fragment has been detached.
+        val host = activity ?: return
         val openFileIntent = Intent(Intent.ACTION_VIEW)
         openFileIntent.setDataAndType(
             uri,
@@ -1237,11 +1241,11 @@ class IncentivesFragment : Fragment() {
         openFileIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
         val chooser = Intent.createChooser(openFileIntent, "Open with")
 
-        if (openFileIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(chooser)
+        if (openFileIntent.resolveActivity(host.packageManager) != null) {
+            host.startActivity(chooser)
         } else {
             Toast.makeText(
-                requireContext(),
+                host,
                 "cant open this file check in downloads",
                 Toast.LENGTH_SHORT
             ).show()

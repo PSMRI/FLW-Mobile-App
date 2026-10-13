@@ -49,7 +49,7 @@ class BenWithCbacDomainsTest {
     @Test
     fun `BenWithCbacReferDomain computes allSynced when omitted and records unsynced`() {
         val referral = ReferalCache(benId = 1L, syncState = SyncState.SYNCED)
-        val domain = BenWithCbacReferDomain(ben(), listOf(cbacCache(SyncState.UNSYNCED)), referral)
+        val domain = BenWithCbacReferDomain(ben(), listOf(cbacCache(SyncState.UNSYNCED)), referral, emptyList())
         assertEquals(SyncState.UNSYNCED, domain.allSynced)
     }
 

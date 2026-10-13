@@ -12,7 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.ImmunizationDataset
@@ -101,6 +101,15 @@ class ImmunizationFormViewModel @Inject constructor(
 
 
 
+    // Declared before init: the IO coroutines launched there can run before any property
+    // initialiser that sits below the init block, which left these null (NPE on emit).
+    private val clickedBenId = MutableStateFlow(0L)
+
+    /** Child vaccine master list; null until loaded, so the details flow waits for it. */
+    private val loadedVaccines = MutableStateFlow<List<Vaccine>?>(null)
+    var vaccinesList: List<Vaccine> = emptyList()
+        private set
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -133,6 +142,7 @@ class ImmunizationFormViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
+                loadedVaccines.value = vaccinesList
             }
         }
     }
@@ -195,7 +205,6 @@ class ImmunizationFormViewModel @Inject constructor(
     }
 
     //========================================================================================================================
-    private val clickedBenId = MutableStateFlow(0L)
 
     private val pastRecords = vaccineDao.getBenWithImmunizationRecords(
         minDob = Calendar.getInstance().apply {
@@ -207,16 +216,16 @@ class ImmunizationFormViewModel @Inject constructor(
         }.timeInMillis,
         maxDob = System.currentTimeMillis(),
     )
-    lateinit var vaccinesList: List<Vaccine>
-
-    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+    // Combine with the loaded vaccine list instead of reading a lateinit that the init coroutine
+    // may not have set yet when the bottom sheet starts collecting.
+    val benWithVaccineDetails = pastRecords.combine(loadedVaccines.filterNotNull()) { vaccineIdList, vaccines ->
         vaccineIdList.map { cache ->
 
             val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
 
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccinesList.filter {
+                vaccineStateList = vaccines.filter {
                     it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
                     val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis

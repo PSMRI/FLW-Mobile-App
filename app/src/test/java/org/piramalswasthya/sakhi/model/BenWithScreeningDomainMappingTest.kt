@@ -178,7 +178,8 @@ class BenWithScreeningDomainMappingTest {
 
     @Test fun `tbScreening domain with cache`() {
         val cache = TBScreeningCache(benId = 1L)
-        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache)
+        val Suspectedcache = TBSuspectedCache(benId = 1L)
+        val benWithTbScreening = BenWithTbScreeningCache(ben(), cache,Suspectedcache)
         assertEquals(1L, benWithTbScreening.ben.benId)
         assertEquals(cache, benWithTbScreening.tb)
         val d = benWithTbScreening.asTbScreeningDomainModel()
@@ -186,8 +187,32 @@ class BenWithScreeningDomainMappingTest {
         assertEquals(1L, d.ben.benId)
     }
 
+    @Test fun `tb screening domain maps latest CBAC record`() {
+        val olderCbac = CbacCache(
+            benId = 1L,
+            ashaId = 2,
+            fillDate = 100L,
+            syncState = SyncState.SYNCED
+        )
+        val latestCbac = CbacCache(
+            benId = 1L,
+            ashaId = 2,
+            fillDate = 200L,
+            cbac_smoke_posi = 3,
+            syncState = SyncState.SYNCED
+        )
+        val cache = BenWithTbScreeningCache(
+            ben = ben(),
+            tb = null,
+            tbSuspected = null,
+            cbacRecords = listOf(olderCbac, latestCbac)
+        )
+
+        assertEquals(latestCbac, cache.asTbScreeningDomainModel().cbac)
+    }
+
     @Test fun `tbScreening domain with null`() {
-        assertNull(BenWithTbScreeningCache(ben(), null).asTbScreeningDomainModel().tb)
+        assertNull(BenWithTbScreeningCache(ben(), null,null).asTbScreeningDomainModel().tb)
     }
 
     // ===================== TB suspected =====================

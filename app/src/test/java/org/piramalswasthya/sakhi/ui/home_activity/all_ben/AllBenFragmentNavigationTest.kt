@@ -115,12 +115,12 @@ class AllBenFragmentNavigationTest {
 
     @Test
     fun actionAllBenFragmentToNewBenRegFragment_buildsDirections() {
-        val d = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61, livingPlace = "v7", otherLivingPlace = "v8", institutionName = "v9")
         assertNotNull(d)
         assertTrue(d.actionId != 0)
         assertNotNull(d.arguments)
         assertTrue(d.toString().isNotEmpty())
-        val same = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        val same = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61, livingPlace = "v7", otherLivingPlace = "v8", institutionName = "v9")
         assertEquals(d, same)
         assertEquals(d.hashCode(), same.hashCode())
         assertFalse(d.equals(null))
@@ -193,6 +193,9 @@ class AllBenFragmentNavigationTest {
         assertTrue(d.toString().contains("selectedBenId=0"))
         assertTrue(d.toString().contains("gender=0"))
         assertTrue(d.toString().contains("isAddSpouse=0"))
+        assertTrue(d.toString().contains("livingPlace=null"))
+        assertTrue(d.toString().contains("otherLivingPlace=null"))
+        assertTrue(d.toString().contains("institutionName=null"))
     }
 
     @Test

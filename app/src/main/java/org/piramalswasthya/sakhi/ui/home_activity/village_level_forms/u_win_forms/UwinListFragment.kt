@@ -17,6 +17,7 @@ import org.piramalswasthya.sakhi.adapters.UwinListAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentUwinListBinding
 
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class UwinListFragment : Fragment() {
@@ -47,7 +48,7 @@ class UwinListFragment : Fragment() {
         binding.btnAddNew.setOnClickListener {
             val action = UwinListFragmentDirections
                 .actionUwinListFragmentToUwinFragment(uwinId = 0)
-            findNavController().navigate(action)
+            findNavController().safeNavigate(action)
         }
     }
 
@@ -55,7 +56,7 @@ class UwinListFragment : Fragment() {
         adapter = UwinListAdapter(UwinListAdapter.UwinClickListener { id ->
             val action = UwinListFragmentDirections
                 .actionUwinListFragmentToUwinFragment(uwinId = id)
-            findNavController().navigate(action)
+            findNavController().safeNavigate(action)
 
         })
         binding.recyclerUwinList.layoutManager = LinearLayoutManager(requireContext())

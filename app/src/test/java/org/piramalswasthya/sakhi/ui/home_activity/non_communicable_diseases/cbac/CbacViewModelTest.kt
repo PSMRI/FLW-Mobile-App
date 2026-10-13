@@ -36,6 +36,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -1142,6 +1143,47 @@ class CbacViewModelTest : BaseViewModelTest() {
         every { context.resources } returns mockResources
         every { context.createConfigurationContext(any()) } returns context
         return mockResources
+    }
+
+    @Test
+    fun `occupational exposure other keeps the typed detail`() = runTest {
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setOccExposure(Konstants.cbacOtherSourcesPosi - 1)
+        vm.setOccExposureOther("  second-hand smoke  ")
+
+        assertEquals("second-hand smoke", vm.resolveOccupationalExposureOther())
+    }
+
+    @Test
+    fun `occupational exposure other falls back to the dropdown label when left blank`() = runTest {
+        val mockResources = mockLocalizedResources()
+        every { mockResources.getStringArray(Konstants.cbacOccupationalExposureArrayId) } returns
+            arrayOf("Crop residue burning", "Burning of garbage", "Industries", "Other sources")
+
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setOccExposure(Konstants.cbacOtherSourcesPosi - 1)
+        vm.setOccExposureOther("   ")
+
+        assertEquals("Other sources", vm.resolveOccupationalExposureOther())
+    }
+
+    @Test
+    fun `occupational exposure other is null when other sources is not selected`() = runTest {
+        val cache = emptyCbac()
+        val vm = editVm(cache)
+        advanceUntilIdle()
+
+        vm.setOccExposure(Konstants.cbacOtherSourcesPosi - 1)
+        vm.setOccExposureOther("second-hand smoke")
+        vm.setOccExposure(0)
+
+        assertNull(vm.resolveOccupationalExposureOther())
     }
 
     @Test

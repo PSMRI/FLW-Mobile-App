@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.ReferralRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetCBACRequest
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
@@ -24,6 +25,9 @@ class NcdReferalRepo@Inject constructor(
     private val tmcNetworkApiService: AmritApiService,
     private val database: InAppDb
 )  {
+    suspend fun getNcdFollowUpVisits(benId: Long): List<NCDReferalFormResponseJsonEntity> =
+        database.NCDReferalFormResponseJsonDao().getAllVisitsByBeneficiary(benId)
+
     suspend fun getReferedNCD(benId: Long): ReferalCache? {
         return withContext(Dispatchers.IO) {
             referalDao.getReferalFromBenId(benId)
@@ -85,6 +89,9 @@ class NcdReferalRepo@Inject constructor(
             }
             val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId })
             val validEntities = cbacEntities.filter { it.benId in existingBenIds }
+            validEntities.filter { it.type.isNullOrBlank() }.forEach {
+                it.type = referalDao.getReferralType(it.benId, it.referralReason)
+            }
             if (validEntities.isNotEmpty()) {
                 referalDao.insertAll(validEntities)
             }

@@ -294,4 +294,11 @@ data class BenPost(
     @Json(name = "familyId")
     val familyId: String? = null,
 
+    // Non-household beneficiary details sent through syncDataToAmrit.
+    @Json(name = "placeOfCurrentLiving")
+    val placeOfCurrentLiving: String? = null,
+
+    @Json(name = "institutionName")
+    val institutionName: String? = null,
+
     )

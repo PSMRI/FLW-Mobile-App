@@ -38,6 +38,7 @@ class NCDReferalFormFragment : Fragment() {
 
 
         binding.benId.text = viewModel.benId.toString()
+        binding.btnSubmit.text = requireContext().getString(R.string.refer)
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it
         }

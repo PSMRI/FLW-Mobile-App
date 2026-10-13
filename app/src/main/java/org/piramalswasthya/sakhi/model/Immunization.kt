@@ -190,7 +190,13 @@ data class VaccineDomain(
     val vaccineCategory: ChildImmunizationCategory,
     val state: VaccineState,
     var isSwitchChecked:Boolean = false,
-    val dueDate: String = ""
+    val dueDate: String = "",
+    /**
+     * FLW-1144 "Due Work Plan Date" as epoch millis - `ben.dob + vaccine.minAllowedAgeInMillis`.
+     * [dueDate] holds the same instant formatted dd-MM-yyyy for display; compare on this field
+     * instead, since month-boundary comparison on the formatted string is not viable.
+     */
+    val dueDateMillis: Long = 0L
 )
 
 class VaccineClickListener(private val clickListener: (benId: Long, vaccineId: Int) -> Unit) {
@@ -208,7 +214,8 @@ enum class VaccineState {
 
 data class ImmunizationPost(
     val id: Long = 0,
-    val beneficiaryId: Long,
+    val beneficiaryId: Long = 0,
+    val beneficiaryRegId: Long? = null,
     val vaccineId: Int,
     var vaccineName: String = "",
     val receivedDate: String? = null,
@@ -221,7 +228,7 @@ data class ImmunizationPost(
     var mcpCardSummary1 : String ? = null,
     var mcpCardSummary2 : String ? = null
 ) {
-    fun toCacheModel(): ImmunizationCache {
+    fun toCacheModel(beneficiaryId: Long = this.beneficiaryId): ImmunizationCache {
         return ImmunizationCache(
             id = id,
             beneficiaryId = beneficiaryId,

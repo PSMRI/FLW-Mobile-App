@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="incomplete_install_title">অ্যাপ ইনস্টলেশন অসম্পূর্ণ</string>
+    <string name="incomplete_install_message">এই ফোনে অ্যাপটির জন্য প্রয়োজনীয় কিছু ফাইল নেই। অনুগ্রহ করে অ্যাপটি আনইনস্টল করে Google Play Store থেকে আবার ইনস্টল করুন। শেয়ার করা APK ফাইল থেকে ইনস্টল করবেন না।</string>
+    <string name="incomplete_install_open_play_store">Play Store খুলুন</string>
+    <string name="incomplete_install_exit">বের হন</string>
+</resources>

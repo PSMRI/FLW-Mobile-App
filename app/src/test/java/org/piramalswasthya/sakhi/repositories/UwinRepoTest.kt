@@ -83,10 +83,21 @@ class UwinRepoTest : BaseRepositoryTest() {
     @Test
     fun `insertLocalRecord delegates to dao`() = runTest {
         val record = mockk<UwinCache>(relaxed = true)
+        coEvery { uwinDao.insertIfDateAvailable(record) } returns true
 
-        repo.insertLocalRecord(record)
+        assertTrue(repo.insertLocalRecord(record))
 
-        coVerify { uwinDao.insert(record) }
+        coVerify { uwinDao.insertIfDateAvailable(record) }
+    }
+
+    @Test
+    fun `insertLocalRecord reports duplicate session date`() = runTest {
+        val record = mockk<UwinCache>(relaxed = true)
+        coEvery { uwinDao.insertIfDateAvailable(record) } returns false
+
+        assertFalse(repo.insertLocalRecord(record))
+
+        coVerify { uwinDao.insertIfDateAvailable(record) }
     }
 
     @Test

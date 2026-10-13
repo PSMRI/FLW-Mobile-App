@@ -399,11 +399,16 @@ class SupervisorActivity : AppCompatActivity() {
                     }
 
                     R.id.sync_status -> {
-                        if (!syncBottomSheet.isVisible)
-                            syncBottomSheet.show(
-                                supportFragmentManager,
-                                resources.getString(R.string.sync)
-                            )
+                        // show() only queues the add, so isVisible/isAdded stay false until it runs
+                        // and a quick double tap added the same instance twice ("Fragment already
+                        // added"). showNow() commits synchronously, so the next tap sees it.
+                        val syncTag = resources.getString(R.string.sync)
+                        if (!syncBottomSheet.isAdded &&
+                            supportFragmentManager.findFragmentByTag(syncTag) == null &&
+                            !supportFragmentManager.isStateSaved
+                        ) {
+                            syncBottomSheet.showNow(supportFragmentManager, syncTag)
+                        }
                         return true
                     }
                 }

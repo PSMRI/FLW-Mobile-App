@@ -118,15 +118,27 @@ class ImmunizationRepo @Inject constructor(
             }
         }
         immunizationList.forEach { immunizationDTO ->
-            val immunization: ImmunizationCache? =
-                immunizationDao.getImmunizationRecord(
-                    immunizationDTO.beneficiaryId,
+            try {
+                // Some server rows omit beneficiaryId but include beneficiaryRegId.
+                val beneficiaryId = immunizationDTO.beneficiaryId.takeIf { it > 0 }
+                    ?: immunizationDTO.beneficiaryRegId?.let { benDao.getBeneficiaryIdByRegId(it) }
+                if (beneficiaryId == null || immunizationDTO.vaccineId <= 0) {
+                    Timber.w("Skipping immunization ${immunizationDTO.id}: missing beneficiary or vaccine ID")
+                    return@forEach
+                }
+
+                val existing = immunizationDao.getImmunizationRecord(
+                    beneficiaryId,
                     immunizationDTO.vaccineId
                 )
-            if (immunization == null) {
-                val immunizationCache = immunizationDTO.toCacheModel()
-                immunizationCache.vaccineId = immunizationDTO.vaccineId
-                immunizationDao.addImmunizationRecord(immunizationCache)
+                if (existing == null) {
+                    immunizationDao.addImmunizationRecord(
+                        immunizationDTO.toCacheModel(beneficiaryId)
+                    )
+                }
+            } catch (e: Exception) {
+                // Keep one bad row from aborting the rest of the response.
+                Timber.e(e, "Failed to cache immunization ${immunizationDTO.id}")
             }
         }
         return immunizationList

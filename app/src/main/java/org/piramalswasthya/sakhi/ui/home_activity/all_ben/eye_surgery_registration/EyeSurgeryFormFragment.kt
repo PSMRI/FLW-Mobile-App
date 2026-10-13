@@ -294,20 +294,20 @@
                 }
 
 
+                // Resolve the context before suspending: the save can finish after this fragment
+                // was popped (double submit / back press), when requireContext() and
+                // findNavController() throw.
+                // Messages are resolved here too so they keep the user's in-app language.
+                val appContext = requireContext().applicationContext
+                val savedMessage = getString(R.string.eye_surgery_details_saved_successfully)
+                val failedMessage = getString(R.string.failed_to_submit_form)
                 val isSaved = viewModel.saveFormResponses(benId, hhId, actualEyeSide, recordId)
-                if (isSaved) {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.eye_surgery_details_saved_successfully),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.failed_to_submit_form),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Toast.makeText(
+                    appContext,
+                    if (isSaved) savedMessage else failedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+                if (!isAdded) return@launch
                 findNavController().previousBackStackEntry
                     ?.savedStateHandle?.set("form_submitted", true)
                 findNavController().popBackStack()

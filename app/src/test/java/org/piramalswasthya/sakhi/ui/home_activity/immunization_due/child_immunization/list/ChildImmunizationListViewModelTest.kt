@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -253,16 +254,17 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `filterText trims and lowercases before filtering`() = runTest {
-        viewModel.filterText("  Hello  ")
+    fun `setSearchText trims and lowercases before filtering`() = runTest {
+        viewModel.setSearchText("  Hello  ")
         advanceUntilIdle()
         assertNotNull(viewModel.immunizationBenList)
     }
 
+    // FLW-1144: 10 YEARS / 16 YEARS removed, leaving All + 7 dose stages.
     @Test
-    fun `categoryData returns ten localized categories`() {
+    fun `categoryData returns eight localized categories`() {
         val categories = viewModel.categoryData()
-        assertEquals(10, categories.size)
+        assertEquals(8, categories.size)
     }
 
     @Test
@@ -271,7 +273,136 @@ class ChildImmunizationListViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `toEnglishCategory returns empty string for an unrecognised label`() {
-        assertEquals("", viewModel.toEnglishCategory("not a category"))
+    fun `toCategory returns null for an unrecognised label`() {
+        assertNull(viewModel.toCategory("not a category"))
+    }
+
+    // ===============================================================
+    // FLW-1144 quick worklist buckets
+    // ===============================================================
+
+    /**
+     * Builds a VM over one child with one vaccine whose due date (dob + minAllowedAge)
+     * lands [dueInDays] from now - negative for already past due.
+     */
+    private fun vmWithVaccineDue(
+        dueInDays: Long,
+        stage: ChildImmunizationCategory = ChildImmunizationCategory.BIRTH,
+        given: Boolean = false,
+    ): ChildImmunizationListViewModel {
+        val ageMillis = 400 * day
+        val ben = benCache(benId = 1L, dobMillisAgo = ageMillis)
+        val cache = ChildImmunizationDetailsCache(
+            ben = ben,
+            givenVaccines = if (given) listOf(
+                ImmunizationCache(
+                    beneficiaryId = 1L,
+                    vaccineId = 1,
+                    createdBy = "asha",
+                    updatedBy = "asha",
+                    syncState = SyncState.SYNCED
+                )
+            ) else emptyList()
+        )
+        // dueDateMillis = dob + minAllowedAge, so minAllowedAge = age + dueInDays
+        val vaccine = Vaccine(
+            vaccineId = 1,
+            vaccineName = "Unknown Vaccine",
+            minAllowedAgeInMillis = ageMillis + dueInDays * day,
+            maxAllowedAgeInMillis = ageMillis + (dueInDays + 365) * day,
+            category = ImmunizationCategory.CHILD,
+            immunizationService = stage,
+        )
+        every { vaccineDao.getBenWithImmunizationRecords(any(), any()) } returns flowOf(listOf(cache))
+        coEvery { vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD) } returns listOf(vaccine)
+        return ChildImmunizationListViewModel(vaccineDao, preferenceDao, context, SavedStateHandle())
+    }
+
+    @Test
+    fun `due this month counts a dose whose due date has already passed`() = runTest {
+        // Open-ended to the left: outstanding work carries forward, it does not drop off.
+        val vm = vmWithVaccineDue(dueInDays = -400)
+        advanceUntilIdle()
+        assertEquals(1, vm.dueThisMonthCount.first())
+    }
+
+    @Test
+    fun `due this month ignores an administered dose`() = runTest {
+        val vm = vmWithVaccineDue(dueInDays = -400, given = true)
+        advanceUntilIdle()
+        assertEquals(0, vm.dueThisMonthCount.first())
+    }
+
+    @Test
+    fun `next month excludes a dose due in the current month`() = runTest {
+        val vm = vmWithVaccineDue(dueInDays = -400)
+        advanceUntilIdle()
+        assertEquals(0, vm.nextMonthCount.first())
+    }
+
+    @Test
+    fun `next month excludes a dose due far in the future`() = runTest {
+        val vm = vmWithVaccineDue(dueInDays = 200)
+        advanceUntilIdle()
+        assertEquals(0, vm.nextMonthCount.first())
+    }
+
+    @Test
+    fun `dose stage and bucket must be satisfied by the same vaccine`() = runTest {
+        // The child's only past-due dose is a BIRTH dose. Filtering by WEEK_6 must not
+        // match them just because some other vaccine would satisfy the bucket.
+        val vm = vmWithVaccineDue(dueInDays = -400, stage = ChildImmunizationCategory.BIRTH)
+        advanceUntilIdle()
+        assertEquals(1, vm.dueThisMonthCount.first())
+
+        vm.setDoseStage(ChildImmunizationCategory.WEEK_6)
+        advanceUntilIdle()
+        assertEquals(0, vm.dueThisMonthCount.first())
+    }
+
+    @Test
+    fun `toggleQuickFilter selects then clears on a second tap`() = runTest {
+        assertNull(viewModel.selectedQuickFilter)
+
+        viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH)
+        advanceUntilIdle()
+        assertEquals(
+            ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH,
+            viewModel.selectedQuickFilter
+        )
+
+        viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH)
+        advanceUntilIdle()
+        assertNull(viewModel.selectedQuickFilter)
+    }
+
+    @Test
+    fun `toggleQuickFilter switching bucket replaces rather than clears`() = runTest {
+        viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.DUE_THIS_MONTH)
+        advanceUntilIdle()
+        viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH)
+        advanceUntilIdle()
+        assertEquals(
+            ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH,
+            viewModel.selectedQuickFilter
+        )
+    }
+
+    @Test
+    fun `isFiltered is false by default and true once a bucket is picked`() = runTest {
+        assertFalse(viewModel.isFiltered.first())
+        viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH)
+        advanceUntilIdle()
+        assertTrue(viewModel.isFiltered.first())
+    }
+
+    @Test
+    fun `search and dose stage no longer clear one another`() = runTest {
+        // The old single-channel filter made these mutually exclusive.
+        viewModel.setSearchText("asha")
+        viewModel.setDoseStage(ChildImmunizationCategory.WEEK_6)
+        advanceUntilIdle()
+        assertTrue(viewModel.isFiltered.first())
+        assertNotNull(viewModel.immunizationBenList.first())
     }
 }

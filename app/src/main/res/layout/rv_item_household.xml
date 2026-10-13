@@ -138,7 +138,7 @@
                 android:layout_marginStart="3dp"
                 android:layout_marginEnd="3dp"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_person"
+                android:drawableLeft="@drawable/person_add"
                 app:drawableTint="@color/md_theme_light_onPrimary"
                 android:onClick="@{()->clickListener.onClickedForNewBen(household)}"
                 android:text="@string/btn_rv_item_hh_add_ben"

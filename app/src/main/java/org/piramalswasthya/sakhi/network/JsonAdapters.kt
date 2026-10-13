@@ -1119,6 +1119,16 @@ data class TBScreeningDTO(
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
+    var keyPopulationRiskFactorIds: List<Int>? = null,
+    var keyPopulationRiskFactors: List<String>? = null,
+    var hivStatusId: Int? = null,
+    var hivStatus: String? = null,
+    var fatigue: Boolean? = null,
+    var shortBreath: Boolean? = null,
+    var chestPain: Boolean? = null,
+    var failureToGainWeight: Boolean? = null,
+    var decreasedActivityOrPlayfulness: Boolean? = null,
+
 ) {
     fun toCache(): TBScreeningCache {
         return TBScreeningCache(
@@ -1143,7 +1153,16 @@ data class TBScreeningDTO(
             sympotomatic = sympotomatic,
             asymptomatic = asymptomatic,
             recommandateTest = recommandateTest,
-            syncState = SyncState.SYNCED
+            syncState = SyncState.SYNCED,
+            keyPopulationRiskFactorIds = keyPopulationRiskFactorIds,
+            keyPopulationRiskFactors = keyPopulationRiskFactors,
+            hivStatus = hivStatus,
+            hivStatusId = hivStatusId,
+            fatigue = fatigue,
+            shortBreath = shortBreath,
+            chestPain = chestPain,
+            failureToGainWeight = failureToGainWeight,
+            decreasedActivityOrPlayfulness = decreasedActivityOrPlayfulness
         )
     }
 }
@@ -1154,6 +1173,10 @@ data class AdolscentHealthDTO(
     var benId:Long,
     var visitDate: String,
     var healthStatus: String? = null,
+    @com.google.gson.annotations.SerializedName(
+        value = "ifaTabletDistributed",
+        alternate = ["ifaTabletDistribution"]
+    )
     var ifaTabletDistributed: Boolean? = null,
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,

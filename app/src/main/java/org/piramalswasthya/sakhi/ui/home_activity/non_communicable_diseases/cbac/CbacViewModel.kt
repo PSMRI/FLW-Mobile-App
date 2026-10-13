@@ -19,6 +19,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.AgeUnit
 import org.piramalswasthya.sakhi.model.BenBasicCache
@@ -556,8 +557,24 @@ class CbacViewModel @Inject constructor(
 
     }
 
+    private var occupationalExposureOther: String? = null
+
     fun setOccExposure(i: Int) {
         cbac.cbac_occupational_exposure_posi = i + 1
+        if (cbac.cbac_occupational_exposure_posi != Konstants.cbacOtherSourcesPosi) {
+            occupationalExposureOther = null
+        }
+    }
+
+    fun setOccExposureOther(detail: String?) {
+        occupationalExposureOther = detail?.trim()?.takeIf { it.isNotEmpty() }
+    }
+
+    fun resolveOccupationalExposureOther(): String? {
+        if (cbac.cbac_occupational_exposure_posi != Konstants.cbacOtherSourcesPosi) return null
+        return occupationalExposureOther
+            ?: resources.getStringArray(Konstants.cbacOccupationalExposureArrayId)
+                .getOrNull(Konstants.cbacOtherSourcesPosi - 1)
     }
 
     fun setLi(i: Int) {
@@ -582,6 +599,7 @@ class CbacViewModel @Inject constructor(
         }
         _state.value = State.SAVING
         cbac.total_score = _raTotalScore.value!!
+        cbac.cbac_occupational_exposure_other = resolveOccupationalExposureOther()
         var flagForHrp = false
         if (ben.genDetails?.reproductiveStatusId == 1 || ben.genDetails?.reproductiveStatusId == 2 || ben.genDetails?.reproductiveStatusId == 3) {
             //hrp related posibilities

@@ -3,9 +3,11 @@ package org.piramalswasthya.sakhi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvItemTbConfirmedListBinding
 import org.piramalswasthya.sakhi.databinding.RvItemTbSuspectedListBinding
@@ -56,6 +58,9 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
             binding.benWithTb = item
 
+            binding.nikshayLayout.visibility = View.VISIBLE
+            binding.RCHlayout.visibility = View.GONE
+
             binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.INVISIBLE else View.VISIBLE
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
@@ -86,8 +91,24 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
                 }
             }
 
+            if (item.ben.isDeath) {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+                )
+                if (item.tbConfirmedList.isEmpty()) {
+                    binding.btnFormTb.visibility = View.GONE
+                } else {
+                    binding.btnFormTb.visibility = View.VISIBLE
 
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+                }
+            } else {
+                binding.contstraintLayoutV.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+                )
+            }
+
+            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFamilyMembers.setBackgroundColor(binding.root.resources.getColor(R.color.pending_orange))
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
@@ -119,11 +140,14 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
 
     class ClickListener(
+        private val clickedFamilyMembers: ((hhId: Long, benId: Long) -> Unit)? = null,
         private val clickedForm: ((hhId: Long, benId: Long) -> Unit)? = null
 
     ) {
         fun onClickForm(item: BenWithTbSuspectedDomain) =
             clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
+        fun onFamilyMembers(item: BenWithTbSuspectedDomain) =
+            clickedFamilyMembers?.let { it(item.ben.hhId, item.ben.benId) }
     }
 
 }

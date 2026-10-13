@@ -26,6 +26,5 @@
     <string name="session_expired_message">आपका सत्र समाप्त हो गया है। कृपया पुनः लॉग इन करें।</string>
     <string name="cd_assam_nhm_logo">असम NHM लोगो</string>
     <string name="cd_piramal">पीरामल लोगो</string>
-    <string name="pwr_by_text">द्वारा संचालित\n <b>पीरामल फाउंडेशन</b></string>
-
+    <string name="pwr_by_text" translatable="false">द्वारा संचालित\n <b>पिरामल फाउंडेशन</b>\n ऐप संस्करण </string>
 </resources>

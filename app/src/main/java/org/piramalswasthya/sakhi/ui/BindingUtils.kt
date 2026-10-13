@@ -65,6 +65,7 @@ fun IconDataset.Disease.getTitleRes(): Int {
         IconDataset.Disease.FILARIA  -> R.string.icon_title_filaria
         IconDataset.Disease.LEPROSY  -> R.string.icon_title_leprosy
         IconDataset.Disease.DEWARMING -> R.string.deworming_title
+        IconDataset.Disease.TB -> R.string.tb
     }
 }
 @BindingAdapter("vaccineState")
@@ -342,9 +343,9 @@ fun ImageView.setSyncState(syncState: SyncState?) {
     syncState?.let {
         visibility = View.VISIBLE
         val drawable = when (it) {
-            SyncState.UNSYNCED -> R.drawable.ic_unsynced
-            SyncState.SYNCING -> R.drawable.ic_syncing
-            SyncState.SYNCED -> R.drawable.ic_synced
+            SyncState.UNSYNCED -> R.drawable.cloud_off
+            SyncState.SYNCING -> R.drawable.cloud_sync
+            SyncState.SYNCED -> R.drawable.cloud_upload
         }
         setImageResource(drawable)
         isClickable = it == SyncState.UNSYNCED
@@ -359,9 +360,9 @@ fun ImageView.setSyncStateForBen(syncState: SyncState?) {
     syncState?.let {
 
         val drawable = when (it) {
-            SyncState.UNSYNCED -> R.drawable.ic_unsynced
-            SyncState.SYNCING -> R.drawable.ic_syncing
-            SyncState.SYNCED -> R.drawable.ic_synced
+            SyncState.UNSYNCED -> R.drawable.cloud_off
+            SyncState.SYNCING -> R.drawable.cloud_sync
+            SyncState.SYNCED -> R.drawable.cloud_upload
         }
         setImageResource(drawable)
         isClickable = it == SyncState.UNSYNCED

@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSectionDto
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -40,13 +41,14 @@ class HBNCFormViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var repository: FormRepository
     @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var infantRegRepo: InfantRegRepo
+    @MockK(relaxed = true) private lateinit var referalRepo: NcdReferalRepo
 
     private lateinit var viewModel: HBNCFormViewModel
 
     @Before
     override fun setUp() {
         super.setUp()
-        viewModel = HBNCFormViewModel(repository, benRepo, infantRegRepo)
+        viewModel = HBNCFormViewModel(repository, benRepo, infantRegRepo, referalRepo)
     }
 
     // =====================================================
@@ -622,7 +624,7 @@ class HBNCFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         coVerify(exactly = 0) { benRepo.updateRecord(any()) }
-        assertNull(viewModel.navigateToCdsr.value)
+        assertEquals(false, viewModel.navigateToCdsr.value)
         coVerify(exactly = 1) { repository.insertFormResponse(any()) }
     }
 
@@ -643,7 +645,7 @@ class HBNCFormViewModelTest : BaseViewModelTest() {
         advanceUntilIdle()
 
         assertTrue(captured.isCaptured)
-        assertNull(viewModel.navigateToCdsr.value)
+        assertEquals(false, viewModel.navigateToCdsr.value)
     }
 
     @Test

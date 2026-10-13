@@ -32,12 +32,12 @@ class NcdRefferedListDirectionsTest {
 
     @Test
     fun actionNcdRefferedListToNCDReferalFormFragment_buildsDirections() {
-        val d = NcdRefferedListDirections.actionNcdRefferedListToNCDReferalFormFragment(benId = 10L, hhId = 20L)
+        val d = NcdRefferedListDirections.actionNcdRefferedListToNCDReferalFormFragment(benId = 10L, hhId = 20L, referReason = "TB Suspected", referredDate = 20L)
         assertNotNull(d)
         assertTrue(d.actionId != 0)
         assertNotNull(d.arguments)
         assertTrue(d.toString().isNotEmpty())
-        val same = NcdRefferedListDirections.actionNcdRefferedListToNCDReferalFormFragment(benId = 10L, hhId = 20L)
+        val same = NcdRefferedListDirections.actionNcdRefferedListToNCDReferalFormFragment(benId = 10L, hhId = 20L, referReason = "TB Suspected",referredDate = 20L)
         assertEquals(d, same)
         assertEquals(d.hashCode(), same.hashCode())
         assertFalse(d.equals(null))

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="incomplete_install_title">এপ্‌ ইনষ্টলেশ্বন অসম্পূৰ্ণ</string>
+    <string name="incomplete_install_message">এই ফোনত এপ্‌টোৰ বাবে প্ৰয়োজনীয় কিছুমান ফাইল নাই। অনুগ্ৰহ কৰি এপ্‌টো আনইনষ্টল কৰি Google Play Store ৰ পৰা পুনৰ ইনষ্টল কৰক। শ্বেয়াৰ কৰা APK ফাইলৰ পৰা ইনষ্টল নকৰিব।</string>
+    <string name="incomplete_install_open_play_store">Play Store খোলক</string>
+    <string name="incomplete_install_exit">বাহিৰ হওক</string>
+</resources>

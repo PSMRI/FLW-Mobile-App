@@ -26,7 +26,6 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.children
 import androidx.recyclerview.widget.DiffUtil
@@ -541,20 +540,10 @@ class FormInputAdapterWithBgIcon (
                 )
                 item.errorText = null
                 binding.tilEditText.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                HelperUtil.setSafeDateRange(datePickerDialog.datePicker, item.min, item.max)
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
-                val canShow = when {
-                    item.max == null || item.min == null -> true
-                    else -> item.max!! > item.min!!
-                }
-                if (canShow){
-                    datePickerDialog.show()
-                }else{
-                    Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
-                    HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
-                }
+                datePickerDialog.show()
                 datePickerDialog.setOnDismissListener {
                     HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
                 }
@@ -1095,8 +1084,7 @@ class FormInputAdapterWithBgIcon (
                 )
                 item.errorText = null
                 binding.tilEditTextDate.error = null
-                item.min?.let { datePickerDialog.datePicker.minDate = it }
-                item.max?.let { datePickerDialog.datePicker.maxDate = it }
+                HelperUtil.setSafeDateRange(datePickerDialog.datePicker, item.min, item.max)
                 if (item.showYearFirstInDatePicker)
                     datePickerDialog.datePicker.touchables[0].performClick()
                 datePickerDialog.show()
