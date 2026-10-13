@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.repositories
 import android.content.Context
 import android.content.res.Resources
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -28,9 +29,14 @@ import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.BenBasicCache
+import org.piramalswasthya.sakhi.model.BenPncDomain
+import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.BenRegGen
+import org.piramalswasthya.sakhi.model.BenWithDoAndPncCache
 import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.BenWithECRCache
 import org.piramalswasthya.sakhi.model.BenWithEcTrackingCache
+import org.piramalswasthya.sakhi.model.DeliveryOutcomeCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.LocationEntity
@@ -423,6 +429,57 @@ class RecordsRepoTest : BaseRepositoryTest() {
         assertNotNull(repo.childrenImmunizationListCount)
         assertNotNull(repo.motherImmunizationList)
         assertNotNull(repo.motherImmunizationListCount)
+    }
+
+    @Test
+    fun `pnc mother delivered less than 60 days ago stays on pnc list`() = runTest {
+        val item = pncMotherItem(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(59))
+        every { benDao.getAllPNCMotherList(101) } returns flowOf(listOf(item))
+        repo = RecordsRepo(
+            context, householdDao, benDao, ancHomeVisitDao,
+            vaccineDao, maternalHealthDao, childRegistrationDao, benRepo, pref
+        )
+        coEvery { benRepo.getBenFromId(7L) } returns mockk(relaxed = true)
+
+        val result = repo.pncMotherList.first()
+
+        assertEquals(1, result.size)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
+    @Test
+    fun `pnc mother delivered 60 days ago moves to eligible couple`() = runTest {
+        val item = pncMotherItem(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(61))
+        every { benDao.getAllPNCMotherList(101) } returns flowOf(listOf(item))
+        repo = RecordsRepo(
+            context, householdDao, benDao, ancHomeVisitDao,
+            vaccineDao, maternalHealthDao, childRegistrationDao, benRepo, pref
+        )
+        val status = BenRegGen(reproductiveStatusId = 3)
+        val beneficiary = mockk<BenRegCache>(relaxed = true)
+        every { beneficiary.genDetails } returns status
+        coEvery { benRepo.getBenFromId(7L) } returns beneficiary
+        coEvery { benRepo.updateRecord(beneficiary) } returns Unit
+
+        val result = repo.pncMotherList.first()
+
+        assertTrue(result.isEmpty())
+        assertEquals(1, status.reproductiveStatusId)
+        assertEquals("Eligible Couple", status.reproductiveStatus)
+        coVerify(exactly = 1) { benRepo.updateRecord(beneficiary) }
+    }
+
+    private fun pncMotherItem(dateOfDelivery: Long): BenWithDoAndPncCache {
+        val benCache = mockk<BenBasicCache>(relaxed = true)
+        every { benCache.benId } returns 7L
+        val deliveryOutcome = mockk<DeliveryOutcomeCache>(relaxed = true)
+        every { deliveryOutcome.isActive } returns true
+        every { deliveryOutcome.dateOfDelivery } returns dateOfDelivery
+        val item = mockk<BenWithDoAndPncCache>(relaxed = true)
+        every { item.ben } returns benCache
+        every { item.deliveryOutcomeCache } returns listOf(deliveryOutcome)
+        every { item.asBasicDomainModelForPNC() } returns mockk<BenPncDomain>(relaxed = true)
+        return item
     }
 
     // ---------------- eligible couple + hrp vals ----------------

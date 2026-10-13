@@ -271,8 +271,6 @@ class RecordsRepo @Inject constructor(
             .toLifoDomain()
     val hrpListCount = menopauseList.map { it.size }
 
-    val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
-
     private suspend fun updateWomanStatusAfter60Days(
         item: BenWithDoAndPncCache
     ) {
@@ -286,38 +284,42 @@ class RecordsRepo @Inject constructor(
 
         val dateOfDelivery = activeDo?.dateOfDelivery ?: return
 
-        val daysSinceDelivery = TimeUnit.MILLISECONDS.toDays(
-            System.currentTimeMillis() - dateOfDelivery
-        )
+        val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
+        if (dateOfDelivery > sixtyDaysAgo) return
 
-        val isAfter60Days = daysSinceDelivery >= 60
+        if (ben.genDetails?.reproductiveStatusId != 1) {
+            ben.genDetails?.reproductiveStatus = "Eligible Couple"
+            ben.genDetails?.reproductiveStatusId = 1
 
-        if (!isAfter60Days) return
+            if (ben.processed != "N") {
+                ben.processed = "U"
+            }
 
-            if (ben.genDetails?.reproductiveStatusId != 1) {
-                ben.genDetails?.reproductiveStatus = "Eligible Couple"
-                ben.genDetails?.reproductiveStatusId = 1
-
-                if (ben.processed != "N") {
-                    ben.processed = "U"
-                }
-
-                ben.syncState = SyncState.UNSYNCED
-                benRepo.updateRecord(ben)
-
+            ben.syncState = SyncState.UNSYNCED
+            benRepo.updateRecord(ben)
         }
     }
-    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
+
+    private suspend fun getCurrentPncMothers(
+        list: List<BenWithDoAndPncCache>
+    ): List<BenWithDoAndPncCache> {
+        list.forEach { updateWomanStatusAfter60Days(it) }
+        val sixtyDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60)
+        return list.filter { item ->
+            val dateOfDelivery = item.deliveryOutcomeCache.firstOrNull { it.isActive }?.dateOfDelivery
+            dateOfDelivery == null || dateOfDelivery >= sixtyDaysAgo
+        }
+    }
+
+    val pncMotherList = benDao.getAllPNCMotherList(selectedVillage)
         .map { list ->
-            list.forEach {
-                updateWomanStatusAfter60Days(it)
-            }
-            list.map { it.asBasicDomainModelForPNC() } }
+            getCurrentPncMothers(list).map { it.asBasicDomainModelForPNC() }
+        }
     val pncMotherListCount = pncMotherList.map { it.size }
 
-    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage,sixtyDaysAgo)
+    val pncMotherNonFollowUpList = benDao.getAllPNCMotherList(selectedVillage)
         .map { list ->
-            list.filter {
+            getCurrentPncMothers(list).filter {
                 if (!it.savedPncRecords.isNullOrEmpty()) {
                     it.savedPncRecords.last().pncDate != 0L &&
                             it.savedPncRecords.last().pncDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
