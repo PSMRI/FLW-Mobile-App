@@ -9,6 +9,8 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.migrations.ALL_MIGRATIONS
+import org.piramalswasthya.sakhi.database.room.migrations.MigrationHelpers
 
 class InAppDbRecentMigrationsTest {
 
@@ -20,19 +22,8 @@ class InAppDbRecentMigrationsTest {
     }
 
     private fun invokeMigration(name: String, db: SupportSQLiteDatabase) {
-        val clazz = Class.forName(
-            "org.piramalswasthya.sakhi.database.room.InAppDb\$Companion\$getInstance\$$name\$1"
-        )
-        val constructor = clazz.declaredConstructors.first()
-        constructor.isAccessible = true
-        val instance = constructor.newInstance()
-        val method = clazz.declaredMethods.first {
-            (it.name == "migrate" || it.name == "invoke") &&
-                    it.parameterTypes.size == 1 &&
-                    it.parameterTypes[0] == SupportSQLiteDatabase::class.java
-        }
-        method.isAccessible = true
-        method.invoke(instance, db)
+        val (from, to) = name.removePrefix("MIGRATION_").split("_").map { it.toInt() }
+        ALL_MIGRATIONS.single { it.startVersion == from && it.endVersion == to }.migrate(db)
     }
 
     private fun masterCursor(exists: Boolean): Cursor {
@@ -206,7 +197,7 @@ class InAppDbRecentMigrationsTest {
         invokeMigration("MIGRATION_60_61", db)
 
         assertEquals(1, executedSql.size)
-        assertEquals(InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL, executedSql.first())
+        assertEquals(MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL, executedSql.first())
     }
 
     @Test

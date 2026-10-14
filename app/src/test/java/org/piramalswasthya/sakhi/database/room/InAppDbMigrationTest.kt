@@ -11,6 +11,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.migrations.MigrationHelpers
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -78,7 +79,7 @@ class InAppDbMigrationTest {
         insertBen(5, "0")
 
         connection.createStatement().use { stmt ->
-            stmt.execute(InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
+            stmt.execute(MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
         }
 
         // All corrupted rows now count as alive.
@@ -94,7 +95,7 @@ class InAppDbMigrationTest {
         insertBen(3, "1")
 
         connection.createStatement().use { stmt ->
-            stmt.execute(InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
+            stmt.execute(MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
         }
 
         assertEquals(2, countWhere("isDeath = 1"))
@@ -106,7 +107,7 @@ class InAppDbMigrationTest {
         insertBen(2, "1")
 
         connection.createStatement().use { stmt ->
-            stmt.execute(InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
+            stmt.execute(MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL)
         }
 
         assertEquals(1, countWhere("isDeath = 0"))
@@ -114,7 +115,7 @@ class InAppDbMigrationTest {
     }
 
     // =====================================================
-    // InAppDb.tableExists() / InAppDb.columnExists()
+    // MigrationHelpers.tableExists() / MigrationHelpers.columnExists()
     // The migration helpers used by MIGRATION_56_57..60_61.
     // =====================================================
 
@@ -125,7 +126,7 @@ class InAppDbMigrationTest {
         every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
         every { cursor.count } returns 1
 
-        assertTrue(InAppDb.tableExists(db, "BENEFICIARY"))
+        assertTrue(MigrationHelpers.tableExists(db, "BENEFICIARY"))
         verify { cursor.close() }
     }
 
@@ -136,7 +137,7 @@ class InAppDbMigrationTest {
         every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
         every { cursor.count } returns 0
 
-        assertFalse(InAppDb.tableExists(db, "NO_SUCH_TABLE"))
+        assertFalse(MigrationHelpers.tableExists(db, "NO_SUCH_TABLE"))
         verify { cursor.close() }
     }
 
@@ -147,7 +148,7 @@ class InAppDbMigrationTest {
         every { db.query(any<String>(), any<Array<Any?>>()) } returns cursor
         every { cursor.count } returns 1
 
-        InAppDb.tableExists(db, "VHNC")
+        MigrationHelpers.tableExists(db, "VHNC")
 
         verify {
             db.query(
@@ -166,7 +167,7 @@ class InAppDbMigrationTest {
         every { cursor.getColumnIndexOrThrow("name") } returns 1
         every { cursor.getString(1) } returnsMany listOf("beneficiaryId", "isDeath")
 
-        assertTrue(InAppDb.columnExists(db, "BENEFICIARY", "isDeath"))
+        assertTrue(MigrationHelpers.columnExists(db, "BENEFICIARY", "isDeath"))
         verify { cursor.close() }
     }
 
@@ -179,7 +180,7 @@ class InAppDbMigrationTest {
         every { cursor.getColumnIndexOrThrow("name") } returns 1
         every { cursor.getString(1) } returnsMany listOf("beneficiaryId", "isDeath")
 
-        assertFalse(InAppDb.columnExists(db, "BENEFICIARY", "abha_familyId"))
+        assertFalse(MigrationHelpers.columnExists(db, "BENEFICIARY", "abha_familyId"))
         verify { cursor.close() }
     }
 
@@ -190,7 +191,7 @@ class InAppDbMigrationTest {
         every { db.query(any<String>()) } returns cursor
         every { cursor.moveToNext() } returns false
 
-        assertFalse(InAppDb.columnExists(db, "HOUSEHOLD", "isDeactivate"))
+        assertFalse(MigrationHelpers.columnExists(db, "HOUSEHOLD", "isDeactivate"))
         verify { cursor.close() }
     }
 
@@ -201,7 +202,7 @@ class InAppDbMigrationTest {
         every { db.query(any<String>()) } returns cursor
         every { cursor.moveToNext() } returns false
 
-        InAppDb.columnExists(db, "TB_SCREENING", "bmi")
+        MigrationHelpers.columnExists(db, "TB_SCREENING", "bmi")
 
         verify { db.query("PRAGMA table_info(TB_SCREENING)") }
     }
@@ -209,11 +210,11 @@ class InAppDbMigrationTest {
     @Test
     fun `normalize isDeath sql targets only corrupted values`() {
         assertTrue(
-            InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
+            MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
                 .contains("isDeath IS NULL OR (isDeath <> 0 AND isDeath <> 1)")
         )
         assertTrue(
-            InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
+            MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL
                 .startsWith("UPDATE BENEFICIARY SET isDeath = 0")
         )
     }

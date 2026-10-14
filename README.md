@@ -191,6 +191,17 @@ To run this project, Follow these steps:
 
 Prints coverage to the console and writes HTML to `app/build/reports/jacoco/jacocoTestReport/html/index.html`.
 
+## Database Changes (Room)
+
+Every change to `InAppDb` (new table, column, index, or entity change) needs all of the following in the **same PR**:
+
+1. Bump `version` in `InAppDb.kt` (e.g. 70 → 71).
+2. Add a new migration file: `database/room/migrations/Migration70To71.kt`.
+3. Register it in `database/room/migrations/Migrations.kt` (`ALL_MIGRATIONS`).
+4. Build once. Room writes `app/schemas/org.piramalswasthya.sakhi.database.room.InAppDb/71.json`. Commit it. Never edit or delete existing schema JSON files.
+5. Add a test: `app/src/test/java/org/piramalswasthya/sakhi/database/room/migrations/Migration70To71Test.kt`.
+6. Never change a migration that has already shipped to users; fix forward with a new migration instead.
+
 ## Filing Issues
 
 If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.  
