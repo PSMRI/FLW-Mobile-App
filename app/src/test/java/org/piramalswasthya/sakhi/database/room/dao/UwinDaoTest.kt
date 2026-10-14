@@ -3,6 +3,7 @@ package org.piramalswasthya.sakhi.database.room.dao
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -19,6 +20,9 @@ class UwinDaoTest {
         override suspend fun insert(session: UwinCache) {
             stored.add(session)
         }
+
+        override suspend fun hasSessionOnDate(sessionDate: Long): Boolean =
+            stored.any { it.sessionDate == sessionDate }
 
         override suspend fun update(session: UwinCache) {
             val index = stored.indexOfFirst { it.id == session.id }
@@ -82,6 +86,24 @@ class UwinDaoTest {
 
         assertEquals(1, clearCallCount)
         assertTrue(stored.isEmpty())
+    }
+
+    @Test
+    fun `insertIfDateAvailable inserts when no session exists on that date`() = runTest {
+        val inserted = dao.insertIfDateAvailable(session(1))
+
+        assertTrue(inserted)
+        assertEquals(listOf(1), stored.map { it.id })
+    }
+
+    @Test
+    fun `insertIfDateAvailable skips insert when a session already exists on that date`() = runTest {
+        stored.add(session(1))
+
+        val inserted = dao.insertIfDateAvailable(session(2))
+
+        assertFalse(inserted)
+        assertEquals(listOf(1), stored.map { it.id })
     }
 
     @Test

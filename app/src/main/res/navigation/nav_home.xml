@@ -459,6 +459,10 @@
             android:name="isAshaFamily"
             android:defaultValue="No"
             app:argType="string" />
+        <argument
+            android:name="linkBenId"
+            android:defaultValue="0L"
+            app:argType="long" />
         <action
             android:id="@+id/action_newHouseholdFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment"

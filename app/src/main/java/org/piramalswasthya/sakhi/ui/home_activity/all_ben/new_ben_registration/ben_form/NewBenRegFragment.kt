@@ -16,6 +16,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ListView
 import androidx.activity.OnBackPressedCallback
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,9 +50,11 @@ import org.piramalswasthya.sakhi.databinding.AlertConsentBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.LayoutMediaOptionsBinding
 import org.piramalswasthya.sakhi.databinding.LayoutViewMediaBinding
+import org.piramalswasthya.sakhi.configuration.BenRegFormDataset
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.network.NetworkResult
+import org.piramalswasthya.sakhi.model.BenBasicCache.Companion.getAgeFromDob
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.checkFileSize
@@ -81,6 +87,16 @@ class NewBenRegFragment : Fragment() {
         } else {
             navController.navigateUp()
         }
+    }
+
+    private fun navigateToNonHouseholdList() {
+        findNavController().navigate(
+            R.id.allBenFragment,
+            Bundle().apply { putInt("source", 5) },
+            androidx.navigation.NavOptions.Builder()
+                .setPopUpTo(R.id.allBenFragment, true)
+                .build()
+        )
     }
 
     private val isMitaninFlavor = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
@@ -350,6 +366,142 @@ class NewBenRegFragment : Fragment() {
             .show()
     }
 
+    private fun showLinkHouseholdDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.link_household)
+            .setItems(arrayOf(getString(R.string.link_to_existing_household), getString(R.string.create_new_household))) { dialog, which ->
+                dialog.dismiss()
+                if (which == 0) showHouseholdPicker() else {
+                    findNavController().navigate(R.id.newHouseholdFragment, Bundle().apply {
+                        putLong("linkBenId", viewModel.benIdFromArgs)
+                    })
+                }
+            }.show()
+    }
+
+    private fun showHouseholdPicker() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val households = viewModel.getLinkHouseholds()
+            val labels = households.map {
+                "Head: ${it.family?.familyHeadName.orEmpty()} (HH ID: ${it.householdId})"
+            }.toMutableList()
+            val container = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(32, 0, 32, 0)
+            }
+            val search = EditText(requireContext()).apply {
+                hint = getString(R.string.search_household_hint)
+                setSingleLine(true)
+            }
+            val list = ListView(requireContext())
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, labels)
+            list.adapter = adapter
+            container.addView(search)
+            container.addView(list, LinearLayout.LayoutParams(-1, 420))
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.select_household)
+                .setView(container)
+                .setNegativeButton(R.string.cancel, null)
+                .create()
+            search.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    val query = s?.toString()?.trim()?.lowercase().orEmpty()
+                    adapter.clear()
+                    adapter.addAll(households.filter {
+                        query.isBlank() || it.householdId.toString().contains(query) ||
+                            it.family?.familyHeadName.orEmpty().lowercase().contains(query)
+                    }.map { "Head: ${it.family?.familyHeadName.orEmpty()} (HH ID: ${it.householdId})" })
+                    adapter.notifyDataSetChanged()
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            })
+            list.setOnItemClickListener { _, _, position, _ ->
+                val selectedLabel = adapter.getItem(position) ?: return@setOnItemClickListener
+                val selected = households.firstOrNull { selectedLabel.endsWith("${it.householdId})") } ?: return@setOnItemClickListener
+                dialog.dismiss()
+                showRelationshipPicker(selected.householdId)
+            }
+            dialog.show()
+        }
+    }
+
+    private fun showRelationshipPicker(householdId: Long) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val ben = viewModel.getLinkBeneficiary() ?: return@launch
+            val members = viewModel.getLinkHouseholdMembers(householdId)
+            val hof = members.firstOrNull { it.familyHeadRelationPosition == 19 }
+            val base = when (ben.gender) {
+                Gender.FEMALE -> resources.getStringArray(R.array.nbr_relationship_to_head_female).toList()
+                else -> resources.getStringArray(R.array.nbr_relationship_to_head_male).toList()
+            }.toMutableList()
+            if (hof != null) {
+                val common = resources.getStringArray(R.array.nbr_relationship_to_head)
+                if (members.any { it.familyHeadRelationPosition == 2 }) base.remove(common[1])
+                if (members.any { it.familyHeadRelationPosition == 1 }) base.remove(common[0])
+                if (members.any { it.familyHeadRelationPosition == 5 }) base.remove(common[4])
+                if (members.any { it.familyHeadRelationPosition == 6 }) base.remove(common[5])
+                val hofHasSpouse = hof.isSpouseAdded || hof.genDetails?.maritalStatusId == 2 ||
+                    !hof.genDetails?.spouseName.isNullOrBlank() ||
+                    members.any { it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6 }
+                if (hofHasSpouse) {
+                    when (hof.gender) {
+                        Gender.MALE -> base.remove(common[4])
+                        Gender.FEMALE -> base.remove(common[5])
+                        else -> Unit
+                    }
+                }
+                if (hof.genDetails?.maritalStatusId == 1) {
+                    val unmarriedRelations = resources
+                        .getStringArray(R.array.nbr_relationship_to_head_unmarried_filter)
+                        .toSet()
+                    val spouseRelation = when (hof.gender) {
+                        Gender.FEMALE -> common[5]
+                        Gender.MALE -> common[4]
+                        else -> null
+                    }
+                    base.removeAll(spouseRelation?.let { unmarriedRelations - it } ?: unmarriedRelations)
+                }
+                if (hof.gender == Gender.MALE && ben.gender == Gender.MALE) base.remove(common[5])
+                if (hof.gender == Gender.FEMALE && ben.gender == Gender.FEMALE) {
+                    base.remove(common[4]); base.remove(common[18])
+                }
+                if (ben.dob > 0 && hof.dob > 0) {
+                    val hofSpouse = members.firstOrNull {
+                        it.familyHeadRelationPosition == 5 || it.familyHeadRelationPosition == 6
+                    }
+                    val hofAge = getAgeFromDob(hof.dob)
+                    val memberAge = getAgeFromDob(ben.dob)
+                    val hofAgeAtMarriage = hof.genDetails?.ageAtMarriage ?: 0
+                    val spouseAgeAtMarriage = hofSpouse?.genDetails?.ageAtMarriage
+                    base.removeAll {
+                        val relationPosition = common.indexOf(it) + 1
+                        !BenRegFormDataset.isRelationAgeEligible(
+                            relationPosition = relationPosition,
+                            memberAge = memberAge,
+                            hofAge = hofAge,
+                            spouseAge = hofSpouse?.dob?.takeIf { dob -> dob > 0 }?.let { getAgeFromDob(it) },
+                            hofAgeAtMarriage = hofAgeAtMarriage,
+                            spouseAgeAtMarriage = spouseAgeAtMarriage,
+                        )
+                    }
+                }
+            }
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.select_relationship_to_hof)
+                .setItems(base.toTypedArray()) { dialog, which ->
+                    val relation = base[which]
+                    val position = resources.getStringArray(R.array.nbr_relationship_to_head).indexOf(relation) + 1
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.linkToHousehold(householdId, relation, position)
+                        Toast.makeText(requireContext(), R.string.beneficiary_linked_successfully, Toast.LENGTH_SHORT).show()
+                        navigateToNonHouseholdList()
+                    }
+                    dialog.dismiss()
+                }.setNegativeButton(R.string.cancel, null).show()
+        }
+    }
+
     private val consentAlert by lazy {
         val alertBinding = AlertConsentBinding.inflate(layoutInflater, binding.root, false)
         alertBinding.textView4.text = resources.getString(R.string.consent_alert_title)
@@ -468,6 +620,7 @@ class NewBenRegFragment : Fragment() {
                 showPreview()
             }
         }
+        binding.btnLinkHousehold.setOnClickListener { showLinkHouseholdDialog() }
 
         viewModel.isDeath.observe(viewLifecycleOwner) { isDeath ->
             binding.fabEdit.visibility = if (isDeath) View.GONE else View.VISIBLE
@@ -476,6 +629,10 @@ class NewBenRegFragment : Fragment() {
             notIt?.let { recordExists ->
                 binding.fabEdit.visibility = if (recordExists) View.VISIBLE else View.GONE
                 binding.btnSubmit.visibility = if (recordExists) View.GONE else View.VISIBLE
+                binding.btnLinkHousehold.visibility =
+                    if (!recordExists && viewModel.hhId == 0L && viewModel.benIdFromArgs != 0L) {
+                        View.VISIBLE
+                    } else View.GONE
                 val adapter =
                     FormInputAdapter(imageClickListener = FormInputAdapter.ImageClickListener {
                         viewModel.setCurrentImageFormId(it)

@@ -329,7 +329,16 @@ class NewHouseholdFragment : Fragment() {
                         resources.getString(R.string.save_successful),
                         Toast.LENGTH_LONG
                     ).show()
-                    if (!editMode) {
+                    if (viewModel.isLinkMode) {
+                        Toast.makeText(requireContext(), getString(R.string.beneficiary_linked_successfully), Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(
+                            R.id.allBenFragment,
+                            Bundle().apply { putInt("source", 5) },
+                            androidx.navigation.NavOptions.Builder()
+                                .setPopUpTo(R.id.allBenFragment, true)
+                                .build()
+                        )
+                    } else if (!editMode) {
                         nextScreenAlert.setMessage(
                             resources.getString(
                                 R.string.add_head_of_family_message,

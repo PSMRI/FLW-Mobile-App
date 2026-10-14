@@ -32,7 +32,6 @@ interface ImmunizationDao {
     @Query("SELECT * FROM IMMUNIZATION WHERE beneficiaryId=:benId AND vaccineId =:vaccineId limit 1")
     suspend fun getImmunizationRecord(benId: Long, vaccineId: Int): ImmunizationCache?
 
-
     @Query("SELECT * FROM IMMUNIZATION WHERE  syncState = :syncState")
     suspend fun getUnsyncedImmunization(syncState: SyncState): List<ImmunizationCache>
 

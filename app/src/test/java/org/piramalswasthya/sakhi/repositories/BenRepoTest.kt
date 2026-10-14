@@ -3768,7 +3768,7 @@ class BenRepoTest : BaseRepositoryTest() {
             coEvery { benDao.getBen(any(), any()) } returns null
             coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
                     jsonResponse(benPullPayloadEmptyHouseholdAndBenDetails())
-            var upsertedHouseholds = -1
+            var upsertedHouseholds = 0
             coEvery { householdDao.upsert(*anyVararg()) } answers {
                 upsertedHouseholds = varargSize(arg<Any?>(0))
             }

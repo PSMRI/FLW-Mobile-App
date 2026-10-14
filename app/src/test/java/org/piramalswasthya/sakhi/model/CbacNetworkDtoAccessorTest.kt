@@ -75,7 +75,8 @@ class CbacNetworkDtoAccessorTest {
         CbacDepressedhopelessScore = 0,
         CbacCookingOilScore = 0,
         CbacFeelingDownScore = 0,
-        isRefer = true
+        isRefer = true,
+        createdDate = 0L
     )
 
     @Test

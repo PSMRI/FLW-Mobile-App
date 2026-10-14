@@ -609,6 +609,15 @@ class MaternalHealthRepo @Inject constructor(
                     maternalHealthDao.getSavedRecord(ancDTO.benId, ancDTO.ancVisit)
                 if (hasBen && ancCache == null) {
                     maternalHealthDao.saveRecord(ancDTO.toAncCache(context))
+                } else if (hasBen && ancCache != null &&
+                    (ancDTO.isHrpConfirmed != null || ancDTO.hrpIdentifiedBy != null)
+                ) {
+                    maternalHealthDao.updateANC(
+                        ancCache.copy(
+                            hrpConfirmed = ancDTO.isHrpConfirmed ?: ancCache.hrpConfirmed,
+                            hrpConfirmedBy = ancDTO.hrpIdentifiedBy ?: ancCache.hrpConfirmedBy
+                        )
+                    )
                 }
                 if (hasBen && ancDTO.isBabyDelivered == true) {
                     ben?.let { benRecord ->
