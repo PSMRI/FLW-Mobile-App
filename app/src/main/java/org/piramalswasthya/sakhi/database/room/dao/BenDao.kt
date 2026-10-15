@@ -352,26 +352,31 @@ interface BenDao {
 
     @Transaction
     @Query(
-                "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
-                "LEFT JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
-                "LEFT JOIN ncd_referal_all_visit ON BEN_BASIC_CACHE.benId = ncd_referal_all_visit.benId " +
-                "WHERE BEN_BASIC_CACHE.villageId = :selectedVillage " +
-                "AND BEN_BASIC_CACHE.isDeactivate = 0 AND BEN_BASIC_CACHE.isDeath = 0 " +
+                "SELECT DISTINCT ben.*, CASE WHEN BENEFICIARY.householdId = 0 " +
+                "AND TRIM(COALESCE(BENEFICIARY.livingPlace, '')) IN ('Prison', 'कारागार', 'কারাগার', 'কাৰাগাৰ') " +
+                "THEN 1 ELSE 0 END AS isPrisonResident FROM BEN_BASIC_CACHE ben " +
+                "LEFT JOIN TB_SCREENING ON ben.benId = TB_SCREENING.benId " +
+                "LEFT JOIN ncd_referal_all_visit referral ON ben.benId = referral.benId " +
+                "LEFT JOIN BENEFICIARY ON BENEFICIARY.beneficiaryId = ben.benId " +
+                "WHERE ben.villageId = :selectedVillage " +
+                "AND ben.isDeactivate = 0 AND ben.isDeath = 0 " +
                 "AND (" +
                 "(TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '[]') " +
-                "OR EXISTS (SELECT 1 FROM CBAC WHERE CBAC.benId = BEN_BASIC_CACHE.benId " +
+                "OR EXISTS (SELECT 1 FROM CBAC WHERE CBAC.benId = ben.benId " +
                 "AND (CBAC.cbac_smoke_posi IN (2, 3) " +
                 "OR CBAC.cbac_alcohol_posi = 2 " +
                 "OR CBAC.cbac_fuel_used_posi BETWEEN 1 AND 5 " +
                 "OR CBAC.cbac_occupational_exposure_posi = 3)) " +
-                "OR BEN_BASIC_CACHE.reproductiveStatusId IN (2, 3) " +
-                "OR (BEN_BASIC_CACHE.dob IS NOT NULL AND " +
-                "CAST((strftime('%s','now') - BEN_BASIC_CACHE.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +
-                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%hypertension%' " +
-                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%diabetes%'" +
-                ") " + BenListOrder.LIFO
+                "OR ben.reproductiveStatusId IN (2, 3) " +
+                "OR (ben.dob IS NOT NULL AND " +
+                "CAST((strftime('%s','now') - ben.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +
+                "OR LOWER(COALESCE(referral.diagnosisCodes, '')) LIKE '%hypertension%' " +
+                "OR LOWER(COALESCE(referral.diagnosisCodes, '')) LIKE '%diabetes%' " +
+                "OR (BENEFICIARY.householdId = 0 " +
+                "AND TRIM(COALESCE(BENEFICIARY.livingPlace, '')) IN ('Prison', 'कारागार', 'কারাগার', 'কাৰাগাৰ'))" +
+                ") " + BenListOrder.LIFO_BEN
     )
     fun getAllTbScreenedRiskFactorBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
 
