@@ -89,7 +89,7 @@ class SakhiApplication : Application(), Configuration.Provider {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
             // clearMemory() must run on the main thread; Application trim callbacks do.
             Glide.get(this).clearMemory()
         }
