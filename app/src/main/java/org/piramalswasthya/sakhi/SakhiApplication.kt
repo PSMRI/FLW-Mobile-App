@@ -3,12 +3,14 @@ package org.piramalswasthya.sakhi
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentCallbacks2
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.bumptech.glide.Glide
 import com.google.firebase.FirebaseApp
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
@@ -82,6 +84,14 @@ class SakhiApplication : Application(), Configuration.Provider {
             } catch (e: Exception) {
                 Timber.e(e, "Failed to recover orphaned SYNCING states")
             }
+        }
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            // clearMemory() must run on the main thread; Application trim callbacks do.
+            Glide.get(this).clearMemory()
         }
     }
 
