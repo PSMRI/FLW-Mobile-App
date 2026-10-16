@@ -172,7 +172,7 @@ class CreateAbhaFragment : Fragment() {
                     binding.imageView.setImageResource(R.drawable.ic_check_circle)
                     binding.textView7.text = getString(R.string.str_abha_successfully_created)
                     binding.clDownloadAbha.visibility = View.VISIBLE
-                    binding.llAbhaBenMapped.visibility = View.VISIBLE
+//                    binding.llAbhaBenMapped.visibility = View.VISIBLE
 
                 }
             }

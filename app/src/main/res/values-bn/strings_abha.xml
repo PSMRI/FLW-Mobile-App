@@ -62,7 +62,15 @@
     <string name="offline">অফলাইন</string>
     <string name="check_circle">চেক</string>
 
-    <string name="validate_fp">FP যাচাই করুন</string>
+    <string name="validate_fp">মুখ যাচাই করুন</string>
+    <string name="please_wait">অনুগ্রহ করে অপেক্ষা করুন…</string>
+    <string name="initializing">শুরু হচ্ছে</string>
+    <string name="processing">প্রক্রিয়াজাতকরণ</string>
+    <string name="face_pending">মুখমণ্ডল যাচাইকরণ: <b>অপেক্ষমান</b>\nএতে কিছুটা সময় লাগতে পারে।</string>
+    <string name="face_verified">মুখমণ্ডল যাচাইকরণ: <b>যাচাইকৃত</b>\nএতে কিছুটা সময় লাগতে পারে।</string>
+    <string name="face_failed">মুখমণ্ডল যাচাইকরণ: <b>ব্যর্থ</b>\nপরে আবার চেষ্টা করুন</string>
+    <string name="face_success">মুখমণ্ডল যাচাইকরণ: <b>সাফল্য</b></string>
+    <string name="message">বার্তা</string>
     <string name="data_saved_successfully">ডাটা সফলভাবে সংরক্ষিত হয়েছে</string>
     <string name="data_already_exist">ডাটা ইতিমধ্যে বিদ্যমান</string>
     <string name="generating_abha_for">লিখুন</string>
