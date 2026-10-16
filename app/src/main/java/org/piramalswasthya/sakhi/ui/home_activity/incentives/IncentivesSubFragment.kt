@@ -320,8 +320,10 @@ class IncentivesSubFragment : Fragment() {
             if (origWidth <= 0 || origHeight <= 0) return@withContext null
 
             var inSampleSize = 1
-            while (origWidth / inSampleSize > MAX_DIMENSION ||
-                origHeight / inSampleSize > MAX_DIMENSION
+            while (maxOf(
+                    origWidth / (inSampleSize * 2),
+                    origHeight / (inSampleSize * 2)
+                ) >= MAX_DIMENSION
             ) {
                 inSampleSize *= 2
             }
