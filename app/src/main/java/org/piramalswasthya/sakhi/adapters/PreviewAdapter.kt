@@ -46,6 +46,7 @@ class PreviewAdapter(
                     .centerCrop()
                     .into(holder.ivImage)
             } else {
+                Glide.with(holder.ivImage).clear(holder.ivImage)
                 holder.ivImage.setImageResource(R.drawable.ic_person)
             }
         } else {
