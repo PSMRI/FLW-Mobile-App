@@ -21,6 +21,14 @@ class PreviewAdapter(
         val tvLabel: TextView = view.findViewById(R.id.tvLabel)
         val tvValue: TextView = view.findViewById(R.id.tvValue)
         val ivImage: ImageView = view.findViewById(R.id.ivPreviewImage)
+        var hasGlideImageRequest = false
+
+        fun clearGlideImageRequest() {
+            if (hasGlideImageRequest) {
+                Glide.with(ivImage).clear(ivImage)
+                hasGlideImageRequest = false
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreviewVH {
@@ -45,12 +53,13 @@ class PreviewAdapter(
                     .error(R.drawable.ic_person)
                     .centerCrop()
                     .into(holder.ivImage)
+                holder.hasGlideImageRequest = true
             } else {
-                Glide.with(holder.ivImage).clear(holder.ivImage)
+                holder.clearGlideImageRequest()
                 holder.ivImage.setImageResource(R.drawable.ic_person)
             }
         } else {
-            if (imageLoader == null) Glide.with(holder.ivImage).clear(holder.ivImage)
+            if (imageLoader == null) holder.clearGlideImageRequest()
             holder.ivImage.visibility = View.GONE
             holder.tvValue.visibility = View.VISIBLE
             holder.tvValue.text = it.value
@@ -60,7 +69,7 @@ class PreviewAdapter(
     override fun getItemCount(): Int = items.size
 
     override fun onViewRecycled(holder: PreviewVH) {
-        if (imageLoader == null) Glide.with(holder.ivImage).clear(holder.ivImage)
+        if (imageLoader == null) holder.clearGlideImageRequest()
         super.onViewRecycled(holder)
     }
 }
