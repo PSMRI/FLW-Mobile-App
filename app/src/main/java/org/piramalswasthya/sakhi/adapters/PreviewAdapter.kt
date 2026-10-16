@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.PreviewItem
 
 class PreviewAdapter(
     private val items: List<PreviewItem>,
-    private val imageLoader: ((ImageView, Uri?) -> Unit)? = null // injectable for production (Glide/Picasso)
+    private val imageLoader: ((ImageView, Uri?) -> Unit)? = null
 ) : RecyclerView.Adapter<PreviewAdapter.PreviewVH>() {
 
     class PreviewVH(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,17 +35,21 @@ class PreviewAdapter(
             // show image view, hide text value
             holder.tvValue.visibility = View.GONE
             holder.ivImage.visibility = View.VISIBLE
-            imageLoader?.invoke(holder.ivImage, it.imageUri) ?: run {
-                // Minimal default loader (URI -> ImageView). Use Glide/Picasso in prod.
-                try {
-                    it.imageUri?.let { uri ->
-                        holder.ivImage.setImageURI(uri)
-                    } ?: holder.ivImage.setImageResource(android.R.color.darker_gray)
-                } catch (e: Exception) {
-                    holder.ivImage.setImageResource(android.R.color.darker_gray)
-                }
+            val uri = it.imageUri
+            if (imageLoader != null) {
+                imageLoader.invoke(holder.ivImage, uri)
+            } else if (uri != null) {
+                Glide.with(holder.ivImage)
+                    .load(uri)
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .centerCrop()
+                    .into(holder.ivImage)
+            } else {
+                holder.ivImage.setImageResource(R.drawable.ic_person)
             }
         } else {
+            if (imageLoader == null) Glide.with(holder.ivImage).clear(holder.ivImage)
             holder.ivImage.visibility = View.GONE
             holder.tvValue.visibility = View.VISIBLE
             holder.tvValue.text = it.value
@@ -52,4 +57,9 @@ class PreviewAdapter(
     }
 
     override fun getItemCount(): Int = items.size
+
+    override fun onViewRecycled(holder: PreviewVH) {
+        if (imageLoader == null) Glide.with(holder.ivImage).clear(holder.ivImage)
+        super.onViewRecycled(holder)
+    }
 }

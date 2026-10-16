@@ -5,7 +5,6 @@
     import android.content.ActivityNotFoundException
     import android.content.Context
     import android.content.Intent
-    import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
     import android.net.Uri
@@ -20,6 +19,7 @@
     import androidx.core.content.ContextCompat
     import androidx.core.content.FileProvider
     import androidx.recyclerview.widget.RecyclerView
+    import com.bumptech.glide.Glide
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
     import kotlinx.coroutines.CoroutineScope
@@ -105,6 +105,7 @@
         }
 
         override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clearImageRequests()
             holder.clear()
             super.onViewRecycled(holder)
         }
@@ -121,8 +122,11 @@
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
             private val viewHolderScope = MainScope()
             private var muacDebounceJob: Job? = null
+            private val imageViews = mutableSetOf<ImageView>()
 
             private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
+                imageViews.add(imageView)
+                Glide.with(imageView).clear(imageView)
                 if (filePath.isBlank()) {
                     imageView.setImageResource(R.drawable.ic_doc_upload)
                     return
@@ -183,8 +187,11 @@
                             try {
                                 val base64String = filePath.substringAfter(",", filePath)
                                 val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-                                imageView.setImageBitmap(bitmap)
+                                Glide.with(imageView)
+                                    .load(decodedBytes)
+                                    .placeholder(R.drawable.ic_person)
+                                    .error(R.drawable.ic_person)
+                                    .into(imageView)
                             } catch (e: Exception) {
                                 Timber.e(e, "Failed to decode base64 image")
                                 imageView.setImageResource(R.drawable.ic_person)
@@ -193,7 +200,11 @@
 
                         else -> {
                             val uri = Uri.parse(filePath)
-                            imageView.setImageURI(uri)
+                            Glide.with(imageView)
+                                .load(uri)
+                                .placeholder(R.drawable.ic_person)
+                                .error(R.drawable.ic_person)
+                                .into(imageView)
                         }
                     }
                 } catch (e: Exception) {
@@ -206,6 +217,13 @@
                 muacDebounceJob?.cancel()
                 muacDebounceJob = null
                 viewHolderScope.coroutineContext.cancelChildren()
+            }
+
+            fun clearImageRequests() {
+                imageViews.forEach { imageView ->
+                    Glide.with(imageView).clear(imageView)
+                }
+                imageViews.clear()
             }
 
             fun bind(field: FormField) {
@@ -232,6 +250,7 @@
                 }
 
 
+                clearImageRequests()
                 inputContainer.removeAllViews()
 
                 fun addWithError(inputView: View, field: FormField) {
