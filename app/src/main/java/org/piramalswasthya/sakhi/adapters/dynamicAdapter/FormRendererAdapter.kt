@@ -228,6 +228,7 @@
 
             fun bind(field: FormField) {
 
+                clearImageRequests()
                 itemView.visibility = View.VISIBLE
                 if (!field.visible) {
                     itemView.visibility = View.GONE
@@ -250,7 +251,6 @@
                 }
 
 
-                clearImageRequests()
                 inputContainer.removeAllViews()
 
                 fun addWithError(inputView: View, field: FormField) {
