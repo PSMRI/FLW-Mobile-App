@@ -646,9 +646,13 @@ object HelperUtil {
             while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
             val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
             val bmp = appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts2) } ?: return copyToTemp(uri, nameHint, appContext)
-            val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
-            FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
-            temp
+            try {
+                val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
+                FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
+                temp
+            } finally {
+                bmp.recycle()
+            }
         } catch (_: Exception) { null }
     }
 

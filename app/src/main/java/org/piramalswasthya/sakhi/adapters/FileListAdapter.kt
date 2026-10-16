@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.LayoutFileViewBinding
 
@@ -29,7 +30,17 @@ class FileListAdapter(private var images: MutableList<Uri>) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: FileVH, position: Int) {
         val file = images.get(position)
-        holder.binding.ivPreview.setImageURI(file)
+        Glide.with(holder.binding.ivPreview)
+            .load(file)
+            .placeholder(R.drawable.img_assam_logo)
+            .error(R.drawable.img_assam_logo)
+            .centerCrop()
+            .into(holder.binding.ivPreview)
+    }
+
+    override fun onViewRecycled(holder: FileVH) {
+        Glide.with(holder.binding.ivPreview).clear(holder.binding.ivPreview)
+        super.onViewRecycled(holder)
     }
 
     class FileVH(var binding: LayoutFileViewBinding) : RecyclerView.ViewHolder(binding.root) {
