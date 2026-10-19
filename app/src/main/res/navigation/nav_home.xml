@@ -1158,7 +1158,7 @@
     <fragment
         android:id="@+id/TBConfirmedListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.list.TBConfirmedListFragment"
-        android:label="@string/tb_confirmed_list">
+        android:label="@string/tb_confirmed_cases">
         <action
             android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
             app:destination="@id/TBConfirmedFormFragment"/>
