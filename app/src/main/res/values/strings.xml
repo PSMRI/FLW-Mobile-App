@@ -536,6 +536,7 @@
     <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
     <string name="tb_suspected_ncd_case">Suspected NCD Case</string>
     <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_cases">Confirmed TB cases</string>
     <string name="tb_confirmed_form">TB Confirmed Form</string>
 
     <string name="maleria_screening_form">Malaria Form</string>

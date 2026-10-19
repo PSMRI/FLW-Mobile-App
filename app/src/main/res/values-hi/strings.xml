@@ -16,7 +16,7 @@
     <string name="notification_sync_channel_id">sakhi-sync0</string>
 <string name="long_to_string">%d</string>
     <string name="preview_title">पूर्वावलोकन</string>
-
+    <string name="tb_confirmed_cases">पुष्ट टीबी के मामले</string>
     <string name="tv_reg_date_ph">पंजीकरण तिथि</string>
     <string name="reg_date">पंजी. तिथि</string>
     <string name="tv_ben_name_ph">लाभार्थी का नाम</string>

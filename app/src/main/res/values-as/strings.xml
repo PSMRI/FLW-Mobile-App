@@ -1126,6 +1126,7 @@
     <string name="anc">ANC</string>
     <string name="ec">EC</string>
     <string name="tb_confirmed_list">নিশ্চিত টিবি তালিকা</string>
+    <string name="tb_confirmed_cases">নিশ্চিত টিবি ৰোগৰ ঘটনা</string>
     <string name="tb_confirmed_form">নিশ্চিত টিবি ফৰ্ম</string>
     <string name="maleria_screening_form">মেলেৰিয়া ফৰ্ম</string>
     <string name="kala_screening_form">কালা আজাৰ ফৰ্ম</string>
