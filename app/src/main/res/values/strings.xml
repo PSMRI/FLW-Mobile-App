@@ -530,7 +530,7 @@
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
-    <string name="tb_suspected_list">Suspected TB cases</string>
+    <string name="tb_suspected_list">Presumptive TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
     <string name="tb_suspected_copd_case">Suspected COPD case</string>
     <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
@@ -544,7 +544,7 @@
     <string name="filaria_screening_form">Filaria Form</string>
     <string name="leprosy_screening_form">Leprosy Form</string>
     <string name="follow_up_form">Follow-up  Form</string>
-    <string name="tb_suspected_form">Suspected TB case</string>
+    <string name="tb_suspected_form">Presumptive TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
     <string name="delivery_outcome_list">Delivery Outcome List</string>

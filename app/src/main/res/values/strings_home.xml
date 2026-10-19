@@ -117,7 +117,7 @@
     <string name="icon_title_ncd_non_eligible_list">NCD Non-Priority List</string>
     <string name="icon_title_ncd_priority_list">NCD Priority List</string>
     <string name="icon_title_ncd_tb_screening">TB Screening</string>
-    <string name="icon_title_ncd_tb_suspected">Suspected TB cases</string>
+    <string name="icon_title_ncd_tb_suspected">Presumptive TB cases</string>
     <string name="icon_title_ncd_tb_confirmed">Confirmed TB cases</string>
     <string name="icon_title_ncd_tbtpreventive_treatment">Tuberculosis preventive Treatment</string>
     <string name="icon_title_ncd_vulnerable_treatment">vulnerable Population</string>

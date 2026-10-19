@@ -425,12 +425,12 @@
     <string name="eligible_couple_tracking_list">लक्ष्य दम्पति ट्रैकिंग सूची</string>
     <string name="eligible_couple_tracking_form">लक्ष्य दम्पति ट्रैकिंग / फॉलो-अप फॉर्म</string>
     <string name="tb_screening_list">टीबी स्क्रीनिंग सूची</string>
-    <string name="tb_suspected_list">संदिग्ध टीबी केस</string>
+    <string name="tb_suspected_list">संभावित टीबी केस</string>
     <string name="tb_screening_form">टीबी स्क्रीनिंग फॉर्म</string>
     <string name="tb_suspected_leprosy_case">कुष्ठ रोग का संदिग्ध मामला</string>
     <string name="tb_suspected_ncd_case">एनसीडी का संदिग्ध मामला</string>
     <string name="tb_suspected_copd_case">सीओपीडी का संदिग्ध मामला</string>
-    <string name="tb_suspected_form">संदिग्ध टीबी मामला</string>
+    <string name="tb_suspected_form">संभावित टीबी मामला</string>
     <string name="mother_immunization">माँ का टीकाकरण</string>
     <string name="delivery_outcome">प्रसव परिणाम</string>
     <string name="delivery_outcome_list">प्रसव परिणाम सूची</string>
