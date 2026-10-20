@@ -182,9 +182,9 @@
     <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
     <string name="eligible_couple_tracking_form">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং ফৰ্ম</string>
     <string name="tb_screening_list">TB স্ক্ৰীনিং তালিকা</string>
-    <string name="tb_suspected_list">TB সন্দেহভাৱিত তালিকা</string>
+    <string name="tb_suspected_list">TB অনুমানিক তালিকা</string>
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
-    <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
+    <string name="tb_suspected_form">TB অনুমানিক ৰূপ</string>
     <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
     <string name="delivery_outcome">বিতৰণৰ ফলাফল</string>
     <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
