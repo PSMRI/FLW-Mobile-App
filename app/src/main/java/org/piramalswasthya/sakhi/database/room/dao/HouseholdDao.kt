@@ -26,7 +26,9 @@ interface HouseholdDao {
         updateStatus: Int
     )
 
-    @Query("SELECT * FROM HOUSEHOLD WHERE isDraft = 1 LIMIT 1")
+    // Household ID 0 is the shared parent row for non-household beneficiaries,
+    // not a resumable household-registration draft.
+    @Query("SELECT * FROM HOUSEHOLD WHERE isDraft = 1 AND householdId != 0 LIMIT 1")
     suspend fun getDraftHousehold(): HouseholdCache?
 
     @Query("SELECT * FROM HOUSEHOLD WHERE isDraft = 0 and loc_village_Id = :selectedVillage ORDER BY MAX(IFNULL(updatedTimeStamp, 0), IFNULL(createdTimeStamp, 0)) DESC, householdId DESC")
@@ -44,13 +46,17 @@ interface HouseholdDao {
     @Query("SELECT * FROM HOUSEHOLD WHERE householdId =:hhId LIMIT 1")
     suspend fun getHousehold(hhId: Long): HouseholdCache?
 
-    @Query("DELETE  FROM HOUSEHOLD WHERE isDraft=1")
+    // Never delete the household-0 placeholder: BENEFICIARY references it with
+    // ON DELETE CASCADE, and all non-household beneficiaries use that parent.
+    @Query("DELETE FROM HOUSEHOLD WHERE isDraft = 1 AND householdId != 0")
     suspend fun deleteDraftHousehold()
 
     @Query("UPDATE HOUSEHOLD SET processed = 'P' WHERE householdId in(:hhId)")
     suspend fun householdSyncedWithServer(vararg hhId: Long)
 
-    @Query("UPDATE HOUSEHOLD SET householdId  = :newId WHERE householdId = :oldId ")
+    // ID 0 is shared by every non-household beneficiary. Updating its primary
+    // key would cascade those beneficiaries into a newly registered household.
+    @Query("UPDATE HOUSEHOLD SET householdId = :newId WHERE householdId = :oldId AND householdId != 0")
     suspend fun substituteHouseholdId(oldId: Long, newId: Long)
 
     @Query("SELECT * FROM household WHERE isDraft = 0 AND processed = 'N'")

@@ -781,7 +781,7 @@ class IconDataset @Inject constructor(
 
     fun getCDDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__ncd_eligibility,
+            R.drawable.tb_screening,
             resources.getString(R.string.icon_title_ncd_tb_screening),
             recordsRepo.tbScreeningListCount,
             CdFragmentDirections.actionCdFragmentToAllHouseHoldDiseaseControlFragment(
@@ -789,25 +789,25 @@ class IconDataset @Inject constructor(
             )
 //            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
         ), Icon(
-            R.drawable.ic__death,
+            R.drawable.healthicons__viral_lung_infection_outline,
             resources.getString(R.string.icon_title_ncd_tb_suspected),
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
 
         ), Icon(
-            icon = R.drawable.ic__death,
+            icon = R.drawable.healthicons__tb_outline,
             title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
             recordsRepo.tbConfirmedListCount,
             CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
         ),
         Icon(
-            icon = R.drawable.ic__abha_logo_v1_24,
-            title = resources.getString(R.string.icon_title_ncd_tbtpreventive_treatment),
+            icon = R.drawable.covid__vaccine_protection_medicine_pill,
+            title = resources.getString(R.string.icon_title_ncd_tbtpreventive),
             recordsRepoTb.tptListCount,
             CdFragmentDirections.actionCdFragmentToTPTListFragment()
         ),
         Icon(
-            icon = R.drawable.ic_crash,
+            icon = R.drawable.healthicons__health_vulnerability_through_social_determinants,
             title = resources.getString(R.string.icon_title_ncd_vulnerable_treatment),
             recordsRepo.tbScreeningRiskfactorListforVulneravilityCount,
             CdFragmentDirections.actionCdFragmentToVulnerablePopulationListFragment()

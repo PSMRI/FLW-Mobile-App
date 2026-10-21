@@ -20,6 +20,9 @@ class UwinDaoTest {
             stored.add(session)
         }
 
+        override suspend fun hasSessionOnDate(sessionDate: Long): Boolean =
+            stored.any { it.sessionDate == sessionDate }
+
         override suspend fun update(session: UwinCache) {
             val index = stored.indexOfFirst { it.id == session.id }
             if (index >= 0) stored[index] = session

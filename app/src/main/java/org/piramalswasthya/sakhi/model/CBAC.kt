@@ -231,7 +231,8 @@ data class CbacCache(
             CbacDepressedhopelessScore = cbac_feeling_down_posi,
             totalScore = total_score,
             CbacFeelingDownScore = cbac_feeling_down_score,
-            isRefer = isReffered!!
+            isRefer = isReffered!!,
+            createdDate = fillDate
         )
     }
 
@@ -644,6 +645,7 @@ data class CbacPostNew(
     val CbacCookingOilScore: Int,
     val CbacFeelingDownScore: Int,
     val isRefer: Boolean,
+    val createdDate:Long
 )
 
 

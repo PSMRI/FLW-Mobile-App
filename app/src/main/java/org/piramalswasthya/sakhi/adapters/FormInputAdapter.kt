@@ -1671,4 +1671,5 @@ private fun FormElement.hasInvertedDateRange(): Boolean {
     val lowerBound = min
     val upperBound = max
     return lowerBound != null && upperBound != null && lowerBound > upperBound
+
 }
