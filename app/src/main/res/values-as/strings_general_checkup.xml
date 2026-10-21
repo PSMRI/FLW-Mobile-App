@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Disease Control (3-tile layout) -->
+    <string name="icon_title_general_checkup">সাধাৰণ স্বাস্থ্য পৰীক্ষা</string>
+    <string name="icon_title_non_communicable">অসংক্ৰামক ৰোগসমূহ</string>
+
+    <!-- General Check-up list -->
+    <string name="gc_search_hint">নাম বা আইডিৰে সন্ধান কৰক</string>
+    <string name="gc_earlier_checkups">পূৰ্বৰ স্বাস্থ্য পৰীক্ষা</string>
+    <string name="gc_add_checkup">স্বাস্থ্য পৰীক্ষা যোগ কৰক</string>
+
+    <!-- General Check-up form -->
+    <string name="gc_earlier_checkups_count">পূৰ্বৰ স্বাস্থ্য পৰীক্ষা (%1$d)</string>
+    <string name="gc_no_earlier_checkups">পূৰ্বৰ কোনো স্বাস্থ্য পৰীক্ষা নাই।</string>
+    <string name="gc_date_hint">আজি বা এমাহ আগলৈকে। ভৱিষ্যতৰ তাৰিখ নহয়।</string>
+    <string name="gc_pointer_cd">যক্ষ্মা, মেলেৰিয়া, কুষ্ঠ বা আন সংক্ৰামক ৰোগ বিচাৰিছে নেকি? সংক্ৰামক ৰোগসমূহ ব্যৱহাৰ কৰক।</string>
+    <string name="gc_pointer_ncd">উচ্চ ৰক্তচাপ, মধুমেহ, COPD বা কৰ্কট ৰোগৰ স্ক্ৰীনিং? অসংক্ৰামক ৰোগসমূহ ব্যৱহাৰ কৰক।</string>
+    <string name="gc_other_required">বাধ্যতামূলক। সমস্যাটোৰ নাম নিলিখালৈকে আপুনি ৰেফাৰ কৰিব নোৱাৰে।</string>
+    <string name="gc_priority_emergency">অগ্ৰাধিকাৰ: জৰুৰীকালীন।\nতৎক্ষণাত ৰেফাৰ কৰক।</string>
+    <string name="gc_priority_routine">অগ্ৰাধিকাৰ: সাধাৰণ</string>
+    <string name="gc_refer_to_facility">স্বাস্থ্য কেন্দ্ৰলৈ ৰেফাৰ কৰক</string>
+    <string name="gc_err_type">সমস্যাৰ প্ৰকাৰ বাছনি কৰক।</string>
+    <string name="gc_err_problem">অন্ততঃ এটা সমস্যা বাছনি কৰক।</string>
+    <string name="gc_err_other_length">নামটো %1$d টা আখৰ বা তাতকৈ কমত লিখক।</string>
+    <string name="gc_form_unavailable">স্বাস্থ্য পৰীক্ষাৰ ফৰ্মখন এতিয়াও ডাউনল\'ড হোৱা নাই। ইণ্টাৰনেটৰ সৈতে সংযোগ কৰি পুনৰ চেষ্টা কৰক।</string>
+    <string name="gc_form_invalid">চাৰ্ভাৰৰ পৰা পোৱা স্বাস্থ্য পৰীক্ষাৰ ফৰ্মখন অসম্পূৰ্ণ, সেয়ে ইয়াক পূৰণ কৰিব নোৱাৰি। অনুগ্ৰহ কৰি আপোনাৰ চুপাৰভাইজাৰক জনাওক বা পিছত পুনৰ চেষ্টা কৰক।</string>
+    <string name="gc_retry">পুনৰ চেষ্টা কৰক</string>
+
+    <!-- Routing to owner modules (FR6) -->
+    <string name="gc_route_title">আন এটা মডিউলে ইয়াক চম্ভালে</string>
+    <string name="gc_route_msg">%1$s %2$s ত চম্ভালা হয়। তাতে আগবাঢ়ক। এটা ঘটনাত এটাই ৰেফাৰেল হয়, সেয়ে সাধাৰণ স্বাস্থ্য পৰীক্ষাৰ পৰা দ্বিতীয় ৰেফাৰেল কৰা নহয়।</string>
+    <string name="gc_route_continue">%1$s ত আগবাঢ়ক</string>
+    <string name="gc_route_stay">ইয়াতে থাকক</string>
+    <string name="gc_module_maternal">মাতৃ স্বাস্থ্য</string>
+    <string name="gc_module_child">শিশু যত্ন</string>
+    <string name="gc_module_ecl">যোগ্য দম্পতিৰ তালিকা</string>
+    <string name="gc_module_cataract">ছানি ৰেফাৰেল</string>
+
+    <!-- Refer to Facility form -->
+    <string name="gc_priority">অগ্ৰাধিকাৰ</string>
+    <string name="gc_priority_emergency_short">জৰুৰীকালীন – তৎক্ষণাত ৰেফাৰ কৰক</string>
+    <string name="gc_priority_routine_short">সাধাৰণ</string>
+    <string name="gc_referral_submitted">ৰেফাৰেল জমা দিয়া হ\'ল।</string>
+
+    <string-array name="gc_referral_facility">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>মেডিকেল কলেজ</item>
+        <item>জিলা চিকিৎসালয়</item>
+    </string-array>
+
+    <!-- Duplicate referral (BRD §8) -->
+    <string name="gc_dup_title">এই মাহত ইতিমধ্যে ৰেফাৰ কৰা হৈছে</string>
+    <string name="gc_dup_msg">এই ব্যক্তিজনক এই সমস্যাৰ বাবে %1$s তাৰিখে ইতিমধ্যে ৰেফাৰ কৰা হৈছে। প্ৰতিজন ব্যক্তি, সমস্যা আৰু মাহত এটাই ৰেফাৰেল।</string>
+    <string name="gc_dup_view">HWC ৰেফাৰেলত চাওক</string>
+    <string name="gc_save_failed">স্বাস্থ্য পৰীক্ষা ছেভ কৰিব পৰা নগ\'ল। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
+</resources>

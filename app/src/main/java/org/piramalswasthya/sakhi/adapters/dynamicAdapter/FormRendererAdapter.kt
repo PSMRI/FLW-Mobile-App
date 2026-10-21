@@ -311,6 +311,7 @@
                                 text = option.label
                                 isChecked = selectedValues.contains(option.value)
                                 isEnabled = !isViewOnly && field.isEditable
+                                if (option.highlight) setTextColor(ContextCompat.getColor(context, R.color.gc_emergency))
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -784,7 +785,8 @@
                                                 null -> today
                                                 else -> today
                                             }
-                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID || formId == FormConstants.ANC_FORM_ID ||
+                                        formId == FormConstants.GENERAL_CHECKUP_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Disease Control (3-tile layout) -->
+    <string name="icon_title_general_checkup">সাধারণ স্বাস্থ্য পরীক্ষা</string>
+    <string name="icon_title_non_communicable">অসংক্রামক রোগসমূহ</string>
+
+    <!-- General Check-up list -->
+    <string name="gc_search_hint">নাম বা আইডি দিয়ে খুঁজুন</string>
+    <string name="gc_earlier_checkups">আগের স্বাস্থ্য পরীক্ষা</string>
+    <string name="gc_add_checkup">স্বাস্থ্য পরীক্ষা যোগ করুন</string>
+
+    <!-- General Check-up form -->
+    <string name="gc_earlier_checkups_count">আগের স্বাস্থ্য পরীক্ষা (%1$d)</string>
+    <string name="gc_no_earlier_checkups">আগের কোনো স্বাস্থ্য পরীক্ষা নেই।</string>
+    <string name="gc_date_hint">আজ বা এক মাস আগে পর্যন্ত। ভবিষ্যতের তারিখ নয়।</string>
+    <string name="gc_pointer_cd">যক্ষ্মা, ম্যালেরিয়া, কুষ্ঠ বা অন্য সংক্রামক রোগ খুঁজছেন? সংক্রামক রোগসমূহ ব্যবহার করুন।</string>
+    <string name="gc_pointer_ncd">উচ্চ রক্তচাপ, ডায়াবেটিস, COPD বা ক্যান্সার স্ক্রীনিং? অসংক্রামক রোগসমূহ ব্যবহার করুন।</string>
+    <string name="gc_other_required">বাধ্যতামূলক। সমস্যার নাম না লেখা পর্যন্ত আপনি রেফার করতে পারবেন না।</string>
+    <string name="gc_priority_emergency">অগ্রাধিকার: জরুরি।\nঅবিলম্বে রেফার করুন।</string>
+    <string name="gc_priority_routine">অগ্রাধিকার: সাধারণ</string>
+    <string name="gc_refer_to_facility">স্বাস্থ্য কেন্দ্রে রেফার করুন</string>
+    <string name="gc_err_type">সমস্যার ধরন নির্বাচন করুন।</string>
+    <string name="gc_err_problem">অন্তত একটি সমস্যা নির্বাচন করুন।</string>
+    <string name="gc_err_other_length">নামটি %1$d অক্ষর বা তার কমে লিখুন।</string>
+    <string name="gc_form_unavailable">স্বাস্থ্য পরীক্ষার ফর্মটি এখনও ডাউনলোড হয়নি। ইন্টারনেটে সংযোগ করে আবার চেষ্টা করুন।</string>
+    <string name="gc_form_invalid">সার্ভার থেকে পাওয়া স্বাস্থ্য পরীক্ষার ফর্মটি অসম্পূর্ণ, তাই এটি পূরণ করা যাবে না। অনুগ্রহ করে আপনার সুপারভাইজারকে জানান বা পরে আবার চেষ্টা করুন।</string>
+    <string name="gc_retry">আবার চেষ্টা করুন</string>
+
+    <!-- Routing to owner modules (FR6) -->
+    <string name="gc_route_title">অন্য একটি মডিউল এটি পরিচালনা করে</string>
+    <string name="gc_route_msg">%1$s %2$s-এ পরিচালিত হয়। সেখানে চালিয়ে যান। একটি ঘটনায় একটিই রেফারেল হয়, তাই সাধারণ স্বাস্থ্য পরীক্ষা থেকে দ্বিতীয় রেফারেল করা হয় না।</string>
+    <string name="gc_route_continue">%1$s-এ চালিয়ে যান</string>
+    <string name="gc_route_stay">এখানে থাকুন</string>
+    <string name="gc_module_maternal">মাতৃ স্বাস্থ্য</string>
+    <string name="gc_module_child">শিশু যত্ন</string>
+    <string name="gc_module_ecl">যোগ্য দম্পতির তালিকা</string>
+    <string name="gc_module_cataract">ছানি রেফারেল</string>
+
+    <!-- Refer to Facility form -->
+    <string name="gc_priority">অগ্রাধিকার</string>
+    <string name="gc_priority_emergency_short">জরুরি – অবিলম্বে রেফার করুন</string>
+    <string name="gc_priority_routine_short">সাধারণ</string>
+    <string name="gc_referral_submitted">রেফারেল জমা দেওয়া হয়েছে।</string>
+
+    <string-array name="gc_referral_facility">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>মেডিকেল কলেজ</item>
+        <item>জেলা হাসপাতাল</item>
+    </string-array>
+
+    <!-- Duplicate referral (BRD §8) -->
+    <string name="gc_dup_title">এই মাসে ইতিমধ্যে রেফার করা হয়েছে</string>
+    <string name="gc_dup_msg">এই ব্যক্তিকে এই সমস্যার জন্য %1$s তারিখে ইতিমধ্যে রেফার করা হয়েছে। প্রতি ব্যক্তি, সমস্যা ও মাসে একটিই রেফারেল।</string>
+    <string name="gc_dup_view">HWC রেফারেলে দেখুন</string>
+    <string name="gc_save_failed">স্বাস্থ্য পরীক্ষা সেভ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+</resources>

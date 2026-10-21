@@ -25,4 +25,6 @@ object FormConstants {
     const val MDA_DISTRIBUTION_FORM_NAME  = "mda"
 
     const val LF_MDA_CAMPAIGN  = "LF_MDA_CAMPAIGN"
+
+    const val GENERAL_CHECKUP_FORM_ID = "general_check_up"
 }
