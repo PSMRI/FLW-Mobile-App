@@ -1028,9 +1028,7 @@ GROUP BY b.benId
     SELECT  r.*, b.*
    FROM BEN_BASIC_CACHE b
    INNER JOIN NCD_REFER r ON b.benId = r.benId
-   WHERE ((CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-     AND b.reproductiveStatusId != 2) OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
-   WHERE r.type IN ('CHILD', 'MATERNAL')
+   WHERE (b.reproductiveStatusId != 2 OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
      AND b.villageId = :selectedVillage
      AND b.isDeactivate = 0
 """ + BenListOrder.LIFO_B)
@@ -1043,14 +1041,12 @@ GROUP BY b.benId
   SELECT COUNT(b.benId)
     FROM BEN_BASIC_CACHE b
     INNER JOIN NCD_REFER r ON b.benId = r.benId
-      AND ((CAST((strftime('%s','now') - b.dob/1000)/60/60/24/365 AS INTEGER) >= :min
-      AND b.reproductiveStatusId != 2) OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
+      AND (b.reproductiveStatusId != 2 OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
       AND b.villageId = :selectedVillage
       AND b.isDeactivate=0
 """)
      fun getReferredBenCount(
-        selectedVillage: Int,
-        min: Int = Konstants.minAgeForHWCRefferList
+        selectedVillage: Int
     ): Flow<Int>
 
     @Query("""
