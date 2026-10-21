@@ -83,6 +83,38 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_72_73 drops the problem master and adds formData on an early v72 db`() {
+        val db = mockDb(columns = listOf("id", "checkupId", "benId", "syncState"))
+
+        invokeMigration("MIGRATION_72_73", db)
+
+        assertExecuted("DROP TABLE IF EXISTS `HEALTH_PROBLEM`")
+        assertExecuted("DROP TABLE IF EXISTS `HEALTH_PROBLEM_TYPE`")
+        assertExecuted("DROP INDEX IF EXISTS `ind_health_problem_type`")
+        assertExecuted("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
+    }
+
+    @Test
+    fun `MIGRATION_72_73 skips formData when the db came from 71 through the current 71_72`() {
+        val db = mockDb(columns = listOf("id", "checkupId", "formData", "syncState"))
+
+        invokeMigration("MIGRATION_72_73", db)
+
+        assertNotExecuted("ADD COLUMN formData")
+    }
+
+    @Test
+    fun `MIGRATION_71_72 creates GENERAL_CHECKUP with formData and no problem master`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_71_72", db)
+
+        assertTrue(executedSql.any { it.contains("CREATE TABLE IF NOT EXISTS `GENERAL_CHECKUP`") && it.contains("`formData` TEXT") })
+        assertNotExecuted("HEALTH_PROBLEM")
+        assertExecuted("(`benId`, `referralReason`, `revisitMonth`)")
+    }
+
+    @Test
     fun `MIGRATION_70_71 adds server IDs and removes one-per-day unique index`() {
         val db = mockDb(tableExists = true)
 

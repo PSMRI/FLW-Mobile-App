@@ -27,6 +27,9 @@ class UwinDaoTest {
 
         override suspend fun getAllSessions(): List<UwinCache> = stored.toList()
 
+        override suspend fun hasSessionOnDate(sessionDate: Long): Boolean =
+            stored.any { it.sessionDate == sessionDate }
+
         override suspend fun getUwinById(id: Int): UwinCache? = stored.find { it.id == id }
 
         override suspend fun getUnsyncedSessions(synced: SyncState): List<UwinCache> =

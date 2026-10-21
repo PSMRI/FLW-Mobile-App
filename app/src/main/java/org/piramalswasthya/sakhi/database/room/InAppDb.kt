@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
@@ -116,6 +117,7 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.NotificationEntity
+import org.piramalswasthya.sakhi.model.GeneralCheckupCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
@@ -209,10 +211,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class,
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        GeneralCheckupCache::class
     ],
     views = [BenBasicCache::class],
-    version = 71, exportSchema = false
+    version = 73, exportSchema = false
 )
 
 @TypeConverters(
@@ -260,6 +263,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
+    abstract val generalCheckupDao: GeneralCheckupDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -449,6 +453,66 @@ abstract class InAppDb : RoomDatabase() {
                         "CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_serverId_formId` " +
                                 "ON `children_under_five_all_visit` (`serverId`, `formId`)"
                     )
+                }
+            }
+
+            // General Check-up (FLW-1229): check-ups, and NCD_REFER priority + revisitMonth, with
+            // revisitMonth added to the unique key. The problem list comes from the server-driven
+            // form schema (form_schema, formId general_check_up), so there is no master table.
+            val MIGRATION_71_72 = object : Migration(71, 72) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `GENERAL_CHECKUP` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `checkupId` TEXT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, `hhId` INTEGER NOT NULL, `ashaId` INTEGER NOT NULL, " +
+                                "`checkupDate` INTEGER NOT NULL, `problemTypeId` TEXT NOT NULL, " +
+                                "`problemTypeLabel` TEXT NOT NULL, `problemIds` TEXT NOT NULL, " +
+                                "`problemLabels` TEXT NOT NULL, `otherText` TEXT, `priority` TEXT NOT NULL, " +
+                                "`masterVersion` INTEGER NOT NULL, `referralReason` TEXT NOT NULL, " +
+                                "`referralDate` INTEGER NOT NULL, `referralMonth` INTEGER NOT NULL, " +
+                                "`formData` TEXT, `createdBy` TEXT NOT NULL, `createdDate` INTEGER NOT NULL, " +
+                                "`updatedDate` INTEGER NOT NULL, `syncState` INTEGER NOT NULL, " +
+                                "FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) " +
+                                "ON UPDATE CASCADE ON DELETE CASCADE )"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `ind_gc_checkup_id` ON `GENERAL_CHECKUP` (`checkupId`)"
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `ind_gc_ben` ON `GENERAL_CHECKUP` (`benId`)"
+                    )
+                    if (!columnExists(database, "NCD_REFER", "priority")) {
+                        database.execSQL("ALTER TABLE NCD_REFER ADD COLUMN priority TEXT")
+                    }
+                    if (!columnExists(database, "NCD_REFER", "revisitMonth")) {
+                        database.execSQL("ALTER TABLE NCD_REFER ADD COLUMN revisitMonth INTEGER NOT NULL DEFAULT 0")
+                    }
+                    // Same rule as monthKey(): yyyyMM in the device time zone.
+                    database.execSQL(
+                        "UPDATE NCD_REFER SET revisitMonth = " +
+                                "CAST(strftime('%Y%m', revisitDate / 1000, 'unixepoch', 'localtime') AS INTEGER)"
+                    )
+                    // Old key (benId, referralReason) is unique, so the wider key cannot conflict.
+                    database.execSQL("DROP INDEX IF EXISTS `ind_refcache`")
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `ind_refcache` ON `NCD_REFER` " +
+                                "(`benId`, `referralReason`, `revisitMonth`)"
+                    )
+                }
+            }
+
+            // General Check-up: the Add Check-up form became server-driven (form_schema, formId
+            // general_check_up). Drops the problem-master tables of the first v72 builds and adds
+            // GENERAL_CHECKUP.formData. Guarded, so it also works on a DB that came from 71 via the
+            // current MIGRATION_71_72 (which already creates formData and no master tables).
+            val MIGRATION_72_73 = object : Migration(72, 73) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("DROP INDEX IF EXISTS `ind_health_problem_type`")
+                    database.execSQL("DROP TABLE IF EXISTS `HEALTH_PROBLEM`")
+                    database.execSQL("DROP TABLE IF EXISTS `HEALTH_PROBLEM_TYPE`")
+                    if (!columnExists(database, "GENERAL_CHECKUP", "formData")) {
+                        database.execSQL("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
+                    }
                 }
             }
 
@@ -3694,7 +3758,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_67_68,
                         MIGRATION_68_69,
                         MIGRATION_69_70,
-                        MIGRATION_70_71
+                        MIGRATION_70_71,
+                        MIGRATION_71_72,
+                        MIGRATION_72_73
 
 
                     ).build()
