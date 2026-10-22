@@ -205,10 +205,12 @@ class BenWithScreeningDomainMappingTest {
             ben = ben(),
             tb = null,
             tbSuspected = null,
-            cbacRecords = listOf(olderCbac, latestCbac)
+            cbacRecords = listOf(olderCbac, latestCbac),
+            isPrisonResident = true
         )
 
         assertEquals(latestCbac, cache.asTbScreeningDomainModel().cbac)
+        assertTrue(cache.asTbScreeningDomainModel().isPrisonResident)
     }
 
     @Test fun `tbScreening domain with null`() {

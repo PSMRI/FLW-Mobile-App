@@ -152,6 +152,7 @@ class VulnerableListAdapter(
                 }
 
                 val automaticRiskFactorCodes = buildList {
+                    if (item.isPrisonResident == true) add("PRISON")
                     when (item.ben.reproductiveStatusId) {
                         2 -> add("PREGNANCY")
                         3 -> add("LACTATING_MOTHER")

@@ -1531,12 +1531,21 @@ class BenRepo @Inject constructor(
                                             "reproductiveStatusId"
                                         )
                                         when (idFromServer) {
-                                            0 -> 0
+                                          /*  0 -> 0
                                             1 -> 1
                                             2, 3 -> 2
                                             4 -> 3
                                             5 -> 4
                                             6 -> 5
+                                            else -> 5*/
+
+                                            0 -> 0
+                                            1 -> 1
+                                            2 -> 2
+                                            3 -> 3
+                                            4 -> 4
+                                            5 -> 5
+                                            6 -> 6
                                             else -> 5
                                         }
                                     } else 0,
