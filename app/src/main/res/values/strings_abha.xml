@@ -67,7 +67,15 @@
     <string name="abha_number_">ABHA Number :</string>
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">Aadhaar linked mobile number or other mobile number</string>
     <string name="individual_s_consent_for_creation_of_abha_number">Individual’s consent for creation of ABHA Number.</string>
-    <string name="validate_fp">Validate FP</string>
+    <string name="validate_fp">Verify Face</string>
+    <string name="please_wait">Please Wait…</string>
+    <string name="initializing">Initializing Face Auth</string>
+    <string name="processing">Processing</string>
+    <string name="face_pending">Face Authentication: <b>PENDING</b>\nThis can take some time</string>
+    <string name="face_verified">Face Authentication: <b>VERIFIED</b>\nThis can take some time</string>
+    <string name="face_failed">Face Authentication: <b>FAILED</b>\nTry again later</string>
+    <string name="face_success">Face Authentication: <b>SUCCESS</b></string>
+    <string name="message">Message</string>
     <string name="data_saved_successfully">Data Saved Successfully.</string>
     <string name="data_already_exist">Data already exist.</string>
     <string name="generating_abha_for">Enter</string>  <!--Creating ABHA for:-->
