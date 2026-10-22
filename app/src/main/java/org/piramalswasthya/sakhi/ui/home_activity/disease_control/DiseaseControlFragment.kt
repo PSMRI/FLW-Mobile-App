@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -22,7 +23,7 @@ class DiseaseControlFragment : Fragment() {
     @Inject
     lateinit var iconDataset: IconDataset
 
-    private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
     private val viewModel: EligibleCoupleViewModel by viewModels()
 
     companion object {
@@ -32,7 +33,7 @@ class DiseaseControlFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return binding.root
+        return RvIconGridBinding.inflate(layoutInflater).also { _binding = it }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class DiseaseControlFragment : Fragment() {
     }
 
     private fun setUpDiseaseControlIconRvAdapter() {
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -50,7 +52,7 @@ class DiseaseControlFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getDiseaseControlDataset(resources))
@@ -65,5 +67,10 @@ class DiseaseControlFragment : Fragment() {
                 getString(R.string.icon_title_disease)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

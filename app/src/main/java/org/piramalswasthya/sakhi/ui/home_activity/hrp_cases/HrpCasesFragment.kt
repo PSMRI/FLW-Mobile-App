@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -26,13 +27,13 @@ class HrpCasesFragment : Fragment() {
     }
 
     private val viewModel: HrpCasesViewModel by viewModels()
-    private val binding by lazy { RvIconGridHrpBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridHrpBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return binding.root
+        return RvIconGridHrpBinding.inflate(layoutInflater).also { _binding = it }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class HrpCasesFragment : Fragment() {
     }
 
     private fun getHrpIconsDataset() {
+        val binding = _binding ?: return
         val rvLayoutManager1 = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -50,7 +52,7 @@ class HrpCasesFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid1.adapter = rvAdapter1
         rvAdapter1.submitList(iconDataset.getHRPPregnantWomenDataset(resources))
@@ -64,7 +66,7 @@ class HrpCasesFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid2.adapter = rvAdapter2
         rvAdapter2.submitList(iconDataset.getHRPNonPregnantWomenDataset(resources))
@@ -79,5 +81,10 @@ class HrpCasesFragment : Fragment() {
                 getString(R.string.icon_title_hrp)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -57,8 +57,8 @@ class AbhaBenFragment : Fragment() {
 
     private val viewModel: AllBenViewModel by viewModels()
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
+        _binding?.searchView?.setText(value)
+        _binding?.searchView?.setSelection(value.length)
         viewModel.filterText(value)
     }
 
@@ -366,8 +366,10 @@ class AbhaBenFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding?.rvNewAbha?.adapter = null
+        _binding?.rvExistingAbha?.adapter = null
         _binding = null
     }
 

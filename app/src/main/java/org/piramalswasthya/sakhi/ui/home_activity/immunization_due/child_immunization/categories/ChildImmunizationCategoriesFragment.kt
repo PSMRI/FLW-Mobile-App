@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -49,8 +50,8 @@ class ChildImmunizationCategoriesFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
@@ -63,7 +64,7 @@ class ChildImmunizationCategoriesFragment : Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener {
             safeNavigate(it)
-        }, viewModel.scope)
+        }, viewLifecycleOwner.lifecycleScope)
         binding.rvIconGrid.adapter = rvAdapter
 //        rvAdapter.submitList(iconDataset.getChildImmunizationCategories(resources))
     }

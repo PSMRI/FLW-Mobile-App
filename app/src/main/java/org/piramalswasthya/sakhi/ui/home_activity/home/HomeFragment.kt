@@ -154,7 +154,7 @@ class HomeFragment : Fragment() {
 
     private fun setUpViewPager() {
 
-        binding.vp2Home.adapter = HomePagerAdapter(this)
+        binding.vp2Home.adapter = HomePagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         TabLayoutMediator(binding.tlHomeViewpager, binding.vp2Home) { tab, position ->
             tab.text = when (position) {
                 0 -> requireActivity().getString(R.string.menu_home_scheduler)
@@ -207,13 +207,13 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         numViewCopies--
         Timber.d("onDestroyView() called! $numViewCopies")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
         numCopies--
         Timber.d("onDestroy() called! $numCopies")
 

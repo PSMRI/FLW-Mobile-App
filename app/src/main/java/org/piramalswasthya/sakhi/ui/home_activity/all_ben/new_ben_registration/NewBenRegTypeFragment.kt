@@ -72,13 +72,15 @@ class NewBenRegTypeFragment : Fragment() {
             .setTitle(resources.getString(R.string.incomplete_form_found))
             .setMessage(resources.getString(R.string.do_you_want_to_continue_with_previous_form_or_create_a_new_form_and_discard_the_previous_form))
             .setPositiveButton(resources.getString(R.string.open_draft)) { dialog, _ ->
-                val isKid = binding.rgBenType.checkedRadioButtonId == binding.rbKidPath.id
+                val b = _binding ?: return@setPositiveButton
+                val isKid = b.rgBenType.checkedRadioButtonId == b.rbKidPath.id
                 viewModel.navigateToNewBenRegistration(hhId, false, isKid)
                 dialog.dismiss()
 
             }
             .setNegativeButton(resources.getString(R.string.create_new)) { dialog, _ ->
-                val isKid = binding.rgBenType.checkedRadioButtonId == binding.rbKidPath.id
+                val b = _binding ?: return@setNegativeButton
+                val isKid = b.rgBenType.checkedRadioButtonId == b.rbKidPath.id
                 viewModel.navigateToNewBenRegistration(hhId, true, isKid)
                 dialog.dismiss()
             }
@@ -115,22 +117,22 @@ class NewBenRegTypeFragment : Fragment() {
             homeViewModel.numBenIdsAvail.collect {
                 when (it) {
                     in 1..Konstants.benIdWorkerTriggerLimit -> {
-                        binding.errorText.text =
+                        _binding?.errorText?.text =
                             resources.getString(R.string.warning_id_running_low_connect_to_internet_at_the_earliest)
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
 
                     }
 
                     0 -> {
-                        binding.btnContinue.visibility = View.GONE
-                        binding.errorText.text =
+                        _binding?.btnContinue?.visibility = View.GONE
+                        _binding?.errorText?.text =
                             resources.getString(R.string.error_no_more_ben_ids_available_connect_to_internet_to_get_some)
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
                     }
 
                     else -> {
-                        binding.btnContinue.visibility = View.VISIBLE
-                        binding.errorText.text = null
+                        _binding?.btnContinue?.visibility = View.VISIBLE
+                        _binding?.errorText?.text = null
                     }
                 }
 
@@ -190,8 +192,8 @@ class NewBenRegTypeFragment : Fragment() {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
