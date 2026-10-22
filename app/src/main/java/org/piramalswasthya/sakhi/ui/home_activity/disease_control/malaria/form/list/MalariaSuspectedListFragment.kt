@@ -190,7 +190,7 @@ class MalariaSuspectedListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allBenList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -202,7 +202,7 @@ class MalariaSuspectedListFragment : Fragment() {
 
         irsViewModel.checkSubmitButtonVisibility()
 
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             irsViewModel.isSubmitVisible.collect { isVisible ->
                 binding.btnSubmit.isEnabled = if (isVisible) true else false
             }
@@ -211,7 +211,7 @@ class MalariaSuspectedListFragment : Fragment() {
 
         val irsListAdapter = IrsRoundListAdapter()
         binding.irsAny.adapter = irsListAdapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             irsListViewmodel.allBenList.collect {
                 irsListAdapter.submitList(it)
             }
@@ -223,7 +223,7 @@ class MalariaSuspectedListFragment : Fragment() {
             }, isEnabled = true
         )
         binding.form.rvInputForm.adapter = adapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             irsViewModel.formList.collect {
                 if (it.isNotEmpty()) {
                     adapter.notifyItemChanged(irsViewModel.getIndexOfDate())
@@ -255,7 +255,7 @@ class MalariaSuspectedListFragment : Fragment() {
         viewModelMosquitoNet.loadFormSchema(hhId,  MOSQUITO_NET_FORM_ID, false)
 
         binding.mosquitoRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModelMosquitoNet.schema.collectLatest { schema ->
                 if (schema == null) {
                     return@collectLatest
@@ -420,5 +420,10 @@ class MalariaSuspectedListFragment : Fragment() {
                 getString(R.string.icon_title_maleria)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

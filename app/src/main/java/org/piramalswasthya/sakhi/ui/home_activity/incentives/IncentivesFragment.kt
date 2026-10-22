@@ -317,7 +317,7 @@ class IncentivesFragment : Fragment() {
 
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.incentiveList.collect {
 
                 incentiveRecordList = it
@@ -366,7 +366,7 @@ class IncentivesFragment : Fragment() {
         }
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.groupedIncentiveList.collect { groupedList ->
                 groupedAdapter.submitList(groupedList.toIncentiveGroupSections())
@@ -633,7 +633,7 @@ class IncentivesFragment : Fragment() {
                 run {
                     fromMonth.setSelection(i2)
                     fromYear.setSelection(myArrayList.indexOf(i))
-                    binding.et1.setText("${resources.getStringArray(R.array.months)[i2]} $i")
+                    _binding?.et1?.setText("${resources.getStringArray(R.array.months)[i2]} $i")
                 }
             }
             pd.show(requireFragmentManager(), "MonthYearPickerDialog1")
@@ -657,8 +657,9 @@ class IncentivesFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding?.rvIncentive?.adapter = null
         _binding = null
     }
 

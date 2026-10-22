@@ -31,17 +31,15 @@ class NcdPriorityListFragment : Fragment() {
     lateinit var prefDao: PreferenceDao
 
 
-    private val binding: FragmentDisplaySearchRvButtonBinding by lazy {
-        FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentDisplaySearchRvButtonBinding? = null
 
     private val viewModel: NcdPriorityListViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -49,11 +47,12 @@ class NcdPriorityListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return binding.root
+        return FragmentDisplaySearchRvButtonBinding.inflate(layoutInflater).also { _binding = it }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = _binding ?: return
 
         binding.btnNextPage.visibility = View.GONE
 
@@ -74,9 +73,10 @@ class NcdPriorityListFragment : Fragment() {
             context = requireActivity(),
             showActionButtons = false
         )
+        benAdapter.stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -108,6 +108,11 @@ class NcdPriorityListFragment : Fragment() {
                 (searchView as EditText).removeTextChangedListener(searchTextWatcher)
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onStart() {

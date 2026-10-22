@@ -105,7 +105,7 @@ class BenListCHOFragment : Fragment() {
             context = requireActivity()
         )
         binding.rvAny.adapter = benAdapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -182,8 +182,8 @@ class BenListCHOFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

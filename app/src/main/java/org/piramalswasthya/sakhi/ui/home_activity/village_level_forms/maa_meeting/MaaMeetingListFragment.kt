@@ -59,7 +59,7 @@ class MaaMeetingListFragment : Fragment() {
         )
 
         binding.rvAny.adapter = ahdAdapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.maaMeetings.collect {
                 binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                 ahdAdapter.submitList(it)
@@ -77,8 +77,8 @@ class MaaMeetingListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

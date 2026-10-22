@@ -31,19 +31,16 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
 
 
-    private val binding: FragmentNcdEligibleListBinding by lazy {
-        FragmentNcdEligibleListBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentNcdEligibleListBinding? = null
 
     private val viewModel: NcdEligibleListViewModel by viewModels()
 
-    private val bottomSheet: NcdBottomSheetFragment by lazy { NcdBottomSheetFragment() }
     private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -51,7 +48,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return binding.root
+        return FragmentNcdEligibleListBinding.inflate(layoutInflater).also { _binding = it }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,6 +58,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
             }
         }, false)
         super.onViewCreated(view, savedInstanceState)
+        val binding = _binding ?: return
 
         binding.btnNextPage.visibility = View.GONE
         binding.ibSearch.setOnClickListener { sttContract.launch(Unit) }
@@ -78,7 +76,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
                             isBottomSheetShowing = true
                             Timber.d("ClickListener Triggered!")
                             viewModel.setSelectedBenId(it)
-                            bottomSheet.show(
+                            NcdBottomSheetFragment().show(
                                 childFragmentManager,
                                 resources.getString(R.string.cbac)
                             )
@@ -102,9 +100,10 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
                     })
             )
+        benAdapter.stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -113,7 +112,7 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
                 benAdapter.submitList(it)
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ncdDetails.collect {
                 Timber.d("Collecting Ncd Details : $it")
             }
@@ -163,6 +162,11 @@ class NcdEligibleListFragment : Fragment() , NCDCategoryAdapter.ClickListener {
 
     override fun onClicked(catDataList: String) {
         viewModel.setSelectedCategory(catDataList)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

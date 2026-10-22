@@ -47,7 +47,7 @@ class MotherImmunizationListFragment : Fragment() {
                 }, {})
             )
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benWithVaccineDetails.collect {
                 Timber.d("Collecting list : $it")
                 binding.rvList.apply {
@@ -55,6 +55,11 @@ class MotherImmunizationListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

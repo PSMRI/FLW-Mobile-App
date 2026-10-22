@@ -56,7 +56,7 @@ class HbncDayListFragment : Fragment() {
 
         binding.rvIconGrid.adapter = iconAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dayList.collect {
                 iconAdapter.submitList(it)
             }
@@ -73,8 +73,8 @@ class HbncDayListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

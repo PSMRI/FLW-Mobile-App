@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,7 +62,7 @@ class HouseholdFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 findNavController().navigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getEligibleCoupleDataset(resources))
@@ -79,7 +80,7 @@ class HouseholdFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 findNavController().navigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getAllHouseholdDataset(resources))
