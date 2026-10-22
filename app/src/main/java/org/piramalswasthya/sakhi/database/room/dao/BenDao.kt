@@ -1028,8 +1028,7 @@ GROUP BY b.benId
     SELECT  r.*, b.*
    FROM BEN_BASIC_CACHE b
    INNER JOIN NCD_REFER r ON b.benId = r.benId
-   WHERE (b.reproductiveStatusId != 2 OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
-     AND b.villageId = :selectedVillage
+   WHERE b.villageId = :selectedVillage
      AND b.isDeactivate = 0
 """ + BenListOrder.LIFO_B)
     fun getBenWithReferredCbac(
@@ -1041,7 +1040,6 @@ GROUP BY b.benId
   SELECT COUNT(b.benId)
     FROM BEN_BASIC_CACHE b
     INNER JOIN NCD_REFER r ON b.benId = r.benId
-      AND (b.reproductiveStatusId != 2 OR r.type IN ('CHILD', 'MATERNAL', 'GENERAL_CHECKUP'))
       AND b.villageId = :selectedVillage
       AND b.isDeactivate=0
 """)
