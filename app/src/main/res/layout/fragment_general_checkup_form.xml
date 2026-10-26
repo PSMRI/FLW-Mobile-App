@@ -172,14 +172,6 @@
                     android:textColor="@color/gc_banner_blue_text" />
             </LinearLayout>
 
-            <!-- FR5: priority -->
-            <TextView
-                android:id="@+id/tv_priority"
-                style="@style/GcBanner"
-                android:visibility="gone"
-                tools:text="Priority: Routine"
-                tools:visibility="visible" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_refer"
                 android:layout_width="match_parent"

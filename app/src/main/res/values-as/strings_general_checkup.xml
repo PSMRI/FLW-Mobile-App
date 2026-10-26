@@ -52,7 +52,7 @@
 
     <!-- Duplicate referral (BRD §8) -->
     <string name="gc_dup_title">এই মাহত ইতিমধ্যে ৰেফাৰ কৰা হৈছে</string>
-    <string name="gc_dup_msg">এই ব্যক্তিজনক এই সমস্যাৰ বাবে %1$s তাৰিখে ইতিমধ্যে ৰেফাৰ কৰা হৈছে। প্ৰতিজন ব্যক্তি, সমস্যা আৰু মাহত এটাই ৰেফাৰেল।</string>
+    <string name="gc_dup_msg">এই ব্যক্তিজনক এই সমস্যাৰ বাবে %1$s তাৰিখে আগতেই ৰেফাৰ কৰা হৈছে। এই সমস্যাৰ বাবে অহা মাহত পুনৰ ৰেফাৰ কৰিব পাৰিব।</string>
     <string name="gc_dup_view">HWC ৰেফাৰেলত চাওক</string>
     <string name="gc_save_failed">স্বাস্থ্য পৰীক্ষা ছেভ কৰিব পৰা নগ\'ল। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
 </resources>

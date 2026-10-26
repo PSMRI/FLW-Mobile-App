@@ -52,7 +52,7 @@
 
     <!-- Duplicate referral (BRD §8) -->
     <string name="gc_dup_title">Already referred this month</string>
-    <string name="gc_dup_msg">This person was already referred for this problem on %1$s. One referral per person, problem and month.</string>
+    <string name="gc_dup_msg">This person was already referred for this problem on %1$s. You can refer them for this problem again next month.</string>
     <string name="gc_dup_view">View in HWC Referrals</string>
     <string name="gc_save_failed">Could not save the check-up. Please try again.</string>
 </resources>

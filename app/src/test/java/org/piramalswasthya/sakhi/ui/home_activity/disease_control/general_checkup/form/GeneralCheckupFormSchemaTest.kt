@@ -158,7 +158,7 @@ class GeneralCheckupFormSchemaTest {
         val issues = GeneralCheckupFormSchema.issues(draft)
         assertTrue(issues.any { it.startsWith("Field \"checkup_date\" is missing") })
         assertTrue(issues.any { it.startsWith("Field \"problem_type\" is missing") })
-        assertTrue(issues.any { it.startsWith("Field \"other_text\" is missing") })
+        assertTrue(issues.any { it.startsWith("No Other text box found") })
         assertTrue(issues.any { it.startsWith("No problem lists found") })
         assertTrue(issues.any { it.startsWith("Field \"problem\" has type \"multi-select\"") && it.contains("Use \"multicheckbox\"") })
     }
@@ -192,7 +192,9 @@ class GeneralCheckupFormSchemaTest {
         assertEquals(
             listOf(
                 "Problem types \"b\" have no problem list. Add a \"multicheckbox\" field with conditional.expectedValue = that type ID.",
-                "Field \"problems_a\" has no \"Other\" option. Add {\"value\": \"<typeId>_other\", \"label\": \"Other\", \"labelEn\": \"Other\", \"requiresText\": true}."
+                "Field \"problems_a\" has no \"Other\" option. Add {\"value\": \"<typeId>_other\", \"label\": \"Other\", " +
+                        "\"labelEn\": \"Other\"} and a text field with conditional {\"dependsOn\": \"problems_a\", " +
+                        "\"expectedValue\": \"<typeId>_other\"}."
             ),
             issues
         )
@@ -211,5 +213,29 @@ class GeneralCheckupFormSchemaTest {
         assertTrue(issues.joinToString("\n"), issues.any { it.startsWith("Field \"problem_type\" is missing") })
         assertTrue(issues.any { it.startsWith("Field \"priority\" has type \"auto\"") })
         assertTrue(issues.any { it.startsWith("Field \"refer_to_facility\" has type \"button\"") })
+    }
+
+    private val conditionalOther = """{"formId":"general_check_up","formName":"GC","version":2,"sections":[{"fields":[
+            {"fieldId":"checkup_date","type":"date"},
+            {"fieldId":"problem_type","type":"dropdown","options":[{"value":"t1","label":"Fever type","labelEn":"Fever type"}]},
+            {"fieldId":"problems_t1","type":"multicheckbox","conditional":{"dependsOn":"problem_type","expectedValue":"t1"},
+             "options":[{"value":"p1","label":"Fever","labelEn":"Fever"},{"value":"t1_other","label":"Other","labelEn":"Other"}]},
+            {"fieldId":"other_problem","type":"text","conditional":{"dependsOn":"problems_t1","expectedValue":"t1_other"}}]}]}"""
+
+    @Test
+    fun `option matching an Other box's expectedValue counts as Other`() {
+        val form = GeneralCheckupFormSchema.parse(schema(conditionalOther))!!
+        val problems = form.problemType("t1")!!.problems.associateBy { it.problemId }
+        assertTrue(problems["t1_other"]!!.needsText)
+        assertFalse(problems["p1"]!!.needsText)
+        assertTrue(form.isOtherField("other_problem"))
+        assertFalse(form.isOtherField("problems_t1"))
+        assertEquals(emptyList<String>(), GeneralCheckupFormSchema.issues(schema(conditionalOther)))
+    }
+
+    @Test
+    fun `Other box expecting a value no option has is reported`() {
+        val issues = GeneralCheckupFormSchema.issues(schema(conditionalOther.replace("\"expectedValue\":\"t1_other\"", "\"expectedValue\":\"t1_othr\"")))
+        assertTrue(issues.joinToString("\n"), issues.any { it.contains("expects \"t1_othr\"") })
     }
 }

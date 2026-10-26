@@ -18,7 +18,9 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItem
  *   `ownerModule` (MATERNAL | CHILD | ECL | CATARACT) and `requiresText`.
  * - Any type or problem option with `isActive: false` is hidden from new check-ups (FR12); saved
  *   check-ups keep their label snapshot.
- * - `other_text`: text; shown and required while a ticked problem has `requiresText`.
+ * - Other text box: a text field with conditional { dependsOn: <problem list fieldId>, expectedValue:
+ *   <Other option value> }; shown and required while that option is ticked, and that option counts as
+ *   "Other". Older schemas: `other_text` with no conditional, shown while a ticked problem has `requiresText`.
  *
  * The form engine keeps only label + value per option, so the extra keys are read here from the raw
  * options. Any other field the server adds is rendered as sent and its answer saved in formData.
@@ -26,6 +28,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItem
 class GeneralCheckupFormSchema private constructor(
     val schema: FormSchemaDto,
     val problemTypes: List<HealthProblemType>,
+    private val otherFieldIds: Set<String>,
 ) {
     val version: Int get() = schema.version
 
@@ -37,13 +40,20 @@ class GeneralCheckupFormSchema private constructor(
     fun typeOfProblemField(fieldId: String): HealthProblemType? =
         problemTypes.firstOrNull { it.problemFieldId == fieldId }
 
+    /** True for an Other text box: conditional on a problem list, or the older `other_text`. */
+    fun isOtherField(fieldId: String): Boolean = fieldId == FIELD_OTHER || fieldId in otherFieldIds
+
     companion object {
         const val FIELD_DATE = "checkup_date"
         const val FIELD_TYPE = "problem_type"
         const val FIELD_OTHER = "other_text"
+        /** Server label showing the priority for a type (v24: "Emergency" while type g11 is chosen). */
+        const val FIELD_PRIORITY = "priority_text"
         const val OTHER_MAX_LENGTH = 250
 
         private const val TYPE_MULTI = "multicheckbox"
+        private const val TYPE_TEXT = "text"
+        private const val OTHER_SUFFIX = "_other"
 
         /** Null when the schema has no `problem_type` dropdown or no type has a problem list. */
         fun parse(schema: FormSchemaDto): GeneralCheckupFormSchema? {
@@ -53,6 +63,7 @@ class GeneralCheckupFormSchema private constructor(
                 .filter { it.type == TYPE_MULTI && it.conditional?.dependsOn == FIELD_TYPE }
                 .mapNotNull { field -> field.conditional?.expectedValue?.trim()?.takeIf { it.isNotEmpty() }?.let { it to field } }
                 .toMap()
+            val otherFields = otherTextFields(fields)
             val types = rawOptions(typeField.options).filterNot { it.hidden() }.mapNotNull { option ->
                 val typeId = option.text("value") ?: return@mapNotNull null
                 val problemField = problemFieldByType[typeId] ?: return@mapNotNull null
@@ -62,11 +73,26 @@ class GeneralCheckupFormSchema private constructor(
                     label = label,
                     labelEn = option.text("labelEn") ?: label,
                     problemFieldId = problemField.fieldId,
-                    problems = rawOptions(problemField.options).filterNot { it.hidden() }.mapNotNull { it.toProblem() }
+                    problems = rawOptions(problemField.options).filterNot { it.hidden() }
+                        .mapNotNull { it.toProblem(otherValues(otherFields, problemField.fieldId)) }
                 )
             }.filter { it.problems.isNotEmpty() }
-            return if (types.isEmpty()) null else GeneralCheckupFormSchema(schema, types)
+            return if (types.isEmpty()) null
+            else GeneralCheckupFormSchema(schema, types, otherFields.map { it.fieldId }.toSet())
         }
+
+        /** Text fields whose conditional names a problem list: the Other boxes. */
+        private fun otherTextFields(fields: List<FormFieldDto>): List<FormFieldDto> {
+            val listIds = fields.filter { it.type == TYPE_MULTI && it.conditional?.dependsOn == FIELD_TYPE }
+                .map { it.fieldId }.toSet()
+            return fields.filter { it.type == TYPE_TEXT && it.conditional?.dependsOn?.trim() in listIds }
+        }
+
+        /** Option values of [listFieldId] that open an Other box. */
+        private fun otherValues(otherFields: List<FormFieldDto>, listFieldId: String): Set<String> =
+            otherFields.filter { it.conditional?.dependsOn?.trim() == listFieldId }
+                .mapNotNull { it.conditional?.expectedValue?.trim()?.takeIf { v -> v.isNotEmpty() } }
+                .toSet()
 
         /** Field types FormRendererAdapter can draw. */
         private val RENDERABLE_TYPES = setOf("label", "text", "number", "dropdown", "date", "radio", TYPE_MULTI, "image")
@@ -89,8 +115,10 @@ class GeneralCheckupFormSchema private constructor(
                 typeIds.isEmpty() -> issues += "Field \"$FIELD_TYPE\" has no options. Add the problem types as options " +
                         "(value = type ID, label, labelEn)."
             }
-            if (FIELD_OTHER !in ids) issues += "Field \"$FIELD_OTHER\" is missing. Add a field with fieldId \"$FIELD_OTHER\", " +
-                    "type \"text\" and validation.maxLength 250."
+            val otherFields = otherTextFields(fields)
+            if (FIELD_OTHER !in ids && otherFields.isEmpty()) issues += "No Other text box found. Add a field of type " +
+                    "\"text\" with validation.maxLength 250 and conditional {\"dependsOn\": \"<problem list fieldId>\", " +
+                    "\"expectedValue\": \"<Other option value>\"}."
 
             val lists = fields.filter { it.type == TYPE_MULTI && it.conditional?.dependsOn == FIELD_TYPE }
             if (lists.isEmpty()) {
@@ -103,10 +131,17 @@ class GeneralCheckupFormSchema private constructor(
                         "Add a \"$TYPE_MULTI\" field with conditional.expectedValue = that type ID."
                 lists.forEach { list ->
                     val options = rawOptions(list.options)
+                    val otherValues = otherValues(otherFields, list.fieldId)
                     when {
                         options.isEmpty() -> issues += "Field \"${list.fieldId}\" has no options. Add the problems of that type."
-                        options.none { it.flag("requiresText") } -> issues += "Field \"${list.fieldId}\" has no \"Other\" option. " +
-                                "Add {\"value\": \"<typeId>_other\", \"label\": \"Other\", \"labelEn\": \"Other\", \"requiresText\": true}."
+                        options.none { it.flag("requiresText") || it.text("value") in otherValues } ->
+                            issues += "Field \"${list.fieldId}\" has no \"Other\" option. Add {\"value\": \"<typeId>_other\", " +
+                                    "\"label\": \"Other\", \"labelEn\": \"Other\"} and a text field with conditional " +
+                                    "{\"dependsOn\": \"${list.fieldId}\", \"expectedValue\": \"<typeId>_other\"}."
+                    }
+                    otherValues.filter { v -> options.none { it.text("value") == v } }.forEach { v ->
+                        issues += "An Other text box expects \"$v\" in \"${list.fieldId}\", but no option has that value. " +
+                                "Make conditional.expectedValue equal to the Other option's value."
                     }
                     if (options.isNotEmpty() && options.none { it.text("labelEn") != null }) issues += "Field \"${list.fieldId}\" " +
                             "options have no \"labelEn\". Add the English name to each option."
@@ -141,7 +176,7 @@ class GeneralCheckupFormSchema private constructor(
             }
         }
 
-        private fun Map<*, *>.toProblem(): HealthProblem? {
+        private fun Map<*, *>.toProblem(otherValues: Set<String>): HealthProblem? {
             val problemId = text("value") ?: return null
             val label = text("label") ?: problemId
             return HealthProblem(
@@ -152,7 +187,10 @@ class GeneralCheckupFormSchema private constructor(
                 ownerModule = text("ownerModule")?.let { name ->
                     HealthProblemOwnerModule.entries.firstOrNull { it.name.equals(name, ignoreCase = true) }
                 },
-                needsText = flag("requiresText")
+                // The server's expectedValue does not always match its Other option (v24: the Emergency
+                // list's Other is "g12_other", its box expects "g11_other"), so "<x>_other" also counts.
+                needsText = flag("requiresText") || problemId in otherValues ||
+                        problemId.endsWith(OTHER_SUFFIX, ignoreCase = true)
             )
         }
 
