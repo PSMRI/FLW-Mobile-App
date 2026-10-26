@@ -477,12 +477,34 @@ class GeneralCheckupFormViewModelTest : BaseViewModelTest() {
         assertEquals(listOf("t1"), typeField.options!!.map { it.value })
     }
 
-    // ── Live UAT schema v24 (one shared "other_problem" box per list) ──────────
+    // ── v24-shaped schema (one shared "other_problem" box per list) ────────────
+    // Reproduces the v24 quirks only: no isEmergency flags, a priority_text label for g11,
+    // the Emergency list carrying g12_* options while its Other box expects g11_other.
+
+    private val v24Json = """
+        {"formId":"general_check_up","version":24,"sections":[{"fields":[
+          {"fieldId":"checkup_date","type":"date","isRequired":true},
+          {"fieldId":"problem_type","type":"dropdown","isRequired":true,"options":[
+            {"value":"g11","label":"Emergency"},{"value":"g6","label":"Fever"}]},
+          {"fieldId":"problems_g11","type":"multicheckbox","isRequired":true,
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g11"},
+           "options":[{"value":"g12_sleep","label":"Cannot sleep"},{"value":"g12_other","label":"Other"}]},
+          {"fieldId":"problems_g6","type":"multicheckbox","isRequired":true,
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g6"},
+           "options":[{"value":"g6_fever","label":"Fever"},{"value":"g6_other","label":"Other"}]},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g6","expectedValue":"Other"}},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g11","expectedValue":"g11_other"}},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g6","expectedValue":"g6_other"}},
+          {"fieldId":"priority_text","type":"label","isRequired":true,"defaultValue":"Emergency",
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g11"}}]}]}
+    """.trimIndent()
 
     private fun uatV24ViewModel(): GeneralCheckupFormViewModel {
-        val json = javaClass.classLoader!!.getResource("general_check_up_uat_v24.json").readText()
         coEvery { formRepository.getSavedSchema(FormConstants.GENERAL_CHECKUP_FORM_ID) } returns
-                savedSchema("en").copy(schemaJson = json)
+                savedSchema("en").copy(schemaJson = v24Json)
         return viewModel()
     }
 
