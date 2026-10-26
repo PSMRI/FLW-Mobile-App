@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.piramalswasthya.sakhi.R
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -190,14 +191,30 @@ class GeneralCheckupFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `Other box shows the required message until she types`() = runTest {
+    fun `Other box shows no error until Refer is tapped, and clears it as she types`() = runTest {
         val vm = viewModel()
         advanceUntilIdle()
         vm.onFieldChanged(FIELD_TYPE, "g6")
         vm.onFieldChanged("problems_g6", setOf("g6_other"))
-        assertEquals("needed", vm.visibleFields(ownerTitle, "needed").last().errorMessage)
+        assertNull(vm.visibleFields(ownerTitle).last().errorMessage)
+
+        vm.validate(context, ownerTitle)
+        assertEquals("err:${R.string.gc_other_required}", vm.visibleFields(ownerTitle).last().errorMessage)
+
         vm.onFieldChanged(FIELD_OTHER, "R")
-        assertNull(vm.visibleFields(ownerTitle, "needed").last().errorMessage)
+        assertNull(vm.visibleFields(ownerTitle).last().errorMessage)
+    }
+
+    @Test
+    fun `Other box error is dropped when the box hides, so ticking Other again shows it clean`() = runTest {
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g6")
+        vm.onFieldChanged("problems_g6", setOf("g6_other"))
+        vm.validate(context, ownerTitle)
+        vm.onFieldChanged("problems_g6", setOf("g6_fever"))
+        vm.onFieldChanged("problems_g6", setOf("g6_fever", "g6_other"))
+        assertNull(vm.visibleFields(ownerTitle).last().errorMessage)
     }
 
     @Test
@@ -380,5 +397,166 @@ class GeneralCheckupFormViewModelTest : BaseViewModelTest() {
         vm.onFieldChanged(FIELD_OTHER, "Rash")
         vm.findDuplicate()
         coVerify { generalCheckupRepo.findDuplicate(101L, any(), listOf("g6_other"), listOf("g6_other"), "Rash") }
+    }
+
+    // ── Other box from the schema's conditional ────────────────────────────────
+
+    private val conditionalOtherSchema = """{"formId":"general_check_up","formName":"GC","version":2,"sections":[{"fields":[
+            {"fieldId":"checkup_date","type":"date"},
+            {"fieldId":"problem_type","type":"dropdown","options":[{"value":"t1","label":"Fever type","labelEn":"Fever type"}]},
+            {"fieldId":"problems_t1","type":"multicheckbox","conditional":{"dependsOn":"problem_type","expectedValue":"t1"},
+             "options":[{"value":"p1","label":"Fever","labelEn":"Fever"},{"value":"t1_other","label":"Other","labelEn":"Other"}]},
+            {"fieldId":"other_problem","type":"text","conditional":{"dependsOn":"problems_t1","expectedValue":"t1_other"}}]}]}"""
+
+    private fun conditionalOtherViewModel(): GeneralCheckupFormViewModel {
+        coEvery { formRepository.getSavedSchema(FormConstants.GENERAL_CHECKUP_FORM_ID) } returns
+                savedSchema("en").copy(schemaJson = conditionalOtherSchema)
+        return viewModel()
+    }
+
+    @Test
+    fun `Other box shows only while the checkbox matching its expectedValue is ticked`() = runTest {
+        val vm = conditionalOtherViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "t1")
+        vm.onFieldChanged("problems_t1", setOf("p1"))
+        assertFalse("other_problem" in vm.fieldIds())
+
+        vm.onFieldChanged("problems_t1", setOf("p1", "t1_other"))
+        val other = vm.visibleFields(ownerTitle).last()
+        assertEquals("other_problem", other.fieldId)
+        assertTrue(other.isRequired)
+
+        vm.onFieldChanged("problems_t1", setOf("p1"))
+        assertFalse("other_problem" in vm.fieldIds())
+    }
+
+    @Test
+    fun `conditional Other box is required and goes into the referral reason`() = runTest {
+        val vm = conditionalOtherViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "t1")
+        vm.onFieldChanged("problems_t1", setOf("t1_other"))
+        assertEquals("err:${R.string.gc_other_required}", vm.validate(context, ownerTitle))
+
+        vm.onFieldChanged("other_problem", " Skin rash ")
+        assertNull(vm.validate(context, ownerTitle))
+        assertEquals("General Check-up: Other: Skin rash", vm.referralReason())
+    }
+
+    @Test
+    fun `changing the type clears the conditional Other box`() = runTest {
+        val vm = conditionalOtherViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "t1")
+        vm.onFieldChanged("problems_t1", setOf("t1_other"))
+        vm.onFieldChanged("other_problem", "Rash")
+        vm.onFieldChanged(FIELD_TYPE, null)
+        vm.onFieldChanged(FIELD_TYPE, "t1")
+        vm.onFieldChanged("problems_t1", setOf("t1_other"))
+        assertNull(vm.visibleFields(ownerTitle).last().value)
+    }
+
+    @Test
+    fun `type dropdown leaves out inactive types and types without active problems`() = runTest {
+        coEvery { formRepository.getSavedSchema(FormConstants.GENERAL_CHECKUP_FORM_ID) } returns savedSchema("en").copy(
+            schemaJson = """{"formId":"general_check_up","formName":"GC","version":2,"sections":[{"fields":[
+            {"fieldId":"checkup_date","type":"date"},
+            {"fieldId":"problem_type","type":"dropdown","options":[
+             {"value":"t1","label":"T1"},{"value":"t2","label":"T2","isActive":false},{"value":"t3","label":"T3"}]},
+            {"fieldId":"problems_t1","type":"multicheckbox","conditional":{"dependsOn":"problem_type","expectedValue":"t1"},
+             "options":[{"value":"p1","label":"P1"}]},
+            {"fieldId":"problems_t2","type":"multicheckbox","conditional":{"dependsOn":"problem_type","expectedValue":"t2"},
+             "options":[{"value":"p2","label":"P2"}]},
+            {"fieldId":"problems_t3","type":"multicheckbox","conditional":{"dependsOn":"problem_type","expectedValue":"t3"},
+             "options":[{"value":"p3","label":"P3","isActive":false}]}]}]}"""
+        )
+        val vm = viewModel()
+        advanceUntilIdle()
+        val typeField = vm.visibleFields(ownerTitle).first { it.fieldId == FIELD_TYPE }
+        assertEquals(listOf("t1"), typeField.options!!.map { it.value })
+    }
+
+    // ── v24-shaped schema (one shared "other_problem" box per list) ────────────
+    // Reproduces the v24 quirks only: no isEmergency flags, a priority_text label for g11,
+    // the Emergency list carrying g12_* options while its Other box expects g11_other.
+
+    private val v24Json = """
+        {"formId":"general_check_up","version":24,"sections":[{"fields":[
+          {"fieldId":"checkup_date","type":"date","isRequired":true},
+          {"fieldId":"problem_type","type":"dropdown","isRequired":true,"options":[
+            {"value":"g11","label":"Emergency"},{"value":"g6","label":"Fever"}]},
+          {"fieldId":"problems_g11","type":"multicheckbox","isRequired":true,
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g11"},
+           "options":[{"value":"g12_sleep","label":"Cannot sleep"},{"value":"g12_other","label":"Other"}]},
+          {"fieldId":"problems_g6","type":"multicheckbox","isRequired":true,
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g6"},
+           "options":[{"value":"g6_fever","label":"Fever"},{"value":"g6_other","label":"Other"}]},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g6","expectedValue":"Other"}},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g11","expectedValue":"g11_other"}},
+          {"fieldId":"other_problem","type":"text","isRequired":true,
+           "conditional":{"dependsOn":"problems_g6","expectedValue":"g6_other"}},
+          {"fieldId":"priority_text","type":"label","isRequired":true,"defaultValue":"Emergency",
+           "conditional":{"dependsOn":"problem_type","expectedValue":"g11"}}]}]}
+    """.trimIndent()
+
+    private fun uatV24ViewModel(): GeneralCheckupFormViewModel {
+        coEvery { formRepository.getSavedSchema(FormConstants.GENERAL_CHECKUP_FORM_ID) } returns
+                savedSchema("en").copy(schemaJson = v24Json)
+        return viewModel()
+    }
+
+    @Test
+    fun `v24 - Other box shows for Fever type when Other is ticked`() = runTest {
+        val vm = uatV24ViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g6")
+        vm.onFieldChanged("problems_g6", setOf("g6_other"))
+        assertEquals(1, vm.fieldIds().count { it == "other_problem" })
+    }
+
+    @Test
+    fun `v24 - Other box shows for Emergency type when Other is ticked`() = runTest {
+        val vm = uatV24ViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g11")
+        // Server's Emergency list carries the mental-health options, so its "Other" is g12_other.
+        vm.onFieldChanged("problems_g11", setOf("g12_other"))
+        assertEquals(1, vm.fieldIds().count { it == "other_problem" })
+    }
+
+    @Test
+    fun `v24 - Emergency Other box is required, hides on untick and its text goes in the reason`() = runTest {
+        val vm = uatV24ViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g11")
+        vm.onFieldChanged("problems_g11", setOf("g12_sleep"))
+        assertFalse("other_problem" in vm.fieldIds())
+
+        vm.onFieldChanged("problems_g11", setOf("g12_sleep", "g12_other"))
+        assertTrue(vm.visibleFields(ownerTitle).single { it.fieldId == "other_problem" }.isRequired)
+        assertEquals("err:${R.string.gc_other_required}", vm.validate(context, ownerTitle))
+
+        vm.onFieldChanged("other_problem", "Snake bite")
+        assertNull(vm.validate(context, ownerTitle))
+        assertEquals("General Check-up: Cannot sleep, Other: Snake bite", vm.referralReason())
+
+        vm.onFieldChanged("problems_g11", setOf("g12_sleep"))
+        assertFalse("other_problem" in vm.fieldIds())
+    }
+
+    @Test
+    fun `v24 - Emergency type follows the server's priority field, other types stay routine`() = runTest {
+        val vm = uatV24ViewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g11")
+        vm.onFieldChanged("problems_g11", setOf("g12_sleep"))
+        assertEquals(CheckupPriority.EMERGENCY, vm.priority)
+
+        vm.onFieldChanged(FIELD_TYPE, "g6")
+        vm.onFieldChanged("problems_g6", setOf("g6_fever"))
+        assertEquals(CheckupPriority.ROUTINE, vm.priority)
     }
 }

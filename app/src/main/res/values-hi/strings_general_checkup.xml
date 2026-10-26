@@ -52,7 +52,7 @@
 
     <!-- Duplicate referral (BRD §8) -->
     <string name="gc_dup_title">इस महीने पहले ही रेफर किया गया</string>
-    <string name="gc_dup_msg">इस व्यक्ति को इसी समस्या के लिए %1$s को पहले ही रेफर किया गया है। एक व्यक्ति, एक समस्या, एक महीने में एक ही रेफरल।</string>
+    <string name="gc_dup_msg">इस व्यक्ति को इस समस्या के लिए %1$s को पहले ही रेफर किया जा चुका है। इसी समस्या के लिए अगले महीने फिर से रेफर कर सकते हैं।</string>
     <string name="gc_dup_view">एचडब्ल्यूसी रेफरल में देखें</string>
     <string name="gc_save_failed">जाँच सेव नहीं हो सकी। फिर से कोशिश करें।</string>
 </resources>

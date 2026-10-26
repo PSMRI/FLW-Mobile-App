@@ -32,6 +32,7 @@ import org.piramalswasthya.sakhi.repositories.GeneralCheckupRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormSchema.Companion.FIELD_DATE
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormSchema.Companion.FIELD_OTHER
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormSchema.Companion.FIELD_PRIORITY
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormSchema.Companion.FIELD_TYPE
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormSchema.Companion.OTHER_MAX_LENGTH
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
@@ -178,11 +179,15 @@ class GeneralCheckupFormViewModel @Inject constructor(
         if (fieldId == FIELD_TYPE && normalized != values[FIELD_TYPE]) {
             // A new type starts a fresh problem list (prototype §2.6).
             form?.problemTypes?.forEach { values.remove(it.problemFieldId); errors.remove(it.problemFieldId) }
-            values.remove(FIELD_OTHER)
-            errors.remove(FIELD_OTHER)
+            otherFieldIds().forEach { values.remove(it); errors.remove(it) }
         }
         values[fieldId] = normalized
         errors.remove(fieldId)
+        // A hidden Other box drops its error, so ticking Other again shows it clean.
+        form?.let { form ->
+            val shown = shownFields(form).map { it.fieldId }.toSet()
+            otherFieldIds().filterNot { it in shown }.forEach { errors.remove(it) }
+        }
         _formChanged.value = Unit
     }
 
@@ -197,12 +202,37 @@ class GeneralCheckupFormViewModel @Inject constructor(
             return type.problems.filter { it.problemId in ticked }
         }
 
-    private val otherText: String get() = (values[FIELD_OTHER] as? String).orEmpty().trim()
+    private fun otherFieldIds(): List<String> =
+        form?.let { form -> form.fields.map { it.fieldId }.filter { form.isOtherField(it) } }.orEmpty()
+
+    private fun textOf(fieldId: String): String = (values[fieldId] as? String).orEmpty().trim()
+
+    /** Text of the Other box on screen (the one whose Other option is ticked). */
+    private val otherText: String
+        get() {
+            val form = form ?: return ""
+            return shownFields(form).filter { form.isOtherField(it.fieldId) }
+                .map { textOf(it.fieldId) }.firstOrNull { it.isNotEmpty() }.orEmpty()
+        }
 
     val hasSelection get() = selectedProblems.isNotEmpty()
     val isOtherSelected get() = selectedProblems.any { it.needsText }
+    /** Emergency if a ticked problem is, or the server's priority field on screen says Emergency. */
     val priority
-        get() = if (selectedProblems.any { it.emergency }) CheckupPriority.EMERGENCY else CheckupPriority.ROUTINE
+        get() = if (selectedProblems.any { it.emergency } || serverPriorityIsEmergency) CheckupPriority.EMERGENCY
+        else CheckupPriority.ROUTINE
+
+    /** The server sends no isEmergency flags (v24), only a `priority_text` label for the Emergency type. */
+    private val serverPriorityIsEmergency: Boolean
+        get() {
+            val form = form ?: return false
+            val localized = appContext.getString(R.string.gc_priority_emergency_short).substringBefore("–").trim()
+            return shownFields(form).filter { it.fieldId == FIELD_PRIORITY }.any { field ->
+                val text = (field.defaultValue ?: field.default?.toString()).orEmpty().trim()
+                text.contains("emergency", ignoreCase = true) ||
+                        (localized.isNotEmpty() && text.contains(localized, ignoreCase = true))
+            }
+        }
 
     /** First ticked problem owned by another module (FR6), or null. */
     val ownedProblem get() = selectedProblems.firstOrNull { it.ownerModule != null }
@@ -214,29 +244,30 @@ class GeneralCheckupFormViewModel @Inject constructor(
     // ── Fields for the renderer ────────────────────────────────────────────────
 
     /**
-     * Visible fields in schema order, with answers and errors applied. [otherRequiredMessage] shows
-     * under the Other box as soon as it appears, until she starts typing (FLW-1229 item 4).
+     * Visible fields in schema order, with answers and errors applied. Errors appear only after
+     * Refer is tapped ([validate]), so a newly shown Other box carries just its required mark.
      */
-    fun visibleFields(
-        ownerTitle: (HealthProblemOwnerModule) -> String,
-        otherRequiredMessage: String? = null
-    ): List<FormField> {
+    fun visibleFields(ownerTitle: (HealthProblemOwnerModule) -> String): List<FormField> {
         val form = form ?: return emptyList()
-        return form.fields.filter { isVisible(form, it) }.map { field ->
+        return shownFields(form).map { field ->
             val problemType = form.typeOfProblemField(field.fieldId)
             FormField(
                 fieldId = field.fieldId,
                 label = field.label,
                 type = field.type,
                 defaultValue = field.defaultValue ?: field.default?.toString(),
-                isRequired = field.required || field.fieldId == FIELD_OTHER,
+                isRequired = field.required || form.isOtherField(field.fieldId),
                 options = problemType?.problems?.map { problem ->
                     OptionItem(
                         label = problem.ownerModule?.let { "${problem.label} (${ownerTitle(it)})" } ?: problem.label,
                         value = problem.problemId,
                         highlight = problem.emergency
                     )
-                } ?: field.optionItems(),
+                }
+                    // Only active types that have problems; the raw options still hold inactive ones (FR12).
+                    ?: form.problemTypes.takeIf { field.fieldId == FIELD_TYPE }
+                        ?.map { OptionItem(label = it.label, value = it.typeId) }
+                    ?: field.optionItems(),
                 value = values[field.fieldId],
                 visible = true,
                 placeholder = field.placeholder,
@@ -253,20 +284,41 @@ class GeneralCheckupFormViewModel @Inject constructor(
                     else ConditionalLogic(c.dependsOn, c.expectedValue)
                 },
                 errorMessage = errors[field.fieldId]
-                    ?: otherRequiredMessage.takeIf { field.fieldId == FIELD_OTHER && values[FIELD_OTHER] == null }
             )
+        }
+    }
+
+    /** Visible fields in schema order, with at most one Other box (the server may send several per list). */
+    private fun shownFields(form: GeneralCheckupFormSchema): List<FormFieldDto> {
+        var otherShown = false
+        return form.fields.filter { field ->
+            when {
+                !isVisible(form, field) -> false
+                !form.isOtherField(field.fieldId) -> true
+                otherShown -> false
+                else -> { otherShown = true; true }
+            }
         }
     }
 
     private fun isVisible(form: GeneralCheckupFormSchema, field: FormFieldDto): Boolean {
         form.typeOfProblemField(field.fieldId)?.let { return it.typeId == selectedProblemType?.typeId }
-        if (field.fieldId == FIELD_OTHER) return isOtherSelected
-        // Any other server field: the engine's single-equality condition.
-        val condition = field.conditional ?: return true
-        val dependsOn = condition.dependsOn?.takeIf { it.isNotBlank() } ?: return true
-        val actual = values[dependsOn]?.toString().orEmpty()
-        val expected = condition.expectedValue?.trim().orEmpty()
-        return actual.isNotBlank() && (expected.isBlank() || actual.equals(expected, ignoreCase = true))
+        val dependsOn = field.conditional?.dependsOn?.trim()?.takeIf { it.isNotEmpty() }
+            ?: return if (field.fieldId == FIELD_OTHER) isOtherSelected else true
+        // Other box on a problem list: shown while that list is on screen and an Other option is
+        // ticked, whatever value the server put in expectedValue.
+        if (form.isOtherField(field.fieldId) && form.typeOfProblemField(dependsOn) != null) {
+            return dependsOn == selectedProblemType?.problemFieldId && isOtherSelected
+        }
+        val expected = field.conditional?.expectedValue?.trim().orEmpty()
+        fun matches(actual: Any?) = actual?.toString()?.trim().orEmpty().let {
+            it.isNotEmpty() && (expected.isEmpty() || it.equals(expected, ignoreCase = true))
+        }
+        return when (val actual = values[dependsOn]) {
+            // A checkbox list (e.g. the Other box): shown while the expected option is ticked.
+            is Collection<*> -> actual.any { matches(it) }
+            else -> matches(actual)
+        }
     }
 
     // ── Validation and save ────────────────────────────────────────────────────
@@ -279,21 +331,23 @@ class GeneralCheckupFormViewModel @Inject constructor(
         errors.clear()
         val fields = visibleFields(ownerTitle)
         fields.forEach { field ->
-            val error = when (field.fieldId) {
-                FIELD_DATE -> checkupDate.let { date ->
+            val error = when {
+                field.fieldId == FIELD_DATE -> checkupDate.let { date ->
                     if (date == null || date < minDate || date > maxDate) context.getString(R.string.gc_date_hint) else null
                 }
-                FIELD_TYPE -> if (selectedProblemType == null) context.getString(R.string.gc_err_type) else null
-                FIELD_OTHER -> when {
-                    otherText.isBlank() -> context.getString(R.string.gc_other_required)
-                    otherText.length > OTHER_MAX_LENGTH -> context.getString(R.string.gc_err_other_length, OTHER_MAX_LENGTH)
-                    else -> null
+                field.fieldId == FIELD_TYPE -> if (selectedProblemType == null) context.getString(R.string.gc_err_type) else null
+                form?.isOtherField(field.fieldId) == true -> textOf(field.fieldId).let { text ->
+                    when {
+                        text.isBlank() -> context.getString(R.string.gc_other_required)
+                        text.length > OTHER_MAX_LENGTH -> context.getString(R.string.gc_err_other_length, OTHER_MAX_LENGTH)
+                        else -> null
+                    }
                 }
-                else -> if (form?.typeOfProblemField(field.fieldId) != null) {
+                form?.typeOfProblemField(field.fieldId) != null ->
                     if (selectedProblems.isEmpty()) context.getString(R.string.gc_err_problem) else null
-                } else {
-                    FieldValidator.validate(field, null, context = context).takeUnless { it.isValid }?.errorMessage
-                }
+                // Display only (v24 sends the "Priority" label as required with no value).
+                field.type == "label" -> null
+                else -> FieldValidator.validate(field, null, context = context).takeUnless { it.isValid }?.errorMessage
             }
             if (error != null) errors[field.fieldId] = error
         }
@@ -318,7 +372,7 @@ class GeneralCheckupFormViewModel @Inject constructor(
     /** Every answer of a visible field, for formData (multi-select values comma-separated). */
     private fun answers(): Map<String, String> {
         val form = form ?: return emptyMap()
-        return form.fields.filter { isVisible(form, it) }.mapNotNull { field ->
+        return shownFields(form).mapNotNull { field ->
             val text = when (val v = values[field.fieldId]) {
                 is Collection<*> -> v.joinToString(",")
                 null -> null

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +19,6 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentGeneralCheckupFormBinding
 import org.piramalswasthya.sakhi.model.HealthProblemOwnerModule
 import org.piramalswasthya.sakhi.model.HealthProblem
-import org.piramalswasthya.sakhi.model.CheckupPriority
 import org.piramalswasthya.sakhi.model.GeneralCheckupCache
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -133,10 +131,10 @@ class GeneralCheckupFormFragment : Fragment() {
         }
     }
 
-    /** Redraws the fields, the pointer and the priority banner from the ViewModel. */
+    /** Redraws the fields and the pointer from the ViewModel. Priority is the server form's own field. */
     private fun render() {
         formAdapter?.let { adapter ->
-            val fields = viewModel.visibleFields(::ownerTitle, getString(R.string.gc_other_required))
+            val fields = viewModel.visibleFields(::ownerTitle)
             // updateFields diffs by position only; a different field set (e.g. another type's
             // problem list in the same slot) needs a full redraw.
             if (adapter.getCurrentFields().map { it.fieldId } != fields.map { it.fieldId }) {
@@ -148,16 +146,6 @@ class GeneralCheckupFormFragment : Fragment() {
         val ready = viewModel.formState.value == GeneralCheckupFormViewModel.FormState.Ready
         binding.llPointer.visibility =
             if (ready && viewModel.selectedProblemType == null) View.VISIBLE else View.GONE
-
-        binding.tvPriority.visibility = if (viewModel.hasSelection) View.VISIBLE else View.GONE
-        val emergency = viewModel.priority == CheckupPriority.EMERGENCY
-        binding.tvPriority.setText(if (emergency) R.string.gc_priority_emergency else R.string.gc_priority_routine)
-        binding.tvPriority.setBackgroundColor(
-            color(if (emergency) R.color.gc_banner_red_bg else R.color.gc_banner_blue_bg)
-        )
-        binding.tvPriority.setTextColor(
-            color(if (emergency) R.color.gc_banner_red_text else R.color.gc_banner_blue_text)
-        )
     }
 
     private fun ownerTitle(owner: HealthProblemOwnerModule) = getString(owner.titleRes())
@@ -279,8 +267,6 @@ class GeneralCheckupFormFragment : Fragment() {
         HealthProblemOwnerModule.ECL -> R.string.gc_module_ecl
         HealthProblemOwnerModule.CATARACT -> R.string.gc_module_cataract
     }
-
-    private fun color(res: Int) = ContextCompat.getColor(requireContext(), res)
 
     override fun onStart() {
         super.onStart()
