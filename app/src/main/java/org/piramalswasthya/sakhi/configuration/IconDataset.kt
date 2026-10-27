@@ -568,7 +568,7 @@ class IconDataset @Inject constructor(
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment()
         ),
         Icon(
-            R.drawable.disease_control_icon,
+            R.drawable.covid__transmission_virus_human_infected,
             resources.getString(R.string.icon_title_cd),
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDiseasesGridFragment()

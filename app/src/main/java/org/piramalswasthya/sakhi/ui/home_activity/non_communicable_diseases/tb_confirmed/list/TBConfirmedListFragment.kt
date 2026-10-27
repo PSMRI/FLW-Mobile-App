@@ -132,7 +132,7 @@ class TBConfirmedListFragment : Fragment() {
                 )
             } else {
                 (it as SupervisorActivity).updateActionBar(
-                    R.drawable.ic__ncd,
+                    R.drawable.healthicons__tb_outline,
                     getString(R.string.tb_confirmed_cases)
                 )
             }

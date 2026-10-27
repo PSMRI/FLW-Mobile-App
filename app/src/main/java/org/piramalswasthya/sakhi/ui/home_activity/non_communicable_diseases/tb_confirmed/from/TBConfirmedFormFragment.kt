@@ -149,7 +149,7 @@ class TBConfirmedFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.healthicons__tb_outline,
                 getString(R.string.tb_confirmed_form)
             )
         }

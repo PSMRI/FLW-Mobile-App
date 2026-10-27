@@ -111,7 +111,7 @@ class TBSuspectedListFragment : Fragment() {
                 )
             } else {
                 (it as HomeActivity).updateActionBar(
-                    R.drawable.ic__ncd,
+                    R.drawable.healthicons__viral_lung_infection_outline,
                     getString(R.string.tb_suspected_list)
                 )
             }

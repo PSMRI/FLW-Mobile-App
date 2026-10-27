@@ -57,7 +57,7 @@ class CommunicableDiseasesGridFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.disease_control_icon,
+                R.drawable.covid__transmission_virus_human_infected,
                 getString(R.string.icon_title_cd)
             )
         }
