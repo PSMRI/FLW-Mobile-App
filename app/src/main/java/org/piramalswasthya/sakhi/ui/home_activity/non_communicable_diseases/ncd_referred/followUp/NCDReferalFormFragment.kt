@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentNcdReferalFollowUpFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
 import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
@@ -338,9 +339,13 @@ class NCDReferalFormFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
+            // A General Check-up referral (FLW-1229) is told apart by its reason prefix, since both
+            // the HWC and the NCD referred lists open this screen.
+            val isGeneralCheckup =
+                args.referReason.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX)
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd_priority,
-                getString(R.string.ncd_folloup_form)
+                if (isGeneralCheckup) R.drawable.ic__general_op else R.drawable.ic__ncd_priority,
+                getString(if (isGeneralCheckup) R.string.gc_referral_follow_up_form else R.string.ncd_folloup_form)
             )
         }
     }

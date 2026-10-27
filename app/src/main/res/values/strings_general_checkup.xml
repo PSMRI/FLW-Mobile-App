@@ -19,6 +19,7 @@
     <string name="gc_priority_emergency">Priority: Emergency.\nRefer immediately.</string>
     <string name="gc_priority_routine">Priority: Routine</string>
     <string name="gc_refer_to_facility">Refer to Facility</string>
+    <string name="gc_referral_follow_up_form">General Referral Follow-up Form</string>
     <string name="gc_err_type">Select the type of problem.</string>
     <string name="gc_err_problem">Select at least one problem.</string>
     <string name="gc_err_other_length">Write the name in %1$d characters or fewer.</string>

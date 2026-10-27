@@ -19,6 +19,7 @@
     <string name="gc_priority_emergency">অগ্ৰাধিকাৰ: জৰুৰীকালীন।\nতৎক্ষণাত ৰেফাৰ কৰক।</string>
     <string name="gc_priority_routine">অগ্ৰাধিকাৰ: সাধাৰণ</string>
     <string name="gc_refer_to_facility">স্বাস্থ্য কেন্দ্ৰলৈ ৰেফাৰ কৰক</string>
+    <string name="gc_referral_follow_up_form">সাধাৰণ ৰেফাৰেল ফলো-আপ ফৰ্ম</string>
     <string name="gc_err_type">সমস্যাৰ প্ৰকাৰ বাছনি কৰক।</string>
     <string name="gc_err_problem">অন্ততঃ এটা সমস্যা বাছনি কৰক।</string>
     <string name="gc_err_other_length">নামটো %1$d টা আখৰ বা তাতকৈ কমত লিখক।</string>

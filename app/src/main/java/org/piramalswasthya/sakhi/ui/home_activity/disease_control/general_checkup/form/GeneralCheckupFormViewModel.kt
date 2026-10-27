@@ -453,7 +453,7 @@ class GeneralCheckupFormViewModel @Inject constructor(
 
     companion object {
         const val REFERRAL_TYPE = "GENERAL_CHECKUP"
-        private const val REASON_PREFIX = "General Check-up: "
+        const val REASON_PREFIX = "General Check-up: "
 
         /** The form engine's date format. */
         private fun uiDateFormat() = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
