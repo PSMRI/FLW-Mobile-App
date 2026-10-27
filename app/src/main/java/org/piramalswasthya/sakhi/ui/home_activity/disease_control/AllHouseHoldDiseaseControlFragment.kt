@@ -169,9 +169,18 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
     }
     override fun onStart() {
         super.onStart()
+        val diseaseIcon = when (viewModel.diseaseType) {
+            getString(R.string.icon_title_maleria) -> R.drawable.maleria
+            getString(R.string.icon_title_aes) -> R.drawable.aes
+            getString(R.string.icon_title_ka) -> R.drawable.kala
+            getString(R.string.icon_title_filaria) -> R.drawable.filaria
+            getString(R.string.icon_title_leprosy) -> R.drawable.leprocy
+            getString(R.string.tb) -> R.drawable.tb_icon
+            else -> R.drawable.ic__village_level_form
+        }
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__village_level_form,
+                diseaseIcon,
                 viewModel.diseaseType
             )
         }

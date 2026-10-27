@@ -148,7 +148,7 @@ class TPTStartFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(R.drawable.ic__ncd, getString(R.string.start_tpt))
+            (it as HomeActivity).updateActionBar(R.drawable.covid__vaccine_protection_medicine_pill, getString(R.string.start_tpt))
         }
     }
 
