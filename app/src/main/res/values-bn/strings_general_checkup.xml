@@ -19,6 +19,7 @@
     <string name="gc_priority_emergency">অগ্রাধিকার: জরুরি।\nঅবিলম্বে রেফার করুন।</string>
     <string name="gc_priority_routine">অগ্রাধিকার: সাধারণ</string>
     <string name="gc_refer_to_facility">স্বাস্থ্য কেন্দ্রে রেফার করুন</string>
+    <string name="gc_referral_follow_up_form">সাধারণ রেফারেল ফলো-আপ ফর্ম</string>
     <string name="gc_err_type">সমস্যার ধরন নির্বাচন করুন।</string>
     <string name="gc_err_problem">অন্তত একটি সমস্যা নির্বাচন করুন।</string>
     <string name="gc_err_other_length">নামটি %1$d অক্ষর বা তার কমে লিখুন।</string>
