@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
@@ -17,7 +18,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.lms.LmsFragment
 
 class UserGuideFragment : Fragment() {
-        private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
     private val viewModel: UserGuideViewModel by viewModels()
 
 
@@ -30,7 +31,14 @@ class UserGuideFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val binding = RvIconGridBinding.inflate(layoutInflater)
+        _binding = binding
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,6 +62,7 @@ class UserGuideFragment : Fragment() {
 
 
         InputType.IMAGE_VIEW
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -64,7 +73,7 @@ class UserGuideFragment : Fragment() {
                 Toast.makeText(context,it.toString(), Toast.LENGTH_SHORT).show()
 //                findNavController().navigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
 //        rvAdapter.submitList(iconDataset.getLmsDataset(resources))

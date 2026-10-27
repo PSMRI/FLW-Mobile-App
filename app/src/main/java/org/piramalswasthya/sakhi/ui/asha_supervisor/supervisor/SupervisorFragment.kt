@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.WorkInfo
@@ -254,7 +255,7 @@ class SupervisorFragment : Fragment() {
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(IconGridAdapter.GridIconClickListener {
             safeNavigate(it)
-        }, viewModel.scope)
+        }, viewLifecycleOwner.lifecycleScope)
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {
             Timber.d("update called!~~ $it")

@@ -30,8 +30,8 @@ class InfantRegListFragment : Fragment() {
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -52,7 +52,7 @@ class InfantRegListFragment : Fragment() {
         binding.ivFilter.setOnClickListener {
             EcFilterBottomSheetFragment(viewModel.getCurrentSort()) { selected ->
                 viewModel.setSortFilter(selected)
-                binding.tvSelectedFilter.text = when (selected) {
+                _binding?.tvSelectedFilter?.text = when (selected) {
                     EcFilterType.NEWEST_FIRST   -> getString(R.string.filter_newest_first)
                     EcFilterType.OLDEST_FIRST   -> getString(R.string.filter_oldest_first)
                     EcFilterType.AGE_WISE       -> getString(R.string.filter_age_wise)
@@ -75,7 +75,7 @@ class InfantRegListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -123,8 +123,8 @@ class InfantRegListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

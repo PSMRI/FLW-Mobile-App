@@ -1,12 +1,18 @@
 package org.piramalswasthya.sakhi.adapters
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeIconsFragment
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerFragment
 import timber.log.Timber
 
-class HomePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class HomePagerAdapter : FragmentStateAdapter {
+
+    constructor(fragment: Fragment) : super(fragment)
+
+    constructor(fragmentManager: FragmentManager, lifecycle: Lifecycle) : super(fragmentManager, lifecycle)
 
     override fun getItemCount() = 2
 

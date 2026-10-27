@@ -66,8 +66,8 @@ class ChildListFragment : Fragment() {
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -103,7 +103,7 @@ class ChildListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -145,6 +145,11 @@ class ChildListFragment : Fragment() {
                 getString(R.string.child_care_icon_title_child_list)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

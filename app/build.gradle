@@ -135,6 +135,9 @@ android {
     }
     kapt {
         correctErrorTypes true
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     kotlinOptions {
@@ -286,6 +289,9 @@ dependencies {
 
     //Flexbox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //LeakCanary
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 
 
 

@@ -134,7 +134,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
             ))
         binding.rvAny.adapter = householdAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.householdList.collect {
                 if (it.isEmpty()) binding.flEmpty.visibility = View.VISIBLE
                 else binding.flEmpty.visibility = View.GONE
@@ -175,5 +175,10 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
                 viewModel.diseaseType
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

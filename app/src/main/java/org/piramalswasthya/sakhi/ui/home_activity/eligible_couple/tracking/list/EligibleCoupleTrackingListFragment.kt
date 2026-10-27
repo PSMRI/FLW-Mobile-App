@@ -44,9 +44,6 @@ class EligibleCoupleTrackingListFragment : Fragment() {
 
     private val viewModel: EligibleCoupleTrackingListViewModel by viewModels()
 
-    private val bottomSheet by lazy {
-        ECTrackingListBottomSheetFragment()
-    }
     private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -80,7 +77,7 @@ class EligibleCoupleTrackingListFragment : Fragment() {
         binding.ivFilter.setOnClickListener {
             EcFilterBottomSheetFragment(viewModel.getCurrentSort()) { selected ->
                 viewModel.setSortFilter(selected)
-                binding.tvSelectedFilter.text = when (selected) {
+                _binding?.tvSelectedFilter?.text = when (selected) {
                     EcFilterType.NEWEST_FIRST   -> getString(R.string.filter_newest_first)
                     EcFilterType.OLDEST_FIRST   -> getString(R.string.filter_oldest_first)
                     EcFilterType.AGE_WISE       -> getString(R.string.filter_age_wise)
@@ -107,13 +104,13 @@ class EligibleCoupleTrackingListFragment : Fragment() {
                         if (!isBottomSheetShowing) {
                             isBottomSheetShowing = true
                             viewModel.setClickedBenId(it)
-                            bottomSheet.show(childFragmentManager, "ECT")
+                            ECTrackingListBottomSheetFragment().show(childFragmentManager, "ECT")
                         }
             })
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -164,8 +161,8 @@ class EligibleCoupleTrackingListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

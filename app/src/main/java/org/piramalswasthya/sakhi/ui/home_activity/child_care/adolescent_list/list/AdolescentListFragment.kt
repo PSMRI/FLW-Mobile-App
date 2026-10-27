@@ -35,8 +35,8 @@ class AdolescentListFragment : Fragment() {
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -64,7 +64,7 @@ class AdolescentListFragment : Fragment() {
            }, showBeneficiaries = true, showAbha = true)
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
@@ -113,8 +113,8 @@ class AdolescentListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

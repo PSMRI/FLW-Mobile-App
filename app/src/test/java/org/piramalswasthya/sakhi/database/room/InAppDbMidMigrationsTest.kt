@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.migrations.ALL_MIGRATIONS
 
 class InAppDbMidMigrationsTest {
 
@@ -20,19 +21,8 @@ class InAppDbMidMigrationsTest {
     }
 
     private fun invokeMigration(name: String, db: SupportSQLiteDatabase) {
-        val clazz = Class.forName(
-            "org.piramalswasthya.sakhi.database.room.InAppDb\$Companion\$getInstance\$$name\$1"
-        )
-        val constructor = clazz.declaredConstructors.first()
-        constructor.isAccessible = true
-        val instance = constructor.newInstance()
-        val method = clazz.declaredMethods.first {
-            (it.name == "migrate" || it.name == "invoke") &&
-                    it.parameterTypes.size == 1 &&
-                    it.parameterTypes[0] == SupportSQLiteDatabase::class.java
-        }
-        method.isAccessible = true
-        method.invoke(instance, db)
+        val (from, to) = name.removePrefix("MIGRATION_").split("_").map { it.toInt() }
+        ALL_MIGRATIONS.single { it.startVersion == from && it.endVersion == to }.migrate(db)
     }
 
     private fun masterCursor(exists: Boolean): Cursor {
