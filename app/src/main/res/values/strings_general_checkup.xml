@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Disease Control (3-tile layout) -->
+    <string name="icon_title_general_checkup">General Check-up</string>
+    <string name="icon_title_non_communicable">Non-Communicable Diseases</string>
+
+    <!-- General Check-up list -->
+    <string name="gc_search_hint">Search by name or ID</string>
+    <string name="gc_earlier_checkups">Earlier check-ups</string>
+    <string name="gc_add_checkup">Add Check-up</string>
+
+    <!-- General Check-up form -->
+    <string name="gc_earlier_checkups_count">Earlier check-ups (%1$d)</string>
+    <string name="gc_no_earlier_checkups">No earlier check-ups.</string>
+    <string name="gc_date_hint">Today or up to one month back. Not a future date.</string>
+    <string name="gc_pointer_cd">Looking for TB, malaria, leprosy or other infectious disease? Use Communicable Diseases.</string>
+    <string name="gc_pointer_ncd">High BP, diabetes, COPD or cancer screening? Use Non-Communicable Diseases.</string>
+    <string name="gc_other_required">Required. You cannot refer until you write the name of the problem.</string>
+    <string name="gc_priority_emergency">Priority: Emergency.\nRefer immediately.</string>
+    <string name="gc_priority_routine">Priority: Routine</string>
+    <string name="gc_refer_to_facility">Refer to Facility</string>
+    <string name="gc_err_type">Select the type of problem.</string>
+    <string name="gc_err_problem">Select at least one problem.</string>
+    <string name="gc_err_other_length">Write the name in %1$d characters or fewer.</string>
+    <string name="gc_form_unavailable">The check-up form has not been downloaded yet. Connect to the internet and try again.</string>
+    <string name="gc_form_invalid">The check-up form from the server is incomplete, so it cannot be filled. Please inform your supervisor or try again later.</string>
+    <string name="gc_retry">Try again</string>
+
+    <!-- Routing to owner modules (FR6) -->
+    <string name="gc_route_title">Another module handles this</string>
+    <string name="gc_route_msg">%1$s is handled in %2$s. Continue there. One episode creates one referral, so no second referral is made from General Check-up.</string>
+    <string name="gc_route_continue">Continue in %1$s</string>
+    <string name="gc_route_stay">Stay here</string>
+    <string name="gc_module_maternal">Maternal Health</string>
+    <string name="gc_module_child">Child Care</string>
+    <string name="gc_module_ecl">Eligible Couple List</string>
+    <string name="gc_module_cataract">Cataract referral</string>
+
+    <!-- Refer to Facility form -->
+    <string name="gc_priority">Priority</string>
+    <string name="gc_priority_emergency_short">EMERGENCY – Refer immediately</string>
+    <string name="gc_priority_routine_short">Routine</string>
+    <string name="gc_referral_submitted">Referral submitted.</string>
+
+    <string-array name="gc_referral_facility">
+        <item>HWC</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>Medical College</item>
+        <item>District Hospital</item>
+    </string-array>
+
+    <!-- Duplicate referral (BRD §8) -->
+    <string name="gc_dup_title">Already referred this month</string>
+    <string name="gc_dup_msg">This person was already referred for this problem on %1$s. You can refer them for this problem again next month.</string>
+    <string name="gc_dup_view">View in HWC Referrals</string>
+    <string name="gc_save_failed">Could not save the check-up. Please try again.</string>
+</resources>

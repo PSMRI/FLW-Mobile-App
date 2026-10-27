@@ -219,6 +219,8 @@ object WorkerUtils {
                 .addTag("push_group2_screening").build(),
             syncRequestBuilder<NCDFollowUpSyncWorker>()
                 .addTag("push_group2_screening").build(),
+            syncRequestBuilder<GeneralCheckupPushWorker>()
+                .addTag("push_group2_screening").build(),
         )
 
         // ─────────────────────────────────────────────────────────────
@@ -515,6 +517,8 @@ object WorkerUtils {
             syncRequestBuilder<PullHRPFromAmritWorker>()
                 .addTag("pull_group2_screening").build(),
             syncRequestBuilder<PullAdolescentFromWorker>()
+                .addTag("pull_group2_screening").build(),
+            syncRequestBuilder<GeneralCheckupPullWorker>()
                 .addTag("pull_group2_screening").build(),
 
         )

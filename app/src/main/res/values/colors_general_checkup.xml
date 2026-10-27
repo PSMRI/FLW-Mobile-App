@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gc_banner_blue_bg">#E3F2FD</color>
+    <color name="gc_banner_blue_text">#0D47A1</color>
+    <color name="gc_banner_red_bg">#FFEBEE</color>
+    <color name="gc_banner_red_text">#B71C1C</color>
+    <color name="gc_emergency">#C62828</color>
+</resources>

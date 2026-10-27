@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
@@ -427,5 +428,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
+
+    @Singleton
+    @Provides
+    fun provideGeneralCheckupDao(database: InAppDb): GeneralCheckupDao = database.generalCheckupDao
 
 }

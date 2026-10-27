@@ -1541,6 +1541,8 @@ data class NCDReferalDTO(
 
     val isSpecialist: Boolean? = false,
     var syncState: SyncState = SyncState.UNSYNCED,
+    /** ROUTINE / EMERGENCY, General Check-up only */
+    val priority: String? = null,
 
     ) {
     fun toCache(): ReferalCache {
@@ -1561,11 +1563,8 @@ data class NCDReferalDTO(
             referralReason = referralReason,
             parkingPlaceID = parkingPlaceID,
             syncState = SyncState.SYNCED,
-            type = type
-
-
-
-
+            type = type,
+            priority = priority
         )
     }
 }

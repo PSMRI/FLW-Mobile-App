@@ -33,7 +33,7 @@ class HwcReferredViewModel @Inject constructor(
 
     val benList = allBenList.combine(filter) { cacheList, filter ->
         val maternalList = cacheList
-            .filter { it.referral.type == "MATERNAL" }
+            .filter { it.referral.type in SHOWN_TYPES }
             .map { it.asDomainModel() }
 
         val benBasicDomainList = maternalList.map { it.ben }
@@ -64,5 +64,10 @@ class HwcReferredViewModel @Inject constructor(
 
     fun getAshaId(): Int? {
         return asha?.userId
+    }
+
+    companion object {
+        const val GENERAL_CHECKUP = "GENERAL_CHECKUP"
+        private val SHOWN_TYPES = setOf("MATERNAL", GENERAL_CHECKUP)
     }
 }

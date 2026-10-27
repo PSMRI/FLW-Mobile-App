@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_normal"
+    android:backgroundTint="?attr/colorPrimary"
+    app:cardCornerRadius="@dimen/padding_normal"
+    app:cardElevation="@dimen/padding_normal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_ben_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorOnPrimary"
+            android:drawablePadding="@dimen/padding_small"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_small"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="?attr/colorPrimaryVariant"
+            app:drawableLeftCompat="@drawable/ic__hh"
+            app:drawableTint="?attr/colorPrimary"
+            tools:text="Ramlal Yadav" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_normal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    android:id="@+id/tv_relation_label"
+                    style="@style/GcCardLabel"
+                    tools:text="Father Name" />
+
+                <TextView
+                    android:id="@+id/tv_relation_name"
+                    style="@style/GcCardValue"
+                    tools:text="DHANIRAM YADAV" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    style="@style/GcCardLabel"
+                    android:text="@string/age" />
+
+                <TextView
+                    android:id="@+id/tv_age"
+                    style="@style/GcCardValue"
+                    tools:text="67 Years 3 Months" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    style="@style/GcCardLabel"
+                    android:text="@string/gender" />
+
+                <TextView
+                    android:id="@+id/tv_gender"
+                    style="@style/GcCardValue"
+                    tools:text="MALE" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/padding_normal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    style="@style/GcCardLabel"
+                    android:text="@string/beneficiary_id" />
+
+                <TextView
+                    android:id="@+id/tv_ben_id"
+                    style="@style/GcCardValue"
+                    tools:text="252090934101" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    style="@style/GcCardLabel"
+                    android:text="@string/mobile_number" />
+
+                <TextView
+                    android:id="@+id/tv_mobile"
+                    style="@style/GcCardValue"
+                    tools:text="9340011122" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_small">
+
+                <TextView
+                    style="@style/GcCardLabel"
+                    android:text="@string/gc_earlier_checkups" />
+
+                <TextView
+                    android:id="@+id/tv_checkup_count"
+                    style="@style/GcCardValue"
+                    tools:text="0" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_checkup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:text="@string/gc_add_checkup"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
