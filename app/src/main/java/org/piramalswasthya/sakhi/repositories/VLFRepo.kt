@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -25,6 +26,7 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.VLFDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.model.AHDCache
 import org.piramalswasthya.sakhi.model.DewormingCache
 import org.piramalswasthya.sakhi.model.ORSCampaignCache
@@ -52,6 +54,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 
@@ -65,6 +68,51 @@ class VLFRepo @Inject constructor(
 
 ) {
 
+    private fun newMeetingImageFile(dir: File) = File(dir, "vlf_${UUID.randomUUID()}.jpeg")
+
+    private suspend fun persistMeetingImage(value: String?): String? {
+        if (value.isNullOrBlank() || !value.startsWith("content://")) return value
+        val target = newMeetingImageFile(appContext.filesDir)
+        return if (ImageUtils.compressImageUriToFile(appContext, value, target)) {
+            Uri.fromFile(target).toString()
+        } else {
+            value
+        }
+    }
+
+    private suspend fun meetingImageForUpload(value: String?): String? {
+        if (value.isNullOrBlank()) return value
+        return when {
+            value.startsWith("file://") ->
+                Uri.parse(value).path?.let { ImageUtils.encodeImageFile(File(it)) } ?: value
+
+            value.startsWith("content://") -> {
+                val temp = newMeetingImageFile(appContext.cacheDir)
+                try {
+                    if (ImageUtils.compressImageUriToFile(appContext, value, temp)) {
+                        ImageUtils.encodeImageFile(temp) ?: value
+                    } else {
+                        value
+                    }
+                } finally {
+                    temp.delete()
+                }
+            }
+
+            else -> value
+        }
+    }
+
+    private suspend fun meetingImageFromServer(value: String?): String? {
+        if (value.isNullOrBlank() || value == "default" || value.contains("://")) return value
+        val target = newMeetingImageFile(appContext.filesDir)
+        return if (ImageUtils.saveBase64ImageToFile(appContext, value, target)) {
+            Uri.fromFile(target).toString()
+        } else {
+            value
+        }
+    }
+
     suspend fun getVHND(id: Int): VHNDCache? {
         return withContext(Dispatchers.IO) {
             database.vlfDao.getVHND(id)
@@ -73,6 +121,8 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveRecord(vhndCache: VHNDCache) {
         withContext(Dispatchers.IO) {
+            vhndCache.image1 = persistMeetingImage(vhndCache.image1)
+            vhndCache.image2 = persistMeetingImage(vhndCache.image2)
             database.vlfDao.saveRecord(vhndCache)
         }
     }
@@ -88,6 +138,8 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveRecord(vhncCache: VHNCCache) {
         withContext(Dispatchers.IO) {
+            vhncCache.image1 = persistMeetingImage(vhncCache.image1)
+            vhncCache.image2 = persistMeetingImage(vhncCache.image2)
             database.vlfDao.saveRecord(vhncCache)
         }
     }
@@ -104,6 +156,8 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveRecord(phcCache: PHCReviewMeetingCache) {
         withContext(Dispatchers.IO) {
+            phcCache.image1 = persistMeetingImage(phcCache.image1)
+            phcCache.image2 = persistMeetingImage(phcCache.image2)
             database.vlfDao.saveRecord(phcCache)
         }
     }
@@ -120,6 +174,8 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveAHDRecord(ahdCache: AHDCache) {
         withContext(Dispatchers.IO) {
+            ahdCache.image1 = persistMeetingImage(ahdCache.image1)
+            ahdCache.image2 = persistMeetingImage(ahdCache.image2)
             database.vlfDao.saveRecord(ahdCache)
         }
     }
@@ -136,6 +192,8 @@ class VLFRepo @Inject constructor(
 
     suspend fun saveDeworming(dewormingCache: DewormingCache) {
         withContext(Dispatchers.IO) {
+            dewormingCache.image1 = persistMeetingImage(dewormingCache.image1)
+            dewormingCache.image2 = persistMeetingImage(dewormingCache.image2)
             database.vlfDao.saveRecord(dewormingCache)
         }
     }
@@ -686,7 +744,7 @@ class VLFRepo @Inject constructor(
     }
 
     //...................for VHND.........................................
-    private fun saveVHND(dataObj: String) {
+    private suspend fun saveVHND(dataObj: String) {
         val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
         val entries = requestDTO.getAsJsonArray("entries")
         for (dto in entries) {
@@ -695,8 +753,12 @@ class VLFRepo @Inject constructor(
                 entry.vhndDate?.let {
                     val vhndCache = database
                         .vlfDao.getVHND(entry.id)
-                    if (vhndCache == null) {
-                        database.vlfDao.saveRecord(entry.toCache())
+                    val sameMeetingCount = database.vlfDao.countVHNDByDateAndPlace(it, entry.place)
+                    if (vhndCache == null && sameMeetingCount == 0) {
+                        database.vlfDao.saveRecord(entry.toCache().apply {
+                            image1 = meetingImageFromServer(image1)
+                            image2 = meetingImageFromServer(image2)
+                        })
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -797,7 +859,12 @@ class VLFRepo @Inject constructor(
 
             for (chunk in chunks) {
                 try {
-                    val chunkDtos = chunk.map { cache -> cache.toVhndDTODTO() }
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toVhndDTODTO().apply {
+                            image1 = meetingImageForUpload(image1)
+                            image2 = meetingImageForUpload(image2)
+                        }
+                    }
 
                     val response = tmcNetworkApiService.saveVHNDData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
@@ -844,7 +911,7 @@ class VLFRepo @Inject constructor(
 
     //.............................................................................
     //...................for VHNC.........................................
-    private fun saveVHNC(dataObj: String) {
+    private suspend fun saveVHNC(dataObj: String) {
         val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
         val entries = requestDTO.getAsJsonArray("entries")
         for (dto in entries) {
@@ -853,8 +920,12 @@ class VLFRepo @Inject constructor(
                 entry.vhncDate?.let {
                     val vhncCache = database
                         .vlfDao.getVHNC(entry.id)
-                    if (vhncCache == null) {
-                        database.vlfDao.saveRecord(entry.toCache())
+                    val sameMeetingCount = database.vlfDao.countVHNCByDateAndPlace(it, entry.place)
+                    if (vhncCache == null && sameMeetingCount == 0) {
+                        database.vlfDao.saveRecord(entry.toCache().apply {
+                            image1 = meetingImageFromServer(image1)
+                            image2 = meetingImageFromServer(image2)
+                        })
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -955,7 +1026,12 @@ class VLFRepo @Inject constructor(
 
             for (chunk in chunks) {
                 try {
-                    val chunkDtos = chunk.map { cache -> cache.toVhncDTODTO() }
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toVhncDTODTO().apply {
+                            image1 = meetingImageForUpload(image1)
+                            image2 = meetingImageForUpload(image2)
+                        }
+                    }
 
                     val response = tmcNetworkApiService.saveVHNCData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
@@ -1003,7 +1079,7 @@ class VLFRepo @Inject constructor(
     //.............................................................................
 
     //...................for PHC.........................................
-    private fun savePHC(dataObj: String) {
+    private suspend fun savePHC(dataObj: String) {
         val requestDTO = Gson().fromJson(dataObj, JsonObject::class.java)
         val entries = requestDTO.getAsJsonArray("entries")
         for (dto in entries) {
@@ -1011,8 +1087,12 @@ class VLFRepo @Inject constructor(
                 val entry = Gson().fromJson(dto.toString(), PHCReviewDTO::class.java)
                 entry.phcReviewDate?.let {
                     val phcCache = database.vlfDao.getPHC(entry.id)
-                    if (phcCache == null) {
-                        database.vlfDao.saveRecord(entry.toCache())
+                    val sameMeetingCount = database.vlfDao.countPHCByDateAndPlace(it, entry.place)
+                    if (phcCache == null && sameMeetingCount == 0) {
+                        database.vlfDao.saveRecord(entry.toCache().apply {
+                            image1 = meetingImageFromServer(image1)
+                            image2 = meetingImageFromServer(image2)
+                        })
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -1113,7 +1193,12 @@ class VLFRepo @Inject constructor(
 
             for (chunk in chunks) {
                 try {
-                    val chunkDtos = chunk.map { cache -> cache.toPHCDTODTO() }
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toPHCDTODTO().apply {
+                            image1 = meetingImageForUpload(image1)
+                            image2 = meetingImageForUpload(image2)
+                        }
+                    }
 
                     val response = tmcNetworkApiService.savePHCData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
@@ -1170,8 +1255,12 @@ class VLFRepo @Inject constructor(
                 val entry = Gson().fromJson(dto.toString(), AHDDTO::class.java)
                 entry.ahdDate?.let {
                     val ahdDate = database.vlfDao.getAHD(entry.id)
-                    if (ahdDate == null) {
-                        database.vlfDao.saveRecord(entry.toCache())
+                    val sameMeetingCount = database.vlfDao.countAHDByDateAndPlace(it, entry.ahdPlace)
+                    if (ahdDate == null && sameMeetingCount == 0) {
+                        database.vlfDao.saveRecord(entry.toCache().apply {
+                            image1 = meetingImageFromServer(image1)
+                            image2 = meetingImageFromServer(image2)
+                        })
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -1272,7 +1361,12 @@ class VLFRepo @Inject constructor(
 
             for (chunk in chunks) {
                 try {
-                    val chunkDtos = chunk.map { cache -> cache.toDTO() }
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toDTO().apply {
+                            image1 = meetingImageForUpload(image1)
+                            image2 = meetingImageForUpload(image2)
+                        }
+                    }
 
                     val response = tmcNetworkApiService.saveAHDData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
@@ -1328,7 +1422,10 @@ class VLFRepo @Inject constructor(
                 entry.dewormingDone?.let {
                     val dewormingDate = database.vlfDao.getDeworming(entry.id)
                     if (dewormingDate == null) {
-                        database.vlfDao.saveRecord(entry.toCache())
+                        database.vlfDao.saveRecord(entry.toCache().apply {
+                            image1 = meetingImageFromServer(image1)
+                            image2 = meetingImageFromServer(image2)
+                        })
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -1428,7 +1525,12 @@ class VLFRepo @Inject constructor(
 
             for (chunk in chunks) {
                 try {
-                    val chunkDtos = chunk.map { cache -> cache.toDTO() }
+                    val chunkDtos = chunk.map { cache ->
+                        cache.toDTO().apply {
+                            image1 = meetingImageForUpload(image1)
+                            image2 = meetingImageForUpload(image2)
+                        }
+                    }
 
                     val response = tmcNetworkApiService.saveDewormingData(
                         UserDataDTO(userId = user.userId, entries = chunkDtos)
@@ -1481,10 +1583,10 @@ class VLFRepo @Inject constructor(
 
         val current = YearMonth.now()
 
-        val vhnd = vlfDao.getAllVHND()
-        val vhnc = vlfDao.getAllVHNC()
-        val phc = vlfDao.getAllPHC()
-        val ahd = vlfDao.getAllAHD()
+        val vhnd = vlfDao.getAllVHNDDates()
+        val vhnc = vlfDao.getAllVHNCDates()
+        val phc = vlfDao.getAllPHCDates()
+        val ahd = vlfDao.getAllAHDDates()
         val deworming = vlfDao.countDewormingInLastSixMonths()
 
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
@@ -1501,10 +1603,10 @@ class VLFRepo @Inject constructor(
             }
 
             mapOf(
-                "VHND" to vhndList.any { isInCurrentMonth(it.vhndDate) },
-                "VHNC" to vhncList.any { isInCurrentMonth(it.vhncDate) },
-                "PHC" to phcList.any { isInCurrentMonth(it.phcReviewDate) },
-                "AHD" to ahdList.any { isInCurrentMonth(it.ahdDate) },
+                "VHND" to vhndList.any { isInCurrentMonth(it) },
+                "VHNC" to vhncList.any { isInCurrentMonth(it) },
+                "PHC" to phcList.any { isInCurrentMonth(it) },
+                "AHD" to ahdList.any { isInCurrentMonth(it) },
                 "DEWORMING" to (dewormingCount > 0)
             )
         }
