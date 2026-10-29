@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.GCReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -38,6 +39,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var repository: NCDFollowUpFormRepository
     @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
+    @MockK private lateinit var gcReferralFollowUpRepository: GCReferralFollowUpRepository
     @MockK private lateinit var tbRepo: TBRepo
     @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var context: Context
@@ -53,6 +55,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
     private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
         repository,
         tbReferralFollowUpRepository,
+        gcReferralFollowUpRepository,
         tbRepo,
         benRepo,
         context,

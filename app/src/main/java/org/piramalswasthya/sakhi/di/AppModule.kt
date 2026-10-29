@@ -60,6 +60,7 @@ import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.SerializeNullAdapterFactory
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.BodyCappedLoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
@@ -208,6 +209,7 @@ object AppModule {
     @Provides
     fun provideMoshiInstance(): Moshi {
         return Moshi.Builder()
+            .add(SerializeNullAdapterFactory)
             .add(KotlinJsonAdapterFactory())
             .build()
     }

@@ -6,6 +6,7 @@ import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormNCDFollowUpSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpApiRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
@@ -199,6 +200,17 @@ interface AmritApiService {
 
     @POST("flw-api/tb/referralFollowUp/getAll")
     suspend fun getTBReferralFollowUps(
+        @Body userDetail: GetDataPaginatedRequest
+    ): Response<ResponseBody>
+
+    // General Check-up referral follow-up: a list of records per save.
+    @POST("flw-api/generalCheckUpFollowUp/saveAll")
+    suspend fun saveGCReferralFollowUp(
+        @Body request: List<GCReferralFollowUpRequest>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/generalCheckUpFollowUp/getAll")
+    suspend fun getGCReferralFollowUps(
         @Body userDetail: GetDataPaginatedRequest
     ): Response<ResponseBody>
 

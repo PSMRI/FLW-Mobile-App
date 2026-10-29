@@ -155,7 +155,11 @@ class NCDReferalFormFragment : Fragment() {
                         ?.visibility = android.view.View.GONE
                 }
             },
-            formId = if (viewModel.isTbForm) FormConstants.Tb_Referral_Follow_Up else null
+            formId = when {
+                viewModel.isGcForm -> FormConstants.GC_REFERRAL_FOLLOW_UP
+                viewModel.isTbForm -> FormConstants.Tb_Referral_Follow_Up
+                else -> null
+            }
         )
 
         binding.recyclerView.apply {
@@ -302,7 +306,7 @@ class NCDReferalFormFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 schema?.let {
-                    if (viewModel.isTbForm) {
+                    if (viewModel.isReferralFollowUpForm) {
                         val visibleFields = viewModel.getVisibleFields()
 
                         binding.referredOnContainer.isVisible = true

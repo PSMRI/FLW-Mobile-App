@@ -83,6 +83,20 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_73_74 creates the general check-up referral follow-up table and its unique index`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_73_74", db)
+
+        assertTrue(executedSql.any {
+            it.contains("CREATE TABLE IF NOT EXISTS `gc_referral_follow_up`") &&
+                    it.contains("`followUpDate` TEXT NOT NULL") && it.contains("`fieldsJson` TEXT NOT NULL")
+        })
+        assertExecuted("CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `followUpDate`)")
+    }
+
+    @Test
     fun `MIGRATION_72_73 drops the problem master and adds formData on an early v72 db`() {
         val db = mockDb(columns = listOf("id", "checkupId", "benId", "syncState"))
 

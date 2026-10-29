@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -683,12 +684,17 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val tbFollowUp : List<TBReferralFollowUpEntity>
+    val tbFollowUp : List<TBReferralFollowUpEntity>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp
+            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp, gcReferralFollowUp = gcFollowUp
         )
     }
 }
@@ -700,7 +706,8 @@ data class BenWithCbacReferDomain(
     val tbrefferalFollowUp : List<TBReferralFollowUpEntity>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
-                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
+                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED,
+    val gcReferralFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 )
 
 data class BenWithCbacDomain(

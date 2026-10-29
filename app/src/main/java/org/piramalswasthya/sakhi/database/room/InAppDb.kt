@@ -67,6 +67,7 @@ import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.GCReferralFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
@@ -132,6 +133,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
@@ -212,10 +214,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
         NotificationEntity::class,
-        GeneralCheckupCache::class
+        GeneralCheckupCache::class,
+        GCReferralFollowUpEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 73, exportSchema = false
+    version = 74, exportSchema = false
 )
 
 @TypeConverters(
@@ -272,6 +275,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun gcReferralFollowUpDao(): GCReferralFollowUpDao
     abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
@@ -513,6 +517,28 @@ abstract class InAppDb : RoomDatabase() {
                     if (!columnExists(database, "GENERAL_CHECKUP", "formData")) {
                         database.execSQL("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
                     }
+                }
+            }
+
+            // General Check-up referral follow-up (general_check_follow_up), same table shape as tb_referral_follow_up.
+            val MIGRATION_73_74 = object : Migration(73, 74) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `gc_referral_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`referredOnDate` TEXT NOT NULL, " +
+                                "`followUpDate` TEXT NOT NULL, " +
+                                "`followUpStatus` TEXT, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate` " +
+                                "ON `gc_referral_follow_up` (`benId`, `followUpDate`)"
+                    )
                 }
             }
 
@@ -3760,7 +3786,8 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_69_70,
                         MIGRATION_70_71,
                         MIGRATION_71_72,
-                        MIGRATION_72_73
+                        MIGRATION_72_73,
+                        MIGRATION_73_74
 
 
                     ).build()
