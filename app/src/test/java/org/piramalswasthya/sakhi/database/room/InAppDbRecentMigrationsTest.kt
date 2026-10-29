@@ -92,7 +92,8 @@ class InAppDbRecentMigrationsTest {
         assertExecuted("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
         assertExecuted("WHERE (SELECT COUNT(*) FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId")
         assertExecuted("= gc_referral_follow_up.referredOnDate")
-        assertExecuted("GROUP BY benId, referralReason, referralMonth")
+        // Duplicate cleanup keeps an unsynced row before a synced one.
+        assertExecuted("o.isSynced < gc_referral_follow_up.isSynced")
         assertExecuted("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
         assertExecuted("ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)")
         // The new key is created only after duplicates are removed.

@@ -570,10 +570,15 @@ abstract class InAppDb : RoomDatabase() {
                                 "referralMonth = (SELECT r.revisitMonth $sameDay) " +
                                 "WHERE referralReason = '' AND (SELECT COUNT(*) $sameDay) = 1"
                     )
-                    // Several unlinked rows of one beneficiary would collide on the new key; keep the latest.
+                    // Several unlinked rows of one beneficiary would collide on the new key. Keep one: an
+                    // unsynced row first (not on the server yet), then the latest.
                     database.execSQL(
-                        "DELETE FROM gc_referral_follow_up WHERE id NOT IN (SELECT MAX(id) FROM gc_referral_follow_up " +
-                                "GROUP BY benId, referralReason, referralMonth)"
+                        "DELETE FROM gc_referral_follow_up WHERE EXISTS (SELECT 1 FROM gc_referral_follow_up o " +
+                                "WHERE o.benId = gc_referral_follow_up.benId " +
+                                "AND o.referralReason = gc_referral_follow_up.referralReason " +
+                                "AND o.referralMonth = gc_referral_follow_up.referralMonth " +
+                                "AND (o.isSynced < gc_referral_follow_up.isSynced " +
+                                "OR (o.isSynced = gc_referral_follow_up.isSynced AND o.id > gc_referral_follow_up.id)))"
                     )
                     database.execSQL("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
                     database.execSQL(
