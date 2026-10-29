@@ -11,6 +11,9 @@ import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.fromApiDate
+import org.piramalswasthya.sakhi.model.monthKey
+import org.piramalswasthya.sakhi.model.toApiDate
 import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpRequest
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetDataPaginatedRequest
@@ -30,12 +33,12 @@ class GCReferralFollowUpRepository @Inject constructor(
     private val dao = db.gcReferralFollowUpDao()
     private val gson = Gson()
 
-    suspend fun getVisits(benId: Long): List<GCReferralFollowUpEntity> = withContext(Dispatchers.IO) {
-        dao.getByBeneficiary(benId)
-    }
+    /** The follow-up of one referral; a beneficiary with two referrals (e.g. Cold and Fever) has one each. */
+    suspend fun getForReferral(benId: Long, referralReason: String, referralMonth: Int): GCReferralFollowUpEntity? =
+        withContext(Dispatchers.IO) { dao.getForReferral(benId, referralReason, referralMonth) }
 
     suspend fun save(entity: GCReferralFollowUpEntity) = withContext(Dispatchers.IO) {
-        val existing = dao.getByBeneficiaryAndDate(entity.benId, entity.followUpDate)
+        val existing = dao.getForReferral(entity.benId, entity.referralReason, entity.referralMonth)
         val stored = entity.copy(id = existing?.id ?: entity.id, isSynced = false)
         dao.insertOrUpdate(stored)
     }
@@ -51,7 +54,9 @@ class GCReferralFollowUpRepository @Inject constructor(
                         beneficiaryId = entity.benId,
                         houseHoldId = entity.houseHoldId,
                         visitDate = entity.followUpDate,
-                        fields = gson.fromJson(entity.fieldsJson, object : TypeToken<Map<String, Any?>>() {}.type)
+                        fields = gson.fromJson(entity.fieldsJson, object : TypeToken<Map<String, Any?>>() {}.type),
+                        referralReason = entity.referralReason.ifBlank { null },
+                        referredOnDate = entity.referredOnDate.ifBlank { null }
                     )
                 }
             )
@@ -102,19 +107,21 @@ class GCReferralFollowUpRepository @Inject constructor(
                 val fields = row.fields.orEmpty()
                 val followUpDate = fields[FIELD_FOLLOW_UP_DATE]?.toString().orEmpty()
                 if (row.beneficiaryId <= 0 || followUpDate.isBlank()) return@forEach
-                val existing = dao.getByBeneficiaryAndDate(row.beneficiaryId, followUpDate)
+                val referral = resolveReferral(row) ?: return@forEach
+                val existing = dao.getForReferral(row.beneficiaryId, referral.reason, referral.month)
                 if (existing?.isSynced == false) return@forEach
                 dao.insertOrUpdate(
                     GCReferralFollowUpEntity(
                         id = existing?.id ?: 0,
                         benId = row.beneficiaryId,
                         houseHoldId = row.houseHoldId,
-                        // Not part of the server record; the referral itself carries the referral date.
-                        referredOnDate = existing?.referredOnDate.orEmpty(),
+                        referredOnDate = referral.referredOnDate,
                         followUpDate = followUpDate,
                         followUpStatus = fields[FIELD_STATUS]?.toString(),
                         fieldsJson = gson.toJson(fields),
-                        isSynced = true
+                        isSynced = true,
+                        referralReason = referral.reason,
+                        referralMonth = referral.month
                     )
                 )
             }
@@ -123,6 +130,22 @@ class GCReferralFollowUpRepository @Inject constructor(
             Timber.e(e, "General Check-up follow-up pull failed")
             false
         }
+    }
+
+    private data class ReferralKey(val reason: String, val month: Int, val referredOnDate: String)
+
+    /**
+     * The referral a server record belongs to. A record saved before the server kept the referral
+     * (no referralReason) is linked only when the beneficiary has exactly one General Check-up referral.
+     */
+    private suspend fun resolveReferral(row: GCReferralFollowUpRequest): ReferralKey? {
+        val reason = row.referralReason.orEmpty()
+        val referredOn = fromApiDate(row.referredOnDate)
+        if (reason.isNotBlank() && referredOn != null) {
+            return ReferralKey(reason, monthKey(referredOn), toApiDate(referredOn))
+        }
+        val referral = dao.getGcReferrals(row.beneficiaryId).singleOrNull() ?: return null
+        return ReferralKey(referral.referralReason.orEmpty(), monthKey(referral.revisitDate), toApiDate(referral.revisitDate))
     }
 
     companion object {

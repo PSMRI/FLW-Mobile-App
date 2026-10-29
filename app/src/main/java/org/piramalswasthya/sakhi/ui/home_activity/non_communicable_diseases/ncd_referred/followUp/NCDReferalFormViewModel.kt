@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.monthKey
 import org.piramalswasthya.sakhi.model.toApiDate
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -181,7 +182,7 @@ class NCDReferalFormViewModel @Inject constructor(
     fun loadFormSchema(benId: Long) {
         viewModelScope.launch {
             if (isGcForm) {
-                _gcVisitHistory.value = gcReferralFollowUpRepository.getVisits(benId)
+                _gcVisitHistory.value = loadGcFollowUp(benId)
             } else if (isTbForm) {
                 _tbVisitHistory.value = tbReferralFollowUpRepository.getVisits(benId)
             } else {
@@ -423,12 +424,19 @@ class NCDReferalFormViewModel @Inject constructor(
                 referredOnDate = referredDate.takeIf { it > 0L }?.let { toApiDate(it) }.orEmpty(),
                 followUpDate = followUpDate,
                 followUpStatus = fieldsMap[GCReferralFollowUpRepository.FIELD_STATUS]?.toString(),
-                fieldsJson = JSONObject(fieldsMap).toString()
+                fieldsJson = JSONObject(fieldsMap).toString(),
+                referralReason = referReason,
+                referralMonth = monthKey(referredDate)
             )
         )
-        _gcVisitHistory.value = gcReferralFollowUpRepository.getVisits(benId)
+        _gcVisitHistory.value = loadGcFollowUp(benId)
         WorkerUtils.triggerAmritPushWorker(context)
     }
+
+    /** Only this card's referral: Cold and Fever referrals of one beneficiary each get their own follow-up. */
+    private suspend fun loadGcFollowUp(benId: Long): List<GCReferralFollowUpEntity> = listOfNotNull(
+        gcReferralFollowUpRepository.getForReferral(benId, referReason, monthKey(referredDate))
+    )
 
     private suspend fun updateTbBeneficiaryStatus(benId: Long, selectedStatus: String?) {
         val status = selectedStatus.orEmpty().trim().uppercase(Locale.ROOT)

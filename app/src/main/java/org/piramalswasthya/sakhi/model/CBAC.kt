@@ -694,7 +694,11 @@ data class BenWithCbacAndReferalCache(
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp, gcReferralFollowUp = gcFollowUp
+            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp,
+            // The relation is per beneficiary; keep only this card's referral (same reason, same month).
+            gcReferralFollowUp = gcFollowUp.filter {
+                it.referralReason == referral.referralReason && it.referralMonth == monthKey(referral.revisitDate)
+            }
         )
     }
 }
