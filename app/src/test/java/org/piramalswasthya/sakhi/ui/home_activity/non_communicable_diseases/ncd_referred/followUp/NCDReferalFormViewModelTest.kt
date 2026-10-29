@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -23,11 +24,13 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSectionDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.GCReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -38,6 +41,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
     @MockK private lateinit var repository: NCDFollowUpFormRepository
     @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
+    @MockK private lateinit var gcReferralFollowUpRepository: GCReferralFollowUpRepository
     @MockK private lateinit var tbRepo: TBRepo
     @MockK private lateinit var benRepo: BenRepo
     @MockK private lateinit var context: Context
@@ -53,6 +57,7 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
     private fun buildViewModel(referReason: String) = NCDReferalFormViewModel(
         repository,
         tbReferralFollowUpRepository,
+        gcReferralFollowUpRepository,
         tbRepo,
         benRepo,
         context,
@@ -97,6 +102,77 @@ class NCDReferalFormViewModelTest : BaseViewModelTest() {
 
         coVerify { repository.getSavedSchema(FormConstants.Tb_Referral_Follow_Up) }
         coVerify(exactly = 0) { repository.getSavedSchema(FormConstants.CDTF_001) }
+    }
+
+    // Cold and Fever referrals of one beneficiary: each card has its own follow-up (FLW-1229).
+    private val oct20 = Calendar.getInstance().apply { clear(); set(2026, Calendar.OCTOBER, 20) }.timeInMillis
+
+    private fun buildGcViewModel(referReason: String) = NCDReferalFormViewModel(
+        repository,
+        tbReferralFollowUpRepository,
+        gcReferralFollowUpRepository,
+        tbRepo,
+        benRepo,
+        context,
+        SavedStateHandle(
+            mapOf(
+                "benId" to 1L, "hhId" to 2L, "referReason" to referReason,
+                "referredDate" to oct20, "referralType" to "GENERAL_CHECKUP"
+            )
+        )
+    )
+
+    private fun gcFollowUp(reason: String) = GCReferralFollowUpEntity(
+        id = 7, benId = 1L, houseHoldId = 2L, referredOnDate = "2026-10-20", followUpDate = "2026-10-28",
+        followUpStatus = "treated_at_hwc", fieldsJson = """{"follow_up_date":"2026-10-28"}""",
+        referralReason = reason, referralMonth = 202610
+    )
+
+    @Test
+    fun `general check-up follow-up of a second reason opens empty after the first is done`() = runTest {
+        viewModel = buildGcViewModel("General Check-up: Fever")
+        stubNcd(ncdSchema(ncdField("follow_up_date")))
+        coEvery { gcReferralFollowUpRepository.getForReferral(1L, "General Check-up: Cold", 202610) } returns
+                gcFollowUp("General Check-up: Cold")
+        coEvery { gcReferralFollowUpRepository.getForReferral(1L, "General Check-up: Fever", 202610) } returns null
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        assertFalse(viewModel.isTbFormAlreadyFilled)
+        assertNull(ncdFieldOf("follow_up_date").value)
+    }
+
+    @Test
+    fun `general check-up follow-up already done for this reason opens filled`() = runTest {
+        viewModel = buildGcViewModel("General Check-up: Cold")
+        stubNcd(ncdSchema(ncdField("follow_up_date")))
+        coEvery { gcReferralFollowUpRepository.getForReferral(1L, "General Check-up: Cold", 202610) } returns
+                gcFollowUp("General Check-up: Cold")
+
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.isTbFormAlreadyFilled)
+    }
+
+    @Test
+    fun `general check-up follow-up is saved against its referral`() = runTest {
+        viewModel = buildGcViewModel("General Check-up: Fever")
+        stubNcd(ncdSchema(ncdField("follow_up_date")))
+        coEvery { gcReferralFollowUpRepository.getForReferral(any(), any(), any()) } returns null
+        val saved = slot<GCReferralFollowUpEntity>()
+        coEvery { gcReferralFollowUpRepository.save(capture(saved)) } returns 1L
+        viewModel.loadFormSchema(1L)
+        advanceUntilIdle()
+        viewModel.updateFieldValue("follow_up_date", "28-10-2026")
+
+        runCatching { viewModel.saveFormResponses(1L, 2L) }
+
+        assertEquals("General Check-up: Fever", saved.captured.referralReason)
+        assertEquals(202610, saved.captured.referralMonth)
+        assertEquals("2026-10-20", saved.captured.referredOnDate)
+        assertEquals("2026-10-28", saved.captured.followUpDate)
     }
 
     @Test

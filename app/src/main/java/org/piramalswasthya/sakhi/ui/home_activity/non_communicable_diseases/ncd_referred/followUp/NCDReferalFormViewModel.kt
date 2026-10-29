@@ -19,11 +19,16 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.monthKey
+import org.piramalswasthya.sakhi.model.toApiDate
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.NCDFollowUpFormRepository
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.GCReferralFollowUpRepository
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
 import org.piramalswasthya.sakhi.utils.Log
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
@@ -36,6 +41,7 @@ import javax.inject.Inject
 class NCDReferalFormViewModel @Inject constructor(
     private val repository: NCDFollowUpFormRepository,
     private val tbReferralFollowUpRepository: TBReferralFollowUpRepository,
+    private val gcReferralFollowUpRepository: GCReferralFollowUpRepository,
     private val tbRepo: TBRepo,
     private val benRepo: BenRepo,
     @ApplicationContext private val context: Context,
@@ -46,9 +52,11 @@ class NCDReferalFormViewModel @Inject constructor(
     private val _visitHistory = MutableStateFlow<List<NCDReferalFormResponseJsonEntity>>(emptyList())
     val visitHistory: StateFlow<List<NCDReferalFormResponseJsonEntity>> = _visitHistory
     private val _tbVisitHistory = MutableStateFlow<List<TBReferralFollowUpEntity>>(emptyList())
+    private val _gcVisitHistory = MutableStateFlow<List<GCReferralFollowUpEntity>>(emptyList())
 
     var referReason = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referReason
     var referredDate = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referredDate
+    private val referralType = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).referralType
     var visitNo = 1
     var followUpNo = 0
     var isFollowUpMode = false
@@ -64,7 +72,19 @@ class NCDReferalFormViewModel @Inject constructor(
                 referReason.equals("TB Suspected", ignoreCase = true) ||
                 referReason.equals(context.getString(R.string.tb_suspected_form), ignoreCase = true)
 
-    private val activeFormId get() = if (isTbForm) formIdforTb else formId
+    /** General Check-up referral; the reason prefix covers a referral whose type came back empty from the server. */
+    val isGcForm: Boolean
+        get() = referralType == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
+                referReason.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX)
+
+    /** TB and General Check-up follow-ups: one dated entry per follow-up, no visit numbering. */
+    val isReferralFollowUpForm: Boolean get() = isTbForm || isGcForm
+
+    private val activeFormId get() = when {
+        isGcForm -> FormConstants.GC_REFERRAL_FOLLOW_UP
+        isTbForm -> formIdforTb
+        else -> formId
+    }
 
 
     private suspend fun loadVisitHistoryInternal(benId: Long) {
@@ -161,7 +181,9 @@ class NCDReferalFormViewModel @Inject constructor(
 
     fun loadFormSchema(benId: Long) {
         viewModelScope.launch {
-            if (isTbForm) {
+            if (isGcForm) {
+                _gcVisitHistory.value = loadGcFollowUp(benId)
+            } else if (isTbForm) {
                 _tbVisitHistory.value = tbReferralFollowUpRepository.getVisits(benId)
             } else {
                 loadVisitHistoryInternal(benId)
@@ -172,7 +194,7 @@ class NCDReferalFormViewModel @Inject constructor(
             val schemaDto = repository.getSavedSchema(activeFormId)?.let { FormSchemaDto.fromJson(it.schemaJson) }
                 ?: repository.getFormSchema(activeFormId) ?: return@launch
 
-            if (isTbForm) {
+            if (isReferralFollowUpForm) {
                 Log.e("isComing","TbForm")
 
                 schemaDto.sections.forEach { section ->
@@ -192,10 +214,14 @@ class NCDReferalFormViewModel @Inject constructor(
                     }
                 }
 
-                val lastTbVisit = _tbVisitHistory.value.maxByOrNull { it.followUpDate }
-                isTbFormAlreadyFilled = lastTbVisit != null
-                lastTbVisit?.let { lastVisit ->
-                    val savedFields = JSONObject(lastVisit.fieldsJson)
+                val lastFieldsJson = if (isGcForm) {
+                    _gcVisitHistory.value.maxByOrNull { it.followUpDate }?.fieldsJson
+                } else {
+                    _tbVisitHistory.value.maxByOrNull { it.followUpDate }?.fieldsJson
+                }
+                isTbFormAlreadyFilled = lastFieldsJson != null
+                lastFieldsJson?.let { fieldsJson ->
+                    val savedFields = JSONObject(fieldsJson)
                     schemaDto.sections.forEach { section ->
                         section.fields.forEach { field ->
                             if (savedFields.has(field.fieldId)) {
@@ -302,7 +328,11 @@ class NCDReferalFormViewModel @Inject constructor(
 
     suspend fun saveFormResponses(benId: Long, hhId: Long) {
         val schema = _schema.value ?: return
-        if (isTbForm) {
+        if (isGcForm) {
+            saveGcFollowUp(schema, benId, hhId)
+            return
+        }
+        if (isReferralFollowUpForm) {
             val fieldsMap = schema.sections.flatMap { it.fields }
                 .filter { it.visible }
                 .associate { it.fieldId to normalizeTbFieldValue(it.fieldId, it.value) }
@@ -371,6 +401,43 @@ class NCDReferalFormViewModel @Inject constructor(
 
     }
 
+    /**
+     * General Check-up follow-up: the server record holds only the form's own fields
+     * (follow_up_date, followup_status, referred_to), with dates as yyyy-MM-dd.
+     */
+    private suspend fun saveGcFollowUp(schema: FormSchemaDto, benId: Long, hhId: Long) {
+        val fieldsMap = schema.sections.flatMap { it.fields }
+            .filter { it.visible }
+            .associate { field ->
+                field.fieldId to if (field.fieldId == GCReferralFollowUpRepository.FIELD_FOLLOW_UP_DATE) {
+                    parseUiDate(field.value?.toString())?.let { toApiDate(it.time) } ?: field.value
+                } else {
+                    field.value
+                }
+            }
+        val followUpDate = fieldsMap[GCReferralFollowUpRepository.FIELD_FOLLOW_UP_DATE]?.toString().orEmpty()
+        if (followUpDate.isBlank()) return
+        gcReferralFollowUpRepository.save(
+            GCReferralFollowUpEntity(
+                benId = benId,
+                houseHoldId = hhId,
+                referredOnDate = referredDate.takeIf { it > 0L }?.let { toApiDate(it) }.orEmpty(),
+                followUpDate = followUpDate,
+                followUpStatus = fieldsMap[GCReferralFollowUpRepository.FIELD_STATUS]?.toString(),
+                fieldsJson = JSONObject(fieldsMap).toString(),
+                referralReason = referReason,
+                referralMonth = monthKey(referredDate)
+            )
+        )
+        _gcVisitHistory.value = loadGcFollowUp(benId)
+        WorkerUtils.triggerAmritPushWorker(context)
+    }
+
+    /** Only this card's referral: Cold and Fever referrals of one beneficiary each get their own follow-up. */
+    private suspend fun loadGcFollowUp(benId: Long): List<GCReferralFollowUpEntity> = listOfNotNull(
+        gcReferralFollowUpRepository.getForReferral(benId, referReason, monthKey(referredDate))
+    )
+
     private suspend fun updateTbBeneficiaryStatus(benId: Long, selectedStatus: String?) {
         val status = selectedStatus.orEmpty().trim().uppercase(Locale.ROOT)
             .replace(Regex("[^A-Z0-9]+"), "_").trim('_')
@@ -430,7 +497,7 @@ class NCDReferalFormViewModel @Inject constructor(
                     FieldValidation(
                         min = it.min,
                         max = it.max,
-                        minDate = if (isTbForm && field.fieldId == "follow_up_date") {
+                        minDate = if (isReferralFollowUpForm && field.fieldId == "follow_up_date") {
                             getReferredDateForUi() ?: it.minDate
                         } else {
                             it.minDate
@@ -444,7 +511,7 @@ class NCDReferalFormViewModel @Inject constructor(
                         afterField = it.afterField,
                         beforeField = it.beforeField
                     )
-                } ?: if (isTbForm && field.fieldId == "follow_up_date") {
+                } ?: if (isReferralFollowUpForm && field.fieldId == "follow_up_date") {
                     FieldValidation(minDate = getReferredDateForUi())
                 } else null
 
@@ -494,7 +561,7 @@ class NCDReferalFormViewModel @Inject constructor(
     data class FollowUpDateError(val resId: Int, val formatArgs: Array<Any> = emptyArray(), val scrollIndex: Int = 0)
 
     fun getFollowUpDateErrorFromUI(): FollowUpDateError? {
-        if (isTbForm) return null
+        if (isReferralFollowUpForm) return null
         val fields = getVisibleFields()
         val followUpField = fields.firstOrNull { it.fieldId == "follow_up_date" } ?: return null
         val followUpDateStr = followUpField.value as? String

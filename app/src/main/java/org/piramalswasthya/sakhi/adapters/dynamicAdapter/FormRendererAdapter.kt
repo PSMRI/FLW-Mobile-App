@@ -744,7 +744,8 @@
                                         "treatmentstartdate", "followupdate", "actualcompletiondate"
                                     )
                                 val isTbReferralFollowUpDate =
-                                    formId == FormConstants.Tb_Referral_Follow_Up &&
+                                    (formId == FormConstants.Tb_Referral_Follow_Up ||
+                                        formId == FormConstants.GC_REFERRAL_FOLLOW_UP) &&
                                         field.fieldId == "follow_up_date"
 
                                 if (field.fieldId == "ifa_provision_date") {

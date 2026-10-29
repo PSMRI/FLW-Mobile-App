@@ -83,6 +83,52 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_74_75 keys general check-up follow-ups by referral and links old rows`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_74_75", db)
+
+        assertExecuted("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
+        assertExecuted("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
+        assertExecuted("WHERE (SELECT COUNT(*) FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId")
+        assertExecuted("= gc_referral_follow_up.referredOnDate")
+        // Duplicate cleanup keeps an unsynced row before a synced one.
+        assertExecuted("o.isSynced < gc_referral_follow_up.isSynced")
+        assertExecuted("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)")
+        // The new key is created only after duplicates are removed.
+        assertTrue(
+            executedSql.indexOfFirst { it.startsWith("DELETE FROM gc_referral_follow_up") } <
+                    executedSql.indexOfFirst { it.contains("CREATE UNIQUE INDEX") }
+        )
+    }
+
+    @Test
+    fun `MIGRATION_74_75 skips columns that already exist`() {
+        val db = mockDb(columns = listOf("referralReason", "referralMonth"))
+
+        invokeMigration("MIGRATION_74_75", db)
+
+        assertNotExecuted("ADD COLUMN referralReason")
+        assertNotExecuted("ADD COLUMN referralMonth")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)")
+    }
+
+    @Test
+    fun `MIGRATION_73_74 creates the general check-up referral follow-up table and its unique index`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_73_74", db)
+
+        assertTrue(executedSql.any {
+            it.contains("CREATE TABLE IF NOT EXISTS `gc_referral_follow_up`") &&
+                    it.contains("`followUpDate` TEXT NOT NULL") && it.contains("`fieldsJson` TEXT NOT NULL")
+        })
+        assertExecuted("CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `followUpDate`)")
+    }
+
+    @Test
     fun `MIGRATION_72_73 drops the problem master and adds formData on an early v72 db`() {
         val db = mockDb(columns = listOf("id", "checkupId", "benId", "syncState"))
 

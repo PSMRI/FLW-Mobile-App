@@ -1533,8 +1533,9 @@ data class NCDReferalDTO(
     val vanID: Int?,
     val parkingPlaceID: Int?,
     val beneficiaryRegID: Long?,
-    val benVisitID: Long?,
-    val visitCode: Long?,
+    /** Null when there is no HWC visit behind the referral; sent as null, never 0 (server foreign key). */
+    @SerializeNull val benVisitID: Long?,
+    @SerializeNull val visitCode: Long?,
     val providerServiceMapID: Int?,
     val createdBy: String?,
     var type: String?,

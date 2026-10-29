@@ -67,6 +67,7 @@ import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.GCReferralFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
@@ -132,6 +133,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
@@ -212,10 +214,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
         NotificationEntity::class,
-        GeneralCheckupCache::class
+        GeneralCheckupCache::class,
+        GCReferralFollowUpEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 73, exportSchema = false
+    version = 75, exportSchema = false
 )
 
 @TypeConverters(
@@ -272,6 +275,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun gcReferralFollowUpDao(): GCReferralFollowUpDao
     abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
@@ -513,6 +517,74 @@ abstract class InAppDb : RoomDatabase() {
                     if (!columnExists(database, "GENERAL_CHECKUP", "formData")) {
                         database.execSQL("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
                     }
+                }
+            }
+
+            // General Check-up referral follow-up (general_check_follow_up), same table shape as tb_referral_follow_up.
+            val MIGRATION_73_74 = object : Migration(73, 74) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `gc_referral_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`referredOnDate` TEXT NOT NULL, " +
+                                "`followUpDate` TEXT NOT NULL, " +
+                                "`followUpStatus` TEXT, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate` " +
+                                "ON `gc_referral_follow_up` (`benId`, `followUpDate`)"
+                    )
+                }
+            }
+
+            // General Check-up follow-up per referral (FLW-1229): a beneficiary with two referrals (Cold and
+            // Fever) gets one follow-up each, keyed like NCD_REFER (benId, referralReason, month). Old rows
+            // are linked when the beneficiary has exactly one General Check-up referral.
+            val MIGRATION_74_75 = object : Migration(74, 75) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "gc_referral_follow_up", "referralReason")) {
+                        database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
+                    }
+                    if (!columnExists(database, "gc_referral_follow_up", "referralMonth")) {
+                        database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
+                    }
+                    val gcReferrals = "FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId " +
+                            "AND (r.type = 'GENERAL_CHECKUP' OR r.referralReason LIKE 'General Check-up: %')"
+                    database.execSQL(
+                        "UPDATE gc_referral_follow_up SET " +
+                                "referralReason = (SELECT COALESCE(r.referralReason, '') $gcReferrals), " +
+                                "referralMonth = (SELECT r.revisitMonth $gcReferrals) " +
+                                "WHERE (SELECT COUNT(*) $gcReferrals) = 1"
+                    )
+                    // A follow-up saved on this phone kept the referral date; use it when there are several referrals.
+                    val sameDay = "$gcReferrals AND strftime('%Y-%m-%d', r.revisitDate / 1000, 'unixepoch', 'localtime') = " +
+                            "gc_referral_follow_up.referredOnDate"
+                    database.execSQL(
+                        "UPDATE gc_referral_follow_up SET " +
+                                "referralReason = (SELECT COALESCE(r.referralReason, '') $sameDay), " +
+                                "referralMonth = (SELECT r.revisitMonth $sameDay) " +
+                                "WHERE referralReason = '' AND (SELECT COUNT(*) $sameDay) = 1"
+                    )
+                    // Several unlinked rows of one beneficiary would collide on the new key. Keep one: an
+                    // unsynced row first (not on the server yet), then the latest.
+                    database.execSQL(
+                        "DELETE FROM gc_referral_follow_up WHERE EXISTS (SELECT 1 FROM gc_referral_follow_up o " +
+                                "WHERE o.benId = gc_referral_follow_up.benId " +
+                                "AND o.referralReason = gc_referral_follow_up.referralReason " +
+                                "AND o.referralMonth = gc_referral_follow_up.referralMonth " +
+                                "AND (o.isSynced < gc_referral_follow_up.isSynced " +
+                                "OR (o.isSynced = gc_referral_follow_up.isSynced AND o.id > gc_referral_follow_up.id)))"
+                    )
+                    database.execSQL("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_referralReason_referralMonth` " +
+                                "ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)"
+                    )
                 }
             }
 
@@ -3760,7 +3832,9 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_69_70,
                         MIGRATION_70_71,
                         MIGRATION_71_72,
-                        MIGRATION_72_73
+                        MIGRATION_72_73,
+                        MIGRATION_73_74,
+                        MIGRATION_74_75
 
 
                     ).build()

@@ -105,7 +105,18 @@ class NCDReferalFormFragmentNavigationTest {
         every { bundle.getLong("hhId") } returns 20L
         every { bundle.getString("referReason") } returns "TB Screening Form"
         every { bundle.getLong("referredDate") } returns 30L
+        // Optional, nullable (General Check-up referrals pass GENERAL_CHECKUP); the relaxed mock would return "".
+        every { bundle.getString("referralType") } returns null
         assertEquals(args(), NCDReferalFormFragmentArgs.fromBundle(bundle))
+    }
+
+    @Test
+    fun fromBundle_readsReferralType() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getLong(any()) } returns 10L
+        every { bundle.getString("referReason") } returns "General Check-up: Fever"
+        every { bundle.getString("referralType") } returns "GENERAL_CHECKUP"
+        assertEquals("GENERAL_CHECKUP", NCDReferalFormFragmentArgs.fromBundle(bundle).referralType)
     }
 
     @Test
