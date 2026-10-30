@@ -243,6 +243,10 @@ interface SyncDao {
                 "    SELECT 51 as id, 'Filaria MDA Campaign' as name, CASE \n" +
                 "   WHEN fmc.isSynced = 1 THEN 2 ELSE fmc.isSynced  END AS syncState " +
                 "    FROM FILARIA_MDA_CAMPAIGN_HISTORY fmc " +
+                "    UNION ALL " +
+                "    SELECT 52 as id, 'General Check-up' as name, gc.syncState as syncState " +
+                "    FROM GENERAL_CHECKUP gc " +
+                "    INNER JOIN beneficiary b ON b.beneficiaryId = gc.benId " +
                 ") AS combined_data " +
                 "GROUP BY id, name, syncState " +
                 "ORDER BY id; "

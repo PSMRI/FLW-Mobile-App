@@ -83,6 +83,95 @@ class InAppDbRecentMigrationsTest {
     }
 
     @Test
+    fun `MIGRATION_74_75 keys general check-up follow-ups by referral and links old rows`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_74_75", db)
+
+        assertExecuted("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
+        assertExecuted("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
+        assertExecuted("WHERE (SELECT COUNT(*) FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId")
+        assertExecuted("= gc_referral_follow_up.referredOnDate")
+        // Duplicate cleanup keeps an unsynced row before a synced one.
+        assertExecuted("o.isSynced < gc_referral_follow_up.isSynced")
+        assertExecuted("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)")
+        // The new key is created only after duplicates are removed.
+        assertTrue(
+            executedSql.indexOfFirst { it.startsWith("DELETE FROM gc_referral_follow_up") } <
+                    executedSql.indexOfFirst { it.contains("CREATE UNIQUE INDEX") }
+        )
+    }
+
+    @Test
+    fun `MIGRATION_74_75 skips columns that already exist`() {
+        val db = mockDb(columns = listOf("referralReason", "referralMonth"))
+
+        invokeMigration("MIGRATION_74_75", db)
+
+        assertNotExecuted("ADD COLUMN referralReason")
+        assertNotExecuted("ADD COLUMN referralMonth")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)")
+    }
+
+    @Test
+    fun `MIGRATION_73_74 creates the general check-up referral follow-up table and its unique index`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_73_74", db)
+
+        assertTrue(executedSql.any {
+            it.contains("CREATE TABLE IF NOT EXISTS `gc_referral_follow_up`") &&
+                    it.contains("`followUpDate` TEXT NOT NULL") && it.contains("`fieldsJson` TEXT NOT NULL")
+        })
+        assertExecuted("CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        assertExecuted("ON `gc_referral_follow_up` (`benId`, `followUpDate`)")
+    }
+
+    @Test
+    fun `MIGRATION_72_73 drops the problem master and adds formData on an early v72 db`() {
+        val db = mockDb(columns = listOf("id", "checkupId", "benId", "syncState"))
+
+        invokeMigration("MIGRATION_72_73", db)
+
+        assertExecuted("DROP TABLE IF EXISTS `HEALTH_PROBLEM`")
+        assertExecuted("DROP TABLE IF EXISTS `HEALTH_PROBLEM_TYPE`")
+        assertExecuted("DROP INDEX IF EXISTS `ind_health_problem_type`")
+        assertExecuted("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
+    }
+
+    @Test
+    fun `MIGRATION_72_73 skips formData when the db came from 71 through the current 71_72`() {
+        val db = mockDb(columns = listOf("id", "checkupId", "formData", "syncState"))
+
+        invokeMigration("MIGRATION_72_73", db)
+
+        assertNotExecuted("ADD COLUMN formData")
+    }
+
+    @Test
+    fun `MIGRATION_71_72 creates GENERAL_CHECKUP with formData and no problem master`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_71_72", db)
+
+        assertTrue(executedSql.any { it.contains("CREATE TABLE IF NOT EXISTS `GENERAL_CHECKUP`") && it.contains("`formData` TEXT") })
+        assertNotExecuted("HEALTH_PROBLEM")
+        assertExecuted("(`benId`, `referralReason`, `revisitMonth`)")
+    }
+
+    @Test
+    fun `MIGRATION_70_71 adds server IDs and removes one-per-day unique index`() {
+        val db = mockDb(tableExists = true)
+
+        invokeMigration("MIGRATION_70_71", db)
+
+        assertExecuted("ALTER TABLE children_under_five_all_visit ADD COLUMN serverId INTEGER")
+        assertExecuted("DROP INDEX IF EXISTS `index_children_under_five_all_visit_benId_hhId_visitDate_formId`")
+        assertExecuted("CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_serverId_formId`")
+    }
+
+    @Test
     fun `MIGRATION_66_67 adds tb screening columns on a device that ran the cbac-only 65_66`() {
         val db = mockDb(columns = listOf("cbac_occupational_exposure_other"))
 

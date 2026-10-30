@@ -1,0 +1,582 @@
+{
+  "formId": "general_check_up",
+  "formName": "General Check-up",
+  "version": 1,
+  "sections": [
+    {
+      "sectionId": "general_checkup",
+      "sectionTitle": "General Check-up",
+      "fields": [
+        {
+          "fieldId": "checkup_date",
+          "label": "Date of check-up",
+          "type": "date",
+          "isRequired": true
+        },
+        {
+          "fieldId": "problem_type",
+          "label": "Type of problem",
+          "type": "dropdown",
+          "isRequired": true,
+          "options": [
+            {
+              "value": "g11",
+              "label": "Emergency",
+              "labelEn": "Emergency"
+            },
+            {
+              "value": "g6",
+              "label": "Fever, cough and common illness",
+              "labelEn": "Fever, cough and common illness"
+            },
+            {
+              "value": "g13",
+              "label": "Injury and bites",
+              "labelEn": "Injury and bites"
+            },
+            {
+              "value": "g14",
+              "label": "Blood, thyroid and jaundice",
+              "labelEn": "Blood, thyroid and jaundice"
+            },
+            {
+              "value": "g3",
+              "label": "Child and teenager health",
+              "labelEn": "Child and teenager health"
+            },
+            {
+              "value": "g4",
+              "label": "Women's health and family planning",
+              "labelEn": "Women's health and family planning"
+            },
+            {
+              "value": "g8",
+              "label": "Eye and ear problems",
+              "labelEn": "Eye and ear problems"
+            },
+            {
+              "value": "g9",
+              "label": "Teeth and mouth",
+              "labelEn": "Teeth and mouth"
+            },
+            {
+              "value": "g10",
+              "label": "Older people (60 years and above)",
+              "labelEn": "Older people (60 years and above)"
+            },
+            {
+              "value": "g12",
+              "label": "Mental health (mind and mood)",
+              "labelEn": "Mental health (mind and mood)"
+            },
+            {
+              "value": "g99",
+              "label": "Something else (not listed)",
+              "labelEn": "Something else (not listed)"
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g11",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g11"
+          },
+          "options": [
+            {
+              "value": "e_chest",
+              "label": "Chest pain",
+              "labelEn": "Chest pain",
+              "isEmergency": true
+            },
+            {
+              "value": "e_breath",
+              "label": "Very hard to breathe",
+              "labelEn": "Very hard to breathe",
+              "isEmergency": true
+            },
+            {
+              "value": "e_injury",
+              "label": "Serious injury or accident",
+              "labelEn": "Serious injury or accident",
+              "isEmergency": true
+            },
+            {
+              "value": "e_burn",
+              "label": "Burns",
+              "labelEn": "Burns",
+              "isEmergency": true
+            },
+            {
+              "value": "e_snake",
+              "label": "Snake bite",
+              "labelEn": "Snake bite",
+              "isEmergency": true
+            },
+            {
+              "value": "e_poison",
+              "label": "Poison swallowed",
+              "labelEn": "Poison swallowed",
+              "isEmergency": true
+            },
+            {
+              "value": "e_conv",
+              "label": "Fits (body shaking)",
+              "labelEn": "Fits (body shaking)",
+              "isEmergency": true
+            },
+            {
+              "value": "e_bleed",
+              "label": "Heavy bleeding",
+              "labelEn": "Heavy bleeding",
+              "isEmergency": true
+            },
+            {
+              "value": "g11_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g6",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g6"
+          },
+          "options": [
+            {
+              "value": "g6_fever",
+              "label": "Fever",
+              "labelEn": "Fever"
+            },
+            {
+              "value": "g6_cold",
+              "label": "Common cold",
+              "labelEn": "Common cold"
+            },
+            {
+              "value": "g6_cough",
+              "label": "Cough",
+              "labelEn": "Cough"
+            },
+            {
+              "value": "g6_throat",
+              "label": "Sore throat",
+              "labelEn": "Sore throat"
+            },
+            {
+              "value": "g6_head",
+              "label": "Headache",
+              "labelEn": "Headache"
+            },
+            {
+              "value": "g6_loose",
+              "label": "Loose motions (diarrhoea)",
+              "labelEn": "Loose motions (diarrhoea)"
+            },
+            {
+              "value": "g6_vomit",
+              "label": "Vomiting",
+              "labelEn": "Vomiting"
+            },
+            {
+              "value": "g6_abd",
+              "label": "Stomach pain",
+              "labelEn": "Stomach pain"
+            },
+            {
+              "value": "g6_const",
+              "label": "Constipation",
+              "labelEn": "Constipation"
+            },
+            {
+              "value": "g6_acid",
+              "label": "Acidity (burning in the stomach)",
+              "labelEn": "Acidity (burning in the stomach)"
+            },
+            {
+              "value": "g6_skin",
+              "label": "Skin disease (itching, rash or infection)",
+              "labelEn": "Skin disease (itching, rash or infection)"
+            },
+            {
+              "value": "g6_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g13",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g13"
+          },
+          "options": [
+            {
+              "value": "g13_minor",
+              "label": "Minor injury or accident (cut, fall, bruise)",
+              "labelEn": "Minor injury or accident (cut, fall, bruise)"
+            },
+            {
+              "value": "g13_animal",
+              "label": "Animal bite (dog, monkey or other)",
+              "labelEn": "Animal bite (dog, monkey or other)"
+            },
+            {
+              "value": "g13_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g14",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g14"
+          },
+          "options": [
+            {
+              "value": "g14_anae",
+              "label": "Anaemia (low blood, weakness)",
+              "labelEn": "Anaemia (low blood, weakness)"
+            },
+            {
+              "value": "g14_jaun",
+              "label": "Jaundice (yellow eyes or skin)",
+              "labelEn": "Jaundice (yellow eyes or skin)"
+            },
+            {
+              "value": "g14_thy",
+              "label": "Thyroid problem",
+              "labelEn": "Thyroid problem"
+            },
+            {
+              "value": "g14_sickle",
+              "label": "Sickle cell disease",
+              "labelEn": "Sickle cell disease"
+            },
+            {
+              "value": "g14_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g3",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g3"
+          },
+          "options": [
+            {
+              "value": "g3_fever",
+              "label": "Child has fever",
+              "labelEn": "Child has fever"
+            },
+            {
+              "value": "g3_cough",
+              "label": "Child has cough or cold",
+              "labelEn": "Child has cough or cold"
+            },
+            {
+              "value": "g3_loose",
+              "label": "Child has loose motions",
+              "labelEn": "Child has loose motions"
+            },
+            {
+              "value": "g3_skin",
+              "label": "Child has a skin or ear problem",
+              "labelEn": "Child has a skin or ear problem"
+            },
+            {
+              "value": "g3_adol",
+              "label": "Teenager has a health worry",
+              "labelEn": "Teenager has a health worry"
+            },
+            {
+              "value": "newborn",
+              "label": "Newborn (under 28 days) is sick",
+              "labelEn": "Newborn (under 28 days) is sick",
+              "ownerModule": "CHILD"
+            },
+            {
+              "value": "g3_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g4",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g4"
+          },
+          "options": [
+            {
+              "value": "g4_mens",
+              "label": "Periods problem (pain, heavy or irregular)",
+              "labelEn": "Periods problem (pain, heavy or irregular)"
+            },
+            {
+              "value": "g4_wd",
+              "label": "White discharge",
+              "labelEn": "White discharge"
+            },
+            {
+              "value": "g4_rti",
+              "label": "Itching or burning in private parts",
+              "labelEn": "Itching or burning in private parts"
+            },
+            {
+              "value": "contra",
+              "label": "Family planning advice or sterilisation",
+              "labelEn": "Family planning advice or sterilisation",
+              "ownerModule": "ECL"
+            },
+            {
+              "value": "preg",
+              "label": "Pregnant woman with a problem",
+              "labelEn": "Pregnant woman with a problem",
+              "ownerModule": "MATERNAL"
+            },
+            {
+              "value": "g4_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g8",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g8"
+          },
+          "options": [
+            {
+              "value": "g8_eye",
+              "label": "Eye infection (red, watering or paining eye)",
+              "labelEn": "Eye infection (red, watering or paining eye)"
+            },
+            {
+              "value": "g8_vis",
+              "label": "Blurred vision",
+              "labelEn": "Blurred vision"
+            },
+            {
+              "value": "g8_ear",
+              "label": "Ear pain",
+              "labelEn": "Ear pain"
+            },
+            {
+              "value": "g8_disc",
+              "label": "Pus or water from the ear",
+              "labelEn": "Pus or water from the ear"
+            },
+            {
+              "value": "g8_hear",
+              "label": "Cannot hear well",
+              "labelEn": "Cannot hear well"
+            },
+            {
+              "value": "g8_nose",
+              "label": "Nose bleeding",
+              "labelEn": "Nose bleeding"
+            },
+            {
+              "value": "cat",
+              "label": "Cloudy eyesight (may be cataract)",
+              "labelEn": "Cloudy eyesight (may be cataract)",
+              "ownerModule": "CATARACT"
+            },
+            {
+              "value": "g8_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g9",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g9"
+          },
+          "options": [
+            {
+              "value": "g9_tooth",
+              "label": "Toothache",
+              "labelEn": "Toothache"
+            },
+            {
+              "value": "g9_gum",
+              "label": "Bleeding gums",
+              "labelEn": "Bleeding gums"
+            },
+            {
+              "value": "g9_ulcer",
+              "label": "Sore in the mouth",
+              "labelEn": "Sore in the mouth"
+            },
+            {
+              "value": "g9_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g10",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g10"
+          },
+          "options": [
+            {
+              "value": "g10_fall",
+              "label": "Fall or injury",
+              "labelEn": "Fall or injury"
+            },
+            {
+              "value": "g10_mem",
+              "label": "Forgetting things",
+              "labelEn": "Forgetting things"
+            },
+            {
+              "value": "g10_bed",
+              "label": "Stays in bed and cannot move",
+              "labelEn": "Stays in bed and cannot move"
+            },
+            {
+              "value": "g10_pall",
+              "label": "Long illness needing care at home",
+              "labelEn": "Long illness needing care at home"
+            },
+            {
+              "value": "g10_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g12",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g12"
+          },
+          "options": [
+            {
+              "value": "g12_sleep",
+              "label": "Cannot sleep",
+              "labelEn": "Cannot sleep"
+            },
+            {
+              "value": "g12_mood",
+              "label": "Feeling sad or low for many days",
+              "labelEn": "Feeling sad or low for many days"
+            },
+            {
+              "value": "g12_anx",
+              "label": "Fear or worry",
+              "labelEn": "Fear or worry"
+            },
+            {
+              "value": "g12_fits",
+              "label": "Fits",
+              "labelEn": "Fits"
+            },
+            {
+              "value": "g12_mem",
+              "label": "Forgetting things",
+              "labelEn": "Forgetting things"
+            },
+            {
+              "value": "g12_sub",
+              "label": "Alcohol or tobacco habit",
+              "labelEn": "Alcohol or tobacco habit"
+            },
+            {
+              "value": "g12_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "problems_g99",
+          "label": "What is the problem?",
+          "type": "multicheckbox",
+          "isRequired": true,
+          "conditional": {
+            "dependsOn": "problem_type",
+            "expectedValue": "g99"
+          },
+          "options": [
+            {
+              "value": "g99_other",
+              "label": "Other",
+              "labelEn": "Other",
+              "requiresText": true
+            }
+          ]
+        },
+        {
+          "fieldId": "other_text",
+          "label": "Write the name of the problem",
+          "type": "text",
+          "isRequired": true,
+          "placeholder": "Type the name of the disease or problem",
+          "validation": {
+            "maxLength": 250
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -247,7 +247,11 @@
         android:id="@+id/hwcReferredFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.maternal_health.hwc.list.HwcReferredFragment"
         android:label="HWC Referred List"
-        tools:layout="@layout/fragment_hwc_refered"/>
+        tools:layout="@layout/fragment_hwc_refered">
+        <action
+            android:id="@+id/action_hwcReferredFragment_to_NCDReferalFormFragment"
+            app:destination="@id/NCDReferalFormFragment" />
+    </fragment>
 
 
     <fragment
@@ -459,6 +463,10 @@
             android:name="isAshaFamily"
             android:defaultValue="No"
             app:argType="string" />
+        <argument
+            android:name="linkBenId"
+            android:defaultValue="0L"
+            app:argType="long" />
         <action
             android:id="@+id/action_newHouseholdFragment_to_newBenRegFragment"
             app:destination="@id/newBenRegFragment"
@@ -1154,7 +1162,7 @@
     <fragment
         android:id="@+id/TBConfirmedListFragment"
         android:name="org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_confirmed.list.TBConfirmedListFragment"
-        android:label="@string/tb_confirmed_list">
+        android:label="@string/tb_confirmed_cases">
         <action
             android:id="@+id/action_TBConfirmedListFragment_to_TBConfirmedFormFragment"
             app:destination="@id/TBConfirmedFormFragment"/>
@@ -1866,7 +1874,73 @@
         <action
             android:id="@+id/action_diseaseControlFragment_to_communicableDisease"
             app:destination="@id/cdFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_generalCheckupListFragment"
+            app:destination="@id/generalCheckupListFragment" />
+        <action
+            android:id="@+id/action_diseaseControlFragment_to_communicableDiseasesGridFragment"
+            app:destination="@id/communicableDiseasesGridFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/communicableDiseasesGridFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.communicable.CommunicableDiseasesGridFragment"
+        android:label="CommunicableDiseasesGridFragment">
+        <action
+            android:id="@+id/action_communicableDiseasesGridFragment_to_malariaIconsFragment"
+            app:destination="@id/malariaIconsFragment" />
+        <action
+            android:id="@+id/action_communicableDiseasesGridFragment_to_allHouseHoldDiseaseControlFragment"
+            app:destination="@id/allHouseHoldDiseaseControlFragment" />
+        <action
+            android:id="@+id/action_communicableDiseasesGridFragment_to_leprosyFragment"
+            app:destination="@id/leprosyFragment" />
+        <action
+            android:id="@+id/action_communicableDiseasesGridFragment_to_cdFragment"
+            app:destination="@id/cdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generalCheckupListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.list.GeneralCheckupListFragment"
+        android:label="GeneralCheckupListFragment">
+        <action
+            android:id="@+id/action_generalCheckupListFragment_to_generalCheckupFormFragment"
+            app:destination="@id/generalCheckupFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generalCheckupFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormFragment"
+        android:label="GeneralCheckupFormFragment">
+        <argument
+            android:name="benId"
+            app:argType="long" />
+        <argument
+            android:name="hhId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_NCDReferalForm"
+            app:destination="@id/NCDReferalForm" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_communicableDiseasesGridFragment"
+            app:destination="@id/communicableDiseasesGridFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_ncdFragment"
+            app:destination="@id/ncdFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_motherCareFragment"
+            app:destination="@id/motherCareFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_childCareFragment"
+            app:destination="@id/childCareFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_eligibleCoupleFragment"
+            app:destination="@id/eligibleCoupleFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_eyeSurgeryFormFragment"
+            app:destination="@id/eyeSurgeryFormFragment" />
+        <action
+            android:id="@+id/action_generalCheckupFormFragment_to_hwcReferredListFragment"
+            app:destination="@id/hwcReferredFragment" />
     </fragment>
     <fragment
         android:id="@+id/leprosyFragment"
@@ -2252,6 +2326,15 @@
             android:name="cbacId"
             android:defaultValue="0"
             app:argType="integer" />
+        <!-- General Check-up: prefilled referral date (0 = today) and priority (ROUTINE / EMERGENCY) -->
+        <argument
+            android:name="referralDate"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="priority"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/ncdRefferedList"
@@ -2301,6 +2384,11 @@
         <argument
             android:name="referredDate"
             app:argType="long" />
+        <argument
+            android:name="referralType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
 
     </fragment>

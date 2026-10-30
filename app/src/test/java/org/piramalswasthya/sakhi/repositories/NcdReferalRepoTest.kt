@@ -255,6 +255,7 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getCbacReferData(any()) } returns
             response(200, """{"statusCode":200,"data":[${ncdReferalJson(benId = 200L)}]}""")
         coEvery { benDao.getExistingBenIds(listOf(200L)) } returns emptyList()
+        coEvery { benDao.getBeneficiaryIdByRegId(200L) } returns null
 
         assertEquals(0, repo.pullAndPersistReferRecord())
 
@@ -268,6 +269,7 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         coEvery { amritApiService.getCbacReferData(any()) } returns
             response(200, """{"statusCode":200,"data":[$dataJson]}""")
         coEvery { benDao.getExistingBenIds(listOf(300L, 301L)) } returns listOf(300L)
+        coEvery { benDao.getBeneficiaryIdByRegId(301L) } returns null
         val slot = slot<List<ReferalCache>>()
         coEvery { referalDao.insertAll(capture(slot)) } returns Unit
 
@@ -276,6 +278,29 @@ class NcdReferalRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 1) { referalDao.insertAll(any()) }
         assertEquals(1, slot.captured.size)
         assertEquals(300L, slot.captured[0].benId)
+    }
+
+    @Test
+    fun `pullAndPersistReferRecord maps a server benRegId back to the beneficiary and restores the GC type`() = runTest {
+        every { preferenceDao.getLoggedInUser() } returns mockUser()
+        // Server shape for a referral without an HWC visit: benId is the BeneficiaryRegID, no type.
+        val gcJson = """{"benId":10537228,"beneficiaryRegID":10537228,"referredToInstituteID":2,
+            "referredToInstituteName":"HWC","referralReason":"General Check-up: Child has fever",
+            "revisitDate":"2026-10-31","createdBy":"asha"}"""
+        coEvery { amritApiService.getCbacReferData(any()) } returns
+            response(200, """{"statusCode":200,"data":[$gcJson]}""")
+        coEvery { benDao.getExistingBenIds(listOf(10537228L)) } returns emptyList()
+        coEvery { benDao.getBeneficiaryIdByRegId(10537228L) } returns 257306133079L
+        coEvery { referalDao.getReferralType(257306133079L, any()) } returns null
+        val slot = slot<List<ReferalCache>>()
+        coEvery { referalDao.insertAll(capture(slot)) } returns Unit
+
+        assertEquals(0, repo.pullAndPersistReferRecord())
+
+        assertEquals(1, slot.captured.size)
+        assertEquals(257306133079L, slot.captured[0].benId)
+        assertEquals(10537228L, slot.captured[0].beneficiaryRegID)
+        assertEquals("GENERAL_CHECKUP", slot.captured[0].type)
     }
 
     // =====================================================

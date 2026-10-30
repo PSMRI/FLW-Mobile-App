@@ -187,7 +187,7 @@
     <string name="referral_facility">রেফারেল সুবিধা</string>
     <string name="is_tb_confirmed">TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
     <string name="is_drtb_confirmed">DR-TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
-
+    <string name="tb_confirmed_cases">নিশ্চিত টিবি রোগের ঘটনা</string>
 
 
 
@@ -474,7 +474,7 @@
     <string name="eligible_couple_tracking_list">যোগ্য দম্পতি ট্র্যাকিং তালিকা</string>
     <string name="eligible_couple_tracking_form">যোগ্য দম্পতি ট্র্যাকিং ফর্ম</string>
     <string name="tb_screening_list">TB স্ক্রিনিং তালিকা</string>
-    <string name="tb_suspected_list">সন্দেহজনক TB কেস</string>
+    <string name="tb_suspected_list">সন্দেহের TB রোগী</string>
     <string name="tb_screening_form">TB স্ক্রিনিং ফর্ম</string>
     <string name="tb_confirmed_list">নিশ্চিত TB তালিকা</string>
     <string name="tb_confirmed_form">নিশ্চিত TB ফর্ম</string>
@@ -484,7 +484,7 @@
     <string name="filaria_screening_form">ফাইলেরিয়া ফর্ম</string>
     <string name="leprosy_screening_form">কুষ্ঠরোগ ফর্ম</string>
     <string name="follow_up_form">ফলো-আপ ফর্ম</string>
-    <string name="tb_suspected_form">সন্দেহজনক TB কেস</string>
+    <string name="tb_suspected_form">সন্দেহের TB রোগী</string>
     <string name="mother_immunization">মায়ের টিকাদান</string>
     <string name="delivery_outcome">প্রসবের ফলাফল</string>
     <string name="delivery_outcome_list">প্রসবের ফলাফলের তালিকা</string>

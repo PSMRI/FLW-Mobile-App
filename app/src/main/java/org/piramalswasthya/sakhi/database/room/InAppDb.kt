@@ -25,6 +25,7 @@ import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
@@ -67,6 +68,7 @@ import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.GCReferralFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.AHDCache
@@ -117,6 +119,7 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.NotificationEntity
+import org.piramalswasthya.sakhi.model.GeneralCheckupCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
@@ -131,6 +134,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
@@ -210,10 +214,12 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class,
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        GeneralCheckupCache::class,
+        GCReferralFollowUpEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 70, exportSchema = false
+    version = 75, exportSchema = false
 )
 
 @TypeConverters(
@@ -261,6 +267,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
+    abstract val generalCheckupDao: GeneralCheckupDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao
@@ -269,6 +276,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun gcReferralFollowUpDao(): GCReferralFollowUpDao
     abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
@@ -433,6 +441,151 @@ abstract class InAppDb : RoomDatabase() {
                     if (!columnExists(database, "BENEFICIARY", "institutionName")) {
                         database.execSQL("ALTER TABLE BENEFICIARY ADD COLUMN institutionName TEXT")
                     }
+                }
+            }
+
+            val MIGRATION_70_71 = object : Migration(70, 71) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "children_under_five_all_visit", "serverId")) {
+                        database.execSQL(
+                            "ALTER TABLE children_under_five_all_visit ADD COLUMN serverId INTEGER"
+                        )
+                    }
+                    database.execSQL(
+                        "DROP INDEX IF EXISTS `index_children_under_five_all_visit_benId_hhId_visitDate_formId`"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_children_under_five_all_visit_serverId_formId` " +
+                                "ON `children_under_five_all_visit` (`serverId`, `formId`)"
+                    )
+                }
+            }
+
+            // General Check-up (FLW-1229): check-ups, and NCD_REFER priority + revisitMonth, with
+            // revisitMonth added to the unique key. The problem list comes from the server-driven
+            // form schema (form_schema, formId general_check_up), so there is no master table.
+            val MIGRATION_71_72 = object : Migration(71, 72) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `GENERAL_CHECKUP` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `checkupId` TEXT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, `hhId` INTEGER NOT NULL, `ashaId` INTEGER NOT NULL, " +
+                                "`checkupDate` INTEGER NOT NULL, `problemTypeId` TEXT NOT NULL, " +
+                                "`problemTypeLabel` TEXT NOT NULL, `problemIds` TEXT NOT NULL, " +
+                                "`problemLabels` TEXT NOT NULL, `otherText` TEXT, `priority` TEXT NOT NULL, " +
+                                "`masterVersion` INTEGER NOT NULL, `referralReason` TEXT NOT NULL, " +
+                                "`referralDate` INTEGER NOT NULL, `referralMonth` INTEGER NOT NULL, " +
+                                "`formData` TEXT, `createdBy` TEXT NOT NULL, `createdDate` INTEGER NOT NULL, " +
+                                "`updatedDate` INTEGER NOT NULL, `syncState` INTEGER NOT NULL, " +
+                                "FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`) " +
+                                "ON UPDATE CASCADE ON DELETE CASCADE )"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `ind_gc_checkup_id` ON `GENERAL_CHECKUP` (`checkupId`)"
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `ind_gc_ben` ON `GENERAL_CHECKUP` (`benId`)"
+                    )
+                    if (!columnExists(database, "NCD_REFER", "priority")) {
+                        database.execSQL("ALTER TABLE NCD_REFER ADD COLUMN priority TEXT")
+                    }
+                    if (!columnExists(database, "NCD_REFER", "revisitMonth")) {
+                        database.execSQL("ALTER TABLE NCD_REFER ADD COLUMN revisitMonth INTEGER NOT NULL DEFAULT 0")
+                    }
+                    // Same rule as monthKey(): yyyyMM in the device time zone.
+                    database.execSQL(
+                        "UPDATE NCD_REFER SET revisitMonth = " +
+                                "CAST(strftime('%Y%m', revisitDate / 1000, 'unixepoch', 'localtime') AS INTEGER)"
+                    )
+                    // Old key (benId, referralReason) is unique, so the wider key cannot conflict.
+                    database.execSQL("DROP INDEX IF EXISTS `ind_refcache`")
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `ind_refcache` ON `NCD_REFER` " +
+                                "(`benId`, `referralReason`, `revisitMonth`)"
+                    )
+                }
+            }
+
+            // General Check-up: the Add Check-up form became server-driven (form_schema, formId
+            // general_check_up). Drops the problem-master tables of the first v72 builds and adds
+            // GENERAL_CHECKUP.formData. Guarded, so it also works on a DB that came from 71 via the
+            // current MIGRATION_71_72 (which already creates formData and no master tables).
+            val MIGRATION_72_73 = object : Migration(72, 73) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("DROP INDEX IF EXISTS `ind_health_problem_type`")
+                    database.execSQL("DROP TABLE IF EXISTS `HEALTH_PROBLEM`")
+                    database.execSQL("DROP TABLE IF EXISTS `HEALTH_PROBLEM_TYPE`")
+                    if (!columnExists(database, "GENERAL_CHECKUP", "formData")) {
+                        database.execSQL("ALTER TABLE GENERAL_CHECKUP ADD COLUMN formData TEXT")
+                    }
+                }
+            }
+
+            // General Check-up referral follow-up (general_check_follow_up), same table shape as tb_referral_follow_up.
+            val MIGRATION_73_74 = object : Migration(73, 74) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `gc_referral_follow_up` (" +
+                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "`benId` INTEGER NOT NULL, " +
+                                "`houseHoldId` INTEGER NOT NULL, " +
+                                "`referredOnDate` TEXT NOT NULL, " +
+                                "`followUpDate` TEXT NOT NULL, " +
+                                "`followUpStatus` TEXT, " +
+                                "`fieldsJson` TEXT NOT NULL, " +
+                                "`isSynced` INTEGER NOT NULL, " +
+                                "`updatedAt` INTEGER NOT NULL)"
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_followUpDate` " +
+                                "ON `gc_referral_follow_up` (`benId`, `followUpDate`)"
+                    )
+                }
+            }
+
+            // General Check-up follow-up per referral (FLW-1229): a beneficiary with two referrals (Cold and
+            // Fever) gets one follow-up each, keyed like NCD_REFER (benId, referralReason, month). Old rows
+            // are linked when the beneficiary has exactly one General Check-up referral.
+            val MIGRATION_74_75 = object : Migration(74, 75) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    if (!columnExists(database, "gc_referral_follow_up", "referralReason")) {
+                        database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
+                    }
+                    if (!columnExists(database, "gc_referral_follow_up", "referralMonth")) {
+                        database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
+                    }
+                    val gcReferrals = "FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId " +
+                            "AND (r.type = 'GENERAL_CHECKUP' OR r.referralReason LIKE 'General Check-up: %')"
+                    database.execSQL(
+                        "UPDATE gc_referral_follow_up SET " +
+                                "referralReason = (SELECT COALESCE(r.referralReason, '') $gcReferrals), " +
+                                "referralMonth = (SELECT r.revisitMonth $gcReferrals) " +
+                                "WHERE (SELECT COUNT(*) $gcReferrals) = 1"
+                    )
+                    // A follow-up saved on this phone kept the referral date; use it when there are several referrals.
+                    val sameDay = "$gcReferrals AND strftime('%Y-%m-%d', r.revisitDate / 1000, 'unixepoch', 'localtime') = " +
+                            "gc_referral_follow_up.referredOnDate"
+                    database.execSQL(
+                        "UPDATE gc_referral_follow_up SET " +
+                                "referralReason = (SELECT COALESCE(r.referralReason, '') $sameDay), " +
+                                "referralMonth = (SELECT r.revisitMonth $sameDay) " +
+                                "WHERE referralReason = '' AND (SELECT COUNT(*) $sameDay) = 1"
+                    )
+                    // Several unlinked rows of one beneficiary would collide on the new key. Keep one: an
+                    // unsynced row first (not on the server yet), then the latest.
+                    database.execSQL(
+                        "DELETE FROM gc_referral_follow_up WHERE EXISTS (SELECT 1 FROM gc_referral_follow_up o " +
+                                "WHERE o.benId = gc_referral_follow_up.benId " +
+                                "AND o.referralReason = gc_referral_follow_up.referralReason " +
+                                "AND o.referralMonth = gc_referral_follow_up.referralMonth " +
+                                "AND (o.isSynced < gc_referral_follow_up.isSynced " +
+                                "OR (o.isSynced = gc_referral_follow_up.isSynced AND o.id > gc_referral_follow_up.id)))"
+                    )
+                    database.execSQL("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_referralReason_referralMonth` " +
+                                "ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)"
+                    )
                 }
             }
 
@@ -3681,7 +3834,12 @@ abstract class InAppDb : RoomDatabase() {
                         MIGRATION_66_67,
                         MIGRATION_67_68,
                         MIGRATION_68_69,
-                        MIGRATION_69_70
+                        MIGRATION_69_70,
+                        MIGRATION_70_71,
+                        MIGRATION_71_72,
+                        MIGRATION_72_73,
+                        MIGRATION_73_74,
+                        MIGRATION_74_75
 
 
                     ).addCallback(DbOpenTraceCallback(appContext)).build()

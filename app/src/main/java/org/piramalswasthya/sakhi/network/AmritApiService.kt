@@ -6,6 +6,7 @@ import okhttp3.ResponseBody
 import org.piramalswasthya.sakhi.model.*
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormNCDFollowUpSubmitRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpRequest
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpApiRequest
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSubmitRequest
@@ -199,6 +200,17 @@ interface AmritApiService {
 
     @POST("flw-api/tb/referralFollowUp/getAll")
     suspend fun getTBReferralFollowUps(
+        @Body userDetail: GetDataPaginatedRequest
+    ): Response<ResponseBody>
+
+    // General Check-up referral follow-up: a list of records per save.
+    @POST("flw-api/generalCheckUpFollowUp/saveAll")
+    suspend fun saveGCReferralFollowUp(
+        @Body request: List<GCReferralFollowUpRequest>
+    ): Response<ResponseBody>
+
+    @POST("flw-api/generalCheckUpFollowUp/getAll")
+    suspend fun getGCReferralFollowUps(
         @Body userDetail: GetDataPaginatedRequest
     ): Response<ResponseBody>
 
@@ -512,6 +524,26 @@ interface AmritApiService {
         @Part("createdBy") createdBy: RequestBody,
         @Part images: List<MultipartBody.Part>? = null
     ): Response<ResponseBody>
+
+    // ── General Check-up (FLW-1229) ──────────────────────────────────────────
+    // Paths and bodies agreed with the server team in FLW-1228. Referrals and their follow-up
+    // use the existing referral and CDTF_001 follow-up APIs.
+    // Envelope: { "statusCode": 200, "status": "Success", "errorMessage": ..., "data": ... }.
+
+    /**
+     * General Check-up upload: the generic dynamic-form submit, one [FormSubmitRequest] per check-up
+     * (formId general_check_up). Response: { statusCode: 200, data: … }; if data carries
+     * `saved` / `rejected` lists of { checkupId }, they are applied per record.
+     */
+    @POST("flw-api/disease/generalCheckUp/saveAll")
+    suspend fun saveGeneralCheckups(@Body checkups: List<FormSubmitRequest>): Response<ResponseBody>
+
+    /**
+     * General Check-up download, same pattern as the other dynamic forms' getAll: request
+     * [HBNCVisitRequest]; data = list of { id, beneficiaryId, houseHoldId, visitDate, fields }.
+     */
+    @POST("flw-api/disease/generalCheckUp/getAll")
+    suspend fun getAllGeneralCheckups(@Body request: HBNCVisitRequest): Response<ResponseBody>
 
     @POST("flw-api/uwin/session/getAll")
     suspend fun getAllUwinSessions(

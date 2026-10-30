@@ -125,7 +125,7 @@ class HwcReferredViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `benList includes only MATERNAL referrals`() = runTest {
+    fun `benList excludes other referral types`() = runTest {
         val maternal = maternalReferralItem(1L)
         val nonMaternal = mockk<BenWithCbacAndReferalCache>(relaxed = true)
         val nonMaternalReferral = mockk<ReferalCache>(relaxed = true)
@@ -135,6 +135,18 @@ class HwcReferredViewModelTest : BaseViewModelTest() {
         val vm = HwcReferredViewModel(recordsRepo, preferenceDao, context)
         val list = vm.benList.first()
         assertEquals(1, list.size)
+    }
+
+    @Test
+    fun `benList also includes GENERAL_CHECKUP referrals`() = runTest {
+        val maternal = maternalReferralItem(1L)
+        val gc = mockk<BenWithCbacAndReferalCache>(relaxed = true)
+        val gcReferral = mockk<ReferalCache>(relaxed = true)
+        every { gcReferral.type } returns "GENERAL_CHECKUP"
+        every { gc.referral } returns gcReferral
+        every { recordsRepo.getHwcRefferedList } returns flowOf(listOf(maternal, gc))
+        val vm = HwcReferredViewModel(recordsRepo, preferenceDao, context)
+        assertEquals(2, vm.benList.first().size)
     }
 
     @Test

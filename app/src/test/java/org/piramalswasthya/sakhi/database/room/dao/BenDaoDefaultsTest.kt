@@ -45,7 +45,7 @@ class BenDaoDefaultsTest {
     }
 
     @Test
-    fun `ncd methods with default min age omitted`() {
+    fun `ncd methods with optional parameters omitted`() {
         dao.getAllNCDList(selectedVillage = 1)
         dao.getAllNCDEligibleList(selectedVillage = 1)
         dao.getBenWithCbac(selectedVillage = 1)

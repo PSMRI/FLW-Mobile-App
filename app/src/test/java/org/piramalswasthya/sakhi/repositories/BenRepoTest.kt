@@ -2822,13 +2822,13 @@ class BenRepoTest : BaseRepositoryTest() {
             assertEquals("9998887776", recordC.mobileOthers)
             assertEquals("Custom Religion", recordC.religionOthers)
             assertTrue(recordC.isDeactivate)
-            assertEquals(3, recordC.genDetails?.reproductiveStatusId)
+            assertEquals(4, recordC.genDetails?.reproductiveStatusId)
 
             val recordD = captured.first { it.beneficiaryId == 6004L }
-            assertEquals(4, recordD.genDetails?.reproductiveStatusId)
+            assertEquals(5, recordD.genDetails?.reproductiveStatusId)
 
             val recordE = captured.first { it.beneficiaryId == 6005L }
-            assertEquals(5, recordE.genDetails?.reproductiveStatusId)
+            assertEquals(6, recordE.genDetails?.reproductiveStatusId)
 
             val recordF = captured.first { it.beneficiaryId == 6006L }
             assertEquals(5, recordF.genDetails?.reproductiveStatusId)
@@ -3768,7 +3768,7 @@ class BenRepoTest : BaseRepositoryTest() {
             coEvery { benDao.getBen(any(), any()) } returns null
             coEvery { tmcNetworkApiService.getBeneficiaries(any()) } returns
                     jsonResponse(benPullPayloadEmptyHouseholdAndBenDetails())
-            var upsertedHouseholds = -1
+            var upsertedHouseholds = 0
             coEvery { householdDao.upsert(*anyVararg()) } answers {
                 upsertedHouseholds = varargSize(arg<Any?>(0))
             }

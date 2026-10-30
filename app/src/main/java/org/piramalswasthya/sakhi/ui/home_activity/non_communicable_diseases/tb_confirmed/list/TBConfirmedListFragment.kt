@@ -128,12 +128,12 @@ class TBConfirmedListFragment : Fragment() {
             if (prefDao.getLoggedInUser()?.role.equals("asha", true)) {
                 (it as HomeActivity).updateActionBar(
                     R.drawable.ic__ncd,
-                    getString(R.string.tb_confirmed_list)
+                    getString(R.string.tb_confirmed_cases)
                 )
             } else {
                 (it as SupervisorActivity).updateActionBar(
                     R.drawable.ic__ncd,
-                    getString(R.string.tb_confirmed_list)
+                    getString(R.string.tb_confirmed_cases)
                 )
             }
         }

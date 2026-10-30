@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.CbacRepo
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -40,6 +41,7 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var mockResources: Resources
     @MockK private lateinit var tbRepo: TBRepo
     @MockK private lateinit var benRepo: BenRepo
+    @MockK private lateinit var cbacRepo: CbacRepo
     @MockK private lateinit var referralStatusManager: ReferralStatusManager
     @MockK private lateinit var ncdReferalRepo: NcdReferalRepo
 
@@ -62,7 +64,8 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { benRepo.getBenFromId(any()) } returns null
         coEvery { tbRepo.getTBScreening(any()) } returns null
-        viewModel = TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, referralStatusManager, ncdReferalRepo)
+        coEvery { cbacRepo.getLastFilledCbac(any()) } returns null
+        viewModel = TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, cbacRepo, referralStatusManager, ncdReferalRepo)
     }
 
     @Test fun `viewModel initializes successfully`() { assertNotNull(viewModel) }
@@ -96,7 +99,7 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     }
 
     private fun buildViewModel(): TBScreeningFormViewModel =
-        TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, referralStatusManager, ncdReferalRepo)
+        TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, cbacRepo, referralStatusManager, ncdReferalRepo)
 
     @Test
     fun `markReferralCompleted then isReferralAlreadyDone returns true for that type`() {

@@ -58,7 +58,9 @@ class FormRepository @Inject constructor(
         FormConstants.ANC_FORM_ID,
         FormConstants.ORS_CAMPAIGN_FORM_ID,
         FormConstants.PULSE_POLIO_CAMPAIGN_FORM_ID,
-        LF_MDA_CAMPAIGN
+        LF_MDA_CAMPAIGN,
+        FormConstants.GENERAL_CHECKUP_FORM_ID,
+        FormConstants.GC_REFERRAL_FOLLOW_UP
     )
 
 

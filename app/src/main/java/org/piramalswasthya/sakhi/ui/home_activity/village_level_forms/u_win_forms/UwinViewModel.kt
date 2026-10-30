@@ -28,7 +28,7 @@ class UwinViewModel @Inject constructor(
     private val uwinRepo: UwinRepo
 ) : ViewModel() {
 
-    enum class State { IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED }
+    enum class State { IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DUPLICATE_DATE }
 
     private val _recordExists = MutableLiveData(false)
     val recordExists: LiveData<Boolean> get() = _recordExists
@@ -102,10 +102,15 @@ class UwinViewModel @Inject constructor(
                 )
                 dataset.mapValues(base, 1)
                 if (base.id == 0) {
-                    uwinRepo.insertLocalRecord(base)
+                    if (!uwinRepo.insertLocalRecord(base)) {
+                        _recordExists.postValue(true)
+                        _state.postValue(State.DUPLICATE_DATE)
+                        return@launch
+                    }
                 } else {
                     uwinRepo.updateLocalRecord(base) // add this helper in the repo/dao
                 }
+                _recordExists.postValue(false)
                 currentUwinCache = base
                 _state.postValue(State.SAVE_SUCCESS)
             } catch (e: Exception) {
