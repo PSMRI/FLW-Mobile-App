@@ -246,11 +246,7 @@ class ORSCampaignFormFragment : Fragment() {
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
-                    if (field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") {
-                        showImagePickerDialog()
-                    } else {
-                        showImagePickerDialog()
-                    }
+                    showImagePickerDialog()
                 } else {
                     field.value = value
                     if ((field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") && value is List<*>) {

@@ -109,13 +109,7 @@ class BenListAdapter(
                 if (isMatched) android.R.color.holo_orange_dark
                 else android.R.color.holo_green_dark
             )
-            binding.btnAbove30.text = if (isMatched) {
-                binding.root.context.getString(R.string.cataract_surgery)
-//                binding.root.context.getString(R.string.view_edit_eye_surgery)
-            } else {
-//                binding.root.context.getString(R.string.add_eye_surgery)
-                binding.root.context.getString(R.string.cataract_surgery)
-            }
+            binding.btnAbove30.text = binding.root.context.getString(R.string.cataract_surgery)
 
             binding.executePendingBindings()
 

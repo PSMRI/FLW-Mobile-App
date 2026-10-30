@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI
 import java.text.NumberFormat
@@ -141,10 +140,7 @@ class ActivityAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
-            TYPE_DEFAULT// TYPE_MITANIN
-        } else {
-            TYPE_DEFAULT
-        }
+        // TYPE_MITANIN layout is currently disabled for all flavors
+        return TYPE_DEFAULT
     }
 }

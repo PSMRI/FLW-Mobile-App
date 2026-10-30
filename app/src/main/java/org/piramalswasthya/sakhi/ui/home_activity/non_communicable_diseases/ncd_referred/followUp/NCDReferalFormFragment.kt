@@ -226,7 +226,7 @@ class NCDReferalFormFragment : Fragment() {
 
         val followUpError = viewModel.getFollowUpDateErrorFromUI()
         if (followUpError != null) {
-            val errorMessage = getString(followUpError.resId, *followUpError.formatArgs)
+            val errorMessage = getString(followUpError.resId, *followUpError.formatArgs.toTypedArray())
             currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == "follow_up_date" }?.let { schemaField ->
                     schemaField.errorMessage = errorMessage

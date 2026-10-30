@@ -80,7 +80,9 @@ object RoomDbEncryptionHelper {
     private fun encryptPlainDb(dbFile: File, passphrase: CharArray) {
         val passphraseStr = String(passphrase)
         val tempEncrypted = File(dbFile.parent, "${dbFile.name}-encrypted")
-        if (tempEncrypted.exists()) tempEncrypted.delete()
+        if (tempEncrypted.exists() && !tempEncrypted.delete()) {
+            Log.w(TAG, "Could not delete stale ${tempEncrypted.name}")
+        }
 
         SQLiteDatabase.openDatabase(
             tempEncrypted.absolutePath,
@@ -116,8 +118,8 @@ object RoomDbEncryptionHelper {
             plainDb.close()
         }
 
-        dbFile.delete()
-        tempEncrypted.renameTo(dbFile)
+        if (!dbFile.delete()) Log.w(TAG, "Could not delete plain DB before swap")
+        if (!tempEncrypted.renameTo(dbFile)) Log.e(TAG, "Could not move encrypted DB into place")
 
         val encDb = SQLiteDatabase.openDatabase(
             dbFile.absolutePath,

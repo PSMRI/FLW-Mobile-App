@@ -2,7 +2,7 @@ package org.piramalswasthya.sakhi.crypt
 
 import android.util.Base64
 import org.piramalswasthya.sakhi.utils.KeyUtils
-import java.util.Random
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
@@ -15,6 +15,7 @@ class CryptoUtil {
     private val ivSize = 128
     private val iterationCount = 1989
     private val passPhrase = KeyUtils.encryptedPassKey()
+    private val secureRandom = SecureRandom()
 
     private fun generateKey(
         salt: String,
@@ -47,11 +48,11 @@ class CryptoUtil {
 
     fun encrypt(plainText: String): String {
         val ivarr = ByteArray(ivSize / 8)
-        Random().nextBytes(ivarr)
+        secureRandom.nextBytes(ivarr)
         val iv = ivarr.toHexString()
 
         val saltArr = ByteArray(keySize / 8)
-        Random().nextBytes(saltArr)
+        secureRandom.nextBytes(saltArr)
         val salt = saltArr.toHexString()
 
         val ciphertext = encryptWithIvSalt(salt, iv, plainText)

@@ -231,8 +231,6 @@ class UserRepo @Inject constructor(
                 return true
             } else if (it.userName == userName) {
                 throw IllegalStateException("Invalid Username/password")
-                Timber.w("Invalid Username/password")
-                return false
             }
         }
         return false

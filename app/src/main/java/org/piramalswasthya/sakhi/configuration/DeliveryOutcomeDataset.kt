@@ -476,14 +476,6 @@ open class DeliveryOutcomeDataset(
 
 
 
-            otherCauseOfDeath.id -> {
-                validateAllAlphabetsSpecialOnEditText(otherCauseOfDeath)
-            }
-
-            otherComplication.id -> {
-                validateAllAlphabetsSpecialOnEditText(otherComplication)
-            }
-
             deliveryOutcome.id -> {
                 validateDeliveryOutcome(deliveryOutcome)
             }

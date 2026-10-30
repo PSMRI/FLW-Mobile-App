@@ -558,7 +558,7 @@ class NCDReferalFormViewModel @Inject constructor(
         }
     }
 
-    data class FollowUpDateError(val resId: Int, val formatArgs: Array<Any> = emptyArray(), val scrollIndex: Int = 0)
+    data class FollowUpDateError(val resId: Int, val formatArgs: List<Any> = emptyList(), val scrollIndex: Int = 0)
 
     fun getFollowUpDateErrorFromUI(): FollowUpDateError? {
         if (isReferralFollowUpForm) return null
@@ -578,7 +578,7 @@ class NCDReferalFormViewModel @Inject constructor(
 
         if (currentVisitFollowUps.isEmpty()) {
             if (!followUpDate.after(treatmentDate)) {
-                return FollowUpDateError(R.string.follow_up_must_be_after_treatment, arrayOf(lastMain.treatmentStartDate ?: ""))
+                return FollowUpDateError(R.string.follow_up_must_be_after_treatment, listOf(lastMain.treatmentStartDate ?: ""))
             }
         } else {
             val lastFollowUp = currentVisitFollowUps.last()
