@@ -91,7 +91,14 @@ class GeneralCheckupFormFragment : Fragment() {
                 field.value = (value as? Collection<*>)
                     ?.mapNotNull { it?.toString() }?.toCollection(LinkedHashSet())
                     ?: value?.toString()
-                viewModel.onFieldChanged(field.fieldId, value)
+                viewModel.onFieldChanged(field.fieldId, value)?.let { kept ->
+                    val owner = kept.ownerModule ?: return@let
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.gc_route_one_module, kept.label, ownerTitle(owner)),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         )
         formAdapter = adapter
@@ -197,11 +204,9 @@ class GeneralCheckupFormFragment : Fragment() {
                 GeneralCheckupFormFragmentDirections.actionGeneralCheckupFormFragmentToChildCareFragment()
             HealthProblemOwnerModule.ECL ->
                 GeneralCheckupFormFragmentDirections.actionGeneralCheckupFormFragmentToEligibleCoupleFragment()
+            // The cataract form opens from the beneficiary's card in All Beneficiaries, which picks the eye.
             HealthProblemOwnerModule.CATARACT ->
-                GeneralCheckupFormFragmentDirections.actionGeneralCheckupFormFragmentToEyeSurgeryFormFragment(
-                    hhId = viewModel.hhId,
-                    benId = viewModel.benId
-                )
+                GeneralCheckupFormFragmentDirections.actionGeneralCheckupFormFragmentToAllBenFragment()
         }
         safeNavigate(directions)
     }
