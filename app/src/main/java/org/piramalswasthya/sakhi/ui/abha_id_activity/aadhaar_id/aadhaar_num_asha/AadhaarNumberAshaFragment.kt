@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAadhaarNumberAshaBinding
 import org.piramalswasthya.sakhi.helpers.AadhaarValidationUtils
 import org.piramalswasthya.sakhi.network.AadhaarVerifyBioRequest
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.RdServiceHelper
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -31,6 +32,8 @@ class AadhaarNumberAshaFragment : Fragment() {
     var isValidAadhaar = false
     var isValidMobile = false
     var isValidBenName = false
+
+    private var optionOtp = true
 
     private var _binding: FragmentAadhaarNumberAshaBinding? = null
     private val binding: FragmentAadhaarNumberAshaBinding
@@ -66,8 +69,12 @@ class AadhaarNumberAshaFragment : Fragment() {
         binding.tietAadhaarNumber.disableCopyPaste()
         parentViewModel.verificationType.observe(viewLifecycleOwner) {
             when (it) {
-                "OTP" -> binding.btnVerifyAadhaar.text = resources.getString(R.string.generate_otp)
-                "FP" -> {
+                "OTP" -> {
+                    optionOtp = true
+                    binding.btnVerifyAadhaar.text = resources.getString(R.string.generate_otp)
+                }
+                "FA" -> {
+                    optionOtp = false
                     binding.btnVerifyAadhaar.text = resources.getString(R.string.validate_fp)
                 }
             }
@@ -277,7 +284,15 @@ class AadhaarNumberAshaFragment : Fragment() {
         parentViewModel.setAadhaarNumber(binding.tietAadhaarNumber.text.toString())
         when (parentViewModel.verificationType.value) {
             "OTP" -> viewModel.generateOtpClicked(binding.tietAadhaarNumber.text.toString())
-            "FP" -> rdServiceCapturePIDContract.launch(Unit)
+            "FA" -> {
+                val rdServiceHelper = RdServiceHelper(requireContext())
+                if (!rdServiceHelper.isAbhaAppInstalled()) {
+                    rdServiceHelper.redirectToPlayStore(requireActivity())
+                    Toast.makeText(requireContext(), "Install the ABHA App then retry", Toast.LENGTH_SHORT).show()
+                } else {
+                    parentViewModel.startFaceAuthEnrollment()
+                }
+            }
         }
     }
 

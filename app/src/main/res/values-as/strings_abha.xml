@@ -48,7 +48,15 @@
     <string name="abha_number_">অভা নম্বৰ :</string>
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">আধাৰ সংযুক্ত মোবাইল নম্বৰ অথবা অন্য মোবাইল নম্বৰ</string>
     <string name="individual_s_consent_for_creation_of_abha_number">অভা নম্বৰৰ সৃষ্টি বাবে ব্যক্তিৰ সম্মতি।</string>
-    <string name="validate_fp">মান্যতা পৰীক্ষা কৰক</string>
+    <string name="validate_fp">মুখ পৰীক্ষা কৰক</string>
+    <string name="please_wait">অনুগ্ৰহ কৰি অপেক্ষা কৰক…</string>
+    <string name="initializing">আৰম্ভণি কৰা</string>
+    <string name="processing">প্ৰক্ৰিয়াকৰণ</string>
+    <string name="face_pending">মুখৰ প্ৰমাণীকৰণ: <b>বাকী থকা</b>\nইয়াৰ বাবে কিছু সময় লাগিব পাৰে</string>
+    <string name="face_verified">মুখৰ প্ৰমাণীকৰণ: <b>কৰা হৈছে</b>\nইয়াৰ বাবে কিছু সময় লাগিব পাৰে</string>
+    <string name="face_failed">মুখৰ প্ৰমাণীকৰণ: <b>ব্যৰ্থ হৈছিল</b>\nপিছত আকৌ চেষ্টা কৰক</string>
+    <string name="face_success">মুখৰ প্ৰমাণীকৰণ: <b>সফলতা</b></string>
+    <string name="message">বাৰ্তা</string>
     <string name="generating_abha_for">ABHA পঞ্জীয়নৰ বাবে</string>    <!--"অভা নম্বৰ সৃষ্টি কৰা হ'ল:-->
     <string name="otp_sent_to">"OTP পঠাই দিয়া হ'ল "</string>
     <string name="otp_was_resent">"OTP পুনঃপ্ৰেৰণ হ\'ল।</string>
