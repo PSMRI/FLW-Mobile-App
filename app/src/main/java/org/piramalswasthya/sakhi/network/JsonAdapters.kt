@@ -947,7 +947,9 @@ data class VHNDDTO(
     var vhndDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var vhndPlaceId: Int? = 0,
     var pregnantWomenAnc: String? = null,
@@ -989,7 +991,9 @@ data class VHNCDTO(
     var vhncDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var villageName: String? = null,
     var anm: Int? = 0,
@@ -1025,7 +1029,9 @@ data class PHCReviewDTO(
     var phcReviewDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var villageName: String? = null,
     var mitaninHistory: String? = null,

@@ -49,13 +49,13 @@ class VillageLevelDtoMappingTest {
     }
 
     // =====================================================
-    // PHCReviewMeetingCache.toPHCDTODTO() — images swapped
+    // PHCReviewMeetingCache.toPHCDTODTO()
     // =====================================================
 
-    @Test fun `phc toPHCDTODTO swaps images`() {
+    @Test fun `phc toPHCDTODTO keeps images in their own slots`() {
         val out = phc().copy(image1 = "a", image2 = "b").toPHCDTODTO()
-        assertEquals("b", out.image1)
-        assertEquals("a", out.image2)
+        assertEquals("a", out.image1)
+        assertEquals("b", out.image2)
     }
 
     @Test fun `phc toPHCDTODTO keeps id date and place`() {
@@ -109,13 +109,13 @@ class VillageLevelDtoMappingTest {
     }
 
     // =====================================================
-    // VHNCCache.toVhncDTODTO() — images swapped
+    // VHNCCache.toVhncDTODTO()
     // =====================================================
 
-    @Test fun `vhnc toVhncDTODTO swaps images`() {
+    @Test fun `vhnc toVhncDTODTO keeps images in their own slots`() {
         val out = vhnc().copy(image1 = "x", image2 = "y").toVhncDTODTO()
-        assertEquals("y", out.image1)
-        assertEquals("x", out.image2)
+        assertEquals("x", out.image1)
+        assertEquals("y", out.image2)
     }
 
     @Test fun `vhnc toVhncDTODTO keeps counts and date`() {
@@ -174,13 +174,13 @@ class VillageLevelDtoMappingTest {
     }
 
     // =====================================================
-    // VHNDCache.toVhndDTODTO() — images swapped
+    // VHNDCache.toVhndDTODTO()
     // =====================================================
 
-    @Test fun `vhnd toVhndDTODTO swaps images`() {
+    @Test fun `vhnd toVhndDTODTO keeps images in their own slots`() {
         val out = vhnd().copy(image1 = "m", image2 = "n").toVhndDTODTO()
-        assertEquals("n", out.image1)
-        assertEquals("m", out.image2)
+        assertEquals("m", out.image1)
+        assertEquals("n", out.image2)
     }
 
     @Test fun `vhnd toVhndDTODTO keeps id date and education fields`() {

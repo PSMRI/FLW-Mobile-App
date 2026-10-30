@@ -120,6 +120,85 @@ object ImageUtils {
 
     }
 
+    suspend fun compressImageUriToFile(
+        context: Context,
+        uriString: String,
+        targetFile: File
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(Uri.parse(uriString))
+                if (inputStream == null) {
+                    Timber.e("ImageUtils: InputStream is null for uri=$uriString")
+                    return@withContext false
+                }
+                inputStream.use { input ->
+                    FileOutputStream(targetFile).use { output ->
+                        input.copyTo(output)
+                        output.flush()
+                    }
+                }
+                if (!targetFile.exists() || targetFile.length() == 0L) {
+                    targetFile.delete()
+                    return@withContext false
+                }
+                val compressedFile = Compressor.compress(context, targetFile) {
+                    resolution(500, 500)
+                    quality(60)
+                    format(Bitmap.CompressFormat.JPEG)
+                }
+                if (compressedFile.exists() && compressedFile.length() > 0) {
+                    compressedFile.copyTo(targetFile, overwrite = true)
+                    true
+                } else {
+                    targetFile.delete()
+                    false
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "ImageUtils: Failed to save/compress image")
+                targetFile.delete()
+                false
+            }
+        }
+    }
+
+    fun encodeImageFile(file: File): String? {
+        return try {
+            file.takeIf { it.exists() && it.length() > 0 }?.let {
+                Base64.encodeToString(it.readBytes(), Base64.DEFAULT)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "ImageUtils: Failed to encode image")
+            null
+        }
+    }
+
+    suspend fun saveBase64ImageToFile(
+        context: Context,
+        encodedString: String,
+        targetFile: File
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val bytes = Base64.decode(encodedString.substringAfter(",", encodedString), Base64.DEFAULT)
+                if (bytes.isEmpty()) return@withContext false
+                FileOutputStream(targetFile).use {
+                    it.write(bytes)
+                    it.flush()
+                }
+                val compressedFile = Compressor.compress(context, targetFile) {
+                    quality(80)
+                }
+                compressedFile.renameTo(targetFile)
+                targetFile.exists() && targetFile.length() > 0
+            } catch (e: Exception) {
+                Timber.e(e, "ImageUtils: Failed to decode image")
+                targetFile.delete()
+                false
+            }
+        }
+    }
+
     fun renameImage(context: Context, oldBenId: Long, newBenId: Long): String? {
         val originalFile = File(context.filesDir, "${oldBenId}.jpeg")
         if (!originalFile.exists())

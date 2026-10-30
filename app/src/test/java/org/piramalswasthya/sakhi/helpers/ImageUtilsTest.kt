@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -257,5 +258,98 @@ class ImageUtilsTest {
         val result = ImageUtils.saveBenImageFromServerToStorage(context, "encoded", 9L)
 
         assertNull(result)
+    }
+
+    @Test
+    fun `encodeImageFile returns base64 of the file bytes`() {
+        mockkStatic(Base64::class)
+        every { Base64.encodeToString(any(), Base64.DEFAULT) } answers {
+            java.util.Base64.getEncoder().encodeToString(firstArg<ByteArray>())
+        }
+        val file = Files.createTempFile("vlf_", ".jpeg").toFile().apply {
+            writeBytes(byteArrayOf(1, 2, 3))
+            deleteOnExit()
+        }
+
+        assertEquals("AQID", ImageUtils.encodeImageFile(file))
+    }
+
+    @Test
+    fun `encodeImageFile returns null for a missing or empty file`() {
+        val dir = Files.createTempDirectory("imageutils-encode").toFile().apply { deleteOnExit() }
+        val empty = File(dir, "empty.jpeg").apply { writeBytes(ByteArray(0)) }
+
+        assertNull(ImageUtils.encodeImageFile(File(dir, "missing.jpeg")))
+        assertNull(ImageUtils.encodeImageFile(empty))
+    }
+
+    @Test
+    fun `compressImageUriToFile returns false and leaves no file when the uri cannot be opened`() = runTest {
+        mockkStatic(Uri::class)
+        val uri = mockk<Uri>()
+        every { Uri.parse("content://media/1") } returns uri
+        val resolver = mockk<ContentResolver>()
+        every { resolver.openInputStream(uri) } returns null
+        val context = mockk<Context>()
+        every { context.contentResolver } returns resolver
+        val dir = Files.createTempDirectory("imageutils-compress").toFile().apply { deleteOnExit() }
+        val target = File(dir, "vlf_1.jpeg")
+
+        assertFalse(ImageUtils.compressImageUriToFile(context, "content://media/1", target))
+        assertFalse(target.exists())
+    }
+
+    @Test
+    fun `compressImageUriToFile returns false and deletes the target when reading throws`() = runTest {
+        mockkStatic(Uri::class)
+        val uri = mockk<Uri>()
+        every { Uri.parse("content://media/2") } returns uri
+        val resolver = mockk<ContentResolver>()
+        every { resolver.openInputStream(uri) } throws SecurityException("no permission")
+        val context = mockk<Context>()
+        every { context.contentResolver } returns resolver
+        val dir = Files.createTempDirectory("imageutils-compress").toFile().apply { deleteOnExit() }
+        val target = File(dir, "vlf_2.jpeg")
+
+        assertFalse(ImageUtils.compressImageUriToFile(context, "content://media/2", target))
+        assertFalse(target.exists())
+    }
+
+    @Test
+    fun `saveBase64ImageToFile returns false and deletes the target when the text is not base64`() = runTest {
+        mockkStatic(Base64::class)
+        every { Base64.decode(any<String>(), Base64.DEFAULT) } throws IllegalArgumentException("bad base-64")
+        val dir = Files.createTempDirectory("imageutils-decode").toFile().apply { deleteOnExit() }
+        val target = File(dir, "vlf_3.jpeg")
+
+        assertFalse(ImageUtils.saveBase64ImageToFile(mockk(relaxed = true), "not-base64", target))
+        assertFalse(target.exists())
+    }
+
+    @Test
+    fun `saveBase64ImageToFile returns false when the decoded image is empty`() = runTest {
+        mockkStatic(Base64::class)
+        every { Base64.decode(any<String>(), Base64.DEFAULT) } returns ByteArray(0)
+        val dir = Files.createTempDirectory("imageutils-decode").toFile().apply { deleteOnExit() }
+        val target = File(dir, "vlf_4.jpeg")
+
+        assertFalse(ImageUtils.saveBase64ImageToFile(mockk(relaxed = true), "", target))
+        assertFalse(target.exists())
+    }
+
+    @Test
+    fun `saveBase64ImageToFile strips a data url prefix before decoding`() = runTest {
+        mockkStatic(Base64::class)
+        every { Base64.decode("QUJD", Base64.DEFAULT) } returns ByteArray(0)
+        val dir = Files.createTempDirectory("imageutils-decode").toFile().apply { deleteOnExit() }
+
+        assertFalse(
+            ImageUtils.saveBase64ImageToFile(
+                mockk(relaxed = true),
+                "data:image/jpeg;base64,QUJD",
+                File(dir, "vlf_5.jpeg")
+            )
+        )
+        verify { Base64.decode("QUJD", Base64.DEFAULT) }
     }
 }
