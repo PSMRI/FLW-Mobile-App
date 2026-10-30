@@ -21,4 +21,17 @@ plugins {
     id 'com.android.library' version '8.7.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
     id "com.google.dagger.hilt.android" version "2.48" apply false
+    id "org.sonarqube" version "7.5.0.8588"
+}
+
+// SonarCloud analysis (FLW-1208). Run in CI by .github/workflows/pr-checks.yml with
+// SONAR_TOKEN set; module-level settings (variant, coverage) are in app/sonar.gradle.
+// TODO(FLW-1208): confirm both keys once the project is imported in SonarCloud.
+sonar {
+    properties {
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "psmri"
+        property "sonar.projectKey", "PSMRI_FLW-Mobile-App"
+        property "sonar.projectName", "FLW-Mobile-App"
+    }
 }

@@ -3,9 +3,14 @@ name: PR Checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  # Pushes to long-lived branches give SonarCloud the reference that PRs are compared
+  # against for "new code" (FLW-1208).
+  push:
+    branches: ['main', 'release-*']
 
 concurrency:
-  group: pr-checks-${{ github.event.pull_request.number }}
+  # Pushes have no PR number; group them by branch instead.
+  group: pr-checks-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -15,9 +20,17 @@ jobs:
     permissions:
       contents: read
 
+    # Job level so the SonarCloud step's `if` can check it (a step's own env is not
+    # visible to its `if`). Empty on fork PRs, which skips the scan.
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     steps:
+      # Full history: SonarCloud uses git blame to decide which lines are new code.
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -90,6 +103,15 @@ jobs:
       # failing here but passes locally, this is the first thing to revert.
       - name: Run unit tests and verify coverage
         run: ./gradlew jacocoCoverageVerification --console=plain --build-cache -PtestMaxParallelForks=4 -PtestForkEvery=300
+
+      # Runs even when the 90% coverage check above failed, as long as the report exists, so
+      # the PR still gets its SonarCloud result. Skipped when SONAR_TOKEN is not available
+      # (fork PRs, or before the secret is added). The configuration cache is off for this
+      # step only, so the scanner can read the project model; the test step keeps it.
+      # sonar.qualitygate.wait makes this step fail when the quality gate fails.
+      - name: SonarCloud scan
+        if: ${{ !cancelled() && env.SONAR_TOKEN != '' && hashFiles('app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml') != '' }}
+        run: ./gradlew sonar --console=plain --no-configuration-cache -Dsonar.qualitygate.wait=true
 
       - name: Upload JaCoCo report
         if: always()

@@ -196,6 +196,7 @@ android {
 }
 
 apply from: 'jacoco.gradle'
+apply from: 'sonar.gradle'
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
