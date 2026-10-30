@@ -170,11 +170,19 @@ class GeneralCheckupFormViewModel @Inject constructor(
 
     // ── Answers ────────────────────────────────────────────────────────────────
 
-    fun onFieldChanged(fieldId: String, value: Any?) {
+    /**
+     * Stores an answer. A tick that would add a problem of a second owner module is not kept: Refer
+     * could route to only one module. Returns the problem already ticked from the other module, or null.
+     */
+    fun onFieldChanged(fieldId: String, value: Any?): HealthProblem? {
         val normalized: Any? = when (value) {
             is Collection<*> -> value.mapNotNull { it?.toString() }.toCollection(LinkedHashSet())
             null -> null
             else -> value.toString()
+        }
+        conflictingOwnedProblem(fieldId, normalized)?.let { kept ->
+            _formChanged.value = Unit
+            return kept
         }
         if (fieldId == FIELD_TYPE && normalized != values[FIELD_TYPE]) {
             // A new type starts a fresh problem list (prototype §2.6).
@@ -189,6 +197,16 @@ class GeneralCheckupFormViewModel @Inject constructor(
             otherFieldIds().filterNot { it in shown }.forEach { errors.remove(it) }
         }
         _formChanged.value = Unit
+        return null
+    }
+
+    private fun conflictingOwnedProblem(fieldId: String, value: Any?): HealthProblem? {
+        val type = form?.typeOfProblemField(fieldId) ?: return null
+        val ticked = (value as? Set<*>).orEmpty()
+        val owned = type.problems.filter { it.ownerModule != null && it.problemId in ticked }
+        if (owned.map { it.ownerModule }.distinct().size < 2) return null
+        val before = (values[fieldId] as? Set<*>).orEmpty()
+        return owned.firstOrNull { it.problemId in before } ?: owned.first()
     }
 
     val selectedProblemType: HealthProblemType?

@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ConditionalLogic
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.FormFieldDto
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
@@ -300,12 +301,19 @@ class NCDReferalFormViewModel @Inject constructor(
                 }
             }
 
-
-
-
-
+            if (isGcForm) applyGcConditionalVisibility(schemaDto.sections.flatMap { it.fields })
 
             _schema.value = schemaDto
+        }
+    }
+
+    /** GC follow-up: show a field only when its `conditional.dependsOn` field holds `expectedValue` (e.g. referred_to). */
+    private fun applyGcConditionalVisibility(allFields: List<FormFieldDto>) {
+        allFields.forEach { field ->
+            val cond = field.conditional ?: return@forEach
+            if (cond.dependsOn.isNullOrBlank()) return@forEach
+            val dependsOnValue = allFields.find { it.fieldId == cond.dependsOn }?.value?.toString()
+            field.visible = dependsOnValue.equals(cond.expectedValue, ignoreCase = true)
         }
     }
 
@@ -321,6 +329,8 @@ class NCDReferalFormViewModel @Inject constructor(
                 }
             )
         }
+
+        if (isGcForm) applyGcConditionalVisibility(updatedSections.flatMap { it.fields })
 
         _schema.value = current.copy(sections = updatedSections)
     }
