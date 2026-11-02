@@ -32,30 +32,12 @@
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
--keep class java.util.Locale { *; }
-# Prevent removal of resources used via reflection or dynamic access
--keepclassmembers class ** {
-    public static <fields>;
-}
-# Keep all string resource IDs and names
--keepclassmembers class **.R$string {
-    *;
-}
-
 # --- ContextWrapper ---
 -keep class org.piramalswasthya.sakhi.** extends android.content.ContextWrapper { *; }
 
-# --- Assemblers ---
--keep class org.piramalswasthya.sakhi.**Assembler { *; }
--keepnames class org.piramalswasthya.sakhi.**Assembler
-
 # --- Hilt / DI Support ---
+# hilt-android and hilt-work ship their own R8 rules for modules and generated components.
 -keep @dagger.hilt.EntryPoint interface * { *; }
--keep class dagger.hilt.EntryPoints { *; }
--keep class dagger.hilt.EntryPoint { *; }
--keep class dagger.hilt.android.EntryPointAccessors { *; }
--keep class **_HiltModules* { *; }
--keep class *Module* { *; }
 
 # --- Annotations ---
 -keep @androidx.annotation.Keep class * { *; }
@@ -74,11 +56,10 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
-# Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.examples.android.model.** { *; }
 -keepclassmembers class org.piramalswasthya.**.databinding.** {
     public <methods>;
 }
+# Application classes serialized/deserialized by Gson and Moshi
 -keep class org.piramalswasthya.sakhi.model.** {*;}
 -keep class org.piramalswasthya.sakhi.network.** {*;}
 -keep class org.piramalswasthya.sakhi.repositories.** {*;}
