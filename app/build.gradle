@@ -70,6 +70,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
             signingConfig signingConfigs.release
+            // Upload the R8 mapping file so Crashlytics can de-obfuscate release crashes.
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
 
         debug {

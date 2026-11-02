@@ -12,13 +12,10 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep line numbers so Crashlytics stack traces stay readable once R8 obfuscates
+# (FLW-1211); the source file name is replaced to avoid shipping it.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 -keep class com.squareup.moshi.** { *; }
 -keep class retrofit2.** { *; }
 -keep class okhttp3.** { *; }
@@ -81,8 +78,6 @@
 -keep class org.piramalswasthya.sakhi.network.** {*;}
 -keep class org.piramalswasthya.sakhi.repositories.** {*;}
 -dontusemixedcaseclassnames
--verbose
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
 # Keep all members in kotlinx.coroutines
 -keep class kotlinx.coroutines.** { *; }
