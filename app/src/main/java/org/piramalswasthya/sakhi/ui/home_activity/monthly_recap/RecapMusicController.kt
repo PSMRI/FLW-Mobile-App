@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import org.piramalswasthya.sakhi.R
 import timber.log.Timber
@@ -37,7 +38,14 @@ class RecapMusicController(private val context: Context) {
     fun prepare() {
         if (player != null) return
         try {
+            // USAGE_GAME avoids the system "Now Playing / Music" heads-up that
+            // STREAM_MUSIC / USAGE_MEDIA can surface at the top of the screen.
+            val attrs = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
             player = MediaPlayer.create(context.applicationContext, R.raw.recap_bg_music)?.apply {
+                setAudioAttributes(attrs)
                 isLooping = true
                 setVolume(0f, 0f)
                 start()

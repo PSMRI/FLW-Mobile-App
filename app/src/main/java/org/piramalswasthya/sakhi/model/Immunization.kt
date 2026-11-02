@@ -11,7 +11,23 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
 
 enum class ChildImmunizationCategory {
-    BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12, MONTH_16_24, YEAR_5_6, YEAR_10, YEAR_16, CATCH_UP
+    BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12, MONTH_16_24, YEAR_5_6, YEAR_10, YEAR_16, CATCH_UP;
+
+    companion object {
+        /**
+         * Stages always shown for entry (incl. QA on young babies): birth through
+         * 16–24 months. Age/maxAllowedAge gates previously hid 9–12 “1-year” and
+         * 16–24 cards until the child was old enough.
+         */
+        val ENTRY_STAGES: Set<ChildImmunizationCategory> = setOf(
+            BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12, MONTH_16_24
+        )
+
+        /** First-year stages that count toward Child Fully Protected. */
+        val FIRST_YEAR_STAGES: Set<ChildImmunizationCategory> = setOf(
+            BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12
+        )
+    }
 }
 
 enum class VaccineType {

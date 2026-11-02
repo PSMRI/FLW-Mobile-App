@@ -202,10 +202,26 @@ class MonthlyRecapRepo @Inject constructor(
                 generatedAt = now,
             )
             val readiness = withContext(Dispatchers.IO) {
-                RecapDataReadiness(
+                val onDevice = RecapDataReadiness(
                     isFullPullComplete = preferenceDao.isFullPullComplete,
                     localDataSince = preferenceDao.recapLocalDataSince(now),
                 )
+                // The two install-readiness gates ask whether this phone can be trusted to
+                // hold a complete picture of the month: the one-shot download must have
+                // finished, and the install must predate the month being summarised. Both
+                // are right for an ASHA's phone and both are permanently false on a test
+                // phone, where the build was installed today — so a tester can never reach
+                // the recap with real records, whatever date they set.
+                //
+                // Debug builds therefore assume the answer a phone in continuous use would
+                // give. Nothing else is relaxed: the month still has to contain real,
+                // countable work, and release behaviour is untouched.
+                if (BuildConfig.DEBUG) {
+                    Timber.i("Monthly Recap: debug build — install-readiness gates assumed met")
+                    RecapDataReadiness(isFullPullComplete = true, localDataSince = 1L)
+                } else {
+                    onDevice
+                }
             }
             // ONE freeze decision, covering both the long-standing zero-month rule
             // and local-data readiness. See [recapFreezeBlocker] for the reasoning.

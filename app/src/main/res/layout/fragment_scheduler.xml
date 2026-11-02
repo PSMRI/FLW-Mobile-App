@@ -56,14 +56,14 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/padding_small"
                         android:text="@string/impact_dashboard_title"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <!-- auto-moving badge carousel: one badge at a time, swipeable -->
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/vp_impact_badges"
                         android:layout_width="match_parent"
-                        android:layout_height="84dp"
+                        android:layout_height="96dp"
                         android:layout_marginTop="@dimen/padding_small" />
 
                     <!-- explicit prev/next controls + position counter -->
@@ -76,8 +76,8 @@
 
                         <ImageButton
                             android:id="@+id/btn_carousel_prev"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="@string/impact_carousel_prev"
                             android:rotation="180"
@@ -96,8 +96,8 @@
 
                         <ImageButton
                             android:id="@+id/btn_carousel_next"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="@string/impact_carousel_next"
                             android:src="@drawable/ic_chevron_right"

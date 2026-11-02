@@ -175,10 +175,15 @@ object BadgeDefinitions {
         BadgeDefinition(
             id = BadgeIds.VULNERABLE_BABY,
             kind = BadgeKind.PER_CASE,
-            milestones = listOf(1),
+            milestones = listOf(1, 2, 3),
             titleRes = R.string.badge_vulnerable_baby_title,
             descRes = R.string.badge_vulnerable_baby_desc,
-            iconRes = R.drawable.badge_vulnerable_baby
+            iconRes = R.drawable.badge_vulnerable_baby_t1,
+            tierIcons = listOf(
+                R.drawable.badge_vulnerable_baby_t1,
+                R.drawable.badge_vulnerable_baby_t2,
+                R.drawable.badge_vulnerable_baby_t3
+            )
         ),
         BadgeDefinition(
             id = BadgeIds.CRITICAL_REFERRAL,
@@ -229,7 +234,17 @@ object BadgeDefinitions {
                 (def.tierIcons.getOrNull(quarter) ?: def.iconRes) to (level > 0)
             }
 
-            BadgeKind.PER_CASE -> def.iconRes to ((state?.progress ?: 0L) > 0L)
+            BadgeKind.PER_CASE -> {
+                val progress = state?.progress ?: 0L
+                val earned = progress > 0L
+                // Prefer milestone level when set; otherwise map 1/2/3+ cases to tiers.
+                val tierIndex = when {
+                    level > 0 -> (level - 1).coerceAtLeast(0)
+                    progress <= 0L -> 0
+                    else -> (progress.toInt() - 1).coerceAtLeast(0)
+                }
+                (def.tierIcons.getOrNull(tierIndex) ?: def.iconRes) to earned
+            }
 
             else -> (def.tierIcons.getOrNull((level - 1).coerceAtLeast(0))
                 ?: def.iconRes) to (level > 0)

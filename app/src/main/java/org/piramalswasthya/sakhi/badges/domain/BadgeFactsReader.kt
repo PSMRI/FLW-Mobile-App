@@ -162,9 +162,13 @@ class BadgeFactsReader @Inject constructor(
 
     /**
      * Maternal Journey: distinct completed journeys — registered pregnancy with
-     * ≥4 ANC visits (structured + dynamic history aggregated) ending in an
-     * institutional delivery. First-trimester check applies only when an
-     * INTEGER ANC date column is resolvable.
+     * ≥4 ANC visits (structured + dynamic history aggregated) ending in a
+     * facility / institutional delivery. There is no dropdown value literally
+     * named "Institutional Delivery"; facility options such as District Hospital,
+     * PHC, CHC, etc. qualify. Home and In Transit do NOT. Place values are matched
+     * against the English `do_place_of_delivery_array` strings that
+     * DeliveryOutcomeDataset persists. First-trimester check applies only when
+     * an INTEGER ANC date column is resolvable.
      */
     fun completedMaternalJourneys(): List<String> = safely("maternalJourneys", emptyList()) {
         if (!tableExists("PREGNANCY_REGISTER") || !tableExists("DELIVERY_OUTCOME")) {
@@ -186,12 +190,18 @@ class BadgeFactsReader @Inject constructor(
                         "AND t.ancDate <= pr.lmp + $trimesterMs)"
             } else ""
 
+        // Explicit institutional whitelist (English stored values). Excludes Home
+        // and In Transit — a bare "not home" check was too loose and let non-
+        // institutional / locale leftovers through.
+        val institutionalPlaces = INSTITUTIONAL_PLACES_OF_DELIVERY.joinToString(",") {
+            "'${it.lowercase().replace("'", "''")}'"
+        }
+
         queryStrings(
             """
             SELECT DISTINCT pr.benId FROM PREGNANCY_REGISTER pr
             JOIN DELIVERY_OUTCOME d ON d.benId = pr.benId
-            WHERE IFNULL(d.placeOfDelivery, '') != ''
-              AND LOWER(d.placeOfDelivery) NOT LIKE '%home%'
+            WHERE LOWER(TRIM(IFNULL(d.placeOfDelivery, ''))) IN ($institutionalPlaces)
               ${draftFilter("PREGNANCY_REGISTER", "pr")}
               ${draftFilter("DELIVERY_OUTCOME", "d")}
               AND (($ancStructured) + ($ancDynamic)) >= 4
@@ -201,26 +211,43 @@ class BadgeFactsReader @Inject constructor(
     }
 
     /**
-     * Child Fully Protected: beneficiaries whose administered doses cover every
-     * CHILD vaccine expected within the 0–1 year schedule.
+     * Child Fully Protected: each child [beneficiaryId] whose administered doses
+     * cover every CHILD vaccine in the 0–1 year dose stages (BIRTH … MONTH_9_12).
+     *
+     * Counting is strictly per child id — twins / multiple live births under the
+     * same mother each contribute +1 when that child's own schedule is complete.
+     * Stages use [Vaccine.immunizationService] ordinals (Room default) and also
+     * accept enum-name TEXT leftovers so `expected` never silently becomes 0.
      */
     fun fullyImmunizedChildren(): List<String> = safely("fullyImmunized", emptyList()) {
         if (!tableExists("IMMUNIZATION") || !tableExists("VACCINE")) return@safely emptyList()
-        val oneYearMs = TimeUnit.DAYS.toMillis(365)
+        // ChildImmunizationCategory: BIRTH=0 … MONTH_9_12=4 (and name form if TEXT)
+        val firstYearStages =
+            "(v.immunizationService IN (0, 1, 2, 3, 4) OR UPPER(CAST(v.immunizationService AS TEXT)) IN (" +
+                    "'BIRTH','WEEK_6','WEEK_10','WEEK_14','MONTH_9_12','0','1','2','3','4'))"
+        // ImmunizationCategory.CHILD ordinal 0; raw SQL also accepts the legacy string
+        val childCategory = "(v.category = 0 OR v.category = 'CHILD')"
         val expected = queryLong(
-            "SELECT COUNT(*) FROM VACCINE WHERE category = 'CHILD' AND maxAllowedAgeInMillis <= $oneYearMs"
+            "SELECT COUNT(*) FROM VACCINE v WHERE $childCategory AND $firstYearStages"
         )
-        if (expected == 0L) return@safely emptyList()
-        queryStrings(
+        if (expected == 0L) {
+            Timber.w("Badges: fullyImmunized expected=0 — VACCINE stages unresolved")
+            return@safely emptyList()
+        }
+        val ids = queryStrings(
             """
             SELECT i.beneficiaryId FROM IMMUNIZATION i
             JOIN VACCINE v ON v.vaccineId = i.vaccineId
-            WHERE v.category = 'CHILD' AND v.maxAllowedAgeInMillis <= $oneYearMs
+            WHERE $childCategory AND $firstYearStages
               AND i.date IS NOT NULL
             GROUP BY i.beneficiaryId
             HAVING COUNT(DISTINCT i.vaccineId) >= $expected
             """.trimIndent()
         )
+        Timber.d("Badges: fullyImmunized expected=$expected children=${ids.size}")
+        // Defensive distinct — GROUP BY already unique; keeps twins from collapsing
+        // if a future join ever re-introduces duplicate mother/household keys.
+        ids.distinct()
     }
 
     /** Digital Identity: beneficiaries with a valid generated ABHA. */
@@ -232,20 +259,54 @@ class BadgeFactsReader @Inject constructor(
     }
 
     /**
-     * Vulnerable Baby Cared For: LBW (<2.5kg) or SNCU babies with all seven
-     * HBNC visits (days 1,3,7,14,21,28,42) completed. HBNC.benId is the
-     * infant's beneficiary id → INFANT_REG.childBenId.
+     * Vulnerable Baby Cared For: LBW or SNCU babies with all seven HBNC visits
+     * (days 1,3,7,14,21,28,42) completed. HBNC.benId is the infant's
+     * beneficiary id → INFANT_REG.childBenId.
+     *
+     * Two sources, because the HBNC form moved. The legacy `HBNC` table numbers
+     * its visits (homeVisitDate 1..42, with the visit card and parts I/II kept
+     * at 0/-1/-2), while the dynamic form the Infant list opens today writes
+     * `all_visit_history` rows under form hbnc_form_001 with visitDay as text
+     * ("1st Day" … "42nd Day"). Counting only the old table missed every visit
+     * entered through the current screen, so both are unioned and the seven
+     * days are counted once each.
+     *
+     * INFANT_REG.weight is GRAMS, not kilograms: the registration form is
+     * "Weight at Birth ( grams )" with a 500..6000 range. Comparing it against
+     * 2.5 matched no real LBW baby (2200 grams is not < 2.5) while matching
+     * every unfilled row, whose weight defaults to 0. Hence 2500, with 0 and
+     * NULL treated as "weight unknown" — such a baby qualifies only via SNCU.
      */
     fun vulnerableBabiesCaredFor(): List<String> = safely("vulnerableBabies", emptyList()) {
-        if (!tableExists("HBNC") || !tableExists("INFANT_REG")) return@safely emptyList()
+        if (!tableExists("INFANT_REG")) return@safely emptyList()
+        val legacy = if (tableExists("HBNC")) {
+            """
+            SELECT benId AS benId, homeVisitDate AS visitNo FROM HBNC
+            WHERE homeVisitDate IN (1,3,7,14,21,28,42)
+            """.trimIndent()
+        } else null
+        val dynamic = if (tableExists("all_visit_history")) {
+            """
+            SELECT benId AS benId, CASE visitDay
+                WHEN '1st Day' THEN 1 WHEN '3rd Day' THEN 3 WHEN '7th Day' THEN 7
+                WHEN '14th Day' THEN 14 WHEN '21st Day' THEN 21 WHEN '28th Day' THEN 28
+                WHEN '42nd Day' THEN 42 END AS visitNo
+            FROM all_visit_history
+            WHERE formId = 'hbnc_form_001'
+              AND visitDay IN ('1st Day','3rd Day','7th Day','14th Day','21st Day','28th Day','42nd Day')
+            """.trimIndent()
+        } else null
+        val visits = listOfNotNull(legacy, dynamic).joinToString("\n            UNION\n            ")
+        if (visits.isEmpty()) return@safely emptyList()
         queryStrings(
             """
-            SELECT h.benId FROM HBNC h
-            JOIN INFANT_REG i ON i.childBenId = h.benId
-            WHERE (i.isSNCU = 'Yes' OR IFNULL(i.weight, 99) < 2.5)
-              AND h.homeVisitDate IN (1,3,7,14,21,28,42)
-            GROUP BY h.benId
-            HAVING COUNT(DISTINCT h.homeVisitDate) >= 7
+            SELECT v.benId FROM (
+            $visits
+            ) v
+            JOIN INFANT_REG i ON i.childBenId = v.benId
+            WHERE (i.isSNCU = 'Yes' OR (IFNULL(i.weight, 0) > 0 AND i.weight < 2500))
+            GROUP BY v.benId
+            HAVING COUNT(DISTINCT v.visitNo) >= 7
             """.trimIndent()
         )
     }
@@ -275,6 +336,22 @@ class BadgeFactsReader @Inject constructor(
         private val DATE_COLUMN_CANDIDATES =
             listOf("createddate", "createdat", "updateddate", "updatedat", "date", "visitdate")
 
+        /**
+         * English Place of Delivery values that count as institutional
+         * (`R.array.do_place_of_delivery_array`). Home and In Transit are omitted.
+         */
+        private val INSTITUTIONAL_PLACES_OF_DELIVERY = listOf(
+            "District Hospital",
+            "Community Health Centre",
+            "Primary Health Centre",
+            "Sub Centre",
+            "Other Public Facility",
+            "Accredited Private Hospital",
+            "Other Private Hospital",
+            "Sub District Hospital",
+            "Medical College Hospital",
+        )
+
         /** Complete Worker domains (LLD §1.1): Child, Maternal, Immunization, FP, Disease. */
         private val DOMAIN_TABLES = mapOf(
             "child" to listOf("INFANT_REG", "CHILD_REG", "HBNC", "children_under_five_all_visit"),
@@ -294,10 +371,15 @@ class BadgeFactsReader @Inject constructor(
         private val MEETING_TABLES =
             listOf("MAA_MEETING", "DewormingMeeting", "AHDMeeting", "UWIN_SESSION")
 
-        /** Tables whose invalidation should wake the evaluator (TaskCompletionBus). */
+        /**
+         * Tables whose invalidation should wake the evaluator (TaskCompletionBus).
+         * `all_visit_history` carries the dynamic HBNC form, so saving the seventh
+         * visit re-evaluates Vulnerable Baby there and then, rather than at the
+         * next app launch.
+         */
         val MAPPED_TABLES: Array<String> = (
                 DOMAIN_TABLES.values.flatten() + MEETING_TABLES + listOf(
-                    "INCENTIVE_RECORD", "IMMUNIZATION", "ABHA_GENERATED"
+                    "INCENTIVE_RECORD", "IMMUNIZATION", "ABHA_GENERATED", "all_visit_history"
                 )
                 ).distinct().toTypedArray()
     }

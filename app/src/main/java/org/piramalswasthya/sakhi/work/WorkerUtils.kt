@@ -773,6 +773,19 @@ object WorkerUtils {
         )
     }
 
+    /**
+     * Push a freshly earned badge now, so her other device can see it on its next
+     * sync instead of waiting for this app to be relaunched. REPLACE, not KEEP: a
+     * sync already queued may have been built before this award existed.
+     */
+    fun triggerBadgeSync(context: Context) {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            BadgeSyncWorker.name,
+            ExistingWorkPolicy.REPLACE,
+            syncRequestBuilder<BadgeSyncWorker>().build()
+        )
+    }
+
     /** One-shot badge recompute, used after sync milestones. */
     fun triggerAdHocBadgeEvaluation(context: Context) {
         WorkManager.getInstance(context).enqueueUniqueWork(

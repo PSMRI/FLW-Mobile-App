@@ -22,9 +22,9 @@
     <string name="badge_community_voice_title">Community Voice</string>
     <string name="badge_community_voice_desc">Organize 2+ meeting types (MAA, NDD, AHD, U-WIN) each quarter</string>
     <string name="badge_maternal_journey_title">Maternal Journey</string>
-    <string name="badge_maternal_journey_desc">Complete maternal care journeys through institutional delivery</string>
+    <string name="badge_maternal_journey_desc">Complete maternal care (≥4 ANC) ending in a facility delivery (e.g. District Hospital, PHC, CHC). Home and In Transit do not qualify</string>
     <string name="badge_child_fully_protected_title">Child Fully Protected</string>
-    <string name="badge_child_fully_protected_desc">Complete the full childhood immunization schedule</string>
+    <string name="badge_child_fully_protected_desc">Complete every birth–9–12 month dose for each child (twins count separately). First tier at 3 children.</string>
     <string name="badge_digital_identity_title">Digital Identity</string>
     <string name="badge_digital_identity_desc">Generate ABHA IDs after household registration</string>
     <string name="badge_vulnerable_baby_title">Vulnerable Baby Cared For</string>

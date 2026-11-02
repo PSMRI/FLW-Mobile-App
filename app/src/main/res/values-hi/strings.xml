@@ -1487,8 +1487,8 @@
     <string name="monthly_recap_playback_next_cd">अगला संदेश</string>
     <string name="monthly_recap_playback_pause_cd">रोकें</string>
     <string name="monthly_recap_playback_play_cd">चलाएँ</string>
-    <string name="monthly_recap_music_on_cd">पृष्ठभूमि संगीत बंद करें</string>
-    <string name="monthly_recap_music_off_cd">पृष्ठभूमि संगीत चालू करें</string>
+    <string name="monthly_recap_music_on_cd">संगीत बंद</string>
+    <string name="monthly_recap_music_off_cd">संगीत चालू</string>
     <string name="notification_recap_channel_name">मासिक रीकैप</string>
     <string name="notification_recap_channel_description">आपके मासिक रीकैप को देखने की मासिक याद दिलाना</string>
     <string name="notification_recap_title">आपका महीना, 75 सेकंड में</string>

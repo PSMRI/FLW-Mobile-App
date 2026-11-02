@@ -123,13 +123,16 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
         add(Calendar.MONTH, 1)
         set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
     }.setToEndOfTheDay().timeInMillis
+    // Always surface birth → 16–24 month stages so 9–12 / 1-year / 16–24 cards
+    // appear even for young babies (QA + early entry). Age gates used to hide them.
     vaccineIdList.map { cache ->
         val ageMillis = System.currentTimeMillis() - cache.ben.dob
         val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
         ImmunizationDetailsDomain(
             ben = cache.ben.asBasicDomainModel(),
             vaccineStateList = vaccines.filter {
-                it.minAllowedAgeInMillis < ageMillis ||
+                it.immunizationService in ChildImmunizationCategory.ENTRY_STAGES ||
+                    it.minAllowedAgeInMillis < ageMillis ||
                     cache.ben.dob + it.minAllowedAgeInMillis <= endOfNextMonth
             }.map { vaccine ->
                 val vaccineType = vaccine.vaccineName.toVaccineType()

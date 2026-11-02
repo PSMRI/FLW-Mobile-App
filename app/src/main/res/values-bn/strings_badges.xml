@@ -21,9 +21,9 @@
     <string name="badge_community_voice_title">কমিউনিটি ভয়েস</string>
     <string name="badge_community_voice_desc">প্রতি ত্রৈমাসিকে ২+ ধরনের সভা (MAA, NDD, AHD, U-WIN) আয়োজন করুন</string>
     <string name="badge_maternal_journey_title">মাতৃত্বের যাত্রা</string>
-    <string name="badge_maternal_journey_desc">প্রাতিষ্ঠানিক প্রসব পর্যন্ত মাতৃ যত্নের যাত্রা সম্পূর্ণ করুন</string>
+    <string name="badge_maternal_journey_desc">≥4 ANC সহ মাতৃ যত্ন সম্পূর্ণ করুন যা সুবিধায় প্রসবে শেষ হয় (যেমন জেলা হাসপাতাল, PHC, CHC)। বাড়ি ও পথে প্রসব যোগ্য নয়</string>
     <string name="badge_child_fully_protected_title">সম্পূর্ণ সুরক্ষিত শিশু</string>
-    <string name="badge_child_fully_protected_desc">শিশুর সম্পূর্ণ টিকাদান সূচি সম্পন্ন করুন</string>
+    <string name="badge_child_fully_protected_desc">প্রতিটি শিশুর সম্পূর্ণ প্রথম-বছরের টিকাদান সম্পূর্ণ করুন (যমজ আলাদাভাবে গণনা হয়)</string>
     <string name="badge_digital_identity_title">ডিজিটাল পরিচয়</string>
     <string name="badge_digital_identity_desc">পরিবার নিবন্ধনের পর ABHA আইডি তৈরি করুন</string>
     <string name="badge_vulnerable_baby_title">নাজুক শিশুর যত্ন</string>

@@ -30,13 +30,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/margin_big"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="6dp"
     android:layout_marginEnd="@dimen/margin_big"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="6dp"
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="@color/recap_playback_bg_top"
-    app:cardCornerRadius="22dp"
+    app:cardCornerRadius="18dp"
     app:cardElevation="1dp"
     app:rippleColor="@color/recap_playback_count_accent"
     app:strokeWidth="0dp">
@@ -49,19 +49,17 @@
         android:gravity="bottom"
         android:importantForAccessibility="noHideDescendants"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal"
-        android:paddingEnd="@dimen/padding_wide">
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp">
 
-        <!-- The didi is the hero and now the tallest element, so she sets the card
-             height rather than riding along inside a taller text stack. Bottom
-             aligned with no bottom padding so she stands on the base of the card. -->
+        <!-- Compact didi — shorter card so Home keeps more room for the grid. -->
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/recap_character"
-            android:layout_width="112dp"
-            android:layout_height="112dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_gravity="bottom"
-            android:layout_marginEnd="@dimen/padding_normal"
+            android:layout_marginEnd="8dp"
             android:contentDescription="@null"
             app:lottie_autoPlay="false"
             app:lottie_loop="true"
@@ -75,8 +73,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_normal"
-            android:paddingBottom="@dimen/padding_normal">
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp">
 
             <!-- eyebrow: month, then the state chip -->
             <LinearLayout
@@ -137,12 +135,12 @@
                 android:id="@+id/recap_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="1dp"
                 android:ellipsize="end"
-                android:lineSpacingExtra="1dp"
+                android:lineSpacingExtra="0dp"
                 android:maxLines="1"
                 android:text="@string/monthly_recap_title"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="@color/recap_playback_text"
                 android:textStyle="bold" />
 
@@ -150,11 +148,11 @@
                 android:id="@+id/recap_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="1dp"
                 android:ellipsize="end"
-                android:lineSpacingExtra="1dp"
-                android:maxLines="2"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:lineSpacingExtra="0dp"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@color/recap_card_text_muted"
                 tools:text="Your recap is ready — see the impact you made." />
 
@@ -163,9 +161,10 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:importantForAccessibility="no"
                 android:max="100"
+                android:minHeight="3dp"
                 android:progressBackgroundTint="@color/recap_playback_progress_track"
                 android:progressTint="@color/recap_playback_progress_active"
                 android:visibility="gone"
@@ -178,7 +177,7 @@
                 android:id="@+id/recap_cta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="3dp"
                 android:clickable="false"
                 android:drawableEnd="@drawable/ic_chevron_right"
                 android:drawablePadding="1dp"
@@ -186,7 +185,7 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:text="@string/monthly_recap_view_recap"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                 android:textColor="@color/recap_playback_count_accent"
                 android:textStyle="bold"
                 tools:text="View Recap" />

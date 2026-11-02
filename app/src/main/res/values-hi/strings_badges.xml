@@ -21,9 +21,9 @@
     <string name="badge_community_voice_title">कम्युनिटी वॉइस</string>
     <string name="badge_community_voice_desc">हर तिमाही 2+ प्रकार की बैठकें (MAA, NDD, AHD, U-WIN) आयोजित करें</string>
     <string name="badge_maternal_journey_title">मातृत्व यात्रा</string>
-    <string name="badge_maternal_journey_desc">संस्थागत प्रसव तक मातृ देखभाल यात्राएँ पूरी करें</string>
+    <string name="badge_maternal_journey_desc">≥4 ANC सहित मातृ देखभाल पूरी करें जो सुविधा में प्रसव पर समाप्त हो (जैसे जिला अस्पताल, PHC, CHC)। घर और रास्ते में प्रसव योग्य नहीं</string>
     <string name="badge_child_fully_protected_title">पूर्ण सुरक्षित शिशु</string>
-    <string name="badge_child_fully_protected_desc">बच्चों का पूरा टीकाकरण कार्यक्रम पूर्ण करें</string>
+    <string name="badge_child_fully_protected_desc">प्रत्येक बच्चे का पूरा प्रथम-वर्ष टीकाकरण पूरा करें (जुड़वाँ अलग-अलग गिने जाते हैं)</string>
     <string name="badge_digital_identity_title">डिजिटल पहचान</string>
     <string name="badge_digital_identity_desc">परिवार पंजीकरण के बाद ABHA आईडी बनाएँ</string>
     <string name="badge_vulnerable_baby_title">नाज़ुक शिशु की देखभाल</string>
