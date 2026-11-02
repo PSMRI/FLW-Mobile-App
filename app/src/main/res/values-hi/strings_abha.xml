@@ -48,7 +48,15 @@
     <string name="abha_number_">आभा संख्या:</string>
     <string name="aadhaar_linked_mobile_number_or_other_mobile_number">आधार से जुड़ा मोबाइल संख्या या अन्य मोबाइल संख्या</string>
     <string name="individual_s_consent_for_creation_of_abha_number">आभा संख्या बनाने के लिए व्यक्ति की सहमति</string>
-    <string name="validate_fp">परिवार नियोजन सत्यापित करें</string>
+    <string name="validate_fp">चेहरा वेरिफ़ाई करें</string>
+    <string name="please_wait">कृपया प्रतीक्षा करें…</string>
+    <string name="initializing">शुरु कर रहा है</string>
+    <string name="processing">प्रसंस्करण</string>
+    <string name="face_pending">चेहरे से पहचान: <b>लंबित</b>\nइसमें कुछ समय लग सकता है।</string>
+    <string name="face_verified">चेहरे से पहचान: <b>सत्यापित</b>\nइसमें कुछ समय लग सकता है।</string>
+    <string name="face_failed">चेहरे से पहचान: <b>असफल</b>\nबाद में पुन: प्रयास करें</string>
+    <string name="face_success">चेहरे से पहचान: <b>सफलता</b></string>
+    <string name="message">संदेश</string>
     <string name="generating_abha_for">दर्ज करें</string>
     <string name="otp_sent_to">OTP आधार से जुड़े मोबाइल संख्या पर भेजा गया</string>
     <string name="otp_was_resent">OTP फिर से भेजा गया</string>

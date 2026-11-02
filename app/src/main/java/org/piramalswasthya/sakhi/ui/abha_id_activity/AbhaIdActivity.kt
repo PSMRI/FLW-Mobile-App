@@ -23,6 +23,7 @@ import org.piramalswasthya.sakhi.helpers.MyContextWrapper
 import org.piramalswasthya.sakhi.helpers.TapjackingProtectionHelper
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertAbhaInterceptor
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdViewModel.State
+import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdFragment
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -64,6 +65,13 @@ class AbhaIdActivity : AppCompatActivity() {
                     binding.progressBarAbhaActivity.visibility = View.GONE
                     binding.clError.visibility = View.GONE
                     binding.navHostFragmentAbhaId.visibility = View.VISIBLE
+                    val navHostFragment = supportFragmentManager.findFragmentById(
+                        R.id.nav_host_fragment_abha_id
+                    ) as? NavHostFragment
+                    navHostFragment?.childFragmentManager?.fragments
+                        ?.filterIsInstance<AadhaarIdFragment>()
+                        ?.firstOrNull()
+                        ?.resumePendingFaceAuth()
 
                 }
 
@@ -140,6 +148,9 @@ class AbhaIdActivity : AppCompatActivity() {
             binding.tvToolbarAbha.text = it
         }
     }
+
+    val isAbhaTokenReady: Boolean
+        get() = mainViewModel.state.value == State.SUCCESS
 
     private val exitAlert by lazy {
         MaterialAlertDialogBuilder(this)
