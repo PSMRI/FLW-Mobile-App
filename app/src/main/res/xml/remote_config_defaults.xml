@@ -10,23 +10,33 @@
     </entry>
     <entry>
         <key>gamification_master_enabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>gamification_pilot_user_ids</key>
         <value></value>
     </entry>
+    <!--
+      Small QA / internal cohort (comma-separated ASHA userIds).
+      Members bypass the Monthly Recap days 1–7 calendar window so they can
+      test Watch again and playback anytime. Empty = no cohort bypass.
+      Pair with gamification_pilot_user_ids to limit who sees the feature.
+    -->
+    <entry>
+        <key>gamification_test_cohort_user_ids</key>
+        <value></value>
+    </entry>
     <entry>
         <key>badges_enabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>monthly_recap_enabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>notifications_enabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>consistency_dashboard_enabled</key>

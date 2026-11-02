@@ -9,7 +9,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
@@ -71,6 +70,7 @@ import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.BadgeApiService
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
+import org.piramalswasthya.sakhi.network.interceptors.BodyCappedLoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.LoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.TokenAuthenticator
@@ -99,7 +99,7 @@ object AppModule {
     @Provides
     @Named(AUTH_CLIENT)
     fun provideAuthClient(
-        loggingInterceptor: HttpLoggingInterceptor,
+        loggingInterceptor: BodyCappedLoggingInterceptor,
         accountDeactivationInterceptor: AccountDeactivationInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
@@ -134,7 +134,7 @@ object AppModule {
         apiAnalyticsInterceptor: ApiAnalyticsInterceptor,
         tokenInsertTmcInterceptor: TokenInsertTmcInterceptor,
         tokenAuthenticator: TokenAuthenticator,
-        loggingInterceptor: HttpLoggingInterceptor,
+        loggingInterceptor: BodyCappedLoggingInterceptor,
         accountDeactivationInterceptor: AccountDeactivationInterceptor
     ): OkHttpClient {
         return baseClient
@@ -163,18 +163,9 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideHttpLoggingInterceptor(@ApplicationContext context: Context): HttpLoggingInterceptor {
-        val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
-        val loggingInterceptor = HttpLoggingInterceptor(LoggingInterceptor()).apply {
-            // BODY logging stringifies every sync payload — a serious CPU/memory
-            // cost on low-end devices. Debug builds only.
-            level =
-                if (isDebuggable)
-                    HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
-        }
-        return loggingInterceptor
+    fun provideHttpLoggingInterceptor(): BodyCappedLoggingInterceptor {
+        // Full BODY logging (feeds the sync log in release too), but never for oversized uploads.
+        return BodyCappedLoggingInterceptor(LoggingInterceptor())
     }
 
     // TokenAuthenticator provider
@@ -191,7 +182,7 @@ object AppModule {
     @Singleton
     @Provides
     @Named(ABHA_CLIENT)
-    fun provideAbhaHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideAbhaHttpClient(loggingInterceptor: BodyCappedLoggingInterceptor): OkHttpClient {
         return baseClient
             .newBuilder()
             .addInterceptor(TokenInsertAbhaInterceptor())

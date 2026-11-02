@@ -287,52 +287,56 @@
                 android:layout_marginTop="10dp"
                 app:layout_constraintTop_toBottomOf="@+id/from_to_date_range">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.1" />
-
+                <!-- Guideline percentages must match item_activity.xml or the headers stop
+                     sitting above their own column. -->
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline50"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.3" />
+                    app:layout_constraintGuide_percent="0.55" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline75"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_begin="250dp" />
+                    app:layout_constraintGuide_percent="0.75" />
+
+                <!-- FLW-1171: reserves the row's checkbox column so S.No and Activity keep
+                     sitting above their values. Shown only when the rows carry checkboxes. -->
+                <Space
+                    android:id="@+id/spaceHeaderSelection"
+                    android:layout_width="40dp"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tvHeaderSerialNo"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="S.No"
+                    android:minWidth="24dp"
+                    android:text="@string/incentive_header_serial_no"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/guideline10"
+                    app:layout_constraintStart_toEndOf="@id/spaceHeaderSelection"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
-
 
                 <TextView
                     android:id="@+id/tvHeaderActivity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Activity"
+                    android:text="@string/incentive_header_activity"
                     android:textStyle="bold"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:layout_constraintStart_toEndOf="@id/guideline10"
+                    app:layout_constraintStart_toEndOf="@id/tvHeaderSerialNo"
                     app:layout_constraintEnd_toStartOf="@id/guideline50"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -341,7 +345,7 @@
                     android:id="@+id/tvHeaderCount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="No of Claims"
+                    android:text="@string/incentive_header_no_of_claims"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:layout_marginEnd="@dimen/_5sdp"
@@ -355,7 +359,7 @@
                     android:id="@+id/tvHeaderAmount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Amount claimed (Rs.)"
+                    android:text="@string/incentive_header_amount_claimed"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:paddingEnd="@dimen/_5sdp"

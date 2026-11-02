@@ -118,6 +118,21 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:ellipsize="end"
                 tools:text="ANC Checkup" />
+
+            <TextView
+                android:id="@+id/tvApprovalStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Rejected"
+                tools:background="@drawable/bg_status_rejected" />
         </LinearLayout>
 
 

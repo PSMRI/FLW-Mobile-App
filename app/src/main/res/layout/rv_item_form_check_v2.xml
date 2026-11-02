@@ -35,5 +35,26 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             android:orientation="vertical"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_multi_select"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:endIconDrawable="@drawable/ic_arrow_drop_down"
+            app:endIconMode="custom"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:hint="Chief Complaint"
+            tools:visibility="visible">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_multi_select"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout></layout>

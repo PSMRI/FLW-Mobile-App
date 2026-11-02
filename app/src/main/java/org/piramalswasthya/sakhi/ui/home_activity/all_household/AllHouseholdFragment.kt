@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.helpers.isInternetAvailable
 import org.piramalswasthya.sakhi.utils.RoleConstants
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import timber.log.Timber
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.model.BenRegCache
@@ -150,7 +151,7 @@ class AllHouseholdFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewBenRegFragment(
                     hhId = viewModel.selectedHouseholdId,
                     relToHeadId = relIndex,
@@ -233,8 +234,10 @@ class AllHouseholdFragment : Fragment() {
                         )
                 } else {
                   if(!it.isDeactivate) {
-                      viewModel.setSelectedHouseholdId(it.hhId)
-                      addBenAlert?.show()
+                      viewLifecycleOwner.lifecycleScope.launch {
+                          viewModel.loadSelectedHousehold(it.hhId)
+                          addBenAlert?.show()
+                      }
                   }
                 }
             }
@@ -266,8 +269,10 @@ class AllHouseholdFragment : Fragment() {
         }
         viewModel.navigateToNewHouseholdRegistration.observe(viewLifecycleOwner) {
             if (it) {
-                findNavController().navigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
+                // Reset first: a double tap on "next page" posts a second `true` that would
+                // otherwise fire after we've already left this destination.
                 viewModel.navigateToNewHouseholdRegistrationCompleted()
+                findNavController().safeNavigate(AllHouseholdFragmentDirections.actionAllHouseholdFragmentToNewHouseholdFragment())
             }
         }
 
@@ -377,6 +382,9 @@ class AllHouseholdFragment : Fragment() {
         val hof: BenRegCache?,
         val fatherRegistered: Boolean,
         val motherRegistered: Boolean,
+        val wifeRegistered: Boolean,
+        val husbandRegistered: Boolean,
+        val spouseRegistered: Boolean,
         val unmarried: Boolean,
         val married: Boolean
     )
@@ -385,10 +393,21 @@ class AllHouseholdFragment : Fragment() {
         val hof = viewModel.householdBenList.firstOrNull { it.familyHeadRelationPosition == 19 }
         val fatherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 2 }
         val motherRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 1 }
+        val wifeRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 5 }
+        val husbandRegistered = viewModel.householdBenList.any { it.familyHeadRelationPosition == 6 }
         val unmarried = hof?.genDetails?.maritalStatusId == 1
         val married = hof?.genDetails?.maritalStatusId == 2
 
-        return HofContext(hof, fatherRegistered, motherRegistered, unmarried, married)
+        return HofContext(
+            hof,
+            fatherRegistered,
+            motherRegistered,
+            wifeRegistered,
+            husbandRegistered,
+            hof?.isSpouseAdded == true,
+            unmarried,
+            married
+        )
     }
 
     private fun filterRelations(selectedGender: Gender?, baseList: List<String>, ctx: HofContext): List<String> {
@@ -401,6 +420,16 @@ class AllHouseholdFragment : Fragment() {
 
         if (ctx.fatherRegistered) list.remove(common[1])
         if (ctx.motherRegistered) list.remove(common[0])
+        if (ctx.wifeRegistered) list.remove(common[4])
+        if (ctx.husbandRegistered) list.remove(common[5])
+
+        if (ctx.spouseRegistered) {
+            when (ctx.hof.gender) {
+                Gender.MALE -> list.remove(common[4])
+                Gender.FEMALE -> list.remove(common[5])
+                else -> Unit
+            }
+        }
 
         if (ctx.unmarried) {
             list.removeAll(unmarriedFilter)
@@ -416,6 +445,7 @@ class AllHouseholdFragment : Fragment() {
 
         if (hofGender == Gender.FEMALE && selectedGender == Gender.FEMALE) {
             list.remove(common[4])
+            list.remove(common[18])
         }
         return list
     }

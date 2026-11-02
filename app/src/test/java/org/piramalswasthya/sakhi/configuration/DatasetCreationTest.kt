@@ -35,7 +35,7 @@ class DatasetCreationTest : BaseViewModelTest() {
         every { Log.isLoggable(any(), any()) } returns false
         mockkObject(HelperUtil)
         every { HelperUtil.getLocalizedResources(any(), any()) } returns mockResources
-        every { mockResources.getStringArray(any()) } returns emptyArray()
+        every { mockResources.getStringArray(any()) } returns arrayOf("Yes", "No")
         every { mockResources.getString(any()) } returns ""
         every { mockResources.getString(any(), any()) } returns ""
         every { preferenceDao.getLoggedInUser() } returns null

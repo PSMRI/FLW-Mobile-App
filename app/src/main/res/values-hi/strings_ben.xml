@@ -131,7 +131,21 @@
         <item>पोती/नातनी</item>
         <item>दामाद</item>
         <item>बहू</item>
+        <item>साला/देवर</item>
         <item>अन्य</item>
+    </string-array>
+    <string-array name="nbr_relationship_to_head_unmarried_filter">
+        <item>पत्नी</item>
+        <item>पिता</item>
+        <item>बेटा</item>
+        <item>बेटी</item>
+        <item>ससुर</item>
+        <item>सास</item>
+        <item>पोता</item>
+        <item>पोती/नातनी</item>
+        <item>दामाद</item>
+        <item>बहू</item>
+        <item>साला/देवर</item>
     </string-array>
     <string-array name="nbr_relationship_to_head_src">
         <item>मां</item>
@@ -168,6 +182,7 @@
         <item>ससुर</item>
         <item>पोता</item>
         <item>दामाद</item>
+        <item>साला/देवर</item>
         <item>अन्य</item>
     </string-array>
 

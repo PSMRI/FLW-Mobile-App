@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.BuildConfig
@@ -24,6 +23,7 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.model.VerificationStatus
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.IncentiveVerificationViewModel
 import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.VerificationUiState
+import org.piramalswasthya.sakhi.utils.safeNavigate
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -121,10 +121,11 @@ class IncentiveVerificationFragment : Fragment() {
                 putInt("selected_month", selectedMonth)
                 putInt("selected_year", selectedYear)
                 putString("status", worker.status.name)
+                putInt("approval_status", worker.status.code)
                 putInt("amount", worker.amount)
             }
             if (worker.status != VerificationStatus.UNCLAIMED) {
-                findNavController().navigate(R.id.workerDetailFragment, bundle)
+                safeNavigate(R.id.workerDetailFragment, bundle)
 
             }
         }

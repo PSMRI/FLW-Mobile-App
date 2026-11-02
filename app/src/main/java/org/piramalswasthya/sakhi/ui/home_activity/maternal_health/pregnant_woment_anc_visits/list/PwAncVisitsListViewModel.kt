@@ -42,6 +42,7 @@ class PwAncVisitsListViewModel @Inject constructor(
     private val allBenList = when (sourceFromArgs) {
         1 -> recordsRepo.getRegisteredPregnantWomanNonFollowUpList()
         2 -> recordsRepo.getDuePregnantWomanList()
+        3 -> recordsRepo.getHrpConfirmedPregnantWomanList()
         else -> recordsRepo.getRegisteredPregnantWomanList()
     }
     private val _homeVisitState = MutableLiveData<Map<Long, HomeVisitUiState>>()
@@ -146,7 +147,8 @@ class PwAncVisitsListViewModel @Inject constructor(
     fun updateDeliveryStatus(
         benId: Long,
         visitNumber: Int,
-        isDelivered: Boolean
+        isDelivered: Boolean,
+        deliveryDate : Long
     ) {
 
         viewModelScope.launch {
@@ -158,7 +160,8 @@ class PwAncVisitsListViewModel @Inject constructor(
                 benId = benId,
                 visitNumber = visitNumber,
                 isDelivered = isDelivered,
-                userName = user?.userName ?: ""
+                userName = user?.userName ?: "",
+                delivaryDate = deliveryDate
             )
         }
     }

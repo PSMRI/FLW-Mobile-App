@@ -1,6 +1,5 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +16,10 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntityHBYC
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
 import org.piramalswasthya.sakhi.model.dynamicModel.VisitCard
+import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.InfantRegRepo
+import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.dynamicRepo.FormRepository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +30,21 @@ class HBYCFormViewModel @Inject constructor(
     private val repository: FormRepository,
     private val benRepo: BenRepo,
     private val infantRegRepo: InfantRegRepo,
+    private val referalRepo: NcdReferalRepo,
 ) : ViewModel() {
+
+    private val _referralList = mutableListOf<ReferalCache>()
+
+    fun addReferral(referral: ReferalCache) {
+        _referralList.add(referral)
+    }
+
+    fun hasReferral(): Boolean = _referralList.isNotEmpty()
+
+    fun isDangerSign(fieldId: String, value: Any?): Boolean {
+        if (fieldId !in DANGER_SIGN_FIELDS) return false
+        return value?.toString().equals("Yes", ignoreCase = true)
+    }
 
     private val _schema = MutableStateFlow<FormSchemaDto?>(null)
     val schema: StateFlow<FormSchemaDto?> = _schema
@@ -66,6 +81,13 @@ class HBYCFormViewModel @Inject constructor(
     companion object {
         private const val OTHER_PLACE_OF_DEATH_ID = 8
         private const val DEFAULT_DEATH_ID = -1
+        const val REFERRAL_TYPE = "CHILD"
+        private val DANGER_SIGN_FIELDS = setOf(
+            "is_child_sick",
+            "developmental_delay",
+            "diarrhoea_episode",
+            "breathing_difficulty"
+        )
     }
 
     fun loadSyncedVisitList(benId: Long, onComplete: (() -> Unit)? = null) {
@@ -153,7 +175,7 @@ class HBYCFormViewModel @Inject constructor(
         val cond = field.conditional
         return if (cond != null && !cond.dependsOn.isNullOrBlank()) {
             val dependsOnField = allFields.find { it.fieldId == cond.dependsOn }
-            val dependsOnValue = dependsOnField?.value?.toString() ?: dependsOnField?.defaultValue?.toString()
+            val dependsOnValue = dependsOnField?.value?.toString()
             dependsOnValue.equals(cond.expectedValue, ignoreCase = true)
         } else true
     }
@@ -239,6 +261,10 @@ fun updateFieldValue(fieldId: String, value: Any?) {
         )
 
         repository.insertFormResponseHBYC(entity)
+
+        _referralList.forEach { referalRepo.saveReferedNCD(it) }
+        _referralList.clear()
+
         loadSyncedVisitList(benId)
     }
 

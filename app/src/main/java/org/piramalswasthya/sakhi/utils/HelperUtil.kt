@@ -24,6 +24,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.DatePicker
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -94,6 +95,23 @@ object HelperUtil {
         )
     }
 
+
+    /**
+     * Applies min/max bounds to a [DatePicker] without ever leaving it with min > max.
+     *
+     * The framework does not validate the pair: if min lands in a later month than max the
+     * calendar gets zero month pages and DayPickerView.onLayout crashes with an NPE on
+     * SimpleMonthView.getMonthHeight(). On an inverted range the upper bound wins (it is
+     * usually "today", which must not be exceeded) and the picker collapses to that day.
+     */
+    fun setSafeDateRange(datePicker: DatePicker, min: Long?, max: Long?) {
+        val safeMin = if (min != null && max != null && min > max) {
+            Timber.w("Inverted DatePicker range min=$min max=$max, clamping min to max")
+            max
+        } else min
+        max?.let { datePicker.maxDate = it }
+        safeMin?.let { datePicker.minDate = it }
+    }
 
     private val dateFormat = SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH)
 

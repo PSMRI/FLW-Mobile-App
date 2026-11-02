@@ -107,19 +107,22 @@ class LeprosyConfirmedFromFragment : Fragment() {
             when (it) {
                 LeprosyConfirmedFromViewModel.State.SAVE_SUCCESS -> {
 
-                    Toast.makeText(requireContext(), "Follow-up saved successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),
+                        getString(R.string.follow_up_saved_successfully), Toast.LENGTH_SHORT).show()
 
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
 
                 LeprosyConfirmedFromViewModel.State.VISIT_COMPLETED -> {
-                    Toast.makeText(requireContext(), "Visit completed! Starting next visit screening.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),
+                        getString(R.string.visit_completed_starting_next_visit_screening), Toast.LENGTH_LONG).show()
                     WorkerUtils.triggerAmritPushWorker(requireContext())
                     findNavController().navigateUp()
                 }
                 LeprosyConfirmedFromViewModel.State.SAVE_FAILED -> {
-                    Toast.makeText(requireContext(), "Failed to save follow-up", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),
+                        getString(R.string.failed_to_save_follow_up), Toast.LENGTH_SHORT).show()
                 }
                 else -> {}
             }

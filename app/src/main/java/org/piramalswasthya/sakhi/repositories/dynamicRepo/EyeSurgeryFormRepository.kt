@@ -214,7 +214,8 @@ class EyeSurgeryFormRepository @Inject constructor(
                 type = "Cataract Surgery",
                 revisitDate = System.currentTimeMillis(),
                 createdBy = pref.getLoggedInUser()?.userName,
-                syncState = SyncState.UNSYNCED
+                syncState = SyncState.UNSYNCED,
+                beneficiaryRegID = db.benDao.getBen(benId)?.benRegId
             )
             ncdReferalRepo.saveReferedNCD(referalCache)
         } catch (e: Exception) {

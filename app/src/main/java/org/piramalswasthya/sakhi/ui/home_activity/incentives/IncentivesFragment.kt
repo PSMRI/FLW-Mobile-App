@@ -47,7 +47,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.IncentiveGroupedAdapter
+import org.piramalswasthya.sakhi.adapters.IncentiveGroupSectionAdapter
+import org.piramalswasthya.sakhi.adapters.toIncentiveGroupSections
 import org.piramalswasthya.sakhi.databinding.FragmentIncentivesBinding
 import org.piramalswasthya.sakhi.databinding.LayoutRejectedDialogBinding
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -70,6 +71,7 @@ import java.util.Locale
 import java.util.Objects
 import java.util.Timer
 import kotlin.math.max
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -91,7 +93,7 @@ class IncentivesFragment : Fragment() {
 
     var selectedYear: String = ""
 
-    private lateinit var groupedAdapter: IncentiveGroupedAdapter
+    private lateinit var groupedAdapter: IncentiveGroupSectionAdapter
 
     private val PERMISSION_REQUEST_CODE = 792
 
@@ -203,6 +205,13 @@ class IncentivesFragment : Fragment() {
         }
 
 //        fromMonth.setSelection(0)
+        // FLW-1177: et1 above already displays the current month, but the spinner was left on
+        // its default index 0 (January), so the first Submit fetched January instead of the month
+        // on screen — the list came back empty and the claim button stayed hidden. It only
+        // corrected itself once the picker dialog called setSelection (see et1 click listener).
+        // Sync the spinner to what is displayed. No OnItemSelectedListener is attached to these
+        // spinners, so this cannot re-trigger a fetch.
+        fromMonth.setSelection(currentMonth)
 
         val myArrayList = ArrayList<Int>()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -219,6 +228,10 @@ class IncentivesFragment : Fragment() {
             )
         fromYear.adapter = fromYearsAdapter
         //  fromYear.setSelection(0)
+        // FLW-1177: index 0 is the current year only because the list is built currentYear
+        // downTo 2020. Pin it explicitly so a change to that range cannot silently desync the
+        // year from et1 the same way the month was.
+        fromYear.setSelection(myArrayList.indexOf(currentYears).coerceAtLeast(0))
 
         val toMonth: Spinner = binding.toMonthsSpinner
         ArrayAdapter.createFromResource(
@@ -238,7 +251,7 @@ class IncentivesFragment : Fragment() {
         toYear.setSelection(0)
 
 
-        groupedAdapter = IncentiveGroupedAdapter { activityId, activityName ->
+        groupedAdapter = IncentiveGroupSectionAdapter { activityId, activityName ->
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRecordsForActivity(activityId).collect { records ->
 
@@ -254,7 +267,7 @@ class IncentivesFragment : Fragment() {
 
                         setFragmentResult("records_key", bundle)
 
-                        findNavController().navigate(
+                        findNavController().safeNavigate(
                             R.id.action_incentivesFragment_to_incentiveDetailFragment
                         )
                     }
@@ -356,7 +369,7 @@ class IncentivesFragment : Fragment() {
         lifecycleScope.launch {
 
             viewModel.groupedIncentiveList.collect { groupedList ->
-                groupedAdapter.submitList(groupedList)
+                groupedAdapter.submitList(groupedList.toIncentiveGroupSections())
             }
         }
 
@@ -390,32 +403,54 @@ class IncentivesFragment : Fragment() {
                 .indexOf(fromMonth.selectedItem)
             val selectedYearInt = fromYear.selectedItem.toString().toInt()
 
-            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
-                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
+            // FLW-1177: both predicates moved into IncentiveClaimWindow so the rule is unit
+            // testable. Kept here, commented, because they read as the definition of the window.
+//            val isExactlyLastMonth = (selectedYearInt == currentYear && selectedMonthIndex == currentMonth - 1) ||
+//                    (currentMonth == 0 && selectedMonthIndex == 11 && selectedYearInt == currentYear - 1)
+//
+//            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
+//                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
 
-            val isSelectedPreviousMonth = (selectedYearInt < currentYear) ||
-                    (selectedYearInt == currentYear && selectedMonthIndex < currentMonth)
-
-            val isRejectedClaim = try {
-                incentiveRecordList.isNotEmpty() &&
-                        incentiveRecordList[0].record.isClaimed &&
-                        incentiveRecordList[0].record.approvalStatus == 103
-            } catch (e: Exception) {
-                false
-            }
-
-
-            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
-
-            val isPreviousMonth = if (isMitaninVariant) {
-                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
-            } else {
-                when {
-                    isExactlyLastMonth -> currentDay <= 12
-                    isSelectedPreviousMonth -> true
-                    else -> false
+            val rejectedRecords = try {
+                incentiveRecordList.filter {
+                    it.record.approvalStatus == 103
                 }
+            } catch (e: Exception) {
+                emptyList()
             }
+
+            val isRejectedClaim = rejectedRecords.isNotEmpty()
+
+
+            // ── FLW-1177: kept for reuse once the pilot ends and permanent cut-offs are decided ──
+            // Pre-FLW-1177 Mitanin rule: month M was claimed on days 1-3 of M+1, extended to
+            // day 5 only when something in M had been rejected. Restore this block (and delete
+            // the one below) when the state confirms the permanent cut-off dates.
+//            val mitaninClaimWindowEnd = if (isRejectedClaim) 5 else 3
+//
+//            val isPreviousMonth = if (isMitaninVariant) {
+//                isExactlyLastMonth && currentDay in 1..mitaninClaimWindowEnd
+//            } else {
+//                when {
+//                    isExactlyLastMonth -> currentDay <= 12
+//                    isSelectedPreviousMonth -> true
+//                    else -> false
+//                }
+//            }
+
+            // FLW-1177: rule now lives in IncentiveClaimWindow (unit tested in
+            // IncentiveClaimWindowTest). Mitanin still claims the PREVIOUS month — only the
+            // days 1-3 / 1-5 cut-off is gone, so Claim and Reclaim are offered on every day of
+            // the current month. Every other flavor keeps the legacy window unchanged.
+            // Name kept as-is: it is read again by the claim and reclaim click handlers below.
+            val isPreviousMonth = IncentiveClaimWindow.isClaimAllowed(
+                isMitaninVariant = isMitaninVariant,
+                selectedMonthIndex = selectedMonthIndex,
+                selectedYear = selectedYearInt,
+                currentMonthIndex = currentMonth,
+                currentYear = currentYear,
+                currentDayOfMonth = currentDay
+            )
             binding.claimbtn.visibility = if (isPreviousMonth) View.VISIBLE else View.GONE
 
             binding.claimbtn.setOnClickListener {
@@ -423,7 +458,7 @@ class IncentivesFragment : Fragment() {
                     Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
                    return@setOnClickListener
                      }
-                viewModel.claimIncentive(selectedMonth, selectedYear)
+                viewModel.claimIncentive(selectedMonth, selectedYear, emptyList())
             }
 
             if (incentiveRecordList.isNotEmpty()) {
@@ -477,6 +512,23 @@ class IncentivesFragment : Fragment() {
             } else {
                 binding.claimStatus.visibility = View.GONE
 
+            }
+
+            // If any claim in the fetched list was rejected, switch the claim button into
+            // "Reclaim" mode so only the rejected activity's incentive id(s) are resubmitted,
+            // instead of the blanket whole-month claim above. Mitanin-only.
+            if (isMitaninVariant && isRejectedClaim) {
+                binding.claimbtn.text = "Reclaim"
+                binding.claimbtn.isEnabled = true
+                binding.claimbtn.isClickable = true
+                binding.claimbtn.setOnClickListener reclaimClick@{
+                    if (!isPreviousMonth) {
+                        Toast.makeText(requireContext(), "Claim is not allowed for the selected month", Toast.LENGTH_SHORT).show()
+                        return@reclaimClick
+                    }
+                    val rejectedIncentiveIds = rejectedRecords.map { it.record.id }
+                    viewModel.claimIncentive(selectedMonth, selectedYear, rejectedIncentiveIds)
+                }
             }
         }
 
@@ -1178,6 +1230,9 @@ class IncentivesFragment : Fragment() {
 
 
     private fun showFile(uri: Uri) {
+        // Called from the download Snackbar's action, which can still be tapped after this
+        // fragment has been detached.
+        val host = activity ?: return
         val openFileIntent = Intent(Intent.ACTION_VIEW)
         openFileIntent.setDataAndType(
             uri,
@@ -1186,11 +1241,11 @@ class IncentivesFragment : Fragment() {
         openFileIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
         val chooser = Intent.createChooser(openFileIntent, "Open with")
 
-        if (openFileIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(chooser)
+        if (openFileIntent.resolveActivity(host.packageManager) != null) {
+            host.startActivity(chooser)
         } else {
             Toast.makeText(
-                requireContext(),
+                host,
                 "cant open this file check in downloads",
                 Toast.LENGTH_SHORT
             ).show()

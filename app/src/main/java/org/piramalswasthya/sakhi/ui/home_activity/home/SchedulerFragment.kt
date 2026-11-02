@@ -20,7 +20,6 @@ import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -33,6 +32,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.
 import org.piramalswasthya.sakhi.ui.home_activity.home.SchedulerViewModel.State.LOADING
 import java.util.Calendar
 import java.util.concurrent.atomic.AtomicInteger
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 @AndroidEntryPoint
@@ -100,34 +100,37 @@ class SchedulerFragment : Fragment() {
             }
         }
         binding.cvAnc.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 2))
         }
 
         binding.cvImm.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment(showDueOnly = true))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToChildImmunizationListFragment(showDueOnly = true))
         }
         binding.cvHrp.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
+        }
+        binding.cvConfirmedHrp.setOnClickListener {
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToPwAncVisitsFragment(source = 3))
         }
         binding.cvNonHrp.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToHRPNonPregnantListFragment())
         }
         binding.cvLwb.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToInfantRegListFragment(onlyLowBirthWeight = true))
         }
         binding.cvAbha.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
+            safeNavigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(1))
 //            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvRch.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(2))
+            safeNavigate(HomeFragmentDirections.actionNavHomeToAllBenFragment(2))
 //            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToHRPPregnantListFragment())
         }
         binding.cvNon.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToNonFollowUpFragment())
         }
         binding.cvMiss.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
+            safeNavigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
         }
         lifecycleScope.launch {
             viewModel.hrpDueCount.collect {
@@ -137,6 +140,11 @@ class SchedulerFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.hrpCountEC.collect {
                 binding.tvHrEcCount.text = it.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.hrpConfirmedCount.collect {
+                binding.tvConfirmedHrp.text = it.toString()
             }
         }
         lifecycleScope.launch {
@@ -205,14 +213,12 @@ class SchedulerFragment : Fragment() {
     /** Set by a drag or an arrow tap, consumed by the next page change — see [setUpImpactDashboard]. */
     private var carouselMovedByUser = false
 
-    /** Impact Dashboard: auto-moving carousel of badge progress. */
+    /** Impact Dashboard: badge progress carousel (arrow / swipe only — no auto-scroll). */
     private fun setUpImpactDashboard() {
         val carouselAdapter = BadgeCarouselAdapter()
         binding.vpImpactBadges.adapter = carouselAdapter
 
-        // The carousel also advances on its own every few seconds. A tick on those is the
-        // phone buzzing in her pocket unprompted, which reads as a notification rather than
-        // as feedback, so haptics are armed only by a drag or a tap on the arrows.
+        // Haptics only on a drag or arrow tap — never on programmatic page changes.
         fun step(direction: Int) {
             val count = carouselAdapter.itemCount
             if (count == 0) return
@@ -294,25 +300,8 @@ class SchedulerFragment : Fragment() {
                 }
             }
         }
-        // gentle auto-advance; pauses while the worker is swiping or tab hidden
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                while (true) {
-                    delay(CAROUSEL_INTERVAL_MS)
-                    val b = _binding ?: continue
-                    val count = carouselAdapter.itemCount
-                    if (count > 1 && b.vpImpactBadges.scrollState == ViewPager2.SCROLL_STATE_IDLE) {
-                        b.vpImpactBadges.setCurrentItem(
-                            (b.vpImpactBadges.currentItem + 1) % count, true
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    companion object {
-        private const val CAROUSEL_INTERVAL_MS = 4_000L
+        // No auto-advance — next/prev badges only via the navigation arrows
+        // (LAVA feedback: auto-scroll was distracting).
     }
 
     override fun onDestroy() {

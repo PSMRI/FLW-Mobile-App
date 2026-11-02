@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.configuration.EligibleCoupleTrackingDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -149,6 +150,15 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
                     _state.postValue(State.SAVING)
                     dataset.mapValues(eligibleCoupleTracking, 1)
                     ecrRepo.saveEct(eligibleCoupleTracking)
+                    if (eligibleCoupleTracking.methodOfContraception.equals(
+                            "Female Sterilization",
+                            ignoreCase = true
+                        )
+                    ) {
+                        ecrRepo.getBenFromId(benId)?.let { ben ->
+                            updateBeneficiaryToPermanentlySterilised(ben)
+                        }
+                    }
                     isPregnant = (eligibleCoupleTracking.isPregnant == "Yes") ||
                             (eligibleCoupleTracking.pregnancyTestResult == "Positive")
                     if (isPregnant) {
@@ -195,6 +205,14 @@ class EligibleCoupleTrackingFormViewModel @Inject constructor(
         }
     }
 
+
+    private suspend fun updateBeneficiaryToPermanentlySterilised(ben: BenRegCache) {
+        ben.genDetails?.reproductiveStatus = "Permanently Sterilised"
+        ben.genDetails?.reproductiveStatusId = 5
+        if (ben.processed != "N") ben.processed = "U"
+        ben.syncState = SyncState.UNSYNCED
+        benRepo.updateRecord(ben)
+    }
     fun resetState() {
         _state.value = State.IDLE
     }

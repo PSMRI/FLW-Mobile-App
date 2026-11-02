@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.Locale
 
@@ -48,5 +49,18 @@ class MyContextWrapperTest {
         assertNotNull(result)
         // Locale.setDefault should have been applied
         org.junit.Assert.assertEquals("bn", Locale.getDefault().language)
+    }
+
+    @Test
+    fun `wrap updates locale and returns a MyContextWrapper around the context`() {
+        val (context, _) = contextWithResources()
+        every { context.createConfigurationContext(any()) } returns mockk(relaxed = true)
+        val applicationContext: Context = mockk(relaxed = true)
+
+        val result = MyContextWrapper.wrap(context, applicationContext, "hi")
+
+        assertNotNull(result)
+        assertTrue(result is MyContextWrapper)
+        org.junit.Assert.assertEquals("hi", Locale.getDefault().language)
     }
 }

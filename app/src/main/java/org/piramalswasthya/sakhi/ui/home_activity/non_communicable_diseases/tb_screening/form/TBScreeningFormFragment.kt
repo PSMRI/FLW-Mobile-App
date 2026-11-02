@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import timber.log.Timber
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 @AndroidEntryPoint
 class TBScreeningFormFragment : Fragment() {
@@ -49,7 +50,11 @@ class TBScreeningFormFragment : Fragment() {
             .setMessage("it")
             .setPositiveButton(resources.getString(R.string.yes)) {dialog, _ ->
                 isAlertHandled = true
-             findNavController().navigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = binding.root.resources.getString(R.string.tb_screening_form), referralType = referType))
+                // The alert can outlive this fragment (it lives on the activity window); only
+                // navigate while still attached, and from the current destination.
+                if (isAdded) {
+                    findNavController().safeNavigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = getString(R.string.tb_screening_form), referralType = referType))
+                }
             }
             .setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
                 isAlertHandled = true

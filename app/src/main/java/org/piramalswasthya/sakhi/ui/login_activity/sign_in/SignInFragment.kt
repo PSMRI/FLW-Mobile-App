@@ -121,6 +121,9 @@ class SignInFragment : Fragment() {
         val initialTop = binding.root.paddingTop
         val initialRight = binding.root.paddingRight
         val initialBottom = binding.root.paddingBottom
+
+        binding.textView12?.text = getString(R.string.pwr_by_text)+BuildConfig.VERSION_NAME
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val systemBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom

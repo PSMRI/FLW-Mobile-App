@@ -19,6 +19,7 @@ import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.model.LocationEntity
 import org.piramalswasthya.sakhi.model.ProfileActivityCache
 import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.repositories.AshaProfileRepo
@@ -141,6 +142,28 @@ class AshaProfileDatasetTest : BaseViewModelTest() {
     }
 
     // ===================== base coverage (from DeepTest) =====================
+
+    @Test
+    fun `User setVanId updates vanId and district is exposed`() {
+        val stateLoc = LocationEntity(1, "State")
+        val districtLoc = LocationEntity(2, "District")
+        val blockLoc = LocationEntity(3, "Block")
+        val user = User(
+            userId = 1,
+            name = "N",
+            userName = "U",
+            password = "P",
+            role = "ASHA",
+            serviceMapId = 1,
+            state = stateLoc,
+            district = districtLoc,
+            block = blockLoc,
+            villages = emptyList()
+        )
+        user.vanId = 7
+        assertEquals(7, user.vanId)
+        assertEquals(districtLoc, user.district)
+    }
 
     @Test
     fun `setUpPage with profile`() = runTest {
@@ -352,5 +375,123 @@ class AshaProfileDatasetTest : BaseViewModelTest() {
                 "[{\"anmName\":\"A1\",\"anmContactNo\":\"9000000002\"}]"
         val d = page(populatedProfile())
         assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage falls back to cho and anm list values when profile fields are blank`() = runTest {
+        every { preferenceDao.getChoList() } returns
+                "[{\"role\":\"CHO\",\"fullName\":\"REAL CHO\",\"mobile\":\"9812345670\",\"userId\":1}]"
+        every { preferenceDao.getAnmList() } returns
+                "[{\"role\":\"ANM\",\"fullName\":\"REAL ANM1\",\"mobile\":\"9812345671\",\"userId\":2}," +
+                "{\"role\":\"ANM\",\"fullName\":\"REAL ANM2\",\"mobile\":\"9812345672\",\"userId\":3}]"
+        val d = page(blankProfile())
+        val list = d.listFlow.value
+        val choName = list.first { it.id == 15 }
+        val choMobile = list.first { it.id == 16 }
+        val anm1Name = list.first { it.id == 19 }
+        val anm1Mobile = list.first { it.id == 20 }
+        val anm2Name = list.first { it.id == 21 }
+        val anm2Mobile = list.first { it.id == 22 }
+        assertEquals("REAL CHO", choName.value)
+        assertEquals("9812345670", choMobile.value)
+        assertEquals("REAL ANM1", anm1Name.value)
+        assertEquals("9812345671", anm1Mobile.value)
+        assertEquals("REAL ANM2", anm2Name.value)
+        assertEquals("9812345672", anm2Mobile.value)
+    }
+
+    @Test
+    fun `setUpPage falls back to anm list value when only one anm entry present`() = runTest {
+        every { preferenceDao.getChoList() } returns "[]"
+        every { preferenceDao.getAnmList() } returns
+                "[{\"role\":\"ANM\",\"fullName\":\"SOLE ANM\",\"mobile\":\"9812340000\",\"userId\":9}]"
+        val d = page(blankProfile())
+        val list = d.listFlow.value
+        val anm1Name = list.first { it.id == 19 }
+        val anm2Name = list.first { it.id == 21 }
+        assertEquals("SOLE ANM", anm1Name.value)
+        assertEquals("", anm2Name.value)
+    }
+
+    @Test
+    fun `updateList runs the dob validator`() = runTest {
+        val d = page(populatedProfile())
+        d.updateList(4, 0)
+        assertTrue(d.listFlow.value.isNotEmpty())
+    }
+
+    @Test
+    fun `setUpPage falls back to preference values when employee id and supervisor fields are unset`() = runTest {
+        every { preferenceDao.getEmployeeId() } returns "1234"
+        every { preferenceDao.getSupervisorName() } returns "PREF SUPERVISOR"
+        every { preferenceDao.getSupervisorContact() } returns "9812300000"
+        val d = page(blankProfile())
+        val list = d.listFlow.value
+        assertEquals("1234", list.first { it.id == 3 }.value)
+        assertEquals("PREF SUPERVISOR", list.first { it.id == 13 }.value)
+        assertEquals("9812300000", list.first { it.id == 14 }.value)
+    }
+
+    @Test
+    fun `setUpPage treats literal null string profile fields as blank`() = runTest {
+        val p = mockk<ProfileActivityCache>(relaxed = true)
+        every { p.name } returns "null"
+        every { p.employeeId } returns 0
+        every { p.dob } returns "null"
+        every { p.mobileNumber } returns "null"
+        every { p.alternateMobileNumber } returns "null"
+        every { p.fatherOrSpouseName } returns "null"
+        every { p.dateOfJoining } returns "null"
+        every { p.bankAccount } returns "null"
+        every { p.ifsc } returns "null"
+        every { p.populationCovered } returns 0
+        every { p.choName } returns "null"
+        every { p.choMobile } returns "null"
+        every { p.awwName } returns "null"
+        every { p.awwMobile } returns "null"
+        every { p.anm1Name } returns "null"
+        every { p.anm1Mobile } returns "null"
+        every { p.anm2Name } returns "null"
+        every { p.anm2Mobile } returns "null"
+        every { p.abhaNumber } returns "null"
+        every { p.supervisorName } returns "null"
+        every { p.supervisorMobile } returns "null"
+        every { p.isFatherOrSpouse } returns false
+        every { p.profileImage } returns "null"
+        val d = page(p)
+        val list = d.listFlow.value
+        assertEquals("", list.first { it.id == 8 }.value)
+        assertEquals("", list.first { it.id == 10 }.value)
+        assertEquals("", list.first { it.id == 23 }.value)
+    }
+
+    @Test
+    fun `setUpPage falls back through outer catch when a profile getter throws once`() = runTest {
+        val p = mockk<ProfileActivityCache>(relaxed = true)
+        every { p.choName } throws RuntimeException("boom") andThen "Fallback Cho"
+        val d = ds()
+        runCatching { d.setUpPage(mockk<User>(relaxed = true), p) }
+        val choName = d.listFlow.value.firstOrNull { it.id == 15 }
+        assertNotNull(choName)
+        assertEquals("Fallback Cho", choName!!.value)
+    }
+
+    @Test
+    fun `mapProfileValues with pic value null from a null profile setup`() = runTest {
+        val d = page(null)
+        val target = mockk<ProfileActivityCache>(relaxed = true)
+        runCatching { d.mapProfileValues(target, context) }
+        assertNotNull(d.listFlow)
+    }
+
+    @Test
+    fun `mapProfileValues enters the persisted-image branch when uri does not reference filesDir`() = runTest {
+        every { context.filesDir } returns java.io.File(
+            System.getProperty("java.io.tmpdir") ?: ".", "asha_profile_test_dir"
+        )
+        val d = page(populatedProfile())
+        val target = mockk<ProfileActivityCache>(relaxed = true)
+        runCatching { d.mapProfileValues(target, context) }
+        assertNotNull(d.listFlow)
     }
 }

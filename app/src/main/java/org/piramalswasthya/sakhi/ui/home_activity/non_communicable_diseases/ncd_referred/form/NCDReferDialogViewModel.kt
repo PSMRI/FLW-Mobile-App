@@ -112,7 +112,8 @@ class NCDReferDialogViewModel @Inject constructor(
                 benId = benId,
                 id = 0,
                 syncState = SyncState.UNSYNCED,
-                createdBy = preferenceDao.getLoggedInUser()?.userName
+                createdBy = preferenceDao.getLoggedInUser()?.userName,
+                beneficiaryRegID = ben.benRegId
             )
             dataset.setUpPage(referralReason, referralType)
 

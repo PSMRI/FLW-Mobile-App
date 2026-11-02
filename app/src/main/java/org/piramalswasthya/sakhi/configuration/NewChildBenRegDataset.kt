@@ -820,15 +820,18 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
 
             dateOfReg.value = getDateFromLong(System.currentTimeMillis())
 
-            noOfChildren.value = childList.size.toString()
-            noOfChildren.min = childList.size.toLong()
+            // The form has fixed slots for [children] (max 9); a mother can have more children
+            // registered, so extra ones are not pre-filled rather than indexing past the slots.
+            val shownChildren = childList.take(children.size)
+            noOfChildren.value = shownChildren.size.toString()
+            noOfChildren.min = shownChildren.size.toLong()
 
             elderChildrenCount.value = elderChildCount.coerceAtMost(5).toString()
 
 
         var insertIndex = list.indexOf(noOfChildren) + 1
 
-        childList.forEachIndexed { index, child ->
+        shownChildren.forEachIndexed { index, child ->
 
             val bundle = children[index]
 
@@ -847,7 +850,7 @@ class NewChildBenRegDataset(context: Context, language: Languages) : Dataset(con
                 setSiblingAgeDiff(timeAtMarriage, child.dob, bundle.gap)
             } else {
                 setSiblingAgeDiff(
-                    childList[index - 1].dob,
+                    shownChildren[index - 1].dob,
                     child.dob,
                     bundle.gap
                 )

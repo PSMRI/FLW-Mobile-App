@@ -31,9 +31,18 @@ class VHNCDataset(
         }
         private fun getTwoMonthsBackMillis(): Long {
             return Calendar.getInstance().apply {
+                // VHNC eligibility is month-based. Start at the first day of
+                // the month two months before the current month, rather than
+                // using the same day-of-month.
+                set(Calendar.DAY_OF_MONTH, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
                 add(Calendar.MONTH, -2)
             }.timeInMillis
         }
+
     }
 
 
@@ -46,6 +55,50 @@ class VHNCDataset(
         min = getTwoMonthsBackMillis(),
         max = System.currentTimeMillis()
     )
+
+    /** Move the picker lower bound past the latest already-filled eligible month. */
+    fun restrictFilledMonths(meetings: List<VHNCCache>, editingId: Int = 0) {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).apply {
+            isLenient = false
+        }
+        val firstEligibleMonth = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            add(Calendar.MONTH, -2)
+        }
+        val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+        val latestFilledMonth = meetings.asSequence()
+            .filter { it.id != editingId }
+            .mapNotNull { meeting ->
+                runCatching {
+                    val date = dateFormat.parse(meeting.vhncDate) ?: return@runCatching null
+                    Calendar.getInstance().apply { time = date }
+                }.getOrNull()
+            }
+            .filter { month ->
+                month.get(Calendar.YEAR) > firstEligibleMonth.get(Calendar.YEAR) ||
+                    (month.get(Calendar.YEAR) == firstEligibleMonth.get(Calendar.YEAR) &&
+                        month.get(Calendar.MONTH) >= firstEligibleMonth.get(Calendar.MONTH))
+            }
+            .filter { month ->
+                month.get(Calendar.YEAR) < currentYear ||
+                    (month.get(Calendar.YEAR) == currentYear && month.get(Calendar.MONTH) <= currentMonth)
+            }
+            .maxWithOrNull(compareBy<Calendar> { it.get(Calendar.YEAR) }.thenBy { it.get(Calendar.MONTH) })
+
+        latestFilledMonth?.let { latest ->
+            val nextMonth = (latest.clone() as Calendar).apply {
+                set(Calendar.DAY_OF_MONTH, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+                add(Calendar.MONTH, 1)
+            }
+            vhncDate.min = maxOf(vhncDate.min ?: 0L, nextMonth.timeInMillis)
+        }
+    }
     private val place = FormElement(
         id = 3,
         inputType = InputType.DROPDOWN,
@@ -277,6 +330,8 @@ class VHNCDataset(
 
     fun getFileIndex1() = getIndexById(pic1.id)
     fun getFileIndex2() = getIndexById(pic2.id)
+
+    fun getVhncDate(): String? = vhncDate.value
 
 
 //    fun setImageUriToFormElement(lastImageFormId: Int, dpUri: Uri) {

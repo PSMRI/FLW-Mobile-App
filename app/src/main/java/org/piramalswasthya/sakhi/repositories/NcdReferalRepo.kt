@@ -85,6 +85,9 @@ class NcdReferalRepo@Inject constructor(
             }
             val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId })
             val validEntities = cbacEntities.filter { it.benId in existingBenIds }
+            validEntities.filter { it.type.isNullOrBlank() }.forEach {
+                it.type = referalDao.getReferralType(it.benId, it.referralReason)
+            }
             if (validEntities.isNotEmpty()) {
                 referalDao.insertAll(validEntities)
             }

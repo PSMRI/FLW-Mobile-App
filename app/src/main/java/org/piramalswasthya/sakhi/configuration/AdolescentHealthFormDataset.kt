@@ -93,6 +93,16 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
         hasDependants = true
     )
 
+    private val iSanitaryNapkinUsed= FormElement(
+        id = 17,
+        inputType = RADIO,
+        title = resources.getString(R.string.sanitary_napkin_used),
+        arrayId = R.array.yes_no,
+        entries = resources.getStringArray(R.array.yes_no),
+        required = true,
+        hasDependants = true
+    )
+
     private val noOfPacketsDistributed = FormElement(
         id = 9,
         inputType = EDIT_TEXT,
@@ -174,6 +184,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             ifaTabletDistribution,
             menstrualHygieneAwareness,
             sanitaryNapkinDistributed,
+            iSanitaryNapkinUsed,
             counselingProvided,
             counselingType,
             followUpDate,
@@ -193,6 +204,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             ifaTabletQuantity.value = saved.quantityOfIfaTablets?.toString()
             menstrualHygieneAwareness.value = if (saved.menstrualHygieneAwarenessGiven == true) menstrualHygieneAwareness.entries!![0] else menstrualHygieneAwareness.entries!![1]
             sanitaryNapkinDistributed.value = if (saved.sanitaryNapkinDistributed == true) sanitaryNapkinDistributed.entries!![0] else sanitaryNapkinDistributed.entries!![1]
+            iSanitaryNapkinUsed.value = if (saved.isSanitaryNapkinUsed == true) iSanitaryNapkinUsed.entries!![0] else iSanitaryNapkinUsed.entries!![1]
             noOfPacketsDistributed.value = saved.noOfPacketsDistributed?.toString()
             place.value = getLocalValueInArray(R.array.ahd_place_array, saved.place)
             sDate.value = saved.distributionDate?.let { getDateFromLong(it) }
@@ -298,6 +310,7 @@ class AdolescentHealthFormDataset(context: Context, language: Languages) : Datas
             ben.quantityOfIfaTablets = ifaTabletQuantity.value?.toInt()
             ben.menstrualHygieneAwarenessGiven = menstrualHygieneAwareness.value == menstrualHygieneAwareness.entries!![0]
             ben.sanitaryNapkinDistributed = sanitaryNapkinDistributed.value == sanitaryNapkinDistributed.entries!![0]
+            ben.isSanitaryNapkinUsed = iSanitaryNapkinUsed.value == iSanitaryNapkinUsed.entries!![0]
             ben.noOfPacketsDistributed = noOfPacketsDistributed.value?.toInt()
             ben.place = place.getEnglishStringFromPosition(place.getPosition())
             ben.distributionDate = getLongFromDate(sDate.value)

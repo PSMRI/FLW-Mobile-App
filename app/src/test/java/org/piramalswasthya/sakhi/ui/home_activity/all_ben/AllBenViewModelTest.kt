@@ -1,9 +1,17 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
+import android.content.Context
+import android.media.MediaScannerConnection
+import android.os.Environment
+import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -14,9 +22,13 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.BenBasicDomain
+import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import java.nio.file.Files
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AllBenViewModelTest : BaseViewModelTest() {
@@ -300,5 +312,89 @@ class AllBenViewModelTest : BaseViewModelTest() {
         val c1 = viewModel.childCounts
         val c2 = viewModel.childCounts
         assertEquals(c1, c2)
+    }
+
+    // =====================================================
+    // fetchAbha() / getBenFromId() ben-found branch
+    // =====================================================
+
+    @Test
+    fun `fetchAbha sets benRegId when ben is found`() = runTest {
+        val benRegCache = mockk<BenRegCache>(relaxed = true)
+        every { benRegCache.benRegId } returns 555L
+        coEvery { benRepo.getBenFromId(42L) } returns benRegCache
+        viewModel.fetchAbha(42L)
+        advanceUntilIdle()
+        assertEquals(555L, viewModel.benRegId.value)
+    }
+
+    @Test
+    fun `getBenFromId returns benRegId when ben is found`() = runTest {
+        val benRegCache = mockk<BenRegCache>(relaxed = true)
+        every { benRegCache.benRegId } returns 777L
+        coEvery { benRepo.getBenFromId(1L) } returns benRegCache
+        val result = viewModel.getBenFromId(1L)
+        assertEquals(777L, result)
+    }
+
+    // =====================================================
+    // downloadCsv() Tests
+    // =====================================================
+
+    private fun sampleBen(benId: Long) = BenBasicDomain(
+        benId = benId,
+        hhId = 1L,
+        reproductiveStatusId = 0,
+        regDate = "01-01-2024",
+        benName = "TestName",
+        gender = "M",
+        dob = 0L,
+        relToHeadId = 1,
+        mobileNo = "9999999999",
+        familyHeadName = "Head",
+        syncState = SyncState.SYNCED,
+        isConsent = true,
+        isSpouseAdded = false,
+        isChildrenAdded = false,
+        isMarried = false
+    )
+
+    @Test
+    fun `downloadCsv shows a toast when there is no data to export`() = runTest {
+        mockkStatic(Toast::class)
+        val toast = mockk<Toast>(relaxed = true)
+        every { Toast.makeText(any(), any<CharSequence>(), any()) } returns toast
+        coEvery { recordsRepo.searchBenOnce(any(), any(), any()) } returns emptyList()
+        val context = mockk<Context>(relaxed = true)
+
+        viewModel.downloadCsv(context)
+        advanceUntilIdle()
+
+        io.mockk.verify { Toast.makeText(context, "No data to export", Toast.LENGTH_SHORT) }
+    }
+
+    @Test
+    fun `downloadCsv writes a csv file and shows a toast when there is data to export`() = runTest {
+        mockkStatic(Toast::class)
+        val toast = mockk<Toast>(relaxed = true)
+        every { Toast.makeText(any(), any<CharSequence>(), any()) } returns toast
+
+        val tempDir = Files.createTempDirectory("allben-csv").toFile().apply { deleteOnExit() }
+        mockkStatic(Environment::class)
+        every { Environment.getExternalStoragePublicDirectory(any()) } returns tempDir
+
+        mockkStatic(MediaScannerConnection::class)
+        every { MediaScannerConnection.scanFile(any(), any(), any(), any()) } just Runs
+
+        coEvery { recordsRepo.searchBenOnce(any(), any(), any()) } returns listOf(sampleBen(10L))
+        val context = mockk<Context>(relaxed = true)
+
+        viewModel.downloadCsv(context)
+        advanceUntilIdle()
+
+        val csvFiles = tempDir.listFiles { file -> file.name.startsWith("ABHAUsers_") }
+        assertNotNull(csvFiles)
+        assertEquals(1, csvFiles!!.size)
+        io.mockk.verify { Toast.makeText(context, any<CharSequence>(), Toast.LENGTH_LONG) }
     }
 }

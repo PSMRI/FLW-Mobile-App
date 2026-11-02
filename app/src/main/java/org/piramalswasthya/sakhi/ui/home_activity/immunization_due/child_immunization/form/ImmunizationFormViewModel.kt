@@ -12,9 +12,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
 import org.piramalswasthya.sakhi.configuration.ImmunizationDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
@@ -23,6 +24,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.getLocalizedAgeUnit
 import org.piramalswasthya.sakhi.helpers.getLocalizedGender
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.ChildImmunizationCategory
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.ImmunizationCategory
 import org.piramalswasthya.sakhi.model.ImmunizationDetailsDomain
@@ -41,6 +43,7 @@ class ImmunizationFormViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val vaccineDao: ImmunizationDao,
     benDao: BenDao,
+    private val taskCompletionBus: TaskCompletionBus,
 ) : ViewModel() {
 
     enum class State {
@@ -101,6 +104,15 @@ class ImmunizationFormViewModel @Inject constructor(
 
 
 
+    // Declared before init: the IO coroutines launched there can run before any property
+    // initialiser that sits below the init block, which left these null (NPE on emit).
+    private val clickedBenId = MutableStateFlow(0L)
+
+    /** Child vaccine master list; null until loaded, so the details flow waits for it. */
+    private val loadedVaccines = MutableStateFlow<List<Vaccine>?>(null)
+    var vaccinesList: List<Vaccine> = emptyList()
+        private set
+
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -133,6 +145,7 @@ class ImmunizationFormViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 vaccinesList = vaccineDao.getVaccinesForCategory(ImmunizationCategory.CHILD)
+                loadedVaccines.value = vaccinesList
             }
         }
     }
@@ -143,7 +156,11 @@ class ImmunizationFormViewModel @Inject constructor(
                 try {
                     _state.postValue(State.SAVING)
                     dataset.mapValues(immCache, 1)
+                    if (immCache.date == null) {
+                        immCache.date = System.currentTimeMillis()
+                    }
                     vaccineDao.addImmunizationRecord(immCache)
+                    taskCompletionBus.publish()
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PW-ANC data failed!!")
@@ -158,6 +175,7 @@ class ImmunizationFormViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 try {
                     _state.postValue(State.SAVING)
+                    immCacheArray.clear()
                     vaccinationDoneList.forEach { item->
                         val savedRecord = vaccineDao.getImmunizationRecord(benId, item.vaccineId)
                         immCache = savedRecord?.also { _recordExists.postValue(true) } ?: run {
@@ -171,9 +189,14 @@ class ImmunizationFormViewModel @Inject constructor(
                         }.also { _recordExists.postValue(false) }
 
                         dataset.mapValues(immCache, 1)
+                        // Badge facts require a non-null date; never leave bulk saves undated.
+                        if (immCache.date == null) {
+                            immCache.date = System.currentTimeMillis()
+                        }
                         immCacheArray.add(immCache)
                     }
                      vaccineDao.insertImmunizationRecord(immCacheArray)
+                    taskCompletionBus.publish()
                     _state.postValue(State.SAVE_SUCCESS)
                 } catch (e: Exception) {
                     Timber.d("saving PW-ANC data failed!!")
@@ -195,7 +218,6 @@ class ImmunizationFormViewModel @Inject constructor(
     }
 
     //========================================================================================================================
-    private val clickedBenId = MutableStateFlow(0L)
 
     private val pastRecords = vaccineDao.getBenWithImmunizationRecords(
         minDob = Calendar.getInstance().apply {
@@ -207,20 +229,24 @@ class ImmunizationFormViewModel @Inject constructor(
         }.timeInMillis,
         maxDob = System.currentTimeMillis(),
     )
-    lateinit var vaccinesList: List<Vaccine>
-
-    val benWithVaccineDetails = pastRecords.map { vaccineIdList ->
+    // Combine with the loaded vaccine list instead of reading a lateinit that the init coroutine
+    // may not have set yet when the bottom sheet starts collecting.
+    val benWithVaccineDetails = pastRecords.combine(loadedVaccines.filterNotNull()) { vaccineIdList, vaccines ->
         vaccineIdList.map { cache ->
 
             val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.ENGLISH)
 
             val ageMillis = System.currentTimeMillis() - cache.ben.dob
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
-                vaccineStateList = vaccinesList.filter {
-                    it.minAllowedAgeInMillis < ageMillis
+                vaccineStateList = vaccines.filter {
+                    // Birth → 16–24 months always listed (9–12 / 1-year / 16–24).
+                    it.immunizationService in ChildImmunizationCategory.ENTRY_STAGES ||
+                        it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
                     val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis
                     val dueDateStr = sdf.format(java.util.Date(dueDateMillis))
+                    // Future-stage doses (min age not reached yet) stay PENDING so
+                    // the form switches can still select them for QA entry.
                     VaccineDomain(
                         vaccine.vaccineId,
                         vaccine.vaccineName,

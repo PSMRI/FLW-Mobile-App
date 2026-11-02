@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.model.HomeVisitDomain
@@ -21,15 +23,10 @@ class AncHomeVisitViewModel @Inject constructor(
 
     fun loadHomeVisits(benId: Long) {
         viewModelScope.launch {
-            try {
-                val formResponses = formResponseDao.getSyncedVisitsByRchId(benId)
-
-                val visits = HomeVisitHelper.getSortedHomeVisits(formResponses)
-
-                _homeVisits.value = visits
-            } catch (e: Exception) {
-                _homeVisits.value = emptyList()
-            }
+            formResponseDao.getVisitsByBenFlow(benId)
+                .map { HomeVisitHelper.getSortedHomeVisits(it) }
+                .catch { _homeVisits.postValue(emptyList()) }
+                .collect { _homeVisits.postValue(it) }
         }
     }
 

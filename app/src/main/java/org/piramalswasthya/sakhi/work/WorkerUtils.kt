@@ -34,6 +34,10 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.TBReferralFollowUpPullWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.TBReferralFollowUpPushWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.TPTFollowUpPullWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.TPTFollowUpPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYIFAPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYORSPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.CUFYSAMPushWorker
@@ -281,6 +285,10 @@ object WorkerUtils {
                 .addTag("push_group5_comm_disease").build(),
             syncRequestBuilder<PushFilariaAmritWorker>()
                 .addTag("push_group5_comm_disease").build(),
+            syncRequestBuilder<TBReferralFollowUpPushWorker>()
+                .addTag("push_group5_comm_disease").build(),
+            syncRequestBuilder<TPTFollowUpPushWorker>()
+                .addTag("push_group5_comm_disease").build(),
         )
 
         // ─────────────────────────────────────────────────────────────
@@ -506,6 +514,9 @@ object WorkerUtils {
                 .addTag("pull_group2_screening").build(),
             syncRequestBuilder<PullHRPFromAmritWorker>()
                 .addTag("pull_group2_screening").build(),
+            syncRequestBuilder<PullAdolescentFromWorker>()
+                .addTag("pull_group2_screening").build(),
+
         )
 
         // ─────────────────────────────────────────────────────────────
@@ -570,6 +581,10 @@ object WorkerUtils {
             syncRequestBuilder<PullLeprosyFormAmritWorker>()
                 .addTag("pull_group5_comm_disease").build(),
             syncRequestBuilder<PullFilariaFromAmritWorker>()
+                .addTag("pull_group5_comm_disease").build(),
+            syncRequestBuilder<TBReferralFollowUpPullWorker>()
+                .addTag("pull_group5_comm_disease").build(),
+            syncRequestBuilder<TPTFollowUpPullWorker>()
                 .addTag("pull_group5_comm_disease").build(),
         )
 
@@ -754,6 +769,19 @@ object WorkerUtils {
         workManager.enqueueUniqueWork(
             BadgeSyncWorker.name,
             ExistingWorkPolicy.KEEP,
+            syncRequestBuilder<BadgeSyncWorker>().build()
+        )
+    }
+
+    /**
+     * Push a freshly earned badge now, so her other device can see it on its next
+     * sync instead of waiting for this app to be relaunched. REPLACE, not KEEP: a
+     * sync already queued may have been built before this award existed.
+     */
+    fun triggerBadgeSync(context: Context) {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            BadgeSyncWorker.name,
+            ExistingWorkPolicy.REPLACE,
             syncRequestBuilder<BadgeSyncWorker>().build()
         )
     }

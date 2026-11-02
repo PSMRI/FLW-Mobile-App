@@ -2435,8 +2435,10 @@ class EligibleCoupleRegistrationDataset(
             ecr.bankName = bankName.value
             ecr.branchName = branchName.value
             ecr.ifsc = ifsc.value
-            ecr.noOfChildren = noOfChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.noOfLiveChildren = noOfLiveChildren.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
+            noOfChildren.value?.takeIf { it.isNotBlank() }?.toIntOrNull()
+                ?.let { ecr.noOfChildren = it }
+            ecr.noOfChildren = maxOf(ecr.noOfChildren, ecr.noOfLiveChildren)
             ecr.noOfMaleChildren = numMale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.noOfFemaleChildren = numFemale.value?.takeIf { it.isNotBlank() }?.toInt() ?: 0
             ecr.dob1 = getLongFromDate(dob1.value)

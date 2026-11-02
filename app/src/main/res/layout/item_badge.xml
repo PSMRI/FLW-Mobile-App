@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Shelf row: artwork, badge name, and one line on what earns it. No numbers here —
+  progress belongs on the dashboard card, which is where she looks for "how far am I".
+  This screen answers a different question: which badges exist, and what are they for.
+-->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,65 +35,22 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_badge_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_badge_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="Steady Syncer" />
-
-                <TextView
-                    android:id="@+id/tv_badge_level"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    tools:text="Level 2" />
-            </LinearLayout>
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Steady Syncer" />
 
             <TextView
                 android:id="@+id/tv_badge_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:textSize="13sp"
                 tools:text="Sync your app at least once every week" />
 
-            <ProgressBar
-                android:id="@+id/pb_badge_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_small"
-                tools:progress="60" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_badge_progress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="12sp"
-                    tools:text="3 of 4" />
-
-                <TextView
-                    android:id="@+id/tv_badge_streak"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    tools:text="3 week streak · 1 grace left" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

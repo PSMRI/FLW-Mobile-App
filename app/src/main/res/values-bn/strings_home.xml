@@ -9,7 +9,8 @@
 
     <string name="loginusername">লগইন ব্যবহারকারীর নাম</string>
     <string name="asha_empid">আশা কর্মীর আইডি</string>
-
+    <string name="icon_title_ncd_tbtpreventive_treatment">যক্ষ্মা প্রতিরোধমূলক চিকিৎসা</string>
+    <string name="icon_title_ncd_vulnerable_treatment">ঝুঁকিপূর্ণ জনগোষ্ঠী</string>
     <string name="service_type_dd_state_text">রাজ্য</string>
     <string name="service_type_dd_district_text">জেলা</string>
     <string name="service_type_dd_block_text">ব্লক</string>

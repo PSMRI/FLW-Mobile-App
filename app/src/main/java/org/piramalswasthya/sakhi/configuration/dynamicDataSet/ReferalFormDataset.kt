@@ -47,10 +47,27 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
         title = resources.getString(R.string.refer_date),
         arrayId = -1,
         required = true,
-        isEnabled = false,
+        isEnabled = true,
         min = System.currentTimeMillis() -  (90L * 24 * 60 * 60 * 1000),
         max = System.currentTimeMillis(),
     )
+
+    private val referralReasonResIds = listOf(
+        R.string.tb_suspected_ncd_case,
+        R.string.tb_suspected_leprosy_case,
+        R.string.tb_suspected_copd_case,
+        R.string.tb_suspected_form,
+        R.string.further_depression,
+        R.string.suspected_c_case,
+        R.string.tb_screening_form,
+        R.string.suspected_newborn_complication,
+        R.string.suspected_illness_young_child
+    )
+
+    private fun toEnglishReferralReason(reason: String?): String? {
+        val resId = referralReasonResIds.firstOrNull { resources.getString(it) == reason } ?: return reason
+        return englishResources.getString(resId)
+    }
 
     var referralTypes = ""
     suspend fun setUpPage(referral : String , referralType : String) {
@@ -93,7 +110,7 @@ class ReferalFormDataset(context: Context, language: Languages,var preferenceDao
     ) {
         (cacheModel as ReferalCache).let { form ->
             form.revisitDate = getLongFromDate(referDate.value)
-            form.referralReason = reasonForReferal.value
+            form.referralReason = toEnglishReferralReason(reasonForReferal.value)
             form.refrredToAdditionalServiceList = listOf("FLW")
             form.referredToInstituteID = healthCenter.getPosition()
             form.referredToInstituteName = healthCenter.getEnglishStringFromPosition(healthCenter.getPosition())

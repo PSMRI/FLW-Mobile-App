@@ -34,6 +34,7 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.new_household_registration.NewHouseholdViewModel.State
 import timber.log.Timber
+import org.piramalswasthya.sakhi.utils.safeNavigate
 
 
 private const val ABHA_ALREADY_EXISTS_CODE = 5001
@@ -142,7 +143,7 @@ class NewHouseholdFragment : Fragment() {
             .setPositiveButton(resources.getString(R.string.yes)) { dialog, _ ->
 
                 if (isAdded) {
-                    findNavController().navigate(
+                    findNavController().safeNavigate(
                         NewHouseholdFragmentDirections.actionNewHouseholdFragmentToNewBenRegFragment(
                             viewModel.getHHId(),
                             18

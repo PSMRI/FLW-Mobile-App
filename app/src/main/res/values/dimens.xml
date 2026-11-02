@@ -25,4 +25,13 @@
     <dimen name="pv_pin_view_cursor_width">2dp</dimen>
 
     <dimen name="password_toggle_size">30dp</dimen>
+
+    <!-- FLW-1171: the beneficiary-detail header is a static view above the RecyclerView, so its
+         columns only line up with layout_mt_inner rows if both measure the same. Shared here so
+         a change to one cannot silently drift from the other.
+         Actions column = btnApprove 32dp + 6dp margin + btnReject 30dp. -->
+    <dimen name="mt_row_action_column">68dp</dimen>
+    <dimen name="mt_row_serial_width">40dp</dimen>
+    <dimen name="mt_row_serial_margin">10dp</dimen>
+    <dimen name="mt_row_info_margin">12dp</dimen>
 </resources>

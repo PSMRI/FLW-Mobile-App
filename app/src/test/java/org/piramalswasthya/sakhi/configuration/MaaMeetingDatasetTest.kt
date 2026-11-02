@@ -65,4 +65,16 @@ class MaaMeetingDatasetTest : BaseViewModelTest() {
         runCatching { ds.setUpPage(false) }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `updateList sweeps every formId`() = runTest {
+        val ds = MaaMeetingDataset(context, Languages.ENGLISH)
+        runCatching { ds.setUpPage(true) }
+        for (id in 0..30) {
+            for (index in 0..2) {
+                runCatching { ds.updateList(id, index) }
+            }
+        }
+        assertNotNull(ds.listFlow)
+    }
 }

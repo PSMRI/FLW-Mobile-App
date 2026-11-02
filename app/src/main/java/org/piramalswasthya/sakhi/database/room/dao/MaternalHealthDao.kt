@@ -13,6 +13,12 @@ interface MaternalHealthDao {
     @Query("select * from pregnancy_register where benId = :benId and active = 1 order by createdDate limit 1")
     fun getSavedActiveRecord(benId: Long): PregnantWomanRegistrationCache?
 
+    @Query("select count(*) from pregnancy_register where benId = :benId and active = 0")
+    fun getCompletedPregnancyCount(benId: Long): Int
+
+    @Query("select * from pregnancy_register where benId = :benId and active = 0 order by dateOfRegistration desc limit 1")
+    fun getLastCompletedRecord(benId: Long): PregnantWomanRegistrationCache?
+
     @Query("select * from pregnancy_anc where benId = :benId and visitNumber = :visitNumber limit 1")
     fun getSavedRecord(benId: Long, visitNumber: Int): PregnantWomanAncCache?
 

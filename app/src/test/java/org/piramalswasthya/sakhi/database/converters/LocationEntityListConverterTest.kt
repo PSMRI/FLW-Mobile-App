@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.database.converters
 
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.model.LocationEntity
@@ -23,8 +24,8 @@ class LocationEntityListConverterTest {
     }
 
     @Test
-    fun `fromLocationEntityList of an empty list returns an empty json array`() {
-        assertEquals("[]", LocationEntityListConverter.fromLocationEntityList(emptyList()))
+    fun `fromLocationEntityList of an empty list returns null`() {
+        assertNull(LocationEntityListConverter.fromLocationEntityList(emptyList()))
     }
 
     @Test
@@ -38,7 +39,26 @@ class LocationEntityListConverterTest {
 
     @Test
     fun `toLocationEntityList parses an empty json array`() {
-        assertTrue(LocationEntityListConverter.toLocationEntityList("[]").isEmpty())
+        assertTrue(LocationEntityListConverter.toLocationEntityList("[]")!!.isEmpty())
+    }
+
+    @Test
+    fun `toLocationEntityList returns null for null blank or literal null`() {
+        assertNull(LocationEntityListConverter.toLocationEntityList(null))
+        assertNull(LocationEntityListConverter.toLocationEntityList(""))
+        assertNull(LocationEntityListConverter.toLocationEntityList("null"))
+    }
+
+    @Test
+    fun `toLocationEntityList returns null for malformed json`() {
+        assertNull(LocationEntityListConverter.toLocationEntityList("not json"))
+    }
+
+    @Test
+    fun `toLocationEntityList drops null entries`() {
+        val parsed = LocationEntityListConverter.toLocationEntityList("""[null,{"id":1,"name":"A"}]""")!!
+        assertEquals(1, parsed.size)
+        assertEquals(1, parsed[0].id)
     }
 
     @Test
@@ -54,7 +74,7 @@ class LocationEntityListConverterTest {
     fun `toLocationEntityList keeps optional localised names`() {
         val parsed = LocationEntityListConverter.toLocationEntityList(
             """[{"id":7,"name":"Village","nameHindi":"गाँव","nameAssamese":"গাঁও"}]"""
-        )
+        )!!
 
         assertEquals(1, parsed.size)
         assertEquals(7, parsed[0].id)
@@ -69,8 +89,9 @@ class LocationEntityListConverterTest {
     }
 
     @Test
-    fun `fromIntList of an empty list returns an empty json array`() {
-        assertEquals("[]", LocationEntityListConverter.fromIntList(emptyList()))
+    fun `fromIntList of an empty or null list returns null`() {
+        assertNull(LocationEntityListConverter.fromIntList(emptyList()))
+        assertNull(LocationEntityListConverter.fromIntList(null))
     }
 
     @Test
@@ -80,7 +101,15 @@ class LocationEntityListConverterTest {
 
     @Test
     fun `toIntList parses an empty json array`() {
-        assertTrue(LocationEntityListConverter.toIntList("[]").isEmpty())
+        assertTrue(LocationEntityListConverter.toIntList("[]")!!.isEmpty())
+    }
+
+    @Test
+    fun `toIntList returns null for null blank literal null or malformed json`() {
+        assertNull(LocationEntityListConverter.toIntList(null))
+        assertNull(LocationEntityListConverter.toIntList(" "))
+        assertNull(LocationEntityListConverter.toIntList("NULL"))
+        assertNull(LocationEntityListConverter.toIntList("{bad"))
     }
 
     @Test

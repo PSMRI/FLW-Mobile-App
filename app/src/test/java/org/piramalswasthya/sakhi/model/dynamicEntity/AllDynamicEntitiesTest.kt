@@ -52,6 +52,11 @@ class AllDynamicEntitiesTest {
         assertEquals(a, b)
     }
 
+    @Test fun `ANCFormResponseJsonEntity version`() {
+        val e = ANCFormResponseJsonEntity(benId = 1L, visitDay = "1", visitDate = "d", formId = "f", version = 3, formDataJson = "{}")
+        assertEquals(3, e.version)
+    }
+
     // =====================================================
     // CUFYFormResponseJsonEntity Tests
     // =====================================================
@@ -81,6 +86,13 @@ class AllDynamicEntitiesTest {
         val e = CUFYFormResponseJsonEntity(benId = 1L, hhId = 1L, visitDate = "d", formId = "f", version = 1, formDataJson = "{}")
         val copy = e.copy(formId = "new_form")
         assertEquals("new_form", copy.formId)
+    }
+
+    @Test fun `CUFYFormResponseJsonEntity createdAt and syncedAt`() {
+        val ts = 5000L
+        val e = CUFYFormResponseJsonEntity(benId = 1L, hhId = 1L, visitDate = "d", formId = "f", version = 1, formDataJson = "{}", createdAt = ts, syncedAt = ts)
+        assertEquals(ts, e.createdAt)
+        assertEquals(ts, e.syncedAt)
     }
 
     // =====================================================
@@ -117,6 +129,14 @@ class AllDynamicEntitiesTest {
         assertEquals(1L, a.hhId)
     }
 
+    @Test fun `FormResponseJsonEntityHBYC formId createdAt syncedAt`() {
+        val ts = 9000L
+        val e = FormResponseJsonEntityHBYC(benId = 1L, hhId = 1L, visitDay = "1", visitDate = "d", formId = "hbyc_form_002", version = 1, formDataJson = "{}", createdAt = ts, syncedAt = ts)
+        assertEquals("hbyc_form_002", e.formId)
+        assertEquals(ts, e.createdAt)
+        assertEquals(ts, e.syncedAt)
+    }
+
     // =====================================================
     // NCDReferalFormResponseJsonEntity Tests
     // =====================================================
@@ -146,6 +166,14 @@ class AllDynamicEntitiesTest {
         assertEquals(5, copy.visitNo)
     }
 
+    @Test fun `NCDReferalFormResponseJsonEntity createdAt updatedAt syncedAt`() {
+        val ts = 8000L
+        val e = NCDReferalFormResponseJsonEntity(benId = 1L, hhId = 1L, visitNo = 1, followUpNo = 1, treatmentStartDate = "d", diagnosisCodes = null, formId = "f", version = 1, formDataJson = "{}", createdAt = ts, updatedAt = ts, syncedAt = ts)
+        assertEquals(ts, e.createdAt)
+        assertEquals(ts, e.updatedAt)
+        assertEquals(ts, e.syncedAt)
+    }
+
     // =====================================================
     // InfantEntity Tests
     // =====================================================
@@ -157,6 +185,8 @@ class AllDynamicEntitiesTest {
         assertEquals("Mother", e.motherName)
         assertEquals("Father", e.fatherName)
         assertEquals("Male", e.gender)
+        assertEquals("14-04-2026", e.dob)
+        assertEquals("9876543210", e.phoneNumber)
     }
 
     @Test fun `InfantEntity default id 0`() {

@@ -140,11 +140,9 @@ class CbacRepo @Inject constructor(
     suspend fun pushAndUpdateCbacRecord() {
         val unProcessedList = database.cbacDao.getAllUnprocessedCbac()
 
-        val cbacDataList = unProcessedList.mapNotNull { record ->
+        val cbacDataList = unProcessedList.map { record ->
             val cbacPostModel = record.cbac.asPostModel(record.hhId, record.benGender, resources)
-            record.cbac.benId?.let { benId ->
-                Pair(benId, cbacPostModel)
-            }
+            Triple(record.cbac.benId, record.cbac.cbac_reg_id, cbacPostModel)
         }
 
         if (cbacDataList.isEmpty()) return
@@ -155,12 +153,12 @@ class CbacRepo @Inject constructor(
         var successCount = 0
         var failCount = 0
 
-        for ((benId, cbac) in cbacDataList) {
+        for ((benId, benRegId, cbac) in cbacDataList) {
             try {
                 val request = CbacRequest(
                     visitDetails = VisitDetailsWrapper(
                         visitDetails = CbacVisitDetails(
-                            beneficiaryRegID = benId,
+                            beneficiaryRegID = benRegId,
                             providerServiceMapID = prefDao.getLoggedInUser()!!.serviceMapId,
                             visitNo = null,
                             visitReason = "New Chief Complaint",
@@ -189,7 +187,7 @@ class CbacRepo @Inject constructor(
                     parkingPlaceID = prefDao.getLoggedInUser()?.serviceMapId,
                     createdBy = prefDao.getLoggedInUser()?.userName.toString(),
                     vanID = prefDao.getLoggedInUser()?.vanId,
-                    beneficiaryRegID = benId,
+                    beneficiaryRegID = benRegId,
                     benVisitID = null,
                     providerServiceMapID = prefDao.getLoggedInUser()?.serviceMapId,
                     isFlw = true

@@ -337,4 +337,119 @@ class FilariaRepoTest : BaseRepositoryTest() {
         assertTrue(repo.pushUnSyncedRecords())
         coVerify(atLeast = 21) { filariaDao.saveFilariaScreening(any()) }
     }
+
+    // ---------------- saveAESScreeningCacheFromResponse ----------------
+
+    private fun filariaEntryJson(): String =
+        """{"benId":1,"mdaHomeVisitDate":"2024-01-15","houseHoldDetailsId":1,"createdDate":"2024-01-15","sufferingFromFilariasis":false}"""
+
+    private fun pullOuterJson(dataJson: String): String {
+        val outer = org.json.JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataJson)
+        return outer.toString()
+    }
+
+    @Test
+    fun `pull saves new record from array-shaped data when ben exists and no cache yet`() = runTest {
+        loggedIn()
+        val dataJson = "[${filariaEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull saves new record from object-shaped data with filariaLists wrapper`() = runTest {
+        loggedIn()
+        val dataJson = """{"userId":0,"filariaLists":[${filariaEntryJson()}]}"""
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull skips save when filaria cache already exists`() = runTest {
+        loggedIn()
+        val dataJson = "[${filariaEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns
+            mockk<FilariaScreeningCache>(relaxed = true)
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull skips save when ben does not exist`() = runTest {
+        loggedIn()
+        val dataJson = "[${filariaEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns null
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull swallows per-record exception during save and still reports success`() = runTest {
+        loggedIn()
+        val dataJson = "[${filariaEntryJson()}]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } throws RuntimeException("db down")
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull returns 0 when data payload is malformed`() = runTest {
+        loggedIn()
+        coEvery { api.getMalariaScreeningData(any()) } returns
+            resp200(pullOuterJson("not a valid json"))
+
+        assertEquals(0, repo.getFilariaScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `pull aborts whole batch when mdaHomeVisitDate is unparseable in both formats`() = runTest {
+        loggedIn()
+        val badEntry =
+            """{"benId":1,"mdaHomeVisitDate":"not-a-date","houseHoldDetailsId":1,"createdDate":"2024-01-15","sufferingFromFilariasis":false}"""
+        val dataJson = "[$badEntry]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+
+        assertEquals(0, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { filariaDao.saveFilariaScreening(any()) }
+    }
+
+    @Test
+    fun `pull saves record when mdaHomeVisitDate uses fallback date format`() = runTest {
+        loggedIn()
+        val fallbackFormatEntry =
+            """{"benId":1,"mdaHomeVisitDate":"Jan 15, 2024 3:04:05 PM","houseHoldDetailsId":1,"createdDate":"2024-01-15","sufferingFromFilariasis":false}"""
+        val dataJson = "[$fallbackFormatEntry]"
+        coEvery { api.getMalariaScreeningData(any()) } returns resp200(pullOuterJson(dataJson))
+        coEvery { filariaDao.getFilariaScreening(1L, any(), any()) } returns null
+        coEvery { benDao.getBen(1L) } returns mockk<org.piramalswasthya.sakhi.model.BenRegCache>(relaxed = true)
+
+        assertEquals(1, repo.getFilariaScreeningDetailsFromServer())
+
+        coVerify(exactly = 1) { filariaDao.saveFilariaScreening(any()) }
+    }
 }

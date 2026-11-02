@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="android.view.View" />
@@ -68,7 +69,8 @@
             android:layout_gravity="center_vertical|end"
             android:layout_marginHorizontal="@dimen/padding_small"
             android:contentDescription="@string/iv_sync_state_tv"
-            tools:src="@drawable/ic_synced" />
+            tools:src="@drawable/cloud_upload"
+            app:iconTint="@android:color/holo_green_dark" />
 
     </LinearLayout>
 </layout>

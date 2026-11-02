@@ -17,16 +17,6 @@ class TBConfirmedDataset(
     context: Context, currentLanguage: Languages
 ) : Dataset(context, currentLanguage) {
 
-    private fun getOneYearBeforeCurrentDate(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.YEAR, -1)
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
-
     private var treatmentStartDateLong: Long = 0L
     private var lastFollowUpDateLong: Long = 0L
     private var nextFollowUpMonthStart: Long = 0L
@@ -49,7 +39,6 @@ class TBConfirmedDataset(
         title = resources.getString(R.string.treatment_start_date),
         arrayId = -1,
         required = true,
-        max = System.currentTimeMillis(),
         hasDependants = true,
         isEnabled = true
 
@@ -209,7 +198,7 @@ class TBConfirmedDataset(
 
         if (saved == null) {
             isNewRecord = true
-            treatmentStartDate.value = getDateFromLong(System.currentTimeMillis())
+            treatmentStartDate.value = null
             reasonForDeath.value = resources.getString(R.string.tuberculosis)
 
             baseList.addAll(listOf(
@@ -223,24 +212,6 @@ class TBConfirmedDataset(
                // treatmentCompleted,
 
             ))
-
-            treatmentStartDate.max = System.currentTimeMillis()
-            treatmentStartDate.min = suspectedTb?.visitDate
-                ?.takeIf { it > 0 }
-                ?: getOneYearBeforeCurrentDate()
-
-            // Enable follow-up date since treatment start date is pre-filled
-            val todayStart = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
-            treatmentStartDateValue = todayStart
-            treatmentStartDateLong = todayStart
-            followUpDate.min = todayStart
-            followUpDate.isEnabled = true
-
 
         } else
         {
@@ -334,9 +305,27 @@ class TBConfirmedDataset(
 
         }
 
-       /* ben?.let {
-            treatmentStartDate.min = suspectedTb?.visitDate ?: it.regDate
-        }*/
+        suspectedTb?.visitDate
+            ?.takeIf { it > 0 }
+            ?.let { confirmationVisitDate ->
+                val maxDate = Calendar.getInstance().apply {
+                    timeInMillis = confirmationVisitDate
+                    set(Calendar.HOUR_OF_DAY, 23)
+                    set(Calendar.MINUTE, 59)
+                    set(Calendar.SECOND, 59)
+                    set(Calendar.MILLISECOND, 999)
+                }.timeInMillis
+                val minDate = Calendar.getInstance().apply {
+                    timeInMillis = confirmationVisitDate
+                    add(Calendar.DAY_OF_YEAR, -30)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.timeInMillis
+                treatmentStartDate.min = minDate
+                treatmentStartDate.max = maxDate
+            }
 
         setUpPage(baseList)
     }
@@ -354,6 +343,7 @@ class TBConfirmedDataset(
             treatmentStartDate.id -> {
                 val dateLong = getLongFromDate(treatmentStartDate.value)
                 treatmentStartDateValue = dateLong
+                treatmentStartDateLong = dateLong
                 followUpDate.min = dateLong
                 followUpDate.isEnabled = true
                 calculateExpectedCompletionDate()

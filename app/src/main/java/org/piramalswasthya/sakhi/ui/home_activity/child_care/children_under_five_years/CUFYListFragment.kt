@@ -111,7 +111,7 @@ class CUFYListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__adolescent,
+                R.drawable.children_under_five,
                 getString(R.string.children_under_five_years)
             )
         }

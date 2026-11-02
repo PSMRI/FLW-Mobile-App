@@ -37,11 +37,16 @@ class AncHomeVisitBottomSheetFragment : BottomSheetDialogFragment () {
 
 
         adapter = AncHomeVisitAdapter(
-            clickListener = AncHomeVisitAdapter.HomeVisitClickListener { homeVisit ->
+            clickListener = AncHomeVisitAdapter.HomeVisitClickListener { homeVisit, isLastItem ->
 
                 findNavController().navigate(
                     PwAncVisitsListFragmentDirections.actionPwAncVisitsFragmentToPwAncCounsellingFormFragment(
-                        homeVisit.benId,homeVisit.visitNumber,true,homeVisit.visitDateString
+                        homeVisit.benId,
+                        homeVisit.visitNumber,
+                        true,
+                        homeVisit.visitDateString,
+                        isLastItem,
+                        homeVisit.id
                     )
                 )
             }

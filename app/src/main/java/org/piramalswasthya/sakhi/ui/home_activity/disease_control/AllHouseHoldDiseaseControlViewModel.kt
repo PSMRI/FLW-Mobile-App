@@ -83,17 +83,22 @@ class AllHouseHoldDiseaseControlViewModel @Inject constructor(
         list: List<HouseHoldBasicDomain>,
         filter: String
     ): List<HouseHoldBasicDomain> {
-        if (filter.isBlank()) return list
 
-        val filterText = filter.trim().lowercase().replace(" ", "")
-
-        return list.filter {
-            val fullName = it.headFullName.lowercase().replace(" ", "")
-
-            it.hhId.toString().contains(filterText) ||
-                    fullName.contains(filterText) ||
-                    it.contactNumber.contains(filterText)
+        val filteredList = if (filter.isBlank()) {
+            list
+        } else {
+            val filterText = filter.trim().lowercase().replace(" ", "")
+            list.filter {
+                it.hhId.toString().contains(filterText) ||
+                        it.headFullName.lowercase().replace(" ", "").contains(filterText) ||
+                        it.contactNumber.contains(filterText)
+            }
         }
+
+        return filteredList.sortedWith(
+            compareBy<HouseHoldBasicDomain> { it.isDeactivate }
+                .thenByDescending { it.createdTimeStamp }
+        )
     }
 
     fun resetSelectedHouseholdId() {

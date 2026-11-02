@@ -81,12 +81,16 @@ class BadgeSyncWorker @AssistedInject constructor(
         // The key is a quarter key or a digest, never a beneficiary id (AwardKeys).
         try {
             api.getEarned().body()?.earned?.let { restored ->
-                badgeDao.insertEarned(restored.map {
+                val inserted = badgeDao.insertEarned(restored.map {
                     BadgeEarnedCache(
                         userId = userId, badgeId = it.badgeId, level = it.level,
-                        caseRef = it.awardKey, earnedAt = it.earnedAt, synced = true
+                        caseRef = it.awardKey ?: "", earnedAt = it.earnedAt, synced = true
                     )
                 })
+                // Awards earned on her other device arrive as history. Re-evaluate so the
+                // shelf shows them at their real tier instead of staying locked until the
+                // next save or the nightly pass.
+                if (inserted.any { it != -1L }) WorkerUtils.triggerAdHocBadgeEvaluation(applicationContext)
             }
         } catch (e: Exception) {
             Timber.d("Badges: earned restore skipped (${e.message})")

@@ -1,0 +1,239 @@
+package org.piramalswasthya.sakhi.ui.home_activity.all_ben
+
+import android.os.Bundle
+import androidx.lifecycle.SavedStateHandle
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkConstructor
+import io.mockk.unmockkConstructor
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+
+class AllBenFragmentNavigationTest {
+
+    private lateinit var bundle: Bundle
+
+    @Before
+    fun setUp() {
+        bundle = mockk(relaxed = true)
+        every { bundle.setClassLoader(any()) } returns Unit
+    }
+
+    @After
+    fun tearDown() {
+        unmockkConstructor(Bundle::class)
+    }
+
+    private fun args() = AllBenFragmentArgs(source = 11)
+
+    @Test
+    fun constructor_exposesEveryArgument() {
+        val a = args()
+        assertEquals(11, a.source)
+    }
+
+    @Test
+    fun dataClassSynthetics_behaveAsValueType() {
+        val a = args()
+        assertEquals(a, a.copy())
+        assertEquals(a.hashCode(), a.copy().hashCode())
+        assertEquals(a, a)
+        assertFalse(a.equals(null))
+        assertFalse(a.equals(Any()))
+        assertTrue(a.toString().contains("AllBenFragmentArgs"))
+        assertEquals(11, a.component1())
+    }
+
+    @Test
+    fun copy_replacesSingleArgument() {
+        val a = args()
+        val b = a.copy(source = 99)
+        assertEquals(99, b.source)
+        assertNotEquals(a, b)
+    }
+
+    @Test
+    fun toSavedStateHandle_thenFromSavedStateHandle_roundTrips() {
+        val handle = args().toSavedStateHandle()
+        assertEquals(11, handle.get<Int>("source"))
+        assertEquals(args(), AllBenFragmentArgs.fromSavedStateHandle(handle))
+    }
+
+    @Test
+    fun fromSavedStateHandle_appliesDefaults_whenOptionalArgumentsMissing() {
+        val handle = SavedStateHandle()
+        val a = AllBenFragmentArgs.fromSavedStateHandle(handle)
+        assertEquals(0, a.source)
+    }
+
+    @Test
+    fun fromBundle_readsEveryArgument() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.getInt("source") } returns 11
+        assertEquals(args(), AllBenFragmentArgs.fromBundle(bundle))
+    }
+
+    @Test
+    fun fromBundle_appliesDefaults_whenOptionalArgumentsMissing() {
+        every { bundle.containsKey(any()) } returns true
+        every { bundle.containsKey("source") } returns false
+        val a = AllBenFragmentArgs.fromBundle(bundle)
+        assertEquals(0, a.source)
+    }
+
+    @Test
+    fun toBundle_putsEveryArgument() {
+        mockkConstructor(Bundle::class)
+        every { anyConstructed<Bundle>().putLong(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putInt(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putBoolean(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putString(any(), any()) } returns Unit
+        assertNotNull(args().toBundle())
+    }
+
+    @Before
+    fun setUpDirections() {
+        mockkConstructor(Bundle::class)
+        every { anyConstructed<Bundle>().putLong(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putInt(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putBoolean(any(), any()) } returns Unit
+        every { anyConstructed<Bundle>().putString(any(), any()) } returns Unit
+    }
+
+    @After
+    fun tearDownDirections() {
+        unmockkConstructor(Bundle::class)
+    }
+
+    @Test
+    fun actionAllBenFragmentToNewBenRegFragment_buildsDirections() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+        val same = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertFalse(d.equals(null))
+        assertFalse(d.equals(Any()))
+    }
+
+    @Test
+    fun actionAllBenFragmentToNewChildAsBenRegistrationFragment_buildsDirections() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+        val same = AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(hhId = 10L, relToHeadId = 21, benId = 30L, selectedBenId = 40L, gender = 51, isAddSpouse = 61)
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertFalse(d.equals(null))
+        assertFalse(d.equals(Any()))
+    }
+
+    @Test
+    fun actionAllBenFragmentToEyeSurgeryFormFragment_buildsDirections() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(hhId = 10L, benId = 20L, isViewMode = true, eyeSide = "v4", formDataJson = "v5", recordId = 61, benName = "v7", gender = "v8", age = "v9")
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+        val same = AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(hhId = 10L, benId = 20L, isViewMode = true, eyeSide = "v4", formDataJson = "v5", recordId = 61, benName = "v7", gender = "v8", age = "v9")
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertFalse(d.equals(null))
+        assertFalse(d.equals(Any()))
+    }
+
+    @Test
+    fun actionAllBenFragmentToBenIfaFormFragment_buildsDirections() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(hhId = 10L, benId = 20L, isViewMode = true)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+        val same = AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(hhId = 10L, benId = 20L, isViewMode = true)
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertFalse(d.equals(null))
+        assertFalse(d.equals(Any()))
+    }
+
+    @Test
+    fun actionGlobalPwAncFormFragment_buildsDirections() {
+        val d = AllBenFragmentDirections.actionGlobalPwAncFormFragment(benId = 10L, hhId = "v2", visitNumber = 31, fromPmsma = true, lastItemClick = true)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+        val same = AllBenFragmentDirections.actionGlobalPwAncFormFragment(benId = 10L, hhId = "v2", visitNumber = 31, fromPmsma = true, lastItemClick = true)
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertFalse(d.equals(null))
+        assertFalse(d.equals(Any()))
+    }
+
+    @Test
+    fun actionAllBenFragmentToNewBenRegFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewBenRegFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToNewChildAsBenRegistrationFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToNewChildAsBenRegistrationFragment(hhId = 10L, relToHeadId = 21)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("selectedBenId=0"))
+        assertTrue(d.toString().contains("gender=0"))
+        assertTrue(d.toString().contains("isAddSpouse=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToEyeSurgeryFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToEyeSurgeryFormFragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("isViewMode=false"))
+        assertTrue(d.toString().contains("recordId=0"))
+    }
+
+    @Test
+    fun actionAllBenFragmentToBenIfaFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionAllBenFragmentToBenIfaFormFragment(hhId = 10L)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().contains("benId=0"))
+        assertTrue(d.toString().contains("isViewMode=false"))
+    }
+
+    @Test
+    fun actionGlobalPwAncFormFragment_buildsDirections_withDefaultArguments() {
+        val d = AllBenFragmentDirections.actionGlobalPwAncFormFragment(benId = 10L, hhId = "v2", visitNumber = 31)
+        assertNotNull(d)
+        assertTrue(d.actionId != 0)
+        assertNotNull(d.arguments)
+        assertTrue(d.toString().isNotEmpty())
+    }
+}

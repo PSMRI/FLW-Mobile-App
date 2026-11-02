@@ -30,7 +30,7 @@ class EnableDevModeBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.button5.setOnClickListener {
-            binding.editText.text?.toString()?.toInt()?.takeIf { it == Konstants.devCode }?.let {
+            binding.editText.text?.toString()?.trim()?.toIntOrNull()?.takeIf { it == Konstants.devCode }?.let {
                 viewModel.setDevMode(true)
                 binding.editText.setText("")
                 Toast.makeText(context, "Dev Mode Enabled!", Toast.LENGTH_LONG).show()

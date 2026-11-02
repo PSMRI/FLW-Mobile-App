@@ -290,7 +290,7 @@ class PncFormViewModel @Inject constructor(
 
             if (hasPermanentSterilization) {
                 updateBeneficiaryToPermanentlySterilised(ben)
-            } else {
+            } else if (isAfter60Days) {
                 updateBeneficiaryToEligibleCouple(ben)
             }
         }

@@ -2,14 +2,20 @@ package org.piramalswasthya.sakhi.ui.home_activity.maternal_health
 
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
+import org.piramalswasthya.sakhi.model.BenWithAncListDomain
+import org.piramalswasthya.sakhi.model.PMSMAStatus
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
 import org.piramalswasthya.sakhi.ui.home_activity.maternal_health.pmsma.list.PmsmaVisitsListViewModel
@@ -96,5 +102,61 @@ class PmsmaVisitsListViewModelTest : BaseViewModelTest() {
         viewModel.filterText("")
         advanceUntilIdle()
         assertNotNull(viewModel.benList)
+    }
+
+    private fun benWithAnc(benId: Long, pmsma: List<PMSMAStatus>): BenWithAncListDomain {
+        val entry = mockk<BenWithAncListDomain>(relaxed = true)
+        every { entry.ben.benId } returns benId
+        every { entry.pmsma } returns pmsma
+        return entry
+    }
+
+    @Test
+    fun `benList is empty until a ben id is selected`() = runTest {
+        every { recordsRepo.getRegisteredPmsmaWomenList() } returns flowOf(
+            listOf(benWithAnc(1L, emptyList()), benWithAnc(2L, emptyList()))
+        )
+        val vm = PmsmaVisitsListViewModel(recordsRepo, maternalHealthRepo)
+
+        assertTrue(vm.benList.first().isEmpty())
+    }
+
+    @Test
+    fun `benList filters to the selected ben id`() = runTest {
+        every { recordsRepo.getRegisteredPmsmaWomenList() } returns flowOf(
+            listOf(benWithAnc(1L, emptyList()), benWithAnc(2L, emptyList()))
+        )
+        val vm = PmsmaVisitsListViewModel(recordsRepo, maternalHealthRepo)
+
+        vm.updateBottomSheetData(2L)
+        advanceUntilIdle()
+
+        val result = vm.benList.first()
+        assertEquals(1, result.size)
+        assertEquals(2L, result[0].ben.benId)
+    }
+
+    @Test
+    fun `bottomSheetList returns pmsma of first matching ben`() = runTest {
+        val status = mockk<PMSMAStatus>(relaxed = true)
+        every { recordsRepo.getRegisteredPmsmaWomenList() } returns flowOf(
+            listOf(benWithAnc(1L, listOf(status)))
+        )
+        val vm = PmsmaVisitsListViewModel(recordsRepo, maternalHealthRepo)
+
+        vm.updateBottomSheetData(1L)
+        advanceUntilIdle()
+
+        assertEquals(1, vm.bottomSheetList.first().size)
+    }
+
+    @Test
+    fun `bottomSheetList is empty when no ben is selected`() = runTest {
+        every { recordsRepo.getRegisteredPmsmaWomenList() } returns flowOf(
+            listOf(benWithAnc(1L, emptyList()))
+        )
+        val vm = PmsmaVisitsListViewModel(recordsRepo, maternalHealthRepo)
+
+        assertTrue(vm.bottomSheetList.first().isEmpty())
     }
 }

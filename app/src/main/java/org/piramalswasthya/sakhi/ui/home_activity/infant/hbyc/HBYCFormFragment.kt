@@ -1,8 +1,12 @@
 package org.piramalswasthya.sakhi.ui.home_activity.infant.hbyc
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,7 +15,9 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,13 +25,17 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemBenChildCareChildBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.child_list.ChildListViewModel
+import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.form.NCDReferDialogViewModel
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants.HBYC_FORM_ID
 import java.text.SimpleDateFormat
@@ -41,6 +51,8 @@ class HBYCFormFragment : Fragment() {
     private val args: HBYCFormFragmentArgs by navArgs()
     private val childListViewModel: ChildListViewModel by viewModels()
     private val viewModel: HBYCFormViewModel by viewModels()
+    private val referViewModel: NCDReferDialogViewModel by viewModels()
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
     var benId = -1L
     var hhId = -1L
     var dob = -1L
@@ -157,6 +169,9 @@ class HBYCFormFragment : Fragment() {
                         field.value = value
                         viewModel.updateFieldValue(field.fieldId, value)
                         adapter.updateFields(viewModel.getVisibleFields())
+                        if (isMitanin && !isViewMode && !viewModel.hasReferral() && viewModel.isDangerSign(field.fieldId, value)) {
+                            showDangerSignDialog()
+                        }
                     }
                 }, formId = HBYC_FORM_ID
                     )
@@ -270,6 +285,91 @@ class HBYCFormFragment : Fragment() {
             findNavController().previousBackStackEntry?.savedStateHandle?.set("form_submitted", true)
             findNavController().popBackStack()
         }
+    }
+
+    private fun showDangerSignDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.danger_signs_identified))
+            .setMessage(getString(R.string.refer_to_hwc_facility_alert))
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                dialog.dismiss()
+                showReferralDialog()
+            }
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun showReferralDialog() {
+        val dialog = Dialog(requireContext(), R.style.BottomStyleDialog)
+        val binding = FragmentNewFormBinding.inflate(layoutInflater)
+        dialog.setContentView(binding.root)
+        dialog.setCancelable(true)
+
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (Resources.getSystem().displayMetrics.heightPixels * 0.60).toInt()
+            )
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        referViewModel.initFromArgs(
+            benId = benId,
+            referralReason = getString(R.string.suspected_illness_young_child),
+            cbacId = 0L,
+            referralType = HBYCFormViewModel.REFERRAL_TYPE
+        )
+
+        binding.benId.text = benId.toString()
+
+        referViewModel.benName.observe(viewLifecycleOwner) {
+            binding.tvBenName.text = it
+        }
+
+        referViewModel.benAgeGender.observe(viewLifecycleOwner) {
+            binding.tvAgeGender.text = it
+        }
+
+        val referAdapter = FormInputAdapter(
+            formValueListener = FormInputAdapter.FormValueListener { formId, index ->
+                referViewModel.updateListOnValueChanged(formId, index)
+                binding.form.rvInputForm.adapter?.notifyDataSetChanged()
+            }, isEnabled = true
+        )
+
+        binding.form.rvInputForm.adapter = referAdapter
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                referViewModel.formList.collect {
+                    referAdapter.submitList(it)
+                }
+            }
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            val result = binding.form.rvInputForm.adapter?.let {
+                (it as FormInputAdapter).validateInput(resources)
+            }
+            if (result == -1) referViewModel.saveForm()
+            else if (result != null) {
+                binding.form.rvInputForm.scrollToPosition(result)
+            }
+        }
+
+        referViewModel.state.observe(viewLifecycleOwner) {
+            if (it == NCDReferDialogViewModel.State.SAVE_SUCCESS) {
+                viewModel.addReferral(referViewModel.referalCache)
+                Toast.makeText(requireContext(), getString(R.string.submit), Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
     }
 
     override fun onStart() {

@@ -575,7 +575,10 @@ class LeprosyConfirmedDataset(
             followUpdate.isEnabled = false
             Toast.makeText(
                 context,
-                "Next follow-up will be available from ${getDateFromLong(nextFollowUpMonthStart)}",
+                resources.getString(
+                    R.string.next_follow_up_will_be_available_from,
+                    getDateFromLong(nextFollowUpMonthStart)
+                ),
                 Toast.LENGTH_LONG
             ).show()
         } else if (currentTime >= nextFollowUpMonthStart && currentTime <= nextFollowUpMonthEnd) {
@@ -589,10 +592,10 @@ class LeprosyConfirmedDataset(
     fun validateFollowUpDate(selectedDate: Long): String? {
         if (lastFollowUpDateLong == 0L) {
             if (selectedDate < homeVisitDateLong) {
-                return "Follow-up date cannot be before home visit date"
+                return resources.getString(R.string.follow_up_date_cannot_be_before_home_visit_date)
             }
             if (selectedDate > System.currentTimeMillis()) {
-                return "Follow-up date cannot be in the future"
+                return resources.getString(R.string.follow_up_date_cannot_be_in_the_future)
             }
             return null
         }
@@ -605,7 +608,7 @@ class LeprosyConfirmedDataset(
          }*/
 
         if (selectedDate > currentTime) {
-            return "Follow-up date cannot be in the future"
+            return resources.getString(R.string.follow_up_date_cannot_be_in_the_future)
         }
 
         /* if (!isSameOrAfterMonth(selectedDate, nextMonthStart)) {
@@ -629,7 +632,7 @@ class LeprosyConfirmedDataset(
 
     fun validateForm(): String? {
         if (followUpdate.value!!.isBlank()) {
-            return "Follow-up date is required"
+            return resources.getString(R.string.follow_up_date_is_required)
         }
 
         val selectedDate = getLongFromDate(followUpdate.value)
@@ -639,11 +642,11 @@ class LeprosyConfirmedDataset(
         }
 
         if (treatmentStatus.value!!.isBlank()) {
-            return "Treatment status is required"
+            return resources.getString(R.string.treatment_status_is_required)
         }
 
         if (treatmentStatus.value == treatmentStatus.entries?.last() && treatmentEndDate.value!!.isBlank()) {
-            return "Treatment end date is required when treatment status is completed"
+            return resources.getString(R.string.treatment_end_date_is_required_when_treatment_status_is_completed)
         }
 
         return null
@@ -684,7 +687,10 @@ class LeprosyConfirmedDataset(
         val currentTime = System.currentTimeMillis()
 
         if (currentTime < nextMonthStart) {
-            return "Next follow-up will be available from ${getDateFromLong(nextMonthStart)}"
+            return resources.getString(
+                R.string.next_follow_up_will_be_available_from,
+                getDateFromLong(nextMonthStart)
+            )
         }
 
         return null

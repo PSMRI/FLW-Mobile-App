@@ -1,11 +1,28 @@
 package org.piramalswasthya.sakhi.helpers
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.BuildConfig
+import org.piramalswasthya.sakhi.R
 import java.util.concurrent.TimeUnit
 
 class KonstantsTest {
+
+    private val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+
+    @Test
+    fun `other sources sits at position 4 of the exposure dropdown`() {
+        assertEquals(4, Konstants.cbacOtherSourcesPosi)
+    }
+
+    @Test
+    fun `occupational exposure array follows the build flavor`() {
+        val expected = if (isMitanin) R.array.cbac_type_occupational_exposure_mitanin
+        else R.array.cbac_type_occupational_exposure
+        assertEquals(expected, Konstants.cbacOccupationalExposureArrayId)
+    }
 
     // =====================================================
     // Age Range Constants Tests
@@ -285,5 +302,20 @@ class KonstantsTest {
 
     @Test fun `pnc ec gap is between 30 and 60 days`() {
         assertTrue(Konstants.pncEcGap in 30..60)
+    }
+
+    @Test fun `negative blood group positions are the odd entries of the blood group array`() {
+        assertEquals(setOf(1, 3, 5, 7), Konstants.negativeBloodGroupPositions)
+    }
+
+    @Test fun `isNegativeBloodGroup is true only for negative positions`() {
+        (0..7).forEach { position ->
+            assertEquals(position % 2 == 1, Konstants.isNegativeBloodGroup(position))
+        }
+    }
+
+    @Test fun `isNegativeBloodGroup is false for out of range positions`() {
+        assertFalse(Konstants.isNegativeBloodGroup(-1))
+        assertFalse(Konstants.isNegativeBloodGroup(8))
     }
 }

@@ -234,6 +234,30 @@
         <item>নহয়</item>
     </string-array>
 
+    <string-array name="method_of_contraception_for_zero_child">
+        <item>নিজে</item>
+        <item>অন্তৰা বেজী</item>
+        <item>কপাৰ টি (IUCD)</item>
+        <item>কন্ডম</item>
+        <item>মালা এন</item>
+        <item>ছায়া</item>
+        <item>ECP</item>
+        <item>অন্য যেকোনো পদ্ধতি</item>
+    </string-array>
+    <string-array name="method_of_contraception">
+        <item>নিজে</item>
+        <item>অন্তৰা বেজী</item>
+        <item>কপাৰ টি (IUCD)</item>
+        <item>কন্ডম</item>
+        <item>মালা এন</item>
+        <item>ছায়া</item>
+        <item>ECP</item>
+        <item>পুৰুষৰ নিৰ্বাচন</item>
+        <item>নাৰীৰ নিৰ্বাচন</item>
+<!--        <item>MiniLap</item>-->
+        <item>অন্য যেকোনো পদ্ধতি</item>
+    </string-array>
+
     <!--  Post Natal Care -->
     <string name="pnc_period">PNC সময়</string>
     <string name="pnc_visit_date">PNC দৰ্শনীৰ তাৰিখ</string>
@@ -422,5 +446,19 @@
         <item>অক্টোবৰ</item>
         <item>নৱেম্বৰ</item>
         <item>ডিচেম্বৰ</item>
+    </string-array>
+
+    <string-array name="maternal_health_past_illness">
+        <item>একো নাই</item>
+        <item>টিবি (যক্ষ্মা ৰোগ)</item>
+        <item>মধুমেহ</item>
+        <item>উচ্চ ৰক্তচাপ</item>
+        <item>হৃদৰোগ</item>
+        <item>মৃগী</item>
+        <item>যৌন সংক্ৰমণ / প্ৰজনন তন্ত্ৰৰ সংক্ৰমণ</item>
+        <item>হেপাটাইটিছ-বি</item>
+        <item>হাঁপানি</item>
+        <item>চিকেল চেল</item>
+        <item>আন কোনো</item>
     </string-array>
 </resources>

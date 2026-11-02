@@ -487,6 +487,55 @@ class CbacRepoTest : BaseRepositoryTest() {
         coVerify(exactly = 0) { cbacDao.insertAll(any()) }
     }
 
+    @Test
+    fun `pullAndPersistCbacRecord inserts entities whose benId exists locally`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returns
+            response(200, """{"statusCode":200,"data":[{"beneficiaryRegId":5,"vanId":4}]}""")
+        coEvery { benDao.getExistingBenIds(any()) } returns listOf(5L)
+        coEvery { cbacDao.insertAll(any()) } returns Unit
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+        coVerify { cbacDao.insertAll(match { it.size == 1 && it[0].benId == 5L }) }
+    }
+
+    @Test
+    fun `pullAndPersistCbacRecord skips insertAll when no benId matches locally`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returns
+            response(200, """{"statusCode":200,"data":[{"beneficiaryRegId":5,"vanId":4}]}""")
+        coEvery { benDao.getExistingBenIds(any()) } returns emptyList()
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+        coVerify(exactly = 0) { cbacDao.insertAll(any()) }
+    }
+
+    @Test
+    fun `pullAndPersistCbacRecord recurses on 401 then returns 0`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        coEvery { amritApiService.getCbacData(any()) } returnsMany listOf(
+            response(200, """{"statusCode":401}"""),
+            response(200, """{"statusCode":200}""")
+        )
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertEquals(0, cbacRepo.pullAndPersistCbacRecord())
+    }
+
+    @Test
+    fun `pushAndUpdateCbacRecord processes each unprocessed record exactly once`() = runTest {
+        every { prefDao.getLoggedInUser() } returns mockUser()
+        val validRecord = unprocessed(benId = 9L)
+        coEvery { cbacDao.getAllUnprocessedCbac() } returns listOf(validRecord)
+        coEvery { referalDao.getReferalFromBenId(9L) } returns null
+        coEvery { amritApiService.postCbacs(any()) } returns
+            response(200, """{"status":"Success","data":{"visitCode":"1","benVisitID":"2"}}""")
+
+        cbacRepo.pushAndUpdateCbacRecord()
+
+        coVerify(exactly = 1) { amritApiService.postCbacs(any()) }
+    }
+
     // =====================================================
     // Helpers
     // =====================================================

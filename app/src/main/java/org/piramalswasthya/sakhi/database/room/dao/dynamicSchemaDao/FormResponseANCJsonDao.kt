@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 
 @Dao
@@ -12,8 +14,14 @@ interface FormResponseANCJsonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFormResponse(response: ANCFormResponseJsonEntity)
 
+    @Update
+    suspend fun updateFormResponse(response: ANCFormResponseJsonEntity)
+
     @Query("SELECT * FROM ALL_VISIT_HISTORY_ANC WHERE benId = :benId AND visitDate = :visitDate LIMIT 1")
     suspend fun getFormResponse(benId: Long, visitDate: String): ANCFormResponseJsonEntity?
+
+    @Query("SELECT * FROM ALL_VISIT_HISTORY_ANC WHERE id = :id LIMIT 1")
+    suspend fun getFormResponseById(id: Int): ANCFormResponseJsonEntity?
 
     @Query("DELETE FROM ALL_VISIT_HISTORY_ANC WHERE benId = :benId AND visitDay = :visitDay")
     suspend fun deleteFormResponse(benId: Long, visitDay: String)
@@ -26,6 +34,9 @@ interface FormResponseANCJsonDao {
 
     @Query("SELECT * FROM ALL_VISIT_HISTORY_ANC WHERE benId = :benId")
     suspend fun getSyncedVisitsByRchId(benId: Long): List<ANCFormResponseJsonEntity>
+
+    @Query("SELECT * FROM ALL_VISIT_HISTORY_ANC WHERE benId = :benId")
+    fun getVisitsByBenFlow(benId: Long): Flow<List<ANCFormResponseJsonEntity>>
 
     @Query("UPDATE ALL_VISIT_HISTORY_ANC SET benId = :newBenId WHERE benId = :oldBenId")
     suspend fun updateVisitBenId(oldBenId: Long, newBenId: Long)

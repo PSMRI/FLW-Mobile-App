@@ -55,4 +55,17 @@ class AdolescentHealthFormDatasetTest : BaseViewModelTest() {
         runCatching { ds.mapValues(mockk<AdolescentHealthCache>(relaxed = true), 0) }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `updateList sweeps every formId`() = runTest {
+        val ds = AdolescentHealthFormDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { ds.setFirstPage(ben, mockk<AdolescentHealthCache>(relaxed = true)) }
+        for (id in 0..40) {
+            for (index in 0..2) {
+                runCatching { ds.updateList(id, index) }
+            }
+        }
+        assertNotNull(ds.listFlow)
+    }
 }

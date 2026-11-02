@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:id="@+id/layoutGroupHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/table_header_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvGroupName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#001B44"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="IMMUNIZATION" />
+
+        <TextView
+            android:id="@+id/tvGroupClaimCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textColor="#666666"
+            android:textSize="12sp"
+            tools:text="3 claims" />
+
+        <TextView
+            android:id="@+id/tvGroupAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:textColor="#333333"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="₹450" />
+
+        <ImageView
+            android:id="@+id/imgGroupExpand"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_arrow_drop_down"
+            app:tint="#666666" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGroupActivities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_activity" />
+
+</LinearLayout>

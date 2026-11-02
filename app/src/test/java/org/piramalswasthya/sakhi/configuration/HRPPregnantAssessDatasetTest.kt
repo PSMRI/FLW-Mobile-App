@@ -60,4 +60,17 @@ class HRPPregnantAssessDatasetTest : BaseViewModelTest() {
         runCatching { ds.getIndexOfEdd() }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `updateList sweeps every formId`() = runTest {
+        val ds = HRPPregnantAssessDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { ds.setUpPage(ben, mockk<HRPPregnantAssessCache>(relaxed = true)) }
+        for (id in 0..30) {
+            for (index in 0..2) {
+                runCatching { ds.updateList(id, index) }
+            }
+        }
+        assertNotNull(ds.listFlow)
+    }
 }

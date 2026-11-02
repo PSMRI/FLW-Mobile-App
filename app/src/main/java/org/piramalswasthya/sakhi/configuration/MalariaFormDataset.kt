@@ -334,7 +334,7 @@ class MalariaFormDataset(
             visitId = 0
             caseStatus.value = null
         } else {
-            dateOfCase.value = getDateFromLong(saved.caseDate)
+            dateOfCase.value = getDateFromLong(saved.screeningDate)
             followUpdate.value = getDateFromLong(saved.followUpDate)
             visitId = saved.visitId
             val entries = resources.getStringArray(R.array.test_type)
@@ -402,9 +402,13 @@ class MalariaFormDataset(
                 ?: resources.getStringArray(R.array.positive_negative)[2]
 
 
-            if (saved.malariaSlideTestType != 0) {
-                slideTestOptions.value = resources.getStringArray(R.array.pf_pv)[saved.malariaSlideTestType!!-1]
 
+            saved.malariaSlideTestType?.let { type ->
+                val options = resources.getStringArray(R.array.pf_pv)
+
+                if (type in 1..options.size) {
+                    slideTestOptions.value = options[type - 1]
+                }
             }
             beneficiaryStatus.value =
                 getLocalValueInArray(beneficiaryStatus.arrayId, saved.beneficiaryStatus)

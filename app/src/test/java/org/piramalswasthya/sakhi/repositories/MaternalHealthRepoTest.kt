@@ -2,31 +2,40 @@ package org.piramalswasthya.sakhi.repositories
 
 import android.app.Application
 import android.content.res.Resources
+import androidx.work.WorkManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.json.JSONException
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.base.BaseRepositoryTest
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
+import org.piramalswasthya.sakhi.database.room.dao.HrpDao
 import org.piramalswasthya.sakhi.database.room.dao.MaternalHealthDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.ANCPost
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.BenRegGen
+import org.piramalswasthya.sakhi.model.HRPPregnantAssessCache
 import org.piramalswasthya.sakhi.model.PregnantWomanAncCache
 import org.piramalswasthya.sakhi.model.PregnantWomanRegistrationCache
 import org.piramalswasthya.sakhi.model.PwrPost
@@ -34,6 +43,7 @@ import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import retrofit2.Response
+import java.net.SocketTimeoutException
 
 /**
  * Unit tests for [MaternalHealthRepo]. Consolidated from the previously separate
@@ -559,6 +569,37 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `processNewPwr marks the record unsynced and continues when beneficiary is missing`() = runTest {
+        loggedIn()
+        val record = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { record.benId } returns 101L
+        coEvery { maternalHealthDao.getAllUnprocessedPWRs() } returns listOf(record)
+        coEvery { benDao.getBen(101L) } returns null
+        coEvery { maternalHealthDao.updatePwr(any()) } returns Unit
+
+        assertTrue(repo.processNewPwr())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+        coVerify(atLeast = 1) { maternalHealthDao.updatePwr(record) }
+    }
+
+    @Test
+    fun `processNewPwr marks the record unsynced when the upload fails`() = runTest {
+        loggedIn()
+        val record = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        every { record.benId } returns 102L
+        every { record.asPwrPost() } returns mockk<PwrPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedPWRs() } returns listOf(record)
+        coEvery { benDao.getBen(102L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updatePwr(any()) } returns Unit
+        coEvery { amritApiService.postPwrForm(any()) } returns jsonResponse("{}", code = 500)
+
+        assertTrue(repo.processNewPwr())
+
+        verify { record.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
     fun `ancDueCount flow val is built at construction`() {
         assertNotNull(repo.ancDueCount)
     }
@@ -571,10 +612,111 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
             benId = 999L,
             visitNumber = 1,
             isDelivered = false,
-            userName = "asha"
+            userName = "asha",
+            delivaryDate = 0L
         )
 
         coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) }
+    }
+
+    private fun mockWorkManager() {
+        mockkObject(WorkManager.Companion)
+        every { WorkManager.getInstance(any()) } returns mockk(relaxed = true)
+    }
+
+    @Test
+    fun `saveDeliveryStatusFromList creates new anc cache and skips ben update when not delivered`() = runTest {
+        mockWorkManager()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(10L) } returns ben
+        coEvery { maternalHealthDao.getSavedRecord(10L, 2) } returns null
+        val savedSlot = slot<PregnantWomanAncCache>()
+        coEvery { maternalHealthDao.saveRecord(capture(savedSlot)) } returns Unit
+
+        repo.saveDeliveryStatusFromList(
+            benId = 10L,
+            visitNumber = 2,
+            isDelivered = false,
+            userName = "asha1",
+            delivaryDate = 0L
+        )
+
+        assertEquals("N", savedSlot.captured.processed)
+        assertEquals(SyncState.UNSYNCED, savedSlot.captured.syncState)
+        assertEquals(false, savedSlot.captured.pregnantWomanDelivered)
+        coVerify(exactly = 0) { benRepo.updateRecord(any()) }
+    }
+
+    @Test
+    fun `saveDeliveryStatusFromList updates existing anc cache and marks ben delivered when processed is not N`() = runTest {
+        mockWorkManager()
+        every { mockResources.getStringArray(R.array.nbr_reproductive_status_array2) } returns
+                arrayOf("Not Pregnant", "Pregnant", "Postnatal Mother")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.processed } returns "P"
+        coEvery { benDao.getBen(20L) } returns ben
+        val existingAncCache = PregnantWomanAncCache(
+            benId = 20L,
+            visitNumber = 1,
+            createdBy = "asha2",
+            updatedBy = "asha2",
+            syncState = SyncState.SYNCED,
+            frontFilePath = "",
+            backFilePath = "",
+            processed = "P"
+        )
+        coEvery { maternalHealthDao.getSavedRecord(20L, 1) } returns existingAncCache
+        coEvery { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { benRepo.updateRecord(any()) } returns Unit
+
+        repo.saveDeliveryStatusFromList(
+            benId = 20L,
+            visitNumber = 1,
+            isDelivered = true,
+            userName = "asha2",
+            delivaryDate = 0L
+        )
+
+        assertEquals("U", existingAncCache.processed)
+        assertEquals(true, existingAncCache.pregnantWomanDelivered)
+        assertEquals(SyncState.UNSYNCED, existingAncCache.syncState)
+        verify { ben.processed = "U" }
+        coVerify(exactly = 1) { benRepo.updateRecord(ben) }
+    }
+
+    @Test
+    fun `saveDeliveryStatusFromList leaves ben processed as N when already N even though delivered`() = runTest {
+        mockWorkManager()
+        every { mockResources.getStringArray(R.array.nbr_reproductive_status_array2) } returns
+                arrayOf("Not Pregnant", "Pregnant", "Postnatal Mother")
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.processed } returns "N"
+        coEvery { benDao.getBen(30L) } returns ben
+        val existingAncCache = PregnantWomanAncCache(
+            benId = 30L,
+            visitNumber = 3,
+            createdBy = "asha3",
+            updatedBy = "asha3",
+            syncState = SyncState.SYNCED,
+            frontFilePath = "",
+            backFilePath = "",
+            processed = "N"
+        )
+        coEvery { maternalHealthDao.getSavedRecord(30L, 3) } returns existingAncCache
+        coEvery { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { benRepo.updateRecord(any()) } returns Unit
+
+        repo.saveDeliveryStatusFromList(
+            benId = 30L,
+            visitNumber = 3,
+            isDelivered = true,
+            userName = "asha3",
+            delivaryDate = 0L
+        )
+
+        assertEquals("N", existingAncCache.processed)
+        verify(exactly = 0) { ben.processed = "U" }
+        coVerify(exactly = 1) { benRepo.updateRecord(ben) }
     }
 
     // ---------------- pull non-200 http fall-through ----------------
@@ -604,6 +746,55 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
         // and swallowed -> bad-response -> false.
         val json = """{"errorMessage":""}"""
         coEvery { amritApiService.postPwrForm(any()) } returns jsonResponse(json)
+
+        assertFalse(repo.postPwrToAmritServer(mutableSetOf(mockk<PwrPost>(relaxed = true))))
+    }
+
+    // ---------------- postPwrToAmritServer additional branch coverage ----------------
+
+    @Test
+    fun `postPwrToAmritServer returns false when response body is null`() = runTest {
+        loggedIn()
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.code() } returns 200
+        every { response.body() } returns null
+        coEvery { amritApiService.postPwrForm(any()) } returns response
+
+        assertFalse(repo.postPwrToAmritServer(mutableSetOf(mockk<PwrPost>(relaxed = true))))
+    }
+
+    @Test
+    fun `postPwrToAmritServer retries on SocketTimeoutException and succeeds on second attempt`() = runTest {
+        loggedIn()
+        var callCount = 0
+        val successJson = """{"errorMessage":"","statusCode":200}"""
+        coEvery { amritApiService.postPwrForm(any()) } coAnswers {
+            callCount++
+            if (callCount == 1) throw SocketTimeoutException("timed out")
+            jsonResponse(successJson)
+        }
+
+        val result = repo.postPwrToAmritServer(mutableSetOf(mockk<PwrPost>(relaxed = true)))
+
+        assertTrue(result)
+        coVerify(exactly = 2) { amritApiService.postPwrForm(any()) }
+    }
+
+    @Test
+    fun `postPwrToAmritServer returns false after exhausting retries on persistent SocketTimeoutException`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.postPwrForm(any()) } throws SocketTimeoutException("timed out")
+
+        val result = repo.postPwrToAmritServer(mutableSetOf(mockk<PwrPost>(relaxed = true)), retryCount = 1)
+
+        assertFalse(result)
+        coVerify(exactly = 2) { amritApiService.postPwrForm(any()) }
+    }
+
+    @Test
+    fun `postPwrToAmritServer returns false when postPwrForm throws JSONException directly`() = runTest {
+        loggedIn()
+        coEvery { amritApiService.postPwrForm(any()) } throws JSONException("bad json")
 
         assertFalse(repo.postPwrToAmritServer(mutableSetOf(mockk<PwrPost>(relaxed = true))))
     }
@@ -639,5 +830,376 @@ class MaternalHealthRepoTest : BaseRepositoryTest() {
 
         assertTrue(repo.processNewAncVisit())
         coVerify(atLeast = 1) { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) }
+    }
+
+    // ---------------- postDataToAmritServer (ANC) token-refresh / retry branches ----------------
+
+    @Test
+    fun `processNewAncVisit marks unsynced when 5002 token refresh succeeds because the retry throw is caught as IOException`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        val expired = """{"statusCode":5002,"errorMessage":"expired"}"""
+        coEvery { amritApiService.postAncForm(any()) } returns jsonResponse(expired)
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns true
+
+        assertTrue(repo.processNewAncVisit())
+
+        coVerify(exactly = 1) { amritApiService.postAncForm(any()) }
+        coVerify { userRepo.refreshTokenTmc("asha", "pwd") }
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewAncVisit marks unsynced when ANC token refresh fails on 401`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { amritApiService.postAncForm(any()) } returns
+                jsonResponse("""{"statusCode":401,"errorMessage":"expired"}""")
+        coEvery { userRepo.refreshTokenTmc(any(), any()) } returns false
+
+        assertTrue(repo.processNewAncVisit())
+
+        coVerify(exactly = 1) { amritApiService.postAncForm(any()) }
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewAncVisit marks unsynced when ANC push response body is null`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        val response = mockk<Response<ResponseBody>>(relaxed = true)
+        every { response.code() } returns 200
+        every { response.body() } returns null
+        coEvery { amritApiService.postAncForm(any()) } returns response
+
+        assertTrue(repo.processNewAncVisit())
+
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewAncVisit marks unsynced when statusCode key is json null`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { amritApiService.postAncForm(any()) } returns
+                jsonResponse("""{"statusCode":null,"errorMessage":""}""")
+
+        assertTrue(repo.processNewAncVisit())
+
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewAncVisit exhausts retries when ANC push keeps timing out`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { amritApiService.postAncForm(any()) } throws SocketTimeoutException()
+
+        assertTrue(repo.processNewAncVisit())
+
+        coVerify(exactly = 4) { amritApiService.postAncForm(any()) }
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    @Test
+    fun `processNewAncVisit marks synced when ANC push retries once after timeout then succeeds`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        var callCount = 0
+        coEvery { amritApiService.postAncForm(any()) } coAnswers {
+            callCount++
+            if (callCount == 1) throw SocketTimeoutException("timed out")
+            jsonResponse("""{"statusCode":200,"errorMessage":""}""")
+        }
+
+        assertTrue(repo.processNewAncVisit())
+
+        coVerify(exactly = 2) { amritApiService.postAncForm(any()) }
+        verify { ancRecord.syncState = SyncState.SYNCED }
+    }
+
+    // ---------------- postDataToAmritServer (ANC) outer JSONException branch ----------------
+
+    @Test
+    fun `processNewAncVisit marks unsynced when postAncForm throws JSONException directly`() = runTest {
+        loggedIn()
+        val ancRecord = mockk<PregnantWomanAncCache>(relaxed = true)
+        every { ancRecord.benId } returns 100L
+        every { ancRecord.asPostModel() } returns mockk<ANCPost>(relaxed = true)
+        coEvery { maternalHealthDao.getAllUnprocessedAncVisits() } returns listOf(ancRecord)
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+        coEvery { maternalHealthDao.updateANC(any<PregnantWomanAncCache>()) } returns Unit
+        coEvery { amritApiService.postAncForm(any()) } throws JSONException("bad json")
+
+        assertTrue(repo.processNewAncVisit())
+
+        coVerify(exactly = 1) { amritApiService.postAncForm(any()) }
+        verify { ancRecord.syncState = SyncState.UNSYNCED }
+    }
+
+    // ---------------- savePwrCacheFromResponse / isHighRisk via getPwrDetailsFromServer ----------------
+
+    private fun pwrPullResponse(dataArrayJson: String): Response<ResponseBody> {
+        val outer = JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataArrayJson)
+        return jsonResponse(outer.toString())
+    }
+
+    private fun ancPullResponse(dataArrayJson: String): Response<ResponseBody> {
+        val outer = JSONObject()
+        outer.put("statusCode", 200)
+        outer.put("errorMessage", "")
+        outer.put("data", dataArrayJson)
+        return jsonResponse(outer.toString())
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer saves new pwr cache and creates high-risk assess when none exists`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":501,"createdDate":"2024-01-01","isRegistered":true,"rhNegative":"Yes","homeDelivery":"No","badObstetric":"No","isFirstPregnancyTest":true,"lmpDate":"2024-01-01","createdBy":"asha","updatedBy":"asha","isActive":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(501L) } returns ben
+        coEvery { maternalHealthDao.getSavedRecord(501L) } returns null
+        val hrpDao = mockk<HrpDao>(relaxed = true)
+        every { database.hrpDao } returns hrpDao
+        every { hrpDao.getPregnantAssess(501L) } returns null
+        coEvery { maternalHealthDao.saveRecord(any<PregnantWomanRegistrationCache>()) } returns Unit
+        val assessSlot = slot<HRPPregnantAssessCache>()
+        every { hrpDao.saveRecord(capture(assessSlot)) } returns Unit
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify { maternalHealthDao.saveRecord(any<PregnantWomanRegistrationCache>()) }
+        assertEquals(501L, assessSlot.captured.benId)
+        assertTrue(assessSlot.captured.isHighRisk)
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer updates existing assess as high-risk for first-time pregnancy flag and skips duplicate pwr save`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":502,"createdDate":"2024-01-01","isRegistered":true,"rhNegative":"No","homeDelivery":"No","badObstetric":"No","isFirstPregnancyTest":false,"lmpDate":"2024-01-01","createdBy":"asha","updatedBy":"asha","isActive":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(502L) } returns ben
+        val existingCache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        coEvery { maternalHealthDao.getSavedRecord(502L) } returns existingCache
+        val existingAssess = HRPPregnantAssessCache(benId = 502L, isHighRisk = false)
+        val hrpDao = mockk<HrpDao>(relaxed = true)
+        every { database.hrpDao } returns hrpDao
+        every { hrpDao.getPregnantAssess(502L) } returns existingAssess
+        every { hrpDao.saveRecord(any<HRPPregnantAssessCache>()) } returns Unit
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanRegistrationCache>()) }
+        verify { hrpDao.saveRecord(existingAssess) }
+        assertTrue(existingAssess.isHighRisk)
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer keeps assess as not high-risk when all risk flags are negative`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":507,"createdDate":"2024-01-01","isRegistered":true,"rhNegative":"No","homeDelivery":"No","badObstetric":"No","isFirstPregnancyTest":true,"lmpDate":"2024-01-01","createdBy":"asha","updatedBy":"asha","isActive":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(507L) } returns ben
+        val existingCache = mockk<PregnantWomanRegistrationCache>(relaxed = true)
+        coEvery { maternalHealthDao.getSavedRecord(507L) } returns existingCache
+        val existingAssess = HRPPregnantAssessCache(benId = 507L, isHighRisk = false)
+        val hrpDao = mockk<HrpDao>(relaxed = true)
+        every { database.hrpDao } returns hrpDao
+        every { hrpDao.getPregnantAssess(507L) } returns existingAssess
+        every { hrpDao.saveRecord(any<HRPPregnantAssessCache>()) } returns Unit
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        assertFalse(existingAssess.isHighRisk)
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer skips processing when beneficiary does not exist`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":503,"createdDate":"2024-01-01","isRegistered":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+        coEvery { benDao.getBen(503L) } returns null
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanRegistrationCache>()) }
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer skips record with null createdDate`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":504,"isRegistered":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { benDao.getBen(504L) }
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer returns 0 when pwr data payload is malformed`() = runTest {
+        loggedInUser()
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse("not-a-json-array")
+
+        assertEquals(0, repo.getPwrDetailsFromServer())
+    }
+
+    @Test
+    fun `getPwrDetailsFromServer skips pwr cache save when isRegistered is false but still creates assess`() = runTest {
+        loggedInUser()
+        val pwrArrayJson = """[{"benId":508,"createdDate":"2024-01-01","isRegistered":false,"rhNegative":"No","homeDelivery":"No","badObstetric":"No","isFirstPregnancyTest":true,"lmpDate":"2024-01-01","createdBy":"asha","updatedBy":"asha","isActive":true}]"""
+        coEvery { amritApiService.getPwrData(any()) } returns pwrPullResponse(pwrArrayJson)
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(508L) } returns ben
+        coEvery { maternalHealthDao.getSavedRecord(508L) } returns null
+        val hrpDao = mockk<HrpDao>(relaxed = true)
+        every { database.hrpDao } returns hrpDao
+        every { hrpDao.getPregnantAssess(508L) } returns null
+        every { hrpDao.saveRecord(any<HRPPregnantAssessCache>()) } returns Unit
+
+        val result = repo.getPwrDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanRegistrationCache>()) }
+        verify { hrpDao.saveRecord(any<HRPPregnantAssessCache>()) }
+    }
+
+    // ---------------- saveANCCacheFromResponse via getAncVisitDetailsFromServer ----------------
+
+    @Test
+    fun `getAncVisitDetailsFromServer saves new anc cache and skips ben update when not delivered`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":601,"ancVisit":1,"isActive":true,"createdDate":"2024-01-01","isBabyDelivered":false,"createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+
+        val ben = mockk<BenRegCache>(relaxed = true)
+        coEvery { benDao.getBen(601L) } returns ben
+        coEvery { maternalHealthDao.getSavedRecord(601L, 1) } returns null
+        coEvery { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) } returns Unit
+
+        val result = repo.getAncVisitDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) }
+        coVerify(exactly = 0) { benDao.updateBen(any()) }
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer marks ben as postnatal mother when baby delivered and status not already set`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":602,"ancVisit":2,"isActive":true,"createdDate":"2024-01-01","isBabyDelivered":true,"createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+
+        val genDetails = BenRegGen(reproductiveStatusId = 1)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns genDetails
+        coEvery { benDao.getBen(602L) } returns ben
+        val existingCache = mockk<PregnantWomanAncCache>(relaxed = true)
+        coEvery { maternalHealthDao.getSavedRecord(602L, 2) } returns existingCache
+        coEvery { benDao.updateBen(any()) } returns Unit
+
+        val result = repo.getAncVisitDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) }
+        coVerify { benDao.updateBen(ben) }
+        assertEquals("Postnatal Mother", genDetails.reproductiveStatus)
+        assertEquals(3, genDetails.reproductiveStatusId)
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer skips ben update when already marked postnatal mother`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":603,"ancVisit":3,"isActive":true,"createdDate":"2024-01-01","isBabyDelivered":true,"createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+
+        val genDetails = BenRegGen(reproductiveStatusId = 3)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns genDetails
+        coEvery { benDao.getBen(603L) } returns ben
+        coEvery { maternalHealthDao.getSavedRecord(603L, 3) } returns mockk(relaxed = true)
+
+        val result = repo.getAncVisitDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { benDao.updateBen(any()) }
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer skips processing when beneficiary does not exist`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":604,"ancVisit":1,"isActive":true,"createdDate":"2024-01-01","createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+        coEvery { benDao.getBen(604L) } returns null
+
+        val result = repo.getAncVisitDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { maternalHealthDao.saveRecord(any<PregnantWomanAncCache>()) }
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer skips record with null createdDate`() = runTest {
+        loggedInUser()
+        val ancArrayJson = """[{"benId":605,"ancVisit":1,"isActive":true,"createdBy":"asha","updatedBy":"asha"}]"""
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse(ancArrayJson)
+
+        val result = repo.getAncVisitDetailsFromServer()
+
+        assertEquals(1, result)
+        coVerify(exactly = 0) { benDao.getBen(605L) }
+    }
+
+    @Test
+    fun `getAncVisitDetailsFromServer returns 0 when anc data payload is malformed`() = runTest {
+        loggedInUser()
+        coEvery { amritApiService.getAncVisitsData(any()) } returns ancPullResponse("not-a-json-array")
+
+        assertEquals(0, repo.getAncVisitDetailsFromServer())
     }
 }

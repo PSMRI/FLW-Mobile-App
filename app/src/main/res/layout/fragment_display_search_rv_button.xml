@@ -208,6 +208,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/filterText"
         android:layout_width="match_parent"

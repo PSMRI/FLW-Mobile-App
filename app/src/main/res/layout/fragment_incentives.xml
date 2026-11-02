@@ -107,29 +107,29 @@
             </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/from_to_date_range"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/ll_date_range"
-        android:orientation="horizontal"
         android:padding="@dimen/padding_normal"
         >
         <LinearLayout
             android:id="@+id/from_date_ll"
             android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/fetch_data_ll"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_edit_text1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_weight="2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin_normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_nullable"
                 android:hint="Select Month">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -146,14 +146,18 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/fetch_data_ll"
             android:layout_width="0dp"
-            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
             android:paddingVertical="@dimen/padding_normal"
-            android:layout_height="wrap_content">
+            app:layout_constraintHorizontal_weight="1.5"
+            app:layout_constraintStart_toEndOf="@id/from_date_ll"
+            app:layout_constraintEnd_toStartOf="@id/claimlayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fetch_data"
-                android:layout_width="0dp"
-                android:layout_weight="2"
+                android:layout_width="match_parent"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_height="wrap_content"
@@ -164,15 +168,18 @@
         <LinearLayout
             android:id="@+id/claimlayout"
             android:layout_width="0dp"
-            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
             android:paddingVertical="@dimen/padding_normal"
             android:layout_marginStart="5dp"
             android:visibility="gone"
-            android:layout_height="wrap_content">
+            app:layout_constraintHorizontal_weight="1.5"
+            app:layout_constraintStart_toEndOf="@id/fetch_data_ll"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/claimbtn"
-                android:layout_width="0dp"
-                android:layout_weight="2"
+                android:layout_width="match_parent"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_height="wrap_content"
@@ -180,7 +187,7 @@
                 >
             </com.google.android.material.button.MaterialButton>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/claimStatus"
         android:layout_width="match_parent"

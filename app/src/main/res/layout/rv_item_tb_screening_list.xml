@@ -71,6 +71,15 @@
                         tools:text="Hello Meister" />
 
                     <ImageView
+                        android:id="@+id/status"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:contentDescription="@string/iv_death_indicator"
+                        android:src="@drawable/ic_verified" />
+
+                    <ImageView
                         android:id="@+id/iv_isDeath"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -88,7 +97,8 @@
                         android:layout_marginHorizontal="@dimen/padding_small"
                         android:contentDescription="@string/iv_sync_state_tv"
                         app:syncState="@{benWithTb.tb.syncState}"
-                        tools:src="@drawable/ic_synced" />
+                        tools:src="@drawable/cloud_upload"
+                        app:iconTint="@android:color/holo_green_dark" />
 
                 </LinearLayout>
 
@@ -284,6 +294,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/RCHlayout"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -305,6 +316,30 @@
                                 android:textColor="?attr/colorOnPrimary"
                                 tools:text="511616166" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/nikshayLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            android:padding="@dimen/padding_small">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nikshay_id"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                                android:textColor="?attr/colorOnPrimary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{benWithTb.tbSuspected.nikshayId}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorOnPrimary"
+                                tools:text="511616166" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -317,6 +352,17 @@
 
                     </LinearLayout>
                 </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/riskfactRV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
+                    >
+
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_form_tb"

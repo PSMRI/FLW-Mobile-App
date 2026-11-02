@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -628,6 +629,269 @@ class TBRepoTest : BaseRepositoryTest() {
         } catch (e: IllegalStateException) {
             assertTrue(e.message?.contains("No user logged in") == true)
         }
+    }
+
+    // =====================================================
+    // pull payload parsing (saveTB*CacheFromResponse)
+    // =====================================================
+
+    private fun envelope(inner: String, statusCode: Int = 200, errorMessage: String = "") =
+        JSONObject()
+            .put("statusCode", statusCode)
+            .put("errorMessage", errorMessage)
+            .put("data", inner)
+            .toString()
+
+    private val screeningInner =
+        """{"tbScreeningList":[{"id":1,"benId":100,"visitDate":"Jul 22, 2023 8:17:23 AM","coughMoreThan2Weeks":true,"bloodInSputum":false}]}"""
+
+    private val suspectedInner =
+        """{"tbSuspectedList":[{"id":1,"benId":100,"visitDate":"Jul 22, 2023 8:17:23 AM","isSputumCollected":true,"nikshayId":"NK1"}]}"""
+
+    private val confirmedInner =
+        """{"tbConfirmedCases":[{"id":1,"benId":100,"regimenType":"DS","treatmentStartDate":"2026-01-05","followUpDate":"2026-02-05"}]}"""
+
+    @Test
+    fun `screening pull saves a parsed record for a known beneficiary`() = runTest {
+        loggedIn()
+        coEvery { api.getTBScreeningData(any()) } returns resp200(envelope(screeningInner))
+        coEvery { tbDao.getTbScreening(100L, any(), any()) } returns null
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getTBScreeningDetailsFromServer())
+
+        coVerify { tbDao.saveTbScreening(any<TBScreeningCache>()) }
+    }
+
+    @Test
+    fun `screening pull keeps an already stored record untouched`() = runTest {
+        loggedIn()
+        coEvery { api.getTBScreeningData(any()) } returns resp200(envelope(screeningInner))
+        coEvery { tbDao.getTbScreening(100L, any(), any()) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getTBScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbScreening(any<TBScreeningCache>()) }
+    }
+
+    @Test
+    fun `screening pull skips records for unknown beneficiaries`() = runTest {
+        loggedIn()
+        coEvery { api.getTBScreeningData(any()) } returns resp200(envelope(screeningInner))
+        coEvery { tbDao.getTbScreening(100L, any(), any()) } returns null
+        coEvery { benDao.getBen(100L) } returns null
+
+        assertEquals(1, repo.getTBScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbScreening(any<TBScreeningCache>()) }
+    }
+
+    @Test
+    fun `screening pull skips records without a visit date`() = runTest {
+        loggedIn()
+        val inner = """{"tbScreeningList":[{"id":1,"benId":100}]}"""
+        coEvery { api.getTBScreeningData(any()) } returns resp200(envelope(inner))
+
+        assertEquals(1, repo.getTBScreeningDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbScreening(any<TBScreeningCache>()) }
+    }
+
+    @Test
+    fun `screening pull returns 0 when the nested payload is malformed`() = runTest {
+        loggedIn()
+        coEvery { api.getTBScreeningData(any()) } returns
+            resp200("""{"statusCode":200,"errorMessage":"","data":{}}""")
+
+        assertEquals(0, repo.getTBScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `screening pull returns -1 on status 5000 with another message`() = runTest {
+        loggedIn()
+        coEvery { api.getTBScreeningData(any()) } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Something else"}""")
+
+        assertEquals(-1, repo.getTBScreeningDetailsFromServer())
+    }
+
+    @Test
+    fun `suspected pull saves a parsed record for a known beneficiary`() = runTest {
+        loggedIn()
+        coEvery { api.getTBSuspectedData(any()) } returns resp200(envelope(suspectedInner))
+        coEvery { tbDao.getTbSuspected(100L, any(), any()) } returns null
+        coEvery { benDao.getBen(100L) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getTbSuspectedDetailsFromServer())
+
+        coVerify { tbDao.saveTbSuspected(any<TBSuspectedCache>()) }
+    }
+
+    @Test
+    fun `suspected pull keeps an already stored record untouched`() = runTest {
+        loggedIn()
+        coEvery { api.getTBSuspectedData(any()) } returns resp200(envelope(suspectedInner))
+        coEvery { tbDao.getTbSuspected(100L, any(), any()) } returns mockk(relaxed = true)
+
+        assertEquals(1, repo.getTbSuspectedDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbSuspected(any<TBSuspectedCache>()) }
+    }
+
+    @Test
+    fun `suspected pull skips records for unknown beneficiaries`() = runTest {
+        loggedIn()
+        coEvery { api.getTBSuspectedData(any()) } returns resp200(envelope(suspectedInner))
+        coEvery { tbDao.getTbSuspected(100L, any(), any()) } returns null
+        coEvery { benDao.getBen(100L) } returns null
+
+        assertEquals(1, repo.getTbSuspectedDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbSuspected(any<TBSuspectedCache>()) }
+    }
+
+    @Test
+    fun `suspected pull returns 0 when the nested payload is malformed`() = runTest {
+        loggedIn()
+        coEvery { api.getTBSuspectedData(any()) } returns
+            resp200("""{"statusCode":200,"errorMessage":"","data":{}}""")
+
+        assertEquals(0, repo.getTbSuspectedDetailsFromServer())
+    }
+
+    @Test
+    fun `suspected pull returns -1 on status 5000 with another message`() = runTest {
+        loggedIn()
+        coEvery { api.getTBSuspectedData(any()) } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Something else"}""")
+
+        assertEquals(-1, repo.getTbSuspectedDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull saves every parsed treatment record`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } returns resp200(envelope(confirmedInner))
+
+        assertEquals(1, repo.getTbConfirmedDetailsFromServer())
+
+        coVerify { tbDao.saveTbConfirmed(any<TBConfirmedTreatmentCache>()) }
+    }
+
+    @Test
+    fun `confirmed pull keeps going when one record cannot be stored`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } returns resp200(envelope(confirmedInner))
+        coEvery { tbDao.saveTbConfirmed(any<TBConfirmedTreatmentCache>()) } throws
+            RuntimeException("constraint")
+
+        assertEquals(1, repo.getTbConfirmedDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull tolerates a malformed nested payload`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } returns
+            resp200("""{"statusCode":200,"errorMessage":"","data":"not-json"}""")
+
+        assertEquals(1, repo.getTbConfirmedDetailsFromServer())
+
+        coVerify(exactly = 0) { tbDao.saveTbConfirmed(any<TBConfirmedTreatmentCache>()) }
+    }
+
+    @Test
+    fun `confirmed pull returns -1 on status 5000 with another message`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } returns
+            resp200("""{"statusCode":5000,"errorMessage":"Something else"}""")
+
+        assertEquals(-1, repo.getTbConfirmedDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull returns -1 on an unexpected failure`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } throws RuntimeException("boom")
+
+        assertEquals(-1, repo.getTbConfirmedDetailsFromServer())
+    }
+
+    @Test
+    fun `confirmed pull returns -1 on 401 which is not handled`() = runTest {
+        loggedIn()
+        coEvery { api.getTBConfirmedData() } returns
+            resp200("""{"statusCode":401,"errorMessage":""}""")
+
+        assertEquals(-1, repo.getTbConfirmedDetailsFromServer())
+    }
+
+    // =====================================================
+    // push chunking across more than one chunk
+    // =====================================================
+
+    @Test
+    fun `pushUnSyncedRecords splits tb screening records into chunks of twenty`() = runTest {
+        loggedIn()
+        val caches = List(25) { mockk<TBScreeningCache>(relaxed = true) }
+        coEvery { tbDao.getTBScreening(SyncState.UNSYNCED) } returns caches
+        coEvery { tbDao.getTbSuspected(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { tbDao.getTbConfirmed(SyncState.UNSYNCED) } returns emptyList()
+        coEvery { api.saveTBScreeningData(any()) } returns resp(200, """{"statusCode":200}""")
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 2) { api.saveTBScreeningData(any()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords tolerates a null body on the tb screening push`() = runTest {
+        loggedIn()
+        onlyScreening(mockk(relaxed = true))
+        coEvery { api.saveTBScreeningData(any()) } returns resp(200, null)
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { tbDao.saveTbScreening(any<TBScreeningCache>()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords tolerates a null body on the tb suspected push`() = runTest {
+        loggedIn()
+        onlySuspected(mockk(relaxed = true))
+        coEvery { api.saveTBSuspectedData(any()) } returns resp(200, null)
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { tbDao.saveTbSuspected(any<TBSuspectedCache>()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords tolerates a null body on the tb confirmed push`() = runTest {
+        loggedIn()
+        onlyConfirmed(mockk(relaxed = true))
+        coEvery { api.saveTBConfirmedData(any()) } returns resp(200, null)
+
+        assertTrue(repo.pushUnSyncedRecords())
+
+        coVerify(exactly = 0) { tbDao.saveTbConfirmed(any<TBConfirmedTreatmentCache>()) }
+    }
+
+    @Test
+    fun `pushUnSyncedRecords keeps tb suspected unsynced when the push throws`() = runTest {
+        loggedIn()
+        onlySuspected(mockk(relaxed = true))
+        coEvery { api.saveTBSuspectedData(any()) } throws RuntimeException("boom")
+
+        assertTrue(repo.pushUnSyncedRecords())
+    }
+
+    @Test
+    fun `pushUnSyncedRecords keeps tb confirmed unsynced when the push throws`() = runTest {
+        loggedIn()
+        onlyConfirmed(mockk(relaxed = true))
+        coEvery { api.saveTBConfirmedData(any()) } throws RuntimeException("boom")
+
+        assertTrue(repo.pushUnSyncedRecords())
     }
 
 }

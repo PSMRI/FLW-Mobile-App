@@ -177,7 +177,12 @@ android {
         unitTests.all {
             it.maxHeapSize = "2560m"
             it.jvmArgs "-XX:MaxMetaspaceSize=1024m"
-            it.forkEvery = 80
+            it.forkEvery = (project.findProperty("testForkEvery") ?: 80).toString().toInteger()
+            it.maxParallelForks = (project.findProperty("testMaxParallelForks") ?: 2).toString().toInteger()
+            it.testLogging {
+                events "failed", "standardError"
+                exceptionFormat = "full"
+            }
         }
     }
 
@@ -320,6 +325,8 @@ dependencies {
     implementation 'com.google.android.play:app-update:2.1.0'
 
     implementation "net.zetetic:sqlcipher-android:4.13.0"
+    // Recovers native libs the PackageManager failed to extract (UnsatisfiedLinkError on load)
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
     implementation "androidx.sqlite:sqlite:2.4.0"
 }
 

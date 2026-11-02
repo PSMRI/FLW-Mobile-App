@@ -1,11 +1,14 @@
 package org.piramalswasthya.sakhi.network
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.ReferralRequest
 
 /**
  * Extra coverage for JsonAdapters.kt mappers/helpers not exercised by
@@ -96,6 +99,168 @@ class JsonAdaptersTest {
 
     @Test fun `LeprosyFollowUpDTO toCache parses valid date to positive long`() {
         assertTrue(leprosyFollowUpDto().toCache().createdDate > 0L)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache maps lastModDate to positive long`() {
+        assertTrue(leprosyFollowUpDto().toCache().lastModDate > 0L)
+    }
+
+    @Test fun `LeprosyFollowUpDTO constructor applies default values for optional fields`() {
+        val dto = leprosyFollowUpDto()
+        assertNull(dto.treatmentStatus)
+        assertNull(dto.mdtBlisterPackReceived)
+        assertNull(dto.remarks)
+        assertNull(dto.leprosySymptoms)
+        assertNull(dto.typeOfLeprosy)
+        assertNull(dto.referToName)
+        assertNull(dto.mdtBlisterPackRecived)
+        assertEquals(1, dto.leprosySymptomsPosition)
+        assertEquals("Visit -1", dto.visitLabel)
+        assertEquals("", dto.leprosyStatus)
+        assertEquals(0, dto.referredTo)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache passes through null optional fields as null`() {
+        val cache = leprosyFollowUpDto().toCache()
+        assertNull(cache.treatmentStatus)
+        assertNull(cache.mdtBlisterPackReceived)
+        assertNull(cache.remarks)
+        assertNull(cache.leprosySymptoms)
+        assertNull(cache.typeOfLeprosy)
+        assertNull(cache.referToName)
+        assertNull(cache.mdtBlisterPackRecived)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache passes through default numeric and label fields`() {
+        val cache = leprosyFollowUpDto().toCache()
+        assertEquals(1, cache.leprosySymptomsPosition)
+        assertEquals("Visit -1", cache.visitLabel)
+        assertEquals("", cache.leprosyStatus)
+        assertEquals(0, cache.referredTo)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache tolerates null referredTo leprosyStatus and leprosySymptomsPosition`() {
+        val cache = leprosyFollowUpDto().copy(
+            referredTo = null,
+            leprosyStatus = null,
+            leprosySymptomsPosition = null
+        ).toCache()
+        assertNull(cache.referredTo)
+        assertNull(cache.leprosyStatus)
+        assertNull(cache.leprosySymptomsPosition)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache maps followUpDate and homeVisitDate to positive longs`() {
+        val cache = leprosyFollowUpDto().copy(
+            followUpDate = "2023-03-01",
+            homeVisitDate = "2023-03-02"
+        ).toCache()
+        assertTrue(cache.followUpDate > 0L)
+        assertTrue(cache.homeVisitDate > 0L)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache maps treatmentStartDate treatmentEndDate and treatmentCompleteDate to positive longs`() {
+        val cache = leprosyFollowUpDto().copy(
+            treatmentStartDate = "2023-03-03",
+            treatmentEndDate = "2023-03-04",
+            treatmentCompleteDate = "2023-03-05"
+        ).toCache()
+        assertTrue(cache.treatmentStartDate > 0L)
+        assertTrue(cache.treatmentEndDate > 0L)
+        assertTrue(cache.treatmentCompleteDate > 0L)
+    }
+
+    @Test fun `LeprosyFollowUpDTO toCache passes through mdt remarks and symptoms fields`() {
+        val cache = leprosyFollowUpDto().copy(
+            mdtBlisterPackReceived = "Y",
+            mdtBlisterPackRecived = "N",
+            remarks = "all good",
+            leprosySymptoms = "numbness"
+        ).toCache()
+        assertEquals("Y", cache.mdtBlisterPackReceived)
+        assertEquals("N", cache.mdtBlisterPackRecived)
+        assertEquals("all good", cache.remarks)
+        assertEquals("numbness", cache.leprosySymptoms)
+    }
+
+    @Test fun `LeprosyFollowUpDTO copy equals hashCode and toString`() {
+        val dto = leprosyFollowUpDto()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("LeprosyFollowUpDTO"))
+        assertTrue(dto == dto)
+        assertTrue(!dto.equals(null))
+        assertTrue(!dto.equals("other"))
+    }
+
+    @Test fun `LeprosyFollowUpDTO copy with changed fields is not equal`() {
+        val dto = leprosyFollowUpDto()
+        val changed = dto.copy(visitNumber = 9, leprosyStatus = "Negative")
+        assertEquals(9, changed.visitNumber)
+        assertEquals("Negative", changed.leprosyStatus)
+        assertTrue(dto != changed)
+    }
+
+    private fun leprosyFollowUpDtoFull() = LeprosyFollowUpDTO(
+        benId = 155L,
+        visitNumber = 5,
+        followUpDate = "2023-09-01",
+        treatmentStatus = "Ongoing",
+        mdtBlisterPackReceived = "Yes",
+        treatmentCompleteDate = "2023-09-02",
+        remarks = "all clear",
+        homeVisitDate = "2023-09-03",
+        leprosySymptoms = "patch",
+        typeOfLeprosy = "MB",
+        leprosySymptomsPosition = 3,
+        visitLabel = "Visit -5",
+        leprosyStatus = "Positive",
+        referredTo = 6,
+        referToName = "District Hospital",
+        treatmentEndDate = "2023-09-04",
+        mdtBlisterPackRecived = "No",
+        createdBy = "creator5",
+        createdDate = "2023-09-05",
+        modifiedBy = "modifier5",
+        lastModDate = "2023-09-06",
+        treatmentStartDate = "2023-09-07"
+    )
+
+    @Test fun `LeprosyFollowUpDTO fully populated dto maps every field via toCache`() {
+        val cache = leprosyFollowUpDtoFull().toCache()
+        assertEquals(155L, cache.benId)
+        assertEquals(5, cache.visitNumber)
+        assertEquals("Ongoing", cache.treatmentStatus)
+        assertEquals("Yes", cache.mdtBlisterPackReceived)
+        assertEquals("all clear", cache.remarks)
+        assertEquals("patch", cache.leprosySymptoms)
+        assertEquals("MB", cache.typeOfLeprosy)
+        assertEquals(3, cache.leprosySymptomsPosition)
+        assertEquals("Visit -5", cache.visitLabel)
+        assertEquals("Positive", cache.leprosyStatus)
+        assertEquals(6, cache.referredTo)
+        assertEquals("District Hospital", cache.referToName)
+        assertEquals("No", cache.mdtBlisterPackRecived)
+        assertEquals("creator5", cache.createdBy)
+        assertEquals("modifier5", cache.modifiedBy)
+    }
+
+    @Test fun `LeprosyFollowUpDTO differing only in the last constructor field is unequal after all other fields compare equal`() {
+        val base = leprosyFollowUpDtoFull()
+        val changed = base.copy(treatmentStartDate = "2023-09-08")
+        assertNotEquals(base, changed)
+        assertEquals(base.benId, changed.benId)
+        assertEquals(base.visitNumber, changed.visitNumber)
+        assertEquals(base.leprosyStatus, changed.leprosyStatus)
+        assertNotEquals(base.hashCode(), changed.hashCode())
+    }
+
+    @Test fun `LeprosyFollowUpDTO copy overrides visitLabel independently`() {
+        val changed = leprosyFollowUpDtoFull().copy(visitLabel = "Visit -6")
+        assertEquals("Visit -6", changed.visitLabel)
+        assertEquals(155L, changed.benId)
     }
 
     // ---------------- getLongFromDate ----------------
@@ -484,5 +649,548 @@ class JsonAdaptersTest {
         assertNotNull(dto.toString())
         assertNotNull(dto.hashCode())
         assertEquals(dto, dto.copy())
+    }
+
+    // ---------------- AddHealthIdRecord ----------------
+
+    private fun abhaProfileSample() = ABHAProfile(
+        firstName = "Asha",
+        lastName = "Devi",
+        dob = "1990-05-12",
+        gender = "F",
+        mobile = "9999999999",
+        email = "asha@example.com",
+        ABHANumber = "11-2222-3333-4444",
+        abhaStatus = "ACTIVE"
+    )
+
+    private fun addHealthIdRecord() = AddHealthIdRecord(
+        healthId = "asha@abdm",
+        healthIdNumber = "11-2222-3333-4444",
+        providerServiceMapId = 7,
+        createdBy = "creator",
+        message = "created",
+        txnId = "txn-1",
+        ABHAProfile = abhaProfileSample(),
+        isNew = true
+    )
+
+    @Test fun `AddHealthIdRecord exposes constructor values`() {
+        val dto = addHealthIdRecord()
+        assertEquals("asha@abdm", dto.healthId)
+        assertEquals("11-2222-3333-4444", dto.healthIdNumber)
+        assertEquals(7, dto.providerServiceMapId)
+        assertEquals("creator", dto.createdBy)
+        assertEquals("created", dto.message)
+        assertEquals("txn-1", dto.txnId)
+        assertEquals("Asha", dto.ABHAProfile?.firstName)
+        assertEquals(true, dto.isNew)
+    }
+
+    @Test fun `AddHealthIdRecord tolerates all null optional fields`() {
+        val dto = AddHealthIdRecord(
+            healthId = null,
+            healthIdNumber = null,
+            providerServiceMapId = null,
+            createdBy = null,
+            message = null,
+            txnId = null,
+            ABHAProfile = null,
+            isNew = null
+        )
+        assertNull(dto.healthId)
+        assertNull(dto.healthIdNumber)
+        assertNull(dto.providerServiceMapId)
+        assertNull(dto.createdBy)
+        assertNull(dto.message)
+        assertNull(dto.txnId)
+        assertNull(dto.ABHAProfile)
+        assertNull(dto.isNew)
+    }
+
+    @Test fun `AddHealthIdRecord isNew false is distinct from null and true`() {
+        val whenTrue = addHealthIdRecord()
+        val whenFalse = addHealthIdRecord().copy(isNew = false)
+        val whenNull = addHealthIdRecord().copy(isNew = null)
+        assertEquals(true, whenTrue.isNew)
+        assertEquals(false, whenFalse.isNew)
+        assertNull(whenNull.isNew)
+        assertNotEquals(whenTrue, whenFalse)
+        assertNotEquals(whenFalse, whenNull)
+    }
+
+    @Test fun `AddHealthIdRecord var fields are mutable`() {
+        val dto = addHealthIdRecord()
+        dto.providerServiceMapId = 42
+        dto.createdBy = "other creator"
+        dto.message = "updated"
+        dto.txnId = "txn-2"
+        dto.isNew = false
+        dto.ABHAProfile = null
+        assertEquals(42, dto.providerServiceMapId)
+        assertEquals("other creator", dto.createdBy)
+        assertEquals("updated", dto.message)
+        assertEquals("txn-2", dto.txnId)
+        assertEquals(false, dto.isNew)
+        assertNull(dto.ABHAProfile)
+    }
+
+    @Test fun `AddHealthIdRecord copy equals hashCode and toString`() {
+        val dto = addHealthIdRecord()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("AddHealthIdRecord"))
+        assertTrue(dto == dto)
+        assertTrue(!dto.equals(null))
+        assertTrue(!dto.equals("other"))
+    }
+
+    @Test fun `AddHealthIdRecord differing only in the last constructor field is unequal after all other fields compare equal`() {
+        val base = addHealthIdRecord()
+        val changed = base.copy(isNew = false)
+        assertNotEquals(base, changed)
+        assertEquals(base.healthId, changed.healthId)
+        assertEquals(base.txnId, changed.txnId)
+        assertEquals(base.ABHAProfile, changed.ABHAProfile)
+    }
+
+    // ---------------- LoginVerifyOtpResponse ----------------
+
+    private fun accountSample(verified: Boolean = true) = Accounts(
+        ABHANumber = "11-2222-3333-4444",
+        preferredAbhaAddress = "asha@abdm",
+        name = "Asha Devi",
+        status = "ACTIVE",
+        profilePhoto = "photo",
+        mobileVerified = verified
+    )
+
+    private fun loginVerifyOtpResponse() = LoginVerifyOtpResponse(
+        txnId = "txn-1",
+        authResult = "success",
+        message = "OTP verified",
+        token = "tok",
+        expiresIn = 3600L,
+        refreshToken = "rtok",
+        refreshExpiresIn = 7200L,
+        accounts = listOf(accountSample())
+    )
+
+    @Test fun `LoginVerifyOtpResponse exposes constructor values`() {
+        val dto = loginVerifyOtpResponse()
+        assertEquals("txn-1", dto.txnId)
+        assertEquals("success", dto.authResult)
+        assertEquals("OTP verified", dto.message)
+        assertEquals("tok", dto.token)
+        assertEquals(3600L, dto.expiresIn)
+        assertEquals("rtok", dto.refreshToken)
+        assertEquals(7200L, dto.refreshExpiresIn)
+        assertEquals(1, dto.accounts.size)
+        assertEquals("Asha Devi", dto.accounts[0].name)
+        assertTrue(dto.accounts[0].mobileVerified)
+    }
+
+    @Test fun `LoginVerifyOtpResponse tolerates an empty accounts list`() {
+        val dto = loginVerifyOtpResponse().copy(accounts = emptyList())
+        assertTrue(dto.accounts.isEmpty())
+    }
+
+    @Test fun `LoginVerifyOtpResponse holds multiple accounts with differing verification status`() {
+        val dto = loginVerifyOtpResponse().copy(
+            accounts = listOf(accountSample(verified = true), accountSample(verified = false))
+        )
+        assertEquals(2, dto.accounts.size)
+        assertTrue(dto.accounts[0].mobileVerified)
+        assertFalse(dto.accounts[1].mobileVerified)
+    }
+
+    @Test fun `LoginVerifyOtpResponse copy equals hashCode and toString`() {
+        val dto = loginVerifyOtpResponse()
+        val same = dto.copy()
+        assertEquals(dto, same)
+        assertEquals(dto.hashCode(), same.hashCode())
+        assertEquals(dto.toString(), same.toString())
+        assertTrue(dto.toString().contains("LoginVerifyOtpResponse"))
+        assertTrue(dto == dto)
+        assertTrue(!dto.equals(null))
+        assertTrue(!dto.equals("other"))
+    }
+
+    @Test fun `LoginVerifyOtpResponse differing only in the last constructor field is unequal after all other fields compare equal`() {
+        val base = loginVerifyOtpResponse()
+        val changed = base.copy(accounts = listOf(accountSample(verified = false)))
+        assertNotEquals(base, changed)
+        assertEquals(base.txnId, changed.txnId)
+        assertEquals(base.token, changed.token)
+        assertEquals(base.expiresIn, changed.expiresIn)
+    }
+
+    @Test fun `TmcAuthUserRequest constructor uses defaults when authKey and doLogout omitted`() {
+        val request = TmcAuthUserRequest(
+            userName = "asha_user",
+            password = "secret"
+        )
+        assertEquals("asha_user", request.userName)
+        assertEquals("secret", request.password)
+        assertEquals("", request.authKey)
+        assertTrue(request.doLogout)
+    }
+
+    @Test fun `ReferralRequest exposes constructor value`() {
+        val ncdReferal = NCDReferalDTO(
+            benId = 1L,
+            referredToInstituteID = null,
+            refrredToAdditionalServiceList = null,
+            referredToInstituteName = null,
+            referralReason = null,
+            revisitDate = "2023-01-01",
+            vanID = null,
+            parkingPlaceID = null,
+            beneficiaryRegID = null,
+            benVisitID = null,
+            visitCode = null,
+            providerServiceMapID = null,
+            createdBy = null,
+            type = null
+        )
+        val request = ReferralRequest(refer = ncdReferal)
+        assertEquals(ncdReferal, request.refer)
+    }
+
+    @Test fun `AdolescentHealthRequestDTO exposes constructor values`() {
+        val dto = AdolescentHealthRequestDTO(userId = 5, adolescentHealths = emptyList())
+        assertEquals(5, dto.userId)
+        assertTrue(dto.adolescentHealths.isEmpty())
+    }
+
+    @Test fun `FilariaScreeningRequestDTO exposes constructor values`() {
+        val dto = FilariaScreeningRequestDTO(userId = 6, filariaLists = emptyList())
+        assertEquals(6, dto.userId)
+    }
+
+    @Test fun `GetCBACRequest exposes constructor value`() {
+        val dto = GetCBACRequest(createdBy = "creator")
+        assertEquals("creator", dto.createdBy)
+    }
+
+    @Test fun `KalaAzarScreeningRequestDTO exposes constructor values`() {
+        val dto = KalaAzarScreeningRequestDTO(userId = 7, kalaAzarLists = emptyList())
+        assertEquals(7, dto.userId)
+    }
+
+    @Test fun `LeprosyScreeningRequestDTO exposes constructor values`() {
+        val dto = LeprosyScreeningRequestDTO(userId = 8, leprosyLists = emptyList())
+        assertEquals(8, dto.userId)
+    }
+
+    @Test fun `MalariaConfirmedRequestDTO exposes constructor values`() {
+        val dto = MalariaConfirmedRequestDTO(userId = 9, malariaFollowListUp = emptyList())
+        assertEquals(9, dto.userId)
+    }
+
+    @Test fun `MalariaScreeningRequestDTO exposes constructor values`() {
+        val dto = MalariaScreeningRequestDTO(userId = 10, malariaLists = emptyList())
+        assertEquals(10, dto.userId)
+    }
+
+    @Test fun `TBConfirmedRequestDTO exposes constructor values`() {
+        val dto = TBConfirmedRequestDTO(userId = 11, tbConfirmedList = emptyList())
+        assertEquals(11, dto.userId)
+    }
+
+    @Test fun `TBScreeningRequestDTO exposes constructor values`() {
+        val dto = TBScreeningRequestDTO(userId = 12, tbScreeningList = emptyList())
+        assertEquals(12, dto.userId)
+    }
+
+    @Test fun `TBSuspectedRequestDTO exposes constructor values`() {
+        val dto = TBSuspectedRequestDTO(userId = 13, tbSuspectedList = emptyList())
+        assertEquals(13, dto.userId)
+    }
+
+    @Test fun `sendOtpRequest exposes constructor value`() {
+        val dto = sendOtpRequest(mobNo = "9999999999")
+        assertEquals("9999999999", dto.mobNo)
+    }
+
+    @Test fun `AESScreeningRequestDTO exposes constructor values`() {
+        val dto = AESScreeningRequestDTO(userId = 14, aesJeLists = emptyList())
+        assertEquals(14, dto.userId)
+        assertTrue(dto.aesJeLists.isEmpty())
+    }
+
+    @Test fun `GetBenHealthIdRequest exposes constructor values`() {
+        val dto = GetBenHealthIdRequest(beneficiaryRegID = 100L, beneficiaryID = 200L)
+        assertEquals(100L, dto.beneficiaryRegID)
+        assertEquals(200L, dto.beneficiaryID)
+    }
+
+    @Test fun `GetVHNDRequest exposes constructor values`() {
+        val dto = GetVHNDRequest(formType = "VHND", userId = 15)
+        assertEquals("VHND", dto.formType)
+        assertEquals(15, dto.userId)
+    }
+
+    @Test fun `UserDataDTO exposes constructor values`() {
+        val dto = UserDataDTO(userId = 16, entries = listOf("x"))
+        assertEquals(16, dto.userId)
+        assertEquals(listOf("x"), dto.entries)
+    }
+
+    @Test fun `UserDetailsByAyushmanCardNoRequest exposes constructor values`() {
+        val dto = UserDetailsByAyushmanCardNoRequest(cardNo = "card-1", houseHoldId = "hh-1")
+        assertEquals("card-1", dto.cardNo)
+        assertEquals("hh-1", dto.houseHoldId)
+    }
+
+    @Test fun `ValidateOtpRequest exposes constructor values`() {
+        val dto = ValidateOtpRequest(otp = 123456, mobNo = "9999999999")
+        assertEquals(123456, dto.otp)
+        assertEquals("9999999999", dto.mobNo)
+    }
+
+    @Test fun `IRSScreeningRequestDTO exposes constructor value`() {
+        val dto = IRSScreeningRequestDTO(rounds = emptyList())
+        assertTrue(dto.rounds.isEmpty())
+    }
+
+    @Test fun `TmcUserDetailsRequest exposes constructor value`() {
+        val dto = TmcUserDetailsRequest(userID = 17)
+        assertEquals(17, dto.userID)
+    }
+
+    @Test fun `AbhaTokenRequest constructor uses default grantType when omitted`() {
+        val request = AbhaTokenRequest(
+            clientId = "id",
+            clientSecret = "secret"
+        )
+        assertEquals("client_credentials", request.grantType)
+        assertEquals("id", request.clientId)
+        assertEquals("secret", request.clientSecret)
+    }
+
+    @Test fun `Accounts exposes constructor values and generated members`() {
+        val account = accountSample()
+        assertEquals("11-2222-3333-4444", account.ABHANumber)
+        assertEquals("asha@abdm", account.preferredAbhaAddress)
+        assertEquals("Asha Devi", account.name)
+        assertEquals("ACTIVE", account.status)
+        assertEquals("photo", account.profilePhoto)
+        assertTrue(account.mobileVerified)
+        val same = account.copy()
+        assertEquals(account, same)
+        assertEquals(account.hashCode(), same.hashCode())
+        assertNotEquals(account, account.copy(mobileVerified = false))
+    }
+
+    // ---------------- D2DAuthUserRequest ----------------
+
+    @Test fun `D2DAuthUserRequest exposes constructor values and generated members`() {
+        val request = D2DAuthUserRequest(username = "asha_user", password = "secret")
+        assertEquals("asha_user", request.username)
+        assertEquals("secret", request.password)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("D2DAuthUserRequest"))
+        assertNotEquals(request, request.copy(password = "other"))
+    }
+
+    // ---------------- D2DSaveUserRequest ----------------
+
+    @Test fun `D2DSaveUserRequest exposes constructor values and generated members`() {
+        val request = D2DSaveUserRequest(id = 1, username = "asha_user", password = "secret")
+        assertEquals(1, request.id)
+        assertEquals("asha_user", request.username)
+        assertEquals("secret", request.password)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("D2DSaveUserRequest"))
+        assertNotEquals(request, request.copy(id = 2))
+    }
+
+    // ---------------- D2DAuthUserResponse ----------------
+
+    @Test fun `D2DAuthUserResponse exposes constructor values and generated members`() {
+        val response = D2DAuthUserResponse(jwt = "jwt-token")
+        assertEquals("jwt-token", response.jwt)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("D2DAuthUserResponse"))
+        assertNotEquals(response, response.copy(jwt = "other"))
+    }
+
+    // ---------------- D2DSaveUserResponse ----------------
+
+    @Test fun `D2DSaveUserResponse exposes constructor values and generated members`() {
+        val response = D2DSaveUserResponse(jwt = "jwt-token-2")
+        assertEquals("jwt-token-2", response.jwt)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("D2DSaveUserResponse"))
+        assertNotEquals(response, response.copy(jwt = "other"))
+    }
+
+    // ---------------- TmcGenerateBenIdsRequest ----------------
+
+    @Test fun `TmcGenerateBenIdsRequest exposes constructor values and generated members`() {
+        val request = TmcGenerateBenIdsRequest(benIDRequired = 5, vanID = 10)
+        assertEquals(5, request.benIDRequired)
+        assertEquals(10, request.vanID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcGenerateBenIdsRequest"))
+        assertNotEquals(request, request.copy(vanID = 20))
+    }
+
+    // ---------------- TmcLocationDetailsRequest ----------------
+
+    @Test fun `TmcLocationDetailsRequest exposes constructor values and generated members`() {
+        val request = TmcLocationDetailsRequest(spID = 1, spPSMID = 2)
+        assertEquals(1, request.spID)
+        assertEquals(2, request.spPSMID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcLocationDetailsRequest"))
+        assertNotEquals(request, request.copy(spPSMID = 3))
+    }
+
+    // ---------------- TmcUserVanSpDetailsRequest ----------------
+
+    @Test fun `TmcUserVanSpDetailsRequest exposes constructor values and generated members`() {
+        val request = TmcUserVanSpDetailsRequest(userID = 7, providerServiceMapID = 8)
+        assertEquals(7, request.userID)
+        assertEquals(8, request.providerServiceMapID)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("TmcUserVanSpDetailsRequest"))
+        assertNotEquals(request, request.copy(userID = 9))
+    }
+
+    // ---------------- AyushmanCardRequest ----------------
+
+    @Test fun `AyushmanCardRequest exposes constructor values and generated members`() {
+        val request = AyushmanCardRequest(userId = "u1", password = "pwd", cardNo = "card-1")
+        assertEquals("u1", request.userId)
+        assertEquals("pwd", request.password)
+        assertEquals("card-1", request.cardNo)
+        val same = request.copy()
+        assertEquals(request, same)
+        assertEquals(request.hashCode(), same.hashCode())
+        assertTrue(request.toString().contains("AyushmanCardRequest"))
+        assertNotEquals(request, request.copy(cardNo = "other"))
+    }
+
+    // ---------------- BenAbhaResponse / BenResponse ----------------
+
+    private fun benAbhaResponse() = BenAbhaResponse(
+        BeneficiaryRegID = 1L,
+        HealthID = "hid",
+        HealthIDNumber = "hidn",
+        AuthenticationMode = "AADHAAR_OTP",
+        CreatedDate = "2023-01-01"
+    )
+
+    @Test fun `BenAbhaResponse exposes constructor values and generated members`() {
+        val response = benAbhaResponse()
+        assertEquals(1L, response.BeneficiaryRegID)
+        assertEquals("hid", response.HealthID)
+        assertEquals("hidn", response.HealthIDNumber)
+        assertEquals("AADHAAR_OTP", response.AuthenticationMode)
+        assertEquals("2023-01-01", response.CreatedDate)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("BenAbhaResponse"))
+        assertNotEquals(response, response.copy(HealthID = "other"))
+    }
+
+    @Test fun `BenAbhaResponse tolerates null optional fields`() {
+        val response = benAbhaResponse().copy(AuthenticationMode = null, CreatedDate = null)
+        assertNull(response.AuthenticationMode)
+        assertNull(response.CreatedDate)
+    }
+
+    private fun benResponse() = BenResponse(
+        benId = "b1",
+        benRegId = 10L,
+        abhaDetails = listOf(benAbhaResponse()),
+        toDate = "2023-01-02"
+    )
+
+    @Test fun `BenResponse exposes constructor values and generated members`() {
+        val response = benResponse()
+        assertEquals("b1", response.benId)
+        assertEquals(10L, response.benRegId)
+        assertEquals(1, response.abhaDetails?.size)
+        assertEquals("2023-01-02", response.toDate)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("BenResponse"))
+        assertNotEquals(response, response.copy(benId = "other"))
+    }
+
+    @Test fun `BenResponse tolerates null abhaDetails`() {
+        val response = benResponse().copy(abhaDetails = null)
+        assertNull(response.abhaDetails)
+    }
+
+    // ---------------- ResponseOtp / SendOtpResponse / ValidateOtpResponse ----------------
+
+    private fun responseOtp() = ResponseOtp(userName = "asha_user", userId = "u1")
+
+    @Test fun `ResponseOtp exposes constructor values and generated members`() {
+        val otp = responseOtp()
+        assertEquals("asha_user", otp.userName)
+        assertEquals("u1", otp.userId)
+        val same = otp.copy()
+        assertEquals(otp, same)
+        assertEquals(otp.hashCode(), same.hashCode())
+        assertTrue(otp.toString().contains("ResponseOtp"))
+        assertNotEquals(otp, otp.copy(userId = "other"))
+    }
+
+    @Test fun `SendOtpResponse exposes constructor values and generated members`() {
+        val response = SendOtpResponse(
+            data = Data(response = "sent"),
+            statusCode = 200L,
+            errorMessage = "",
+            status = "OK"
+        )
+        assertEquals("sent", response.data.response)
+        assertEquals(200L, response.statusCode)
+        assertEquals("", response.errorMessage)
+        assertEquals("OK", response.status)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("SendOtpResponse"))
+        assertNotEquals(response, response.copy(statusCode = 500L))
+    }
+
+    @Test fun `ValidateOtpResponse exposes constructor values and generated members`() {
+        val response = ValidateOtpResponse(
+            data = responseOtp(),
+            statusCode = 200L,
+            errorMessage = "",
+            status = "OK"
+        )
+        assertEquals("asha_user", response.data.userName)
+        assertEquals(200L, response.statusCode)
+        assertEquals("OK", response.status)
+        val same = response.copy()
+        assertEquals(response, same)
+        assertEquals(response.hashCode(), same.hashCode())
+        assertTrue(response.toString().contains("ValidateOtpResponse"))
+        assertNotEquals(response, response.copy(status = "FAIL"))
     }
 }

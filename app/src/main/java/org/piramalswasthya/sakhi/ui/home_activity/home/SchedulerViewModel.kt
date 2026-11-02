@@ -43,6 +43,8 @@ class SchedulerViewModel @Inject constructor(
 
     val hrpCountEC: Flow<Int> = recordsRepo.hrpTrackingNonPregListCount
 
+    val hrpConfirmedCount: Flow<Int> = recordsRepo.hrpConfirmedPregListCount
+
     val immunizationDue: Flow<Int> = recordsRepo.childrenImmunizationDueListCount
 
     val lowWeightBabiesCount: Flow<Int> = recordsRepo.lowWeightBabiesCount

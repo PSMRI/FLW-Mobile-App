@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.filterBenList
@@ -28,7 +29,7 @@ class NcdRefferedListViewModel @Inject constructor(
 
     private val resources get() = getLocalizedResources(context, preferenceDao.getCurrentLanguage())
 
-    private val englishCategories = listOf("ALL", "NCD", "TB", "LEPROSY", "GERIATRIC", "HRP", "MATERNAL")
+    private val englishCategories = listOf("ALL", "NCD", "TB", "LEPROSY", "GERIATRIC", "HRP", "MATERNAL", "CHILD")
 
     private fun toEnglishCategory(localizedType: String?): String {
         val localized = listOf(
@@ -38,7 +39,8 @@ class NcdRefferedListViewModel @Inject constructor(
             resources.getString(R.string.cat_leprosy),
             resources.getString(R.string.cat_geriatric),
             resources.getString(R.string.cat_hrp),
-            resources.getString(R.string.cat_maternal)
+            resources.getString(R.string.cat_maternal),
+            resources.getString(R.string.cat_child)
         )
         val idx = localized.indexOf(localizedType)
         return if (idx >= 0) englishCategories[idx] else localizedType ?: "ALL"
@@ -121,6 +123,9 @@ class NcdRefferedListViewModel @Inject constructor(
         catList.add(resources.getString(R.string.cat_geriatric))
         catList.add(resources.getString(R.string.cat_hrp))
         catList.add(resources.getString(R.string.cat_maternal))
+        if (BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)) {
+            catList.add(resources.getString(R.string.cat_child))
+        }
 
 
         return catList

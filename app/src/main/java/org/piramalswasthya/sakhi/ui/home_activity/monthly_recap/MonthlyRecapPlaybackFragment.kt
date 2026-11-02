@@ -86,8 +86,11 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         motionEnabled = recapAnimationsEnabled(requireContext())
 
-        binding.recapPlaybackClose.setOnClickListener { findNavController().popBackStack() }
-        binding.recapReplayButton.setOnClickListener { restartStory() }
+        binding.recapPlaybackClose.bringToFront()
+        binding.recapPlaybackClose.setOnClickListener { exitToHome() }
+        binding.recapReplayButton.setOnClickListener {
+            restartStory()
+        }
         binding.recapPrevButton.setOnClickListener { onControlNavigate(-1) }
         binding.recapNextButton.setOnClickListener { onControlNavigate(+1) }
         binding.recapPauseButton.setOnClickListener { togglePause() }
@@ -103,8 +106,7 @@ class MonthlyRecapPlaybackFragment : Fragment() {
                     when (state) {
                         is MonthlyRecapPlaybackViewModel.UiState.Loading -> showLoading(true)
 
-                        is MonthlyRecapPlaybackViewModel.UiState.Closed ->
-                            findNavController().popBackStack()
+                        is MonthlyRecapPlaybackViewModel.UiState.Closed -> exitToHome()
 
                         is MonthlyRecapPlaybackViewModel.UiState.Playing -> {
                             if (scenes.isEmpty()) {
@@ -124,6 +126,15 @@ class MonthlyRecapPlaybackFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    /** Always land on Home — plain popBackStack can no-op on some nav stacks. */
+    private fun exitToHome() {
+        music?.setAudible(false, fade = false)
+        val nav = findNavController()
+        if (!nav.popBackStack(R.id.homeFragment, false)) {
+            nav.navigateUp()
         }
     }
 
@@ -161,6 +172,10 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         b.recapPauseButton.visibility = if (isGoodbye) View.INVISIBLE else View.VISIBLE
         b.recapNextButton.isEnabled = !isGoodbye
         b.recapNextButton.alpha = if (isGoodbye) 0.35f else 1f
+        // Goodbye: drop the gesture overlay so "Watch again" is never under it,
+        // and raise the button above any remaining chrome.
+        b.recapTouchOverlay.visibility = if (isGoodbye) View.GONE else View.VISIBLE
+        if (isGoodbye) b.recapReplayButton.bringToFront()
 
         b.recapSceneText.text = emphasizedCount(scene) // count == null -> plain text
         scene.lottieRawRes?.let { res ->
@@ -176,6 +191,7 @@ class MonthlyRecapPlaybackFragment : Fragment() {
         }
         b.root.announceForAccessibility(scene.text)
         startSceneTimer(scene)
+        // Goodbye rests until she taps Watch again or Close — no auto-home.
     }
 
     /** Makes the achievement number pop inside the sentence (bold, accent, larger). */

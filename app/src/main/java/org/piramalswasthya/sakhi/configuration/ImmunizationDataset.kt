@@ -149,10 +149,20 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         vaccinationDueDate.value = getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
         expectedDate.value =
             getDateFromLong(ben.dob + vaccine.maxAllowedAgeInMillis)
-        //dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
-        dateOfVaccination.min = ben.dob + vaccine.minAllowedAgeInMillis
+        // Default today so bulk checkbox saves always write a non-null date
+        // (Child Fully Protected ignores rows with date IS NULL).
+        if (dateOfVaccination.value.isNullOrBlank()) {
+            dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
+        }
+        // If the dose's min age is still in the future (young baby + 9–12 / 16–24
+        // month card), allow any date on/after DOB so QA can complete the schedule.
+        val naturalMin = ben.dob + vaccine.minAllowedAgeInMillis
+        dateOfVaccination.min =
+            if (naturalMin > System.currentTimeMillis()) ben.dob else naturalMin
         if (System.currentTimeMillis() > ben.dob + vaccine.maxAllowedAgeInMillis) {
             dateOfVaccination.max = ben.dob + vaccine.maxAllowedAgeInMillis
+        } else {
+            dateOfVaccination.max = System.currentTimeMillis()
         }
 
 

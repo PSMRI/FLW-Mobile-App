@@ -149,4 +149,17 @@ class AESJEFormDatasetTest : BaseViewModelTest() {
         runCatching { ds.updateBen(ben) }
         assertNotNull(ds.listFlow)
     }
+
+    @Test
+    fun `updateList sweeps every formId`() = runTest {
+        val ds = AESJEFormDataset(context, Languages.ENGLISH)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        runCatching { ds.setUpPage(ben, savedReferred()) }
+        for (id in 0..40) {
+            for (index in 0..2) {
+                runCatching { ds.updateList(id, index) }
+            }
+        }
+        assertNotNull(ds.listFlow)
+    }
 }

@@ -10,11 +10,13 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.SaasBahuSammelanCache
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
@@ -58,6 +60,13 @@ class SaasBahuSamelanDatasetTest : BaseViewModelTest() {
         runCatching { ds.mapValues(mockk<FormDataModel>(relaxed = true), 0) }
         runCatching { ds.mapSaasBahuValues(mockk<SaasBahuSammelanCache>(relaxed = true)) }
         assertNotNull(ds.listFlow)
+    }
+
+    @Test
+    fun `SaasBahuSammelanCache setSyncState updates state`() = runTest {
+        val cache = SaasBahuSammelanCache(ashaId = 1)
+        cache.syncState = SyncState.SYNCED
+        assertEquals(SyncState.SYNCED, cache.syncState)
     }
 
     @Test

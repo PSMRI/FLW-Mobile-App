@@ -2,9 +2,11 @@ package org.piramalswasthya.sakhi.utils
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
+import java.util.Calendar
 
 class HomeVisitHelperTest {
 
@@ -155,6 +157,17 @@ class HomeVisitHelperTest {
         assertEquals(3, result.size)
         // First should be latest date (highest createdAt due to visit date ordering)
         assertTrue(HomeVisitHelper.getVisitDate(result[0]) >= HomeVisitHelper.getVisitDate(result[1]))
+    }
+
+    @Test
+    fun `getANCSortedHomeVisits sorts by visit date descending`() {
+        val entities = listOf(
+            createAncEntity(formId = "anc_form_001", visitDate = "17-03-2026"),
+            createAncEntity(formId = "anc_form_002", visitDate = "18-03-2026")
+        )
+        val result = HomeVisitHelper.getANCSortedHomeVisits(entities)
+        assertEquals(2, result.size)
+        assertEquals("18-03-2026", result[0].visitDate)
     }
 
     // --- Helper ---

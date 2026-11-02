@@ -149,6 +149,79 @@ class MaternalHealthCachesTest {
         assertEquals(SyncState.UNSYNCED, a.syncState)
     }
 
+    @Test fun `ChildRegCache equality and hashCode with all fields set`() {
+        val a = ChildRegCache(
+            id = 2, motherBenId = 1L, babyName = "Baby", infantTerm = "Full", corticosteroidGiven = "Yes",
+            gender = "Male", babyCriedAtBirth = true, resuscitation = false, referred = "No",
+            hadBirthDefect = "No", birthDefect = null, otherDefect = null, weight = 3.2,
+            breastFeedingStarted = true, opv0Dose = 1000L, bcgDose = 2000L, hepBDose = 3000L,
+            vitkDose = 4000L, syncState = SyncState.SYNCED
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertNotEquals(a, a.copy(babyName = "Other"))
+        assertTrue(a.toString().contains("ChildRegCache"))
+
+        assertNotEquals(a, a.copy(id = 999))
+        assertNotEquals(a, a.copy(motherBenId = 999L))
+        assertNotEquals(a, a.copy(infantTerm = "Other"))
+        assertNotEquals(a, a.copy(corticosteroidGiven = "Other"))
+        assertNotEquals(a, a.copy(gender = "Other"))
+        assertNotEquals(a, a.copy(babyCriedAtBirth = false))
+        assertNotEquals(a, a.copy(resuscitation = true))
+        assertNotEquals(a, a.copy(referred = "Other"))
+        assertNotEquals(a, a.copy(hadBirthDefect = "Other"))
+        assertNotEquals(a, a.copy(birthDefect = "Other"))
+        assertNotEquals(a, a.copy(otherDefect = "Other"))
+        assertNotEquals(a, a.copy(weight = 9.9))
+        assertNotEquals(a, a.copy(breastFeedingStarted = false))
+        assertNotEquals(a, a.copy(opv0Dose = 9999L))
+        assertNotEquals(a, a.copy(bcgDose = 9999L))
+        assertNotEquals(a, a.copy(hepBDose = 9999L))
+        assertNotEquals(a, a.copy(vitkDose = 9999L))
+        assertNotEquals(a, a.copy(syncState = SyncState.UNSYNCED))
+    }
+
+    @Test fun `ChildRegCache getters and setters mutate and read back`() {
+        val cache = ChildRegCache(motherBenId = 1L, syncState = SyncState.UNSYNCED)
+
+        cache.babyName = "Baby"
+        assertEquals("Baby", cache.babyName)
+        cache.infantTerm = "Full"
+        assertEquals("Full", cache.infantTerm)
+        cache.corticosteroidGiven = "Yes"
+        assertEquals("Yes", cache.corticosteroidGiven)
+        cache.gender = "Male"
+        assertEquals("Male", cache.gender)
+        cache.babyCriedAtBirth = true
+        assertEquals(true, cache.babyCriedAtBirth)
+        cache.resuscitation = false
+        assertEquals(false, cache.resuscitation)
+        cache.referred = "No"
+        assertEquals("No", cache.referred)
+        cache.hadBirthDefect = "No"
+        assertEquals("No", cache.hadBirthDefect)
+        cache.birthDefect = "None"
+        assertEquals("None", cache.birthDefect)
+        cache.otherDefect = "None"
+        assertEquals("None", cache.otherDefect)
+        cache.weight = 3.5
+        assertEquals(3.5, cache.weight)
+        cache.breastFeedingStarted = true
+        assertEquals(true, cache.breastFeedingStarted)
+        cache.opv0Dose = 1111L
+        assertEquals(1111L, cache.opv0Dose)
+        cache.bcgDose = 2222L
+        assertEquals(2222L, cache.bcgDose)
+        cache.hepBDose = 3333L
+        assertEquals(3333L, cache.hepBDose)
+        cache.vitkDose = 4444L
+        assertEquals(4444L, cache.vitkDose)
+        cache.syncState = SyncState.SYNCED
+        assertEquals(SyncState.SYNCED, cache.syncState)
+    }
+
     // =====================================================
     // InfantRegCache Tests
     // =====================================================
@@ -180,5 +253,56 @@ class MaternalHealthCachesTest {
         assertEquals(1L, a.id)
         assertEquals(1L, a.motherBenId)
         assertEquals(1, a.babyIndex)
+    }
+
+    @Test fun `InfantRegCache equality and hashCode with all fields set`() {
+        val a = InfantRegCache(
+            id = 2, childBenId = 3L, motherBenId = 1L, isActive = true, babyName = "Infant",
+            babyIndex = 1, infantTerm = "Full", corticosteroidGiven = "Yes", gender = Gender.MALE,
+            babyCriedAtBirth = true, resuscitation = false, referred = "No", hadBirthDefect = "No",
+            birthDefect = null, isSNCU = "Yes", deliveryDischargeSummary1 = "d1",
+            deliveryDischargeSummary2 = "d2", deliveryDischargeSummary3 = "d3",
+            deliveryDischargeSummary4 = "d4", otherDefect = null, weight = 3.2,
+            breastFeedingStarted = true, opv0Dose = 1000L, bcgDose = 2000L, hepBDose = 3000L,
+            vitkDose = 4000L, processed = "N", createdBy = "test", createdDate = 5000L,
+            updatedBy = "test", updatedDate = 6000L, syncState = SyncState.SYNCED
+        )
+        val b = a.copy()
+        assertEquals(a, b)
+        assertEquals(a.hashCode(), b.hashCode())
+        assertTrue(a.toString().contains("InfantRegCache"))
+
+        assertNotEquals(a, a.copy(id = 999))
+        assertNotEquals(a, a.copy(childBenId = 999L))
+        assertNotEquals(a, a.copy(motherBenId = 999L))
+        assertNotEquals(a, a.copy(isActive = false))
+        assertNotEquals(a, a.copy(babyName = "Other"))
+        assertNotEquals(a, a.copy(babyIndex = 999))
+        assertNotEquals(a, a.copy(infantTerm = "Other"))
+        assertNotEquals(a, a.copy(corticosteroidGiven = "Other"))
+        assertNotEquals(a, a.copy(gender = Gender.FEMALE))
+        assertNotEquals(a, a.copy(babyCriedAtBirth = false))
+        assertNotEquals(a, a.copy(resuscitation = true))
+        assertNotEquals(a, a.copy(referred = "Other"))
+        assertNotEquals(a, a.copy(hadBirthDefect = "Other"))
+        assertNotEquals(a, a.copy(birthDefect = "Other"))
+        assertNotEquals(a, a.copy(isSNCU = "No"))
+        assertNotEquals(a, a.copy(deliveryDischargeSummary1 = "Other"))
+        assertNotEquals(a, a.copy(deliveryDischargeSummary2 = "Other"))
+        assertNotEquals(a, a.copy(deliveryDischargeSummary3 = "Other"))
+        assertNotEquals(a, a.copy(deliveryDischargeSummary4 = "Other"))
+        assertNotEquals(a, a.copy(otherDefect = "Other"))
+        assertNotEquals(a, a.copy(weight = 9.9))
+        assertNotEquals(a, a.copy(breastFeedingStarted = false))
+        assertNotEquals(a, a.copy(opv0Dose = 9999L))
+        assertNotEquals(a, a.copy(bcgDose = 9999L))
+        assertNotEquals(a, a.copy(hepBDose = 9999L))
+        assertNotEquals(a, a.copy(vitkDose = 9999L))
+        assertNotEquals(a, a.copy(processed = "Y"))
+        assertNotEquals(a, a.copy(createdBy = "Other"))
+        assertNotEquals(a, a.copy(createdDate = 9999L))
+        assertNotEquals(a, a.copy(updatedBy = "Other"))
+        assertNotEquals(a, a.copy(updatedDate = 9999L))
+        assertNotEquals(a, a.copy(syncState = SyncState.UNSYNCED))
     }
 }

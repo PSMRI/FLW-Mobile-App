@@ -9,7 +9,6 @@
     import androidx.fragment.app.Fragment
     import androidx.fragment.app.viewModels
     import androidx.lifecycle.lifecycleScope
-    import androidx.navigation.fragment.findNavController
     import androidx.recyclerview.widget.GridLayoutManager
     import dagger.hilt.android.AndroidEntryPoint
     import org.piramalswasthya.sakhi.R
@@ -18,6 +17,7 @@
     import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
     import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
     import javax.inject.Inject
+    import org.piramalswasthya.sakhi.utils.safeNavigate
 
     @AndroidEntryPoint
     class VillageLevelFormsFragment : Fragment() {
@@ -57,7 +57,7 @@
 
             val rvAdapter1 = IconGridAdapter(
                 IconGridAdapter.GridIconClickListener {
-                    findNavController().navigate(it)
+                    safeNavigate(it)
                 },
                 viewModel.scope
             )

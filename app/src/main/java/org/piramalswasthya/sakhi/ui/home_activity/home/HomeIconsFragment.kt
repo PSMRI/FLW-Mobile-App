@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
-import org.piramalswasthya.sakhi.badges.BadgeRepository
-import org.piramalswasthya.sakhi.badges.domain.BadgeDefinitions
 import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
@@ -44,9 +42,6 @@ class HomeIconsFragment : Fragment() {
 
     @Inject
     lateinit var iconDataset: IconDataset
-
-    @Inject
-    lateinit var badgeRepository: BadgeRepository
 
     @Inject
     lateinit var pref: PreferenceDao
@@ -78,61 +73,8 @@ class HomeIconsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpHomeIconRvAdapter()
-        setUpBadgeWidget()
         setUpMonthlyRecapStrip()
     }
-
-    /**
-     * Live badge progress widget (LLD: never reads zero). Shows the badge
-     * closest to its next milestone; hidden entirely by the remote kill switch.
-     */
-    private fun setUpBadgeWidget() {
-        binding.cvBadgeWidget.setOnClickListener {
-            try {
-                findNavController().navigate(R.id.action_homeFragment_to_badgeShelfFragment)
-            } catch (e: Exception) {
-                Timber.e(e, "Badge shelf navigation failed")
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                badgeRepository.shelf.collect { cards ->
-                    val b = _binding ?: return@collect
-                    if (cards.isEmpty()) { // feature disabled remotely
-                        b.cvBadgeWidget.visibility = View.GONE
-                        return@collect
-                    }
-                    b.cvBadgeWidget.visibility = View.VISIBLE
-                    val top = cards.maxByOrNull { card ->
-                        val target = card.state?.nextTarget?.coerceAtLeast(1) ?: 1
-                        (card.state?.progress ?: 0).toDouble() / target
-                    }
-                    val target = top?.state?.nextTarget?.coerceAtLeast(1) ?: 1
-                    // maxed badges keep counting (streak weeks, cases) — never show "9 of 8"
-                    val progress = (top?.state?.progress ?: 0).coerceAtMost(target)
-                    if (top == null || progress <= 0) {
-                        b.ivBadgeWidgetIcon.setImageResource(R.drawable.badge_steady_syncer_t1)
-                        b.tvBadgeWidgetText.text =
-                            getString(R.string.badge_widget_get_started)
-                        b.pbBadgeWidget.max = 1
-                        b.pbBadgeWidget.progress = 0
-                    } else {
-                        val (iconRes, earnedLook) =
-                            BadgeDefinitions.displayIcon(top.definition, top.state)
-                        b.ivBadgeWidgetIcon.setImageResource(iconRes)
-                        b.ivBadgeWidgetIcon.alpha = if (earnedLook) 1f else 0.85f
-                        b.tvBadgeWidgetText.text = getString(
-                            R.string.badge_widget_progress,
-                            getString(top.definition.titleRes), progress, target
-                        )
-                        b.pbBadgeWidget.max = target.toInt()
-                        b.pbBadgeWidget.progress = progress.coerceAtMost(target).toInt()
-                    }
-                }
-            }
-        }
-    }
-
 
     /**
      * Strip state now derives from local recap persistence via

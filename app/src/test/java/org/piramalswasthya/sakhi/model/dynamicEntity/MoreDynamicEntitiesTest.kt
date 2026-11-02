@@ -47,6 +47,13 @@ class MoreDynamicEntitiesTest {
         assertEquals(1L, a.hhId)
         assertEquals("f", a.formId)
     }
+    @Test fun `FilariaMDAFormResponseJsonEntity visitDate version createdAt`() {
+        val ts = 7000L
+        val e = FilariaMDAFormResponseJsonEntity(hhId = 1L, visitDate = "14-04-2026", visitMonth = "m", formId = "f", version = 4, formDataJson = "{}", createdAt = ts)
+        assertEquals("14-04-2026", e.visitDate)
+        assertEquals(4, e.version)
+        assertEquals(ts, e.createdAt)
+    }
 
     // =====================================================
     // FilariaMDACampaignFormResponseJsonEntity Tests
@@ -95,6 +102,10 @@ class MoreDynamicEntitiesTest {
         val b = MosquitoNetFormResponseJsonEntity(id = 1, hhId = 1L, formId = "f", version = 1, visitDate = "d", formDataJson = "{}")
         assertEquals(a, b)
     }
+    @Test fun `MosquitoNetFormResponseJsonEntity syncedAt`() {
+        val e = MosquitoNetFormResponseJsonEntity(hhId = 1L, formId = "f", version = 1, visitDate = "d", formDataJson = "{}", syncedAt = "2026-04-14")
+        assertEquals("2026-04-14", e.syncedAt)
+    }
 
     // =====================================================
     // BenIfaFormResponseJsonEntity Tests
@@ -116,6 +127,12 @@ class MoreDynamicEntitiesTest {
     @Test fun `BenIfaFormResponseJsonEntity copy`() {
         val e = BenIfaFormResponseJsonEntity(benId = 1L, hhId = 1L, visitDate = "d", formId = "f", version = 1, formDataJson = "{}")
         assertEquals(77L, e.copy(benId = 77L).benId)
+    }
+    @Test fun `BenIfaFormResponseJsonEntity createdAt and syncedAt`() {
+        val ts = 6000L
+        val e = BenIfaFormResponseJsonEntity(benId = 1L, hhId = 1L, visitDate = "d", formId = "f", version = 1, formDataJson = "{}", createdAt = ts, syncedAt = ts)
+        assertEquals(ts, e.createdAt)
+        assertEquals(ts, e.syncedAt)
     }
 
     // =====================================================

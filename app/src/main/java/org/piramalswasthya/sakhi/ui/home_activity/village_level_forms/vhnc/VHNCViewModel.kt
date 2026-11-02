@@ -15,12 +15,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.configuration.VHNCDataset
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.VHNCCache
 import org.piramalswasthya.sakhi.repositories.VLFRepo
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @HiltViewModel
 class VHNCViewModel @javax.inject.Inject
@@ -31,7 +35,7 @@ constructor(
     private val vlfReo: VLFRepo,
 ) : ViewModel() {
     enum class State {
-        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED
+        IDLE, SAVING, SAVE_SUCCESS, SAVE_FAILED, DATE_ALREADY_FILLED
     }
 
     val allVHNCList = vlfReo.vhncList
@@ -86,6 +90,10 @@ constructor(
             } ?: run {
                 _recordExists.value = false
             }
+            if (_recordExists.value != true) {
+                val meetings = runCatching { allVHNCList.first() }.getOrDefault(emptyList())
+                dataset.restrictFilledMonths(meetings, vhncId)
+            }
             dataset.setUpPage(
                 if (recordExists.value == true) vhncIds else null
             )
@@ -104,6 +112,10 @@ constructor(
         viewModelScope.launch {
             try {
                 _state.postValue(State.SAVING)
+                if (!isVhncDateAvailable()) {
+                    _state.postValue(State.DATE_ALREADY_FILLED)
+                    return@launch
+                }
                 dataset.mapValues(_vhncCache, 1)
                 vlfReo.saveRecord(_vhncCache)
                 _state.postValue(State.SAVE_SUCCESS)
@@ -111,6 +123,33 @@ constructor(
                 Timber.d("saving VHND data failed!!")
                 _state.postValue(State.SAVE_FAILED)
             }
+        }
+    }
+
+    /**
+     * VHNC allows at most one meeting per calendar month. The date picker
+     * min/max bounds cover the rolling two-month window, while this check
+     * handles already-used months inside that window.
+     */
+    private suspend fun isVhncDateAvailable(): Boolean {
+        val selectedDate = dataset.getVhncDate() ?: return false
+        val selectedMonth = parseMonth(selectedDate) ?: return false
+
+        return allVHNCList.first().none { meeting ->
+            meeting.id != vhncId && parseMonth(meeting.vhncDate) == selectedMonth
+        }
+    }
+
+    private fun parseMonth(value: String): Pair<Int, Int>? {
+        return try {
+            val date = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).apply {
+                isLenient = false
+            }.parse(value) ?: return null
+            Calendar.getInstance().apply { time = date }.let {
+                it.get(Calendar.YEAR) to it.get(Calendar.MONTH)
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 

@@ -12,6 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.piramalswasthya.sakhi.badges.domain.TaskCompletionBus
 import org.piramalswasthya.sakhi.configuration.DeliveryOutcomeDataset
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
@@ -20,6 +21,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.DeliveryOutcomeRepo
 import org.piramalswasthya.sakhi.repositories.EcrRepo
 import org.piramalswasthya.sakhi.repositories.MaternalHealthRepo
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +32,8 @@ class DeliveryOutcomeViewModel @Inject constructor(
     private val deliveryOutcomeRepo: DeliveryOutcomeRepo,
     private val ecrRepo: EcrRepo,
     private val pwrRepo: MaternalHealthRepo,
-    private val benRepo: BenRepo
+    private val benRepo: BenRepo,
+    private val taskCompletionBus: TaskCompletionBus,
 ) : ViewModel() {
     val benId =
         DeliveryOutcomeFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
@@ -85,9 +88,15 @@ class DeliveryOutcomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val asha = preferenceDao.getLoggedInUser()!!
-            val pwr = pwrRepo.getLatestActiveRegistrationRecord(benId)!!
-            val anc = pwrRepo.getLatestAncRecord(benId)!!
+            val asha = preferenceDao.getLoggedInUser() ?: run {
+                Timber.e("DeliveryOutcomeViewModel: no logged in user for benId: $benId")
+                return@launch
+            }
+            val pwr = pwrRepo.getLatestActiveRegistrationRecord(benId) ?: run {
+                Timber.e("DeliveryOutcomeViewModel: no active pregnancy record for benId: $benId")
+                return@launch
+            }
+            val anc = pwrRepo.getLatestAncRecord(benId)
             benRepo.getBenFromId(benId)?.also { ben ->
                 _benName.value =
                     "${ben.firstName} ${if (ben.lastName == null) "" else ben.lastName}"
@@ -169,6 +178,7 @@ fun saveForm() {
                     ecrRepo.persistRecord(ecr)
                 }
 
+                taskCompletionBus.publish()
                 _state.postValue(State.SAVE_SUCCESS(shouldNavigateToMdsr))
 
             } catch (e: Exception) {

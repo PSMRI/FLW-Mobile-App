@@ -232,7 +232,7 @@ data class InfantRegPost(
             babyIndex = babyIndex,
             infantTerm = infantTerm,
             corticosteroidGiven = corticosteroidGiven,
-//            gender = gender,
+            gender = gender?.let { name -> Gender.values().firstOrNull { it.name.equals(name, ignoreCase = true) } },
             babyCriedAtBirth = babyCriedAtBirth,
             resuscitation = resuscitation,
             referred = referred,

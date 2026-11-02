@@ -68,6 +68,7 @@ class TaskCompletionBus @Inject constructor(
     }
 
     companion object {
-        private const val DEBOUNCE_MS = 3_000L
+        // Keep short so awards show soon after a form save; Room bursts still coalesce.
+        private const val DEBOUNCE_MS = 400L
     }
 }

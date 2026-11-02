@@ -129,7 +129,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:padding="@dimen/padding_normal"
-                android:src="@drawable/ic_synced"
+                android:src="@drawable/cloud_upload"
                 android:contentDescription="Synced" />
 
             <ImageView
@@ -137,7 +137,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:padding="@dimen/padding_normal"
-                android:src="@drawable/ic_unsynced"
+                android:src="@drawable/cloud_off"
                 android:contentDescription="Unsynced" />
 
             <ImageView
@@ -145,7 +145,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:padding="@dimen/padding_normal"
-                android:src="@drawable/ic_syncing"
+                android:src="@drawable/cloud_sync"
                 android:contentDescription="Syncing" />
 
         </LinearLayout>

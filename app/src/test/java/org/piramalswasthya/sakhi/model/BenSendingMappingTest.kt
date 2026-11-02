@@ -7,6 +7,8 @@ import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -254,5 +256,96 @@ class BenSendingMappingTest {
     fun `CHO null spouseName when genDetails null`() {
         val post = benCho().asNetworkSendingModelCHO(user, context)
         assertEquals(null, post.spouseName)
+    }
+
+    @Test
+    fun `BeneficiaryDataSending copy toString and equality`() {
+        val sending = ben().asNetworkSendingModel(user, locationRecord, context)
+        val same = sending.copy()
+        assertEquals(sending, same)
+        assertEquals(sending.hashCode(), same.hashCode())
+        assertNotEquals(sending, sending.copy(firstName = "Other"))
+        assertTrue(sending.toString().contains("BeneficiaryDataSending"))
+    }
+
+    @Test
+    fun `BenCHOPost copy toString and equality`() {
+        val post = benCho().asNetworkSendingModelCHO(user, context)
+        val same = post.copy()
+        assertEquals(post, same)
+        assertEquals(post.hashCode(), same.hashCode())
+        assertNotEquals(post, post.copy(firstName = "Other"))
+        assertTrue(post.toString().contains("BenCHOPost"))
+    }
+
+    private fun demographicsCHO() = BenDemographicsCHO(
+        incomeStatusID = "1",
+        incomeStatusName = "Low",
+        occupationID = "2",
+        occupationName = "Farmer",
+        educationID = "3",
+        educationName = "Primary",
+        communityID = "4",
+        communityName = "General",
+        religionID = "5",
+        religionName = "Hindu",
+        countryID = 1,
+        countryName = "India",
+        stateID = 2,
+        stateName = "State",
+        districtID = 3,
+        districtName = "District",
+        blockID = 4,
+        blockName = "Block",
+        districtBranchID = 5,
+        districtBranchName = "Branch",
+        habitation = "Habitation",
+        pinCode = "123456",
+        addressLine1 = "Line1",
+        addressLine2 = "Line2",
+        addressLine3 = "Line3"
+    )
+
+    @Test
+    fun `BenDemographicsCHO holds field values`() {
+        val d = demographicsCHO()
+        assertEquals("Low", d.incomeStatusName)
+        assertEquals("India", d.countryName)
+        assertEquals("123456", d.pinCode)
+    }
+
+    @Test
+    fun `BenDemographicsCHO copy toString and equality`() {
+        val d = demographicsCHO()
+        val same = d.copy()
+        assertEquals(d, same)
+        assertEquals(d.hashCode(), same.hashCode())
+        assertNotEquals(d, d.copy(stateName = "Other"))
+        assertTrue(d.toString().contains("BenDemographicsCHO"))
+
+        assertNotEquals(d, d.copy(incomeStatusID = "Other"))
+        assertNotEquals(d, d.copy(incomeStatusName = "Other"))
+        assertNotEquals(d, d.copy(occupationID = "Other"))
+        assertNotEquals(d, d.copy(occupationName = "Other"))
+        assertNotEquals(d, d.copy(educationID = "Other"))
+        assertNotEquals(d, d.copy(educationName = "Other"))
+        assertNotEquals(d, d.copy(communityID = "Other"))
+        assertNotEquals(d, d.copy(communityName = "Other"))
+        assertNotEquals(d, d.copy(religionID = "Other"))
+        assertNotEquals(d, d.copy(religionName = "Other"))
+        assertNotEquals(d, d.copy(countryID = 999))
+        assertNotEquals(d, d.copy(countryName = "Other"))
+        assertNotEquals(d, d.copy(stateID = 999))
+        assertNotEquals(d, d.copy(districtID = 999))
+        assertNotEquals(d, d.copy(districtName = "Other"))
+        assertNotEquals(d, d.copy(blockID = 999))
+        assertNotEquals(d, d.copy(blockName = "Other"))
+        assertNotEquals(d, d.copy(districtBranchID = 999))
+        assertNotEquals(d, d.copy(districtBranchName = "Other"))
+        assertNotEquals(d, d.copy(habitation = "Other"))
+        assertNotEquals(d, d.copy(pinCode = "Other"))
+        assertNotEquals(d, d.copy(addressLine1 = "Other"))
+        assertNotEquals(d, d.copy(addressLine2 = "Other"))
+        assertNotEquals(d, d.copy(addressLine3 = "Other"))
     }
 }

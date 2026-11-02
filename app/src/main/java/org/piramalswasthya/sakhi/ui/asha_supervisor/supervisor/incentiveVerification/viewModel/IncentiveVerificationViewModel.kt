@@ -57,15 +57,7 @@ class IncentiveVerificationViewModel @Inject constructor(
     }
 
     private fun fetchAshaList() {
-        val approvalStatusCode = when (currentStatus) {
-            VerificationStatus.VERIFIED -> 101
-            VerificationStatus.PENDING  -> 102
-            VerificationStatus.REJECTED -> 103
-            VerificationStatus.OVERDUE  -> 104
-            VerificationStatus.APPROVED  -> 105
-            VerificationStatus.UNCLAIMED  -> 106
-            VerificationStatus.ALL      -> 0
-        }
+        val approvalStatusCode = currentStatus.code
 
         viewModelScope.launch {
             _uiState.value = VerificationUiState.Loading
@@ -141,15 +133,8 @@ class IncentiveVerificationViewModel @Inject constructor(
         _uiState.value = VerificationUiState.Success(workers = filtered, summary = summary)
     }
 
-    private fun mapStatus(code: Int?): VerificationStatus = when (code) {
-        101  -> VerificationStatus.VERIFIED
-        102  -> VerificationStatus.PENDING
-        103  -> VerificationStatus.REJECTED
-        104  -> VerificationStatus.OVERDUE
-        105  -> VerificationStatus.APPROVED
-        106  -> VerificationStatus.UNCLAIMED
-        else -> VerificationStatus.PENDING
-    }
+    private fun mapStatus(code: Int?): VerificationStatus =
+        VerificationStatus.entries.firstOrNull { it.code == code } ?: VerificationStatus.PENDING
 }
 
 sealed class VerificationUiState {

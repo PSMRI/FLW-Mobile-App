@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -34,6 +35,7 @@ class SchedulerViewModelTest : BaseViewModelTest() {
         every { recordsRepo.eligibleCoupleTrackingNonFollowUpListCount } returns flowOf(6)
         every { recordsRepo.hrpTrackingPregListCount } returns flowOf(7)
         every { recordsRepo.hrpTrackingNonPregListCount } returns flowOf(8)
+        every { recordsRepo.hrpConfirmedPregListCount } returns flowOf(15)
         every { recordsRepo.childrenImmunizationDueListCount } returns flowOf(9)
         every { recordsRepo.lowWeightBabiesCount } returns flowOf(10)
         every { recordsRepo.benWithAbhaListCount } returns flowOf(11)
@@ -105,6 +107,16 @@ class SchedulerViewModelTest : BaseViewModelTest() {
     @Test
     fun `hrpCountEC flow is assigned from recordsRepo`() {
         assertNotNull(viewModel.hrpCountEC)
+    }
+
+    @Test
+    fun `hrpConfirmedCount flow is assigned from recordsRepo`() {
+        assertNotNull(viewModel.hrpConfirmedCount)
+    }
+
+    @Test
+    fun `hrpConfirmedCount emits count from recordsRepo`() = runTest {
+        assertEquals(15, viewModel.hrpConfirmedCount.first())
     }
 
     @Test

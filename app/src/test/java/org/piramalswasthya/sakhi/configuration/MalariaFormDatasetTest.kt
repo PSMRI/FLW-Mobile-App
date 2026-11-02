@@ -10,12 +10,15 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.piramalswasthya.sakhi.base.BaseViewModelTest
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.model.BenRegCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.MalariaScreeningCache
@@ -435,5 +438,274 @@ class MalariaFormDatasetTest : BaseViewModelTest() {
         // else branch
         runCatching { d.updateList(9999, 0) }
         assertNotNull(d.listFlow)
+    }
+
+    // ---- Additional deep-branch coverage ----
+
+    private fun deathCaseNonLastPlaceAndReason(): MalariaScreeningCache {
+        val s = mockk<MalariaScreeningCache>(relaxed = true)
+        every { s.caseStatus } returns "opt79"
+        every { s.caseDate } returns 1_600_000_000_000L
+        every { s.followUpDate } returns 1_610_000_000_000L
+        every { s.malariaTestType } returns 1
+        every { s.malariaSlideTestType } returns 1
+        every { s.beneficiaryStatus } returns "opt79"
+        every { s.dateOfDeath } returns 1_620_000_000_000L
+        every { s.placeOfDeath } returns "opt0"
+        every { s.reasonForDeath } returns "opt0"
+        every { s.feverMoreThanTwoWeeks } returns false
+        every { s.fluLikeIllness } returns false
+        return s
+    }
+
+    @Test
+    fun `setUpPage death case with non-last place and reason omits other fields`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), deathCaseNonLastPlaceAndReason()) }
+        assertNotEquals(-1, d.getIndexById(4))
+        assertEquals(-1, d.getIndexById(5))
+        assertEquals(-1, d.getIndexById(30))
+    }
+
+    @Test
+    fun `setUpPage caseStatus resolved but test type unset adds testType only`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 0, 0, null, null, null)
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertEquals(-1, d.getIndexById(17))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `setUpPage slide only test type with pv result adds slideTestPv not slideTestPf`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 2, 2, null, "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(27))
+        assertNotEquals(-1, d.getIndexById(20))
+        assertEquals(-1, d.getIndexById(19))
+    }
+
+    @Test
+    fun `setUpPage both test types with resolved rapid result skips dateOfTest insertion`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 3, 1, "opt2", "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertEquals(-1, d.getIndexById(18))
+    }
+
+    @Test
+    fun `updateList symptoms unanswered leaves testType absent then primary yes adds it`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), null) }
+        runCatching { d.updateList(7, 0) }
+        assertEquals(-1, d.getIndexById(28))
+        d.setValueById(7, "opt0")
+        runCatching { d.updateList(7, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    @Test
+    fun `updateList secondary symptoms alone trigger suspected via count threshold`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), null) }
+        d.setValueById(7, "opt1")
+        d.setValueById(8, "opt1")
+        d.setValueById(9, "opt1")
+        d.setValueById(10, "opt0")
+        d.setValueById(11, "opt0")
+        runCatching { d.updateList(11, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic negative and other results without both test type`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.setValueById(17, "opt1"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+        runCatching { d.setValueById(17, "opt0"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `setUpPage rapid only test type skips dateOfTest when rapid result already resolved`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 1, 0, "opt2", "opt0", "opt0")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(17))
+        assertEquals(-1, d.getIndexById(18))
+    }
+
+    @Test
+    fun `setUpPage slide only test type pf branch skips dateOfSlidetest when pf result resolved`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 2, 1, null, "opt2", "opt2")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(21))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic negative result adds only dateOfTest when test type not both`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.updateList(28, 0) }
+        runCatching { d.setValueById(17, "opt1"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `updateList rapid diagnostic other result adds only dateOfTest when test type not both`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(28, "opt0")
+        runCatching { d.updateList(28, 0) }
+        runCatching { d.setValueById(17, "opt0"); d.updateList(17, 0) }
+        assertNotEquals(-1, d.getIndexById(18))
+        assertEquals(-1, d.getIndexById(27))
+    }
+
+    @Test
+    fun `updateBen applies reproductive status and processed flag when genDetails present`() = runTest {
+        val d = ds()
+        val gen = mockk<org.piramalswasthya.sakhi.model.BenRegGen>(relaxed = true)
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns gen
+        every { ben.processed } returns "P"
+        d.updateBen(ben)
+        io.mockk.verify { gen.reproductiveStatusId = 2 }
+        io.mockk.verify { ben.processed = "U" }
+    }
+
+    @Test
+    fun `updateBen tolerates null genDetails and keeps a new record unprocessed`() = runTest {
+        val d = ds()
+        val ben = mockk<BenRegCache>(relaxed = true)
+        every { ben.genDetails } returns null
+        every { ben.processed } returns "N"
+        d.updateBen(ben)
+        io.mockk.verify(exactly = 0) { ben.processed = "U" }
+    }
+
+    // ---- Gap coverage: "both" test-type path with pf slide option + independently-resolved
+    // slidePv/slidePf results (previously only the pv-slide-option variant, with both results
+    // unresolved together, was exercised for this else branch of setUpPage). ----
+
+    @Test
+    fun `setUpPage both test type path with pf slide option and unresolved slide results`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                caseSaved("opt0", "opt0", 3, 1, "opt0", "opt2", "opt2")
+            )
+        }
+        assertNotEquals(-1, d.getIndexById(28))
+        assertNotEquals(-1, d.getIndexById(18))
+        assertNotEquals(-1, d.getIndexById(27))
+        assertNotEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(20))
+        assertEquals(-1, d.getIndexById(21))
+    }
+
+    // ---- Gap coverage: the symptom-branch try/catch in handleListOnValueChanged silently
+    // swallows an exception when the localized dc_case_status array is too short to index [4].
+    // Every existing test relies on the generic 80-entry mock, so the catch body never ran. ----
+
+    @Test
+    fun `updateList symptom branch swallows exception from short case status array`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        every { mockResources.getStringArray(R.array.dc_case_status) } returns arrayOf("opt0", "opt1")
+        d.setValueById(7, "opt0")
+        runCatching { d.updateList(7, 0) }
+        assertNotEquals(-1, d.getIndexById(28))
+    }
+
+    // ---- Gap coverage: slideTestOptions.id handler has no trailing else - when the value
+    // matches neither pf_pv[0] nor pf_pv[1], both triggerDependants calls are skipped. ----
+
+    @Test
+    fun `updateList slideTestOptions value matching neither pf nor pv skips both triggers`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        d.setValueById(27, "unmatched")
+        runCatching { d.updateList(27, 0) }
+        assertEquals(-1, d.getIndexById(19))
+        assertEquals(-1, d.getIndexById(20))
+    }
+
+    // ---- Gap coverage: mapValues was only ever exercised with a relaxed mockk cache model,
+    // so assignments ran but no test verified the actually computed values. Use a real cache
+    // instance and assert the mapped fields for both a "yes" (suspected) and a "no" record. ----
+
+    @Test
+    fun `mapValues maps suspected all-yes record onto real cache model`() = runTest {
+        val d = ds()
+        runCatching { d.setUpPage(benMock(), suspectedAllSymptoms()) }
+        val cache = MalariaScreeningCache(benId = 1L, visitId = 1L, houseHoldDetailsId = 1L)
+        d.mapValues(cache, 0)
+        assertEquals(true, cache.feverMoreThanTwoWeeks)
+        assertEquals(true, cache.fluLikeIllness)
+        assertEquals(true, cache.shakingChills)
+        assertEquals(true, cache.headache)
+        assertEquals(true, cache.muscleAches)
+        assertEquals(true, cache.tiredness)
+        assertEquals(true, cache.nausea)
+        assertEquals(true, cache.vomiting)
+        assertEquals(true, cache.diarrhea)
+        assertEquals(1, cache.diseaseTypeID)
+        assertEquals(1L, cache.visitId)
+    }
+
+    @Test
+    fun `mapValues maps negative-answers record onto real cache model`() = runTest {
+        val d = ds()
+        runCatching {
+            d.setUpPage(
+                benMock(),
+                savedMock(false, "opt1", 1, 0, "opt0")
+            )
+        }
+        val cache = MalariaScreeningCache(benId = 2L, visitId = 2L, houseHoldDetailsId = 2L)
+        d.mapValues(cache, 0)
+        assertEquals(false, cache.feverMoreThanTwoWeeks)
+        assertEquals(false, cache.fluLikeIllness)
+        assertEquals(false, cache.shakingChills)
+        assertEquals(false, cache.headache)
+        assertEquals(false, cache.muscleAches)
+        assertEquals(false, cache.tiredness)
+        assertEquals(false, cache.nausea)
+        assertEquals(false, cache.vomiting)
+        assertEquals(false, cache.diarrhea)
+        assertEquals(1, cache.diseaseTypeID)
     }
 }

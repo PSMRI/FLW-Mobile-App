@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.utils
 
+import org.piramalswasthya.sakhi.helpers.NativeLibraryLoader
 import timber.log.Timber
 
 
@@ -14,14 +15,14 @@ import timber.log.Timber
  */
 object KeyUtils {
 
-    private const val NATIVE_JNI_LIB_NAME = "sakhi"
+    private const val NATIVE_JNI_LIB_NAME = NativeLibraryLoader.SAKHI
 
     init {
         try {
-            System.loadLibrary(NATIVE_JNI_LIB_NAME)
+            NativeLibraryLoader.load(NATIVE_JNI_LIB_NAME)
         } catch (e: UnsatisfiedLinkError) {
             Timber.tag("KeyUtils").e(e, "Failed to load native library")
-            throw RuntimeException("Failed to load native library: $NATIVE_JNI_LIB_NAME")
+            throw RuntimeException("Failed to load native library: $NATIVE_JNI_LIB_NAME", e)
         }
 
     }

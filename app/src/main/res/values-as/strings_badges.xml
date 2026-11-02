@@ -21,9 +21,9 @@
     <string name="badge_community_voice_title">কমিউনিটি ভইচ</string>
     <string name="badge_community_voice_desc">প্ৰতি ত্ৰৈমাসিকত ২+ ধৰণৰ সভা (MAA, NDD, AHD, U-WIN) আয়োজন কৰক</string>
     <string name="badge_maternal_journey_title">মাতৃত্বৰ যাত্ৰা</string>
-    <string name="badge_maternal_journey_desc">প্ৰাতিষ্ঠানিক প্ৰসৱলৈকে মাতৃ যত্নৰ যাত্ৰা সম্পূৰ্ণ কৰক</string>
+    <string name="badge_maternal_journey_desc">≥4 ANC সহ মাতৃ যত্ন সম্পূৰ্ণ কৰক যি সুবিধাত প্ৰসৱত শেষ হয় (যেনে জিলা চিকিৎসালয়, PHC, CHC)। ঘৰ আৰু পথে প্ৰসৱ যোগ্য নহয়</string>
     <string name="badge_child_fully_protected_title">সম্পূৰ্ণ সুৰক্ষিত শিশু</string>
-    <string name="badge_child_fully_protected_desc">শিশুৰ সম্পূৰ্ণ টিকাকৰণ সূচী সম্পূৰ্ণ কৰক</string>
+    <string name="badge_child_fully_protected_desc">প্ৰতিটো শিশুৰ সম্পূৰ্ণ প্ৰথম-বছৰৰ টিকাকৰণ সম্পূৰ্ণ কৰক (যমজ সন্তান পৃথকে গণ্য)</string>
     <string name="badge_digital_identity_title">ডিজিটেল পৰিচয়</string>
     <string name="badge_digital_identity_desc">পৰিয়াল পঞ্জীয়নৰ পিছত ABHA আইডি বনাওক</string>
     <string name="badge_vulnerable_baby_title">নাজুক কেঁচুৱাৰ যত্ন</string>

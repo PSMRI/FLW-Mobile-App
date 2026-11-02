@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.children
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -32,6 +33,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
 import org.piramalswasthya.sakhi.databinding.FragmentCbacBinding
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
+import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.CbacCache
 import org.piramalswasthya.sakhi.model.Gender
 import org.piramalswasthya.sakhi.model.ReferalCache
@@ -73,7 +75,7 @@ class CbacFragment : Fragment() {
     }
     private var isReferralDialogShown = false
     var referralForReason = ""
-    var referType = "NCD"
+    var referType  = "NCD"
     var enumType = "NCD"
 
     private val raAlertDialog by lazy {
@@ -118,6 +120,9 @@ class CbacFragment : Fragment() {
 
             yesBtn.setOnClickListener {
                 dialog.dismiss()
+                // The alert lives on the activity window and can still be tapped after this
+                // fragment was popped; inflating the referral form then needs an attached fragment.
+                if (!isAdded) return@setOnClickListener
                 showReferralDialog(
                     fragment = this,
                     type = referType,
@@ -171,7 +176,7 @@ class CbacFragment : Fragment() {
     private var dialogAlreadyShown = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        referType = getString(R.string.ncd_referral_type)
         binding.layoutReferralForm.clPatientInformation.visibility = View.GONE
         binding.layoutReferralForm.btnSubmit.visibility = View.GONE
         referViewModel.initFromArgs(
@@ -232,7 +237,7 @@ class CbacFragment : Fragment() {
                 dialogAlreadyShown = true
                 viewModelLeprosyScreening.saveLeprosySuspectedFormDirectlyfromCbac()
                 referralForReason = getString(R.string.tb_suspected_leprosy_case)
-                referType = "SUSPECTED LEPROSY CASE"
+                referType = getString(R.string.suspected_leprosy_case)
                 enumType = "LEPROSY"
                 asreferAlertDialog = buildAsReferAlertDialog()
                 asreferAlertDialog?.show()
@@ -373,7 +378,7 @@ class CbacFragment : Fragment() {
                 ?.substringAfter(": ")
                 ?.toIntOrNull() ?: 0
             referralForReason = getString(R.string.tb_suspected_ncd_case)
-            referType = "NCD"
+            referType = getString(R.string.ncd_referral_type)
             enumType = "NCD"
             handleNcdSusBottomInfoDisplay(totalScore)
 
@@ -662,7 +667,8 @@ class CbacFragment : Fragment() {
                 ast1AlertDialog.show()*/
                 if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB) ) {
                     referralForReason = getString(R.string.tb_suspected_form)
-                    referType = "Suspected TB Case"
+                    referType = getString(R.string.suspected_tb_case)
+
                     enumType = "TB"
                     asreferAlertDialog = buildAsReferAlertDialog()
                     asreferAlertDialog?.show()
@@ -673,6 +679,50 @@ class CbacFragment : Fragment() {
             }
         }
 
+    }
+
+    // FLW-343: a "Yes" on any one (*) question asks for a sputum sample, a "Yes" on any one (**)
+    // question asks for family screening, and a "Yes" in both groups shows the combined message.
+    private fun handleTbAlert(yesSelected: Boolean) {
+        val anyAst1Yes = listOf(
+            binding.cbacHistb,
+            binding.cbacCoughing,
+            binding.cbacBlsputum,
+            binding.cbacFeverwks,
+            binding.cbacLsweight,
+            binding.cbacNtswets
+        ).any { it.rbYes.isChecked }
+        val anyAst2Yes = listOf(
+            binding.cbacFhTb,
+            binding.cbacTakingTbDrug
+        ).any { it.rbYes.isChecked }
+
+        isSuspected = anyAst1Yes
+
+        if (!isInFillMode || !yesSelected) return
+
+        val message = when {
+            anyAst1Yes && anyAst2Yes -> R.string.tb_alert_collect_sputum_and_screen_family
+            anyAst1Yes -> R.string.tb_alert_collect_sputum
+            anyAst2Yes -> R.string.tb_alert_screen_family
+            else -> return
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.tb_suspected_case_title))
+            .setMessage(getString(message))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+            .setOnDismissListener {
+                if (!isAdded || !anyAst1Yes) return@setOnDismissListener
+                if (!viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.TB)) {
+                    referralForReason = getString(R.string.tb_suspected_form)
+                    referType = getString(R.string.suspected_tb_case)
+                    enumType = "TB"
+                    asreferAlertDialog = buildAsReferAlertDialog()
+                    asreferAlertDialog?.show()
+                }
+            }
+            .show()
     }
 
     private fun handleAst0Alert() {
@@ -776,11 +826,13 @@ class CbacFragment : Fragment() {
                 }, thisYear, thisMonth, thisDay
             )
 
-            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-            viewModel.minDate.observe(viewLifecycleOwner) {
-                datePickerDialog.datePicker.minDate = it
-
-            }
+            // minDate is last CBAC + 365 days, which is in the future when the previous CBAC is
+            // under a year old; the helper keeps it from exceeding maxDate (framework crash).
+            HelperUtil.setSafeDateRange(
+                datePickerDialog.datePicker,
+                viewModel.minDate.value,
+                System.currentTimeMillis()
+            )
             datePickerDialog.show()
             datePickerDialog.setOnDismissListener {
                 HelperUtil.setOriginalLocaleForDatePicker(activity,originalLocale)
@@ -906,6 +958,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFhTb(2)
             }
 //            handleAst2Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacTakingTbDrug.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -913,6 +966,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setTakingTbDrug(2)
             }
 //            handleAst2Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacHistb.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -920,6 +974,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setHisTb(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacCoughing.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -927,6 +982,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setCoughing(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacBlsputum.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -934,6 +990,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setBloodSputum(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacFeverwks.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -941,6 +998,7 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setFeverWks(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacLsweight.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
@@ -948,13 +1006,15 @@ class CbacFragment : Fragment() {
                 R.id.rb_no -> viewModel.setLsWt(2)
             }
 //            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
         }
         binding.cbacNtswets.cbacEdRg.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.rb_yes -> viewModel.setNtSwets(1)
                 R.id.rb_no -> viewModel.setNtSwets(2)
             }
-            handleAst1Alert()
+//            handleAst1Alert()
+            handleTbAlert(id == R.id.rb_yes)
 
         }
         binding.cbacRecurrentUlceration.cbacEdRg.setOnCheckedChangeListener { _, id ->
@@ -1297,19 +1357,23 @@ class CbacFragment : Fragment() {
                 requireContext(),
                 R.layout.dropdown_item,
                 R.id.tv_dropdown_item_text,
-                resources.getStringArray(R.array.cbac_type_occupational_exposure),
+                resources.getStringArray(Konstants.cbacOccupationalExposureArrayId),
 
 
                 )
         )
+        binding.etExposureOther.doAfterTextChanged {
+            viewModel.setOccExposureOther(it?.toString())
+        }
         binding.actvFuelDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setFuelType(i)
 
         }
         binding.actvExposureDropdown.setOnItemClickListener { _, _, i, _ ->
             viewModel.setOccExposure(i)
+            updateExposureOtherVisibility(i + 1)
             referralForReason = getString(R.string.tb_suspected_copd_case)
-            referType = "Suspected COPD Case"
+            referType = getString(R.string.suspected_copd_case)
             enumType = "COPD"
             if (isInFillMode && !viewModel.isReferralAlreadyDone(CbacViewModel.ReferralType.COPD)) {
                 asreferAlertDialog = buildAsReferAlertDialog()
@@ -1320,13 +1384,25 @@ class CbacFragment : Fragment() {
         }
     }
 
+    private fun updateExposureOtherVisibility(posi: Int) {
+        val isOtherSources = posi == Konstants.cbacOtherSourcesPosi
+        binding.tilExposureOther.visibility = if (isOtherSources) View.VISIBLE else View.GONE
+        if (!isOtherSources) binding.etExposureOther.setText("")
+    }
+
     private fun setupRfCopdView(cbac: CbacCache) {
         cbac.cbac_fuel_used_posi.takeIf { it > 0 }?.let {
             binding.actvFuelDropdown.setText(resources.getStringArray(R.array.cbac_type_Cooking_fuel)[it - 1])
         }
         cbac.cbac_occupational_exposure_posi.takeIf { it > 0 }?.let {
-            binding.actvExposureDropdown.setText(resources.getStringArray(R.array.cbac_type_occupational_exposure)[it - 1])
+            val entries = resources.getStringArray(Konstants.cbacOccupationalExposureArrayId)
+            entries.getOrNull(it - 1)?.let { entry ->
+                binding.actvExposureDropdown.setText(entry)
+            }
+            updateExposureOtherVisibility(it)
         }
+        binding.etExposureOther.setText(cbac.cbac_occupational_exposure_other)
+        binding.etExposureOther.isEnabled = false
 
     }
 
@@ -1400,6 +1476,12 @@ class CbacFragment : Fragment() {
 
 
     }
+    override fun onDestroyView() {
+        asreferAlertDialog?.dismiss()
+        asreferAlertDialog = null
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         referViewModel.resetState()
@@ -1514,7 +1596,7 @@ class CbacFragment : Fragment() {
             benId = benId,
             referralReason = reason,
             cbacId = cbacId,
-            referralType = type
+            referralType = if (enumType == "COPD" || enumType == "CANCER") "NCD" else enumType
         )
 
         binding.benId.text = benId.toString()

@@ -153,7 +153,7 @@ class PHCReviewFormFragement:Fragment() {
     private fun hardCodedListUpdate(formId: Int) {
         binding.form.rvInputForm.adapter?.apply {
             when (formId) {
-//                9 -> notifyDataSetChanged()
+                9 -> notifyDataSetChanged()
             }
         }
     }
@@ -188,8 +188,11 @@ class PHCReviewFormFragement:Fragment() {
                         viewModel.setImageUriToFormElement(uri)
 
                         binding.form.rvInputForm.apply {
-                            (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
-
+                            val position = (this.adapter as? FormInputAdapter)
+                                ?.currentList?.indexOfFirst { it.id == imgValue } ?: -1
+                            if (position != -1) {
+                                (this.adapter as? FormInputAdapter)?.notifyItemChanged(position)
+                            }
                         }
                         showImageLoadedMessage(requireContext())
                     }
@@ -232,7 +235,11 @@ class PHCReviewFormFragement:Fragment() {
                     viewModel.setCurrentImageFormId(imgValue)
                     viewModel.setImageUriToFormElement(uri)
                     binding.form.rvInputForm.apply {
-                        (this.adapter as? FormInputAdapter)?.notifyItemChanged(if (imgValue == 1) 4 else 5)
+                        val position = (this.adapter as? FormInputAdapter)
+                            ?.currentList?.indexOfFirst { it.id == imgValue } ?: -1
+                        if (position != -1) {
+                            (this.adapter as? FormInputAdapter)?.notifyItemChanged(position)
+                        }
                     }
                     showImageLoadedMessage(requireContext())
                 }

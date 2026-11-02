@@ -8,6 +8,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.model.Icon
 import org.piramalswasthya.sakhi.repositories.AdolescentHealthRepo
 import org.piramalswasthya.sakhi.repositories.RecordsRepo
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorHomeFragmentDirections
 import org.piramalswasthya.sakhi.ui.getTitleRes
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDirections
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class IconDataset @Inject constructor(
     private val recordsRepo: RecordsRepo,
+    private val recordsRepoTb: TBReferralFollowUpRepository,
     private val preferenceDao: PreferenceDao,
     private val adolescentHealthRepo: AdolescentHealthRepo
 ) {
@@ -41,7 +43,7 @@ class IconDataset @Inject constructor(
     }
 
     enum class Disease {
-        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING
+        MALARIA, KALA_AZAR, AES_JE, FILARIA, LEPROSY, DEWARMING ,TB
     }
 
     fun getHomeIconDataset(resources: Resources): List<Icon> {
@@ -92,7 +94,7 @@ class IconDataset @Inject constructor(
                     HomeFragmentDirections.actionNavHomeToChildCareFragment()
                 ),
                 Icon(
-                    R.drawable.ic__ncd,
+                    R.drawable.disease_control_icon,
                     resources.getString(R.string.icon_title_disease),
                     null,
                     HomeFragmentDirections.actionHomeFragmentToDiseaseControlFragment()
@@ -106,8 +108,8 @@ class IconDataset @Inject constructor(
                 Icon(
                     R.drawable.ic_vaccines,
                     resources.getString(R.string.icon_title_imm),
-                    null,
-                    HomeFragmentDirections.actionNavHomeToImmunizationDueFragment(),
+                    recordsRepo.childrenImmunizationListCount,
+                    HomeFragmentDirections.actionNavHomeToChildImmunizationListFragment(),
                 ),
                 Icon(
                     icon = R.drawable.ic__hrp,
@@ -442,7 +444,7 @@ class IconDataset @Inject constructor(
 
     fun getChildCareDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__infant,
+            R.drawable.new_born_baby_icon,
             resources.getString(R.string.icon_title_icc),
             recordsRepo.infantListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToInfantListFragment()
@@ -458,7 +460,7 @@ class IconDataset @Inject constructor(
             ChildCareFragmentDirections.actionChildCareFragmentToAdolescentListFragment()
         ),
         Icon(
-            R.drawable.ic__adolescent,
+            R.drawable.children_under_five,
             resources.getString(R.string.children_under_five_years),
             recordsRepo.childFilteredListCount,
             ChildCareFragmentDirections.actionChildCareFragmentToChildrenUnderFiveYearListFragment()
@@ -510,7 +512,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.leprocy,
             resources.getString(R.string.leprosy_screening),
-            recordsRepo.tbScreeningListCount,
+            recordsRepo.hhListCount,
             LeprosyFragmentDirections.actionLeprosyFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.LEPROSY.getTitleRes())
             )
@@ -533,7 +535,7 @@ class IconDataset @Inject constructor(
 
     fun getDiseaseControlDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__ncd,
+            R.drawable.ncd_icon,
             resources.getString(R.string.icon_title_ncd),
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
@@ -577,7 +579,7 @@ class IconDataset @Inject constructor(
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
         ),
         Icon(
-            R.drawable.ic__ncd,
+            R.drawable.tb_icon,
             resources.getString(R.string.tb),
             null,
             DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDisease()
@@ -754,7 +756,10 @@ class IconDataset @Inject constructor(
             R.drawable.ic__ncd_eligibility,
             resources.getString(R.string.icon_title_ncd_tb_screening),
             recordsRepo.tbScreeningListCount,
-            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
+            CdFragmentDirections.actionCdFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.TB.getTitleRes())
+            )
+//            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
         ), Icon(
             R.drawable.ic__death,
             resources.getString(R.string.icon_title_ncd_tb_suspected),
@@ -766,6 +771,18 @@ class IconDataset @Inject constructor(
             title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
             recordsRepo.tbConfirmedListCount,
             CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
+        ),
+        Icon(
+            icon = R.drawable.ic__abha_logo_v1_24,
+            title = resources.getString(R.string.icon_title_ncd_tbtpreventive_treatment),
+            recordsRepoTb.tptListCount,
+            CdFragmentDirections.actionCdFragmentToTPTListFragment()
+        ),
+        Icon(
+            icon = R.drawable.ic_crash,
+            title = resources.getString(R.string.icon_title_ncd_vulnerable_treatment),
+            recordsRepo.tbScreeningRiskfactorListforVulneravilityCount,
+            CdFragmentDirections.actionCdFragmentToVulnerablePopulationListFragment()
         )
     ).apply {
         forEachIndexed { index, icon ->
@@ -777,7 +794,7 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.malaria_list,
             resources.getString(R.string.icon_title_maleria),
-            recordsRepo.tbScreeningListCount,
+            recordsRepo.hhListCount,
             MalariaIconsFragmentDirections.actionMalariaIconsFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.MALARIA.getTitleRes())
             ),
