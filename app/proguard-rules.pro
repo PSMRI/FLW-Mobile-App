@@ -16,17 +16,22 @@
 # (FLW-1211); the source file name is replaced to avoid shipping it.
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
--keep class com.squareup.moshi.** { *; }
--keep class retrofit2.** { *; }
--keep class okhttp3.** { *; }
--keep class androidx.legacy.** { *; }
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class androidx.lifecycle.** { *; }
--keepclassmembers class androidx.lifecycle.** { *; }
--keep class androidx.work.** { *; }
--keep class androidx.startup.** { *; }
--keep class org.bouncycastle.** { *; }
+
+# Libraries (Moshi, OkHttp, Firebase, Play services, AndroidX, Kotlin, coroutines) ship
+# their own R8 rules, so they are no longer kept wholesale (FLW-1211).
+
+# Retrofit 2.9.0 ships no R8 full-mode rules, and AGP 8 runs R8 in full mode, which would
+# strip the generic signatures Retrofit reads from suspend API methods. These are the rules
+# newer Retrofit versions ship.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
 -keep class java.util.Locale { *; }
 # Prevent removal of resources used via reflection or dynamic access
 -keepclassmembers class ** {
@@ -78,16 +83,6 @@
 -keep class org.piramalswasthya.sakhi.network.** {*;}
 -keep class org.piramalswasthya.sakhi.repositories.** {*;}
 -dontusemixedcaseclassnames
-
-# Keep all members in kotlinx.coroutines
--keep class kotlinx.coroutines.** { *; }
-
-# Keep all methods in kotlinx.coroutines
--keepclassmembers class kotlinx.coroutines.** { *; }
-
-# Keep Kotlin standard library functions
--keep class kotlin.** { *; }
--keepclassmembers class kotlin.** { *; }
 
 # Keep coroutines continuation classes and methods
 -keepclassmembers class kotlin.coroutines.Continuation {
