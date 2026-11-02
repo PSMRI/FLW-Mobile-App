@@ -41,12 +41,11 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
     private val viewModel: ChildImmunizationListViewModel by viewModels()
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
-        binding.searchView.setText(value)
-        binding.searchView.setSelection(value.length)
+        _binding?.searchView?.setText(value)
+        _binding?.searchView?.setSelection(value.length)
         viewModel.setSearchText(value)
     }
 
-    private val bottomSheet: ChildImmunizationVaccineBottomSheetFragment by lazy { ChildImmunizationVaccineBottomSheetFragment() }
     private val filterBottomSheet: ChildImmunizationFilterBottomSheetFragment by lazy { ChildImmunizationFilterBottomSheetFragment() }
     private var isBottomSheetShowing = false
     override fun onCreateView(
@@ -71,12 +70,12 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
                 if (!isBottomSheetShowing) {
                     isBottomSheetShowing = true
                     viewModel.updateBottomSheetData(it)
-                    bottomSheet.show(childFragmentManager, "ImM")
+                    ChildImmunizationVaccineBottomSheetFragment().show(childFragmentManager, "ImM")
                 }
             })
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.immunizationBenList.collect {
                 if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
@@ -139,16 +138,16 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
             viewModel.toggleQuickFilter(ChildImmunizationListViewModel.QuickFilter.NEXT_MONTH)
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dueThisMonthCount.collect { binding.tvDueThisMonthCount.text = "$it" }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.nextMonthCount.collect { binding.tvNextMonthCount.text = "$it" }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.resultMeta.collect { binding.tvResultMeta.text = it }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isFiltered.collect { filtered ->
                 binding.tvEmptyContent.setText(
                     if (filtered) R.string.imm_no_match_for_filters
@@ -214,5 +213,9 @@ class ChildImmunizationListFragment : Fragment(),ImmunizationBirthDoseCategoryAd
         viewModel.setDoseStage(viewModel.toCategory(catDataList))
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

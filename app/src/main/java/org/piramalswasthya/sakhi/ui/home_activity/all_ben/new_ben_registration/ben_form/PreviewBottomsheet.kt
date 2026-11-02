@@ -34,7 +34,7 @@ class PreviewBottomSheet : BottomSheetDialogFragment() {
         val v = inflater.inflate(R.layout.bottomsheet_preview, container, false)
         val rv = v.findViewById<RecyclerView>(R.id.recyclerPreview)
         rv.layoutManager = LinearLayoutManager(requireContext())
-        rv.adapter = PreviewAdapter(previewList) // Here you can pass Glide loader in prod
+        rv.adapter = PreviewAdapter(previewList)
 
         v.findViewById<Button>(R.id.btnEditPreview).setOnClickListener {
             dismiss()

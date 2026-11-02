@@ -62,8 +62,8 @@ class AllBenFragment : Fragment() {
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -277,20 +277,20 @@ class AllBenFragment : Fragment() {
             initialPrefetchItemCount = 10
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collectLatest {
                 benAdapter.submitData(it)
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             benAdapter.loadStateFlow.collectLatest { loadStates ->
                 val isEmpty = loadStates.refresh is LoadState.NotLoading && benAdapter.itemCount == 0
                 binding.flEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.childCounts.collectLatest { countMap ->
                 benAdapter.submitChildCounts(countMap)
             }
@@ -420,8 +420,9 @@ class AllBenFragment : Fragment() {
         bottomSheet.show(childFragmentManager, "EyeSurgeryBottomSheet")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding?.rvAny?.adapter = null
         _binding = null
     }
 }

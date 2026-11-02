@@ -123,7 +123,7 @@ class TBSuspectedFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.healthicons__viral_lung_infection_outline,
                 getString(R.string.tb_suspected_form)
             )
         }

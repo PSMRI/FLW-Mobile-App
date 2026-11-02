@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Disease Control (3-tile layout) -->
+    <string name="icon_title_general_checkup">सामान्य जाँच</string>
+    <string name="icon_title_non_communicable">गैर-संचारी रोग</string>
+
+    <!-- General Check-up list -->
+    <string name="gc_search_hint">नाम या आईडी से खोजें</string>
+    <string name="gc_earlier_checkups">पिछली जाँचें</string>
+    <string name="gc_add_checkup">जाँच जोड़ें</string>
+
+    <!-- General Check-up form -->
+    <string name="gc_earlier_checkups_count">पिछली जाँचें (%1$d)</string>
+    <string name="gc_no_earlier_checkups">कोई पिछली जाँच नहीं।</string>
+    <string name="gc_date_hint">आज या एक महीने पहले तक। आगे की तारीख नहीं।</string>
+    <string name="gc_pointer_cd">टीबी, मलेरिया, कुष्ठ या कोई और संक्रामक रोग? संचारी रोग का उपयोग करें।</string>
+    <string name="gc_pointer_ncd">हाई बीपी, शुगर, सीओपीडी या कैंसर जाँच? गैर-संचारी रोग का उपयोग करें।</string>
+    <string name="gc_other_required">ज़रूरी है। समस्या का नाम लिखे बिना रेफर नहीं कर सकते।</string>
+    <string name="gc_priority_emergency">प्राथमिकता: आपातकाल।\nतुरंत रेफर करें।</string>
+    <string name="gc_priority_routine">प्राथमिकता: सामान्य</string>
+    <string name="gc_refer_to_facility">स्वास्थ्य केंद्र रेफर करें</string>
+    <string name="gc_err_type">समस्या का प्रकार चुनें।</string>
+    <string name="gc_err_problem">कम से कम एक समस्या चुनें।</string>
+    <string name="gc_err_other_length">नाम %1$d अक्षरों या उससे कम में लिखें।</string>
+    <string name="gc_form_unavailable">जाँच फ़ॉर्म अभी डाउनलोड नहीं हुआ है। इंटरनेट से जुड़ें और फिर से कोशिश करें।</string>
+    <string name="gc_form_invalid">सर्वर से मिला जाँच फ़ॉर्म अधूरा है, इसलिए इसे भरा नहीं जा सकता। कृपया अपने सुपरवाइज़र को बताएँ या बाद में फिर से कोशिश करें।</string>
+    <string name="gc_retry">फिर से कोशिश करें</string>
+
+    <!-- Routing to owner modules (FR6) -->
+    <string name="gc_route_title">इसे दूसरा मॉड्यूल संभालता है</string>
+    <string name="gc_route_msg">%1$s को %2$s में संभाला जाता है। वहाँ जारी रखें। एक मामले में एक ही रेफरल बनता है, इसलिए सामान्य जाँच से दूसरा रेफरल नहीं बनेगा।</string>
+    <string name="gc_route_continue">%1$s में जारी रखें</string>
+    <string name="gc_route_stay">यहीं रहें</string>
+    <string name="gc_module_maternal">मातृ स्वास्थ्य</string>
+    <string name="gc_module_child">शिशु देखभाल</string>
+    <string name="gc_module_ecl">योग्य दंपति सूची</string>
+    <string name="gc_module_cataract">मोतियाबिंद रेफरल</string>
+
+    <!-- Refer to Facility form -->
+    <string name="gc_priority">प्राथमिकता</string>
+    <string name="gc_priority_emergency_short">आपातकाल – तुरंत रेफर करें</string>
+    <string name="gc_priority_routine_short">सामान्य</string>
+    <string name="gc_referral_submitted">रेफरल जमा हो गया।</string>
+
+    <string-array name="gc_referral_facility">
+        <item>एचडब्ल्यूसी</item>
+        <item>पीएचसी</item>
+        <item>सीएचसी</item>
+        <item>मेडिकल कॉलेज</item>
+        <item>जिला अस्पताल</item>
+    </string-array>
+
+    <!-- Duplicate referral (BRD §8) -->
+    <string name="gc_dup_title">इस महीने पहले ही रेफर किया गया</string>
+    <string name="gc_dup_msg">इस व्यक्ति को इस समस्या के लिए %1$s को पहले ही रेफर किया जा चुका है। इसी समस्या के लिए अगले महीने फिर से रेफर कर सकते हैं।</string>
+    <string name="gc_dup_view">एचडब्ल्यूसी रेफरल में देखें</string>
+    <string name="gc_save_failed">जाँच सेव नहीं हो सकी। फिर से कोशिश करें।</string>
+</resources>

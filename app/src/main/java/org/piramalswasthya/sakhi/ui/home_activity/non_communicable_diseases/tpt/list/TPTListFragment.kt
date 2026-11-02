@@ -86,7 +86,7 @@ class TPTListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.covid__vaccine_protection_medicine_pill,
                 getString(R.string.tpt_list)
             )
         }

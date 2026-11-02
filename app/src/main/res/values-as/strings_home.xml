@@ -106,7 +106,7 @@
     <string name="icon_title_ect">যোগ্য দম্পতী অনুসৰণ</string>
     <string name="icon_title_video_tutorial">ভিডিঅ\' পাঠ্যক্ৰম</string>
     <string name="icon_title_ncd_tb_screening">টিবি পৰীক্ষা</string>
-    <string name="icon_title_ncd_tb_suspected">সন্দেহাজনক টিবি ৰোগীৰ ঘটনা</string>
+    <string name="icon_title_ncd_tb_suspected">অনুমানিক টিবি ৰোগী</string>
     <string name="icon_title_hrp_pregnant">উচ্চ ঝুঁকিপূর্ণ গৰ্ভৱতী মহিলাসকল</string>
     <string name="icon_title_hrp_non_pregnant">উচ্চ ঝুঁকিপূর্ণঅগৰ্ভবতী মহিলা</string>
     <string name="icon_title_hrp_pregnant_assess">PW-ত উচ্চ ঝুঁকি মূল্যায়ন কৰক</string>

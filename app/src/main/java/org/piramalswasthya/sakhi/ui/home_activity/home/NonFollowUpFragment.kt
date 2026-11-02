@@ -52,7 +52,7 @@ class NonFollowUpFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ancNonFollowUpCount.collect {
                 binding.tvAnc.text = it.toString()
             }
@@ -62,7 +62,7 @@ class NonFollowUpFragment : Fragment() {
             findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToPwAncVisitsFragment(1))
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.pncNonFollowUpCount.collect {
                 binding.tvHrEcPnc.text = it.toString()
             }
@@ -72,7 +72,7 @@ class NonFollowUpFragment : Fragment() {
             findNavController().navigate(NonFollowUpFragmentDirections.actionNonFollowUpFragmentToPncMotherListFragment(1))
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ecNonFollowUpCount.collect {
                 binding.tvLbwb.text = it.toString()
             }
@@ -94,8 +94,8 @@ class NonFollowUpFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

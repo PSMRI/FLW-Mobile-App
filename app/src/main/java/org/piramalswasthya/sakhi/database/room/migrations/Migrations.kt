@@ -60,5 +60,7 @@ val ALL_MIGRATIONS: Array<Migration> = arrayOf(
     Migration67To68,
     Migration68To69,
     Migration69To70,
-    Migration70To71
+    Migration70To71,
+    Migration71To72,
+    Migration72To73
 )

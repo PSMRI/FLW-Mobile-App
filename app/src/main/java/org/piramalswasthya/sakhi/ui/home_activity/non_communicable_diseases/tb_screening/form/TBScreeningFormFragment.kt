@@ -227,7 +227,7 @@ class TBScreeningFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.tb_screening,
                 getString(R.string.tb_screening_form)
             )
         }

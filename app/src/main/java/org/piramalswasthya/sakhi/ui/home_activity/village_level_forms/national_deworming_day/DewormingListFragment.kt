@@ -69,7 +69,7 @@
             binding.btnNextPage.setOnClickListener {
                 findNavController().navigate(R.id.action_DewormingListFragment_to_DewormingFormFragment)
             }
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.allDewormingList.collect {
                     if (it.isEmpty())
                         binding.flEmpty.visibility = View.VISIBLE
@@ -89,9 +89,9 @@
                 )
             }
         }
-//
-//        override fun onDestroyView() {
-//            super.onDestroyView()
-//            _binding = null
-//        }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            _binding = null
+        }
     }

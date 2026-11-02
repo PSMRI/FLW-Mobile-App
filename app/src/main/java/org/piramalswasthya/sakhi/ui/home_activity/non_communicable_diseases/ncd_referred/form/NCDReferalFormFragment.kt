@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter
+import org.piramalswasthya.sakhi.configuration.dynamicDataSet.ReferalFormDataset
 import org.piramalswasthya.sakhi.databinding.FragmentNewFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import timber.log.Timber
@@ -131,6 +132,7 @@ class NCDReferalFormFragment : Fragment() {
         return when (viewModel.referraltype.uppercase()) {
             "MATERNAL" -> getString(R.string.hwc_refer_form)
             "TB" -> getString(R.string.hwc_refer_form)
+            ReferalFormDataset.GENERAL_CHECKUP -> getString(R.string.gc_refer_to_facility)
             else -> getString(R.string.ncd_refer_form)
         }
     }

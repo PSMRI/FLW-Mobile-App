@@ -14,9 +14,19 @@ import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
     import org.piramalswasthya.sakhi.model.ReferalCache
 
-    class NcdReferListAdapter(var userName: String, private val listener: NcdReferallickListener, private val visible: Boolean ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
+    /**
+     * [followUpVisible] overrides the follow-up button per row (used for General Check-up rows in the
+     * HWC Referrals list); by default every row uses [visible].
+     */
+    class NcdReferListAdapter(
+        var userName: String,
+        private val listener: NcdReferallickListener,
+        private val visible: Boolean,
+        private val followUpVisible: (BenWithCbacReferDomain) -> Boolean = { visible },
+    ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
         BenDiffUtilCallBack
     ) {
+
         private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenWithCbacReferDomain>() {
             override fun areItemsTheSame(
                 oldItem: BenWithCbacReferDomain, newItem: BenWithCbacReferDomain
@@ -119,7 +129,8 @@ import org.piramalswasthya.sakhi.R
         ): BenCbacViewHolder = BenCbacViewHolder.from(parent)
 
             override fun onBindViewHolder(holder: BenCbacViewHolder, position: Int) {
-            holder.bind(getItem(position) , userName,listener,visible)
+            val item = getItem(position)
+            holder.bind(item, userName, listener, followUpVisible(item))
         }
 
 

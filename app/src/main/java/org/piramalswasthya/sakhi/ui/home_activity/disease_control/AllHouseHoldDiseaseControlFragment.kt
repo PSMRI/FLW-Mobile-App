@@ -134,7 +134,7 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
             ))
         binding.rvAny.adapter = householdAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.householdList.collect {
                 if (it.isEmpty()) binding.flEmpty.visibility = View.VISIBLE
                 else binding.flEmpty.visibility = View.GONE
@@ -169,11 +169,25 @@ class AllHouseHoldDiseaseControlFragment : Fragment() {
     }
     override fun onStart() {
         super.onStart()
+        val diseaseIcon = when (viewModel.diseaseType) {
+            getString(R.string.icon_title_maleria) -> R.drawable.maleria
+            getString(R.string.icon_title_aes) -> R.drawable.aes
+            getString(R.string.icon_title_ka) -> R.drawable.kala
+            getString(R.string.icon_title_filaria) -> R.drawable.filaria
+            getString(R.string.icon_title_leprosy) -> R.drawable.leprocy
+            getString(R.string.tb) -> R.drawable.tb_icon
+            else -> R.drawable.ic__village_level_form
+        }
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__village_level_form,
+                diseaseIcon,
                 viewModel.diseaseType
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.database.room.dao.DeliveryOutcomeDao
 import org.piramalswasthya.sakhi.database.room.dao.EcrDao
 import org.piramalswasthya.sakhi.database.room.dao.FilariaDao
 import org.piramalswasthya.sakhi.database.room.dao.FpotDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.GeneralOpdDao
 import org.piramalswasthya.sakhi.database.room.dao.HbncDao
 import org.piramalswasthya.sakhi.database.room.dao.HbycDao
@@ -113,6 +114,7 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.model.UwinCache
 import org.piramalswasthya.sakhi.model.MaaMeetingEntity
 import org.piramalswasthya.sakhi.model.NotificationEntity
+import org.piramalswasthya.sakhi.model.GeneralCheckupCache
 import org.piramalswasthya.sakhi.model.TBConfirmedTreatmentCache
 import org.piramalswasthya.sakhi.model.Vaccine
 import org.piramalswasthya.sakhi.model.PulsePolioCampaignCache
@@ -206,10 +208,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBConfirmedTreatmentCache::class,
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        GeneralCheckupCache::class
     ],
     views = [BenBasicCache::class],
-    version = 71, exportSchema = true
+    version = 73, exportSchema = true
 )
 
 @TypeConverters(
@@ -257,6 +260,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val uwinDao: UwinDao
 
     abstract val referalDao: NcdReferalDao
+    abstract val generalCheckupDao: GeneralCheckupDao
 
     abstract fun infantDao(): InfantDao
     abstract fun formSchemaDao(): FormSchemaDao

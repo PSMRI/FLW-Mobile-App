@@ -756,7 +756,7 @@ class NewBenRegFragment : Fragment() {
 
                     )
                 binding.form.rvInputForm.adapter = adapter
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.formList.collect {
                         Timber.d("Collecting $it")
                         if (it.isNotEmpty())
@@ -844,7 +844,7 @@ class NewBenRegFragment : Fragment() {
 
     private fun viewDocuments(it: Int) {
         if (it == 46) {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.formList.collect{
                     it.get(viewModel.getIndexOfBirthCertificateFront()).value.let {
                         if (it.toString().contains("document")) {
@@ -856,7 +856,7 @@ class NewBenRegFragment : Fragment() {
                 }
             }
         } else {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.formList.collect{
                     it.get(viewModel.getIndexOfBirthCertificateBack()).value.let {
                         if (it.toString().contains("document")) {
@@ -1072,12 +1072,7 @@ class NewBenRegFragment : Fragment() {
         postSaveDialog?.dismiss()
         postSaveDialog = null
         super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         _binding = null
-
     }
 
     private var countdownTimers : HashMap<Int, CountDownTimer> = HashMap()

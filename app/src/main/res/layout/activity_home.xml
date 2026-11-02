@@ -34,6 +34,7 @@
                         android:id="@+id/iv_toolbar"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
+                        android:tint="#ffffff"
                         android:padding="@dimen/padding_normal"/>
 
                     <TextView

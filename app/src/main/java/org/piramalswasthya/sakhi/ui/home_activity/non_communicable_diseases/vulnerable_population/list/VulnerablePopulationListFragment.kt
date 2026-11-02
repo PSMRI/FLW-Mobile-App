@@ -129,7 +129,7 @@ class VulnerablePopulationListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic_crash,
+                R.drawable.healthicons__health_vulnerability_through_social_determinants,
                 getString(R.string.icon_title_ncd_vulnerable_treatment)
             )
         }

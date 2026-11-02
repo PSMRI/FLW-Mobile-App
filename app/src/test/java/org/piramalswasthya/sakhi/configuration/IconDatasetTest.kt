@@ -127,7 +127,16 @@ class IconDatasetTest : BaseViewModelTest() {
     fun `getDiseaseControlDataset builds every disease icon including the title-res lookups`() {
         val d = ds()
         val list = d.getDiseaseControlDataset(resources)
-        assertEquals(7, list.size)
+        assertEquals(3, list.size)
+        assertTrue(list[0].colorPrimary)
+        assertTrue(!list[1].colorPrimary)
+    }
+
+    @Test
+    fun `getCommunicableDiseasesGridDataset builds the six programme tiles`() {
+        val d = ds()
+        val list = d.getCommunicableDiseasesGridDataset(resources)
+        assertEquals(6, list.size)
         assertTrue(list[0].colorPrimary)
         assertTrue(!list[1].colorPrimary)
     }

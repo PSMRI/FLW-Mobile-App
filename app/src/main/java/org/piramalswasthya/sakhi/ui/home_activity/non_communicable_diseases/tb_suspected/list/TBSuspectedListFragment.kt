@@ -67,7 +67,7 @@ class TBSuspectedListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -111,15 +111,15 @@ class TBSuspectedListFragment : Fragment() {
                 )
             } else {
                 (it as HomeActivity).updateActionBar(
-                    R.drawable.ic__ncd,
+                    R.drawable.healthicons__viral_lung_infection_outline,
                     getString(R.string.tb_suspected_list)
                 )
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

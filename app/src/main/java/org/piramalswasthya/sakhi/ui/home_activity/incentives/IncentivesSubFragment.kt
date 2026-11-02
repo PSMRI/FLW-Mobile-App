@@ -317,16 +317,15 @@ class IncentivesSubFragment : Fragment() {
 
             val origWidth = boundsOptions.outWidth
             val origHeight = boundsOptions.outHeight
+            if (origWidth <= 0 || origHeight <= 0) return@withContext null
 
             var inSampleSize = 1
-            if (origWidth > MAX_DIMENSION || origHeight > MAX_DIMENSION) {
-                val halfWidth = origWidth / 2
-                val halfHeight = origHeight / 2
-                while ((halfWidth / inSampleSize) >= MAX_DIMENSION &&
-                    (halfHeight / inSampleSize) >= MAX_DIMENSION
-                ) {
-                    inSampleSize *= 2
-                }
+            while (maxOf(
+                    origWidth / (inSampleSize * 2),
+                    origHeight / (inSampleSize * 2)
+                ) >= MAX_DIMENSION
+            ) {
+                inSampleSize *= 2
             }
 
             val decodeOptions = BitmapFactory.Options().apply {
@@ -334,42 +333,43 @@ class IncentivesSubFragment : Fragment() {
             }
             var bitmap = BitmapFactory.decodeFile(originalFile.absolutePath, decodeOptions)
                 ?: return@withContext null
-
-            val currentWidth = bitmap.width
-            val currentHeight = bitmap.height
-            if (currentWidth > MAX_DIMENSION || currentHeight > MAX_DIMENSION) {
-                val scale = MAX_DIMENSION.toFloat() / maxOf(currentWidth, currentHeight)
-                val newWidth = (currentWidth * scale).toInt()
-                val newHeight = (currentHeight * scale).toInt()
-                val scaled = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
-                if (scaled != bitmap) bitmap.recycle()
-                bitmap = scaled
-            }
-
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-            val storageDir = requireContext().getExternalFilesDir(null)
-            val compressedFile = File.createTempFile(
-                "COMPRESSED_${timeStamp}_",
-                ".jpg",
-                storageDir
-            )
-
-            var quality = 80
-            var compressedSize: Long
-
-            do {
-                FileOutputStream(compressedFile).use { out ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+            try {
+                val currentWidth = bitmap.width
+                val currentHeight = bitmap.height
+                if (currentWidth > MAX_DIMENSION || currentHeight > MAX_DIMENSION) {
+                    val scale = MAX_DIMENSION.toFloat() / maxOf(currentWidth, currentHeight)
+                    val newWidth = (currentWidth * scale).toInt()
+                    val newHeight = (currentHeight * scale).toInt()
+                    val scaled = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+                    if (scaled != bitmap) bitmap.recycle()
+                    bitmap = scaled
                 }
-                compressedSize = compressedFile.length()
-                quality -= 5
-            } while (compressedSize > TARGET_SIZE_BYTES && quality > 10)
 
-            bitmap.recycle()
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
+                val storageDir = requireContext().getExternalFilesDir(null)
+                val compressedFile = File.createTempFile(
+                    "COMPRESSED_${timeStamp}_",
+                    ".jpg",
+                    storageDir
+                )
 
-            Timber.d("Image compressed: ${formatFileSize(originalFile.length())} -> ${formatFileSize(compressedSize)} (quality=$quality)")
+                var quality = 80
+                var compressedSize: Long
 
-            Uri.fromFile(compressedFile)
+                do {
+                    FileOutputStream(compressedFile).use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+                    }
+                    compressedSize = compressedFile.length()
+                    quality -= 5
+                } while (compressedSize > TARGET_SIZE_BYTES && quality > 10)
+
+                Timber.d("Image compressed: ${formatFileSize(originalFile.length())} -> ${formatFileSize(compressedSize)} (quality=$quality)")
+
+                Uri.fromFile(compressedFile)
+            } finally {
+                if (!bitmap.isRecycled) bitmap.recycle()
+            }
         } catch (e: Exception) {
             Timber.e(e, "Error compressing image")
             null
