@@ -58,6 +58,7 @@ class VulnerablePopulationViewModel @Inject constructor(
                         item.cbac?.vulnerabilityRiskFactorCodes().orEmpty()
 
                 hasSavedRiskFactor || hasNcdDiagnosis || hasCbacRiskFactor || when (riskCode) {
+                    "PRISON" -> item.isPrisonResident == true
                     "PREGNANCY" -> item.ben.reproductiveStatusId == 2
                     "LACTATING_MOTHER" -> item.ben.reproductiveStatusId == 3
                     "ELDERLY" -> item.ben.ageInt > 60

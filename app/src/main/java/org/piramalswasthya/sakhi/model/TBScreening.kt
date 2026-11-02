@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import androidx.room.Embedded
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -120,7 +121,10 @@ data class BenWithTbScreeningCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val cbacRecords: List<CbacCache> = emptyList()
+    val cbacRecords: List<CbacCache> = emptyList(),
+
+    @ColumnInfo(name = "isPrisonResident")
+    val isPrisonResident: Boolean? = null
 
     ) {
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
@@ -129,7 +133,8 @@ data class BenWithTbScreeningCache(
             tb = tb,
             tbSuspected = tbSuspected,
             ncdReferralVisits = ncdReferralVisits,
-            cbac = cbacRecords.maxByOrNull { it.fillDate }
+            cbac = cbacRecords.maxByOrNull { it.fillDate },
+            isPrisonResident = isPrisonResident == true
         )
     }
 }
@@ -139,5 +144,6 @@ data class BenWithTbScreeningDomain(
     val tb: TBScreeningCache?,
     val tbSuspected: TBSuspectedCache?,
     val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
-    val cbac: CbacCache? = null
+    val cbac: CbacCache? = null,
+    val isPrisonResident: Boolean = false
 )

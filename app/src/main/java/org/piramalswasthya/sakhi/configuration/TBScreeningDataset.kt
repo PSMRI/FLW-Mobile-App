@@ -281,6 +281,7 @@ class TBScreeningDataset(
     private var isLactatingBen: Boolean = false
     private var hasHypertension: Boolean = false
     private var hasDiabetes: Boolean = false
+    private var isPrisonResident: Boolean = false
     private var hasTobaccoUser: Boolean = false
     private var hasAlcoholRiskFactor: Boolean = false
     private var hasIndoorAirPollution: Boolean = false
@@ -326,6 +327,7 @@ class TBScreeningDataset(
         saved: TBScreeningCache?,
         hasHypertension: Boolean = false,
         hasDiabetes: Boolean = false,
+        isPrisonResident: Boolean = false,
         hasTobaccoUser: Boolean = false,
         hasAlcoholRiskFactor: Boolean = false,
         hasIndoorAirPollution: Boolean = false,
@@ -333,6 +335,7 @@ class TBScreeningDataset(
     ) {
         this.hasHypertension = hasHypertension
         this.hasDiabetes = hasDiabetes
+        this.isPrisonResident = isPrisonResident
         this.hasTobaccoUser = hasTobaccoUser
         this.hasAlcoholRiskFactor = hasAlcoholRiskFactor
         this.hasIndoorAirPollution = hasIndoorAirPollution
@@ -486,6 +489,7 @@ class TBScreeningDataset(
             selected.remove(contactWithTbIndex)
         }
         val automaticRiskFactorCodes = buildList {
+            if (isPrisonResident) add("PRISON")
             if (hasTobaccoUser) add("TOBACCO_SMOKER")
             if (hasAlcoholRiskFactor) add("SUBSTANCE_ABUSE")
             if (hasIndoorAirPollution) add("INDOOR_AIR_POLLUTION_EXPOSURE")

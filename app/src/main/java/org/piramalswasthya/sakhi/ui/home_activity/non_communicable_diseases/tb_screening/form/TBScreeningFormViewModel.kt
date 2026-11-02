@@ -112,12 +112,15 @@ class TBScreeningFormViewModel @Inject constructor(
                 .joinToString(",")
             val cbac = cbacRepo.getLastFilledCbac(benId)
             val cbacRiskFactors = cbac?.vulnerabilityRiskFactorCodes().orEmpty()
+            val prisonLivingPlaceLabels = setOf("prison", "कारागार", "কারাগার", "কাৰাগাৰ")
             dataset.setUpPage(
                 ben,
                 if (recordExists.value == true) tbScreeningCache else null,
                 hasHypertension = ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
                         ncdDiagnoses.contains("hypertensive", ignoreCase = true),
                 hasDiabetes = ncdDiagnoses.contains("diabetes", ignoreCase = true),
+                isPrisonResident = ben?.householdId == 0L &&
+                        ben.livingPlace.orEmpty().trim().lowercase() in prisonLivingPlaceLabels,
                 hasTobaccoUser = "TOBACCO_SMOKER" in cbacRiskFactors,
                 hasAlcoholRiskFactor = "SUBSTANCE_ABUSE" in cbacRiskFactors,
                 hasIndoorAirPollution = "INDOOR_AIR_POLLUTION_EXPOSURE" in cbacRiskFactors,
