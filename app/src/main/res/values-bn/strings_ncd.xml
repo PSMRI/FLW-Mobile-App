@@ -199,6 +199,7 @@
     <string name="is_sputum_sample_collected">থুতুর নমুনা সংগ্রহ করা হয়েছে?</string>
     <string name="sputum_sample_submitted_at">থুতুর নমুনা জমা দেওয়া হয়েছে</string>
     <string name="nikshay_id">নিক্ষয় আইডি</string>
+    <string name="recommended_for_tpt">TPT-এর জন্য সুপারিশ করা হয়েছে?</string>
     <string name="sputum_test_result">থুতু পরীক্ষার ফলাফল</string>
     <string name="referred_to_facility">সুবিধায় রেফার করা হয়েছে</string>
     <string name="facility_referral_follow_ups">সুবিধা রেফারেল ফলো-আপ</string>

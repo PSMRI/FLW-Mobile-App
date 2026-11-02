@@ -25,6 +25,7 @@ interface TBReferralFollowUpDao {
         "SELECT b.* FROM BEN_BASIC_CACHE AS b " +
                 "INNER JOIN tb_referral_follow_up AS t ON t.benId = b.benId " +
                 "WHERE t.followUpStatus = :status " +
+                "AND t.followUpDate = (SELECT MAX(t2.followUpDate) FROM tb_referral_follow_up AS t2 WHERE t2.benId = b.benId) " +
                 "GROUP BY b.benId"
     )
     fun observeBeneficiariesByFollowUpStatus(status: String): Flow<List<BenWithTbReferralFollowUpCache>>

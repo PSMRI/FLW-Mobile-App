@@ -188,7 +188,7 @@
     <string name="is_chest_xray_done">Is the TB Chest X-Ray Test done?</string>
     <string name="chest_xray_result">Chest X-Ray Test Result</string>
     <string name="referral_facility">Referral Facility</string>
-    <string name="is_tb_confirmed">Has the diagnosis of TB been confirmed?</string>
+    <string name="is_tb_confirmed">Is TB confirmed?</string>
     <string name="is_drtb_confirmed">Has the diagnosis of DR-TB been confirmed?</string>
 
     <string-array name="type_of_tb_case">

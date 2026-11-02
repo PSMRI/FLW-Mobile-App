@@ -278,6 +278,7 @@
     <string name="is_sputum_sample_collected">স্পুটাম নমুনা সংগ্ৰহ হৈছে নেকি?</string>
     <string name="sputum_sample_submitted_at">স্পুটাম নমুনা জমা দিয়া হৈছে</string>
     <string name="nikshay_id">নিক্ষয় আইডি</string>
+    <string name="recommended_for_tpt">TPT-ৰ বাবে পৰামৰ্শ দিয়া হৈছে নেকি?</string>
     <string name="sputum_test_result">স্পুটাম পৰীক্ষা ফলাফল</string>
     <string name="referred_to_facility">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপিত হৈছে</string>
     <string name="facility_referral_follow_ups">সুবিধাৰ পৰা উপযুক্ত স্থানলৈ উপস্থাপন অনুসৰণ</string>

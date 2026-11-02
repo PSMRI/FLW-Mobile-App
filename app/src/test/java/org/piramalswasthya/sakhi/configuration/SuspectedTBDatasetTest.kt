@@ -90,6 +90,7 @@ class SuspectedTBDatasetTest : BaseViewModelTest() {
         referralFacility: String? = "opt6",
         isTBConfirmed: Boolean? = null,
         isDRTBConfirmed: Boolean? = null,
+        isRecommendedForTpt: Boolean? = null,
     ): TBSuspectedCache {
         val s = mockk<TBSuspectedCache>(relaxed = true)
         every { s.visitDate } returns System.currentTimeMillis()
@@ -103,6 +104,7 @@ class SuspectedTBDatasetTest : BaseViewModelTest() {
         every { s.referralFacility } returns referralFacility
         every { s.isTBConfirmed } returns isTBConfirmed
         every { s.isDRTBConfirmed } returns isDRTBConfirmed
+        every { s.isRecommendedForTpt } returns isRecommendedForTpt
         return s
     }
 
@@ -132,7 +134,8 @@ class SuspectedTBDatasetTest : BaseViewModelTest() {
         val saved = savedTb(
             typeOfTBCase = "opt1",
             isSputumCollected = false,
-            isDRTBConfirmed = false
+            isDRTBConfirmed = false,
+            sputumTestResult = null
         )
         ds.setUpPage(ben, saved)
 
@@ -237,5 +240,41 @@ class SuspectedTBDatasetTest : BaseViewModelTest() {
         ds.mapValues(form, 0)
 
         verify(exactly = 0) { form.isConfirmed = true }
+    }
+
+    @Test
+    fun `visit two maps recommended for TPT into the cache field`() = runTest {
+        val ds = SuspectedTBDataset(context, Languages.ENGLISH)
+        val saved = savedTb(
+            typeOfTBCase = "opt0",
+            isSputumCollected = true,
+            sputumTestResult = "opt0",
+            isTBConfirmed = false,
+            isRecommendedForTpt = true
+        )
+        ds.setUpPage(mockk(relaxed = true), saved)
+
+        val form = TBSuspectedCache(benId = 12L)
+        ds.mapValues(form, 1)
+
+        assertEquals(true, form.isRecommendedForTpt)
+    }
+
+    @Test
+    fun `completed visit two disables follow up fields`() = runTest {
+        val ds = SuspectedTBDataset(context, Languages.ENGLISH)
+        val saved = savedTb(
+            typeOfTBCase = "opt0",
+            isSputumCollected = true,
+            sputumTestResult = "opt0",
+            isTBConfirmed = false,
+            isRecommendedForTpt = true
+        )
+        ds.setUpPage(mockk(relaxed = true), saved)
+
+        val elements = ds.listFlow.value
+        assertEquals(false, elements.first { it.id == 11 }.isEnabled)
+        assertEquals(false, elements.first { it.id == 13 }.isEnabled)
+        assertEquals(false, elements.first { it.id == 16 }.isEnabled)
     }
 }

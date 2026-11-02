@@ -25,6 +25,8 @@ import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBindin
 import org.piramalswasthya.sakhi.ui.asha_supervisor.SupervisorActivity
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.utils.RoleConstants
+import org.piramalswasthya.sakhi.helpers.Languages
+import org.piramalswasthya.sakhi.utils.HelperUtil.getLocalizedResources
 import org.piramalswasthya.sakhi.ui.home_activity.child_care.infant_list.InfantListFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.ncd_referred.filter.NCDReferTypeFilter
 import javax.inject.Inject
@@ -66,17 +68,26 @@ class NcdRefferedList : Fragment() {
         val benAdapter =
             NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason,referredDate->
                 if (findNavController().currentDestination?.id == R.id.ncdRefferedList) {
-                    findNavController().navigate(
-                        NcdRefferedListDirections
-                            .actionNcdRefferedListToNCDReferalFormFragment(
-                                benId = benId,
-                                hhId = hhId,
-                                referReason = referReason.toString(),
-                                referredDate = referredDate
+                    if (isPresumptiveTbReferral(referReason)) {
+                        findNavController().navigate(
+                            NcdRefferedListDirections
+                                .actionNcdRefferedListToTBSuspectedFragment(benId)
+                        )
+                    } else {
+                        findNavController().navigate(
+                            NcdRefferedListDirections
+                                .actionNcdRefferedListToNCDReferalFormFragment(
+                                    benId = benId,
+                                    hhId = hhId,
+                                    referReason = referReason.toString(),
+                                    referredDate = referredDate
+                                )
                             )
-                    )
+                    }
                 }
-            },true)
+            }, true, isPresumptiveTbReferral = { item ->
+                isPresumptiveTbReferral(item.referalCac.referralReason)
+            })
         benAdapter.stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvAny.adapter = benAdapter
 
@@ -157,6 +168,14 @@ class NcdRefferedList : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isPresumptiveTbReferral(reason: String?): Boolean {
+        val englishReason = getLocalizedResources(requireContext(), Languages.ENGLISH)
+            .getString(R.string.tb_suspected_form)
+        return reason.equals("TB Suspected", ignoreCase = true) ||
+            reason.equals(getString(R.string.tb_suspected_form), ignoreCase = true) ||
+            reason.equals(englishReason, ignoreCase = true)
     }
 
 }

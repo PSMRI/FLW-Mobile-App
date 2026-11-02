@@ -10,8 +10,8 @@ class MigrationsTest {
     private fun pairs() = ALL_MIGRATIONS.map { it.startVersion to it.endVersion }
 
     @Test
-    fun `registry lists all 60 migrations`() {
-        assertEquals(60, ALL_MIGRATIONS.size)
+    fun `registry lists all 62 migrations`() {
+        assertEquals(62, ALL_MIGRATIONS.size)
     }
 
     @Test
@@ -27,9 +27,9 @@ class MigrationsTest {
     }
 
     @Test
-    fun `oldest supported version is 13 and newest is 73`() {
+    fun `oldest supported version is 13 and newest is 75`() {
         assertEquals(13, ALL_MIGRATIONS.minOf { it.startVersion })
-        assertEquals(73, ALL_MIGRATIONS.maxOf { it.endVersion })
+        assertEquals(75, ALL_MIGRATIONS.maxOf { it.endVersion })
     }
 
     @Test
@@ -39,28 +39,28 @@ class MigrationsTest {
     }
 
     @Test
-    fun `every version from 13 to 72 has a path up to 73`() {
+    fun `every version from 13 to 74 has a path up to 75`() {
         val byStart = ALL_MIGRATIONS.groupBy { it.startVersion }
-        for (start in 13..72) {
+        for (start in 13..74) {
             var version = start
-            while (version < 73) {
+            while (version < 75) {
                 val next = byStart[version]?.maxOf { it.endVersion }
                 assertNotNull("no migration from $version", next)
                 version = next!!
             }
-            assertEquals(73, version)
+            assertEquals(75, version)
         }
     }
 
     @Test
-    fun `current production version 64 upgrades through 65 to 73 one step at a time`() {
+    fun `current production version 64 upgrades through 65 to 75 one step at a time`() {
         val path = mutableListOf(64)
         var version = 64
-        while (version < 73) {
+        while (version < 75) {
             version = ALL_MIGRATIONS.single { it.startVersion == version }.endVersion
             path.add(version)
         }
-        assertEquals(listOf(64, 65, 66, 67, 68, 69, 70, 71, 72, 73), path)
+        assertEquals(listOf(64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75), path)
     }
 
     @Test
@@ -71,5 +71,7 @@ class MigrationsTest {
         assertTrue(ALL_MIGRATIONS.contains(Migration70To71))
         assertTrue(ALL_MIGRATIONS.contains(Migration71To72))
         assertTrue(ALL_MIGRATIONS.contains(Migration72To73))
+        assertTrue(ALL_MIGRATIONS.contains(Migration73To74))
+        assertTrue(ALL_MIGRATIONS.contains(Migration74To75))
     }
 }

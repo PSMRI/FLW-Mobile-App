@@ -185,7 +185,7 @@
     <string name="is_chest_xray_done">TB বুকের এক্স-রে পরীক্ষা করা হয়েছে কি?</string>
     <string name="chest_xray_result">বুকের এক্স-রে পরীক্ষার ফলাফল</string>
     <string name="referral_facility">রেফারেল সুবিধা</string>
-    <string name="is_tb_confirmed">TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
+    <string name="is_tb_confirmed">TB নিশ্চিত হয়েছে কি?</string>
     <string name="is_drtb_confirmed">DR-TB রোগ নির্ণয় নিশ্চিত হয়েছে কি?</string>
     <string name="tb_confirmed_cases">নিশ্চিত টিবি রোগের ঘটনা</string>
 

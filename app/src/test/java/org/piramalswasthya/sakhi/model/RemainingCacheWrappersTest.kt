@@ -210,7 +210,10 @@ class RemainingCacheWrappersTest {
     @Test fun `BenWithCbacAndReferalCache asDomainModel maps ben cbacList and referral`() {
         val referral = ReferalCache(benId = 1L, syncState = SyncState.SYNCED)
         val cbacList = listOf(CbacCache(benId = 1L, ashaId = 2, syncState = SyncState.SYNCED))
-        val wrapper = BenWithCbacAndReferalCache(referral = referral, cbacList = cbacList, ben = ben(), tbFollowUp = emptyList())
+        val wrapper = BenWithCbacAndReferalCache(
+            referral = referral, cbacList = cbacList, ben = ben(),
+            tbFollowUp = emptyList(), tbSuspectedCases = emptyList()
+        )
 
         val domain = wrapper.asDomainModel()
 
@@ -221,7 +224,10 @@ class RemainingCacheWrappersTest {
 
     @Test fun `BenWithCbacAndReferalCache asDomainModel tolerates an empty cbacList`() {
         val referral = ReferalCache(benId = 1L, syncState = SyncState.SYNCED)
-        val domain = BenWithCbacAndReferalCache(referral = referral, cbacList = emptyList(), ben = ben(), tbFollowUp = emptyList()).asDomainModel()
+        val domain = BenWithCbacAndReferalCache(
+            referral = referral, cbacList = emptyList(), ben = ben(),
+            tbFollowUp = emptyList(), tbSuspectedCases = emptyList()
+        ).asDomainModel()
         assertTrue(domain.savedCbacRecords.isEmpty())
     }
 
