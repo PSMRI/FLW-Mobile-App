@@ -1000,10 +1000,19 @@ GROUP BY b.benId
     fun getScreeningList(villageId: Int): Flow<List<BenBasicCache>>
 
     @Transaction
-    @Query("select b.* from BEN_BASIC_CACHE b inner join tb_screening t on  b.benId = t.benId LEFT JOIN TB_SUSPECTED ts ON b.benId = ts.benId  where villageId = :villageId and isDeactivate=0 and tbsnFilled = 1 and (t.bloodInSputum =1 or t.coughMoreThan2Weeks = 1 or feverMoreThan2Weeks = 1 or nightSweats = 1 or lossOfWeight = 1 or historyOfTb = 1)AND (\n" +
-            "            ts.benId IS NULL\n" +
-            "            OR ts.isConfirmed = 0\n" +
-            "        )" + BenListOrder.LIFO_B)
+    @Query("""
+        SELECT b.* FROM BEN_BASIC_CACHE b
+        LEFT JOIN tb_screening t ON b.benId = t.benId
+        LEFT JOIN TB_SUSPECTED ts ON b.benId = ts.benId
+        WHERE b.villageId = :villageId AND b.isDeactivate = 0
+          AND (
+            (t.benId IS NOT NULL AND b.tbsnFilled = 1
+             AND (t.bloodInSputum = 1 OR t.coughMoreThan2Weeks = 1 OR t.feverMoreThan2Weeks = 1
+                  OR t.nightSweats = 1 OR t.lossOfWeight = 1 OR t.historyOfTb = 1)
+             AND (ts.benId IS NULL OR (IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)))
+            OR (ts.benId IS NOT NULL AND IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)
+          )
+        """ + BenListOrder.LIFO_B)
     fun getTbScreeningList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
 
     @Transaction

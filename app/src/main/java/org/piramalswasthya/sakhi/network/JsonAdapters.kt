@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -1271,6 +1272,9 @@ data class TBSuspectedDTO(
     var referralFacility: String? = null,
     var isTBConfirmed: Boolean? = null,
     var isDRTBConfirmed: Boolean? = null,
+    @Json(name = "isRecommendedForTpt")
+    @SerializedName("isRecommendedForTpt")
+    var isRecommendedForTpt: Boolean? = null,
     var isConfirmed: Boolean = false,
 
     ) {
@@ -1293,6 +1297,7 @@ data class TBSuspectedDTO(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isRecommendedForTpt = isRecommendedForTpt,
             isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )

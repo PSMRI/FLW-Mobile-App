@@ -107,8 +107,13 @@ class TbSuspectedListAdapter(
                 )
             }
 
-            binding.btnFormTb.text = if (item.tbSuspected == null) binding.root.resources.getString(R.string.track) else binding.root.resources.getString(R.string.view)
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbSuspected == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.text = binding.root.resources.getString(R.string.tb_suspected_follow_up)
+            binding.btnFormTb.setBackgroundColor(
+                ContextCompat.getColor(
+                    binding.root.context,
+                    if (item.tbSuspected == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark
+                )
+            )
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()

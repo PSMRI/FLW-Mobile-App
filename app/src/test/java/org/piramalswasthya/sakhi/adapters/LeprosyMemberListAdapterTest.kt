@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
+import org.piramalswasthya.sakhi.model.LeprosyFollowUpCache
 import org.piramalswasthya.sakhi.model.LeprosyScreeningCache
 
 class LeprosyMemberListAdapterTest {
@@ -34,15 +35,28 @@ class LeprosyMemberListAdapterTest {
         isMarried = false
     )
 
-    private fun benWithLeprosy(benId: Long = 1L, leprosy: LeprosyScreeningCache? = null) =
+    private fun benWithLeprosy(
+        benId: Long = 1L,
+        leprosy: LeprosyScreeningCache? = null,
+        currentVisitFollowUps: List<LeprosyFollowUpCache> = emptyList()
+    ) =
         BenWithLeprosyScreeningDomain(
             ben = benBasic(benId = benId),
             leprosy = leprosy,
-            followUps = emptyList(),
-            currentFollowUp = null,
-            currentVisitFollowUps = emptyList(),
-            lastFollowUp = null
+            followUps = currentVisitFollowUps,
+            currentFollowUp = currentVisitFollowUps.maxByOrNull { it.followUpDate },
+            currentVisitFollowUps = currentVisitFollowUps,
+            lastFollowUp = currentVisitFollowUps.maxByOrNull { it.followUpDate }
         )
+
+    private fun confirmedLeprosy() = LeprosyScreeningCache(
+        benId = 1L,
+        houseHoldDetailsId = 1L,
+        leprosySymptomsPosition = 0,
+        isConfirmed = true,
+        createdBy = "test",
+        modifiedBy = "test"
+    )
 
     @Suppress("UNCHECKED_CAST")
     private fun diffCallback(): DiffUtil.ItemCallback<BenWithLeprosyScreeningDomain> {
@@ -105,6 +119,30 @@ class LeprosyMemberListAdapterTest {
         val item = benWithLeprosy()
         listener.onClickForm(item)
         listener.onClickVisits(item)
+    }
+
+    @Test
+    fun confirmedLeprosyWithoutCurrentVisitFollowUp_showsRedFollowUp() {
+        val state = leprosyMemberButtonState(benWithLeprosy(leprosy = confirmedLeprosy()))
+
+        assertEquals(org.piramalswasthya.sakhi.R.string.follow_up, state.labelResId)
+        assertEquals(android.R.color.holo_red_dark, state.colorResId)
+    }
+
+    @Test
+    fun confirmedLeprosyWithCurrentVisitFollowUp_showsGreenViewFollowUp() {
+        val followUp = LeprosyFollowUpCache(
+            benId = 1L,
+            visitNumber = 1,
+            createdBy = "test",
+            modifiedBy = "test"
+        )
+        val state = leprosyMemberButtonState(
+            benWithLeprosy(leprosy = confirmedLeprosy(), currentVisitFollowUps = listOf(followUp))
+        )
+
+        assertEquals(org.piramalswasthya.sakhi.R.string.view_follow_up, state.labelResId)
+        assertEquals(android.R.color.holo_green_dark, state.colorResId)
     }
 
     @Test

@@ -683,12 +683,18 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val tbFollowUp : List<TBReferralFollowUpEntity>
+    val tbFollowUp : List<TBReferralFollowUpEntity>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId",
+        entity = TBSuspectedCache::class
+    )
+    val tbSuspectedCases: List<TBSuspectedCache>
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp
+            ben.asBasicDomainModel(), cbacList, referral, tbFollowUp, tbSuspectedCases
         )
     }
 }
@@ -698,6 +704,7 @@ data class BenWithCbacReferDomain(
     val savedCbacRecords: List<CbacCache>,
     val referalCac : ReferalCache,
     val tbrefferalFollowUp : List<TBReferralFollowUpEntity>,
+    val tbSuspectedCases: List<TBSuspectedCache>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
                 .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED

@@ -50,9 +50,15 @@ class TBSuspectedFragment : Fragment() {
                 val adapter = FormInputAdapter(
                     formValueListener = FormInputAdapter.FormValueListener { formId, index ->
                         viewModel.updateListOnValueChanged(formId, index)
-                    }, isEnabled = !recordExists
+                    }, isEnabled = true
                 )
-                binding.btnSubmit.isEnabled = !recordExists
+                binding.btnSubmit.isEnabled = true
+                binding.btnSubmit.visibility = if (viewModel.visit2Complete.value == true) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+                binding.btnSubmit.text = getString(if (recordExists) R.string.save else R.string.btn_submit)
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
                     viewModel.formList.collect {
@@ -63,6 +69,9 @@ class TBSuspectedFragment : Fragment() {
                     }
                 }
             }
+        }
+        viewModel.visit2Complete.observe(viewLifecycleOwner) { isComplete ->
+            binding.btnSubmit.visibility = if (isComplete) View.GONE else View.VISIBLE
         }
         viewModel.benName.observe(viewLifecycleOwner) {
             binding.tvBenName.text = it

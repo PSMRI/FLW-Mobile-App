@@ -1346,7 +1346,8 @@ class CommonUtilsTest {
             ben = mkBen(benName = "Asha"),
             savedCbacRecords = emptyList(),
             referalCac = refer,
-            tbrefferalFollowUp = emptyList()
+            tbrefferalFollowUp = emptyList(),
+            tbSuspectedCases = emptyList()
         )
         assertTrue(domain.savedCbacRecords.isEmpty())
         assertEquals(refer, domain.referalCac)

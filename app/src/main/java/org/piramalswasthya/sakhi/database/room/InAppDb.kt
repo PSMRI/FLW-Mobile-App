@@ -212,7 +212,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         GeneralCheckupCache::class
     ],
     views = [BenBasicCache::class],
-    version = 73, exportSchema = true
+    version = 75, exportSchema = true
 )
 
 @TypeConverters(

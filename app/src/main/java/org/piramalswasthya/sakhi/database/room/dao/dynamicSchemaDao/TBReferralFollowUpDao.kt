@@ -23,9 +23,17 @@ interface TBReferralFollowUpDao {
     @Transaction
     @Query(
         "SELECT b.* FROM BEN_BASIC_CACHE AS b " +
-                "INNER JOIN tb_referral_follow_up AS t ON t.benId = b.benId " +
-                "WHERE t.followUpStatus = :status " +
-                "GROUP BY b.benId"
+                "WHERE EXISTS (" +
+                "SELECT 1 FROM tb_referral_follow_up AS t " +
+                "WHERE t.benId = b.benId AND t.followUpStatus = :status " +
+                "AND t.followUpDate = (SELECT MAX(t2.followUpDate) FROM tb_referral_follow_up AS t2 WHERE t2.benId = b.benId)" +
+                ") OR EXISTS (" +
+                "SELECT 1 FROM TB_SUSPECTED AS ts WHERE ts.benId = b.benId " +
+                "AND IFNULL(ts.isRecommendedForTpt, 0) = 1 " +
+                "AND IFNULL(ts.isConfirmed, 0) = 0 " +
+                "AND IFNULL(ts.isTBConfirmed, 0) = 0 " +
+                "AND IFNULL(ts.isDRTBConfirmed, 0) = 0" +
+                ")"
     )
     fun observeBeneficiariesByFollowUpStatus(status: String): Flow<List<BenWithTbReferralFollowUpCache>>
 

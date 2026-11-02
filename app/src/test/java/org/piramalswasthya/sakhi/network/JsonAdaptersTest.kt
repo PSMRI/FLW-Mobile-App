@@ -1,5 +1,7 @@
 package org.piramalswasthya.sakhi.network
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -9,6 +11,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.ReferralRequest
+import org.piramalswasthya.sakhi.model.TBSuspectedCache
 
 /**
  * Extra coverage for JsonAdapters.kt mappers/helpers not exercised by
@@ -18,6 +21,21 @@ import org.piramalswasthya.sakhi.model.ReferralRequest
  *  - the package-level date helpers getLongFromDate / getLongFromDateMultipleSupport / convertIsoDateToMillis
  */
 class JsonAdaptersTest {
+
+    @Test fun `TB suspected sends only the isRecommendedForTpt server key`() {
+        val dto = TBSuspectedCache(benId = 12L, isRecommendedForTpt = true).toDTO()
+        val adapter = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+            .adapter(TBSuspectedDTO::class.java)
+
+        val json = adapter.toJson(dto)
+        val received = adapter.fromJson(json)
+
+        assertTrue(json.contains("\"isRecommendedForTpt\":true"))
+        assertFalse(json.contains("\"recommendedForTpt\""))
+        assertEquals(true, received?.toCache()?.isRecommendedForTpt)
+    }
 
     // ---------------- ABHAGeneratedDTO.toCache() ----------------
 

@@ -1090,7 +1090,7 @@
     <string name="is_chest_xray_done">টিবি বুকুৰ এক্স-ৰে পৰীক্ষা হৈছে নেকি?</string>
     <string name="chest_xray_result">বুকুৰ এক্স-ৰে পৰীক্ষাৰ ফলাফল</string>
     <string name="referral_facility">ৰেফাৰেল সুবিধা</string>
-    <string name="is_tb_confirmed">টিবি ৰোগ নিশ্চিত হৈছে নেকি?</string>
+    <string name="is_tb_confirmed">টিবি নিশ্চিত হৈছে নেকি?</string>
     <string name="is_drtb_confirmed">DR-TB ৰোগ নিশ্চিত হৈছে নেকি?</string>
     <string name="form_input_alphabet_special__digit_only_error">কেৱল আখৰ, বিশেষ আখৰ আৰু সংখ্যা অনুমোদিত!</string>
     <string name="abha_number_digit">ABHA নম্বৰ ১৪ সংখ্যাৰ হ\'ব লাগিব</string>

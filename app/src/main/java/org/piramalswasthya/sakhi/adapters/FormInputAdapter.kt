@@ -213,6 +213,13 @@ class FormInputAdapter(
                     item.value = editable?.toString()
                     Timber.d("editable : $editable Current value : ${item.value}  isNull: ${item.value == null} isEmpty: ${item.value == ""}")
                     formValueListener?.onValueChanged(item, -1)
+                    item.errorText = if (!item.value.isNullOrBlank() &&
+                        item.regex?.let { !Regex(it).matches(item.value.orEmpty()) } == true
+                    ) {
+                        binding.root.resources.getString(R.string.enter_a_valid_number)
+                    } else {
+                        null
+                    }
                     if (item.errorText != binding.tilEditText.error) {
                         binding.tilEditText.isErrorEnabled = item.errorText != null
                         binding.tilEditText.error = item.errorText
@@ -1638,6 +1645,14 @@ class FormInputAdapter(
         currentList.forEachIndexed { index, item ->
             item ?: return@forEachIndexed
             Timber.d("Error text for ${item.title} ${item.errorText}")
+            if (!item.value.isNullOrBlank() &&
+                item.regex?.let { !Regex(it).matches(item.value.orEmpty()) } == true
+            ) {
+                item.errorText = resources.getString(R.string.enter_a_valid_number)
+                notifyItemChanged(index)
+                retVal = index
+                return@forEachIndexed
+            }
             if (item.inputType != TEXT_VIEW && item.errorText != null) {
                 retVal = index
                 return@forEachIndexed

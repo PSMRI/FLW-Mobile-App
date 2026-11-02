@@ -11,6 +11,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemTptFollowupListBinding
 import org.piramalswasthya.sakhi.helpers.getLocalizedAge
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tpt.list.TPTListItem
 
@@ -140,13 +141,15 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
 
     ) {
         fun onClickForm(item: TPTListItem) {
-            val referralFollowUpDate = runCatching {
-                JSONObject(item.referralFollowUps.fieldsJson).optString("follow_up_date")
-            }.getOrDefault("")
+            val referralFollowUpDate = tptReferralFollowUpDate(item.referralFollowUps)
             clickedForm?.invoke(item.ben.hhId, item.ben.benId, referralFollowUpDate)
         }
     }
 }
+
+internal fun tptReferralFollowUpDate(referral: TBReferralFollowUpEntity?): String =
+    runCatching { referral?.let { JSONObject(it.fieldsJson).optString("follow_up_date") }.orEmpty() }
+        .getOrDefault("")
 
 internal enum class TPTFollowUpAction { START_TREATMENT, ADD_FOLLOW_UP, VIEW_DETAILS }
 
