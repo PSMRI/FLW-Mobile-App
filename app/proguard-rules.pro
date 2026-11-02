@@ -46,8 +46,17 @@
 }
 
 # --- Reflection Safety ---
--keep class org.piramalswasthya.sakhi.** { *; }
--keepnames class org.piramalswasthya.sakhi.**
+# App code is shrunk and obfuscated (FLW-1211). Only classes read by reflection are kept:
+# Gson/Moshi classes (model/, network/ and the ones below) and JNI.
+-keep class org.piramalswasthya.sakhi.repositories.UwinRepo$* { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.**.model.** { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.BeneficiaryRecordUI { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI { *; }
+-keep class org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.model.** { *; }
+
+# SyncLogTree picks sync logs for the Sync Dashboard by the logging class's name.
+-keepnames class org.piramalswasthya.sakhi.work.**
+-keepnames class org.piramalswasthya.sakhi.repositories.**
 
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
@@ -62,7 +71,6 @@
 # Application classes serialized/deserialized by Gson and Moshi
 -keep class org.piramalswasthya.sakhi.model.** {*;}
 -keep class org.piramalswasthya.sakhi.network.** {*;}
--keep class org.piramalswasthya.sakhi.repositories.** {*;}
 -dontusemixedcaseclassnames
 
 # Keep coroutines continuation classes and methods
