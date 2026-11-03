@@ -9,6 +9,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.ImageUtils
@@ -187,6 +188,7 @@ data class BenWithEcrDomain(
     val childCount: Int = 0
 )
 
+@JsonClass(generateAdapter = true)
 data class EcrPost(
     val benId: Long,
     @Json(name = "registrationDate")

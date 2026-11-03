@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 
 /**
  * Follow-up of a General Check-up referral (form general_check_follow_up). Same shape as [TBReferralFollowUpEntity],
@@ -33,6 +34,7 @@ data class GCReferralFollowUpEntity(
 )
 
 /** One record of generalCheckUpFollowUp/saveAll (sent as a list). Dates are yyyy-MM-dd. */
+@JsonClass(generateAdapter = true)
 data class GCReferralFollowUpRequest(
     val id: Long = 0,
     val beneficiaryId: Long,

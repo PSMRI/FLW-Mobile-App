@@ -1,5 +1,8 @@
 package org.piramalswasthya.sakhi.model.dynamicEntity
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class FormSubmitRequest(
     val id: Long? = null,
     val userName: String,

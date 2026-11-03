@@ -32,8 +32,8 @@
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
-# --- ContextWrapper ---
--keep class org.piramalswasthya.sakhi.** extends android.content.ContextWrapper { *; }
+# Activities, services and the Application class are kept by the rules AAPT generates from the
+# manifest, and data binding classes are called directly, so neither needs its own keep rule.
 
 # --- Hilt / DI Support ---
 # hilt-android and hilt-work ship their own R8 rules for modules and generated components.
@@ -65,12 +65,11 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
--keepclassmembers class org.piramalswasthya.**.databinding.** {
-    public <methods>;
-}
-# Application classes serialized/deserialized by Gson and Moshi
--keep class org.piramalswasthya.sakhi.model.** {*;}
--keep class org.piramalswasthya.sakhi.network.** {*;}
+# Application classes serialized/deserialized by Gson and Moshi. Gson reads and writes fields by
+# name and needs the constructors; Moshi uses generated adapters. Getters, copy(), equals() etc.
+# are left to R8 (FLW-1211).
+-keep class org.piramalswasthya.sakhi.model.** { <fields>; <init>(...); }
+-keep class org.piramalswasthya.sakhi.network.** { <fields>; <init>(...); }
 -dontusemixedcaseclassnames
 
 # Keep coroutines continuation classes and methods

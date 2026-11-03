@@ -152,12 +152,14 @@ data class GetDataPaginatedRequestForDisease(
 
 )
 
+@JsonClass(generateAdapter = true)
 data class ValidateOtpRequest(
     val otp: Int,
     val mobNo: String,
 )
 
 
+@JsonClass(generateAdapter = true)
 data class sendOtpRequest(
     val mobNo: String,
 )
@@ -252,6 +254,7 @@ data class AbhaGenerateAadhaarOtpResponseV2(
     val message:String
 )
 
+@JsonClass(generateAdapter = true)
 data class UserDetailsByAyushmanCardNoRequest(
 //    val userId: String,
 //    val password: String,
@@ -670,16 +673,19 @@ data class AddHealthIdRecord(
     var isNew: Boolean?
 )
 
+@JsonClass(generateAdapter = true)
 data class TBScreeningRequestDTO(
     val userId: Int,
     val tbScreeningList: List<TBScreeningDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class KalaAzarScreeningRequestDTO(
     val userId: Int,
     val kalaAzarLists: List<KALAZARScreeningDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class MalariaScreeningRequestDTO(
     val userId: Int,
     val malariaLists: List<MalariaScreeningDTO>
@@ -689,26 +695,31 @@ data class IRSScreeningRequestDTO(
     val rounds: List<ScreeningRoundDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class LeprosyScreeningRequestDTO(
     val userId: Int,
     val leprosyLists: List<LeprosyScreeningDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class AESScreeningRequestDTO(
     val userId: Int,
     val aesJeLists: List<AESScreeningDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class FilariaScreeningRequestDTO(
     val userId: Int,
     val filariaLists: List<FilariaScreeningDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class AdolescentHealthRequestDTO(
     val userId: Int,
     val adolescentHealths: List<AdolscentHealthDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class UserDataDTO<T>(
     val userId: Int,
     val entries: List<T>
@@ -1096,6 +1107,7 @@ data class DewormingDTO(
 
 
 
+@JsonClass(generateAdapter = true)
 data class TBScreeningDTO(
     val id: Long,
     val benId: Long,
@@ -1167,6 +1179,7 @@ data class TBScreeningDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class AdolscentHealthDTO(
     var id :Int? = null,
     var userID :Int? =null,
@@ -1246,6 +1259,7 @@ data class ABHAGeneratedDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class TBSuspectedDTO(
     val id: Long,
     val benId: Long,
@@ -1293,6 +1307,7 @@ data class TBSuspectedDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class TBConfirmedTreatmentDTO(
     val id: Long,
     val benId: Long,
@@ -1334,6 +1349,7 @@ data class TBConfirmedTreatmentDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class TBConfirmedRequestDTO(
     @SerializedName("userId")
     val userId: Int,
@@ -1341,17 +1357,20 @@ data class TBConfirmedRequestDTO(
     val tbConfirmedList: List<TBConfirmedTreatmentDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class TBSuspectedRequestDTO(
     val userId: Int,
     val tbSuspectedList: List<TBSuspectedDTO>
 )
 
+@JsonClass(generateAdapter = true)
 data class MalariaConfirmedRequestDTO(
     val userId: Int,
     val malariaFollowListUp: List<MalariaConfirmedDTO>
 )
 
 
+@JsonClass(generateAdapter = true)
 data class MalariaScreeningDTO(
     val id: Int = 0,
     val benId: Long,
@@ -1443,6 +1462,7 @@ data class MalariaScreeningDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class MalariaConfirmedDTO(
     val id: Int = 0,
     val diseaseId: Int = 0,
@@ -1471,6 +1491,7 @@ data class MalariaConfirmedDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class AESScreeningDTO(
     val id: Int = 0,
     val benId: Long,
@@ -1522,6 +1543,7 @@ data class AESScreeningDTO(
 }
 
 
+@JsonClass(generateAdapter = true)
 data class NCDReferalDTO(
     val id: Int = 0,
     val benId: Long,
@@ -1572,6 +1594,7 @@ data class NCDReferalDTO(
 
 
 
+@JsonClass(generateAdapter = true)
 data class LeprosyScreeningDTO(
     val id: Int = 0,
     val benId: Long,
@@ -1700,6 +1723,7 @@ data class LeprosyScreeningDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class LeprosyFollowUpDTO(
     val benId: Long,
     val visitNumber: Int,
@@ -1753,6 +1777,7 @@ data class LeprosyFollowUpDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class FilariaScreeningDTO(
     val id: Int = 0,
     val benId: Long,
@@ -1805,6 +1830,7 @@ data class ScreeningRoundDTO(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class KALAZARScreeningDTO(
     val id: Int = 0,
     val benId: Long,

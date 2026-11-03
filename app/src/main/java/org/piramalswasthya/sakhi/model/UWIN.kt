@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
@@ -73,6 +74,7 @@ data class UwinNetwork(
 }
 
 
+@JsonClass(generateAdapter = true)
 data class UwinGetAllRequest(
     val villageID: Int,
     val fromDate: String,

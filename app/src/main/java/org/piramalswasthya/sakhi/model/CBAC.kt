@@ -890,6 +890,7 @@ fun CbacResponseDto.toEntity():CbacCache {
     )
 }
 
+@JsonClass(generateAdapter = true)
 data class CbacRequest(
     val visitDetails: VisitDetailsWrapper,
     val cbac: CbacPostNew,
@@ -905,10 +906,12 @@ data class CbacRequest(
     val isFlw: Boolean?
 )
 
+@JsonClass(generateAdapter = true)
 data class VisitDetailsWrapper(
     val visitDetails: CbacVisitDetails
 )
 
+@JsonClass(generateAdapter = true)
 data class CbacVisitDetails(
     val beneficiaryRegID: Long,
     val providerServiceMapID: Int,

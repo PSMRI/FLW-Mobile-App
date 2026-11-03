@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.network
 
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -16,7 +15,6 @@ class SerializeNullTest {
     // Same setup as AppModule.provideMoshiInstance().
     private val moshi = Moshi.Builder()
         .add(SerializeNullAdapterFactory)
-        .add(KotlinJsonAdapterFactory())
         .build()
 
     private fun toJson(referral: ReferalCache): String =

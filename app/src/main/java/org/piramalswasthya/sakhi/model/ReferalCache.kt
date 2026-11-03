@@ -8,6 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.TypeConverter
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
@@ -95,6 +96,7 @@ data class BenWithNCDReferalDomain(
     val refcache: ReferalCache?
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralRequest(
     val refer: NCDReferalDTO,
 )

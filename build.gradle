@@ -6,6 +6,9 @@ buildscript {
     }
     dependencies {
         def nav_version = "2.5.3"
+        // Newer R8 than the one bundled with AGP 8.7: better shrinking and optimization of
+        // release DEX (FLW-1211). Remove when AGP is upgraded to a version that ships it.
+        classpath 'com.android.tools:r8:9.5.28'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
         classpath 'com.google.gms:google-services:4.4.3'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.6'
