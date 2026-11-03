@@ -61,7 +61,7 @@ class AHDListFragment : Fragment() {
                 }
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allAHDList.collect {
                 binding.flEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                 ahdAdapter.submitList(it)
@@ -77,5 +77,10 @@ class AHDListFragment : Fragment() {
                 getString(R.string.icon_title_ahd_list)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

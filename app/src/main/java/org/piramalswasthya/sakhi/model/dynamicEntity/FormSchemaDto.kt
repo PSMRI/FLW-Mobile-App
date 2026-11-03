@@ -2,7 +2,9 @@ package org.piramalswasthya.sakhi.model.dynamicEntity
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class FormSchemaDto(
     @SerializedName("formId")
     val formId: String,
@@ -25,6 +27,7 @@ data class FormSchemaDto(
     fun toJson(): String = Gson().toJson(this)
 }
 
+@JsonClass(generateAdapter = true)
 data class FormSectionDto(
     @SerializedName("sectionId")
     val sectionId: String = "",
@@ -36,6 +39,7 @@ data class FormSectionDto(
     val fields: List<FormFieldDto> = emptyList()
 )
 
+@JsonClass(generateAdapter = true)
 data class FormFieldDto(
     @SerializedName("fieldId")
     val fieldId: String = "",
@@ -75,6 +79,7 @@ data class FormFieldDto(
     @Transient var isEditable: Boolean = true
 )
 
+@JsonClass(generateAdapter = true)
 data class ConditionalLogic(
     @SerializedName("dependsOn")
     val dependsOn: String? = null,
@@ -83,6 +88,7 @@ data class ConditionalLogic(
     val expectedValue: String? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class FieldValidationDto(
     val min: Float? = null,
     val max: Float? = null,
@@ -100,5 +106,7 @@ data class FieldValidationDto(
 
 data class OptionItem(
     val label: String = "",
-    val value: String = ""
+    val value: String = "",
+    /** Set by a form's ViewModel (never by the server) to show the option in red, e.g. an emergency. */
+    @Transient val highlight: Boolean = false
 )

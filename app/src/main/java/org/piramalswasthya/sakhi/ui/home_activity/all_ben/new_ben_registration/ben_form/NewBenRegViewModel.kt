@@ -75,6 +75,9 @@ class NewBenRegViewModel @Inject constructor(
     val hhId = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
      val relToHeadId =
         NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).relToHeadId
+    private val livingPlace = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).livingPlace
+    private val otherLivingPlace = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).otherLivingPlace
+    private val institutionName = NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).institutionName
     private val benGender =
         when (NewBenRegFragmentArgs.fromSavedStateHandle(savedStateHandle).gender) {
             1 -> Gender.MALE
@@ -125,6 +128,18 @@ class NewBenRegViewModel @Inject constructor(
             _abhaUserDetails.postValue(result)
         }
     }
+
+    suspend fun getLinkHouseholds() = householdRepo.getAllHouseholds(
+        preferenceDao.getLocationRecord()?.village?.id ?: 0
+    )
+
+    suspend fun linkToHousehold(householdId: Long, relation: String, relationPosition: Int) {
+        benRepo.linkBeneficiaryToHousehold(benIdFromArgs, householdId, relation, relationPosition)
+    }
+
+    suspend fun getLinkBeneficiary() = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)
+
+    suspend fun getLinkHouseholdMembers(householdId: Long) = benRepo.getBenListFromHousehold(householdId)
 
     fun clearAbhaUserDetails() {
         _abhaUserDetails.value = null
@@ -215,7 +230,8 @@ class NewBenRegViewModel @Inject constructor(
                     }
                     dataset.setFirstPageToRead(
                         ben,
-                        familyHeadPhoneNo = household.family?.familyHeadPhoneNo
+                        familyHeadPhoneNo = household.family?.familyHeadPhoneNo,
+                        isNonHousehold = hhId == 0L
                     )
                 } else if (benIdFromArgs != 0L && recordExists.value != true) {
                     ben = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId) ?: run {
@@ -226,7 +242,11 @@ class NewBenRegViewModel @Inject constructor(
                     isOtpVerified = ben.isConsent
                     if (isHoF) dataset.setPageForHof(
                         if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
-                        household
+                        household,
+                        isNonHousehold = hhId == 0L,
+                        nonHouseholdLivingPlace = ben.livingPlace,
+                        nonHouseholdInstitutionName = ben.institutionName,
+                        nonHouseholdOtherLivingPlace = ben.otherLivingPlace
                     ) else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
                         val hoFBen = familyList.firstOrNull { it.beneficiaryId == household.benId }
@@ -256,7 +276,11 @@ class NewBenRegViewModel @Inject constructor(
                         dataset.setPageForHof(
                             if (this@NewBenRegViewModel::ben.isInitialized) ben else null,
                             household,
-                            hofAbhaPrefillCache.consume(hhId)
+                            hofAbhaPrefillCache.consume(hhId),
+                            isNonHousehold = hhId == 0L,
+                            nonHouseholdLivingPlace = livingPlace,
+                            nonHouseholdInstitutionName = institutionName,
+                            nonHouseholdOtherLivingPlace = otherLivingPlace
                         )
                     } else {
                         val familyList = benRepo.getBenListFromHousehold(hhId)
@@ -330,6 +354,9 @@ class NewBenRegViewModel @Inject constructor(
                             syncState = SyncState.UNSYNCED,
                             locationRecord = locationRecord,
                             isConsent = isOtpVerified,
+                            livingPlace = livingPlace,
+                            otherLivingPlace = otherLivingPlace,
+                            institutionName = institutionName,
 
                         )
                     }
@@ -338,6 +365,14 @@ class NewBenRegViewModel @Inject constructor(
                         benRepo.updateHousehold(ben.householdId, SyncState.UNSYNCED)
                     } else if (isAddspouse == 1) {
                         benRepo.updateBeneficiarySpouseAdded(ben.householdId,SelectedbenIdFromArgs,SyncState.UNSYNCED)
+                    } else if (ben.familyHeadRelationPosition == 1 || ben.familyHeadRelationPosition == 2) {
+                        val spousePosition = if (ben.familyHeadRelationPosition == 1) 2 else 1
+                        benRepo.getBenListFromHousehold(ben.householdId)
+                            .firstOrNull { it.familyHeadRelationPosition == spousePosition && it.beneficiaryId != ben.beneficiaryId }
+                            ?.let { spouse ->
+                                ben.isSpouseAdded = true
+                                benRepo.updateBeneficiarySpouseAdded(ben.householdId, spouse.beneficiaryId, SyncState.UNSYNCED)
+                            }
                     }
                     if (isHoF) {
                         if (ben.gender == Gender.MALE) {

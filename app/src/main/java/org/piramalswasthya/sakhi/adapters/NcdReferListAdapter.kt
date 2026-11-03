@@ -3,18 +3,32 @@
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
+    import androidx.core.content.ContextCompat
     import androidx.recyclerview.widget.DiffUtil
     import androidx.recyclerview.widget.ListAdapter
     import androidx.recyclerview.widget.RecyclerView
-    import org.piramalswasthya.sakhi.databinding.RvItemNcdReferBinding
+import org.piramalswasthya.sakhi.databinding.RvItemNcdReferBinding
+import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.helpers.getLocalizedAge
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
+    import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
     import org.piramalswasthya.sakhi.model.ReferalCache
 
-    class NcdReferListAdapter(var userName: String, private val listener: NcdReferallickListener, private val visible: Boolean ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
+    /**
+     * [followUpVisible] overrides the follow-up button per row (used for General Check-up rows in the
+     * HWC Referrals list); by default every row uses [visible].
+     */
+    class NcdReferListAdapter(
+        var userName: String,
+        private val listener: NcdReferallickListener,
+        private val visible: Boolean,
+        private val followUpVisible: (BenWithCbacReferDomain) -> Boolean = { visible },
+        private val isPresumptiveTbReferral: (BenWithCbacReferDomain) -> Boolean = { false },
+    ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
         BenDiffUtilCallBack
     ) {
+
         private object BenDiffUtilCallBack : DiffUtil.ItemCallback<BenWithCbacReferDomain>() {
             override fun areItemsTheSame(
                 oldItem: BenWithCbacReferDomain, newItem: BenWithCbacReferDomain
@@ -40,7 +54,8 @@
                 item: BenWithCbacReferDomain,
                 userName: String,
                 listener: NcdReferallickListener,
-                visible: Boolean
+                visible: Boolean,
+                isPresumptiveTbReferral: Boolean
             ) {
                 binding.benWithCbac = item
                 binding.referredFrom.text = userName
@@ -73,8 +88,47 @@
                     }
                 }
 
+                if (item.ben.isDeath) {
+                    binding.contstraintLayoutV.setBackgroundColor(
+                        ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+                    )
+                        binding.btnFollowUp.visibility = View.INVISIBLE
+
+                } else {
+                    binding.contstraintLayoutV.setBackgroundColor(
+                        ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+                    )
+                    binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
+//                    binding.btnFollowUp.setBackgroundColor(binding.root.resources.getColor(if (item.tbrefferalFollowUp == null || item.tbrefferalFollowUp.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+
+                    // Same General Check-up rule as the follow-up screen (type, or reason prefix when the type is missing).
+                    val isGcReferral = item.referalCac.type == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
+                            item.referalCac.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
+                    val isFollowUpPending = when {
+                        isGcReferral -> item.gcReferralFollowUp.isEmpty()
+                        isPresumptiveTbReferral -> item.tbSuspectedCases.isEmpty()
+                        else -> item.tbrefferalFollowUp.isNullOrEmpty()
+                    }
+
+                    binding.btnFollowUp.apply {
+                        text = context.getString(
+                            when {
+                                isFollowUpPending -> R.string.start_follow_up
+                                isPresumptiveTbReferral -> R.string.tb_suspected_follow_up
+                                else -> R.string.view_follow_up
+                            }
+                        )
+                        setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                if (isFollowUpPending) android.R.color.holo_red_dark else android.R.color.holo_green_dark
+                            )
+                        )
+                    }
+
+                }
+
                 binding.executePendingBindings()
-                binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
                 binding.btnFollowUp.setOnClickListener {
                     listener.onClickedFollowUp(item.ben,item.referalCac)
                 }
@@ -89,17 +143,24 @@
         ): BenCbacViewHolder = BenCbacViewHolder.from(parent)
 
             override fun onBindViewHolder(holder: BenCbacViewHolder, position: Int) {
-            holder.bind(getItem(position) , userName,listener,visible)
+            val item = getItem(position)
+            holder.bind(
+                item,
+                userName,
+                listener,
+                followUpVisible(item),
+                isPresumptiveTbReferral(item)
+            )
         }
 
 
 
         class NcdReferallickListener(
-            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long) -> Unit
+            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long,referralType:String?) -> Unit
 
         ) {
             fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) = goToFollowUp(
-                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate
+                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate,referalCac.type
             )
         }
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
@@ -56,7 +57,7 @@ class DeathReportsFragment : Fragment() {
         }
 
 
-        binding.scope = viewModel.scope
+        binding.scope = viewLifecycleOwner.lifecycleScope
     }
 
     override fun onStart() {

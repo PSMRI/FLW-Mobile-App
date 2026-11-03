@@ -72,30 +72,30 @@ class ORSCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = HelperUtil.compressImageToTemp(uri, "camera_image", context)
-        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val base64String = HelperUtil.compressImageToBase64(uri, "camera_image", context)
 
-        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
-            if (base64String != null) {
-                campaignPhotosList.add(base64String)
-                if (campaignPhotosList.size > 2) {
-                    campaignPhotosList.removeAt(0)
+            if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+                if (base64String != null) {
+                    campaignPhotosList.add(base64String)
+                    if (campaignPhotosList.size > 2) {
+                        campaignPhotosList.removeAt(0)
+                    }
+                    currentImageField?.value = campaignPhotosList.toList()
+                    currentImageField?.errorMessage = null
+                    viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
                 }
-                currentImageField?.value = campaignPhotosList.toList()
-                currentImageField?.errorMessage = null
-                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            } else {
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
+                }
             }
-        } else {
-            currentImageField?.apply {
-                value = base64String
-                errorMessage = null
-                viewModel.updateFieldValue(fieldId, value)
-            }
+            adapter.updateFields(viewModel.getVisibleFields())
+            adapter.notifyDataSetChanged()
+            showImageLoadedMessage(requireContext())
         }
-        adapter.updateFields(viewModel.getVisibleFields())
-        adapter.notifyDataSetChanged()
-        showImageLoadedMessage(requireContext())
-
     }
 
     private fun handleImageSelection(uri: Uri) {
@@ -111,30 +111,31 @@ class ORSCampaignFormFragment : Fragment() {
             return
         }
 
-        val compressedFile = HelperUtil.compressImageToTemp(uri, "selected_image", context)
-        val base64String = compressedFile?.let { HelperUtil.fileToBase64(it) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val base64String = HelperUtil.compressImageToBase64(uri, "selected_image", context)
 
-        if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
-            if (base64String != null) {
-                campaignPhotosList.add(base64String)
-                if (campaignPhotosList.size > 2) {
-                    campaignPhotosList.removeAt(0)
+            if (currentImageField?.fieldId == "campaign_photos" || currentImageField?.fieldId == "campaignPhotos") {
+                if (base64String != null) {
+                    campaignPhotosList.add(base64String)
+                    if (campaignPhotosList.size > 2) {
+                        campaignPhotosList.removeAt(0)
+                    }
+                    currentImageField?.value = campaignPhotosList.toList()
+                    currentImageField?.errorMessage = null
+                    viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
                 }
-                currentImageField?.value = campaignPhotosList.toList()
-                currentImageField?.errorMessage = null
-                viewModel.updateFieldValue(currentImageField!!.fieldId, campaignPhotosList.toList())
+            } else {
+                currentImageField?.apply {
+                    value = base64String
+                    errorMessage = null
+                    viewModel.updateFieldValue(fieldId, value)
+                }
             }
-        } else {
-            currentImageField?.apply {
-                value = base64String
-                errorMessage = null
-                viewModel.updateFieldValue(fieldId, value)
-            }
-        }
-        adapter.updateFields(viewModel.getVisibleFields())
-        adapter.notifyDataSetChanged()
-        showFileLoadedMessage(requireContext())
+            adapter.updateFields(viewModel.getVisibleFields())
+            adapter.notifyDataSetChanged()
+            showFileLoadedMessage(requireContext())
 
+        }
     }
 
     private fun showImagePickerDialog() {
@@ -245,11 +246,7 @@ class ORSCampaignFormFragment : Fragment() {
             onValueChanged = { field, value ->
                 if (value == "pick_image") {
                     currentImageField = field
-                    if (field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") {
-                        showImagePickerDialog()
-                    } else {
-                        showImagePickerDialog()
-                    }
+                    showImagePickerDialog()
                 } else {
                     field.value = value
                     if ((field.fieldId == "campaign_photos" || field.fieldId == "campaignPhotos") && value is List<*>) {

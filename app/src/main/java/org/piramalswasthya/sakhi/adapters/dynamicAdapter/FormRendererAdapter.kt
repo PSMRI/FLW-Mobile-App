@@ -5,7 +5,6 @@
     import android.content.ActivityNotFoundException
     import android.content.Context
     import android.content.Intent
-    import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
     import android.net.Uri
@@ -20,6 +19,7 @@
     import androidx.core.content.ContextCompat
     import androidx.core.content.FileProvider
     import androidx.recyclerview.widget.RecyclerView
+    import com.bumptech.glide.Glide
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
     import kotlinx.coroutines.CoroutineScope
@@ -70,6 +70,7 @@
 
                 val shouldUpdate = oldField == null ||
                         oldField.value != newField.value ||
+                        oldField.defaultValue != newField.defaultValue ||
                         oldField.validation != newField.validation ||
                         oldField.isEditable != newField.isEditable ||
                         oldField.errorMessage != newField.errorMessage ||
@@ -104,6 +105,7 @@
         }
 
         override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clearImageRequests()
             holder.clear()
             super.onViewRecycled(holder)
         }
@@ -120,8 +122,11 @@
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
             private val viewHolderScope = MainScope()
             private var muacDebounceJob: Job? = null
+            private val imageViews = mutableSetOf<ImageView>()
 
             private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
+                imageViews.add(imageView)
+                Glide.with(imageView).clear(imageView)
                 if (filePath.isBlank()) {
                     imageView.setImageResource(R.drawable.ic_doc_upload)
                     return
@@ -182,8 +187,11 @@
                             try {
                                 val base64String = filePath.substringAfter(",", filePath)
                                 val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-                                imageView.setImageBitmap(bitmap)
+                                Glide.with(imageView)
+                                    .load(decodedBytes)
+                                    .placeholder(R.drawable.ic_person)
+                                    .error(R.drawable.ic_person)
+                                    .into(imageView)
                             } catch (e: Exception) {
                                 Timber.e(e, "Failed to decode base64 image")
                                 imageView.setImageResource(R.drawable.ic_person)
@@ -192,7 +200,11 @@
 
                         else -> {
                             val uri = Uri.parse(filePath)
-                            imageView.setImageURI(uri)
+                            Glide.with(imageView)
+                                .load(uri)
+                                .placeholder(R.drawable.ic_person)
+                                .error(R.drawable.ic_person)
+                                .into(imageView)
                         }
                     }
                 } catch (e: Exception) {
@@ -207,8 +219,16 @@
                 viewHolderScope.coroutineContext.cancelChildren()
             }
 
+            fun clearImageRequests() {
+                imageViews.forEach { imageView ->
+                    Glide.with(imageView).clear(imageView)
+                }
+                imageViews.clear()
+            }
+
             fun bind(field: FormField) {
 
+                clearImageRequests()
                 itemView.visibility = View.VISIBLE
                 if (!field.visible) {
                     itemView.visibility = View.GONE
@@ -310,6 +330,7 @@
                                 text = option.label
                                 isChecked = selectedValues.contains(option.value)
                                 isEnabled = !isViewOnly && field.isEditable
+                                if (option.highlight) setTextColor(ContextCompat.getColor(context, R.color.gc_emergency))
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -377,14 +398,26 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value as? String ?: "")
+                            val textValue = field.value as? String ?: ""
+                            val displayValue = if (
+                                formId == FormConstants.TB_TPT_FOLLOW_UP &&
+                                field.fieldId.equals("reason_for_death", ignoreCase = true) &&
+                                textValue.equals("Tuberculosis", ignoreCase = true)
+                            ) context.getString(R.string.tuberculosis) else textValue
+                            setText(displayValue)
                             inputType = InputType.TYPE_CLASS_TEXT
-                            isEnabled = !isViewOnly
+                            isEnabled = !isViewOnly && field.isEditable
+                            if (!field.isEditable || isViewOnly) {
+                                keyListener = null
+                                isFocusable = false
+                                isFocusableInTouchMode = false
+                                isCursorVisible = false
+                            }
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
                             setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
                         }
 
-                        if (!isViewOnly) {
+                        if (!isViewOnly && field.isEditable) {
                             editText.addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
                                     val normalized = org.piramalswasthya.sakhi.utils.StringMappingUtil.convertDigits(s.toString())
@@ -443,7 +476,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
+                            setText(field.value?.toString() ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                             isEnabled = !isViewOnly
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
@@ -506,7 +539,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
+                            setText(field.value?.toString() ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                             val isIFABottleCount = field.fieldId == "ifa_bottle_count"
@@ -729,6 +762,10 @@
                                     normalizedTptDateField in setOf(
                                         "treatmentstartdate", "followupdate", "actualcompletiondate"
                                     )
+                                val isTbReferralFollowUpDate =
+                                    (formId == FormConstants.Tb_Referral_Follow_Up ||
+                                        formId == FormConstants.GC_REFERRAL_FOLLOW_UP) &&
+                                        field.fieldId == "follow_up_date"
 
                                 if (field.fieldId == "ifa_provision_date") {
                                     minDate = minVisitDate
@@ -744,7 +781,7 @@
                                     }
                                 }
                                 else {
-                                    if (isTptDateField) {
+                                    if (isTptDateField || isTbReferralFollowUpDate) {
                                             minDate = field.validation?.minDate?.let { minDateValue ->
                                                 listOf("dd-MM-yyyy", "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss")
                                                     .firstNotNullOfOrNull { pattern ->
@@ -763,12 +800,9 @@
                                                 set(Calendar.DAY_OF_MONTH, 1)
                                             }
                                             minDate = minCal.time
-                                            maxDate = when (field.validation?.maxDate?.lowercase()) {
-                                                "today" -> today
-                                                null -> today
-                                                else -> today
-                                            }
-                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID|| formId == FormConstants.ANC_FORM_ID) {
+                                            maxDate = today
+                                    } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID || formId == FormConstants.ANC_FORM_ID ||
+                                        formId == FormConstants.GENERAL_CHECKUP_FORM_ID) {
                                         minDate = minVisitDate
                                         maxDate = maxVisitDate
 

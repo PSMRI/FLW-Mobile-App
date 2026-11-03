@@ -10,6 +10,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 import org.piramalswasthya.sakhi.network.interceptors.TokenInsertTmcInterceptor
 import timber.log.Timber
 import java.io.IOException
@@ -41,7 +42,14 @@ abstract class BasePushWorker(
     override suspend fun getForegroundInfo(): ForegroundInfo =
         createForegroundInfo("Syncing data...")
 
-    override suspend fun doWork(): Result {
+    // One "sync_push" trace per push run, split by worker and outcome in the console.
+    override suspend fun doWork(): Result = PerfTracer.trace("sync_push") { trace ->
+        trace?.putAttribute("worker", workerName)
+        trace?.putMetric("attempt", runAttemptCount.toLong())
+        runSync().also { trace?.putAttribute("result", PerfTracer.label(it)) }
+    }
+
+    private suspend fun runSync(): Result {
         if (runAttemptCount >= MAX_RETRY_COUNT) {
             Timber.e("[$workerName] Max retries ($MAX_RETRY_COUNT) exceeded, giving up")
             return Result.failure(workDataOf(

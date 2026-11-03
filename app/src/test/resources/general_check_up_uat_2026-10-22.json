@@ -1,0 +1,310 @@
+{
+  "success": true,
+  "message": "Form structure fetched successfully",
+  "statusCode": 200,
+  "data": {
+    "version": 2,
+    "formId": "general_check_up",
+    "formName": "General Check-up",
+    "sections": [
+      {
+        "sectionTitle": "Section Title",
+        "fields": [
+          {
+            "id": 553,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "check_up_date",
+            "label": "Date of check up",
+            "visible": true,
+            "type": "date",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select Date",
+            "sequence": 2,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "default": "today",
+              "allowFuture": false,
+              "minDate": "one_month_ago"
+            },
+            "conditional": null
+          },
+          {
+            "id": 554,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "type_of_problem",
+            "label": "Type of problem",
+            "visible": true,
+            "type": "dropdown",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select Type of Problem",
+            "sequence": 3,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": [
+              {
+                "id": 92,
+                "value": "Fever",
+                "label": "Fever"
+              },
+              {
+                "id": 93,
+                "value": "Common Cold",
+                "label": "Common Cold"
+              },
+              {
+                "id": 94,
+                "value": "Cough",
+                "label": "Cough"
+              },
+              {
+                "id": 95,
+                "value": "Headache",
+                "label": "Headache"
+              },
+              {
+                "id": 96,
+                "value": "Diarrhoea",
+                "label": "Diarrhoea"
+              },
+              {
+                "id": 97,
+                "value": "Constipation",
+                "label": "Constipation"
+              },
+              {
+                "id": 98,
+                "value": "Acidity",
+                "label": "Acidity"
+              },
+              {
+                "id": 99,
+                "value": "Skin Diseases",
+                "label": "Skin Diseases"
+              }
+            ],
+            "validation": {
+              "required": true,
+              "optionsSource": "Appendix A"
+            },
+            "conditional": null
+          },
+          {
+            "id": 555,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "problem",
+            "label": "What is the problem?",
+            "visible": true,
+            "type": "multi-select",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select Problems",
+            "sequence": 4,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": [
+              {
+                "id": 92,
+                "value": "Fever",
+                "label": "Fever"
+              },
+              {
+                "id": 93,
+                "value": "Common Cold",
+                "label": "Common Cold"
+              },
+              {
+                "id": 94,
+                "value": "Cough",
+                "label": "Cough"
+              },
+              {
+                "id": 95,
+                "value": "Headache",
+                "label": "Headache"
+              },
+              {
+                "id": 96,
+                "value": "Diarrhoea",
+                "label": "Diarrhoea"
+              },
+              {
+                "id": 97,
+                "value": "Constipation",
+                "label": "Constipation"
+              },
+              {
+                "id": 98,
+                "value": "Acidity",
+                "label": "Acidity"
+              },
+              {
+                "id": 99,
+                "value": "Skin Diseases",
+                "label": "Skin Diseases"
+              }
+            ],
+            "validation": {
+              "required": true,
+              "minSelections": 1
+            },
+            "conditional": null
+          },
+          {
+            "id": 556,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "other_problem_name",
+            "label": "Write the name of the problem",
+            "visible": true,
+            "type": "text",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Enter problem name",
+            "sequence": 5,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "maxLength": 250,
+              "visibleWhen": {
+                "field": "problem",
+                "value": "Other"
+              }
+            },
+            "conditional": null
+          },
+          {
+            "id": 557,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "priority",
+            "label": "Priority",
+            "visible": true,
+            "type": "auto",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Routine",
+            "sequence": 6,
+            "isEditable": false,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "default": "Routine",
+              "emergencyWhen": "emergency_problem_selected"
+            },
+            "conditional": null
+          },
+          {
+            "id": 558,
+            "formId": "general_check_up",
+            "sectionTitle": "General Check-up",
+            "fieldId": "refer_to_facility",
+            "label": "Refer to Facility",
+            "visible": true,
+            "type": "button",
+            "isRequired": false,
+            "defaultValue": null,
+            "placeholder": "Refer to Facility",
+            "sequence": 7,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "action": "open_form",
+              "targetForm": "FR7"
+            },
+            "conditional": null
+          },
+          {
+            "id": 559,
+            "formId": "general_check_up",
+            "sectionTitle": "Follow-up fields",
+            "fieldId": "follow_up_date",
+            "label": "Follow Up Date",
+            "visible": true,
+            "type": "date",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select follow-up date",
+            "sequence": 8,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "minDate": "referral_date"
+            },
+            "conditional": null
+          },
+          {
+            "id": 560,
+            "formId": "general_check_up",
+            "sectionTitle": "Follow-up fields",
+            "fieldId": "follow_up_status",
+            "label": "Follow-up Status",
+            "visible": true,
+            "type": "dropdown",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select status",
+            "sequence": 9,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "options": [
+                "Treated at HWC",
+                "Medicines given",
+                "Not yet visited",
+                "Referred to higher facility",
+                "Other"
+              ]
+            },
+            "conditional": null
+          },
+          {
+            "id": 561,
+            "formId": "general_check_up",
+            "sectionTitle": "Follow-up fields",
+            "fieldId": "referred_to",
+            "label": "Select refer to",
+            "visible": true,
+            "type": "dropdown",
+            "isRequired": true,
+            "defaultValue": null,
+            "placeholder": "Select refer to",
+            "sequence": 10,
+            "isEditable": true,
+            "stateCode": 0,
+            "options": null,
+            "validation": {
+              "required": true,
+              "visibleWhen": {
+                "field": "follow_up_status",
+                "value": "Referred to higher facility"
+              },
+              "options": [
+                "PHC",
+                "CHC",
+                "Medical College",
+                "District Hospital"
+              ]
+            },
+            "conditional": null
+          }
+        ]
+      }
+    ]
+  }
+}

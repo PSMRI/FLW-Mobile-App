@@ -28,13 +28,13 @@
         @Inject
         lateinit var iconDataset: IconDataset
         private val viewModel: VillageLevelFormsViewModel by viewModels()
-        private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+        private var _binding: RvIconGridBinding? = null
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View {
-            return binding.root
+            return RvIconGridBinding.inflate(layoutInflater).also { _binding = it }.root
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
@@ -48,6 +48,7 @@
 
 
         private fun setUpVillageLevelFormsIconRvAdapter() {
+            val binding = _binding ?: return
             val rvLayoutManager = GridLayoutManager(
                 context,
                 requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -59,7 +60,7 @@
                 IconGridAdapter.GridIconClickListener {
                     safeNavigate(it)
                 },
-                viewModel.scope
+                viewLifecycleOwner.lifecycleScope
             )
             binding.rvIconGrid.adapter = rvAdapter1
             rvAdapter1.submitList(iconDataset.getVLFDataset(resources))
@@ -80,7 +81,7 @@
                         )
 
                     }
-                    (binding.rvIconGrid.adapter as? IconGridAdapter)?.submitList(updatedIcons)
+                    (_binding?.rvIconGrid?.adapter as? IconGridAdapter)?.submitList(updatedIcons)
 
                 }
             }
@@ -94,5 +95,10 @@
                     getString(R.string.icon_title_vlf)
                 )
             }
+        }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            _binding = null
         }
     }

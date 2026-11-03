@@ -125,6 +125,10 @@ class UwinFragment : Fragment() {
                     findNavController().navigateUp()
                 }
                 UwinViewModel.State.SAVE_FAILED -> binding.pbForm.visibility = View.GONE
+                UwinViewModel.State.DUPLICATE_DATE -> {
+                    binding.pbForm.visibility = View.GONE
+                    context?.showToast(getString(R.string.uwin_session_already_submitted_for_date))
+                }
                 else -> Unit
             }
         }

@@ -171,6 +171,17 @@
                             android:background="?selectableItemBackgroundBorderless"
                             android:layout_marginEnd="4dp" />
 
+                        <ImageView
+                            android:id="@+id/iv_non_household"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:padding="4dp"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_non_household_vector"
+                            android:contentDescription="@string/non_households_title"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="4dp" />
+
 <!--                        <ImageView-->
 <!--                            android:id="@+id/ivSoftDelete"-->
 <!--                            android:layout_width="24dp"-->

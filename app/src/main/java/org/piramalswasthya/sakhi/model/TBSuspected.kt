@@ -41,6 +41,7 @@ data class TBSuspectedCache(
     var referralFacility: String? = null,
     var isTBConfirmed: Boolean? = null,
     var isDRTBConfirmed: Boolean? = null,
+    var isRecommendedForTpt: Boolean? = null,
     var isConfirmed: Boolean = false,
     var referred: Boolean? = null,
     var followUps: String? = null,
@@ -66,6 +67,7 @@ data class TBSuspectedCache(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isRecommendedForTpt = isRecommendedForTpt,
             isConfirmed = isConfirmed,
 
         )

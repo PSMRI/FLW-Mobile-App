@@ -16,12 +16,15 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.repositories.ABHAGenratedRepo
@@ -110,16 +113,19 @@ class AllBenViewModel @Inject constructor(
         _benRegId.value = null
     }
 
-    fun downloadCsv(context: Context) {
+    // Returns the Job so callers (tests) can wait for the IO write to finish.
+    fun downloadCsv(context: Context): Job =
         viewModelScope.launch {
             val users = recordsRepo.searchBenOnce(filterOrg.value, kindOrg.value, sourceFromArgs)
             if (users.isNotEmpty()) {
-                createCsvFile(context, users)
+                val file = withContext(Dispatchers.IO) { createCsvFile(context, users) }
+                file?.let {
+                    Toast.makeText(context, "CSV Downloaded: ${it.name}", Toast.LENGTH_LONG).show()
+                }
             } else {
                 Toast.makeText(context, "No data to export", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
     private fun createCsvFile(context: Context, users: List<BenBasicDomain>): File? {
         return try {
@@ -137,8 +143,6 @@ class AllBenViewModel @Inject constructor(
                 }
             }
             MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), null, null)
-
-            Toast.makeText(context, "CSV Downloaded: ${file.name}", Toast.LENGTH_LONG).show()
 
             file
         } catch (e: Exception) {

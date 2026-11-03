@@ -87,13 +87,16 @@ class TPTStartFragment : Fragment() {
         binding.followupHeading.isVisible = hasSchedule
         binding.includeFollowupTable.root.isVisible = hasSchedule
         followUpAdapter.submitList(visits)
-        binding.btnSave.isVisible = !viewModel.isFollowUpLimitReached()
+        binding.btnSave.isVisible = !viewModel.isTreatmentCompleted && !viewModel.isFollowUpLimitReached()
     }
 
     private fun observeForm() {
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
-                if (schema != null) formAdapter.updateFields(viewModel.getVisibleFields())
+                if (schema != null) {
+                    formAdapter.updateFields(viewModel.getVisibleFields())
+                    updateFollowUpHistory()
+                }
             }
         }
         lifecycleScope.launch {
@@ -145,7 +148,7 @@ class TPTStartFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(R.drawable.ic__ncd, getString(R.string.start_tpt))
+            (it as HomeActivity).updateActionBar(R.drawable.covid__vaccine_protection_medicine_pill, getString(R.string.start_tpt))
         }
     }
 

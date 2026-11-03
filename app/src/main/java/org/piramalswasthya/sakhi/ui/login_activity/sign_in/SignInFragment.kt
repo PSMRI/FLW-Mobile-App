@@ -269,42 +269,10 @@ class SignInFragment : Fragment() {
                     } else {
 
                         WorkerUtils.triggerGenBenIdWorker(requireContext())
-                        if (BuildConfig.FLAVOR.equals("niramay", true)) {
-//                            if (viewModel.getLoggedInUser()?.serviceMapId == 1718 ||
-//                                //Below ServiceMapId are form Indian Oil Project
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1722 ||
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1723 ||
-//                                viewModel.getLoggedInUser()?.serviceMapId ==1724) {
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-//                            } else {
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Niramay Project",Toast.LENGTH_SHORT).show()
-//                            }
-
-                        } else if (BuildConfig.FLAVOR.equals("xushrukha", true)) {
-                           // if (viewModel.getLoggedInUser()?.serviceMapId == 1716) {
-                                findNavController().navigate(
-                                    if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                    else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                                activity?.finish()
-//                            } else {
-//                                binding.clContent.visibility = View.VISIBLE
-//                                binding.pbSignIn.visibility = View.GONE
-//                                binding.tvError.visibility = View.GONE
-//                                Toast.makeText(requireContext(),"This user is not from Xushrukha Project",Toast.LENGTH_SHORT).show()
-//                            }
-
-                        } else {
-                            findNavController().navigate(
-                                if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
-                                else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
-                            activity?.finish()
-                        }
+                        findNavController().navigate(
+                            if (prefDao.getLocationRecord() == null) SignInFragmentDirections.actionSignInFragmentToServiceLocationActivity()
+                            else SignInFragmentDirections.actionSignInFragmentToHomeActivity())
+                        activity?.finish()
                     }
 
                 }

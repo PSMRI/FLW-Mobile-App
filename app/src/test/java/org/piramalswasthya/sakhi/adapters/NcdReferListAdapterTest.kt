@@ -42,7 +42,9 @@ class NcdReferListAdapterTest {
     )
 
     private fun benWithCbacRefer(benId: Long = 1L, records: List<org.piramalswasthya.sakhi.model.CbacCache> = emptyList()) =
-        BenWithCbacReferDomain(benBasic(benId = benId), records, referalCache(benId = benId))
+        BenWithCbacReferDomain(
+            benBasic(benId = benId), records, referalCache(benId = benId), emptyList(), emptyList()
+        )
 
     @Suppress("UNCHECKED_CAST")
     private fun diffCallback(): DiffUtil.ItemCallback<BenWithCbacReferDomain> {
@@ -80,7 +82,7 @@ class NcdReferListAdapterTest {
         var capturedHhId: Long? = null
         var capturedReason: String? = null
         var capturedReferredDate: Long? = null
-        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate ->
+        val listener = NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, _ ->
             capturedBenId = benId
             capturedHhId = hhId
             capturedReason = referReason
@@ -104,7 +106,7 @@ class NcdReferListAdapterTest {
         try {
             val adapter = NcdReferListAdapter(
                 userName = "ASHA",
-                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _ -> },
+                listener = NcdReferListAdapter.NcdReferallickListener { _, _, _, _, _ -> },
                 visible = true
             )
             assertEquals(0, adapter.itemCount)

@@ -83,6 +83,7 @@
             android:name=".ui.login_activity.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.Sakhi.Launch"
             android:windowSoftInputMode="stateHidden|adjustPan"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>

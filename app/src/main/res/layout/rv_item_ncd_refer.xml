@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
         <variable
             name="benWithCbac"
             type="org.piramalswasthya.sakhi.model.BenWithCbacReferDomain" />
@@ -41,7 +43,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/contstraintLayoutV">
 
                 <LinearLayout
                     android:id="@+id/ll_title_ncd_eligible_bar"
@@ -68,6 +71,16 @@
                         app:drawableLeftCompat="@drawable/ic__hh"
                         app:drawableTint="?attr/colorPrimary"
                         tools:text="Hello Meister" />
+
+                    <ImageView
+                        android:id="@+id/iv_isDeath"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginHorizontal="@dimen/padding_small"
+                        android:visibility="@{benWithCbac.ben.isDeath == true ? View.VISIBLE : View.GONE}"
+                        android:contentDescription="@string/iv_death_indicator"
+                        android:src="@drawable/ic_death" />
 
                     <ImageView
                         android:id="@+id/iv_sync_state"
@@ -388,6 +401,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="5dp"
+                    android:textColor="#ffffff"
                     android:layout_marginEnd="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

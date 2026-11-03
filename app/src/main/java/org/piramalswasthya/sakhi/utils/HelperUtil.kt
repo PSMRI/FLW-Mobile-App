@@ -54,6 +54,8 @@ import org.piramalswasthya.sakhi.model.AgeUnitDTO
 import org.piramalswasthya.sakhi.model.BenWithAncVisitCache
 import org.piramalswasthya.sakhi.model.EligibleCoupleTrackingCache
 import timber.log.Timber
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -646,9 +648,13 @@ object HelperUtil {
             while (srcW / sample > maxDim || srcH / sample > maxDim) sample *= 2
             val opts2 = BitmapFactory.Options().apply { inSampleSize = sample }
             val bmp = appContext.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts2) } ?: return copyToTemp(uri, nameHint, appContext)
-            val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
-            FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
-            temp
+            try {
+                val temp = File.createTempFile("maa_img_", ".jpg", appContext.cacheDir)
+                FileOutputStream(temp).use { fos -> bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos) }
+                temp
+            } finally {
+                bmp.recycle()
+            }
         } catch (_: Exception) { null }
     }
 
@@ -921,6 +927,15 @@ object HelperUtil {
         val bytes = file.readBytes()
         return Base64.encodeToString(bytes, Base64.NO_WRAP)
     }
+
+    /**
+     * Compress + Base64-encode a picked/captured image off the main thread. Decoding and
+     * re-encoding a camera photo takes long enough on low-end phones to freeze the form.
+     */
+    suspend fun compressImageToBase64(uri: Uri, nameHint: String, appContext: Context): String? =
+        withContext(Dispatchers.IO) {
+            compressImageToTemp(uri, nameHint, appContext)?.let { fileToBase64(it) }
+        }
 
     fun showPickerDialog(
         context: Context,

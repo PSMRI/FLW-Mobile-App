@@ -82,19 +82,19 @@ class SchedulerFragment : Fragment() {
         viewModel.date.observe(viewLifecycleOwner) {
             binding.calendarView.date = it
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ancDueCount.collect {
                 binding.tvAnc.text = it.toString()
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.immunizationDue.collect {
                 binding.tvImm.text = it.toString()
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.lowWeightBabiesCount.collect {
                 binding.tvLbwb.text = it.toString()
             }
@@ -132,38 +132,38 @@ class SchedulerFragment : Fragment() {
         binding.cvMiss.setOnClickListener {
             safeNavigate(HomeFragmentDirections.actionHomeFragmentToMissedPeriodFragment())
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.hrpDueCount.collect {
                 binding.tvHrp.text = it.toString()
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.hrpCountEC.collect {
                 binding.tvHrEcCount.text = it.toString()
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.hrpConfirmedCount.collect {
                 binding.tvConfirmedHrp.text = it.toString()
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.abhaOldGeneratedCount.collect {
                 binding.tvAbhaOldCount.text = it.toString()
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.abhaNewGeneratedCount.collect {
                 binding.tvAbhaNewCount.text = it.toString()
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.rchIdCount.collect {
                 binding.tvRch.text = it.toString()
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             combine(
                 viewModel.ancNonFollowUpCount,
                 viewModel.pncNonFollowUpCount,
@@ -175,7 +175,7 @@ class SchedulerFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             combine(
                 viewModel.ecrMissedPeriodCount,
                 viewModel.ectMissedPeriodCount
@@ -186,14 +186,14 @@ class SchedulerFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ecrMissedPeriodCount.collect {
                 countMissedPeriodCases.incrementAndGet()
                 ecrMissedPeriodCount = it
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ectMissedPeriodCount.collect {
                 countMissedPeriodCases.incrementAndGet()
                 ectMissedPeriodCount = it
@@ -304,8 +304,8 @@ class SchedulerFragment : Fragment() {
         // (LAVA feedback: auto-scroll was distracting).
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

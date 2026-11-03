@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
@@ -26,6 +27,7 @@ data class TBReferralFollowUpEntity(
     val updatedAt: Long = System.currentTimeMillis()
 )
 
+@JsonClass(generateAdapter = true)
 data class TBReferralFollowUpRequest(
     val benId: Long,
     val houseHoldId: Long,
@@ -40,7 +42,7 @@ data class BenWithTbReferralFollowUpCache(
         entityColumn = "benId",
         entity = TBReferralFollowUpEntity::class
     )
-    val referralFollowUps: TBReferralFollowUpEntity,
+    val referralFollowUps: TBReferralFollowUpEntity?,
     @Relation(
         parentColumn = "benId",
         entityColumn = "benId"
@@ -58,7 +60,7 @@ data class BenWithTbReferralFollowUpCache(
 
 data class BenWithTbReferralFollowUpDomain(
     val ben: BenBasicDomain,
-    val referralFollowUps: TBReferralFollowUpEntity,
+    val referralFollowUps: TBReferralFollowUpEntity?,
     val tbSuspected: TBSuspectedCache?
 
 )

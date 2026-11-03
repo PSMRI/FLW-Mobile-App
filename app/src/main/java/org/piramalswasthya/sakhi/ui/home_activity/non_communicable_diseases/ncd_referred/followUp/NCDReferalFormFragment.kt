@@ -28,7 +28,9 @@ import org.piramalswasthya.sakhi.adapters.dynamicAdapter.FormRendererAdapter
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentNcdReferalFollowUpFormBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
 import org.piramalswasthya.sakhi.utils.Log
+import org.piramalswasthya.sakhi.utils.dynamicFormConstants.FormConstants
 import org.piramalswasthya.sakhi.utils.dynamicFiledValidator.FieldValidator
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.text.SimpleDateFormat
@@ -152,6 +154,11 @@ class NCDReferalFormFragment : Fragment() {
                         ?.findViewWithTag<android.view.View>("field_error_tv")
                         ?.visibility = android.view.View.GONE
                 }
+            },
+            formId = when {
+                viewModel.isGcForm -> FormConstants.GC_REFERRAL_FOLLOW_UP
+                viewModel.isTbForm -> FormConstants.Tb_Referral_Follow_Up
+                else -> null
             }
         )
 
@@ -219,7 +226,7 @@ class NCDReferalFormFragment : Fragment() {
 
         val followUpError = viewModel.getFollowUpDateErrorFromUI()
         if (followUpError != null) {
-            val errorMessage = getString(followUpError.resId, *followUpError.formatArgs)
+            val errorMessage = getString(followUpError.resId, *followUpError.formatArgs.toTypedArray())
             currentSchema.sections.flatMap { it.fields }
                 .find { it.fieldId == "follow_up_date" }?.let { schemaField ->
                     schemaField.errorMessage = errorMessage
@@ -299,7 +306,7 @@ class NCDReferalFormFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.schema.collectLatest { schema ->
                 schema?.let {
-                    if (viewModel.isTbForm) {
+                    if (viewModel.isReferralFollowUpForm) {
                         val visibleFields = viewModel.getVisibleFields()
 
                         binding.referredOnContainer.isVisible = true
@@ -336,9 +343,13 @@ class NCDReferalFormFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
+            // A General Check-up referral (FLW-1229) is told apart by its reason prefix, since both
+            // the HWC and the NCD referred lists open this screen.
+            val isGeneralCheckup =
+                args.referReason.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX)
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd_priority,
-                getString(R.string.ncd_folloup_form)
+                if (isGeneralCheckup) R.drawable.ic__general_op else R.drawable.ic__ncd_priority,
+                getString(if (isGeneralCheckup) R.string.gc_referral_follow_up_form else R.string.ncd_folloup_form)
             )
         }
     }

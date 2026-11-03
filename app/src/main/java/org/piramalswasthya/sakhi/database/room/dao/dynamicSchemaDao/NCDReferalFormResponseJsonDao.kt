@@ -77,6 +77,11 @@ interface NCDReferalFormResponseJsonDao {
         formId: String
     ): List<NCDReferalFormResponseJsonEntity>
 
+    @Query("SELECT * FROM ncd_referal_all_visit WHERE benId = :benId")
+    suspend fun getAllVisitsByBeneficiary(
+        benId: Long
+    ): List<NCDReferalFormResponseJsonEntity>
+
     @Query("""
         SELECT * FROM ncd_referal_all_visit 
         WHERE benId = :benId

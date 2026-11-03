@@ -16,6 +16,16 @@ interface UwinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(session: UwinCache)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM UWIN_SESSION WHERE date(sessionDate / 1000, 'unixepoch', 'localtime') = date(:sessionDate / 1000, 'unixepoch', 'localtime'))")
+    suspend fun hasSessionOnDate(sessionDate: Long): Boolean
+
+    @Transaction
+    suspend fun insertIfDateAvailable(session: UwinCache): Boolean {
+        if (hasSessionOnDate(session.sessionDate)) return false
+        insert(session)
+        return true
+    }
+
     @Update
     suspend fun update(session: UwinCache)
 

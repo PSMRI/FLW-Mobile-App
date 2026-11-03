@@ -13,6 +13,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FieldValidation
 import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.model.dynamicEntity.FormSchemaDto
+import org.piramalswasthya.sakhi.model.dynamicEntity.OptionItemParser
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.optionItems
 import org.piramalswasthya.sakhi.repositories.BenRepo
@@ -51,6 +52,8 @@ class TPTStartViewModel @Inject constructor(
         } ?: 0) + 1
     val currentVisitNo: Int
         get() = _history.value.maxOfOrNull { it.visitNo } ?: 1
+    val isTreatmentCompleted: Boolean
+        get() = _history.value.any { isTreatmentCompletedVisit(it, _schema.value) }
 
     fun loadForm() {
         viewModelScope.launch {
@@ -70,6 +73,10 @@ class TPTStartViewModel @Inject constructor(
     }
 
     private fun configureSchema(schema: FormSchemaDto): FormSchemaDto {
+        val completedVisit = _history.value
+            .filter { isTreatmentCompletedVisit(it, schema) }
+            .maxWithOrNull(compareBy<TPTFollowUpEntity> { it.visitNo }.thenBy { it.followUpNo }.thenBy { it.updatedAt })
+        val completedVisitFields = completedVisit?.let { parseFields(it.fieldsJson) }
         val mainVisit = _history.value.firstOrNull { !it.treatmentStartDate.isNullOrBlank() }
         val savedFields = mainVisit?.let { parseFields(it.fieldsJson) }
         val treatmentStartMinDate = referralFollowUpDate.takeIf { it.isNotBlank() && !it.equals("null", true) }
@@ -82,6 +89,7 @@ class TPTStartViewModel @Inject constructor(
                 val completionDateField = isCompletionDateField(field.fieldId, field.label)
                 val followUpDateField = isFollowUpDateField(field.fieldId, field.label)
                 val monthlyField = isMonthlyFollowUpField(field.fieldId, field.label)
+                val reasonOfDeathField = isReasonOfDeathField(field.fieldId, field.label)
                 val validation = if (treatmentDateField && mainVisit == null) {
                     (field.validation ?: org.piramalswasthya.sakhi.model.dynamicEntity.FieldValidationDto()).copy(
                         minDate = treatmentStartMinDate ?: field.validation?.minDate,
@@ -89,6 +97,18 @@ class TPTStartViewModel @Inject constructor(
                     )
                 } else field.validation
                 when {
+                    completedVisit != null -> field.copy(
+                        value = if (reasonOfDeathField) {
+                            savedFieldValue(completedVisitFields, field.fieldId)
+                                ?.takeUnless { it.toString().isBlank() }
+                                ?: field.defaultValue ?: field.default ?: field.value
+                        } else {
+                            savedFieldValue(completedVisitFields, field.fieldId)
+                                ?: field.value ?: field.defaultValue ?: field.default
+                        },
+                        isEditable = false,
+                        validation = validation
+                    )
                     treatmentTypeField && mainVisit != null -> field.copy(
                         value = mainVisit.treatmentType ?: savedFields?.opt(field.fieldId),
                         isEditable = false
@@ -110,6 +130,10 @@ class TPTStartViewModel @Inject constructor(
                         value = "Month-${currentFollowUpNo.coerceAtMost(6)}",
                         isEditable = false
                     )
+                    reasonOfDeathField -> field.copy(
+                        value = field.defaultValue ?: field.default?.toString() ?: field.value,
+                        isEditable = false
+                    )
                     else -> field.copy(
                         value = field.value ?: field.defaultValue ?: field.default,
                         validation = validation,
@@ -119,6 +143,7 @@ class TPTStartViewModel @Inject constructor(
             })
         }
         val configuredSchema = schema.copy(sections = configuredSections)
+        if (completedVisit != null) return refreshConditions(configuredSchema)
         val completionDate = calculateCompletionDate(
             treatmentTypeValue(configuredSchema),
             treatmentStartDateValue(configuredSchema)
@@ -134,6 +159,7 @@ class TPTStartViewModel @Inject constructor(
     }
 
     fun updateFieldValue(fieldId: String, value: Any?) {
+        if (isTreatmentCompleted) return
         val current = _schema.value ?: return
         val updated = current.copy(sections = current.sections.map { section ->
             section.copy(fields = section.fields.map { field ->
@@ -152,18 +178,38 @@ class TPTStartViewModel @Inject constructor(
     }
 
     private fun refreshConditions(schema: FormSchemaDto): FormSchemaDto {
-        val values = schema.sections.flatMap { it.fields }.associateBy { normalizeFieldText(it.fieldId) }
+        val fields = schema.sections.flatMap { it.fields }
+        val values = fields.associateBy { normalizeFieldText(it.fieldId) }
+        val treatmentCompleted = fields.firstOrNull {
+            isTreatmentCompletedField(it.fieldId, it.label)
+        }?.value?.toString()?.let { normalizeFieldText(it) in setOf("yes", "true", "1") } == true
+        val outcomeField = fields.firstOrNull { isTreatmentOutcomeField(it.fieldId, it.label) }
+        val outcomeValue = outcomeField?.value?.toString().orEmpty()
+        val outcomeLabel = OptionItemParser.parse(outcomeField?.options)
+            ?.firstOrNull { it.value.equals(outcomeValue, ignoreCase = true) }
+            ?.label.orEmpty()
+        val deathOutcomeSelected = listOf(outcomeValue, outcomeLabel).any(::isDeathOutcome)
         return schema.copy(sections = schema.sections.map { section ->
             section.copy(fields = section.fields.map { field ->
                 val condition = field.conditional
-                if (condition == null || condition.dependsOn.isNullOrBlank()) field.copy(visible = true)
+                val conditionVisible = if (condition == null || condition.dependsOn.isNullOrBlank()) true
                 else {
                     val dependency = values[normalizeFieldText(condition.dependsOn)]
                     val actual = dependency?.value?.toString()?.trim().orEmpty()
                     val expected = condition.expectedValue?.trim().orEmpty()
-                    val visible = actual.isNotBlank() && (expected.isBlank() || actual.equals(expected, true))
-                    field.copy(visible = visible, value = if (visible) field.value else null, errorMessage = null)
+                    actual.isNotBlank() && (expected.isBlank() || actual.equals(expected, true))
                 }
+                val deathField = isDateOfDeathField(field.fieldId, field.label) ||
+                        isReasonOfDeathField(field.fieldId, field.label) ||
+                        isPlaceOfDeathField(field.fieldId, field.label)
+                val visible = conditionVisible && (!deathField || (treatmentCompleted && deathOutcomeSelected))
+                val value = when {
+                    !visible -> null
+                    isReasonOfDeathField(field.fieldId, field.label) && field.value?.toString().isNullOrBlank() ->
+                        field.defaultValue ?: field.default ?: field.value
+                    else -> field.value
+                }
+                field.copy(visible = visible, value = value, errorMessage = null)
             })
         })
     }
@@ -206,6 +252,7 @@ class TPTStartViewModel @Inject constructor(
                 fieldId = field.fieldId,
                 label = field.label,
                 type = field.type,
+                defaultValue = field.defaultValue ?: field.default?.toString(),
                 options = field.optionItems(),
                 isRequired = field.required,
                 placeholder = field.placeholder,
@@ -229,13 +276,14 @@ class TPTStartViewModel @Inject constructor(
                     ?.takeIf { !it.dependsOn.isNullOrBlank() && !it.expectedValue.isNullOrBlank() }
                     ?.let { ConditionalLogic(it.dependsOn.orEmpty(), it.expectedValue.orEmpty()) },
                 value = field.value,
-                isEditable = field.isEditable,
+                isEditable = field.isEditable && !isReasonOfDeathField(field.fieldId, field.label),
                 errorMessage = field.errorMessage
             )
         }
     }.orEmpty()
 
     suspend fun saveFormResponses(updatedFields: List<FormField>) {
+        if (isTreatmentCompleted) return
         val schema = _schema.value ?: return
         val values = updatedFields.associate { it.fieldId to it.value }
         val updatedSchema = refreshConditions(schema.copy(sections = schema.sections.map { section ->
@@ -275,13 +323,25 @@ class TPTStartViewModel @Inject constructor(
                 fieldsJson = fieldsObject.toString()
             )
         )
-        if (fieldsObject.optString("tpt_outcome").equals("Death", ignoreCase = true)) {
+        val schemaFields = updatedSchema.sections.flatMap { it.fields }
+        val outcomeField = schemaFields.firstOrNull { isTreatmentOutcomeField(it.fieldId, it.label) }
+        val outcomeValue = outcomeField?.value?.toString().orEmpty()
+        val outcomeLabel = OptionItemParser.parse(outcomeField?.options)
+            ?.firstOrNull { it.value.equals(outcomeValue, ignoreCase = true) }
+            ?.label.orEmpty()
+        if (listOf(outcomeValue, outcomeLabel).any(::isDeathOutcome)) {
             benRepo.getBenFromId(benId)?.let { beneficiary ->
                 beneficiary.isDeath = true
                 beneficiary.isDeathValue = "Death"
-                beneficiary.dateOfDeath = fieldsObject.optString("date_of_death").takeIf { it.isNotBlank() }
-                beneficiary.reasonOfDeath = fieldsObject.optString("reason_for_death").takeIf { it.isNotBlank() }
-                beneficiary.placeOfDeath = fieldsObject.optString("place_of_death").takeIf { it.isNotBlank() }
+                beneficiary.dateOfDeath = schemaFields.firstOrNull {
+                    isDateOfDeathField(it.fieldId, it.label)
+                }?.value?.toString()?.takeIf { it.isNotBlank() }
+                beneficiary.reasonOfDeath = schemaFields.firstOrNull {
+                    isReasonOfDeathField(it.fieldId, it.label)
+                }?.value?.toString()?.takeIf { it.isNotBlank() }
+                beneficiary.placeOfDeath = schemaFields.firstOrNull {
+                    isPlaceOfDeathField(it.fieldId, it.label)
+                }?.value?.toString()?.takeIf { it.isNotBlank() }
                 if (beneficiary.processed != "N") beneficiary.processed = "U"
                 beneficiary.syncState = SyncState.UNSYNCED
                 benRepo.updateRecord(beneficiary)
@@ -358,6 +418,64 @@ class TPTStartViewModel @Inject constructor(
         ?.value?.toString()
 
     private fun normalizeFieldText(value: String) = value.lowercase(Locale.ENGLISH).filter(Char::isLetterOrDigit)
+
+    private fun isTreatmentCompletedVisit(visit: TPTFollowUpEntity, schema: FormSchemaDto?): Boolean {
+        val savedFields = parseFields(visit.fieldsJson) ?: return false
+        val completionField = schema?.sections?.flatMap { it.fields }
+            ?.firstOrNull { isTreatmentCompletedField(it.fieldId, it.label) }
+        val value = if (completionField != null) {
+            savedFieldValue(savedFields, completionField.fieldId)
+        } else {
+            val key = savedFields.keys().asSequence()
+                .firstOrNull { isTreatmentCompletedField(it, it) }
+            key?.let { savedFieldValue(savedFields, it) }
+        }
+        return normalizeFieldText(value?.toString().orEmpty()) in setOf("yes", "true", "1")
+    }
+
+    private fun savedFieldValue(fields: JSONObject?, fieldId: String): Any? =
+        fields?.opt(fieldId)?.takeUnless { it == JSONObject.NULL }
+
+    private fun isTreatmentCompletedField(fieldId: String, label: String): Boolean {
+        val id = normalizeFieldText(fieldId)
+        val normalizedLabel = normalizeFieldText(label)
+        return id.contains("treatmentcompleted") || normalizedLabel.contains("treatmentcompleted")
+    }
+
+    private fun isTreatmentOutcomeField(fieldId: String, label: String): Boolean {
+        val normalizedId = normalizeFieldText(fieldId)
+        val normalizedLabel = normalizeFieldText(label)
+        return normalizedId.contains("tptoutcome") ||
+                normalizedId.contains("treatmentoutcome") ||
+                normalizedLabel.contains("tptoutcome") ||
+                normalizedLabel.contains("treatmentoutcome")
+    }
+
+    private fun isDateOfDeathField(fieldId: String, label: String): Boolean {
+        val id = normalizeFieldText(fieldId)
+        val normalizedLabel = normalizeFieldText(label)
+        return id.contains("dateofdeath") || id.contains("deathdate") ||
+                normalizedLabel.contains("dateofdeath") || normalizedLabel.contains("deathdate")
+    }
+
+    private fun isReasonOfDeathField(fieldId: String, label: String): Boolean {
+        val id = normalizeFieldText(fieldId)
+        val normalizedLabel = normalizeFieldText(label)
+        return id.contains("reasonfordeath") || id.contains("deathreason") ||
+                normalizedLabel.contains("reasonfordeath") || normalizedLabel.contains("deathreason")
+    }
+
+    private fun isPlaceOfDeathField(fieldId: String, label: String): Boolean {
+        val id = normalizeFieldText(fieldId)
+        val normalizedLabel = normalizeFieldText(label)
+        return id.contains("placeofdeath") || id.contains("deathplace") ||
+                normalizedLabel.contains("placeofdeath") || normalizedLabel.contains("deathplace")
+    }
+
+    private fun isDeathOutcome(value: String): Boolean {
+        val normalized = normalizeFieldText(value)
+        return normalized == "death" || normalized == "deceased" || normalized == "died"
+    }
 
     private fun isTreatmentTypeField(fieldId: String, label: String = ""): Boolean {
         val combined = "${normalizeFieldText(fieldId)} ${normalizeFieldText(label)}"

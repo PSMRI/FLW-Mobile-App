@@ -72,6 +72,7 @@ data class BenCHOPost(
     val createdBy: String
 )
 
+@JsonClass(generateAdapter = true)
 data class BenPhoneMapCHO(
     @Json(name = "parentBenRegID")
     val parentBenRegID: String? = null,
@@ -91,6 +92,7 @@ data class BenPhoneMapCHO(
     val createdBy: String
 )
 
+@JsonClass(generateAdapter = true)
 data class BeneficiaryIdentitiesCHO(
     @Json(name = "govtIdentityNo")
     var govtIdentityNo: Int = 0,
@@ -108,6 +110,7 @@ data class BeneficiaryIdentitiesCHO(
     var createdBy: String,
 )
 
+@JsonClass(generateAdapter = true)
 data class BenDemographicsCHO(
     @Json(name = "incomeStatusID")
     val incomeStatusID: String? = null,

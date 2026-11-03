@@ -30,6 +30,7 @@ class TBScreeningFormFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: TBScreeningFormViewModel by viewModels()
+    private var formAdapter: FormInputAdapter? = null
 
     var referralForReason = "Suspected TB case"
     var referType = "TB"
@@ -53,7 +54,7 @@ class TBScreeningFormFragment : Fragment() {
                 // The alert can outlive this fragment (it lives on the activity window); only
                 // navigate while still attached, and from the current destination.
                 if (isAdded) {
-                    findNavController().safeNavigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = getString(R.string.tb_screening_form), referralType = referType))
+                    findNavController().safeNavigate(TBScreeningFormFragmentDirections.actionTBScreeningFormFragmentToNcdReferForm(viewModel.benId, referral = getString(R.string.suspected_tb_case), referralType = referType))
                 }
             }
             .setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
@@ -86,16 +87,42 @@ class TBScreeningFormFragment : Fragment() {
                         viewModel.updateListOnValueChanged(formId, index)
                     }, isEnabled = !recordExists
                 )
+                formAdapter = adapter
                 binding.btnSubmit.isEnabled = !recordExists
                 binding.form.rvInputForm.adapter = adapter
                 lifecycleScope.launch {
                     viewModel.formList.collect {
                         if (it.isNotEmpty()) {
-                            adapter.notifyItemChanged(viewModel.getIndexOfDate())
-                            adapter.submitList(it)
+                            val dateIndex = viewModel.getIndexOfDate()
+                            val asymptomaticIdx = viewModel.getIndexOfAsymptomatic()
+                            val familyHistoryTb = viewModel.getHistoryTB()
+                            val riskFactorsIndex = viewModel.getIndexOfRiskFactors()
+
+                            adapter.submitList(it) {
+                                if (dateIndex >= 0) adapter.notifyItemChanged(dateIndex)
+                                if (asymptomaticIdx >= 0) adapter.notifyItemChanged(asymptomaticIdx)
+                                if (familyHistoryTb >= 0) adapter.notifyItemChanged(familyHistoryTb)
+                                if (riskFactorsIndex >= 0) adapter.notifyItemChanged(riskFactorsIndex)
+                            }
                         }
 
                     }
+                }
+            }
+        }
+        viewModel.asymptomaticRefresh.observe(viewLifecycleOwner) { position ->
+            if (position >= 0) {
+                binding.form.rvInputForm.post {
+                    formAdapter?.takeIf { position < it.itemCount }
+                        ?.notifyItemChanged(position)
+                }
+            }
+        }
+        viewModel.riskFactorsRefresh.observe(viewLifecycleOwner) { position ->
+            if (position >= 0) {
+                binding.form.rvInputForm.post {
+                    formAdapter?.takeIf { position < it.itemCount }
+                        ?.notifyItemChanged(position)
                 }
             }
         }
@@ -200,7 +227,7 @@ class TBScreeningFormFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__ncd,
+                R.drawable.tb_screening,
                 getString(R.string.tb_screening_form)
             )
         }
@@ -208,6 +235,7 @@ class TBScreeningFormFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        formAdapter = null
         _binding = null
     }
 

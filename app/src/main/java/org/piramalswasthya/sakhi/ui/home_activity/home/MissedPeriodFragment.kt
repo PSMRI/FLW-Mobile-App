@@ -53,7 +53,7 @@ class MissedPeriodFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ecrMissedPeriodCount.collect {
                 binding.tvAnc.text = it.toString()
             }
@@ -63,7 +63,7 @@ class MissedPeriodFragment : Fragment() {
             findNavController().navigate(MissedPeriodFragmentDirections.actionMissedPeriodFragmentToEligibleCoupleListFragment(2))
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ectMissedPeriodCount.collect {
                 binding.tvHrEcPnc.text = it.toString()
             }
@@ -85,8 +85,8 @@ class MissedPeriodFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

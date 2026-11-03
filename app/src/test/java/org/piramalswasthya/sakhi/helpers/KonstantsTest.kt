@@ -147,8 +147,13 @@ class KonstantsTest {
     }
 
     @Test
-    fun `pnc ec gap is 45 days`() {
-        assertEquals(45L, Konstants.pncEcGap)
+    fun `pnc ec gap is 60 days`() {
+        assertEquals(60L, Konstants.pncEcGap)
+    }
+
+    @Test
+    fun `low weight infant register window remains 45 days`() {
+        assertEquals(45L, Konstants.maxAgeForLowWeightInfantRegisterDays)
     }
 
     @Test

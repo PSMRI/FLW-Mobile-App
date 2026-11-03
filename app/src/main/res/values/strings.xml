@@ -59,6 +59,9 @@
     <string name="mdsr_reason_death">specify reasons</string>
     <string name="mdsr_action">Action taken</string>
     <string name="refer_to">Referred To</string>
+    <string name="refer">Refer</string>
+    <string name="start_follow_up">Start Follow-up</string>
+    <string name="view_follow_up">View Follow-up</string>
     <string name="day_wise_tracking_pf">Pf - Day-wise Tracking</string>
     <string name="day_wise_tracking_pv">PV - Day-wise Tracking</string>
     <string name="type_of_leprocy">Type of leprosy confirmed</string>
@@ -186,7 +189,7 @@
     <string name="is_chest_xray_done">Is the TB Chest X-Ray Test done?</string>
     <string name="chest_xray_result">Chest X-Ray Test Result</string>
     <string name="referral_facility">Referral Facility</string>
-    <string name="is_tb_confirmed">Has the diagnosis of TB been confirmed?</string>
+    <string name="is_tb_confirmed">Is TB confirmed?</string>
     <string name="is_drtb_confirmed">Has the diagnosis of DR-TB been confirmed?</string>
 
     <string-array name="type_of_tb_case">
@@ -215,6 +218,17 @@
         <item>District Hospital</item>
         <item>Medical College Hospital</item>
         <item>Tuberculosis Unit</item>
+    </string-array>
+
+    <string-array name="TB_referral_facility">
+        <item>Tuberculosis Unit(TU)</item>
+        <item>HWC-Subcenter</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>District Hospital</item>
+        <item>District TB Centre (DTC)</item>
+        <item>Govt. Medical Collage</item>
+
     </string-array>
 
     <string-array name="referral_facility">
@@ -517,12 +531,13 @@
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
-    <string name="tb_suspected_list">Suspected TB cases</string>
+    <string name="tb_suspected_list">Presumptive TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
     <string name="tb_suspected_copd_case">Suspected COPD case</string>
     <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
     <string name="tb_suspected_ncd_case">Suspected NCD Case</string>
     <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_cases">Confirmed TB cases</string>
     <string name="tb_confirmed_form">TB Confirmed Form</string>
 
     <string name="maleria_screening_form">Malaria Form</string>
@@ -531,7 +546,7 @@
     <string name="filaria_screening_form">Filaria Form</string>
     <string name="leprosy_screening_form">Leprosy Form</string>
     <string name="follow_up_form">Follow-up  Form</string>
-    <string name="tb_suspected_form">Suspected TB case</string>
+    <string name="tb_suspected_form">Presumptive TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
     <string name="delivery_outcome_list">Delivery Outcome List</string>
@@ -719,6 +734,7 @@
     <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
+    <string name="uwin_session_already_submitted_for_date">A U-WIN session has already been submitted for this date.</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
     <string name="number_of_families_label">Number Of Families : %s</string>
     <string name="number_of_children_label">Number Of Children : %s</string>
@@ -810,6 +826,7 @@
         <item>Mosquito Net</item>
         <item>Filaria MDA</item>
         <item>Filaria MDA Campaign</item>
+        <item>General Check-up</item>
     </string-array>
 
     <string-array name="place_array">
@@ -1500,9 +1517,11 @@
     <string name="delivery_discharge_summary_4">Delivery Discharge Summary 4</string>
     <string name="symptomatic_tb_screening">Symptomatic TB Screening</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">Check if the person has any of these Symptoms:</string>
-    <string name="tb_asymptomatic_symptoms">Asymptomatic Symptoms</string>
+    <string name="tb_asymptomatic_symptoms">Beneficiary is Asymptomatic</string>
     <string name="tb_rise_of_fever">Rise of fever in evening</string>
     <string name="tb_loss_of_appetite">Loss of Appetite</string>
+    <string name="tb_child_failure_to_gain_weight">Failure to gain weight (in children)</string>
+    <string name="tb_child_decreased_activity">Decreased activity or playfulness (in children)</string>
     <string name="tb_age_more_than_60">Age more than 60 years</string>
     <string name="tb_diabetic">Diabetic</string>
     <string name="tb_tobacco_user">Tobacco user</string>
@@ -1644,7 +1663,7 @@
     <string name="negative">Negative</string>
     <string name="hiv_status">HIV Status</string>
     <string name="not_applicable">Not Applicable</string>
-    <string name="fatigue">fatigue</string>
+    <string name="fatigue">Fatigue</string>
     <string name="chestpain">Chest pain</string>
 
 
@@ -1799,4 +1818,11 @@
     <string name="add_follow_up">Add Follow Up</string>
     <string name="view_details">View Details</string>
     <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
+    <string name="link_household">Link Household</string>
+    <string name="link_to_existing_household">Link to Existing Household</string>
+    <string name="create_new_household">Create New Household</string>
+    <string name="select_household">Select Household</string>
+    <string name="search_household_hint">Search by name or ID...</string>
+    <string name="select_relationship_to_hof">Select Relationship to HOF</string>
+    <string name="beneficiary_linked_successfully">Beneficiary linked successfully</string>
 </resources>

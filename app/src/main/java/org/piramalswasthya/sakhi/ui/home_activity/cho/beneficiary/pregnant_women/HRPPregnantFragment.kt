@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -26,13 +27,20 @@ class HRPPregnantFragment : Fragment() {
     }
 
     private val viewModel: HRPPregnantViewModel by viewModels()
-    private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val binding = RvIconGridBinding.inflate(layoutInflater)
+        _binding = binding
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +49,7 @@ class HRPPregnantFragment : Fragment() {
     }
 
     private fun setupPWIcons() {
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -50,7 +59,7 @@ class HRPPregnantFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getHRPPregnantWomenDataset(resources))

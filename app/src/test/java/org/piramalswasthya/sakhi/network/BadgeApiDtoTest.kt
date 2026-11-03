@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.network
 
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.Test
 
 /**
@@ -17,7 +16,7 @@ import org.junit.Test
  */
 class BadgeApiDtoTest {
 
-    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val moshi = Moshi.Builder().build() // codegen adapters, same as the app (no kotlin-reflect)
     private val adapter = moshi.adapter(BadgeEarnedResponse::class.java)
 
     @Test

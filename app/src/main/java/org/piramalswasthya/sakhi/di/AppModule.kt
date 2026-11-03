@@ -2,7 +2,6 @@ package org.piramalswasthya.sakhi.di
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +11,7 @@ import okhttp3.OkHttpClient
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
@@ -69,6 +69,7 @@ import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.BadgeApiService
+import org.piramalswasthya.sakhi.network.SerializeNullAdapterFactory
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.BodyCappedLoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
@@ -217,7 +218,10 @@ object AppModule {
     @Provides
     fun provideMoshiInstance(): Moshi {
         return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
+            .add(SerializeNullAdapterFactory)
+            // No KotlinJsonAdapterFactory: it pulls in kotlin-reflect (~1.4 MB of DEX). Every Kotlin
+            // class Moshi converts uses @JsonClass(generateAdapter = true); MoshiCodegenCoverageTest
+            // checks it (FLW-1211).
             .build()
     }
 
@@ -481,5 +485,9 @@ object AppModule {
             .build()
             .create(BadgeApiService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideGeneralCheckupDao(database: InAppDb): GeneralCheckupDao = database.generalCheckupDao
 
 }

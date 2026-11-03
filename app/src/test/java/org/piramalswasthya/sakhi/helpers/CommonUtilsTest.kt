@@ -1345,7 +1345,9 @@ class CommonUtilsTest {
         val domain = BenWithCbacReferDomain(
             ben = mkBen(benName = "Asha"),
             savedCbacRecords = emptyList(),
-            referalCac = refer
+            referalCac = refer,
+            tbrefferalFollowUp = emptyList(),
+            tbSuspectedCases = emptyList()
         )
         assertTrue(domain.savedCbacRecords.isEmpty())
         assertEquals(refer, domain.referalCac)

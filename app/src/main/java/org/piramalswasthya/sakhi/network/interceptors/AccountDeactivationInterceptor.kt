@@ -15,9 +15,12 @@ class AccountDeactivationInterceptor @Inject constructor(
         val response = chain.proceed(chain.request())
 
         try {
-            val peekBody = response.peekBody(1024 * 1024) // peek up to 1MB
-            val bodyString = peekBody.string()
-            if (bodyString.isNotBlank()) {
+            // The deactivation reply is a small error JSON. Peeking only a few KB keeps large
+            // sync pages from being copied and parsed a second time (OOM / GC ANRs in the field).
+            val peekBody = response.peekBody(MAX_PEEK_BYTES)
+            val truncated = peekBody.contentLength() >= MAX_PEEK_BYTES
+            val bodyString = if (truncated) "" else peekBody.string()
+            if (bodyString.contains("5002")) {
                 val json = JSONObject(bodyString)
                 val statusCode = json.optInt("statusCode", -1)
                 if (statusCode == 5002) {
@@ -36,5 +39,9 @@ class AccountDeactivationInterceptor @Inject constructor(
         }
 
         return response
+    }
+
+    private companion object {
+        const val MAX_PEEK_BYTES = 16 * 1024L
     }
 }

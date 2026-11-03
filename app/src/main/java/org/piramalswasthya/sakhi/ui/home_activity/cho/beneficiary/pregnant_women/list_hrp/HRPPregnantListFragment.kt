@@ -36,7 +36,6 @@ class HRPPregnantListFragment : Fragment() {
         viewModel.filterText(lowerValue)
     }
 
-    private val bottomSheet: HRPPregnantTrackBottomSheet by lazy { HRPPregnantTrackBottomSheet() }
     private var isBottomSheetShowing = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,7 +72,7 @@ class HRPPregnantListFragment : Fragment() {
                     if (!isBottomSheetShowing) {
                         isBottomSheetShowing = true
                         viewModel.benId = benId
-                        bottomSheet.show(
+                        HRPPregnantTrackBottomSheet().show(
                             childFragmentManager,
                             resources.getString(R.string.follow_up)
                         )
@@ -87,7 +86,7 @@ class HRPPregnantListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -132,8 +131,8 @@ class HRPPregnantListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

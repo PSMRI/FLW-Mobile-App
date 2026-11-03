@@ -6,6 +6,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -1431,7 +1432,7 @@ class HRPRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getMicroBirthPlan saveHighRiskAssessMicroBirthPlan fills only null fields on existing record`() = runTest {
+    fun `getMicroBirthPlan saveHighRiskAssessMicroBirthPlan overwrites existing record with server values and keeps local id`() = runTest {
         val entries = """[{
             "benId":20002,"nearestSc":"NewSC","bloodGroup":"NewBG","contactNumber1":"New1","contactNumber2":"New2",
             "scHosp":"NewSH","usg":"NewUSG","block":"NewBlock","nearestPhc":"NewPHC","nearestFru":"NewFRU",
@@ -1439,6 +1440,7 @@ class HRPRepoTest : BaseRepositoryTest() {
             "communityMember":"NewCM","communityMemberContact":"NewCMC","modeOfTransportation":"NewMOT"
         }]"""
         val existing = HRPMicroBirthPlanCache(
+            id = 7,
             benId = 20002L,
             nearestSc = "OldSC",
             bloodGroup = null,
@@ -1457,30 +1459,34 @@ class HRPRepoTest : BaseRepositoryTest() {
             communityMemberContact = "OldCMC",
             modeOfTransportation = null
         )
+        val saved = slot<HRPMicroBirthPlanCache>()
         coEvery { tmcNetworkApiService.getMicroBirthPlanAssessData(any()) } returns
                 jsonResponse(dataWithEntries(entries))
         coEvery { hrpDao.getMicroBirthPlan(20002L) } returns existing
+        coEvery { hrpDao.saveRecord(capture(saved)) } returns Unit
 
         assertEquals(1, repo.getHighRiskAssessMicroBirthPlanDetailsFromServer(0))
 
-        assertEquals("OldSC", existing.nearestSc)
-        assertEquals("NewBG", existing.bloodGroup)
-        assertEquals("Old1", existing.contactNumber1)
-        assertEquals("New2", existing.contactNumber2)
-        assertEquals("OldSH", existing.scHosp)
-        assertEquals("NewUSG", existing.usg)
-        assertEquals("OldBlock", existing.block)
-        assertEquals("NewPHC", existing.nearestPhc)
-        assertEquals("OldFRU", existing.nearestFru)
-        assertEquals("NewBD1", existing.bloodDonors1)
-        assertEquals("OldBD2", existing.bloodDonors2)
-        assertEquals("NewBC", existing.birthCompanion)
-        assertEquals("OldCT", existing.careTaker)
-        assertEquals("NewCM", existing.communityMember)
-        assertEquals("OldCMC", existing.communityMemberContact)
-        assertEquals("NewMOT", existing.modeOfTransportation)
-
-        coVerify(exactly = 1) { hrpDao.saveRecord(existing) }
+        coVerify(exactly = 1) { hrpDao.saveRecord(any<HRPMicroBirthPlanCache>()) }
+        val record = saved.captured
+        assertEquals(7, record.id)
+        assertEquals(20002L, record.benId)
+        assertEquals("NewSC", record.nearestSc)
+        assertEquals("NewBG", record.bloodGroup)
+        assertEquals("New1", record.contactNumber1)
+        assertEquals("New2", record.contactNumber2)
+        assertEquals("NewSH", record.scHosp)
+        assertEquals("NewUSG", record.usg)
+        assertEquals("NewBlock", record.block)
+        assertEquals("NewPHC", record.nearestPhc)
+        assertEquals("NewFRU", record.nearestFru)
+        assertEquals("NewBD1", record.bloodDonors1)
+        assertEquals("NewBD2", record.bloodDonors2)
+        assertEquals("NewBC", record.birthCompanion)
+        assertEquals("NewCT", record.careTaker)
+        assertEquals("NewCM", record.communityMember)
+        assertEquals("NewCMC", record.communityMemberContact)
+        assertEquals("NewMOT", record.modeOfTransportation)
     }
 
     @Test

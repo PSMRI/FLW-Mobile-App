@@ -182,9 +182,9 @@
     <string name="eligible_couple_tracking_list">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং তালিকা</string>
     <string name="eligible_couple_tracking_form">যোগ্য জনপৰা পৰাৰ ট্ৰেকিং ফৰ্ম</string>
     <string name="tb_screening_list">TB স্ক্ৰীনিং তালিকা</string>
-    <string name="tb_suspected_list">TB সন্দেহভাৱিত তালিকা</string>
+    <string name="tb_suspected_list">TB অনুমানিক তালিকা</string>
     <string name="tb_screening_form">TB স্ক্ৰীনিং ফৰ্ম</string>
-    <string name="tb_suspected_form">TB সন্দেহভাৱিত ফৰ্ম</string>
+    <string name="tb_suspected_form">TB অনুমানিক ৰূপ</string>
     <string name="mother_immunization">মাৰ পৰিস্কৃতি</string>
     <string name="delivery_outcome">বিতৰণৰ ফলাফল</string>
     <string name="delivery_outcome_list">প্ৰসৱ সম্পূৰ্ণ হোৱাৰ ফল তালিকা</string>
@@ -246,6 +246,7 @@
         <item>মহাজাল</item>
         <item>ফাইলেৰিয়া MDA</item>
         <item>ফাইলেৰিয়া MDA অভিযান</item>
+        <item>সাধাৰণ স্বাস্থ্য পৰীক্ষা</item>
     </string-array>
 
     <string-array name="temp_array">
@@ -523,6 +524,18 @@
         <item>জিলা চিকিৎসালয়</item>
         <item>মেডিকেল কলেজ চিকিৎসালয়</item>
         <item>যক্ষ্মা ইউনিট</item>
+    </string-array>
+
+    <string name="start_follow_up">ফলো-আপ আৰম্ভ কৰক</string>
+    <string name="view_follow_up">ফলো-আপ চাওক</string>
+    <string-array name="TB_referral_facility">
+        <item>যক্ষ্মা ইউনিট (TU)</item>
+        <item>HWC-উপকেন্দ্ৰ</item>
+        <item>PHC</item>
+        <item>CHC</item>
+        <item>জিলা চিকিৎসালয়</item>
+        <item>জিলা যক্ষ্মা কেন্দ্ৰ (DTC)</item>
+        <item>চৰকাৰী মেডিকেল কলেজ</item>
     </string-array>
 
     <string-array name="referral_facility">
@@ -1078,7 +1091,7 @@
     <string name="is_chest_xray_done">টিবি বুকুৰ এক্স-ৰে পৰীক্ষা হৈছে নেকি?</string>
     <string name="chest_xray_result">বুকুৰ এক্স-ৰে পৰীক্ষাৰ ফলাফল</string>
     <string name="referral_facility">ৰেফাৰেল সুবিধা</string>
-    <string name="is_tb_confirmed">টিবি ৰোগ নিশ্চিত হৈছে নেকি?</string>
+    <string name="is_tb_confirmed">টিবি নিশ্চিত হৈছে নেকি?</string>
     <string name="is_drtb_confirmed">DR-TB ৰোগ নিশ্চিত হৈছে নেকি?</string>
     <string name="form_input_alphabet_special__digit_only_error">কেৱল আখৰ, বিশেষ আখৰ আৰু সংখ্যা অনুমোদিত!</string>
     <string name="abha_number_digit">ABHA নম্বৰ ১৪ সংখ্যাৰ হ\'ব লাগিব</string>
@@ -1115,6 +1128,7 @@
     <string name="anc">ANC</string>
     <string name="ec">EC</string>
     <string name="tb_confirmed_list">নিশ্চিত টিবি তালিকা</string>
+    <string name="tb_confirmed_cases">নিশ্চিত টিবি ৰোগৰ ঘটনা</string>
     <string name="tb_confirmed_form">নিশ্চিত টিবি ফৰ্ম</string>
     <string name="maleria_screening_form">মেলেৰিয়া ফৰ্ম</string>
     <string name="kala_screening_form">কালা আজাৰ ফৰ্ম</string>
@@ -1320,9 +1334,12 @@
     <string name="ahd_distribution_date">তাৰিখ</string>
     <string name="symptomatic_tb_screening">লক্ষণযুক্ত টিবি স্ক্ৰিনিং</string>
     <string name="check_if_the_person_has_any_of_these_symptoms">এইবোৰ লক্ষণৰ যিকোনো এটা আছে নে পৰীক্ষা কৰক</string>
-    <string name="tb_asymptomatic_symptoms">লক্ষণবিহীন টিবি স্ক্ৰিনিং</string>
+    <string name="tb_asymptomatic_symptoms">হিতাধিকাৰীৰ কোনো লক্ষণ নাই</string>
     <string name="tb_rise_of_fever">সন্ধিয়া জ্বৰ বৃদ্ধি</string>
+    <string name="refer">ৰেফাৰ কৰক</string>
     <string name="tb_loss_of_appetite">ভোক কমি যোৱা</string>
+    <string name="tb_child_failure_to_gain_weight">শিশুৰ ওজন বৃদ্ধি নোহোৱা</string>
+    <string name="tb_child_decreased_activity">শিশুৰ কাৰ্যকলাপ বা খেলাধূলাৰ আগ্ৰহ কমি যোৱা</string>
     <string name="tb_age_more_than_60">৬০ বছৰৰ ওপৰত বয়স</string>
     <string name="tb_diabetic">ডায়েবেটিক</string>
     <string name="tb_tobacco_user">তামাক ব্যৱহাৰকাৰী</string>

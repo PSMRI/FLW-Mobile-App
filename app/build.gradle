@@ -5,6 +5,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
@@ -69,10 +70,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
             signingConfig signingConfigs.release
+            // Upload the R8 mapping file so Crashlytics can de-obfuscate release crashes.
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
 
         debug {
             // uses default debug keystore; no changes needed
+            // Skip Performance Monitoring bytecode instrumentation (automatic
+            // OkHttp/URLConnection traces) to keep debug builds fast. Custom
+            // traces from PerfTracer still record.
+            FirebasePerformance {
+                instrumentationEnabled false
+            }
         }
     }
     flavorDimensions "default"
@@ -135,6 +146,9 @@ android {
     }
     kapt {
         correctErrorTypes true
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     kotlinOptions {
@@ -189,6 +203,7 @@ android {
 }
 
 apply from: 'jacoco.gradle'
+apply from: 'sonar.gradle'
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -196,6 +211,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
     implementation 'androidx.test.ext:junit-ktx:1.2.1'
     implementation "androidx.security:security-crypto:1.0.0"
     implementation 'com.google.crypto.tink:tink-android:1.18.0'
@@ -268,7 +284,6 @@ dependencies {
 
     //moshi
     implementation "com.squareup.moshi:moshi:$moshi_version"
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
     //Gson
@@ -288,6 +303,9 @@ dependencies {
 
     //Flexbox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //LeakCanary
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 
 
 

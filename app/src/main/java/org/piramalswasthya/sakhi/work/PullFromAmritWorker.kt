@@ -22,6 +22,7 @@ import org.piramalswasthya.sakhi.repositories.BenRepo
 import timber.log.Timber
 import java.lang.Integer.min
 import java.util.concurrent.TimeUnit
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 
 @HiltWorker
 class PullFromAmritWorker @AssistedInject constructor(
@@ -46,7 +47,15 @@ class PullFromAmritWorker @AssistedInject constructor(
 
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo("Syncing data...")
 
-    override suspend fun doWork(): Result {
+    // "ben_download" trace: full beneficiary download time, with the page count as a metric.
+    // This worker heads the pull chain, so it also opens "full_pull", which
+    // UpdatePrefForPullCompleteWorker closes when every module has downloaded.
+    override suspend fun doWork(): Result = PerfTracer.trace("ben_download") { trace ->
+        PerfTracer.startOpen(PerfTracer.FULL_PULL, restart = runAttemptCount == 0)
+        download(trace).also { trace?.putAttribute("result", PerfTracer.label(it)) }
+    }
+
+    private suspend fun download(trace: com.google.firebase.perf.metrics.Trace?): Result {
         return try {            withContext(Dispatchers.IO) {
                 val startTime = System.currentTimeMillis()
                 var numPages: Int
@@ -59,6 +68,7 @@ class PullFromAmritWorker @AssistedInject constructor(
                     do {
                         numPages = benRepo.getBeneficiariesFromServerForWorker(startPage)
                     } while (numPages == -2)
+                    trace?.putMetric("pages", numPages.toLong())
                     if (numPages == 0)
                         return@withContext Result.success()
                     val result1 =

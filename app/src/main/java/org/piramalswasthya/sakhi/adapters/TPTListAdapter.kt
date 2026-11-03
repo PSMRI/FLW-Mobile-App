@@ -11,6 +11,7 @@ import org.json.JSONObject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemTptFollowupListBinding
 import org.piramalswasthya.sakhi.helpers.getLocalizedAge
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tpt.list.TPTListItem
 
@@ -59,6 +60,10 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             binding.tvTptFollowUpHistory.visibility = if (history.isEmpty()) View.GONE else View.VISIBLE
             binding.tvTptFollowUpHistory.text = history.joinToString(separator = "\n", prefix = "Follow-up history\n")
 
+            val isDeceased = item.ben.isDeath || tptFollowUpMarkedDeath(item.followUpHistory)
+            binding.btnFormTb.visibility = if (!isDeceased) View.VISIBLE else View.GONE
+            binding.btnFormTb.alpha = if (isDeceased) 0.5f else 1f
+
             when (tptFollowUpAction(item.followUpHistory)) {
                 TPTFollowUpAction.VIEW_DETAILS -> {
                     binding.btnFormTb.text = binding.root.context.getString(R.string.view_details)
@@ -104,11 +109,11 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             }
 
             if (item.ben.isDeath) {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
+                binding.contstraintLayoutV.setBackgroundColor(
                     ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
                 )
             } else {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
+                binding.contstraintLayoutV.setBackgroundColor(
                     ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
                 )
             }
@@ -136,13 +141,15 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
 
     ) {
         fun onClickForm(item: TPTListItem) {
-            val referralFollowUpDate = runCatching {
-                JSONObject(item.referralFollowUps.fieldsJson).optString("follow_up_date")
-            }.getOrDefault("")
+            val referralFollowUpDate = tptReferralFollowUpDate(item.referralFollowUps)
             clickedForm?.invoke(item.ben.hhId, item.ben.benId, referralFollowUpDate)
         }
     }
 }
+
+internal fun tptReferralFollowUpDate(referral: TBReferralFollowUpEntity?): String =
+    runCatching { referral?.let { JSONObject(it.fieldsJson).optString("follow_up_date") }.orEmpty() }
+        .getOrDefault("")
 
 internal enum class TPTFollowUpAction { START_TREATMENT, ADD_FOLLOW_UP, VIEW_DETAILS }
 
@@ -159,3 +166,17 @@ internal fun tptFollowUpAction(history: List<TPTFollowUpEntity>): TPTFollowUpAct
 
 internal fun tptFollowUpSyncStatus(history: List<TPTFollowUpEntity>): Boolean? =
     history.takeIf { it.isNotEmpty() }?.all { it.isSynced }
+
+internal fun tptFollowUpMarkedDeath(history: List<TPTFollowUpEntity>): Boolean =
+    history.any { visit ->
+        runCatching {
+            val fields = JSONObject(visit.fieldsJson)
+            fields.keys().asSequence().any { key ->
+                val normalizedKey = key.filter(Char::isLetterOrDigit).lowercase()
+                val isOutcomeField = normalizedKey.contains("tptoutcome") ||
+                        normalizedKey.contains("treatmentoutcome")
+                isOutcomeField && fields.optString(key).trim().lowercase() in
+                        setOf("death", "deceased", "died")
+            }
+        }.getOrDefault(false)
+    }

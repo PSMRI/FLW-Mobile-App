@@ -7,6 +7,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -183,6 +184,7 @@ data class InfantRegDomain(
 }
 
 
+@JsonClass(generateAdapter = true)
 data class InfantRegPost(
     val id: Long = 0,
     val benId: Long,

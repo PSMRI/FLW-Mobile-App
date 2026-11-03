@@ -735,8 +735,6 @@ class EligibleCoupleTrackingDataset(
                         addItems = listOf(methodOfContraception)
                     )
 
-                    methodOfContraception.value = methodOfContraception.value
-
                 } else {
                     triggerDependants(
                         source = usingFamilyPlanningMitanin,

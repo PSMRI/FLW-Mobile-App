@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.first
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.HouseholdDao
@@ -24,6 +25,10 @@ class HouseholdRepo @Inject constructor(
         return withContext(Dispatchers.IO) {
             dao.getHousehold(hhId)
         }
+    }
+
+    suspend fun getAllHouseholds(villageId: Int): List<HouseholdCache> = withContext(Dispatchers.IO) {
+        dao.getAllHouseholds(villageId).first()
     }
 
     suspend fun persistRecord(householdCache: HouseholdCache?, isFinal: Boolean = false) {

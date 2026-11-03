@@ -28,6 +28,8 @@ import org.piramalswasthya.sakhi.model.User
 import org.piramalswasthya.sakhi.network.AmritApiService
 import retrofit2.Response
 import java.net.SocketTimeoutException
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 /**
  * Unit tests for [DeliveryOutcomeRepo]. Consolidated from DeliveryOutcomeRepoTest
@@ -173,6 +175,24 @@ class DeliveryOutcomeRepoTest : BaseRepositoryTest() {
         // deliver date of 0 (epoch) is well beyond the gap from today
         coEvery { deliveryOutcomeDao.getAllBenIdAndDeliverDate() } returns mapOf(1L to 0L)
         assertTrue(repo.getExpiredRecords().contains(1L))
+    }
+
+    @Test
+    fun `getExpiredRecords expires records only after 60 days`() = runTest {
+        val todayStart = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val oneDay = TimeUnit.DAYS.toMillis(1)
+        coEvery { deliveryOutcomeDao.getAllBenIdAndDeliverDate() } returns mapOf(
+            59L to todayStart - 59 * oneDay,
+            60L to todayStart - 60 * oneDay,
+            61L to todayStart - 61 * oneDay
+        )
+
+        assertEquals(setOf(61L), repo.getExpiredRecords())
     }
 
     @Test

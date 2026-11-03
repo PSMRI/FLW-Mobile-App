@@ -28,8 +28,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.mosquito_net.MosquitoNetFormViewModel
-import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
-import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToBase64
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
@@ -76,14 +75,15 @@ class MalariaSuspectedListFragment : Fragment() {
                     return@registerForActivityResult
                 }
 
-                val compressedFile = compressImageToTemp(uri, "camera_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val base64String = compressImageToBase64(uri, "camera_image", context)
 
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
+                    currentImageField?.apply {
+                        value = base64String
+                        errorMessage = null
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
             }
         }
 
@@ -104,14 +104,15 @@ class MalariaSuspectedListFragment : Fragment() {
                     return@registerForActivityResult
                 }
 
-                val compressedFile = compressImageToTemp(uri, "selected_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val base64String = compressImageToBase64(uri, "selected_image", context)
 
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
+                    currentImageField?.apply {
+                        value = base64String
+                        errorMessage = null
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
             }
         }
 
@@ -190,7 +191,7 @@ class MalariaSuspectedListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allBenList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -202,7 +203,7 @@ class MalariaSuspectedListFragment : Fragment() {
 
         irsViewModel.checkSubmitButtonVisibility()
 
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             irsViewModel.isSubmitVisible.collect { isVisible ->
                 binding.btnSubmit.isEnabled = if (isVisible) true else false
             }
@@ -211,7 +212,7 @@ class MalariaSuspectedListFragment : Fragment() {
 
         val irsListAdapter = IrsRoundListAdapter()
         binding.irsAny.adapter = irsListAdapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             irsListViewmodel.allBenList.collect {
                 irsListAdapter.submitList(it)
             }
@@ -223,7 +224,7 @@ class MalariaSuspectedListFragment : Fragment() {
             }, isEnabled = true
         )
         binding.form.rvInputForm.adapter = adapter
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             irsViewModel.formList.collect {
                 if (it.isNotEmpty()) {
                     adapter.notifyItemChanged(irsViewModel.getIndexOfDate())
@@ -255,7 +256,7 @@ class MalariaSuspectedListFragment : Fragment() {
         viewModelMosquitoNet.loadFormSchema(hhId,  MOSQUITO_NET_FORM_ID, false)
 
         binding.mosquitoRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModelMosquitoNet.schema.collectLatest { schema ->
                 if (schema == null) {
                     return@collectLatest
@@ -420,5 +421,10 @@ class MalariaSuspectedListFragment : Fragment() {
                 getString(R.string.icon_title_maleria)
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

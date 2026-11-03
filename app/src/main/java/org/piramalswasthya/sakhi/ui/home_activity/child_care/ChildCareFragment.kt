@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -55,7 +56,7 @@ class ChildCareFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
 
         binding.rvIconGrid.adapter = iconAdapter
@@ -72,8 +73,8 @@ class ChildCareFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

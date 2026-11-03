@@ -326,11 +326,14 @@ class DtoToCacheMappingTest {
             id = 1L, benId = 66L, visitDate = null,
             coughMoreThan2Weeks = true, bloodInSputum = false, feverMoreThan2Weeks = true,
             lossOfWeight = false, nightSweats = true, historyOfTb = false,
-            takingAntiTBDrugs = false, familySufferingFromTB = true
+            takingAntiTBDrugs = false, familySufferingFromTB = true,
+            failureToGainWeight = true, decreasedActivityOrPlayfulness = false
         ).toCache()
         assertEquals(66L, cache.benId)
         assertEquals(true, cache.coughMoreThan2Weeks)
         assertEquals(true, cache.familySufferingFromTB)
+        assertEquals(true, cache.failureToGainWeight)
+        assertEquals(false, cache.decreasedActivityOrPlayfulness)
     }
 
     // ---------------- AdolscentHealthDTO ----------------
@@ -423,6 +426,16 @@ class DtoToCacheMappingTest {
             referred = null, followUps = null, visitLabel = null, hasSymptoms = true
         ).toCache()
         assertEquals(true, cache.hasSymptoms)
+    }
+
+    @Test fun `TBSuspectedDTO toCache maps isRecommendedForTpt`() {
+        val cache = TBSuspectedDTO(
+            id = 1L, benId = 2L, visitDate = null, isSputumCollected = null,
+            sputumSubmittedAt = null, nikshayId = null, sputumTestResult = null,
+            referred = null, followUps = null, visitLabel = null, isRecommendedForTpt = true
+        ).toCache()
+
+        assertEquals(true, cache.isRecommendedForTpt)
     }
 
     // ---------------- TBConfirmedTreatmentDTO ----------------

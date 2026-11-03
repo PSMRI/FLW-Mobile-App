@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -29,14 +30,12 @@ class HwcReferredFragment : Fragment() {
 
     @Inject
     lateinit var prefDao: PreferenceDao
-    private val binding: FragmentHwcReferedBinding by lazy {
-        FragmentHwcReferedBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentHwcReferedBinding? = null
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         val lowerValue = value.lowercase()
-        binding.searchView.setText(lowerValue)
-        binding.searchView.setSelection(lowerValue.length)
+        _binding?.searchView?.setText(lowerValue)
+        _binding?.searchView?.setSelection(lowerValue.length)
         viewModel.filterText(lowerValue)
     }
 
@@ -45,11 +44,19 @@ class HwcReferredFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val binding = FragmentHwcReferedBinding.inflate(layoutInflater)
+        _binding = binding
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = _binding ?: return
 
         binding.btnNextPage.visibility = View.GONE
         binding.filterText.visibility = View.VISIBLE
@@ -57,7 +64,7 @@ class HwcReferredFragment : Fragment() {
         binding.ivFilter.setOnClickListener {
             EcFilterBottomSheetFragment(viewModel.getCurrentSort()) { selected ->
                 viewModel.setSortFilter(selected)
-                binding.tvSelectedFilter.text = when (selected) {
+                _binding?.tvSelectedFilter?.text = when (selected) {
                     EcFilterType.NEWEST_FIRST   -> getString(R.string.filter_newest_first)
                     EcFilterType.OLDEST_FIRST   -> getString(R.string.filter_oldest_first)
                     EcFilterType.AGE_WISE       -> getString(R.string.filter_age_wise)
@@ -69,14 +76,31 @@ class HwcReferredFragment : Fragment() {
 
 //        val benAdapter =
 //            NcdReferListAdapter(viewModel.userName)
-        val benAdapter =
-            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason,referredDate->
-
-            },false)
+        // Follow-up is enabled only for General Check-up rows (FLW-1229); it opens the existing
+        // referral follow-up form. Other rows stay as before.
+        val benAdapter = NcdReferListAdapter(
+            viewModel.userName,
+            NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, referralType ->
+                if (findNavController().currentDestination?.id == R.id.hwcReferredFragment) {
+                    findNavController().navigate(
+                        HwcReferredFragmentDirections.actionHwcReferredFragmentToNCDReferalFormFragment(
+                            benId = benId,
+                            hhId = hhId,
+                            referReason = referReason.toString(),
+                            referredDate = referredDate,
+                            referralType = referralType
+                        )
+                    )
+                }
+            },
+            false,
+            followUpVisible = { it.referalCac.type == HwcReferredViewModel.GENERAL_CHECKUP },
+        )
+        benAdapter.stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvAny.adapter = benAdapter
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE

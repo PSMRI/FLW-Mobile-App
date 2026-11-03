@@ -85,6 +85,7 @@ class UwinListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.recyclerUwinList?.adapter = null
         _binding = null
     }
 

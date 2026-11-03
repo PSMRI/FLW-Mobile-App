@@ -97,6 +97,8 @@ class BenListAdapter(
             } else {
                 binding.ivCall.visibility = View.GONE
             }
+            binding.ivNonHousehold.visibility =
+                if (item.hhId == 0L) View.VISIBLE else View.GONE
 
             binding.age.text = getLocalizedAge(context, item.dob)
             val isMatched = benIdList.contains(item.benId)
@@ -107,19 +109,17 @@ class BenListAdapter(
                 if (isMatched) android.R.color.holo_orange_dark
                 else android.R.color.holo_green_dark
             )
-            binding.btnAbove30.text = if (isMatched) {
-                binding.root.context.getString(R.string.cataract_surgery)
-//                binding.root.context.getString(R.string.view_edit_eye_surgery)
-            } else {
-//                binding.root.context.getString(R.string.add_eye_surgery)
-                binding.root.context.getString(R.string.cataract_surgery)
-            }
+            binding.btnAbove30.text = binding.root.context.getString(R.string.cataract_surgery)
 
             binding.executePendingBindings()
 
             var gender = item.gender.toString()
 
-            if (item.relToHeadId == 19) {
+            if (item.hhId == 0L) {
+                // Non-household beneficiaries do not have a household head.
+                binding.HOF.visibility = View.GONE
+                binding.llHof.visibility = View.GONE
+            } else if (item.relToHeadId == 19) {
                 binding.llHof.visibility = View.GONE
                 binding.HOF.visibility = View.VISIBLE
             } else {

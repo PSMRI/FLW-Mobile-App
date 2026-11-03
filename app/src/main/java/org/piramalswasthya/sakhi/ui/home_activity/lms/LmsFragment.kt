@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +33,7 @@ class LmsFragment: Fragment() {
     @Inject
     lateinit var iconDataset: IconDataset
 
-    private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
     private val viewModel: LmsViewModel by viewModels()
 
     companion object {
@@ -44,7 +45,14 @@ class LmsFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val binding = RvIconGridBinding.inflate(layoutInflater)
+        _binding = binding
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,6 +61,7 @@ class LmsFragment: Fragment() {
     }
 
     private fun setupLMS() {
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -70,7 +79,7 @@ class LmsFragment: Fragment() {
                     openPdfFile(requireContext(), pdfFile)
                 }
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getLmsDataset(resources))

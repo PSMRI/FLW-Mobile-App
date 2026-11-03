@@ -23,6 +23,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentHRPMicroBirthPlanTableBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -65,7 +67,7 @@ class HRPMicroBirthPlanTable : Fragment() {
         binding.btnShare.setOnClickListener {
             val bitmap = getScreenShotFromView(binding.tableLayout)
             if (bitmap != null) {
-                saveMediaToStorage(bitmap)
+                viewLifecycleOwner.lifecycleScope.launch { saveMediaToStorage(bitmap) }
             }
 
         }
@@ -216,46 +218,51 @@ class HRPMicroBirthPlanTable : Fragment() {
         return screenshot
     }
 
-    private fun saveMediaToStorage(bitmap: Bitmap) {
+    // JPEG encode + file write run on IO; on the main thread they froze the screen.
+    private suspend fun saveMediaToStorage(bitmap: Bitmap) {
         val filename = "${System.currentTimeMillis()}.jpg"
-        var imageUri: Uri? = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            activity?.contentResolver?.also { resolver ->
-                val contentValues = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                    put(MediaStore.MediaColumns.IS_PENDING, 1)
-                }
-
-                imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                imageUri?.let { uri ->
-                    resolver.openOutputStream(uri)?.use { fos ->
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+        val appContext = requireContext().applicationContext
+        val imageUri: Uri? = withContext(Dispatchers.IO) {
+            var savedUri: Uri? = null
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appContext.contentResolver.also { resolver ->
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                        put(MediaStore.MediaColumns.IS_PENDING, 1)
                     }
-                    contentValues.clear()
-                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                    resolver.update(uri, contentValues, null, null)
+
+                    savedUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                    savedUri?.let { uri ->
+                        resolver.openOutputStream(uri)?.use { fos ->
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                        }
+                        contentValues.clear()
+                        contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                        resolver.update(uri, contentValues, null, null)
+                    }
                 }
+            } else {
+                val imagesDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val image = File(imagesDir, filename)
+                FileOutputStream(image).use { fos ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                }
+                savedUri = FileProvider.getUriForFile(
+                    appContext,
+                    "${appContext.packageName}.provider",
+                    image
+                )
             }
-        } else {
-            val imagesDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val image = File(imagesDir, filename)
-            FileOutputStream(image).use { fos ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-            }
-            imageUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                image
-            )
+            savedUri
         }
 
         if (imageUri != null) {
             Toast.makeText(activity, "Captured View and saved to Gallery", Toast.LENGTH_SHORT)
                 .show()
-            shareImage(imageUri!!)
+            shareImage(imageUri)
         } else {
             Toast.makeText(activity, "Failed to save image", Toast.LENGTH_SHORT).show()
         }

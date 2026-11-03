@@ -114,7 +114,6 @@ class HbycFragment : Fragment() {
             }
             false
         }
-        return false
     }
 
     private fun hardCodedListUpdate(formId: Int) {

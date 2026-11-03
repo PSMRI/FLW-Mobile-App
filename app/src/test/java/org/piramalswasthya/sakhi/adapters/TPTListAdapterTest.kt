@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.adapters
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 
 class TPTListAdapterTest {
@@ -28,6 +29,25 @@ class TPTListAdapterTest {
         assertThat(tptFollowUpSyncStatus(emptyList())).isNull()
         assertThat(tptFollowUpSyncStatus(listOf(visit("{}", synced = true)))).isTrue()
         assertThat(tptFollowUpSyncStatus(listOf(visit("{}", synced = true), visit("{}")))).isFalse()
+    }
+
+    @Test
+    fun referralFollowUpDate_isEmptyForPresumptiveTbTptEntryWithoutReferral() {
+        assertThat(tptReferralFollowUpDate(null)).isEmpty()
+    }
+
+    @Test
+    fun referralFollowUpDate_readsDateWhenReferralExists() {
+        val referral = TBReferralFollowUpEntity(
+            benId = 1,
+            houseHoldId = 1,
+            referredOnDate = "2026-09-29 00:00:00",
+            followUpDate = "2026-09-29 00:00:00",
+            followUpStatus = "RECOMMEND_TPT",
+            fieldsJson = "{\"follow_up_date\":\"2026-09-29 00:00:00\"}"
+        )
+
+        assertThat(tptReferralFollowUpDate(referral)).isEqualTo("2026-09-29 00:00:00")
     }
 
     private fun visit(fieldsJson: String, synced: Boolean = false) = TPTFollowUpEntity(

@@ -25,4 +25,9 @@ object FormConstants {
     const val MDA_DISTRIBUTION_FORM_NAME  = "mda"
 
     const val LF_MDA_CAMPAIGN  = "LF_MDA_CAMPAIGN"
+
+    const val GENERAL_CHECKUP_FORM_ID = "general_check_up"
+
+    /** Follow-up of a General Check-up referral; handled like [Tb_Referral_Follow_Up]. */
+    const val GC_REFERRAL_FOLLOW_UP = "general_check_follow_up"
 }

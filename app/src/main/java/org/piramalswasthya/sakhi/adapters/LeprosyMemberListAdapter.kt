@@ -13,6 +13,23 @@ import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenWithKALAZARScreeningDomain
 import org.piramalswasthya.sakhi.model.BenWithLeprosyScreeningDomain
 
+internal data class LeprosyMemberButtonState(val labelResId: Int, val colorResId: Int)
+
+internal fun leprosyMemberButtonState(item: BenWithLeprosyScreeningDomain): LeprosyMemberButtonState =
+    when {
+        item.leprosy == null -> LeprosyMemberButtonState(R.string.screening, android.R.color.holo_red_dark)
+        item.leprosy.leprosySymptomsPosition == 1 -> LeprosyMemberButtonState(R.string.screening, android.R.color.holo_red_dark)
+        item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
+            if (item.currentVisitFollowUps.isEmpty()) {
+                LeprosyMemberButtonState(R.string.follow_up, android.R.color.holo_red_dark)
+            } else {
+                LeprosyMemberButtonState(R.string.view_follow_up, android.R.color.holo_green_dark)
+            }
+        }
+        item.leprosy.leprosySymptomsPosition == 0 -> LeprosyMemberButtonState(R.string.suspected, android.R.color.holo_orange_dark)
+        else -> LeprosyMemberButtonState(R.string.view, android.R.color.holo_green_dark)
+    }
+
 class LeprosyMemberListAdapter(
     private val clickListener: ClickListener? = null,
     private val showExtraButton: Boolean? = null
@@ -108,23 +125,8 @@ class LeprosyMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            val (text, colorRes) = when {
-
-                item.leprosy == null -> {
-                    R.string.screening to android.R.color.holo_red_dark
-                }
-                item.leprosy.leprosySymptomsPosition == 1 -> {
-                    R.string.screening to android.R.color.holo_red_dark
-                }
-                item.leprosy.leprosySymptomsPosition == 0 && item.leprosy.isConfirmed -> {
-                    R.string.follow_up to android.R.color.holo_green_dark
-                }
-                item.leprosy.leprosySymptomsPosition == 0 -> {
-                  R.string.suspected to android.R.color.holo_orange_dark
-                }
-                else -> {
-                    R.string.view to android.R.color.holo_green_dark
-                }
+            val (text, colorRes) = leprosyMemberButtonState(item).let {
+                it.labelResId to it.colorResId
             }
 
             binding.btnFormTb.text = binding.root.context.getString(text)

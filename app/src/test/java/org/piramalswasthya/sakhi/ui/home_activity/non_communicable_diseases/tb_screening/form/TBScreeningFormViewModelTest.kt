@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.CbacRepo
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import org.piramalswasthya.sakhi.utils.HelperUtil
@@ -40,6 +41,7 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var mockResources: Resources
     @MockK private lateinit var tbRepo: TBRepo
     @MockK private lateinit var benRepo: BenRepo
+    @MockK private lateinit var cbacRepo: CbacRepo
     @MockK private lateinit var referralStatusManager: ReferralStatusManager
     @MockK private lateinit var ncdReferalRepo: NcdReferalRepo
 
@@ -62,7 +64,8 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
         every { preferenceDao.getCurrentLanguage() } returns Languages.ENGLISH
         coEvery { benRepo.getBenFromId(any()) } returns null
         coEvery { tbRepo.getTBScreening(any()) } returns null
-        viewModel = TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, referralStatusManager, ncdReferalRepo)
+        coEvery { cbacRepo.getLastFilledCbac(any()) } returns null
+        viewModel = TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, cbacRepo, referralStatusManager, ncdReferalRepo)
     }
 
     @Test fun `viewModel initializes successfully`() { assertNotNull(viewModel) }
@@ -96,7 +99,7 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     }
 
     private fun buildViewModel(): TBScreeningFormViewModel =
-        TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, referralStatusManager, ncdReferalRepo)
+        TBScreeningFormViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, cbacRepo, referralStatusManager, ncdReferalRepo)
 
     @Test
     fun `markReferralCompleted then isReferralAlreadyDone returns true for that type`() {
@@ -129,10 +132,25 @@ class TBScreeningFormViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `updateListOnValueChanged does not crash`() {
-        viewModel.updateListOnValueChanged(1, 0)
+    fun `updateListOnValueChanged recalculates and refreshes asymptomatic field`() {
         testDispatcher.scheduler.advanceUntilIdle()
-        assertNotNull(viewModel.formList)
+        val symptomIds = setOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 22)
+        val symptoms = viewModel.formList.value.filter { it.id in symptomIds }
+        symptoms.forEach { it.value = "No" }
+
+        viewModel.updateListOnValueChanged(symptoms.first().id, 1)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val asymptomaticIndex = viewModel.formList.value.indexOfFirst { it.id == 16 }
+        assertEquals("Yes", viewModel.formList.value[asymptomaticIndex].value)
+        assertEquals(asymptomaticIndex, viewModel.asymptomaticRefresh.value)
+
+        symptoms.first().value = "Yes"
+        viewModel.updateListOnValueChanged(symptoms.first().id, 0)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("No", viewModel.formList.value[asymptomaticIndex].value)
+        assertEquals(asymptomaticIndex, viewModel.asymptomaticRefresh.value)
     }
 
     @Test

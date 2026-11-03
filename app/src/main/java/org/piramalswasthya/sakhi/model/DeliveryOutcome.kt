@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
@@ -112,6 +113,7 @@ data class DeliveryOutcomeCache(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class DeliveryOutcomePost(
     val id: Long = 0,
     val benId: Long,

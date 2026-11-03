@@ -8,6 +8,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
@@ -235,6 +236,7 @@ data class BenWithPwrDomain(
     val pwr: PregnantWomanRegistrationCache?
 )
 
+@JsonClass(generateAdapter = true)
 data class PwrPost(
     val id: Long = 0,
     val benId: Long = 0,
@@ -467,6 +469,7 @@ data class PregnantWomanAncCache(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class ANCPost(
     val id: Long = 0,
     val benId: Long = 0,
@@ -584,8 +587,8 @@ data class ANCPost(
             otherHighRisk = otherHighRiskCondition,
             referralFacility = referralFacility,
 //            referralFacilityId
-//            hrpConfirmed
-//            hrpConfirmedBy
+            hrpConfirmed = isHrpConfirmed,
+            hrpConfirmedBy = hrpIdentifiedBy,
 //            hrpConfirmedById
             maternalDeath = isMaternalDeath,
             maternalDeathProbableCause = probableCauseOfDeath,

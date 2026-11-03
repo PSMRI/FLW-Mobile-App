@@ -301,7 +301,7 @@ class HomeIconsFragment : Fragment() {
                 Timber.e(e, "Navigation failed")
             }
            // findNavController().navigate(it)
-        }, viewModel.scope)
+        }, viewLifecycleOwner.lifecycleScope)
         binding.rvIconGrid.adapter = rvAdapter
         viewModel.devModeEnabled.observe(viewLifecycleOwner) {
             Timber.d("update called!~~ $it")

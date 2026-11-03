@@ -13,6 +13,8 @@ import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
+import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -132,6 +134,13 @@ data class CbacCache(
 
 ) {
 
+    fun vulnerabilityRiskFactorCodes(): Set<String> = buildSet {
+        if (cbac_smoke_posi in 2..3) add("TOBACCO_SMOKER")
+        if (cbac_alcohol_posi == 2) add("SUBSTANCE_ABUSE")
+        if (cbac_fuel_used_posi in 1..5) add("INDOOR_AIR_POLLUTION_EXPOSURE")
+        if (cbac_occupational_exposure_posi == 3) add("WORKPLACE_SETTINGS")
+    }
+
     fun asPostModel(
         hhId: Long,
         benGender: Gender,
@@ -223,7 +232,8 @@ data class CbacCache(
             CbacDepressedhopelessScore = cbac_feeling_down_posi,
             totalScore = total_score,
             CbacFeelingDownScore = cbac_feeling_down_score,
-            isRefer = isReffered!!
+            isRefer = isReffered!!,
+            createdDate = fillDate
         )
     }
 
@@ -636,6 +646,7 @@ data class CbacPostNew(
     val CbacCookingOilScore: Int,
     val CbacFeelingDownScore: Int,
     val isRefer: Boolean,
+    val createdDate:Long
 )
 
 
@@ -668,12 +679,32 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val ben: BenBasicCache
+    val ben: BenBasicCache,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val tbFollowUp : List<TBReferralFollowUpEntity>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId",
+        entity = TBSuspectedCache::class
+    )
+    val tbSuspectedCases: List<TBSuspectedCache>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral
+            ben.asBasicDomainModel(), cbacList, referral, tbFollowUp, tbSuspectedCases,
+            // The relation is per beneficiary; keep only this card's referral (same reason, same month).
+            gcReferralFollowUp = gcFollowUp.filter {
+                it.referralReason == referral.referralReason && it.referralMonth == monthKey(referral.revisitDate)
+            }
         )
     }
 }
@@ -682,9 +713,12 @@ data class BenWithCbacReferDomain(
     val ben: BenBasicDomain,
     val savedCbacRecords: List<CbacCache>,
     val referalCac : ReferalCache,
+    val tbrefferalFollowUp : List<TBReferralFollowUpEntity>,
+    val tbSuspectedCases: List<TBSuspectedCache>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
-                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
+                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED,
+    val gcReferralFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 )
 
 data class BenWithCbacDomain(
@@ -863,6 +897,7 @@ fun CbacResponseDto.toEntity():CbacCache {
     )
 }
 
+@JsonClass(generateAdapter = true)
 data class CbacRequest(
     val visitDetails: VisitDetailsWrapper,
     val cbac: CbacPostNew,
@@ -878,10 +913,12 @@ data class CbacRequest(
     val isFlw: Boolean?
 )
 
+@JsonClass(generateAdapter = true)
 data class VisitDetailsWrapper(
     val visitDetails: CbacVisitDetails
 )
 
+@JsonClass(generateAdapter = true)
 data class CbacVisitDetails(
     val beneficiaryRegID: Long,
     val providerServiceMapID: Int,

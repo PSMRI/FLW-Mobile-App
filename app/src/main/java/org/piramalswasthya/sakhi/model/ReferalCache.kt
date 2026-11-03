@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -7,6 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.TypeConverter
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
@@ -20,7 +22,8 @@ import org.piramalswasthya.sakhi.network.NCDReferalDTO
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/, "referralReason",], unique = true)]
+    // revisitMonth is in the key so a re-referral in a new month adds a row instead of replacing last month's.
+    indices = [Index(name = "ind_refcache", value = ["benId"/* "hhId"*/, "referralReason", "revisitMonth"], unique = true)]
 )
 data class ReferalCache(
     @PrimaryKey(autoGenerate = true)
@@ -34,13 +37,18 @@ data class ReferalCache(
     var vanID: Int? = 0,
     var parkingPlaceID: Int? = 0,
     var beneficiaryRegID: Long? = 0L,
-    var benVisitID: Long? = 0L,
-    var visitCode: Long? = 0L,
+    var benVisitID: Long? = null,
+    var visitCode: Long? = null,
     var providerServiceMapID: Int? = 0,
     var createdBy: String? = "",
     var type: String? = null,
     var isSpecialist: Boolean? = false,
-    var syncState: SyncState
+    var syncState: SyncState,
+    /** ROUTINE / EMERGENCY; set for General Check-up referrals only. */
+    var priority: String? = null,
+    /** yyyyMM of [revisitDate]. Kept in step by [org.piramalswasthya.sakhi.database.room.NcdReferalDao] on every write. */
+    @ColumnInfo(defaultValue = "0")
+    var revisitMonth: Int = 0
 ) : FormDataModel {
     fun toDTO(): NCDReferalDTO {
         return NCDReferalDTO(
@@ -60,9 +68,8 @@ data class ReferalCache(
             benVisitID = benVisitID,
             visitCode = visitCode,
             beneficiaryRegID = beneficiaryRegID,
-            type = type
-
-
+            type = type,
+            priority = priority
         )
     }
 }
@@ -89,6 +96,7 @@ data class BenWithNCDReferalDomain(
     val refcache: ReferalCache?
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralRequest(
     val refer: NCDReferalDTO,
 )

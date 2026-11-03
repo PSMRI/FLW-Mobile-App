@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.model
 
 import androidx.room.Embedded
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -8,6 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.network.TBScreeningDTO
 
 @Entity(
@@ -46,6 +48,8 @@ data class TBScreeningCache(
     var fatigue: Boolean? = null,
     var shortBreath: Boolean? = null,
     var chestPain: Boolean? = null,
+    var failureToGainWeight: Boolean? = null,
+    var decreasedActivityOrPlayfulness: Boolean? = null,
     var sympotomatic :String?=null,
     var asymptomatic  :String?=null,
     var recommandateTest  :String?=null,
@@ -84,8 +88,10 @@ data class TBScreeningCache(
             fatigue = fatigue,
             shortBreath = shortBreath,
             chestPain = chestPain,
+            failureToGainWeight = failureToGainWeight,
+            decreasedActivityOrPlayfulness = decreasedActivityOrPlayfulness,
             hivStatusId = hivStatusId,
-            hivStatus = hivStatus
+            hivStatus = hivStatus,
 
         )
     }
@@ -103,14 +109,32 @@ data class BenWithTbScreeningCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val tbSuspected: TBSuspectedCache?
+    val tbSuspected: TBSuspectedCache?,
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
+
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val cbacRecords: List<CbacCache> = emptyList(),
+
+    @ColumnInfo(name = "isPrisonResident")
+    val isPrisonResident: Boolean? = null
 
     ) {
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
         return BenWithTbScreeningDomain(
             ben = ben.asBasicDomainModel(),
             tb = tb,
-            tbSuspected = tbSuspected
+            tbSuspected = tbSuspected,
+            ncdReferralVisits = ncdReferralVisits,
+            cbac = cbacRecords.maxByOrNull { it.fillDate },
+            isPrisonResident = isPrisonResident == true
         )
     }
 }
@@ -118,5 +142,8 @@ data class BenWithTbScreeningCache(
 data class BenWithTbScreeningDomain(
     val ben: BenBasicDomain,
     val tb: TBScreeningCache?,
-    val tbSuspected: TBSuspectedCache?
+    val tbSuspected: TBSuspectedCache?,
+    val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
+    val cbac: CbacCache? = null,
+    val isPrisonResident: Boolean = false
 )

@@ -52,6 +52,16 @@ class BenRepo @Inject constructor(
     private val provideCUFYFormResponseJsonDao: CUFYFormResponseJsonDao
 ) {
 
+    private suspend fun persistDownsyncHouseholds(households: List<HouseholdCache>) {
+        households.forEach { household ->
+            if (householdDao.getHousehold(household.householdId) == null) {
+                householdDao.upsert(household)
+            } else {
+                householdDao.update(household)
+            }
+        }
+    }
+
     private val processNewBenMutex = Mutex()
     private enum class UploadResult { SUCCESS, FAILED, PAYLOAD_TOO_LARGE }
 
@@ -310,6 +320,70 @@ class BenRepo @Inject constructor(
         }
     }
 
+    suspend fun linkBeneficiaryToHousehold(benId: Long, householdId: Long, relation: String, relationPosition: Int) {
+        withContext(Dispatchers.IO) {
+            val ben = benDao.getBen(benId) ?: return@withContext
+            if (householdDao.getHousehold(0L) == null) {
+                preferenceDao.getLocationRecord()?.let { location ->
+                    householdDao.upsert(
+                        HouseholdCache(
+                            householdId = 0L,
+                            ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                            locationRecord = location,
+                            processed = "P",
+                            isDraft = true
+                        )
+                    )
+                }
+            }
+            ben.householdId = householdId
+            ben.familyHeadRelation = relation
+            ben.familyHeadRelationPosition = relationPosition
+            if (relationPosition == 5 || relationPosition == 6) {
+                val hof = getBenListFromHousehold(householdId)
+                    .firstOrNull { it.familyHeadRelationPosition == 19 }
+                if (hof != null) {
+                    val genDetails = ben.genDetails ?: BenRegGen()
+                    genDetails.maritalStatus = "Married"
+                    genDetails.maritalStatusId = 2
+                    genDetails.spouseName = hof.firstName
+                    ben.genDetails = genDetails
+                    ben.isMarried = true
+                    ben.isSpouseAdded = true
+
+                    val hofGenDetails = hof.genDetails ?: BenRegGen()
+                    hofGenDetails.maritalStatus = "Married"
+                    hofGenDetails.maritalStatusId = 2
+                    hofGenDetails.spouseName = ben.firstName
+                    hof.genDetails = hofGenDetails
+                    hof.isMarried = true
+                    hof.isSpouseAdded = true
+                    hof.processed = "U"
+                    hof.serverUpdatedStatus = 2
+                    hof.syncState = SyncState.UNSYNCED
+                    benDao.updateBen(hof)
+                }
+            }
+            ben.isDraft = false
+            ben.processed = "U"
+            ben.serverUpdatedStatus = 2
+            ben.syncState = SyncState.UNSYNCED
+            benDao.updateBen(ben)
+            if (relationPosition == 19) {
+                householdDao.getHousehold(householdId)?.let { household ->
+                    val family = household.family ?: HouseholdFamily()
+                    family.familyHeadName = ben.firstName
+                    family.familyName = ben.lastName
+                    family.familyHeadPhoneNo = ben.contactNumber
+                    household.family = family
+                    household.processed = "U"
+                    household.serverUpdatedStatus = 2
+                    householdDao.update(household)
+                }
+            }
+        }
+    }
+
     suspend fun getHousehold(hhId: Long): HouseholdCache? {
         return withContext(Dispatchers.IO) {
             householdDao.getHousehold(hhId)
@@ -501,7 +575,7 @@ class BenRepo @Inject constructor(
         benCacheList.forEach {
             benDao.setSyncState(it.householdId, it.beneficiaryId, SyncState.SYNCING)
             benNetworkPostList.add(it.asNetworkPostModel(context, user))
-            householdDao.getHousehold(it.householdId)?.let { household ->
+            if (it.householdId != 0L) householdDao.getHousehold(it.householdId)?.let { household ->
                 householdNetworkPostList.add(household.asNetworkModel(user))
             }
             try {
@@ -779,10 +853,8 @@ class BenRepo @Inject constructor(
 //                                HelperUtil.allPagesContent.append("\n")
 
                                 try {
-                                    householdDao.upsert(
-                                        *getHouseholdCacheFromServerResponse(
-                                            responseString
-                                        ).toTypedArray()
+                                    persistDownsyncHouseholds(
+                                        getHouseholdCacheFromServerResponse(responseString)
                                     )
                                 } catch (e: Exception) {
                                     Timber.d("HouseHold entries not synced $e")
@@ -924,7 +996,7 @@ class BenRepo @Inject constructor(
                                             age = benDataObj.getInt("age").toString(),
                                             mobileNo = benDataObj.getString("contact_number"),
                                             fatherName = benDataObj.getString("fatherName"),
-                                            familyHeadName = houseDataObj.getString("familyHeadName"),
+                                            familyHeadName = houseDataObj.optString("familyHeadName", ""),
                                             rchId = benDataObj.getString("rchid"),
                                             hrpStatus = benDataObj.getBoolean("hrpStatus"),
                                             syncState = if (benExists) SyncState.SYNCED else SyncState.SYNCING,
@@ -951,10 +1023,8 @@ class BenRepo @Inject constructor(
                                     )
                                 }
                                 try {
-                                    householdDao.upsert(
-                                        *getHouseholdCacheFromServerResponse(
-                                            responseString
-                                        ).toTypedArray()
+                                    persistDownsyncHouseholds(
+                                        getHouseholdCacheFromServerResponse(responseString)
                                     )
                                 } catch (e: Exception) {
                                     Timber.d("HouseHold entries not synced $e")
@@ -1114,7 +1184,25 @@ class BenRepo @Inject constructor(
                     if (benExists) {
                         continue
                     }
-                    val hhExists = householdDao.getHousehold(hhId) != null
+                    // Non-household beneficiaries use householdId = 0. Recreate the
+                    // local placeholder household after a reinstall so the foreign key
+                    // remains valid when the beneficiary is inserted.
+                    if (hhId == 0L && householdDao.getHousehold(0L) == null) {
+                        val location = preferenceDao.getLocationRecord()
+                        if (location != null) {
+                            householdDao.upsert(
+                                HouseholdCache(
+                                    householdId = 0L,
+                                    ashaId = preferenceDao.getLoggedInUser()?.userId ?: 0,
+                                    locationRecord = location,
+                                    processed = "P",
+                                    isDraft = true
+                                )
+                            )
+                        }
+                    }
+
+                    val hhExists = hhId == 0L || householdDao.getHousehold(hhId) != null
 
                     if (!hhExists) {
                         continue
@@ -1443,12 +1531,21 @@ class BenRepo @Inject constructor(
                                             "reproductiveStatusId"
                                         )
                                         when (idFromServer) {
-                                            0 -> 0
+                                         /*   0 -> 0
                                             1 -> 1
                                             2, 3 -> 2
                                             4 -> 3
                                             5 -> 4
                                             6 -> 5
+                                            else -> 5*/
+
+                                            0 -> 0
+                                            1 -> 1
+                                            2 -> 2
+                                            3 -> 3
+                                            4 -> 4
+                                            5 -> 5
+                                            6 -> 6
                                             else -> 5
                                         }
                                     } else 0,
@@ -1472,6 +1569,11 @@ class BenRepo @Inject constructor(
                                 doYouHavechildren = if (jsonObject.has("doYouHavechildren")) jsonObject.optBoolean("doYouHavechildren") else false,
                                 noOfAliveChildren = if (jsonObject.has("noofAlivechildren")) jsonObject.optInt("noofAlivechildren") else 0,
                                 noOfChildren = if (jsonObject.has("noOfchildren")) jsonObject.optInt("noOfchildren") else 0,
+                                // Non-household beneficiary details returned by the downsync API.
+                                livingPlace = benDataObj.optString("placeOfCurrentLiving", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
+                                institutionName = benDataObj.optString("institutionName", null)
+                                    ?.takeIf { it.isNotBlank() && it != "null" },
                             )
                         )
 
