@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.database.room.migrations
 
+import android.database.Cursor
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.mockk.every
 import io.mockk.mockk
@@ -9,7 +10,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.sql.DriverManager
 
-class Migration74To75Test {
+// TB Suspected rebuild from release-2.14 (written there as 74 -> 75; renumbered to 76 -> 77 on merge).
+class Migration76To77Test {
 
     @Test
     fun `renames the stored recommendation column and preserves its value`() {
@@ -60,8 +62,17 @@ class Migration74To75Test {
                 connection.createStatement().use { it.execute(firstArg()) }
                 Unit
             }
+            // columnExists() reads PRAGMA table_info; answer it from the real table.
+            every { db.query(any<String>()) } answers {
+                val names = connection.createStatement().use { statement ->
+                    statement.executeQuery(firstArg<String>()).use { result ->
+                        buildList { while (result.next()) add(result.getString("name")) }
+                    }
+                }
+                namesCursor(names)
+            }
 
-            Migration74To75.migrate(db)
+            Migration76To77.migrate(db)
 
             val columns = connection.createStatement().use { statement ->
                 statement.executeQuery("PRAGMA table_info('TB_SUSPECTED')").use { result ->
@@ -80,5 +91,14 @@ class Migration74To75Test {
             }
             assertEquals(1, storedValue)
         }
+    }
+
+    private fun namesCursor(names: List<String>): Cursor {
+        val cursor = mockk<Cursor>(relaxed = true)
+        var index = -1
+        every { cursor.moveToNext() } answers { index += 1; index < names.size }
+        every { cursor.getColumnIndexOrThrow("name") } returns 0
+        every { cursor.getString(0) } answers { names[index] }
+        return cursor
     }
 }

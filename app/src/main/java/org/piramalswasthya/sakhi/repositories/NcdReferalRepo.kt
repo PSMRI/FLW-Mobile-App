@@ -13,6 +13,8 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonE
 import org.piramalswasthya.sakhi.network.AmritApiService
 import org.piramalswasthya.sakhi.network.GetCBACRequest
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,7 +45,14 @@ class NcdReferalRepo@Inject constructor(
         if (unProcessedList.isEmpty()) return
 
         for (ncdRefer in unProcessedList) {
-            val dto = ncdRefer.toDTO()
+            // No HWC visit behind the referral (only CBAC creates one): 0 breaks the server's
+            // BenVisitID foreign key, so send no value instead.
+            val dto = ncdRefer.toDTO().let {
+                it.copy(
+                    benVisitID = it.benVisitID?.takeIf { id -> id > 0 },
+                    visitCode = it.visitCode?.takeIf { code -> code > 0 }
+                )
+            }
 
             val request = ReferralRequest(
                 refer = dto,
@@ -52,12 +61,18 @@ class NcdReferalRepo@Inject constructor(
 
             val response = tmcNetworkApiService.postRefer(request)
 
-            response?.body()?.string()?.let { body ->
+            val body = response?.body()?.string()
+            if (body == null) {
+                Timber.e("Referral push failed (type=${ncdRefer.type}, benId=${ncdRefer.benId}): HTTP ${response?.code()} ${response?.errorBody()?.string()}")
+            }
+            body?.let {
                 val jsonBody = JSONObject(body)
                 val isSuccess = jsonBody.getString("status") == "Success"
 
                 if (isSuccess) {
                     updateSyncStatusRefer(ncdRefer)
+                } else {
+                    Timber.e("Referral push rejected (type=${ncdRefer.type}, benId=${ncdRefer.benId}): $body")
                 }
                 }
             }
@@ -87,10 +102,25 @@ class NcdReferalRepo@Inject constructor(
                 val dto = gson.fromJson(item.toString(), NCDReferalDTO::class.java)
                 cbacEntities.add(dto.toCache())
             }
-            val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId })
+            val existingBenIds = database.benDao.getExistingBenIds(cbacEntities.map { it.benId }).toMutableSet()
+            // The server returns its stored BeneficiaryRegID as benId. For a referral without an HWC visit
+            // (e.g. General Check-up) that is the ben's real benRegId, so map it back to the beneficiaryId.
+            cbacEntities.filter { it.benId !in existingBenIds }.forEach { refer ->
+                database.benDao.getBeneficiaryIdByRegId(refer.benId)?.let { beneficiaryId ->
+                    refer.benId = beneficiaryId
+                    existingBenIds += beneficiaryId
+                }
+            }
             val validEntities = cbacEntities.filter { it.benId in existingBenIds }
+            if (validEntities.size != cbacEntities.size) {
+                Timber.w("Referral pull: ${cbacEntities.size - validEntities.size} of ${cbacEntities.size} referrals skipped, beneficiary not on device")
+            }
             validEntities.filter { it.type.isNullOrBlank() }.forEach {
+                // The server does not return type; keep the local one, else recognise General Check-up by its reason.
                 it.type = referalDao.getReferralType(it.benId, it.referralReason)
+                    ?: GeneralCheckupFormViewModel.REFERRAL_TYPE.takeIf { _ ->
+                        it.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
+                    }
             }
             if (validEntities.isNotEmpty()) {
                 referalDao.insertAll(validEntities)

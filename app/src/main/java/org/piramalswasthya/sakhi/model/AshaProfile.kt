@@ -7,6 +7,7 @@ import com.squareup.moshi.JsonClass
 
 
 @Entity(tableName = "PROFILE_ACTIVITY")
+@JsonClass(generateAdapter = true)
 data class ProfileActivityCache(
     @PrimaryKey
     val id: Long,

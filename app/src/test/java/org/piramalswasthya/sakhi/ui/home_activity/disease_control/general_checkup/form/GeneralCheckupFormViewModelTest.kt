@@ -250,6 +250,22 @@ class GeneralCheckupFormViewModelTest : BaseViewModelTest() {
         assertEquals(HealthProblemOwnerModule.MATERNAL, vm.ownedProblem!!.ownerModule)
     }
 
+    @Test
+    fun `a problem of a second owner module cannot be ticked`() = runTest {
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.onFieldChanged(FIELD_TYPE, "g4")
+        assertNull(vm.onFieldChanged("problems_g4", setOf("preg")))
+
+        val kept = vm.onFieldChanged("problems_g4", setOf("preg", "contra"))
+
+        assertEquals("preg", kept!!.problemId)
+        assertEquals(listOf("preg"), (vm.visibleFields(ownerTitle).last().value as Set<*>).toList())
+        assertEquals(HealthProblemOwnerModule.MATERNAL, vm.ownedProblem!!.ownerModule)
+        // A general problem can still be ticked with it.
+        assertNull(vm.onFieldChanged("problems_g4", setOf("preg", "g4_mens")))
+    }
+
     // ── Validation ─────────────────────────────────────────────────────────────
 
     @Test

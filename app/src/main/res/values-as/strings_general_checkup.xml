@@ -19,6 +19,7 @@
     <string name="gc_priority_emergency">অগ্ৰাধিকাৰ: জৰুৰীকালীন।\nতৎক্ষণাত ৰেফাৰ কৰক।</string>
     <string name="gc_priority_routine">অগ্ৰাধিকাৰ: সাধাৰণ</string>
     <string name="gc_refer_to_facility">স্বাস্থ্য কেন্দ্ৰলৈ ৰেফাৰ কৰক</string>
+    <string name="gc_referral_follow_up_form">সাধাৰণ ৰেফাৰেল ফলো-আপ ফৰ্ম</string>
     <string name="gc_err_type">সমস্যাৰ প্ৰকাৰ বাছনি কৰক।</string>
     <string name="gc_err_problem">অন্ততঃ এটা সমস্যা বাছনি কৰক।</string>
     <string name="gc_err_other_length">নামটো %1$d টা আখৰ বা তাতকৈ কমত লিখক।</string>
@@ -31,6 +32,7 @@
     <string name="gc_route_msg">%1$s %2$s ত চম্ভালা হয়। তাতে আগবাঢ়ক। এটা ঘটনাত এটাই ৰেফাৰেল হয়, সেয়ে সাধাৰণ স্বাস্থ্য পৰীক্ষাৰ পৰা দ্বিতীয় ৰেফাৰেল কৰা নহয়।</string>
     <string name="gc_route_continue">%1$s ত আগবাঢ়ক</string>
     <string name="gc_route_stay">ইয়াতে থাকক</string>
+    <string name="gc_route_one_module">%1$s (%2$s) আগতে বাছনি কৰা হৈছে। দুটা বেলেগ মডিউলৰ সমস্যা একেলগে বাছিব নোৱাৰি। প্ৰথমে সেইটো আঁতৰাওক।</string>
     <string name="gc_module_maternal">মাতৃ স্বাস্থ্য</string>
     <string name="gc_module_child">শিশু যত্ন</string>
     <string name="gc_module_ecl">যোগ্য দম্পতিৰ তালিকা</string>

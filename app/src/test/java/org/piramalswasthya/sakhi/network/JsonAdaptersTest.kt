@@ -1,7 +1,6 @@
 package org.piramalswasthya.sakhi.network
 
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -24,8 +23,8 @@ class JsonAdaptersTest {
 
     @Test fun `TB suspected sends only the isRecommendedForTpt server key`() {
         val dto = TBSuspectedCache(benId = 12L, isRecommendedForTpt = true).toDTO()
+        // Generated adapter (@JsonClass): the app ships without moshi-kotlin reflection (FLW-1211).
         val adapter = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
             .build()
             .adapter(TBSuspectedDTO::class.java)
 

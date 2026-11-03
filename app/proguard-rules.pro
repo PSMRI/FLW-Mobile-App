@@ -12,48 +12,32 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep line numbers so Crashlytics stack traces stay readable once R8 obfuscates
+# (FLW-1211); the source file name is replaced to avoid shipping it.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
--keep class com.squareup.moshi.** { *; }
--keep class retrofit2.** { *; }
--keep class okhttp3.** { *; }
--keep class androidx.legacy.** { *; }
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class androidx.lifecycle.** { *; }
--keepclassmembers class androidx.lifecycle.** { *; }
--keep class androidx.work.** { *; }
--keep class androidx.startup.** { *; }
--keep class org.bouncycastle.** { *; }
--keep class java.util.Locale { *; }
-# Prevent removal of resources used via reflection or dynamic access
--keepclassmembers class ** {
-    public static <fields>;
+# Libraries (Moshi, OkHttp, Firebase, Play services, AndroidX, Kotlin, coroutines) ship
+# their own R8 rules, so they are no longer kept wholesale (FLW-1211).
+
+# Retrofit 2.9.0 ships no R8 full-mode rules, and AGP 8 runs R8 in full mode, which would
+# strip the generic signatures Retrofit reads from suspend API methods. These are the rules
+# newer Retrofit versions ship.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
 }
-# Keep all string resource IDs and names
--keepclassmembers class **.R$string {
-    *;
-}
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
-# --- ContextWrapper ---
--keep class org.piramalswasthya.sakhi.** extends android.content.ContextWrapper { *; }
-
-# --- Assemblers ---
--keep class org.piramalswasthya.sakhi.**Assembler { *; }
--keepnames class org.piramalswasthya.sakhi.**Assembler
+# Activities, services and the Application class are kept by the rules AAPT generates from the
+# manifest, and data binding classes are called directly, so neither needs its own keep rule.
 
 # --- Hilt / DI Support ---
+# hilt-android and hilt-work ship their own R8 rules for modules and generated components.
 -keep @dagger.hilt.EntryPoint interface * { *; }
--keep class dagger.hilt.EntryPoints { *; }
--keep class dagger.hilt.EntryPoint { *; }
--keep class dagger.hilt.android.EntryPointAccessors { *; }
--keep class **_HiltModules* { *; }
--keep class *Module* { *; }
 
 # --- Annotations ---
 -keep @androidx.annotation.Keep class * { *; }
@@ -62,8 +46,17 @@
 }
 
 # --- Reflection Safety ---
--keep class org.piramalswasthya.sakhi.** { *; }
--keepnames class org.piramalswasthya.sakhi.**
+# App code is shrunk and obfuscated (FLW-1211). Only classes read by reflection are kept:
+# Gson/Moshi classes (model/, network/ and the ones below) and JNI.
+-keep class org.piramalswasthya.sakhi.repositories.UwinRepo$* { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.**.model.** { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.BeneficiaryRecordUI { *; }
+-keep class org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerification.viewModel.ClaimedIncentiveUI { *; }
+-keep class org.piramalswasthya.sakhi.ui.home_activity.all_ben.eye_surgery_registration.eyeBottomsheet.model.** { *; }
+
+# SyncLogTree picks sync logs for the Sync Dashboard by the logging class's name.
+-keepnames class org.piramalswasthya.sakhi.work.**
+-keepnames class org.piramalswasthya.sakhi.repositories.**
 
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
@@ -72,27 +65,12 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
-# Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.examples.android.model.** { *; }
--keepclassmembers class org.piramalswasthya.**.databinding.** {
-    public <methods>;
-}
--keep class org.piramalswasthya.sakhi.model.** {*;}
--keep class org.piramalswasthya.sakhi.network.** {*;}
--keep class org.piramalswasthya.sakhi.repositories.** {*;}
+# Application classes serialized/deserialized by Gson and Moshi. Gson reads and writes fields by
+# name and needs the constructors; Moshi uses generated adapters. Getters, copy(), equals() etc.
+# are left to R8 (FLW-1211).
+-keep class org.piramalswasthya.sakhi.model.** { <fields>; <init>(...); }
+-keep class org.piramalswasthya.sakhi.network.** { <fields>; <init>(...); }
 -dontusemixedcaseclassnames
--verbose
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
-
-# Keep all members in kotlinx.coroutines
--keep class kotlinx.coroutines.** { *; }
-
-# Keep all methods in kotlinx.coroutines
--keepclassmembers class kotlinx.coroutines.** { *; }
-
-# Keep Kotlin standard library functions
--keep class kotlin.** { *; }
--keepclassmembers class kotlin.** { *; }
 
 # Keep coroutines continuation classes and methods
 -keepclassmembers class kotlin.coroutines.Continuation {

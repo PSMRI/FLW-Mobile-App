@@ -476,7 +476,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
+                            setText(field.value?.toString() ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                             isEnabled = !isViewOnly
                             setTextColor(ContextCompat.getColor(context, android.R.color.black))
@@ -539,7 +539,7 @@
                             setPadding(32, 24, 32, 24)
 
                             background = null
-                            setText(field.value?.let { if (it is Number) it.toString() else it.toString() } ?: "")
+                            setText(field.value?.toString() ?: "")
                             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                             val isIFABottleCount = field.fieldId == "ifa_bottle_count"
@@ -763,7 +763,8 @@
                                         "treatmentstartdate", "followupdate", "actualcompletiondate"
                                     )
                                 val isTbReferralFollowUpDate =
-                                    formId == FormConstants.Tb_Referral_Follow_Up &&
+                                    (formId == FormConstants.Tb_Referral_Follow_Up ||
+                                        formId == FormConstants.GC_REFERRAL_FOLLOW_UP) &&
                                         field.fieldId == "follow_up_date"
 
                                 if (field.fieldId == "ifa_provision_date") {
@@ -799,11 +800,7 @@
                                                 set(Calendar.DAY_OF_MONTH, 1)
                                             }
                                             minDate = minCal.time
-                                            maxDate = when (field.validation?.maxDate?.lowercase()) {
-                                                "today" -> today
-                                                null -> today
-                                                else -> today
-                                            }
+                                            maxDate = today
                                     } else if (formId == FormConstants.IFA_DISTRIBUTION_FORM_ID || formId == FormConstants.ANC_FORM_ID ||
                                         formId == FormConstants.GENERAL_CHECKUP_FORM_ID) {
                                         minDate = minVisitDate

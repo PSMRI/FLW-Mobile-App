@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.StringListConverter
@@ -59,10 +60,12 @@ import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormSchemaDa
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.InfantDao
 import org.piramalswasthya.sakhi.model.ABHAModel
 import org.piramalswasthya.sakhi.helpers.DatabaseKeyManager
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 import org.piramalswasthya.sakhi.helpers.RoomDbEncryptionHelper
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FilariaMdaCampaignJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.NCDReferalFormResponseJsonDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TBReferralFollowUpDao
+import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.GCReferralFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.TPTFollowUpDao
 import org.piramalswasthya.sakhi.database.room.dao.dynamicSchemaDao.FormResponseANCJsonDao
 import org.piramalswasthya.sakhi.database.room.migrations.ALL_MIGRATIONS
@@ -129,6 +132,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.hbyc.FormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.VHNDCache
 import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.TPTFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.anc.ANCFormResponseJsonEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.ben_ifa.BenIfaFormResponseJsonEntity
@@ -209,10 +213,11 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         TBReferralFollowUpEntity::class,
         TPTFollowUpEntity::class,
         NotificationEntity::class,
-        GeneralCheckupCache::class
+        GeneralCheckupCache::class,
+        GCReferralFollowUpEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 75, exportSchema = true
+    version = 77, exportSchema = true
 )
 
 @TypeConverters(
@@ -269,6 +274,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract fun CUFYFormResponseJsonDao(): CUFYFormResponseJsonDao
     abstract fun NCDReferalFormResponseJsonDao(): NCDReferalFormResponseJsonDao
     abstract fun tbReferralFollowUpDao(): TBReferralFollowUpDao
+    abstract fun gcReferralFollowUpDao(): GCReferralFollowUpDao
     abstract fun tptFollowUpDao(): TPTFollowUpDao
     abstract fun formResponseJsonDao(): FormResponseJsonDao
     abstract fun formResponseJsonDaoHBYC(): FormResponseJsonDaoHBYC
@@ -293,6 +299,10 @@ abstract class InAppDb : RoomDatabase() {
                 if (instance == null) {
                     val isDebug = appContext.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
 
+                    // "db_open" trace: Room opens lazily, so this runs from here to the first
+                    // open, migrations included; DbOpenTraceCallback stops it.
+                    PerfTracer.startOpen(PerfTracer.DB_OPEN, restart = true)
+
                     val builder = Room.databaseBuilder(
                         appContext,
                         InAppDb::class.java,
@@ -312,7 +322,8 @@ abstract class InAppDb : RoomDatabase() {
                         builder.openHelperFactory(factory)
                     }
 
-                    instance = builder.addMigrations(*ALL_MIGRATIONS).build()
+                    instance = builder.addMigrations(*ALL_MIGRATIONS)
+                        .addCallback(DbOpenTraceCallback(appContext)).build()
 
                     INSTANCE = instance
                 }
@@ -320,5 +331,37 @@ abstract class InAppDb : RoomDatabase() {
 
             }
         }
+    }
+}
+
+/**
+ * Stops the "db_open" trace on the first open. The "kind" attribute separates a fresh install
+ * ("created") and an app update that ran migrations ("upgraded") from an ordinary open, using
+ * the schema version recorded on the previous open. "unknown" is the first open after this
+ * tracing shipped, when no previous version was recorded yet.
+ */
+private class DbOpenTraceCallback(private val context: Context) : RoomDatabase.Callback() {
+
+    private var created = false
+
+    override fun onCreate(db: SupportSQLiteDatabase) {
+        created = true
+    }
+
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        val prefs = context.getSharedPreferences("perf_trace", Context.MODE_PRIVATE)
+        val lastVersion = prefs.getInt(KEY_DB_VERSION, -1)
+        val kind = when {
+            created -> "created"
+            lastVersion == -1 -> "unknown"
+            lastVersion < db.version -> "upgraded"
+            else -> "normal"
+        }
+        prefs.edit().putInt(KEY_DB_VERSION, db.version).apply()
+        PerfTracer.stopOpen(PerfTracer.DB_OPEN, mapOf("kind" to kind))
+    }
+
+    private companion object {
+        const val KEY_DB_VERSION = "db_version"
     }
 }

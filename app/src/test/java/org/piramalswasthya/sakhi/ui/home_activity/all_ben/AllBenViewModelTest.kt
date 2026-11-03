@@ -389,8 +389,7 @@ class AllBenViewModelTest : BaseViewModelTest() {
         coEvery { recordsRepo.searchBenOnce(any(), any(), any()) } returns listOf(sampleBen(10L))
         val context = mockk<Context>(relaxed = true)
 
-        viewModel.downloadCsv(context)
-        advanceUntilIdle()
+        viewModel.downloadCsv(context).join()
 
         val csvFiles = tempDir.listFiles { file -> file.name.startsWith("ABHAUsers_") }
         assertNotNull(csvFiles)

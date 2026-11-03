@@ -375,13 +375,6 @@ class CreateAbhaFragment : Fragment() {
                         "Downloading $fileName ", Snackbar.LENGTH_SHORT
                     ).show()
                 }
-                is Operation.State.SUCCESS -> {
-                    binding.clDownloadAbha.visibility = View.INVISIBLE
-                    Snackbar.make(
-                        binding.root,
-                        "Downloading $fileName ", Snackbar.LENGTH_SHORT
-                    ).show()
-                }
 
                 is Operation.State.FAILURE -> {
                     Toast.makeText(context, "Failed to download , Please retry", Toast.LENGTH_SHORT)

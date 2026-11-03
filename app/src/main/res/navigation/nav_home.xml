@@ -1936,8 +1936,8 @@
             android:id="@+id/action_generalCheckupFormFragment_to_eligibleCoupleFragment"
             app:destination="@id/eligibleCoupleFragment" />
         <action
-            android:id="@+id/action_generalCheckupFormFragment_to_eyeSurgeryFormFragment"
-            app:destination="@id/eyeSurgeryFormFragment" />
+            android:id="@+id/action_generalCheckupFormFragment_to_allBenFragment"
+            app:destination="@id/allBenFragment" />
         <action
             android:id="@+id/action_generalCheckupFormFragment_to_hwcReferredListFragment"
             app:destination="@id/hwcReferredFragment" />
@@ -2387,6 +2387,11 @@
         <argument
             android:name="referredDate"
             app:argType="long" />
+        <argument
+            android:name="referralType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
 
     </fragment>

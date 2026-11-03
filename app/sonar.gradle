@@ -1,0 +1,45 @@
+// SonarCloud settings for the app module (FLW-1208). Applied from app/build.gradle.
+// Project-wide keys (host, organization, projectKey) are in the root build.gradle.
+//
+// Usage (CI runs this after jacocoTestReport has produced the XML report):
+//   ./gradlew jacocoTestReport sonar -Dsonar.token=<token>
+//   override flavor:    -PcoverageVariant=sakshamDebug   (same property jacoco.gradle uses)
+
+// Must match jacoco.gradle so Sonar analyses the same classes the coverage report describes.
+def sonarVariant = project.hasProperty("coverageVariant") ? project.coverageVariant : "niramayDebug"
+
+// Source-file equivalents of coverageExclusions in jacoco.gradle; keep the two lists in sync.
+// JaCoCo leaves these classes out of the XML report, and Sonar counts a source file missing
+// from the report as 0% covered, so without this list Sonar's coverage would not match JaCoCo's.
+// Generated code (Hilt, Room *_Impl, data binding, BuildConfig, R) is under build/ and never
+// part of the analysed sources; sonar.exclusions below makes that explicit.
+def sonarCoverageExclusions = [
+        // Dependency-injection wiring
+        '**/di/**', '**/*Module.kt', '**/*Component*.kt',
+        // Android view layer (not unit-tested; ViewModels are kept)
+        '**/*Fragment.kt', '**/*Fragement.kt',
+        '**/*Activity.kt',
+        '**/*Adapter.kt',
+        '**/*Dialog.kt',
+        '**/*BottomSheet.kt',
+        '**/*ViewHolder.kt',
+        // Fragment/BottomSheet subclasses whose name doesn't end in Fragment/BottomSheet
+        '**/HRPMicroBirthPlanTable.kt',
+        '**/NCDReferTypeFilter.kt',
+        '**/NcdRefferedList.kt',
+        '**/FilariaMdaCampaignHistory.kt',
+        // ListAdapter subclasses whose name doesn't end in Adapter
+        '**/FormInputAdapterWithBgIcon.kt',
+        '**/FormInputAdapterOld.kt',
+        '**/BenListAdapterForForm.kt'
+]
+
+sonar {
+    androidVariant sonarVariant
+    properties {
+        property "sonar.coverage.jacoco.xmlReportPaths",
+                "${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+        property "sonar.exclusions", "**/build/**,**/R.java,**/BuildConfig.*"
+        property "sonar.coverage.exclusions", sonarCoverageExclusions.join(",")
+    }
+}

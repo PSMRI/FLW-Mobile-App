@@ -12,6 +12,7 @@ import org.piramalswasthya.sakhi.R
     import org.piramalswasthya.sakhi.helpers.getLocalizedAge
     import org.piramalswasthya.sakhi.model.BenBasicDomain
     import org.piramalswasthya.sakhi.model.BenWithCbacReferDomain
+    import org.piramalswasthya.sakhi.ui.home_activity.disease_control.general_checkup.form.GeneralCheckupFormViewModel
     import org.piramalswasthya.sakhi.model.ReferalCache
 
     /**
@@ -100,12 +101,14 @@ import org.piramalswasthya.sakhi.R
                     binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
 //                    binding.btnFollowUp.setBackgroundColor(binding.root.resources.getColor(if (item.tbrefferalFollowUp == null || item.tbrefferalFollowUp.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
 
-                    val hasFollowUp = if (isPresumptiveTbReferral) {
-                        item.tbSuspectedCases.isNotEmpty()
-                    } else {
-                        item.tbrefferalFollowUp.isNotEmpty()
+                    // Same General Check-up rule as the follow-up screen (type, or reason prefix when the type is missing).
+                    val isGcReferral = item.referalCac.type == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
+                            item.referalCac.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
+                    val isFollowUpPending = when {
+                        isGcReferral -> item.gcReferralFollowUp.isEmpty()
+                        isPresumptiveTbReferral -> item.tbSuspectedCases.isEmpty()
+                        else -> item.tbrefferalFollowUp.isNullOrEmpty()
                     }
-                    val isFollowUpPending = !hasFollowUp
 
                     binding.btnFollowUp.apply {
                         text = context.getString(
@@ -153,11 +156,11 @@ import org.piramalswasthya.sakhi.R
 
 
         class NcdReferallickListener(
-            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long) -> Unit
+            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long,referralType:String?) -> Unit
 
         ) {
             fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) = goToFollowUp(
-                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate
+                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate,referalCac.type
             )
         }
 

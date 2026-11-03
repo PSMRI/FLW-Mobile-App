@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.JsonClass
 
 @Entity(
     tableName = "tb_tpt_follow_up",
@@ -26,6 +27,7 @@ data class TPTFollowUpEntity(
     val updatedAt: Long = System.currentTimeMillis()
 )
 
+@JsonClass(generateAdapter = true)
 data class TPTFollowUpApiRequest(
     @SerializedName("ben_id") val benId: Long,
     @SerializedName("user_id") val userId: Int,

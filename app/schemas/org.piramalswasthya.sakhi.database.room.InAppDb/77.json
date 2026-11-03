@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 75,
-    "identityHash": "5c57443cb305734c80bbed30b5e65c6c",
+    "version": 77,
+    "identityHash": "95b1461920e35956dd4acb5799e171b2",
     "entities": [
       {
         "tableName": "HOUSEHOLD",
@@ -12775,6 +12775,100 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "gc_referral_follow_up",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `benId` INTEGER NOT NULL, `houseHoldId` INTEGER NOT NULL, `referredOnDate` TEXT NOT NULL, `followUpDate` TEXT NOT NULL, `followUpStatus` TEXT, `fieldsJson` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `referralReason` TEXT NOT NULL DEFAULT '', `referralMonth` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "benId",
+            "columnName": "benId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "houseHoldId",
+            "columnName": "houseHoldId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "referredOnDate",
+            "columnName": "referredOnDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "followUpDate",
+            "columnName": "followUpDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "followUpStatus",
+            "columnName": "followUpStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fieldsJson",
+            "columnName": "fieldsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "referralReason",
+            "columnName": "referralReason",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "referralMonth",
+            "columnName": "referralMonth",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_gc_referral_follow_up_benId_referralReason_referralMonth",
+            "unique": true,
+            "columnNames": [
+              "benId",
+              "referralReason",
+              "referralMonth"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_referralReason_referralMonth` ON `${TABLE_NAME}` (`benId`, `referralReason`, `referralMonth`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [
@@ -12785,7 +12879,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5c57443cb305734c80bbed30b5e65c6c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '95b1461920e35956dd4acb5799e171b2')"
     ]
   }
 }

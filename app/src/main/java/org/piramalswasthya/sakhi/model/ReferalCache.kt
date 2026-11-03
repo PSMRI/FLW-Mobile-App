@@ -8,6 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.TypeConverter
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.NCDReferalDTO
@@ -36,8 +37,8 @@ data class ReferalCache(
     var vanID: Int? = 0,
     var parkingPlaceID: Int? = 0,
     var beneficiaryRegID: Long? = 0L,
-    var benVisitID: Long? = 0L,
-    var visitCode: Long? = 0L,
+    var benVisitID: Long? = null,
+    var visitCode: Long? = null,
     var providerServiceMapID: Int? = 0,
     var createdBy: String? = "",
     var type: String? = null,
@@ -95,6 +96,7 @@ data class BenWithNCDReferalDomain(
     val refcache: ReferalCache?
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralRequest(
     val refer: NCDReferalDTO,
 )

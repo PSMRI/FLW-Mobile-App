@@ -142,6 +142,7 @@ data class BeneficiaryDataSending(
 
     )
 
+@JsonClass(generateAdapter = true)
 data class BenDemographics(
     @Json(name = "addressLine1")
     var addressLine1: String,
@@ -223,6 +224,7 @@ data class BenDemographics(
     )
 
 
+@JsonClass(generateAdapter = true)
 data class BeneficiaryIdentities(
     @Json(name = "govtIdentityNo")
     var govtIdentityNo: Int = 0,
@@ -241,6 +243,7 @@ data class BeneficiaryIdentities(
 )
 
 
+@JsonClass(generateAdapter = true)
 data class BenPhoneMaps(
 
     @Json(name = "createdBy")

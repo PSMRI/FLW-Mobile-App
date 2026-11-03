@@ -14,6 +14,7 @@ import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -689,12 +690,21 @@ data class BenWithCbacAndReferalCache(
         entityColumn = "benId",
         entity = TBSuspectedCache::class
     )
-    val tbSuspectedCases: List<TBSuspectedCache>
+    val tbSuspectedCases: List<TBSuspectedCache>,
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList, referral, tbFollowUp, tbSuspectedCases
+            ben.asBasicDomainModel(), cbacList, referral, tbFollowUp, tbSuspectedCases,
+            // The relation is per beneficiary; keep only this card's referral (same reason, same month).
+            gcReferralFollowUp = gcFollowUp.filter {
+                it.referralReason == referral.referralReason && it.referralMonth == monthKey(referral.revisitDate)
+            }
         )
     }
 }
@@ -707,7 +717,8 @@ data class BenWithCbacReferDomain(
     val tbSuspectedCases: List<TBSuspectedCache>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
-                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED
+                .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED,
+    val gcReferralFollowUp : List<GCReferralFollowUpEntity> = emptyList()
 )
 
 data class BenWithCbacDomain(
@@ -886,6 +897,7 @@ fun CbacResponseDto.toEntity():CbacCache {
     )
 }
 
+@JsonClass(generateAdapter = true)
 data class CbacRequest(
     val visitDetails: VisitDetailsWrapper,
     val cbac: CbacPostNew,
@@ -901,10 +913,12 @@ data class CbacRequest(
     val isFlw: Boolean?
 )
 
+@JsonClass(generateAdapter = true)
 data class VisitDetailsWrapper(
     val visitDetails: CbacVisitDetails
 )
 
+@JsonClass(generateAdapter = true)
 data class CbacVisitDetails(
     val beneficiaryRegID: Long,
     val providerServiceMapID: Int,

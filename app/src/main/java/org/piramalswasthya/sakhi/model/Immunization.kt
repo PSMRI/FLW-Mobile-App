@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.configuration.FormDataModel
 import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.network.getLongFromDate
@@ -212,6 +213,7 @@ enum class VaccineState {
     PENDING, OVERDUE, DONE, MISSED, UNAVAILABLE
 }
 
+@JsonClass(generateAdapter = true)
 data class ImmunizationPost(
     val id: Long = 0,
     val beneficiaryId: Long = 0,

@@ -16,6 +16,14 @@ class CrashHandler(private val context: Context) : Thread.UncaughtExceptionHandl
 
 
     override fun uncaughtException(t: Thread, e: Throwable) {
+        // The startup key check is skipped once a key is verified; if the DB then fails to
+        // open, run the full check (and its reset path) on the next start.
+        try {
+            if (RoomDbEncryptionHelper.isNotADatabaseError(e)) {
+                RoomDbEncryptionHelper.clearKeyVerified(context)
+            }
+        } catch (_: Exception) {
+        }
         try {
             val crashDir = File(context.filesDir, crashDirName)
             if (!crashDir.exists()) crashDir.mkdirs()

@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.squareup.moshi.JsonClass
 import org.piramalswasthya.sakhi.model.BenBasicCache
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
@@ -26,6 +27,7 @@ data class TBReferralFollowUpEntity(
     val updatedAt: Long = System.currentTimeMillis()
 )
 
+@JsonClass(generateAdapter = true)
 data class TBReferralFollowUpRequest(
     val benId: Long,
     val houseHoldId: Long,

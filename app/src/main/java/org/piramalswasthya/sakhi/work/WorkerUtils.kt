@@ -34,6 +34,8 @@ import org.piramalswasthya.sakhi.work.dynamicWoker.FilariaMdaCampaignPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.FormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.MosquitoNetFormSyncWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.NCDFollowUpSyncWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.GCReferralFollowUpPullWorker
+import org.piramalswasthya.sakhi.work.dynamicWoker.GCReferralFollowUpPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.TBReferralFollowUpPullWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.TBReferralFollowUpPushWorker
 import org.piramalswasthya.sakhi.work.dynamicWoker.TPTFollowUpPullWorker
@@ -220,6 +222,8 @@ object WorkerUtils {
             syncRequestBuilder<NCDFollowUpSyncWorker>()
                 .addTag("push_group2_screening").build(),
             syncRequestBuilder<GeneralCheckupPushWorker>()
+                .addTag("push_group2_screening").build(),
+            syncRequestBuilder<GCReferralFollowUpPushWorker>()
                 .addTag("push_group2_screening").build(),
         )
 
@@ -519,6 +523,8 @@ object WorkerUtils {
             syncRequestBuilder<PullAdolescentFromWorker>()
                 .addTag("pull_group2_screening").build(),
             syncRequestBuilder<GeneralCheckupPullWorker>()
+                .addTag("pull_group2_screening").build(),
+            syncRequestBuilder<GCReferralFollowUpPullWorker>()
                 .addTag("pull_group2_screening").build(),
 
         )

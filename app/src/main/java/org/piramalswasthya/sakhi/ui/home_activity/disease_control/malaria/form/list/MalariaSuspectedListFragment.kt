@@ -28,8 +28,7 @@ import org.piramalswasthya.sakhi.configuration.dynamicDataSet.FormField
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.mosquito_net.MosquitoNetFormViewModel
-import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToTemp
-import org.piramalswasthya.sakhi.utils.HelperUtil.fileToBase64
+import org.piramalswasthya.sakhi.utils.HelperUtil.compressImageToBase64
 import org.piramalswasthya.sakhi.utils.HelperUtil.getFileSizeInMB
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchCamera
 import org.piramalswasthya.sakhi.utils.HelperUtil.launchFilePicker
@@ -76,14 +75,15 @@ class MalariaSuspectedListFragment : Fragment() {
                     return@registerForActivityResult
                 }
 
-                val compressedFile = compressImageToTemp(uri, "camera_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val base64String = compressImageToBase64(uri, "camera_image", context)
 
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
+                    currentImageField?.apply {
+                        value = base64String
+                        errorMessage = null
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
             }
         }
 
@@ -104,14 +104,15 @@ class MalariaSuspectedListFragment : Fragment() {
                     return@registerForActivityResult
                 }
 
-                val compressedFile = compressImageToTemp(uri, "selected_image", context)
-                val base64String = compressedFile?.let { fileToBase64(it) }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val base64String = compressImageToBase64(uri, "selected_image", context)
 
-                currentImageField?.apply {
-                    value = base64String
-                    errorMessage = null
+                    currentImageField?.apply {
+                        value = base64String
+                        errorMessage = null
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
             }
         }
 

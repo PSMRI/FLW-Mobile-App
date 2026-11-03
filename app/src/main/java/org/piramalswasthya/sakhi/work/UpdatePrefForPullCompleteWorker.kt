@@ -12,6 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.PerfTracer
 
 @HiltWorker
 class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
@@ -28,6 +29,12 @@ class UpdatePrefForPullCompleteWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
 
     override suspend fun doWork(): Result {
+        // Closes the "full_pull" trace opened by PullFromAmritWorker: login-to-usable time on
+        // a first sync, routine refresh time afterwards.
+        PerfTracer.stopOpen(
+            PerfTracer.FULL_PULL,
+            mapOf("type" to if (preferenceDao.isFullPullComplete) "incremental" else "first")
+        )
         preferenceDao.isFullPullComplete = true
         return Result.success()
     }

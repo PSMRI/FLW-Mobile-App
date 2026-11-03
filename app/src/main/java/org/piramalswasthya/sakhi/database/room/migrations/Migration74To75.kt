@@ -2,58 +2,50 @@ package org.piramalswasthya.sakhi.database.room.migrations
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import org.piramalswasthya.sakhi.database.room.migrations.MigrationHelpers.columnExists
 
+// General Check-up follow-up per referral (FLW-1229): a beneficiary with two referrals (Cold and
+// Fever) gets one follow-up each, keyed like NCD_REFER (benId, referralReason, month). Old rows
+// are linked when the beneficiary has exactly one General Check-up referral.
 object Migration74To75 : Migration(74, 75) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
-            """
-            CREATE TABLE IF NOT EXISTS `TB_SUSPECTED_new` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `benId` INTEGER NOT NULL,
-                `visitDate` INTEGER NOT NULL,
-                `visitLabel` TEXT,
-                `typeOfTBCase` TEXT,
-                `reasonForSuspicion` TEXT,
-                `hasSymptoms` INTEGER NOT NULL,
-                `isSputumCollected` INTEGER,
-                `sputumSubmittedAt` TEXT,
-                `nikshayId` TEXT,
-                `sputumTestResult` TEXT,
-                `isChestXRayDone` INTEGER,
-                `chestXRayResult` TEXT,
-                `referralFacility` TEXT,
-                `isTBConfirmed` INTEGER,
-                `isDRTBConfirmed` INTEGER,
-                `isRecommendedForTpt` INTEGER,
-                `isConfirmed` INTEGER NOT NULL,
-                `referred` INTEGER,
-                `followUps` TEXT,
-                `syncState` INTEGER NOT NULL,
-                FOREIGN KEY(`benId`) REFERENCES `BENEFICIARY`(`beneficiaryId`)
-                    ON UPDATE CASCADE ON DELETE CASCADE
-            )
-            """.trimIndent()
+    override fun migrate(database: SupportSQLiteDatabase) {
+        if (!columnExists(database, "gc_referral_follow_up", "referralReason")) {
+            database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralReason TEXT NOT NULL DEFAULT ''")
+        }
+        if (!columnExists(database, "gc_referral_follow_up", "referralMonth")) {
+            database.execSQL("ALTER TABLE gc_referral_follow_up ADD COLUMN referralMonth INTEGER NOT NULL DEFAULT 0")
+        }
+        val gcReferrals = "FROM NCD_REFER r WHERE r.benId = gc_referral_follow_up.benId " +
+                "AND (r.type = 'GENERAL_CHECKUP' OR r.referralReason LIKE 'General Check-up: %')"
+        database.execSQL(
+            "UPDATE gc_referral_follow_up SET " +
+                    "referralReason = (SELECT COALESCE(r.referralReason, '') $gcReferrals), " +
+                    "referralMonth = (SELECT r.revisitMonth $gcReferrals) " +
+                    "WHERE (SELECT COUNT(*) $gcReferrals) = 1"
         )
-        db.execSQL(
-            """
-            INSERT INTO `TB_SUSPECTED_new` (
-                `id`, `benId`, `visitDate`, `visitLabel`, `typeOfTBCase`, `reasonForSuspicion`,
-                `hasSymptoms`, `isSputumCollected`, `sputumSubmittedAt`, `nikshayId`,
-                `sputumTestResult`, `isChestXRayDone`, `chestXRayResult`, `referralFacility`,
-                `isTBConfirmed`, `isDRTBConfirmed`, `isRecommendedForTpt`, `isConfirmed`,
-                `referred`, `followUps`, `syncState`
-            )
-            SELECT
-                `id`, `benId`, `visitDate`, `visitLabel`, `typeOfTBCase`, `reasonForSuspicion`,
-                `hasSymptoms`, `isSputumCollected`, `sputumSubmittedAt`, `nikshayId`,
-                `sputumTestResult`, `isChestXRayDone`, `chestXRayResult`, `referralFacility`,
-                `isTBConfirmed`, `isDRTBConfirmed`, `recommendedForTpt`, `isConfirmed`,
-                `referred`, `followUps`, `syncState`
-            FROM `TB_SUSPECTED`
-            """.trimIndent()
+        // A follow-up saved on this phone kept the referral date; use it when there are several referrals.
+        val sameDay = "$gcReferrals AND strftime('%Y-%m-%d', r.revisitDate / 1000, 'unixepoch', 'localtime') = " +
+                "gc_referral_follow_up.referredOnDate"
+        database.execSQL(
+            "UPDATE gc_referral_follow_up SET " +
+                    "referralReason = (SELECT COALESCE(r.referralReason, '') $sameDay), " +
+                    "referralMonth = (SELECT r.revisitMonth $sameDay) " +
+                    "WHERE referralReason = '' AND (SELECT COUNT(*) $sameDay) = 1"
         )
-        db.execSQL("DROP TABLE `TB_SUSPECTED`")
-        db.execSQL("ALTER TABLE `TB_SUSPECTED_new` RENAME TO `TB_SUSPECTED`")
-        db.execSQL("CREATE INDEX IF NOT EXISTS `ind_tbs` ON `TB_SUSPECTED` (`benId`)")
+        // Several unlinked rows of one beneficiary would collide on the new key. Keep one: an
+        // unsynced row first (not on the server yet), then the latest.
+        database.execSQL(
+            "DELETE FROM gc_referral_follow_up WHERE EXISTS (SELECT 1 FROM gc_referral_follow_up o " +
+                    "WHERE o.benId = gc_referral_follow_up.benId " +
+                    "AND o.referralReason = gc_referral_follow_up.referralReason " +
+                    "AND o.referralMonth = gc_referral_follow_up.referralMonth " +
+                    "AND (o.isSynced < gc_referral_follow_up.isSynced " +
+                    "OR (o.isSynced = gc_referral_follow_up.isSynced AND o.id > gc_referral_follow_up.id)))"
+        )
+        database.execSQL("DROP INDEX IF EXISTS `index_gc_referral_follow_up_benId_followUpDate`")
+        database.execSQL(
+            "CREATE UNIQUE INDEX IF NOT EXISTS `index_gc_referral_follow_up_benId_referralReason_referralMonth` " +
+                    "ON `gc_referral_follow_up` (`benId`, `referralReason`, `referralMonth`)"
+        )
     }
 }

@@ -325,6 +325,7 @@ data class HbncHomeVisit(
     val supSignDate: Long,
 )
 
+@JsonClass(generateAdapter = true)
 data class HBNCPart1Post(
     var id: Long,
     var benId: Long,
@@ -384,6 +385,7 @@ data class HBNCPart1Post(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class HBNCPart2Post(
     var id: Long,
     var benId: Long,
@@ -433,6 +435,7 @@ data class HBNCPart2Post(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class HBNCVisitPost(
     var id: Long,
     var benId: Long,
