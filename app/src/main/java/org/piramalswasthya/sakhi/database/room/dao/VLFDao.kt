@@ -25,7 +25,12 @@ interface VLFDao {
     fun saveRecord(vhndCache: VHNDCache)
 
     @Query("""
-    SELECT * FROM VHND
+    SELECT id, vhndDate, place, noOfBeneficiariesAttended, NULL AS image1, NULL AS image2,
+        vhndPlaceId, pregnantWomenAnc, lactatingMothersPnc, childrenImmunization,
+        knowledgeBalancedDiet, careDuringPregnancy, importanceBreastfeeding,
+        complementaryFeeding, hygieneSanitation, familyPlanningHealthcare,
+        selectAllEducation, syncState
+    FROM VHND
     ORDER BY date(
         substr(vhndDate, 7, 4) || '-' ||
         substr(vhndDate, 4, 2) || '-' ||
@@ -41,7 +46,10 @@ interface VLFDao {
     fun saveRecord(vhndCache: VHNCCache)
 
     @Query("""
-    SELECT * FROM VHNC
+    SELECT id, vhncDate, place, noOfBeneficiariesAttended, NULL AS image1, NULL AS image2,
+        villageName, anm, aww, noOfPragnentWoment, noOfLactingMother, noOfCommittee,
+        followupPrevius, syncState
+    FROM VHNC
     ORDER BY date(
         substr(vhncDate, 7, 4) || '-' ||
         substr(vhncDate, 4, 2) || '-' ||
@@ -57,7 +65,10 @@ interface VLFDao {
     fun saveRecord(phcCache: PHCReviewMeetingCache)
 
     @Query("""
-    SELECT * FROM PHCReviewMeeting
+    SELECT id, placeId, phcReviewDate, place, villageName, mitaninHistory,
+        mitaninActivityCheckList, noOfBeneficiariesAttended, NULL AS image1, NULL AS image2,
+        syncState
+    FROM PHCReviewMeeting
     ORDER BY date(
         substr(phcReviewDate, 7, 4) || '-' ||
         substr(phcReviewDate, 4, 2) || '-' ||
@@ -70,7 +81,8 @@ interface VLFDao {
     suspend fun getAHD(id: Int): AHDCache?
 
     @Query("""
-    SELECT * FROM AHDMeeting
+    SELECT id, mobilizedForAHD, ahdPlace, ahdDate, NULL AS image1, NULL AS image2, syncState
+    FROM AHDMeeting
     ORDER BY date(
         substr(ahdDate, 7, 4) || '-' ||
         substr(ahdDate, 4, 2) || '-' ||
@@ -87,7 +99,9 @@ interface VLFDao {
     suspend fun getDeworming(id: Int): DewormingCache?
 
     @Query("""
-    SELECT * FROM DewormingMeeting
+    SELECT id, dewormingDone, dewormingDate, dewormingLocation, ageGroup,
+        NULL AS image1, NULL AS image2, regDate, syncState
+    FROM DewormingMeeting
     ORDER BY date(
         substr(dewormingDate, 7, 4) || '-' ||
         substr(dewormingDate, 4, 2) || '-' ||
@@ -95,6 +109,30 @@ interface VLFDao {
     ) DESC
 """)
     fun getAllDeworming(): Flow<List<DewormingCache>>
+
+    @Query("SELECT vhndDate FROM VHND")
+    fun getAllVHNDDates(): Flow<List<String?>>
+
+    @Query("SELECT vhncDate FROM VHNC")
+    fun getAllVHNCDates(): Flow<List<String?>>
+
+    @Query("SELECT phcReviewDate FROM PHCReviewMeeting")
+    fun getAllPHCDates(): Flow<List<String?>>
+
+    @Query("SELECT ahdDate FROM AHDMeeting")
+    fun getAllAHDDates(): Flow<List<String?>>
+
+    @Query("SELECT COUNT(*) FROM VHND WHERE vhndDate = :date AND place IS :place")
+    fun countVHNDByDateAndPlace(date: String, place: String?): Int
+
+    @Query("SELECT COUNT(*) FROM VHNC WHERE vhncDate = :date AND place IS :place")
+    fun countVHNCByDateAndPlace(date: String, place: String?): Int
+
+    @Query("SELECT COUNT(*) FROM PHCReviewMeeting WHERE phcReviewDate = :date AND place IS :place")
+    fun countPHCByDateAndPlace(date: String, place: String?): Int
+
+    @Query("SELECT COUNT(*) FROM AHDMeeting WHERE ahdDate = :date AND ahdPlace IS :place")
+    fun countAHDByDateAndPlace(date: String, place: String?): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveRecord(dewormingCache: DewormingCache)

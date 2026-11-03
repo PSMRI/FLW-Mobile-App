@@ -5,7 +5,6 @@
     import android.content.ActivityNotFoundException
     import android.content.Context
     import android.content.Intent
-    import android.graphics.BitmapFactory
     import android.graphics.Color
     import android.graphics.Typeface
     import android.net.Uri
@@ -20,6 +19,7 @@
     import androidx.core.content.ContextCompat
     import androidx.core.content.FileProvider
     import androidx.recyclerview.widget.RecyclerView
+    import com.bumptech.glide.Glide
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
     import kotlinx.coroutines.CoroutineScope
@@ -39,9 +39,6 @@
     import java.io.FileOutputStream
     import java.text.SimpleDateFormat
     import java.util.*
-
-    // Longest side of image previews in the form; the stored image itself is unchanged.
-    private const val PREVIEW_MAX_PX = 512
 
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
@@ -108,6 +105,7 @@
         }
 
         override fun onViewRecycled(holder: FormViewHolder) {
+            holder.clearImageRequests()
             holder.clear()
             super.onViewRecycled(holder)
         }
@@ -124,8 +122,11 @@
             private val inputContainer: ViewGroup = view.findViewById(R.id.inputContainer)
             private val viewHolderScope = MainScope()
             private var muacDebounceJob: Job? = null
+            private val imageViews = mutableSetOf<ImageView>()
 
             private fun loadImageFromPath(context: android.content.Context, filePath: String, imageView: ImageView) {
+                imageViews.add(imageView)
+                Glide.with(imageView).clear(imageView)
                 if (filePath.isBlank()) {
                     imageView.setImageResource(R.drawable.ic_doc_upload)
                     return
@@ -186,10 +187,11 @@
                             try {
                                 val base64String = filePath.substringAfter(",", filePath)
                                 val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-                                val bitmap = decodeSampled { opts ->
-                                    BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size, opts)
-                                }
-                                imageView.setImageBitmap(bitmap)
+                                Glide.with(imageView)
+                                    .load(decodedBytes)
+                                    .placeholder(R.drawable.ic_person)
+                                    .error(R.drawable.ic_person)
+                                    .into(imageView)
                             } catch (e: Exception) {
                                 Timber.e(e, "Failed to decode base64 image")
                                 imageView.setImageResource(R.drawable.ic_person)
@@ -198,12 +200,11 @@
 
                         else -> {
                             val uri = Uri.parse(filePath)
-                            val bitmap = decodeSampled { opts ->
-                                context.contentResolver.openInputStream(uri)?.use {
-                                    BitmapFactory.decodeStream(it, null, opts)
-                                }
-                            }
-                            if (bitmap != null) imageView.setImageBitmap(bitmap) else imageView.setImageURI(uri)
+                            Glide.with(imageView)
+                                .load(uri)
+                                .placeholder(R.drawable.ic_person)
+                                .error(R.drawable.ic_person)
+                                .into(imageView)
                         }
                     }
                 } catch (e: Exception) {
@@ -212,28 +213,22 @@
                 }
             }
 
-            /**
-             * Decodes a thumbnail-sized bitmap: a bounds pass, then a sampled pass. The form
-             * shows a small preview, and full-size decodes on every rebind caused OOM / GC ANRs.
-             */
-            private fun decodeSampled(decode: (BitmapFactory.Options) -> android.graphics.Bitmap?): android.graphics.Bitmap? {
-                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                decode(bounds)
-                var sample = 1
-                while (bounds.outWidth / (sample * 2) >= PREVIEW_MAX_PX &&
-                    bounds.outHeight / (sample * 2) >= PREVIEW_MAX_PX
-                ) sample *= 2
-                return decode(BitmapFactory.Options().apply { inSampleSize = sample })
-            }
-
             fun clear() {
                 muacDebounceJob?.cancel()
                 muacDebounceJob = null
                 viewHolderScope.coroutineContext.cancelChildren()
             }
 
+            fun clearImageRequests() {
+                imageViews.forEach { imageView ->
+                    Glide.with(imageView).clear(imageView)
+                }
+                imageViews.clear()
+            }
+
             fun bind(field: FormField) {
 
+                clearImageRequests()
                 itemView.visibility = View.VISIBLE
                 if (!field.visible) {
                     itemView.visibility = View.GONE

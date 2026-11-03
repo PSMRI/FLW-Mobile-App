@@ -29,7 +29,6 @@ class HRPNonPregnantListFragment : Fragment() {
 
     private val viewModel: HRPNonPregnantListViewModel by viewModels()
 
-    private val bottomSheet: HRNonPregnantTrackBottomSheet by lazy { HRNonPregnantTrackBottomSheet() }
     private var isBottomSheetShowing = false
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
@@ -74,7 +73,7 @@ class HRPNonPregnantListFragment : Fragment() {
                     if (!isBottomSheetShowing) {
                         isBottomSheetShowing = true
                         viewModel.setBenId(benId)
-                        bottomSheet.show(
+                        HRNonPregnantTrackBottomSheet().show(
                             childFragmentManager,
                             resources.getString(R.string.follow_up)
                         )
@@ -88,7 +87,7 @@ class HRPNonPregnantListFragment : Fragment() {
         )
         binding.rvAny.adapter = benAdapter
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.benList.collect {
                 if (it.isEmpty())
                     binding.flEmpty.visibility = View.VISIBLE
@@ -132,8 +131,8 @@ class HRPNonPregnantListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

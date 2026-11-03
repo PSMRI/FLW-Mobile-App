@@ -42,7 +42,7 @@ data class BenWithTbReferralFollowUpCache(
         entityColumn = "benId",
         entity = TBReferralFollowUpEntity::class
     )
-    val referralFollowUps: TBReferralFollowUpEntity,
+    val referralFollowUps: TBReferralFollowUpEntity?,
     @Relation(
         parentColumn = "benId",
         entityColumn = "benId"
@@ -60,7 +60,7 @@ data class BenWithTbReferralFollowUpCache(
 
 data class BenWithTbReferralFollowUpDomain(
     val ben: BenBasicDomain,
-    val referralFollowUps: TBReferralFollowUpEntity,
+    val referralFollowUps: TBReferralFollowUpEntity?,
     val tbSuspected: TBSuspectedCache?
 
 )

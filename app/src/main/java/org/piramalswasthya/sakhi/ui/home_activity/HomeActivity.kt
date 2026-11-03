@@ -931,6 +931,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
     override fun onDestroy() {
         super.onDestroy()
         inAppUpdateHelper.unregisterListener()
+        if (FBMessaging.messageUpdate === this) FBMessaging.messageUpdate = null
         _binding = null
     }
 

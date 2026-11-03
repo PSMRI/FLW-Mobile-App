@@ -201,6 +201,23 @@ class TBScreeningDatasetTest : BaseViewModelTest() {
     }
 
     @Test
+    fun `prison risk factor is auto selected on create and edit`() = runTest {
+        val dataset = TBScreeningDataset(context, Languages.ENGLISH)
+
+        dataset.setUpPage(ben = null, saved = null, isPrisonResident = true)
+        assertEquals(setOf("PRISON"), selectedRiskFactorCodes(dataset, isMale = false))
+
+        val saved = TBScreeningCache(benId = 1L).apply {
+            keyPopulationRiskFactors = listOf("OTHER")
+        }
+        dataset.setUpPage(ben = null, saved = saved, isPrisonResident = true)
+        assertEquals(
+            setOf("OTHER", "PRISON"),
+            selectedRiskFactorCodes(dataset, isMale = false)
+        )
+    }
+
+    @Test
     fun `male beneficiaries do not receive pregnancy or lactating options`() = runTest {
         val beneficiary = mockk<BenRegCache>(relaxed = true)
         every { beneficiary.gender } returns Gender.MALE

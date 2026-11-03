@@ -36,6 +36,10 @@
 
     </style>
 
+    <style name="Theme.Sakhi.Launch">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
     <style name="ButtonStyled" parent="Widget.MaterialComponents.Button">
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">12dp</item>

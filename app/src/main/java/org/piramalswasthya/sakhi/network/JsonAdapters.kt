@@ -2,6 +2,7 @@ package org.piramalswasthya.sakhi.network
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import org.piramalswasthya.sakhi.database.room.SyncState
@@ -958,7 +959,9 @@ data class VHNDDTO(
     var vhndDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var vhndPlaceId: Int? = 0,
     var pregnantWomenAnc: String? = null,
@@ -1000,7 +1003,9 @@ data class VHNCDTO(
     var vhncDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var villageName: String? = null,
     var anm: Int? = 0,
@@ -1036,7 +1041,9 @@ data class PHCReviewDTO(
     var phcReviewDate: String?,
     var place: String? = null,
     var noOfBeneficiariesAttended: Int? = null,
+    @SerializedName(value = "Image1", alternate = ["image1"])
     var Image1: String? = null,
+    @SerializedName(value = "Image2", alternate = ["image2"])
     var Image2: String? = null,
     var villageName: String? = null,
     var mitaninHistory: String? = null,
@@ -1279,6 +1286,9 @@ data class TBSuspectedDTO(
     var referralFacility: String? = null,
     var isTBConfirmed: Boolean? = null,
     var isDRTBConfirmed: Boolean? = null,
+    @Json(name = "isRecommendedForTpt")
+    @SerializedName("isRecommendedForTpt")
+    var isRecommendedForTpt: Boolean? = null,
     var isConfirmed: Boolean = false,
 
     ) {
@@ -1301,6 +1311,7 @@ data class TBSuspectedDTO(
             referralFacility = referralFacility,
             isTBConfirmed = isTBConfirmed,
             isDRTBConfirmed = isDRTBConfirmed,
+            isRecommendedForTpt = isRecommendedForTpt,
             isConfirmed = isConfirmed,
             syncState = SyncState.SYNCED
         )

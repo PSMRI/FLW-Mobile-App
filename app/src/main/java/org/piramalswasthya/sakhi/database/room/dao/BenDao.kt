@@ -352,26 +352,31 @@ interface BenDao {
 
     @Transaction
     @Query(
-                "SELECT DISTINCT BEN_BASIC_CACHE.* FROM BEN_BASIC_CACHE " +
-                "LEFT JOIN TB_SCREENING ON BEN_BASIC_CACHE.benId = TB_SCREENING.benId " +
-                "LEFT JOIN ncd_referal_all_visit ON BEN_BASIC_CACHE.benId = ncd_referal_all_visit.benId " +
-                "WHERE BEN_BASIC_CACHE.villageId = :selectedVillage " +
-                "AND BEN_BASIC_CACHE.isDeactivate = 0 AND BEN_BASIC_CACHE.isDeath = 0 " +
+                "SELECT DISTINCT ben.*, CASE WHEN BENEFICIARY.householdId = 0 " +
+                "AND TRIM(COALESCE(BENEFICIARY.livingPlace, '')) IN ('Prison', 'कारागार', 'কারাগার', 'কাৰাগাৰ') " +
+                "THEN 1 ELSE 0 END AS isPrisonResident FROM BEN_BASIC_CACHE ben " +
+                "LEFT JOIN TB_SCREENING ON ben.benId = TB_SCREENING.benId " +
+                "LEFT JOIN ncd_referal_all_visit referral ON ben.benId = referral.benId " +
+                "LEFT JOIN BENEFICIARY ON BENEFICIARY.beneficiaryId = ben.benId " +
+                "WHERE ben.villageId = :selectedVillage " +
+                "AND ben.isDeactivate = 0 AND ben.isDeath = 0 " +
                 "AND (" +
                 "(TB_SCREENING.keyPopulationRiskFactors IS NOT NULL " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '' " +
                 "AND TB_SCREENING.keyPopulationRiskFactors != '[]') " +
-                "OR EXISTS (SELECT 1 FROM CBAC WHERE CBAC.benId = BEN_BASIC_CACHE.benId " +
+                "OR EXISTS (SELECT 1 FROM CBAC WHERE CBAC.benId = ben.benId " +
                 "AND (CBAC.cbac_smoke_posi IN (2, 3) " +
                 "OR CBAC.cbac_alcohol_posi = 2 " +
                 "OR CBAC.cbac_fuel_used_posi BETWEEN 1 AND 5 " +
                 "OR CBAC.cbac_occupational_exposure_posi = 3)) " +
-                "OR BEN_BASIC_CACHE.reproductiveStatusId IN (2, 3) " +
-                "OR (BEN_BASIC_CACHE.dob IS NOT NULL AND " +
-                "CAST((strftime('%s','now') - BEN_BASIC_CACHE.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +
-                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%hypertension%' " +
-                "OR LOWER(COALESCE(ncd_referal_all_visit.diagnosisCodes, '')) LIKE '%diabetes%'" +
-                ") " + BenListOrder.LIFO
+                "OR ben.reproductiveStatusId IN (2, 3) " +
+                "OR (ben.dob IS NOT NULL AND " +
+                "CAST((strftime('%s','now') - ben.dob/1000)/60/60/24/365 AS INTEGER) > 60) " +
+                "OR LOWER(COALESCE(referral.diagnosisCodes, '')) LIKE '%hypertension%' " +
+                "OR LOWER(COALESCE(referral.diagnosisCodes, '')) LIKE '%diabetes%' " +
+                "OR (BENEFICIARY.householdId = 0 " +
+                "AND TRIM(COALESCE(BENEFICIARY.livingPlace, '')) IN ('Prison', 'कारागार', 'কারাগার', 'কাৰাগাৰ'))" +
+                ") " + BenListOrder.LIFO_BEN
     )
     fun getAllTbScreenedRiskFactorBen(selectedVillage: Int): Flow<List<BenWithTbScreeningCache>>
 
@@ -1000,10 +1005,19 @@ GROUP BY b.benId
     fun getScreeningList(villageId: Int): Flow<List<BenBasicCache>>
 
     @Transaction
-    @Query("select b.* from BEN_BASIC_CACHE b inner join tb_screening t on  b.benId = t.benId LEFT JOIN TB_SUSPECTED ts ON b.benId = ts.benId  where villageId = :villageId and isDeactivate=0 and tbsnFilled = 1 and (t.bloodInSputum =1 or t.coughMoreThan2Weeks = 1 or feverMoreThan2Weeks = 1 or nightSweats = 1 or lossOfWeight = 1 or historyOfTb = 1)AND (\n" +
-            "            ts.benId IS NULL\n" +
-            "            OR ts.isConfirmed = 0\n" +
-            "        )" + BenListOrder.LIFO_B)
+    @Query("""
+        SELECT b.* FROM BEN_BASIC_CACHE b
+        LEFT JOIN tb_screening t ON b.benId = t.benId
+        LEFT JOIN TB_SUSPECTED ts ON b.benId = ts.benId
+        WHERE b.villageId = :villageId AND b.isDeactivate = 0
+          AND (
+            (t.benId IS NOT NULL AND b.tbsnFilled = 1
+             AND (t.bloodInSputum = 1 OR t.coughMoreThan2Weeks = 1 OR t.feverMoreThan2Weeks = 1
+                  OR t.nightSweats = 1 OR t.lossOfWeight = 1 OR t.historyOfTb = 1)
+             AND (ts.benId IS NULL OR (IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)))
+            OR (ts.benId IS NOT NULL AND IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)
+          )
+        """ + BenListOrder.LIFO_B)
     fun getTbScreeningList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
 
     @Transaction

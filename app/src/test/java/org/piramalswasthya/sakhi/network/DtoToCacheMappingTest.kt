@@ -428,6 +428,16 @@ class DtoToCacheMappingTest {
         assertEquals(true, cache.hasSymptoms)
     }
 
+    @Test fun `TBSuspectedDTO toCache maps isRecommendedForTpt`() {
+        val cache = TBSuspectedDTO(
+            id = 1L, benId = 2L, visitDate = null, isSputumCollected = null,
+            sputumSubmittedAt = null, nikshayId = null, sputumTestResult = null,
+            referred = null, followUps = null, visitLabel = null, isRecommendedForTpt = true
+        ).toCache()
+
+        assertEquals(true, cache.isRecommendedForTpt)
+    }
+
     // ---------------- TBConfirmedTreatmentDTO ----------------
     @Test fun `TBConfirmedTreatmentDTO toCache maps benId and default reasonForDeath`() {
         val cache = TBConfirmedTreatmentDTO(

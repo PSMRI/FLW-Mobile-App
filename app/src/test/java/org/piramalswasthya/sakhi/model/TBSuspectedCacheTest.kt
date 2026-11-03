@@ -26,6 +26,7 @@ class TBSuspectedCacheTest {
         referralFacility = "DH",
         isTBConfirmed = true,
         isDRTBConfirmed = false,
+        isRecommendedForTpt = true,
         isConfirmed = true,
         referred = true,
         followUps = "[]"
@@ -45,6 +46,7 @@ class TBSuspectedCacheTest {
         assertEquals(true, dto.isConfirmed)
         assertEquals(true, dto.isTBConfirmed)
         assertEquals(false, dto.isDRTBConfirmed)
+        assertEquals(true, dto.isRecommendedForTpt)
     }
 
     @Test

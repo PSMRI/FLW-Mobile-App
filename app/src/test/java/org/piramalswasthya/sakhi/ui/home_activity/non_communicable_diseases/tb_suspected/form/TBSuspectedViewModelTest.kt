@@ -30,6 +30,7 @@ import org.piramalswasthya.sakhi.model.LocationRecord
 import org.piramalswasthya.sakhi.model.TBSuspectedCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
+import org.piramalswasthya.sakhi.repositories.dynamicRepo.TBReferralFollowUpRepository
 import org.piramalswasthya.sakhi.utils.HelperUtil
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,6 +41,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
     @MockK private lateinit var mockResources: Resources
     @MockK private lateinit var tbRepo: TBRepo
     @MockK private lateinit var benRepo: BenRepo
+    @MockK private lateinit var tbReferralFollowUpRepository: TBReferralFollowUpRepository
 
     private lateinit var viewModel: TBSuspectedViewModel
     private val savedStateHandle = SavedStateHandle(mapOf("benId" to 1L))
@@ -61,7 +63,9 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         coEvery { benRepo.getBenFromId(any()) } returns null
         mockkStatic(Dispatchers::class)
         every { Dispatchers.IO } returns testDispatcher
-        viewModel = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        viewModel = TBSuspectedViewModel(
+            savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository
+        )
     }
 
     @Test fun `viewModel initializes successfully`() { assertNotNull(viewModel) }
@@ -100,7 +104,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { tbRepo.getTBSuspected(1L) } returns null
 
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
 
         assertEquals("Amit Shah", vm.benName.value)
@@ -113,7 +117,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { tbRepo.getTBSuspected(1L) } returns suspected
 
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
 
         assertEquals(true, vm.recordExists.value)
@@ -124,7 +128,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         coEvery { benRepo.getBenFromId(1L) } returns null
         coEvery { tbRepo.getTBSuspected(1L) } returns null
 
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
 
         assertEquals(false, vm.recordExists.value)
@@ -146,7 +150,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
     fun `saveForm saves the suspected record and sets SAVE_SUCCESS when ben exists`() = runTest {
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { tbRepo.getTBSuspected(1L) } returns null
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
 
         vm.saveForm()
@@ -161,7 +165,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
         val suspected = TBSuspectedCache(benId = 1L)
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { tbRepo.getTBSuspected(1L) } returns suspected
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
 
         vm.saveForm()
@@ -175,7 +179,7 @@ class TBSuspectedViewModelTest : BaseViewModelTest() {
     fun `saveForm sets SAVE_FAILED when saving throws`() = runTest {
         coEvery { benRepo.getBenFromId(1L) } returns benRegCache()
         coEvery { tbRepo.getTBSuspected(1L) } returns null
-        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo)
+        val vm = TBSuspectedViewModel(savedStateHandle, preferenceDao, context, tbRepo, benRepo, tbReferralFollowUpRepository)
         advanceUntilIdle()
         coEvery { tbRepo.saveTBSuspected(any()) } throws RuntimeException("db error")
 

@@ -9,6 +9,8 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.piramalswasthya.sakhi.database.room.migrations.ALL_MIGRATIONS
+import org.piramalswasthya.sakhi.database.room.migrations.MigrationHelpers
 
 class InAppDbRecentMigrationsTest {
 
@@ -20,19 +22,8 @@ class InAppDbRecentMigrationsTest {
     }
 
     private fun invokeMigration(name: String, db: SupportSQLiteDatabase) {
-        val clazz = Class.forName(
-            "org.piramalswasthya.sakhi.database.room.InAppDb\$Companion\$getInstance\$$name\$1"
-        )
-        val constructor = clazz.declaredConstructors.first()
-        constructor.isAccessible = true
-        val instance = constructor.newInstance()
-        val method = clazz.declaredMethods.first {
-            (it.name == "migrate" || it.name == "invoke") &&
-                    it.parameterTypes.size == 1 &&
-                    it.parameterTypes[0] == SupportSQLiteDatabase::class.java
-        }
-        method.isAccessible = true
-        method.invoke(instance, db)
+        val (from, to) = name.removePrefix("MIGRATION_").split("_").map { it.toInt() }
+        ALL_MIGRATIONS.single { it.startVersion == from && it.endVersion == to }.migrate(db)
     }
 
     private fun masterCursor(exists: Boolean): Cursor {
@@ -80,6 +71,57 @@ class InAppDbRecentMigrationsTest {
 
     private fun assertNotExecuted(fragment: String) {
         assertTrue(fragment, executedSql.none { it.contains(fragment) })
+    }
+
+    @Test
+    fun `migrations form one unbroken chain up to the database version`() {
+        val recent = ALL_MIGRATIONS.filter { it.startVersion >= 70 }.sortedBy { it.startVersion }
+        assertEquals((70..76).toList(), recent.map { it.startVersion })
+        recent.forEach { assertEquals(it.startVersion + 1, it.endVersion) }
+    }
+
+    @Test
+    fun `MIGRATION_75_76 adds recommendedForTpt to TB_SUSPECTED`() {
+        val db = mockDb()
+
+        invokeMigration("MIGRATION_75_76", db)
+
+        assertExecuted("ALTER TABLE TB_SUSPECTED ADD COLUMN recommendedForTpt INTEGER")
+    }
+
+    @Test
+    fun `MIGRATION_75_76 skips the column when TB_SUSPECTED already has it`() {
+        val db = mockDb(columns = listOf("id", "benId", "isRecommendedForTpt"))
+
+        invokeMigration("MIGRATION_75_76", db)
+
+        assertNotExecuted("ADD COLUMN recommendedForTpt")
+    }
+
+    @Test
+    fun `MIGRATION_76_77 rebuilds TB_SUSPECTED and copies recommendedForTpt into isRecommendedForTpt`() {
+        val db = mockDb(columns = listOf("id", "benId", "recommendedForTpt"))
+
+        invokeMigration("MIGRATION_76_77", db)
+
+        assertExecuted("CREATE TABLE IF NOT EXISTS `TB_SUSPECTED_new`")
+        assertTrue(executedSql.any {
+            it.startsWith("INSERT INTO `TB_SUSPECTED_new`") && it.contains("`isDRTBConfirmed`, `recommendedForTpt`, `isConfirmed`")
+        })
+        assertExecuted("DROP TABLE `TB_SUSPECTED`")
+        assertExecuted("ALTER TABLE `TB_SUSPECTED_new` RENAME TO `TB_SUSPECTED`")
+        assertExecuted("CREATE INDEX IF NOT EXISTS `ind_tbs` ON `TB_SUSPECTED` (`benId`)")
+    }
+
+    @Test
+    fun `MIGRATION_76_77 copies NULL when the source column is missing`() {
+        val db = mockDb(columns = listOf("id", "benId"))
+
+        invokeMigration("MIGRATION_76_77", db)
+
+        assertTrue(executedSql.any {
+            it.startsWith("INSERT INTO `TB_SUSPECTED_new`") && it.contains("`isDRTBConfirmed`, NULL, `isConfirmed`")
+        })
     }
 
     @Test
@@ -284,7 +326,7 @@ class InAppDbRecentMigrationsTest {
         invokeMigration("MIGRATION_60_61", db)
 
         assertEquals(1, executedSql.size)
-        assertEquals(InAppDb.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL, executedSql.first())
+        assertEquals(MigrationHelpers.MIGRATION_60_61_NORMALIZE_ISDEATH_SQL, executedSql.first())
     }
 
     @Test

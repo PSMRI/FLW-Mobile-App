@@ -2343,6 +2343,9 @@
         <action
             android:id="@+id/action_ncdRefferedList_to_NCDReferalFormFragment"
             app:destination="@id/NCDReferalFormFragment" />
+        <action
+            android:id="@+id/action_ncdRefferedList_to_TBSuspectedFragment"
+            app:destination="@id/TBSuspectedFragment" />
     </fragment>
     <fragment
         android:id="@+id/childMonthListFragment"

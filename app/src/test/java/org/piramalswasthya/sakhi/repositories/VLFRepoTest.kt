@@ -184,10 +184,10 @@ class VLFRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `isFormFilledForCurrentMonth reports all false for empty data`() = runTest {
-        every { vlfDao.getAllVHND() } returns flowOf(emptyList())
-        every { vlfDao.getAllVHNC() } returns flowOf(emptyList())
-        every { vlfDao.getAllPHC() } returns flowOf(emptyList())
-        every { vlfDao.getAllAHD() } returns flowOf(emptyList())
+        every { vlfDao.getAllVHNDDates() } returns flowOf(emptyList())
+        every { vlfDao.getAllVHNCDates() } returns flowOf(emptyList())
+        every { vlfDao.getAllPHCDates() } returns flowOf(emptyList())
+        every { vlfDao.getAllAHDDates() } returns flowOf(emptyList())
         every { vlfDao.countDewormingInLastSixMonths() } returns flowOf(0)
 
         val result = repo.isFormFilledForCurrentMonth().first()
@@ -1329,6 +1329,58 @@ class VLFRepoTest : BaseRepositoryTest() {
     }
 
     @Test
+    fun `getVHNDFromServer skips entry when same date and place already exists locally`() = runTest {
+        loggedIn()
+        every { dbDao.getVHND(511) } returns null
+        every { dbDao.countVHNDByDateAndPlace("01-05-2026", "AWC") } returns 1
+        val json = """{"statusCode":200,"errorMessage":"","data":"{\"entries\":[{\"id\":511,\"vhndDate\":\"01-05-2026\",\"place\":\"AWC\"}]}"}"""
+        coEvery { api.getVLFData(any()) } returns jsonResponse(json)
+
+        assertEquals(1, repo.getVHNDFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<VHNDCache>()) }
+    }
+
+    @Test
+    fun `getVHNCFromServer skips entry when same date and place already exists locally`() = runTest {
+        loggedIn()
+        every { dbDao.getVHNC(611) } returns null
+        every { dbDao.countVHNCByDateAndPlace("01-05-2026", "AWC") } returns 1
+        val json = """{"statusCode":200,"errorMessage":"","data":"{\"entries\":[{\"id\":611,\"vhncDate\":\"01-05-2026\",\"place\":\"AWC\"}]}"}"""
+        coEvery { api.getVLFData(any()) } returns jsonResponse(json)
+
+        assertEquals(1, repo.getVHNCFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<VHNCCache>()) }
+    }
+
+    @Test
+    fun `getPHCFromServer skips entry when same date and place already exists locally`() = runTest {
+        loggedIn()
+        every { dbDao.getPHC(711) } returns null
+        every { dbDao.countPHCByDateAndPlace("01-05-2026", null) } returns 1
+        val json = """{"statusCode":200,"errorMessage":"","data":"{\"entries\":[{\"id\":711,\"phcReviewDate\":\"01-05-2026\"}]}"}"""
+        coEvery { api.getVLFData(any()) } returns jsonResponse(json)
+
+        assertEquals(1, repo.getPHCFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<PHCReviewMeetingCache>()) }
+    }
+
+    @Test
+    fun `getAHDFromServer skips entry when same date and place already exists locally`() = runTest {
+        loggedIn()
+        coEvery { dbDao.getAHD(811) } returns null
+        every { dbDao.countAHDByDateAndPlace("01-05-2026", "SC") } returns 1
+        val json = """{"statusCode":200,"errorMessage":"","data":"{\"entries\":[{\"id\":811,\"mobilizedForAHD\":\"yes\",\"ahdDate\":\"01-05-2026\",\"ahdPlace\":\"SC\"}]}"}"""
+        coEvery { api.getVLFData(any()) } returns jsonResponse(json)
+
+        assertEquals(1, repo.getAHDFromServer())
+
+        coVerify(exactly = 0) { dbDao.saveRecord(any<AHDCache>()) }
+    }
+
+    @Test
     fun `getDewormingFromServer saves new entries and skips existing, doneless or malformed ones`() = runTest {
         loggedIn()
         coEvery { dbDao.getDeworming(901) } returns null
@@ -1659,19 +1711,10 @@ class VLFRepoTest : BaseRepositoryTest() {
         val today = java.time.LocalDate.now().format(
             java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy", java.util.Locale.ENGLISH)
         )
-        val vhnd = mockk<VHNDCache>(relaxed = true)
-        every { vhnd.vhndDate } returns today
-        val vhnc = mockk<VHNCCache>(relaxed = true)
-        every { vhnc.vhncDate } returns today
-        val phc = mockk<PHCReviewMeetingCache>(relaxed = true)
-        every { phc.phcReviewDate } returns today
-        val ahd = mockk<AHDCache>(relaxed = true)
-        every { ahd.ahdDate } returns today
-
-        every { vlfDao.getAllVHND() } returns flowOf(listOf(vhnd))
-        every { vlfDao.getAllVHNC() } returns flowOf(listOf(vhnc))
-        every { vlfDao.getAllPHC() } returns flowOf(listOf(phc))
-        every { vlfDao.getAllAHD() } returns flowOf(listOf(ahd))
+        every { vlfDao.getAllVHNDDates() } returns flowOf(listOf(today))
+        every { vlfDao.getAllVHNCDates() } returns flowOf(listOf(today))
+        every { vlfDao.getAllPHCDates() } returns flowOf(listOf(today))
+        every { vlfDao.getAllAHDDates() } returns flowOf(listOf(today))
         every { vlfDao.countDewormingInLastSixMonths() } returns flowOf(2)
 
         val result = repo.isFormFilledForCurrentMonth().first()
@@ -1685,17 +1728,16 @@ class VLFRepoTest : BaseRepositoryTest() {
 
     @Test
     fun `isFormFilledForCurrentMonth reports false when dates are unparsable`() = runTest {
-        val vhnd = mockk<VHNDCache>(relaxed = true)
-        every { vhnd.vhndDate } returns "not-a-date"
-        every { vlfDao.getAllVHND() } returns flowOf(listOf(vhnd))
-        every { vlfDao.getAllVHNC() } returns flowOf(emptyList())
-        every { vlfDao.getAllPHC() } returns flowOf(emptyList())
-        every { vlfDao.getAllAHD() } returns flowOf(emptyList())
+        every { vlfDao.getAllVHNDDates() } returns flowOf(listOf("not-a-date"))
+        every { vlfDao.getAllVHNCDates() } returns flowOf(emptyList())
+        every { vlfDao.getAllPHCDates() } returns flowOf(listOf(null))
+        every { vlfDao.getAllAHDDates() } returns flowOf(emptyList())
         every { vlfDao.countDewormingInLastSixMonths() } returns flowOf(0)
 
         val result = repo.isFormFilledForCurrentMonth().first()
 
         assertFalse(result["VHND"]!!)
+        assertFalse(result["PHC"]!!)
     }
 
     // =====================================================

@@ -687,6 +687,12 @@ data class BenWithCbacAndReferalCache(
     val tbFollowUp : List<TBReferralFollowUpEntity>,
     @Relation(
         parentColumn = "benId",
+        entityColumn = "benId",
+        entity = TBSuspectedCache::class
+    )
+    val tbSuspectedCases: List<TBSuspectedCache>,
+    @Relation(
+        parentColumn = "benId",
         entityColumn = "benId"
     )
     val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList()
@@ -694,7 +700,7 @@ data class BenWithCbacAndReferalCache(
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
         return BenWithCbacReferDomain(
-            ben.asBasicDomainModel(), cbacList,referral,tbFollowUp,
+            ben.asBasicDomainModel(), cbacList, referral, tbFollowUp, tbSuspectedCases,
             // The relation is per beneficiary; keep only this card's referral (same reason, same month).
             gcReferralFollowUp = gcFollowUp.filter {
                 it.referralReason == referral.referralReason && it.referralMonth == monthKey(referral.revisitDate)
@@ -708,6 +714,7 @@ data class BenWithCbacReferDomain(
     val savedCbacRecords: List<CbacCache>,
     val referalCac : ReferalCache,
     val tbrefferalFollowUp : List<TBReferralFollowUpEntity>,
+    val tbSuspectedCases: List<TBSuspectedCache>,
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
                 .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED,

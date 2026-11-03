@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
@@ -29,13 +30,20 @@ class EligibleCoupleFragment : Fragment() {
 
     private val viewModel: EligibleCoupleViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
-    private val binding by lazy { RvIconGridBinding.inflate(layoutInflater) }
+    private var _binding: RvIconGridBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val binding = RvIconGridBinding.inflate(layoutInflater)
+        _binding = binding
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,6 +53,7 @@ class EligibleCoupleFragment : Fragment() {
     }
 
     private fun setUpEligibleCoupleIconRvAdapter() {
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -54,7 +63,7 @@ class EligibleCoupleFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getEligibleCoupleDataset(resources))
@@ -63,6 +72,7 @@ class EligibleCoupleFragment : Fragment() {
     }
 
     private fun setUpEligibleCouple() {
+        val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
             requireContext().resources.getInteger(R.integer.icon_grid_span)
@@ -72,7 +82,7 @@ class EligibleCoupleFragment : Fragment() {
             IconGridAdapter.GridIconClickListener {
                 safeNavigate(it)
             },
-            viewModel.scope
+            viewLifecycleOwner.lifecycleScope
         )
         binding.rvIconGrid.adapter = rvAdapter
         rvAdapter.submitList(iconDataset.getEligibleCoupleDataset(resources))

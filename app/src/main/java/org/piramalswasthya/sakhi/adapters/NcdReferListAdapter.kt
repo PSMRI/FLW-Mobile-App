@@ -24,6 +24,7 @@ import org.piramalswasthya.sakhi.R
         private val listener: NcdReferallickListener,
         private val visible: Boolean,
         private val followUpVisible: (BenWithCbacReferDomain) -> Boolean = { visible },
+        private val isPresumptiveTbReferral: (BenWithCbacReferDomain) -> Boolean = { false },
     ) : ListAdapter<BenWithCbacReferDomain, NcdReferListAdapter.BenCbacViewHolder>(
         BenDiffUtilCallBack
     ) {
@@ -53,7 +54,8 @@ import org.piramalswasthya.sakhi.R
                 item: BenWithCbacReferDomain,
                 userName: String,
                 listener: NcdReferallickListener,
-                visible: Boolean
+                visible: Boolean,
+                isPresumptiveTbReferral: Boolean
             ) {
                 binding.benWithCbac = item
                 binding.referredFrom.text = userName
@@ -102,15 +104,19 @@ import org.piramalswasthya.sakhi.R
                     // Same General Check-up rule as the follow-up screen (type, or reason prefix when the type is missing).
                     val isGcReferral = item.referalCac.type == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
                             item.referalCac.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
-                    val isFollowUpPending = if (isGcReferral) {
-                        item.gcReferralFollowUp.isEmpty()
-                    } else {
-                        item.tbrefferalFollowUp.isNullOrEmpty()
+                    val isFollowUpPending = when {
+                        isGcReferral -> item.gcReferralFollowUp.isEmpty()
+                        isPresumptiveTbReferral -> item.tbSuspectedCases.isEmpty()
+                        else -> item.tbrefferalFollowUp.isNullOrEmpty()
                     }
 
                     binding.btnFollowUp.apply {
                         text = context.getString(
-                            if (isFollowUpPending) R.string.start_follow_up else R.string.view_follow_up
+                            when {
+                                isFollowUpPending -> R.string.start_follow_up
+                                isPresumptiveTbReferral -> R.string.tb_suspected_follow_up
+                                else -> R.string.view_follow_up
+                            }
                         )
                         setBackgroundColor(
                             ContextCompat.getColor(
@@ -138,7 +144,13 @@ import org.piramalswasthya.sakhi.R
 
             override fun onBindViewHolder(holder: BenCbacViewHolder, position: Int) {
             val item = getItem(position)
-            holder.bind(item, userName, listener, followUpVisible(item))
+            holder.bind(
+                item,
+                userName,
+                listener,
+                followUpVisible(item),
+                isPresumptiveTbReferral(item)
+            )
         }
 
 
