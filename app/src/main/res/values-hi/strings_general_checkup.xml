@@ -32,6 +32,7 @@
     <string name="gc_route_msg">%1$s को %2$s में संभाला जाता है। वहाँ जारी रखें। एक मामले में एक ही रेफरल बनता है, इसलिए सामान्य जाँच से दूसरा रेफरल नहीं बनेगा।</string>
     <string name="gc_route_continue">%1$s में जारी रखें</string>
     <string name="gc_route_stay">यहीं रहें</string>
+    <string name="gc_route_one_module">%1$s (%2$s) पहले से चुना हुआ है। दो अलग मॉड्यूल की समस्याएँ एक साथ नहीं चुनी जा सकतीं। पहले उसे हटाएँ।</string>
     <string name="gc_module_maternal">मातृ स्वास्थ्य</string>
     <string name="gc_module_child">शिशु देखभाल</string>
     <string name="gc_module_ecl">योग्य दंपति सूची</string>

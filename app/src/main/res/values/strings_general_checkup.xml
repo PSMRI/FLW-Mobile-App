@@ -32,6 +32,7 @@
     <string name="gc_route_msg">%1$s is handled in %2$s. Continue there. One episode creates one referral, so no second referral is made from General Check-up.</string>
     <string name="gc_route_continue">Continue in %1$s</string>
     <string name="gc_route_stay">Stay here</string>
+    <string name="gc_route_one_module">%1$s (%2$s) is already selected. Problems from two different modules cannot be selected together. Untick it first.</string>
     <string name="gc_module_maternal">Maternal Health</string>
     <string name="gc_module_child">Child Care</string>
     <string name="gc_module_ecl">Eligible Couple List</string>

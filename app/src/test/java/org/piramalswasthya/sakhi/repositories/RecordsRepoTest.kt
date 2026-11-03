@@ -129,7 +129,7 @@ class RecordsRepoTest : BaseRepositoryTest() {
     @Test
     fun `getHomeVisitUiState blocks add when the last visit was under thirty days ago`() =
         runTest {
-            val visit = homeVisitMock(visitDate = dateString(lastDayOfPreviousMonth()))
+            val visit = homeVisitMock(visitDate = dateString(daysAgo(10)))
             coEvery { ancHomeVisitDao.getSyncedVisitsByRchId(12L) } returns listOf(visit)
 
             val state = repo.getHomeVisitUiState(12L)
@@ -158,9 +158,9 @@ class RecordsRepoTest : BaseRepositoryTest() {
     private fun dateString(millis: Long): String =
         SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(java.util.Date(millis))
 
-    private fun lastDayOfPreviousMonth(): Long = Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_MONTH, 1)
-        add(Calendar.DAY_OF_MONTH, -1)
+    // A fixed offset, not "last day of last month": that is 30 or more days ago on the 30th and 31st.
+    private fun daysAgo(days: Int): Long = Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_MONTH, -days)
     }.timeInMillis
 
     // ---------------- search delegations ----------------

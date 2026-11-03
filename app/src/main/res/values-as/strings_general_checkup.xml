@@ -32,6 +32,7 @@
     <string name="gc_route_msg">%1$s %2$s ত চম্ভালা হয়। তাতে আগবাঢ়ক। এটা ঘটনাত এটাই ৰেফাৰেল হয়, সেয়ে সাধাৰণ স্বাস্থ্য পৰীক্ষাৰ পৰা দ্বিতীয় ৰেফাৰেল কৰা নহয়।</string>
     <string name="gc_route_continue">%1$s ত আগবাঢ়ক</string>
     <string name="gc_route_stay">ইয়াতে থাকক</string>
+    <string name="gc_route_one_module">%1$s (%2$s) আগতে বাছনি কৰা হৈছে। দুটা বেলেগ মডিউলৰ সমস্যা একেলগে বাছিব নোৱাৰি। প্ৰথমে সেইটো আঁতৰাওক।</string>
     <string name="gc_module_maternal">মাতৃ স্বাস্থ্য</string>
     <string name="gc_module_child">শিশু যত্ন</string>
     <string name="gc_module_ecl">যোগ্য দম্পতিৰ তালিকা</string>

@@ -32,6 +32,7 @@
     <string name="gc_route_msg">%1$s %2$s-এ পরিচালিত হয়। সেখানে চালিয়ে যান। একটি ঘটনায় একটিই রেফারেল হয়, তাই সাধারণ স্বাস্থ্য পরীক্ষা থেকে দ্বিতীয় রেফারেল করা হয় না।</string>
     <string name="gc_route_continue">%1$s-এ চালিয়ে যান</string>
     <string name="gc_route_stay">এখানে থাকুন</string>
+    <string name="gc_route_one_module">%1$s (%2$s) আগেই নির্বাচন করা আছে। দুটি আলাদা মডিউলের সমস্যা একসাথে নির্বাচন করা যায় না। আগে সেটি সরান।</string>
     <string name="gc_module_maternal">মাতৃ স্বাস্থ্য</string>
     <string name="gc_module_child">শিশু যত্ন</string>
     <string name="gc_module_ecl">যোগ্য দম্পতির তালিকা</string>
