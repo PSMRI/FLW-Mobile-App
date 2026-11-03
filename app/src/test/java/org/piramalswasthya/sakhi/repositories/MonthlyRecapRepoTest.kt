@@ -182,7 +182,10 @@ class MonthlyRecapRepoTest {
                 maternalHealthDataSource,
                 immunizationDataSource,
             ),
-        )
+        ).apply {
+            // Unit tests run as a debug build; exercise the release readiness gates.
+            assumeDeviceReadyInDebug = false
+        }
     }
 
     @Test

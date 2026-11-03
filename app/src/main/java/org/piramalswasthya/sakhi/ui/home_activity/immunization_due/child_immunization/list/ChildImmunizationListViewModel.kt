@@ -131,7 +131,7 @@ val benWithVaccineDetails = pastRecords.combine(vaccinesFlow) { vaccineIdList, v
         ImmunizationDetailsDomain(
             ben = cache.ben.asBasicDomainModel(),
             vaccineStateList = vaccines.filter {
-                it.immunizationService in ChildImmunizationCategory.ENTRY_STAGES ||
+                ChildImmunizationCategory.isListedForEntry(it.immunizationService) ||
                     it.minAllowedAgeInMillis < ageMillis ||
                     cache.ben.dob + it.minAllowedAgeInMillis <= endOfNextMonth
             }.map { vaccine ->

@@ -37,6 +37,17 @@ class NotificationEngine @Inject constructor(
 
     suspend fun deliverEveningNotification() = withContext(Dispatchers.IO) {
         try {
+            // Logged out: nobody to address and no work to count. The alarm keeps re-arming,
+            // so delivery resumes on its own after the next login.
+            val user = try {
+                pref.getLoggedInUser()
+            } catch (e: Exception) {
+                null
+            }
+            if (user == null) {
+                Timber.d("EveningNotif: no logged-in user, skipping")
+                return@withContext
+            }
             val today = ActivityClassifier.dateKey(System.currentTimeMillis())
             // dedupe: notification already delivered today → skip (LLD §6)
             if (dao.shownCountForDay(today) > 0) return@withContext
@@ -50,12 +61,7 @@ class NotificationEngine @Inject constructor(
                 "en"
             }
             val template = selector.select(bucket, language)
-            val name = try {
-                pref.getLoggedInUser()?.name
-            } catch (e: Exception) {
-                null
-            }
-            val body = filler.fill(template.bodyTemplate, name)
+            val body = filler.fill(template.bodyTemplate, user.name)
 
             // Only record it if it actually went out. The history row is what makes delivery
             // once-a-day, so writing it after a post that was refused (no POST_NOTIFICATIONS,

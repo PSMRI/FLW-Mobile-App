@@ -6,6 +6,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.helpers.Languages
 import org.piramalswasthya.sakhi.model.BenRegCache
+import org.piramalswasthya.sakhi.model.ChildImmunizationCategory
 import org.piramalswasthya.sakhi.model.FormElement
 import org.piramalswasthya.sakhi.model.ImmunizationCache
 import org.piramalswasthya.sakhi.model.InputType
@@ -154,11 +155,13 @@ class ImmunizationDataset(context: Context, language: Languages) : Dataset(conte
         if (dateOfVaccination.value.isNullOrBlank()) {
             dateOfVaccination.value = getDateFromLong(System.currentTimeMillis())
         }
-        // If the dose's min age is still in the future (young baby + 9–12 / 16–24
-        // month card), allow any date on/after DOB so QA can complete the schedule.
+        // QA builds only: if the dose's min age is still in the future (young baby +
+        // 9–12 / 16–24 month card), allow any date on/after DOB so QA can complete the
+        // schedule. Release keeps the dose's minimum age.
         val naturalMin = ben.dob + vaccine.minAllowedAgeInMillis
         dateOfVaccination.min =
-            if (naturalMin > System.currentTimeMillis()) ben.dob else naturalMin
+            if (ChildImmunizationCategory.earlyEntryEnabled && naturalMin > System.currentTimeMillis()) ben.dob
+            else naturalMin
         if (System.currentTimeMillis() > ben.dob + vaccine.maxAllowedAgeInMillis) {
             dateOfVaccination.max = ben.dob + vaccine.maxAllowedAgeInMillis
         } else {

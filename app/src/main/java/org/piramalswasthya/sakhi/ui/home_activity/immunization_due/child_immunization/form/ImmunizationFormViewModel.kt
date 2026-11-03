@@ -240,7 +240,7 @@ class ImmunizationFormViewModel @Inject constructor(
             ImmunizationDetailsDomain(ben = cache.ben.asBasicDomainModel(),
                 vaccineStateList = vaccines.filter {
                     // Birth → 16–24 months always listed (9–12 / 1-year / 16–24).
-                    it.immunizationService in ChildImmunizationCategory.ENTRY_STAGES ||
+                    ChildImmunizationCategory.isListedForEntry(it.immunizationService) ||
                         it.minAllowedAgeInMillis < ageMillis
                 }.map { vaccine ->
                     val dueDateMillis = cache.ben.dob + vaccine.minAllowedAgeInMillis

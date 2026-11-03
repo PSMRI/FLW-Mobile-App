@@ -54,6 +54,12 @@ class MonthlyRecapRepo @Inject constructor(
     /** Serializes metric generation so one payload is frozen per user+month. */
     private val metricsMutex = Mutex()
 
+    /**
+     * Debug builds assume the install-readiness gates are met (see [ensureCurrentRecapMetrics]).
+     * Unit tests also run as debug, so they switch this off to exercise the release gates.
+     */
+    internal var assumeDeviceReadyInDebug: Boolean = BuildConfig.DEBUG
+
     private suspend fun loggedInUserId(): Int? = withContext(Dispatchers.IO) {
         preferenceDao.getLoggedInUser()?.userId
     }
@@ -216,7 +222,7 @@ class MonthlyRecapRepo @Inject constructor(
                 // Debug builds therefore assume the answer a phone in continuous use would
                 // give. Nothing else is relaxed: the month still has to contain real,
                 // countable work, and release behaviour is untouched.
-                if (BuildConfig.DEBUG) {
+                if (assumeDeviceReadyInDebug) {
                     Timber.i("Monthly Recap: debug build — install-readiness gates assumed met")
                     RecapDataReadiness(isFullPullComplete = true, localDataSince = 1L)
                 } else {

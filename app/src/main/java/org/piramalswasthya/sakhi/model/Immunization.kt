@@ -24,6 +24,19 @@ enum class ChildImmunizationCategory {
             BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12, MONTH_16_24
         )
 
+        /**
+         * Early entry ([ENTRY_STAGES] listed regardless of age, dates allowed from DOB) is a
+         * QA aid for testing badges on young babies. Release builds keep the normal
+         * minimum-age rules. Tests may switch it off to check the release behaviour.
+         */
+        @Volatile
+        var earlyEntryEnabled: Boolean =
+            org.piramalswasthya.sakhi.BuildConfig.DEBUG ||
+                org.piramalswasthya.sakhi.BuildConfig.FLAVOR.contains("uat", ignoreCase = true)
+
+        fun isListedForEntry(stage: ChildImmunizationCategory?): Boolean =
+            earlyEntryEnabled && stage in ENTRY_STAGES
+
         /** First-year stages that count toward Child Fully Protected. */
         val FIRST_YEAR_STAGES: Set<ChildImmunizationCategory> = setOf(
             BIRTH, WEEK_6, WEEK_10, WEEK_14, MONTH_9_12
