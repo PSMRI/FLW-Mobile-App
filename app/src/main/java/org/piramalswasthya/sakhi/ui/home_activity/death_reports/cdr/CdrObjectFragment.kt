@@ -219,7 +219,7 @@ class CdrObjectFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let {
-            (it as HomeActivity).updateActionBar(R.drawable.ic__death, getString(R.string.cdr))
+            (it as HomeActivity).updateActionBar(R.drawable.ic__child_death, getString(R.string.cdr))
         }
     }
 

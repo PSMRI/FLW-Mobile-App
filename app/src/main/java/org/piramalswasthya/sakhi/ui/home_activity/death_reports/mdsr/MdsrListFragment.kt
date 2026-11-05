@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
-import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
+import org.piramalswasthya.sakhi.adapters.DeathReportBenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
@@ -52,8 +52,8 @@ class MdsrListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        val benAdapter = BenListAdapterForForm(
-            BenListAdapterForForm.ClickListener(
+        val benAdapter = DeathReportBenListAdapter(
+            DeathReportBenListAdapter.ClickListener(
                 {
                     Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show()
                 },
@@ -108,7 +108,7 @@ class MdsrListFragment : Fragment() {
         super.onStart()
         activity?.let {
             (it as HomeActivity).updateActionBar(
-                R.drawable.ic__death,
+                R.drawable.maternal_death_s1,
                 getString(R.string.mdsr_list)
             )
         }

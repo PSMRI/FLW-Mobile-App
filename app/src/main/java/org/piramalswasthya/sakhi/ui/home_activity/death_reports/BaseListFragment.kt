@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import androidx.navigation.fragment.findNavController
-import org.piramalswasthya.sakhi.adapters.BenListAdapterForForm
+import org.piramalswasthya.sakhi.adapters.DeathReportBenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
@@ -66,8 +66,8 @@ abstract class BaseListFragment<T : ViewBinding> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val benAdapter = BenListAdapterForForm(
-            BenListAdapterForForm.ClickListener(
+        val benAdapter = DeathReportBenListAdapter(
+            DeathReportBenListAdapter.ClickListener(
                 { Toast.makeText(context, "Ben : $it clicked", Toast.LENGTH_SHORT).show() },
                 { hhId, benId ->
                     if (findNavController().currentDestination?.id == navFragmentId) {
