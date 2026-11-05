@@ -584,35 +584,8 @@ class IconDataset @Inject constructor(
         Icon(
             R.drawable.maleria,
             resources.getString(R.string.icon_title_maleria),
-            recordsRepo.tbScreeningListCount,
+            null,
             CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToMalariaIconsFragment()
-        ),
-        Icon(
-            R.drawable.kala,
-            resources.getString(R.string.icon_title_ka),
-            recordsRepo.tbScreeningListCount,
-            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
-                resources.getString(Disease.KALA_AZAR.getTitleRes()))
-        ),
-        Icon(
-            R.drawable.aes,
-            resources.getString(R.string.icon_title_aes),
-            recordsRepo.tbScreeningListCount,
-            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
-                resources.getString(Disease.AES_JE.getTitleRes()))
-        ),
-        Icon(
-            R.drawable.filaria,
-            resources.getString(R.string.icon_title_filaria),
-            recordsRepo.tbScreeningListCount,
-            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
-                resources.getString(Disease.FILARIA.getTitleRes()))
-        ),
-        Icon(
-            R.drawable.leprocy,
-            resources.getString(R.string.icon_title_leprosy),
-            recordsRepo.tbScreeningListCount,
-            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToLeprosyFragment()
         ),
         Icon(
             R.drawable.tb_icon,
@@ -620,6 +593,36 @@ class IconDataset @Inject constructor(
             null,
             CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToCdFragment()
         ),
+        Icon(
+            R.drawable.leprocy,
+            resources.getString(R.string.icon_title_leprosy),
+            null,
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToLeprosyFragment()
+        ),
+        Icon(
+            R.drawable.filaria,
+            resources.getString(R.string.icon_title_filaria),
+            null,
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.FILARIA.getTitleRes()))
+        ),
+
+        Icon(
+            R.drawable.kala,
+            resources.getString(R.string.icon_title_ka),
+            null,
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.KALA_AZAR.getTitleRes()))
+        ),
+        Icon(
+            R.drawable.aes,
+            resources.getString(R.string.icon_title_aes),
+            null,
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.AES_JE.getTitleRes()))
+        ),
+
+
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
