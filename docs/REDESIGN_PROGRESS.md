@@ -104,6 +104,10 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
    - Fixed: empty-state "No Records Found" style on 8 list shells; "baby of X" avatars use X's initials;
      adolescent card Gender before RCH ID (no gap for adult males); **top-bar title** container match_parent → short
      titles no longer cut by a stale width (long ones still ellipsize at 16sp — the old 🟡 row is now mostly fixed).
+   - Sheets ✅ (sync status, ANC visits, vaccines, sort-by), household form + consent ✅ (typing works, nothing saved).
+     Support + delete-account open external MS forms (no in-app screen). mitaninUat compiles after all fixes (2026-11-12).
+   STILL TO CHECK: ABHA flow (needs ABHA_* env vars), supervisor screens (needs supervisor login), Mitanin flavour on a
+   device, tablet login, remaining row-25 upload/file screens, HBNC/HBYC forms.
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.
