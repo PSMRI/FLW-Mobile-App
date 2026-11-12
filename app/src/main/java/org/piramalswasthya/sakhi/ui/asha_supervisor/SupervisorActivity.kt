@@ -440,12 +440,17 @@ class SupervisorActivity : AppCompatActivity() {
         val headerView = binding.navView.getHeaderView(0)
 
         viewModel.currentUser?.let {
-            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
-                resources.getString(R.string.nav_item_1_text, it.name)
-            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_2_text, it.userName)
+//            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
+//                resources.getString(R.string.nav_item_1_text, it.name)
+//            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
+//                resources.getString(R.string.nav_item_2_text, it.userName)
+//            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
+//                resources.getString(R.string.nav_item_3_text, it.userId)
+            // Redesign (Figma 09 header, same as HomeActivity): plain name, user name, "Employee ID · x"
+            headerView.findViewById<TextView>(R.id.tv_nav_name).text = it.name
+            headerView.findViewById<TextView>(R.id.tv_nav_role).text = it.userName
             headerView.findViewById<TextView>(R.id.tv_nav_id).text =
-                resources.getString(R.string.nav_item_3_text, it.userId)
+                getString(R.string.ds_nav_employee_id, java.lang.String.format(java.util.Locale.ENGLISH, "%s", it.userId.toString()))
         }
         viewModel.profilePicUri?.let {
             Glide.with(this).load(it).placeholder(R.drawable.ic_person).circleCrop()

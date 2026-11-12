@@ -97,12 +97,15 @@ class ActivityAdapter(
             // first whenever only one flag was set (and the payload stopped sending
             // isDefaultActivity entirely, so every isDefault row stayed clickable).
             if (item.isDefault || item.isDefaultActivity) {
-                clMain?.setBackgroundColor(
-                    itemView.context.getColor(R.color.default_incentive_no_ben_background)
-                )
-                layoutContent?.setBackgroundColor(
-                    itemView.context.getColor(R.color.unclaimed_pink)
-                )
+//                clMain?.setBackgroundColor(
+//                    itemView.context.getColor(R.color.default_incentive_no_ben_background)
+//                )
+//                layoutContent?.setBackgroundColor(
+//                    itemView.context.getColor(R.color.unclaimed_pink)
+//                )
+                // Redesign: default (not claimable) row = Figma warning tone
+                clMain?.setBackgroundColor(itemView.context.getColor(R.color.ds_warning_container))
+                layoutContent?.setBackgroundColor(itemView.context.getColor(R.color.ds_warning_container))
                 clMain?.setOnClickListener(null)
                 ClmainTwo?.setOnClickListener(null)
                 // setOnClickListener(null) leaves isClickable set from a previous bind, which
@@ -110,10 +113,12 @@ class ActivityAdapter(
                 clMain?.isClickable = false
                 ClmainTwo?.isClickable = false
             } else {
-                clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
-                layoutContent?.setBackgroundColor(
-                    itemView.context.getColor(android.R.color.white)
-                )
+//                clMain?.setBackgroundColor(itemView.context.getColor(android.R.color.white))
+//                layoutContent?.setBackgroundColor(
+//                    itemView.context.getColor(android.R.color.white)
+//                )
+                clMain?.setBackgroundColor(itemView.context.getColor(R.color.ds_surface_container))
+                layoutContent?.setBackgroundColor(itemView.context.getColor(R.color.ds_surface_container))
                 clMain?.setOnClickListener { onClick?.invoke(item) }
                 ClmainTwo?.setOnClickListener { onClick?.invoke(item) }
             }

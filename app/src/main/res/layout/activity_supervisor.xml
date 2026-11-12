@@ -1,58 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: same shell as Home (Figma "Top app bar" light surface, title 22/28; drawer = Figma 09 · Profile & more:
+     surface, pill rows, grey icons, 14/20 labels). Old layout: legacy_activity_supervisor.xml. Ids unchanged. -->
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fitsSystemWindows="true"
-    >
-
+    android:fitsSystemWindows="true">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/ds_surface"
         tools:context=".ui.asha_supervisor.SupervisorActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.Sakhi.ActionBar">
+            android:background="@color/ds_surface"
+            android:theme="@style/Theme.Sakhi.ActionBar.Redesign"
+            app:elevation="0dp"
+            app:liftOnScroll="false">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/ds_surface"
+                app:titleTextAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                app:titleTextColor="@color/ds_on_surface">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="?attr/actionBarSize"
                     android:gravity="center_vertical"
+                    android:minHeight="?attr/actionBarSize"
                     android:orientation="horizontal">
 
+                    <!-- Kept for its id; Figma shows no logo in the bar -->
                     <ImageView
                         android:id="@+id/iv_toolbar"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:padding="@dimen/padding_normal"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="8dp"
+                        android:importantForAccessibility="no"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tv_toolbar"
                         android:layout_width="0dp"
+                        android:layout_height="28dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        tools:text="Hellow!" />
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                        android:textColor="@color/ds_on_surface"
+                        app:autoSizeMaxTextSize="22sp"
+                        app:autoSizeMinTextSize="16sp"
+                        app:autoSizeStepGranularity="1sp"
+                        app:autoSizeTextType="uniform"
+                        tools:text="Verification" />
                 </LinearLayout>
-
-
             </androidx.appcompat.widget.Toolbar>
-
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment_supervisor"
@@ -62,7 +73,6 @@
             android:paddingTop="?attr/actionBarSize"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_supervisor" />
-
     </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -70,22 +80,33 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/ds_surface"
         android:fitsSystemWindows="true"
-        app:itemMaxLines="2"
         app:headerLayout="@layout/nav_header_home"
-        app:menu="@menu/activity_supervisor_drawer">
-
-
+        app:itemHorizontalPadding="@dimen/ds_space_md"
+        app:itemIconPadding="@dimen/ds_space_sm"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/ds_on_surface_variant"
+        app:itemMaxLines="2"
+        app:itemShapeAppearance="@style/ShapeAppearance.Sakhi.Full"
+        app:itemShapeFillColor="@color/ds_chip_bg"
+        app:itemShapeInsetEnd="@dimen/ds_space_xs"
+        app:itemShapeInsetStart="@dimen/ds_space_xs"
+        app:itemTextAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        app:itemTextColor="@color/ds_on_surface"
+        app:itemVerticalPadding="16dp"
+        app:menu="@menu/activity_supervisor_drawer"
+        app:subheaderColor="@color/ds_on_surface_variant"
+        app:subheaderTextAppearance="@style/TextAppearance.Sakhi.TitleSmall">
 
         <TextView
             android:id="@+id/versionName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_margin="@dimen/margin_normal"
-            android:padding="@dimen/padding_normal"
-            tools:text="@string/version_2_0_0"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
-
+            android:padding="16dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
+            tools:text="@string/version_2_0_0" />
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

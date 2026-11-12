@@ -14,6 +14,8 @@ import org.piramalswasthya.sakhi.ui.asha_supervisor.supervisor.incentiveVerifica
 import org.piramalswasthya.sakhi.utils.HelperUtil
 import java.text.NumberFormat
 import java.util.*
+import org.piramalswasthya.sakhi.ui.design.DsTagTone
+import org.piramalswasthya.sakhi.ui.design.dsTag
 
 class AshaWorkerAdapter(
     private val onItemClick: (AshaWorker) -> Unit
@@ -61,7 +63,8 @@ class AshaWorkerAdapter(
             when (worker.status) {
                 VerificationStatus.VERIFIED -> {
                     statusBadge.text = textShort.context.getString(R.string.verified_text)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    statusBadge.dsTag(DsTagTone.SUCCESS) // redesign: Figma "Tag"
                     tvStatusDate.text =
                         textShort.context.getString(R.string.verified_date_txt, worker.approvalDate)
                     tvRejectedReason.visibility = View.GONE
@@ -76,7 +79,8 @@ class AshaWorkerAdapter(
 
                 VerificationStatus.PENDING -> {
                     statusBadge.text = statusBadge.context.getString(R.string.pending_txt)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    statusBadge.dsTag(DsTagTone.WARNING) // redesign: Figma "Tag"
                     tvStatusDate.visibility = View.GONE
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.visibility = View.GONE
@@ -84,7 +88,8 @@ class AshaWorkerAdapter(
 
                 VerificationStatus.REJECTED -> {
                     statusBadge.text = statusBadge.context.getString(R.string.rejected_txt)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    statusBadge.dsTag(DsTagTone.ERROR) // redesign: Figma "Tag"
                     tvRejectedReason.visibility = View.VISIBLE
                     tvStatusDate.text = tvStatusDate.context.getString(
                         R.string.rejected_date_txt,
@@ -105,7 +110,8 @@ class AshaWorkerAdapter(
 
                 VerificationStatus.OVERDUE -> {
                     statusBadge.text = textShort.context.getString(R.string.overdue)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_rejected)
+                    statusBadge.dsTag(DsTagTone.ERROR) // redesign: Figma "Tag"
                     tvStatusDate.visibility = View.GONE
                     tvRejectedReason.visibility = View.GONE
                     tvStatusBy.visibility = View.GONE
@@ -113,19 +119,22 @@ class AshaWorkerAdapter(
 
                 VerificationStatus.ALL -> {
                     statusBadge.text = statusBadge.context.getString(R.string.pending_txt)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_pending)
+                    statusBadge.dsTag(DsTagTone.WARNING) // redesign: Figma "Tag"
                 }
 
                 VerificationStatus.UNCLAIMED -> {
                     tvAmount.visibility = View.INVISIBLE
                     statusBadge.text = statusBadge.context.getString(R.string.unclaimed_txt)
-                    statusBadge.setBackgroundResource(R.drawable.unclaimed_grey)
+                    // statusBadge.setBackgroundResource(R.drawable.unclaimed_grey)
+                    statusBadge.dsTag(DsTagTone.NEUTRAL) // redesign: Figma "Tag"
                 }
 
 
                 VerificationStatus.APPROVED -> {
                     statusBadge.text = textShort.context.getString(R.string.verified_text)
-                    statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    // statusBadge.setBackgroundResource(R.drawable.bg_status_verified)
+                    statusBadge.dsTag(DsTagTone.SUCCESS) // redesign: Figma "Tag"
                     tvStatusDate.visibility = View.GONE
                     tvStatusDate.text = textShort.context.getString(R.string.verified_date_txt, worker.approvalDate)
                     tvRejectedReason.visibility = View.GONE
