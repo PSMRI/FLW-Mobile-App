@@ -91,6 +91,12 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
    Layout audit: 250/293 active layouts use ds_* tokens; 43 untouched = 18 never inflated + 25 inflated (mostly thin shells around
    redesigned lists — `fragment_all_ben`, `fragment_child_list`, `fragment_eligible_couple`, NCD lists …; real leftovers:
    `rv_item_immunization_status(_header)`, `rv_item_immunization_base`, `fragment_survey_register`, `fragment_pw_anc_form`, `mitanin_item_layout`).
+   PHONE PASS LOG (started 2026-11-12 evening, sakshamUat on Lava):
+   - ABHA: only the error state reachable — terminal build has NO ABHA_* env vars → token call HTTP 401. Need the
+     secrets exported (or build from Studio if it has them) before the ABHA flow can be checked.
+   - Incentives (M2.11-03) ✅ fixed 1175c0590: stat tiles amount 22 bold + label, ASHA table head 3 columns, card meta "1 claims · ₹1,000".
+   - My badges ✅ list fallback OK (Figma grid/tier stars = not built, needs data). Profile ✅. Sync dashboard ✅ (title cut = known).
+   - e-PMSMA / ANC visit cards: meta line may wrap to 3 lines (was cut). Form shell header name/age aligned (fragment_new_form).
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.

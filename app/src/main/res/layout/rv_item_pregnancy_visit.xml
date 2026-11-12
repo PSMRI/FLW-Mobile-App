@@ -94,7 +94,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:maxLines="2"
+                            android:maxLines="3"
                             android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
                             android:textColor="@color/ds_on_surface_variant"
                             tools:text="W/o Ramesh · 26 Years" />
