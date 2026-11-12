@@ -88,6 +88,10 @@ import org.piramalswasthya.sakhi.R
                     }
                 }
 
+                // Keep referral classification available to both the button label and click handler.
+                val isGcReferral = item.referalCac.type == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
+                        item.referalCac.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
+
                 if (item.ben.isDeath) {
                     binding.contstraintLayoutV.setBackgroundColor(
                         ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
@@ -101,13 +105,10 @@ import org.piramalswasthya.sakhi.R
                     binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
 //                    binding.btnFollowUp.setBackgroundColor(binding.root.resources.getColor(if (item.tbrefferalFollowUp == null || item.tbrefferalFollowUp.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
 
-                    // Same General Check-up rule as the follow-up screen (type, or reason prefix when the type is missing).
-                    val isGcReferral = item.referalCac.type == GeneralCheckupFormViewModel.REFERRAL_TYPE ||
-                            item.referalCac.referralReason?.startsWith(GeneralCheckupFormViewModel.REASON_PREFIX) == true
                     val isFollowUpPending = when {
                         isGcReferral -> item.gcReferralFollowUp.isEmpty()
                         isPresumptiveTbReferral -> item.tbSuspectedCases.isEmpty()
-                        else -> item.tbrefferalFollowUp.isNullOrEmpty()
+                        else -> item.ncdFollowUpForms.isEmpty()
                     }
 
                     binding.btnFollowUp.apply {
@@ -130,7 +131,12 @@ import org.piramalswasthya.sakhi.R
 
                 binding.executePendingBindings()
                 binding.btnFollowUp.setOnClickListener {
-                    listener.onClickedFollowUp(item.ben,item.referalCac)
+                    val hasFollowUp = when {
+                        isGcReferral -> item.gcReferralFollowUp.isNotEmpty()
+                        isPresumptiveTbReferral -> item.tbSuspectedCases.isNotEmpty()
+                        else -> item.ncdFollowUpForms.isNotEmpty()
+                    }
+                    listener.onClickedFollowUp(item.ben, item.referalCac, hasFollowUp)
                 }
                 binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
@@ -156,11 +162,15 @@ import org.piramalswasthya.sakhi.R
 
 
         class NcdReferallickListener(
-            val goToFollowUp: (benId: Long,hhId:Long,referReason:String?,referredDate:Long,referralType:String?) -> Unit
+            val goToFollowUp: (benId: Long, hhId: Long, referReason: String?, referredDate: Long, referralType: String?, isViewMode: Boolean) -> Unit
 
         ) {
-            fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) = goToFollowUp(
-                item.benId,item.hhId,referalCac.referralReason,referalCac.revisitDate,referalCac.type
+            // Preserve the two-argument entry point used by the row's data-binding expression.
+            fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache) =
+                onClickedFollowUp(item, referalCac, isViewMode = false)
+
+            fun onClickedFollowUp(item: BenBasicDomain, referalCac: ReferalCache, isViewMode: Boolean) = goToFollowUp(
+                item.benId, item.hhId, referalCac.referralReason, referalCac.revisitDate, referalCac.type, isViewMode
             )
         }
 

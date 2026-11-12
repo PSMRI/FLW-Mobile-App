@@ -61,7 +61,7 @@ class NCDReferalFormViewModel @Inject constructor(
     var visitNo = 1
     var followUpNo = 0
     var isFollowUpMode = false
-    var isViewMode = false
+    var isViewMode = NCDReferalFormFragmentArgs.fromSavedStateHandle(savedStateHandle).isViewMode
     var isTbFormAlreadyFilled = false
     private var isTreatmentSavedInDb = false
     private val formId = FormConstants.CDTF_001
@@ -548,6 +548,22 @@ class NCDReferalFormViewModel @Inject constructor(
                 )
             }
         } ?: emptyList()
+    }
+
+    fun enableFormEditing() {
+        isViewMode = false
+        val currentSchema = _schema.value ?: return
+        currentSchema.sections.forEach { section ->
+            section.fields.forEach { field ->
+                field.isEditable = when {
+                    isReferralFollowUpForm -> field.fieldId != "referred_on_date"
+                    field.fieldId == "visit_label" -> false
+                    field.fieldId == "follow_up_date" -> field.visible
+                    isFollowUpMode && field.fieldId in setOf("diagnosis", "treatment_start_date") -> false
+                    else -> true
+                }
+            }
+        }
     }
 
     private fun parseUiDateStrict(dateStr: String?): Date? {
