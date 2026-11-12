@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Mitanin Trainer / ANM month verification row (ActivityAdapter TYPE_MITANIN), styled like the
+     Figma M2.11-03 activity card: white r12, 1dp outline-variant, padding 12/16; "1." + activity 14/20 Medium,
+     claims 14/20 Regular, amount 14/20 Medium; approval line 12/16 Medium in success green with a 16dp check.
+     The count / amount columns keep their fixed widths (60 / 80dp) so they still line up with the screen's table head.
+     The adapter paints layoutContent (warning container for default incentives, surface otherwise).
+     Old layout: legacy_mitanin_item_layout.xml. All view ids unchanged. -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Sakhi.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="12dp"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:cardCornerRadius="@dimen/ds_radius_md">
 
     <LinearLayout
         android:id="@+id/ClmainTwo"
@@ -15,147 +21,126 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
-        <RelativeLayout
+        <!-- Group header (hidden; group headers come from item_activity_group) — kept for its ids -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:visibility="gone"
+            android:background="@drawable/bg_ds_banner_info"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingHorizontal="16dp"
-            android:gravity="center_vertical">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvActivityName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface"
+                tools:text="Maternal Health" />
+
+            <TextView
+                android:id="@+id/tvActivityAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Maternal Health"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="#001B44"/>
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_on_surface_variant"
+                tools:text="₹300" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/imgExpand"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_arrow_drop_down"
+                app:tint="@color/ds_on_surface_variant" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvActivityAmount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="₹300"
-                    android:textColor="#6B7280"
-                    android:textSize="14sp"/>
-
-                <ImageView
-                    android:id="@+id/imgExpand"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="8dp"
-                    android:src="@drawable/ic_arrow_drop_down"
-                    android:tint="#6B7280"/>
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <!-- Table Header -->
-
-        <!-- Child Row -->
+        <!-- Row -->
         <LinearLayout
             android:id="@+id/layoutContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <!-- Main Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tvSerialNo"
+                    android:layout_width="32dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_surface_variant"
+                    tools:text="2." />
 
-                    <TextView
-                        android:id="@+id/tvSerialNo"
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:text="2"
-                        android:textColor="#64748B"/>
-
-                    <!-- Activity -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvActivityDesc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Escorting for institutional delivery (Government Hospital)"
-                            android:textColor="#111827"
-                            android:textSize="16sp"/>
-
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvClaimCount"
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="1"
-                        android:textColor="#111827"/>
-
-                    <TextView
-                        android:id="@+id/tvAmount"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:text="₹300"
-                        android:textStyle="bold"
-                        android:textColor="#111827"/>
-
-                </LinearLayout>
-
-                <!-- Approval Status -->
-                <LinearLayout
-                    android:id="@+id/layoutApproval"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvActivityDesc"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="Escorting for institutional delivery (Government Hospital)" />
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_check"
-                        android:tint="#0F6B45"/>
+                <TextView
+                    android:id="@+id/tvClaimCount"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="1" />
 
-                    <TextView
-                        android:id="@+id/tvApprovalStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/approved_by_mitanin_trainer"
-                        android:textColor="#0F6B45"
-                        android:textSize="14sp"/>
-
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="₹300" />
             </LinearLayout>
 
+            <!-- Approval line (shown by the adapter once the trainer approved) -->
+            <LinearLayout
+                android:id="@+id/layoutApproval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_check_circle"
+                    app:tint="@color/ds_success" />
+
+                <TextView
+                    android:id="@+id/tvApprovalStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="@string/approved_by_mitanin_trainer"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                    android:textColor="@color/ds_success" />
+            </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

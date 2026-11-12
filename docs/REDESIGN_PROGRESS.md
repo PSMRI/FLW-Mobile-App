@@ -108,6 +108,12 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
      Support + delete-account open external MS forms (no in-app screen). mitaninUat compiles after all fixes (2026-11-12).
    STILL TO CHECK: ABHA flow (needs ABHA_* env vars), supervisor screens (needs supervisor login), Mitanin flavour on a
    device, tablet login, remaining row-25 upload/file screens, HBNC/HBYC forms.
+   - "Not redesigned" audit (2026-11-12): only `mitanin_item_layout` was a real screen → redesigned (Mitanin trainer/ANM
+     verification rows, tokens, ids kept, old = legacy_mitanin_item_layout). NOT needed (left as is, on purpose):
+     `fragment_dashboard`, `fragment_survey_register` (hello-stubs, no navigation reaches them), `fragment_pw_anc_form`,
+     `fragment_new_form_viewpager` (only nav-graph tools:layout previews — real screens use fragment_new_form),
+     `rv_item_immunization_status(_header/_base)` (only used by the unused VaccinationListHeader/Element classes),
+     `rv_input_form` (bare RecyclerView, nothing visual).
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.
