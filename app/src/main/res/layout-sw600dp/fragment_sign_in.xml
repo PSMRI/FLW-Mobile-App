@@ -1,218 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Login · redesign, matched 1:1 to Figma "FLW App Redesign" › Screens › "01 · Login" (spec dumped from the file):
+    Hero 240dp (primary, rounded bottom, behind the status bar) with 72dp logo tile, app name 28/36, tagline 14/20;
+    Content padding 24/16/16, 20dp between blocks. The logo is the flavour's app logo (@drawable/splash_logo).
+    Only the look changed: every view id used by SignInFragment is kept. Old layout: legacy_fragment_sign_in.xml.
+    TABLET (sw600dp) copy of the phone redesign: full-width hero, form column 480dp wide and centred (Figma 01 has no
+    tablet frame). Old tablet layout: layout/legacy_fragment_sign_in_sw600dp.xml (its radio language picker was already
+    unused — the code for it is commented out in SignInFragment).
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_login"
+    android:background="@color/ds_surface"
+    android:fillViewport="true"
     tools:context=".ui.login_activity.sign_in.SignInFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_nhm_logo"
-            android:layout_width="200dp"
+        <!-- ===== Hero (top padding gets the status-bar inset in SignInFragment) ===== -->
+        <LinearLayout
+            android:id="@+id/ll_logo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/cd_assam_nhm_logo"
-            android:src="@drawable/ic_piramal_foundation"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/cv_login_item_container"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_login_item_container"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_huge"
-            android:elevation="@dimen/padding_normal"
-            app:cardBackgroundColor="?attr/colorOnPrimary"
-            app:cardCornerRadius="@dimen/padding_wide"
-            app:cardElevation="@dimen/padding_wide"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/iv_nhm_logo">
+            android:background="@drawable/bg_ds_login_hero"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/ds_space_md"
+            android:paddingTop="20dp"
+            android:paddingEnd="@dimen/ds_space_md"
+            android:paddingBottom="@dimen/ds_space_3xl">
 
             <FrameLayout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_ds_logo_tile">
+
+                <ImageView
+                    android:id="@+id/iv_nhm_logo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/cd_assam_nhm_logo"
+                    android:src="@drawable/splash_logo" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_app_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_native_name"
+                    android:textAppearance="@style/TextAppearance.Sakhi.HeadlineLarge"
+                    android:textColor="#FFFFFF" />
+
+                <!-- DEMO: non-production Mitanin builds only (set in code) -->
+                <TextView
+                    android:id="@+id/tvDemo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:background="@drawable/bg_ds_tag_alert"
+                    android:gravity="center"
+                    android:minHeight="24dp"
+                    android:paddingHorizontal="@dimen/ds_space_xs"
+                    android:text="@string/str_demo"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                    android:textColor="@color/ds_error"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_tagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:gravity="center"
+                android:text="@string/ds_login_tagline"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_primary_container" />
+        </LinearLayout>
+
+        <!-- ===== Content ===== -->
+        <LinearLayout
+            android:layout_width="480dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_xl"
+            android:paddingEnd="@dimen/ds_space_md"
+            android:paddingBottom="@dimen/ds_space_md">
+
+            <!-- Language -->
+            <TextView
+                android:id="@+id/tv_lang"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_wide">
+                android:text="@string/ds_choose_language"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface_variant" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_xs"
+                app:chipSpacingHorizontal="@dimen/ds_space_xs"
+                app:selectionRequired="true"
+                app:singleLine="false"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_lang_en"
+                    style="@style/Widget.Sakhi.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_english" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_lang_hi"
+                    style="@style/Widget.Sakhi.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_hindi" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_lang_as"
+                    style="@style/Widget.Sakhi.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_assamese" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_lang_bn"
+                    style="@style/Widget.Sakhi.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_bangali" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Old language picker (opens the language sheet); replaced by the chips above -->
+            <LinearLayout
+                android:id="@+id/ll_select_lang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_selected_lang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/cv_login_item_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_lg">
+
+                <LinearLayout
                     android:id="@+id/cl_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_wide">
+                    android:orientation="vertical">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_sign_in"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/padding_normal"
-                        android:paddingBottom="@dimen/padding_normal"
                         android:text="@string/tv_text_sign_in"
-                        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                        android:textStyle="normal"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.HeadlineSmall"
+                        android:textColor="@color/ds_on_surface" />
 
+                    <!-- Username -->
                     <TextView
-                        android:id="@+id/tv_lang"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:text="@string/tv_text_select_language"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        app:layout_constraintTop_toBottomOf="@id/tv_sign_in" />
-
-                    <RadioGroup
-                        android:id="@+id/rg_lang_select"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:checkedButton="@id/rb_eng"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingStart="@dimen/padding_wide"
-                        android:paddingEnd="@dimen/padding_wide"
-                        android:weightSum="3"
-                        app:layout_constraintTop_toBottomOf="@id/tv_lang">
-
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_eng"
-                            style="@style/radio_item_lang"
-                            android:text="@string/text_english" />
-
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_hindi"
-                            style="@style/radio_item_lang"
-                            android:text="@string/text_hindi" />
-
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_assamese"
-                            style="@style/radio_item_lang"
-                            android:text="@string/text_assamese" />
-
-                    </RadioGroup>
-
+                        android:id="@+id/tv_username_label"
+                        style="@style/Widget.Sakhi.FieldLabel"
+                        android:layout_marginTop="@dimen/ds_space_lg"
+                        android:labelFor="@id/et_username"
+                        android:text="@string/til_username_hint_text" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_username"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Sakhi.TextField.Boxed"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/til_username_hint_text"
-                        android:paddingTop="@dimen/padding_normal"
-
-                        android:paddingBottom="@dimen/padding_normal"
-                        app:endIconTint="?attr/colorOnPrimary"
-
-                        app:layout_constraintTop_toBottomOf="@id/rg_lang_select"
-                        tools:layout_editor_absoluteX="16dp">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_username"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:drawableEnd="@drawable/ic_person"
-                            android:drawablePadding="@dimen/padding_normal"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionNext"
+                            android:minHeight="56dp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                            android:textColor="@color/ds_on_surface" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Password -->
+                    <TextView
+                        android:id="@+id/tv_password_label"
+                        style="@style/Widget.Sakhi.FieldLabel"
+                        android:layout_marginTop="@dimen/ds_space_lg"
+                        android:labelFor="@id/et_password"
+                        android:text="@string/til_password_hint_text" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_password"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Sakhi.TextField.Boxed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/til_password_hint_text"
-                        android:paddingTop="@dimen/padding_normal"
-                        android:paddingBottom="@dimen/padding_normal"
-                        app:layout_constraintTop_toBottomOf="@id/til_username"
-                        app:passwordToggleEnabled="true">
+                        android:longClickable="false"
+                        app:endIconMode="password_toggle"
+                        app:endIconTint="@color/ds_on_surface_variant">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_password"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:drawablePadding="@dimen/padding_normal"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionDone"
                             android:inputType="textPassword"
+                            android:longClickable="false"
+                            android:minHeight="56dp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                            android:textColor="@color/ds_on_surface"
+                            android:textIsSelectable="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-
+                    <!-- Login error, directly under the fields -->
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_error"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        android:textColor="@android:color/holo_red_light"
+                        android:layout_marginTop="@dimen/ds_space_2xs"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_error"
                         android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/til_password"
-                        tools:text="Hello"
-                        tools:visibility="visible"
+                        tools:text="Invalid username or password"
+                        tools:visibility="visible" />
 
-                        />
-
-                    <CheckBox
-                        android:id="@+id/cb_remember"
+                    <!-- Remember me … Forgot password? -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/cb_login_remember_me_text"
-                        app:layout_constraintTop_toBottomOf="@id/tv_error" />
+                        android:layout_marginTop="@dimen/ds_space_lg"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/tv_forgot_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/padding_normal"
-                        android:backgroundTint="?attr/colorOnPrimary"
-                        android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:text="@string/btn_login_forgot_password_text"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/cb_remember" />
+                        <!-- plain CheckBox class: must match layout-sw600dp for view binding -->
+                        <CheckBox
+                            android:id="@+id/cb_remember"
+                            style="@style/Widget.Sakhi.CheckboxPlain"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/cb_login_remember_me_text" />
 
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <!-- Forgot password: not available in the app today (kept hidden, as before) -->
+                        <Button
+                            android:id="@+id/tv_forgot_password"
+                            style="@style/Widget.Sakhi.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="0dp"
+                            android:padding="0dp"
+                            android:text="@string/btn_login_forgot_password_text"
+                            android:visibility="gone" />
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_login"
+                        style="@style/Widget.Sakhi.Button"
                         android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="@dimen/ds_space_lg"
+                        android:text="@string/btn_login_text" />
+
+                    <!-- Footer: Delete my account (red) + powered by -->
+                    <TextView
+                        android:id="@+id/tvDeleteAccount"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_margin="@dimen/padding_normal"
-                        android:padding="@dimen/padding_normal"
-                        android:text="@string/btn_login_text"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                        android:textColor="?attr/colorOnPrimary"
-                        app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
+                        android:layout_marginTop="@dimen/ds_space_lg"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="@string/delete_my_account"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                        android:textColor="@color/ds_error" />
+                </LinearLayout>
 
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <ProgressBar
+                <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/pb_sign_in"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:indeterminateTint="?attr/colorPrimary"
-                    android:visibility="gone" />
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/ds_primary" />
             </FrameLayout>
 
-        </androidx.cardview.widget.CardView>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            <!-- "Powered by … Version x" (text + version set in code) -->
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_2xs"
+                android:gravity="center"
+                android:text="@string/pwr_by_text"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant" />
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>
