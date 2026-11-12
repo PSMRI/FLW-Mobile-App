@@ -114,6 +114,11 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
      `fragment_new_form_viewpager` (only nav-graph tools:layout previews — real screens use fragment_new_form),
      `rv_item_immunization_status(_header/_base)` (only used by the unused VaccinationListHeader/Element classes),
      `rv_input_form` (bare RecyclerView, nothing visual).
+   - Strict audit (layouts with no ds_ token, still inflated): only `fragment_hbyc` (old HBYC form shell, reached from
+     the HBYC month list) was left → redesigned like fragment_new_form (old = legacy_fragment_hbyc). Remaining no-ds_
+     layouts are fine: activity_login (nav host), fragment_monthly_recap_playback (light touch on purpose),
+     item_rejection_reason (uses Widget.Sakhi.CheckboxOption), rv_item_ben_get_data / rv_item_ben_cho + rv_item_ben_element
+     (no Kotlin uses them), plus the stubs listed above. → **All reachable layouts now carry the redesign.**
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.
