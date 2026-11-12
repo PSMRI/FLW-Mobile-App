@@ -17,10 +17,11 @@ import org.piramalswasthya.sakhi.model.Gender
  * white beneficiary card. They read the same fields the old card showed; nothing here changes data or behaviour.
  */
 
-/** Avatar initials: first letter of the first two words of the name ("Ramesh Kumar" → "RK"). */
+/** Avatar initials: first letter of the first two words of the name ("Ramesh Kumar" → "RK"; "baby of Kavita" → "K"). */
 @BindingAdapter("dsInitials")
 fun TextView.setDsInitials(name: String?) {
-    text = name.orEmpty().trim().split(Regex("\\s+"))
+    // Phone pass 2026-11-12: newborns are named "baby of <mother>" — skip that prefix so the avatar isn't always "BO"
+    text = name.orEmpty().trim().replace(Regex("^baby\\s+of\\s+", RegexOption.IGNORE_CASE), "").split(Regex("\\s+"))
         .filter { it.isNotEmpty() }
         .take(2)
         .joinToString("") { it.first().uppercase() }
