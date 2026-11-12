@@ -100,5 +100,7 @@ data class FieldValidationDto(
 
 data class OptionItem(
     val label: String = "",
-    val value: String = ""
+    val value: String = "",
+    /** Set by a form's ViewModel (never by the server) to show the option in red, e.g. an emergency. */
+    @Transient val highlight: Boolean = false
 )

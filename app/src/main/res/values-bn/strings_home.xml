@@ -189,7 +189,7 @@
     <string name="icon_title_ncd_priority_list">NCD অগ্রাধিকার তালিকা</string>
     <string name="icon_title_ncd_tb_confirmed">নিশ্চিত টিবি কেস</string>
     <string name="icon_title_ncd_tb_screening">টিবি স্ক্রিনিং</string>
-    <string name="icon_title_ncd_tb_suspected">সন্দেহভাজন টিবি কেস</string>
+    <string name="icon_title_ncd_tb_suspected">যক্ষ্মা সন্দেহের ক্ষেত্রসমূহ</string>
     <string name="icon_title_sr">সার্ভে রেজিস্টার</string>
     <string name="leprosy_title">ব্যক্তির এই লক্ষণগুলির কোনটি আছে কিনা পরীক্ষা করুন</string>
     <string name="menu_home_home">হোম</string>

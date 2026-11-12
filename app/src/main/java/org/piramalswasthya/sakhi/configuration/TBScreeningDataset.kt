@@ -278,6 +278,13 @@ class TBScreeningDataset(
 
     private var isMaleBen: Boolean = false
     private var isPregnantBen: Boolean = false
+    private var isLactatingBen: Boolean = false
+    private var hasHypertension: Boolean = false
+    private var hasDiabetes: Boolean = false
+    private var hasTobaccoUser: Boolean = false
+    private var hasAlcoholRiskFactor: Boolean = false
+    private var hasIndoorAirPollution: Boolean = false
+    private var hasWorkplaceSettings: Boolean = false
     private var riskFactorOptions: List<CodedOption> = emptyList()
 
     private val hivStatusOptions: List<CodedOption>
@@ -314,7 +321,22 @@ class TBScreeningDataset(
     )
 
 
-    suspend fun setUpPage(ben: BenRegCache?, saved: TBScreeningCache?) {
+    suspend fun setUpPage(
+        ben: BenRegCache?,
+        saved: TBScreeningCache?,
+        hasHypertension: Boolean = false,
+        hasDiabetes: Boolean = false,
+        hasTobaccoUser: Boolean = false,
+        hasAlcoholRiskFactor: Boolean = false,
+        hasIndoorAirPollution: Boolean = false,
+        hasWorkplaceSettings: Boolean = false
+    ) {
+        this.hasHypertension = hasHypertension
+        this.hasDiabetes = hasDiabetes
+        this.hasTobaccoUser = hasTobaccoUser
+        this.hasAlcoholRiskFactor = hasAlcoholRiskFactor
+        this.hasIndoorAirPollution = hasIndoorAirPollution
+        this.hasWorkplaceSettings = hasWorkplaceSettings
         benAgeYears = 0
         ben?.let {
             dateOfVisit.min = it.regDate
@@ -325,8 +347,14 @@ class TBScreeningDataset(
                 resources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1),
                 englishResources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(1)
             )
+            val lactatingStatusLabels = listOfNotNull(
+                resources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(2),
+                englishResources.getStringArray(R.array.nbr_reproductive_status_array2).getOrNull(2)
+            )
             isPregnantBen = it.genDetails?.reproductiveStatusId == 2 ||
                     pregnantStatusLabels.any { label -> reproductiveStatus.equals(label, ignoreCase = true) }
+            isLactatingBen = it.genDetails?.reproductiveStatusId == 3 ||
+                    lactatingStatusLabels.any { label -> reproductiveStatus.equals(label, ignoreCase = true) }
         }
         showChildSymptoms = ben != null && benAgeYears in 0..15
         childFailureToGainWeight.value = if (showChildSymptoms) {
@@ -445,13 +473,49 @@ class TBScreeningDataset(
 
     private fun withAutomaticRiskFactors(selectedIndexes: Collection<Int>): List<Int> {
         val exclusiveIndices = keyPopulationRiskFactors.exclusiveOptionIndices.orEmpty()
-        if (selectedIndexes.any { it in exclusiveIndices }) {
+        val selected = selectedIndexes.toMutableSet()
+        val contactWithTbIndex = riskFactorOptions.indexOfFirst {
+            it.code == "CONTACT_OF_KNOWN_TB_PATIENTS"
+        }
+        if (familyHistoryTB.value == yesValue) {
+            if (contactWithTbIndex >= 0) {
+                selected.removeAll(exclusiveIndices)
+                selected.add(contactWithTbIndex)
+            }
+        } else if (contactWithTbIndex >= 0) {
+            selected.remove(contactWithTbIndex)
+        }
+        val automaticRiskFactorCodes = buildList {
+            if (hasTobaccoUser) add("TOBACCO_SMOKER")
+            if (hasAlcoholRiskFactor) add("SUBSTANCE_ABUSE")
+            if (hasIndoorAirPollution) add("INDOOR_AIR_POLLUTION_EXPOSURE")
+            if (hasWorkplaceSettings) add("WORKPLACE_SETTINGS")
+        }
+        automaticRiskFactorCodes.forEach { code ->
+            riskFactorOptions.indexOfFirst { it.code == code }
+                .takeIf { it >= 0 }?.let { index ->
+                    selected.removeAll(exclusiveIndices)
+                    selected.add(index)
+                }
+        }
+        if (selected.any { it in exclusiveIndices }) {
             return selectedIndexes.filter { it in exclusiveIndices }.distinct().sorted()
         }
 
-        val selected = selectedIndexes.toMutableSet()
         if (isPregnantBen) {
             riskFactorOptions.indexOfFirst { it.code == "PREGNANCY" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (isLactatingBen) {
+            riskFactorOptions.indexOfFirst { it.code == "LACTATING_MOTHER" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (hasHypertension) {
+            riskFactorOptions.indexOfFirst { it.code == "HYPERTENSIVE" }
+                .takeIf { it >= 0 }?.let(selected::add)
+        }
+        if (hasDiabetes) {
+            riskFactorOptions.indexOfFirst { it.code == "DIABETES" }
                 .takeIf { it >= 0 }?.let(selected::add)
         }
         if (benAgeYears >= 60) {
@@ -462,6 +526,13 @@ class TBScreeningDataset(
     }
 
     override suspend fun handleListOnValueChanged(formId: Int, index: Int): Int {
+        if (formId == familyHistoryTB.id) {
+            val selectedIndexes = keyPopulationRiskFactors.value
+                ?.split("|")?.mapNotNull { it.toIntOrNull() }
+                .orEmpty()
+            keyPopulationRiskFactors.value = withAutomaticRiskFactors(selectedIndexes)
+                .takeIf { it.isNotEmpty() }?.joinToString("|")
+        }
         if (!isAsymptomaticDriver(formId)) return -1
         aSymptomaticLabel.value = computeAsymptomaticValue()
         return listFlow.value.indexOf(aSymptomaticLabel).takeIf { it >= 0 } ?: -1
@@ -626,4 +697,7 @@ class TBScreeningDataset(
         return getIndexById(dateOfVisit.id)
     }
     fun getIndexOfAsymptomatic(): Int = listFlow.value.indexOf(aSymptomaticLabel)
+    fun getFamilyhistoryTB(): Int = listFlow.value.indexOf(familyHistoryTB)
+    fun getFamilyHistoryTbFormId(): Int = familyHistoryTB.id
+    fun getIndexOfRiskFactors(): Int = listFlow.value.indexOf(keyPopulationRiskFactors)
 }

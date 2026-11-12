@@ -16,6 +16,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.child_care.ChildCareFragmentDi
 import org.piramalswasthya.sakhi.ui.home_activity.communicable_diseases.CdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.death_reports.DeathReportsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.DiseaseControlFragmentDirections
+import org.piramalswasthya.sakhi.ui.home_activity.disease_control.communicable.CommunicableDiseasesGridFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.leprosy.LeprosyFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.disease_control.malaria.form.MalariaIconsFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.eligible_couple.EligibleCoupleFragmentDirections
@@ -552,65 +553,73 @@ class IconDataset @Inject constructor(
         )
 
 
+    /** General Check-up BRD FR1: General Check-up, Non-Communicable Diseases, Communicable Diseases. */
     fun getDiseaseControlDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ncd_icon,
-            resources.getString(R.string.icon_title_ncd),
+            R.drawable.ic__general_op,
+            resources.getString(R.string.icon_title_general_checkup),
             null,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment(),
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToGeneralCheckupListFragment()
+        ),
+        Icon(
+            R.drawable.ncd_icon,
+            resources.getString(R.string.icon_title_non_communicable),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToNcdFragment()
+        ),
+        Icon(
+            R.drawable.disease_control_icon,
+            resources.getString(R.string.icon_title_cd),
+            null,
+            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDiseasesGridFragment()
+        ),
+    ).apply {
+        forEachIndexed { index, icon ->
+            icon.colorPrimary = index % 2 == 0
+        }
+    }
 
-            ),
+    /** The 6 programme tiles moved under the "Communicable Diseases" tile, unchanged. */
+    fun getCommunicableDiseasesGridDataset(resources: Resources) = listOf(
         Icon(
             R.drawable.maleria,
             resources.getString(R.string.icon_title_maleria),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToMalariaIconsFragment(
-
-            )
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToMalariaIconsFragment()
         ),
         Icon(
             R.drawable.kala,
             resources.getString(R.string.icon_title_ka),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.KALA_AZAR.getTitleRes()))
         ),
-
         Icon(
             R.drawable.aes,
             resources.getString(R.string.icon_title_aes),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
                 resources.getString(Disease.AES_JE.getTitleRes()))
         ),
         Icon(
             R.drawable.filaria,
             resources.getString(R.string.icon_title_filaria),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                resources.getString(Disease.FILARIA.getTitleRes())
-            )
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToAllHouseHoldDiseaseControlFragment(
+                resources.getString(Disease.FILARIA.getTitleRes()))
         ),
         Icon(
             R.drawable.leprocy,
             resources.getString(R.string.icon_title_leprosy),
             recordsRepo.tbScreeningListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToLeprosyFragment()
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToLeprosyFragment()
         ),
         Icon(
             R.drawable.tb_icon,
             resources.getString(R.string.tb),
             null,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToCommunicableDisease()
+            CommunicableDiseasesGridFragmentDirections.actionCommunicableDiseasesGridFragmentToCdFragment()
         ),
-        /*Icon(
-            R.drawable.ic__eligible_couple,
-            resources.getString(R.string.icon_title_dearming),
-            recordsRepo.eligibleCoupleTrackingListCount,
-            DiseaseControlFragmentDirections.actionDiseaseControlFragmentToAllHouseHoldDiseaseControlFragment(
-                Disease.DEWARMING.toString()
-            )
-        )*/
     ).apply {
         forEachIndexed { index, icon ->
             icon.colorPrimary = index % 2 == 0
@@ -772,7 +781,7 @@ class IconDataset @Inject constructor(
 
     fun getCDDataset(resources: Resources) = listOf(
         Icon(
-            R.drawable.ic__ncd_eligibility,
+            R.drawable.tb_screening,
             resources.getString(R.string.icon_title_ncd_tb_screening),
             recordsRepo.tbScreeningListCount,
             CdFragmentDirections.actionCdFragmentToAllHouseHoldDiseaseControlFragment(
@@ -780,25 +789,25 @@ class IconDataset @Inject constructor(
             )
 //            CdFragmentDirections.actionCdFragmentToTBScreeningListFragment()
         ), Icon(
-            R.drawable.ic__death,
+            R.drawable.healthicons__viral_lung_infection_outline,
             resources.getString(R.string.icon_title_ncd_tb_suspected),
             recordsRepo.tbSuspectedListCount,
             CdFragmentDirections.actionCdFragmentToTBSuspectedListFragment()
 
         ), Icon(
-            icon = R.drawable.ic__death,
+            icon = R.drawable.healthicons__tb_outline,
             title = resources.getString(R.string.icon_title_ncd_tb_confirmed),
             recordsRepo.tbConfirmedListCount,
             CdFragmentDirections.actionCdFragmentToTBConfirmedListFragment()
         ),
         Icon(
-            icon = R.drawable.ic__abha_logo_v1_24,
-            title = resources.getString(R.string.icon_title_ncd_tbtpreventive_treatment),
+            icon = R.drawable.covid__vaccine_protection_medicine_pill,
+            title = resources.getString(R.string.icon_title_ncd_tbtpreventive),
             recordsRepoTb.tptListCount,
             CdFragmentDirections.actionCdFragmentToTPTListFragment()
         ),
         Icon(
-            icon = R.drawable.ic_crash,
+            icon = R.drawable.healthicons__health_vulnerability_through_social_determinants,
             title = resources.getString(R.string.icon_title_ncd_vulnerable_treatment),
             recordsRepo.tbScreeningRiskfactorListforVulneravilityCount,
             CdFragmentDirections.actionCdFragmentToVulnerablePopulationListFragment()

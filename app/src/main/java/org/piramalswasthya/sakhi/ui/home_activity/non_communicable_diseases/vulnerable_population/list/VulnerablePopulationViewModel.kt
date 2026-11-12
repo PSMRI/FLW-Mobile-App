@@ -43,8 +43,26 @@ class VulnerablePopulationViewModel @Inject constructor(
             searched
         } else {
             searched.filter { item ->
-                item.tb?.keyPopulationRiskFactors.orEmpty()
+                val hasSavedRiskFactor = item.tb?.keyPopulationRiskFactors.orEmpty()
                     .any { it.trim().equals(riskCode, ignoreCase = true) }
+                val ncdDiagnoses = item.ncdReferralVisits.joinToString(",") {
+                    it.diagnosisCodes.orEmpty()
+                }
+                val hasNcdDiagnosis = when (riskCode) {
+                    "DIABETES" -> ncdDiagnoses.contains("diabetes", ignoreCase = true)
+                    "HYPERTENSIVE" -> ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
+                            ncdDiagnoses.contains("hypertensive", ignoreCase = true)
+                    else -> false
+                }
+                val hasCbacRiskFactor = riskCode in
+                        item.cbac?.vulnerabilityRiskFactorCodes().orEmpty()
+
+                hasSavedRiskFactor || hasNcdDiagnosis || hasCbacRiskFactor || when (riskCode) {
+                    "PREGNANCY" -> item.ben.reproductiveStatusId == 2
+                    "LACTATING_MOTHER" -> item.ben.reproductiveStatusId == 3
+                    "ELDERLY" -> item.ben.ageInt > 60
+                    else -> false
+                }
             }
         }
     }

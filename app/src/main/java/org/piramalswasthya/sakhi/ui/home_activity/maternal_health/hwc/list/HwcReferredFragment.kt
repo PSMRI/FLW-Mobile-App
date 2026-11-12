@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
@@ -69,10 +70,26 @@ class HwcReferredFragment : Fragment() {
 
 //        val benAdapter =
 //            NcdReferListAdapter(viewModel.userName)
-        val benAdapter =
-            NcdReferListAdapter(viewModel.userName, NcdReferListAdapter.NcdReferallickListener { benId ,hhId,referReason,referredDate->
-
-            },false)
+        // Follow-up is enabled only for General Check-up rows (FLW-1229); it opens the existing
+        // referral follow-up form. Other rows stay as before.
+        val benAdapter = NcdReferListAdapter(
+            viewModel.userName,
+            NcdReferListAdapter.NcdReferallickListener { benId, hhId, referReason, referredDate, referralType ->
+                if (findNavController().currentDestination?.id == R.id.hwcReferredFragment) {
+                    findNavController().navigate(
+                        HwcReferredFragmentDirections.actionHwcReferredFragmentToNCDReferalFormFragment(
+                            benId = benId,
+                            hhId = hhId,
+                            referReason = referReason.toString(),
+                            referredDate = referredDate,
+                            referralType = referralType
+                        )
+                    )
+                }
+            },
+            false,
+            followUpVisible = { it.referalCac.type == HwcReferredViewModel.GENERAL_CHECKUP },
+        )
         binding.rvAny.adapter = benAdapter
 
 

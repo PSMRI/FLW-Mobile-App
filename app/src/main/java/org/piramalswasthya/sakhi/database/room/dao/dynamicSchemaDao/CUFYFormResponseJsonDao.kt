@@ -22,8 +22,17 @@ interface CUFYFormResponseJsonDao {
     @Query("SELECT * FROM children_under_five_all_visit WHERE id = :id")
     suspend fun getFormResponseById(id: Int): CUFYFormResponseJsonEntity?
 
+    @Query("SELECT * FROM children_under_five_all_visit WHERE serverId = :serverId AND formId = :formId LIMIT 1")
+    suspend fun getFormResponseByServerId(serverId: Int, formId: String): CUFYFormResponseJsonEntity?
+
+    @Query("SELECT * FROM children_under_five_all_visit WHERE (serverId IS NULL OR serverId = 0) AND benId = :benId AND hhId = :hhId AND visitDate = :visitDate AND formId = :formId LIMIT 1")
+    suspend fun getLegacyFormResponse(benId: Long, hhId: Long, visitDate: String, formId: String): CUFYFormResponseJsonEntity?
+
     @Query("SELECT * FROM children_under_five_all_visit WHERE benId = :benId AND visitDate = :visitDate LIMIT 1")
     suspend fun getFormResponse(benId: Long, visitDate: String): CUFYFormResponseJsonEntity?
+
+    @Query("SELECT * FROM children_under_five_all_visit WHERE benId = :benId AND hhId = :hhId AND visitDate = :visitDate AND formId = :formId LIMIT 1")
+    suspend fun getFormResponse(benId: Long, hhId: Long, visitDate: String, formId: String): CUFYFormResponseJsonEntity?
 
     @Query("DELETE FROM children_under_five_all_visit WHERE benId = :benId AND visitDate = :visitDate")
     suspend fun deleteFormResponse(benId: Long, visitDate: String)

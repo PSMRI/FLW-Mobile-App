@@ -50,6 +50,8 @@ class NewHouseholdViewModel @Inject constructor(
 
     private val hhIdFromArgs = NewHouseholdFragmentArgs.fromSavedStateHandle(savedStateHandle).hhId
     private val isAshaFamily = NewHouseholdFragmentArgs.fromSavedStateHandle(savedStateHandle).isAshaFamily
+    private val linkBenId = NewHouseholdFragmentArgs.fromSavedStateHandle(savedStateHandle).linkBenId
+    val isLinkMode: Boolean get() = linkBenId != 0L
 
     private val _state = MutableLiveData(State.IDLE)
     val state: LiveData<State>
@@ -100,7 +102,11 @@ class NewHouseholdViewModel @Inject constructor(
                     household.apply {
                         if (householdId == 0L) {
                             dataset.freezeHouseholdId(household, user.userId)
-                            householdRepo.substituteHouseholdIdForDraft(household)
+                            if (!isLinkMode) {
+                                householdRepo.substituteHouseholdIdForDraft(household)
+                            } else {
+                                household.isDraft = false
+                            }
                             serverUpdatedStatus = 1
                             processed = "N"
                         } else {
@@ -116,6 +122,9 @@ class NewHouseholdViewModel @Inject constructor(
                         updatedBy = user.userName
                     }
                     householdRepo.persistRecord(household)
+                    if (linkBenId != 0L) {
+                        benRepo.linkBeneficiaryToHousehold(linkBenId, household.householdId, "Self", 19)
+                    }
                     // Hand off the fetched HoF ABHA details, keyed by this household's frozen id,
                     // so the HoF beneficiary registration can prefill gender/dob and persist abhId.
                     pendingAbhaMember?.let { hofAbhaPrefillCache.put(household.householdId, it) }

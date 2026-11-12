@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.database.room.InAppDb
 import org.piramalswasthya.sakhi.database.room.NcdReferalDao
+import org.piramalswasthya.sakhi.database.room.dao.GeneralCheckupDao
 import org.piramalswasthya.sakhi.database.room.dao.ABHAGenratedDao
 import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.AesDao
@@ -59,6 +60,7 @@ import org.piramalswasthya.sakhi.helpers.ApiAnalyticsInterceptor
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.network.AbhaApiService
 import org.piramalswasthya.sakhi.network.AmritApiService
+import org.piramalswasthya.sakhi.network.SerializeNullAdapterFactory
 import org.piramalswasthya.sakhi.network.interceptors.AccountDeactivationInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.BodyCappedLoggingInterceptor
 import org.piramalswasthya.sakhi.network.interceptors.ContentTypeInterceptor
@@ -207,6 +209,7 @@ object AppModule {
     @Provides
     fun provideMoshiInstance(): Moshi {
         return Moshi.Builder()
+            .add(SerializeNullAdapterFactory)
             .add(KotlinJsonAdapterFactory())
             .build()
     }
@@ -427,5 +430,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNcdReferDao(database: InAppDb): NcdReferalDao = database.referalDao
+
+    @Singleton
+    @Provides
+    fun provideGeneralCheckupDao(database: InAppDb): GeneralCheckupDao = database.generalCheckupDao
 
 }

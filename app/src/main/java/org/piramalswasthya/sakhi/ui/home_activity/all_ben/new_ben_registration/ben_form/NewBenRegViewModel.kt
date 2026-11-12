@@ -129,6 +129,18 @@ class NewBenRegViewModel @Inject constructor(
         }
     }
 
+    suspend fun getLinkHouseholds() = householdRepo.getAllHouseholds(
+        preferenceDao.getLocationRecord()?.village?.id ?: 0
+    )
+
+    suspend fun linkToHousehold(householdId: Long, relation: String, relationPosition: Int) {
+        benRepo.linkBeneficiaryToHousehold(benIdFromArgs, householdId, relation, relationPosition)
+    }
+
+    suspend fun getLinkBeneficiary() = benRepo.getBeneficiaryRecord(benIdFromArgs, hhId)
+
+    suspend fun getLinkHouseholdMembers(householdId: Long) = benRepo.getBenListFromHousehold(householdId)
+
     fun clearAbhaUserDetails() {
         _abhaUserDetails.value = null
     }

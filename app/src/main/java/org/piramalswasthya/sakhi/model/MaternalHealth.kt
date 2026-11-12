@@ -584,8 +584,8 @@ data class ANCPost(
             otherHighRisk = otherHighRiskCondition,
             referralFacility = referralFacility,
 //            referralFacilityId
-//            hrpConfirmed
-//            hrpConfirmedBy
+            hrpConfirmed = isHrpConfirmed,
+            hrpConfirmedBy = hrpIdentifiedBy,
 //            hrpConfirmedById
             maternalDeath = isMaternalDeath,
             maternalDeathProbableCause = probableCauseOfDeath,

@@ -116,7 +116,7 @@ class CUFYFormRepositoryTest : BaseRepositoryTest() {
     @Test
     fun `insertOrUpdateFormResponse inserts entity when none existing`() = runTest {
         val entity = mockk<CUFYFormResponseJsonEntity>(relaxed = true)
-        coEvery { jsonDao.getFormResponse(any(), any()) } returns null
+        coEvery { jsonDao.getFormResponse(any(), any(), any(), any()) } returns null
         repo.insertOrUpdateFormResponse(entity)
         coVerify { jsonDao.insertFormResponse(entity) }
     }
@@ -192,9 +192,38 @@ class CUFYFormRepositoryTest : BaseRepositoryTest() {
     fun `insertOrUpdateFormResponse copies id and inserts when existing found`() = runTest {
         val entity = mockk<CUFYFormResponseJsonEntity>(relaxed = true)
         val existing = mockk<CUFYFormResponseJsonEntity>(relaxed = true)
-        coEvery { jsonDao.getFormResponse(any(), any()) } returns existing
+        coEvery { jsonDao.getFormResponse(any(), any(), any(), any()) } returns existing
         repo.insertOrUpdateFormResponse(entity)
         coVerify { jsonDao.insertFormResponse(any()) }
+    }
+
+    @Test
+    fun `insertOrUpdateFormResponse uses the full form key and does not reuse another form row`() = runTest {
+        val entity = CUFYFormResponseJsonEntity(
+            benId = 212925122166L,
+            hhId = 20052024160626977L,
+            visitDate = "2025-12-01",
+            formId = "ors_form_001",
+            version = 1,
+            formDataJson = "{}"
+        )
+        coEvery {
+            jsonDao.getFormResponse(
+                entity.benId,
+                entity.hhId,
+                entity.visitDate,
+                entity.formId
+            )
+        } returns null
+        coEvery { jsonDao.insertFormResponse(entity) } just Runs
+
+        repo.insertOrUpdateFormResponse(entity)
+
+        coVerify(exactly = 1) {
+            jsonDao.getFormResponse(entity.benId, entity.hhId, entity.visitDate, entity.formId)
+        }
+        coVerify(exactly = 0) { jsonDao.getFormResponse(entity.benId, entity.visitDate) }
+        coVerify(exactly = 1) { jsonDao.insertFormResponse(entity) }
     }
 
     @Test
@@ -509,7 +538,8 @@ class CUFYFormRepositoryTest : BaseRepositoryTest() {
             eyeSide = "",
             fields = fields
         )
-        coEvery { jsonDao.getFormResponse(20L, "01-01-2026") } returns null
+        coEvery { jsonDao.getFormResponse(20L, 10L, "01-01-2026", "F1") } returns null
+        coEvery { jsonDao.getFormResponseByServerId(1, "F1") } returns null
         val saved = slot<CUFYFormResponseJsonEntity>()
         coEvery { jsonDao.insertFormResponse(capture(saved)) } just Runs
 
@@ -524,6 +554,66 @@ class CUFYFormRepositoryTest : BaseRepositoryTest() {
         assertEquals("john", fieldsJson.getString("name"))
         assertTrue(fieldsJson.isNull("note"))
         assertTrue(fieldsJson.getString("list").contains("a"))
+        assertEquals(1, saved.captured.serverId)
+    }
+
+    @Test
+    fun `saveDownloadedVisitList stores separate server records for the same child and date`() = runTest {
+        val fields = com.google.gson.JsonObject().apply { addProperty("num_ors_packets", "10.0") }
+        val visits = listOf(189, 190, 191).map { serverId ->
+            HBNCVisitResponse(
+                id = serverId,
+                houseHoldId = 30042026152850977L,
+                beneficiaryId = 247436066655L,
+                visitDate = "2026-06-16",
+                eyeSide = "",
+                fields = fields
+            )
+        }
+        coEvery { jsonDao.getFormResponseByServerId(any(), any()) } returns null
+        val saved = mutableListOf<CUFYFormResponseJsonEntity>()
+        coEvery { jsonDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitList(visits, "ors_form_001")
+
+        assertEquals(listOf(189, 190, 191), saved.map { it.serverId })
+        assertEquals(3, saved.size)
+    }
+
+    @Test
+    fun `saveDownloadedVisitList stores both IFA records when response omits id`() = runTest {
+        val fields = com.google.gson.JsonObject().apply {
+            addProperty("ifa_provided", "Yes")
+            addProperty("ifa_quantity", 11.0)
+        }
+        val visits = listOf(
+            HBNCVisitResponse(
+                id = 0,
+                houseHoldId = 6102026144659977L,
+                beneficiaryId = 469261553614L,
+                visitDate = "06-10-2026",
+                eyeSide = "",
+                fields = fields
+            ),
+            HBNCVisitResponse(
+                id = 0,
+                houseHoldId = 7102026120252977L,
+                beneficiaryId = 484343146819L,
+                visitDate = "07-10-2026",
+                eyeSide = "",
+                fields = fields
+            )
+        )
+        coEvery { jsonDao.getLegacyFormResponse(any(), any(), any(), any()) } returns null
+        val saved = mutableListOf<CUFYFormResponseJsonEntity>()
+        coEvery { jsonDao.insertFormResponse(capture(saved)) } just Runs
+
+        repo.saveDownloadedVisitList(visits, FormConstants.CHILDREN_UNDER_FIVE_IFA_FORM_ID)
+
+        assertEquals(2, saved.size)
+        assertEquals(listOf(null, null), saved.map { it.serverId })
+        assertEquals(listOf(469261553614L, 484343146819L), saved.map { it.benId })
+        coVerify(exactly = 0) { jsonDao.getFormResponseByServerId(any(), any()) }
     }
 
     @Test
@@ -541,7 +631,7 @@ class CUFYFormRepositoryTest : BaseRepositoryTest() {
             fields = fields
         )
 
-        coEvery { jsonDao.getFormResponse(any(), any()) } returns null
+        coEvery { jsonDao.getFormResponse(any(), any(), any(), any()) } returns null
         coEvery { jsonDao.insertFormResponse(any()) } just Runs
 
         repo.saveDownloadedVisitList(listOf(badItem, goodItem), "F1")

@@ -355,8 +355,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/riskfactRV"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_form_tb"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
@@ -370,6 +373,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_normal"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="@dimen/margin_normal"
                     android:onClick="@{()-> clickListener.onClickForm(benWithTb)}"
                     android:textColor="?attr/colorOnPrimary"

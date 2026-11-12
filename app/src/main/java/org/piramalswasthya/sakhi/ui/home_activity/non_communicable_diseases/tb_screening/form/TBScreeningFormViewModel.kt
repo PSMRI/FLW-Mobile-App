@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.database.shared_preferences.ReferralStatusManag
 import org.piramalswasthya.sakhi.model.ReferalCache
 import org.piramalswasthya.sakhi.model.TBScreeningCache
 import org.piramalswasthya.sakhi.repositories.BenRepo
+import org.piramalswasthya.sakhi.repositories.CbacRepo
 import org.piramalswasthya.sakhi.repositories.NcdReferalRepo
 import org.piramalswasthya.sakhi.repositories.TBRepo
 import timber.log.Timber
@@ -30,6 +31,7 @@ class TBScreeningFormViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val tbRepo: TBRepo,
     private val benRepo: BenRepo,
+    private val cbacRepo: CbacRepo,
     private val referralStatusManager: ReferralStatusManager,
     private val referalRepo: NcdReferalRepo
 ) : ViewModel() {
@@ -69,6 +71,10 @@ class TBScreeningFormViewModel @Inject constructor(
     val asymptomaticRefresh: LiveData<Int>
         get() = _asymptomaticRefresh
 
+    private val _riskFactorsRefresh = MutableLiveData<Int>()
+    val riskFactorsRefresh: LiveData<Int>
+        get() = _riskFactorsRefresh
+
     //    private lateinit var user: UserDomain
     private val dataset =
         TBScreeningDataset(context, preferenceDao.getCurrentLanguage())
@@ -101,9 +107,21 @@ class TBScreeningFormViewModel @Inject constructor(
                 _recordExists.value = false
             }
 
+            val ncdDiagnoses = referalRepo.getNcdFollowUpVisits(benId)
+                .mapNotNull { it.diagnosisCodes }
+                .joinToString(",")
+            val cbac = cbacRepo.getLastFilledCbac(benId)
+            val cbacRiskFactors = cbac?.vulnerabilityRiskFactorCodes().orEmpty()
             dataset.setUpPage(
                 ben,
-                if (recordExists.value == true) tbScreeningCache else null
+                if (recordExists.value == true) tbScreeningCache else null,
+                hasHypertension = ncdDiagnoses.contains("hypertension", ignoreCase = true) ||
+                        ncdDiagnoses.contains("hypertensive", ignoreCase = true),
+                hasDiabetes = ncdDiagnoses.contains("diabetes", ignoreCase = true),
+                hasTobaccoUser = "TOBACCO_SMOKER" in cbacRiskFactors,
+                hasAlcoholRiskFactor = "SUBSTANCE_ABUSE" in cbacRiskFactors,
+                hasIndoorAirPollution = "INDOOR_AIR_POLLUTION_EXPOSURE" in cbacRiskFactors,
+                hasWorkplaceSettings = "WORKPLACE_SETTINGS" in cbacRiskFactors
             )
 
         }
@@ -139,6 +157,9 @@ class TBScreeningFormViewModel @Inject constructor(
     fun updateListOnValueChanged(formId: Int, index: Int) {
         viewModelScope.launch {
             dataset.updateList(formId, index)
+            if (formId == dataset.getFamilyHistoryTbFormId()) {
+                _riskFactorsRefresh.value = dataset.getIndexOfRiskFactors()
+            }
             if (dataset.isAsymptomaticDriver(formId)) {
                 _asymptomaticRefresh.value = dataset.getIndexOfAsymptomatic()
             }
@@ -209,6 +230,9 @@ class TBScreeningFormViewModel @Inject constructor(
         return dataset.getIndexOfDate()
     }
     fun getIndexOfAsymptomatic(): Int = dataset.getIndexOfAsymptomatic()
+    fun getHistoryTB(): Int = dataset.getFamilyhistoryTB()
+    fun getIndexOfRiskFactors(): Int = dataset.getIndexOfRiskFactors()
+
 
 }
 

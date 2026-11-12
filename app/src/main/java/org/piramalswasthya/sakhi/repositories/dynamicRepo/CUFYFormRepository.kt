@@ -169,7 +169,11 @@ class CUFYFormRepository @Inject constructor(
                     put("fields", fieldsJson)
                 }
 
+                // Some child-care form endpoints (including IFA) omit `id`. Gson then
+                // supplies 0, which must not be used as a shared unique server key.
+                val serverId = item.id.takeIf { it > 0 }
                 val entity = CUFYFormResponseJsonEntity(
+                    serverId = serverId,
                     benId = benId,
                     hhId = hhId,
                     visitDate = visitDate,
@@ -179,7 +183,12 @@ class CUFYFormRepository @Inject constructor(
                     isSynced = true
                 )
 
-                insertOrUpdateFormResponse(entity)
+                val existing = serverId?.let {
+                    jsonResponseDao.getFormResponseByServerId(it, formId)
+                } ?: jsonResponseDao.getLegacyFormResponse(benId, hhId, visitDate, formId)
+                jsonResponseDao.insertFormResponse(
+                    if (existing != null) entity.copy(id = existing.id) else entity
+                )
 
             } catch (e: Exception) {
                 Timber.tag("CUFYFormRepository").e(e, "Failed to save visit at index " + index)
@@ -189,7 +198,12 @@ class CUFYFormRepository @Inject constructor(
 
     suspend fun insertOrUpdateFormResponse(entity: CUFYFormResponseJsonEntity) {
 
-        val existing = jsonResponseDao.getFormResponse(entity.benId, entity.visitDate)
+        val existing = jsonResponseDao.getFormResponse(
+            entity.benId,
+            entity.hhId,
+            entity.visitDate,
+            entity.formId
+        )
 
         val updated = existing?.let {
             val result = entity.copy(id = it.id)

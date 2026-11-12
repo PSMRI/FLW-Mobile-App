@@ -1173,6 +1173,10 @@ data class AdolscentHealthDTO(
     var benId:Long,
     var visitDate: String,
     var healthStatus: String? = null,
+    @com.google.gson.annotations.SerializedName(
+        value = "ifaTabletDistributed",
+        alternate = ["ifaTabletDistribution"]
+    )
     var ifaTabletDistributed: Boolean? = null,
     var quantityOfIfaTablets: Int? = null,
     var menstrualHygieneAwarenessGiven: Boolean? = null,
@@ -1529,14 +1533,17 @@ data class NCDReferalDTO(
     val vanID: Int?,
     val parkingPlaceID: Int?,
     val beneficiaryRegID: Long?,
-    val benVisitID: Long?,
-    val visitCode: Long?,
+    /** Null when there is no HWC visit behind the referral; sent as null, never 0 (server foreign key). */
+    @SerializeNull val benVisitID: Long?,
+    @SerializeNull val visitCode: Long?,
     val providerServiceMapID: Int?,
     val createdBy: String?,
     var type: String?,
 
     val isSpecialist: Boolean? = false,
     var syncState: SyncState = SyncState.UNSYNCED,
+    /** ROUTINE / EMERGENCY, General Check-up only */
+    val priority: String? = null,
 
     ) {
     fun toCache(): ReferalCache {
@@ -1557,11 +1564,8 @@ data class NCDReferalDTO(
             referralReason = referralReason,
             parkingPlaceID = parkingPlaceID,
             syncState = SyncState.SYNCED,
-            type = type
-
-
-
-
+            type = type,
+            priority = priority
         )
     }
 }

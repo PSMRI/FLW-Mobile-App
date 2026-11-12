@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.repositories
 
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -120,41 +121,41 @@ class AdolescentHealthRepo @Inject constructor(
 
         val adolscentHealthList = mutableListOf<AdolescentHealthCache>()
 
-        val adolscentnewHealthList: List<AdolscentHealthDTO> = if (dataObj.trimStart().startsWith("[")) {
-            Gson().fromJson(dataObj, Array<AdolscentHealthDTO>::class.java)?.toList() ?: emptyList()
-        } else {
-            return adolscentHealthList
-        }
+        val responseData = JsonParser.parseString(dataObj)
+        val dataArray = when {
+            responseData.isJsonArray -> responseData.asJsonArray
+            responseData.isJsonObject -> responseData.asJsonObject.entrySet()
+                .firstOrNull { it.value.isJsonArray }?.value?.asJsonArray
+            else -> null
+        } ?: return adolscentHealthList
+
+        val adolscentnewHealthList = Gson().fromJson(
+            dataArray,
+            Array<AdolscentHealthDTO>::class.java
+        )?.toList().orEmpty()
 
         Timber.d("Pull from amrit adolescent adolscentnewHealthList data aa : $adolscentnewHealthList")
 
 
         adolscentnewHealthList.forEach { dto ->
+            try {
+                if (dto.benId <= 0 || dto.visitDate.isBlank()) {
+                    Timber.e("Skipping adolescent record with invalid benId/visitDate: $dto")
+                    return@forEach
+                }
 
-            val visitDate = dto.visitDate ?: return@forEach
-
-            val visitDateLong = getLongFromDate(visitDate)
-
-            val existing = adolescentHealthDao.getAdolescentHealth(
-                dto.benId,
-                visitDateLong,
-                visitDateLong - 19_800_000
-            )
-
-            if (existing == null) {
-
-                val cache = dto.toCache()
-
-                Timber.d("Saving adolescent cache = $cache")
+                val visitDateLong = getLongFromDate(dto.visitDate)
+                val existing = adolescentHealthDao.getAdolescentHealth(
+                    dto.benId,
+                    visitDateLong,
+                    visitDateLong - 19_800_000
+                )
+                val cache = dto.toCache().copy(id = existing?.id)
 
                 adolescentHealthDao.saveAdolescentHealth(cache)
-
-            } else {
-
-                Timber.d(
-                    "Adolescent cache already exists: benId=${dto.benId}, " +
-                            "visitDate=$visitDate"
-                )
+                adolscentHealthList.add(cache)
+            } catch (e: Exception) {
+                Timber.e(e, "Could not save adolescent server record: benId=${dto.benId}, visitDate=${dto.visitDate}")
             }
         }
 
@@ -265,6 +266,7 @@ class AdolescentHealthRepo @Inject constructor(
 
             val formats = listOf(
                 "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                "yyyy-MM-dd",
                 "MMM d, yyyy h:mm:ss a"
             )
 

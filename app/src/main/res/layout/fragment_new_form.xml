@@ -359,7 +359,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:fillViewport="true"
-                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintBottom_toTopOf="@+id/action_buttons"
                 app:layout_constraintEnd_toEndOf="@+id/cv_patient_information"
                 app:layout_constraintStart_toStartOf="@+id/cv_patient_information"
                 app:layout_constraintTop_toBottomOf="@+id/cv_patient_information">
@@ -439,17 +439,32 @@
 
 
             </androidx.core.widget.NestedScrollView>
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_submit"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+            <LinearLayout
+                android:id="@+id/action_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
                 android:layout_margin="@dimen/margin_small"
-                android:text="@string/btn_submit"
-                android:textColor="@android:color/white" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_link_household"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:text="@string/link_household"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_submit"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_edit"
@@ -457,7 +472,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintBottom_toTopOf="@+id/action_buttons"
                 android:layout_marginEnd="@dimen/padding_wide"
                 android:layout_marginBottom="@dimen/padding_wide"
                 android:contentDescription="@string/edit"

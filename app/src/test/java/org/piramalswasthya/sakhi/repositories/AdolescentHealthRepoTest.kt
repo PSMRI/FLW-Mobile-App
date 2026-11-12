@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -296,7 +297,7 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
     }
 
     @Test
-    fun `getadolescentHealthCacheFromServer skips save when record already exists`() = runTest {
+    fun `getadolescentHealthCacheFromServer updates existing record keeping its local id`() = runTest {
         loggedIn()
         val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
         val outer = org.json.JSONObject()
@@ -304,17 +305,21 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
         outer.put("statusCode", 200)
         outer.put("data", dtoJson)
         coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
-        val existing = mockk<AdolescentHealthCache>(relaxed = true)
+        val existing = AdolescentHealthCache(id = 42, benId = 1L)
+        val saved = slot<AdolescentHealthCache>()
+        coEvery { adolescentHealthDao.saveAdolescentHealth(capture(saved)) } returns Unit
         coEvery { adolescentHealthDao.getAdolescentHealth(1L, any(), any()) } returns existing
 
         val result = repo.getadolescentHealthCacheFromServer()
 
         assertEquals(1, result)
-        coVerify(exactly = 0) { adolescentHealthDao.saveAdolescentHealth(any()) }
+        coVerify(exactly = 1) { adolescentHealthDao.saveAdolescentHealth(any()) }
+        assertEquals(42, saved.captured.id)
+        assertEquals(1L, saved.captured.benId)
     }
 
     @Test
-    fun `getadolescentHealthCacheFromServer skips save when ben not found`() = runTest {
+    fun `getadolescentHealthCacheFromServer saves new record without checking the beneficiary`() = runTest {
         loggedIn()
         val dtoJson = """{"userId":0,"adolescentHealths":[{"benId":1,"visitDate":"Jul 22, 2023 8:17:23 AM","healthStatus":"good"}]}"""
         val outer = org.json.JSONObject()
@@ -324,11 +329,15 @@ class AdolescentHealthRepoTest : BaseRepositoryTest() {
         coEvery { tmcNetworkApiService.getAdolescentHealthData(any()) } returns resp(200, outer.toString())
         coEvery { adolescentHealthDao.getAdolescentHealth(1L, any(), any()) } returns null
         coEvery { benDao.getBen(1L) } returns null
+        val saved = slot<AdolescentHealthCache>()
+        coEvery { adolescentHealthDao.saveAdolescentHealth(capture(saved)) } returns Unit
 
         val result = repo.getadolescentHealthCacheFromServer()
 
         assertEquals(1, result)
-        coVerify(exactly = 0) { adolescentHealthDao.saveAdolescentHealth(any()) }
+        coVerify(exactly = 1) { adolescentHealthDao.saveAdolescentHealth(any()) }
+        assertNull(saved.captured.id)
+        assertEquals(1L, saved.captured.benId)
     }
 
     @Test

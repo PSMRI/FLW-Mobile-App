@@ -530,12 +530,13 @@
     <string name="eligible_couple_tracking_list">Eligible Couple Tracking List</string>
     <string name="eligible_couple_tracking_form">Eligible Couple Tracking Form</string>
     <string name="tb_screening_list">TB Screening List</string>
-    <string name="tb_suspected_list">Suspected TB cases</string>
+    <string name="tb_suspected_list">Presumptive TB cases</string>
     <string name="tb_screening_form">TB Screening Form</string>
     <string name="tb_suspected_copd_case">Suspected COPD case</string>
     <string name="tb_suspected_leprosy_case">Suspected Leprosy case</string>
     <string name="tb_suspected_ncd_case">Suspected NCD Case</string>
     <string name="tb_confirmed_list">TB Confirmed List</string>
+    <string name="tb_confirmed_cases">Confirmed TB cases</string>
     <string name="tb_confirmed_form">TB Confirmed Form</string>
 
     <string name="maleria_screening_form">Malaria Form</string>
@@ -544,7 +545,7 @@
     <string name="filaria_screening_form">Filaria Form</string>
     <string name="leprosy_screening_form">Leprosy Form</string>
     <string name="follow_up_form">Follow-up  Form</string>
-    <string name="tb_suspected_form">Suspected TB case</string>
+    <string name="tb_suspected_form">Presumptive TB case</string>
     <string name="mother_immunization">Mother Immunization</string>
     <string name="delivery_outcome">Delivery Outcome</string>
     <string name="delivery_outcome_list">Delivery Outcome List</string>
@@ -732,6 +733,7 @@
     <string name="abha_not_created_message">ABHA ID is not created. Do you want to create a new ABHA ID?</string>
     <string name="dose_name_2">Dose Name : %1$s</string>
     <string name="u_win_session">U-WIN Session</string>
+    <string name="uwin_session_already_submitted_for_date">A U-WIN session has already been submitted for this date.</string>
     <string name="ors_distribution_campaign">ORS Distribution Campaign</string>
     <string name="number_of_families_label">Number Of Families : %s</string>
     <string name="number_of_children_label">Number Of Children : %s</string>
@@ -823,6 +825,7 @@
         <item>Mosquito Net</item>
         <item>Filaria MDA</item>
         <item>Filaria MDA Campaign</item>
+        <item>General Check-up</item>
     </string-array>
 
     <string-array name="place_array">
@@ -1770,5 +1773,12 @@
     <string name="add_follow_up">Add Follow Up</string>
     <string name="view_details">View Details</string>
     <string name="speech_to_text_unavailable">Voice input is not available on this device</string>
+    <string name="link_household">Link Household</string>
+    <string name="link_to_existing_household">Link to Existing Household</string>
+    <string name="create_new_household">Create New Household</string>
+    <string name="select_household">Select Household</string>
+    <string name="search_household_hint">Search by name or ID...</string>
+    <string name="select_relationship_to_hof">Select Relationship to HOF</string>
+    <string name="beneficiary_linked_successfully">Beneficiary linked successfully</string>
 </resources>
 
