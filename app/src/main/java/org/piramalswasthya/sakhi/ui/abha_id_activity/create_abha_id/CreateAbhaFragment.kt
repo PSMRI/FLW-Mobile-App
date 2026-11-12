@@ -50,6 +50,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import org.piramalswasthya.sakhi.ui.design.AbhaSteps
 
 
 @AndroidEntryPoint
@@ -136,6 +137,8 @@ class CreateAbhaFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         navController = findNavController()
+        // Redesign (Figma M2.10-06): step strip with every step done; not shown for a found ABHA (M2.10-18)
+        AbhaSteps.show(binding.root, 6, parentViewModel.abhaMode.value != AadhaarIdViewModel.Abha.SEARCH)
 
 
         val intent = requireActivity().intent

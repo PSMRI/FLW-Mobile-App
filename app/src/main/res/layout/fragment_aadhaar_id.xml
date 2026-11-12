@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.10-01 / -09 "ABHA · find or create" — question "ABHA" + segmented options
+     (Search ABHA | Create ABHA, 48dp, gap 8), "Verify with" boxed dropdown, then the child nav host.
+     Content padding 16, gap 12. Old layout: legacy_fragment_aadhaar_id.xml. All view ids unchanged. -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -13,202 +16,196 @@
         android:id="@+id/fl_aadhaar_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:background="@color/md_theme_dark_onTertiary"
+        android:background="@color/ds_surface"
         tools:context=".ui.abha_id_activity.aadhaar_id.AadhaarIdFragment">
 
-        <androidx.cardview.widget.CardView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_content_aadhar_id"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/padding_normal">
+            android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_content_aadhar_id"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/padding_normal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Figma "Question": label 14/20 + options, gap 6 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/abha"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_surface_variant" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:id="@+id/cvHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cvHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_margin="18dp"
-                        android:background="@drawable/background_rectangle_lighter_grey_30"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                        android:id="@+id/searchToggle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_ds_segment_toggle"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/str_search_abha"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_segment_toggle_text" />
 
-                        <TextView
-                            android:id="@+id/searchToggle"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:backgroundTint="?attr/colorPrimary"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:padding="@dimen/_5sdp"
-                            android:text="@string/str_search_abha"
-                            android:textColor="@color/md_theme_dark_shadow"
-                            android:textSize="@dimen/_14sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.5"
-                            app:layout_constraintStart_toEndOf="@+id/createToggle"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/createToggle"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:background="@drawable/background_rectangle_lightest_grey_20"
-                            android:backgroundTint="?attr/colorPrimary"
-                            android:fontFamily="@font/roboto_bold"
-                            android:gravity="center"
-                            android:padding="@dimen/_5sdp"
-                            android:text="@string/str_create_abha"
-                            android:textColor="@color/md_theme_light_onSecondary"
-                            android:textSize="@dimen/_14sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/searchToggle"
-                            app:layout_constraintHorizontal_bias="0.5"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_aadhaar_verify_dropdown"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:hint="@string/aadhaar"
-                        android:importantForAccessibility="yes"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/cl_content_aadhar_id">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/actv_aadhar_verification_dropdown"
-                            listItems="@{viewModel.aadhaarVerificationTypeValues}"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:inputType="none"
-                            android:importantForAccessibility="yes"
-                            android:contentDescription="aadhaar dropdown"
-                            android:text="@{viewModel.aadhaarVerificationTypeValues[0]}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <RadioGroup
-                        android:id="@+id/rg_gov_asha"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:textAppearance="?attr/textAppearanceHeadline6"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/til_aadhaar_verify_dropdown">
-
-                        <RadioButton
-                            android:id="@+id/rb_asha"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:checked="true"
-                            android:text="@string/asha" />
-
-                        <RadioButton
-                            android:id="@+id/rb_gov"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/gov" />
-                    </RadioGroup>
-
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/nav_host_fragment_aadhaar_id"
-                        android:name="androidx.navigation.fragment.NavHostFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hello World!"
-                        android:visibility="visible"
-                        app:defaultNavHost="true"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_verify_dropdown"
-                        app:navGraph="@navigation/nav_aadhaar_id"
-                        tools:layout="@layout/fragment_aadhaar_number_asha" />
-
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/nav_host_fragment_find_abha"
-                        android:name="androidx.navigation.fragment.NavHostFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hello World!"
-                        android:visibility="gone"
-                        app:defaultNavHost="true"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/til_aadhaar_verify_dropdown"
-                        app:navGraph="@navigation/nav_find_abha"
-                        tools:layout="@layout/fragment_find_abha" />
-
+                    <TextView
+                        android:id="@+id/createToggle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_ds_segment_toggle"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/str_create_abha"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_segment_toggle_text" />
                 </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Figma "Text field" Verify with: label above (shown with the dropdown) -->
+                <TextView
+                    android:id="@+id/tv_verify_with_label"
+                    style="@style/Widget.Sakhi.FieldLabel"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/ds_abha_verify_with" />
 
-            <ProgressBar
-                android:id="@+id/pb_loading_aadhar_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminateTint="?attr/colorPrimary"
-                android:visibility="gone" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_aadhaar_verify_dropdown"
+                    style="@style/Widget.Sakhi.TextField.Dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:importantForAccessibility="yes"
+                    app:hintEnabled="false">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_error"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/actv_aadhar_verification_dropdown"
+                        style="@style/Widget.Sakhi.TextField.Input"
+                        listItems="@{viewModel.aadhaarVerificationTypeValues}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="aadhaar dropdown"
+                        android:importantForAccessibility="yes"
+                        android:inputType="none"
+                        android:text="@{viewModel.aadhaarVerificationTypeValues[0]}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- ASHA / GOV (hidden in the app today) as segmented options -->
+                <RadioGroup
+                    android:id="@+id/rg_gov_asha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
+                        android:id="@+id/rb_asha"
+                        style="@style/Widget.Sakhi.SegmentedOption"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="@string/asha" />
+
+                    <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
+                        android:id="@+id/rb_gov"
+                        style="@style/Widget.Sakhi.SegmentedOption"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/gov" />
+                </RadioGroup>
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/nav_host_fragment_aadhaar_id"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/nav_aadhaar_id"
+                    tools:layout="@layout/fragment_aadhaar_number_asha" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/nav_host_fragment_find_abha"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/nav_find_abha"
+                    tools:layout="@layout/fragment_find_abha" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/pb_loading_aadhar_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/ds_primary" />
+
+        <!-- Offline: Figma "Empty state" (M2.10-07) -->
+        <LinearLayout
+            android:id="@+id/cl_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="48dp"
+            android:paddingTop="48dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_ds_empty_illustration">
 
                 <ImageView
                     android:id="@+id/iv_offline"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:contentDescription="@string/offline"
-                    android:src="@drawable/ic_offline"
-                    app:layout_constraintBottom_toTopOf="@+id/textView5"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="@+id/textView5"
-                    app:layout_constraintStart_toStartOf="@+id/textView5" />
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:layout_gravity="center"
-                    android:padding="@dimen/padding_normal"
-                    android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.7" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                    android:contentDescription="@string/offline"
+                    android:src="@drawable/ic_ds_wifi_off"
+                    app:tint="@color/ds_primary" />
+            </FrameLayout>
 
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+        </LinearLayout>
     </FrameLayout>
 </layout>

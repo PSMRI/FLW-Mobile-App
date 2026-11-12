@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.10-03 "Checkbox option" row — white + 1dp outline-variant, ticked = primary-subtle + 2dp primary
+     (row is "activated" from AadhaarConsentAdapter), r12, padding 12/16, box 22 + gap 12, text 16/24.
+     Old layout: legacy_rv_card_abha_concent.xml. Ids and bindings unchanged. -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -12,29 +15,39 @@
             type="org.piramalswasthya.sakhi.adapters.AadhaarConsentAdapter.ConsentClickListener" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:id="@+id/ll_consent_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_5sdp">
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_ds_option_activated"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:buttonTint="@color/md_theme_light_primary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:background="@null"
+            android:button="@drawable/ic_ds_checkbox"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            app:buttonCompat="@null"
+            app:buttonIcon="@null"
+            app:useMaterialThemeColors="false" />
 
         <TextView
             android:id="@+id/tvConsentText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:text="@{Item.title}"
-            android:textColor="@color/md_theme_light_scrim"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/checkBox"
-            app:layout_constraintTop_toTopOf="@+id/checkBox" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+            android:textColor="@color/ds_on_surface" />
+    </LinearLayout>
 </layout>

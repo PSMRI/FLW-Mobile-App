@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma M2.10 "Steps": Aadhaar · Consent · OTP · Mobile · Done (bars 4dp r2, gap 6, label 11/16).
+     State is set from code with AbhaSteps.bind(root, current). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_abha_steps"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="0dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/step_bar_1"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_ds_step_todo" />
+
+        <TextView
+            android:id="@+id/step_label_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:text="@string/ds_abha_step_aadhaar"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/step_bar_2"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_ds_step_todo" />
+
+        <TextView
+            android:id="@+id/step_label_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:text="@string/ds_abha_step_consent"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/step_bar_3"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_ds_step_todo" />
+
+        <TextView
+            android:id="@+id/step_label_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:text="@string/ds_abha_step_otp"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/step_bar_4"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_ds_step_todo" />
+
+        <TextView
+            android:id="@+id/step_label_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:text="@string/ds_abha_step_mobile"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/step_bar_5"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_ds_step_todo" />
+
+        <TextView
+            android:id="@+id/step_label_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:text="@string/ds_abha_step_done"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+</LinearLayout>

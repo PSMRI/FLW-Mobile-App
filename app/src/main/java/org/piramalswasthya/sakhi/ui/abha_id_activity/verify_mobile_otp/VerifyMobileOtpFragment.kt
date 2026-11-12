@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentVerifyMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.verify_mobile_otp.VerifyMobileOtpViewModel.State
+import org.piramalswasthya.sakhi.ui.design.AbhaSteps
 
 @AndroidEntryPoint
 class VerifyMobileOtpFragment : Fragment() {
@@ -64,6 +65,8 @@ class VerifyMobileOtpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         startResendTimer()
+        // Redesign (Figma M2.10-05): step strip, Mobile = step 4
+        AbhaSteps.show(binding.root, 4)
         binding.btnVerifyOTP.setOnClickListener {
             viewModel.verifyOtpClicked(binding.otpView.text.toString())
         }

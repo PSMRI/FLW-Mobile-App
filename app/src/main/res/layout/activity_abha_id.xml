@@ -1,65 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.10 ABHA shell — light top app bar (64dp, title 22/28 + subtitle 12/16), session bar
+     (primary-subtle 36dp: timer · "Session ends in mm:ss" · Close), loading (M2.10-14) and error / offline
+     empty state (M2.10-07 / -15). Old layout: legacy_activity_abha_id.xml. All view ids unchanged. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login_activity.LoginActivity">
+    android:background="@color/ds_surface"
+    tools:context=".ui.abha_id_activity.AbhaIdActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:background="@color/ds_surface"
+        app:elevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/seed"
-            android:theme="@style/Theme.Sakhi.ActionBar">
+            android:layout_height="64dp"
+            android:background="@color/ds_surface"
+            android:theme="@style/Theme.Sakhi.ActionBar.Redesign"
+            app:contentInsetStartWithNavigation="4dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Kept for its id; Figma shows no logo in the bar -->
+                <ImageView
+                    android:id="@+id/iv_toolbar_abha"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_toolbar_abha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="ABHA" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@string/ds_abha_subtitle"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_on_surface_variant" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Figma "Session bar": 36dp, primary-subtle, padding 8/16, gap 8 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@color/ds_primary_subtle"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ds_timer"
+                app:tint="@color/ds_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/ds_abha_session_ends"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_primary" />
+
+            <TextView
+                android:id="@+id/sessionTimer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="@string/timer"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_primary" />
+
+            <!-- "Close ABHA flow" (was the home icon in the toolbar): same id, same click = finish() -->
+            <LinearLayout
+                android:id="@+id/toolbar_menu_home"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/go_to_home"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/iv_toolbar_abha"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:padding="@dimen/padding_normal"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_close"
+                    app:tint="@color/ds_on_surface_variant" />
 
                 <TextView
-                    android:id="@+id/tv_toolbar_abha"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_bold"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    tools:text="Hellow!" />
+                    android:layout_marginStart="4dp"
+                    android:text="@string/ds_close"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                    android:textColor="@color/ds_on_surface_variant" />
             </LinearLayout>
-            <ImageButton
-                android:id="@+id/toolbar_menu_home"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/seed"
-                android:src="@drawable/ic_home"
-                android:title="@string/go_to_home"
-                >
-            </ImageButton>
-            <TextView
-                android:id="@+id/sessionTimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:paddingHorizontal="@dimen/padding_normal"
-                android:text= "@string/timer" />
-        </androidx.appcompat.widget.Toolbar>
-
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
@@ -67,7 +134,6 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:text="Hello World!"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,68 +141,102 @@
         app:layout_constraintTop_toBottomOf="@id/app_toolbar"
         app:navGraph="@navigation/nav_abha_id" />
 
-    <ProgressBar
+    <!-- M2.10-14 "Starting ABHA": spinner 56 + title 16/24 + body 14/20 -->
+    <LinearLayout
         android:id="@+id/progress_bar_abha_activity"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="64dp"
         android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_toolbar"
         tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/iv_offline"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/ic_offline"
-            app:layout_constraintBottom_toTopOf="@+id/textView5"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@+id/textView5"
-            app:layout_constraintStart_toStartOf="@+id/textView5"
-            android:contentDescription="@string/offline" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:indicatorColor="@color/ds_primary"
+            app:indicatorSize="56dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/ds_abha_connecting"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/ds_abha_connecting_body"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant" />
+    </LinearLayout>
+
+    <!-- M2.10-07 / -15 "Empty state": 96dp circle + icon 44, title 16/24, body 14/20, tonal "Try again" -->
+    <LinearLayout
+        android:id="@+id/cl_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="48dp"
+        android:paddingTop="48dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_toolbar">
+
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_ds_empty_illustration">
+
+            <ImageView
+                android:id="@+id/iv_offline"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/offline"
+                android:src="@drawable/ic_ds_wifi_off"
+                app:tint="@color/ds_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/ds_abha_server_error"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface" />
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="@dimen/padding_normal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
             android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7" />
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_try_again"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Sakhi.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/try_again"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView5" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="24dp"
+            android:text="@string/try_again" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

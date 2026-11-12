@@ -1,26 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign: Figma M2.10-17 "Dialog · ABHA already linked" — white r24, padding 24, gap 16: error icon 28, title 22/28,
+     message 14/20, filled "OK" at the end. The window keeps its fixed size from CreateAbhaFragment.showDialog, so the
+     card is centred inside it. Old layout: legacy_dialog_abha_error.xml. Ids unchanged. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_ds_dialog"
+        android:elevation="6dp"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:elevation="2dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/dialog_background">
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ds_error"
+            app:tint="@color/ds_error" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/ds_abha_already_linked"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+            android:textColor="@color/ds_on_surface" />
 
         <TextView
             android:id="@+id/tvMessage"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="18sp"
-            android:textColor="@android:color/black" />
+            android:layout_marginTop="16dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOk"
+            style="@style/Widget.Sakhi.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ok"
-            android:layout_marginTop="16dp"/>
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="24dp"
+            android:text="@string/ok" />
     </LinearLayout>
+</FrameLayout>

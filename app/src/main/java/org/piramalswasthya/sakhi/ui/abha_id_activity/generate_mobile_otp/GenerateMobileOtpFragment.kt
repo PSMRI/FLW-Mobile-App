@@ -18,6 +18,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentGenerateMobileOtpBinding
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.generate_mobile_otp.GenerateMobileOtpViewModel.State
 import timber.log.Timber
+import org.piramalswasthya.sakhi.ui.design.AbhaSteps
 
 @AndroidEntryPoint
 class GenerateMobileOtpFragment : Fragment() {
@@ -72,6 +73,8 @@ class GenerateMobileOtpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Redesign (Figma M2.10-05): step strip, Mobile = step 4
+        AbhaSteps.show(binding.root, 4)
         navController = findNavController()
         binding.lifecycleOwner = viewLifecycleOwner
 

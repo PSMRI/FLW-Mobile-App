@@ -71,4 +71,22 @@
     <string name="ds_increase">বাড়ান</string>
     <string name="ds_mother_name">মা: %1$s</string>
     <string name="ds_overdue">সময় পেরিয়েছে</string>
+    <!-- M2.10 ABHA flow (draft translations need native review) -->
+    <string name="ds_abha_subtitle">আয়ুষ্মান ভারত হেলথ অ্যাকাউন্ট</string>
+    <string name="ds_abha_session_ends">সেশন শেষ হবে</string>
+    <string name="ds_close">বন্ধ করুন</string>
+    <string name="ds_abha_connecting">ABHA-র সাথে সংযোগ করা হচ্ছে…</string>
+    <string name="ds_abha_connecting_body">নিরাপদ অ্যাক্সেস নেওয়া হচ্ছে। এর জন্য ইন্টারনেট লাগবে।</string>
+    <string name="ds_abha_verify_with">যাচাই করুন</string>
+    <string name="ds_abha_consent_tap">সম্মতি পড়তে ট্যাপ করুন (সম্মতি স্ক্রিন খুলবে)</string>
+    <string name="ds_abha_step_aadhaar">আধার</string>
+    <string name="ds_abha_step_consent">সম্মতি</string>
+    <string name="ds_abha_step_otp">OTP</string>
+    <string name="ds_abha_step_mobile">মোবাইল</string>
+    <string name="ds_abha_step_done">সম্পন্ন</string>
+    <string name="ds_abha_number">ABHA নম্বর</string>
+    <string name="ds_abha_enter_otp">৬ সংখ্যার OTP দিন</string>
+    <string name="ds_abha_server_error">ABHA সার্ভারে পৌঁছানো যায়নি</string>
+    <string name="ds_abha_show_aadhaar">আধার নম্বর দেখান বা লুকান</string>
+    <string name="ds_abha_already_linked">ABHA আগেই লিঙ্ক করা আছে</string>
 </resources>

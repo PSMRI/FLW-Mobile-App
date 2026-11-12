@@ -9912,13 +9912,26 @@ async function buildStageTokens(ctx) {
 
 // ===== 50-stage-spec.js =====
 // Utility: dumps a developer spec (geometry, padding, gap, radius, fills, strokes, fonts) of SPEC_FRAME into a text node.
-const SPEC_FRAME = 'M2.2-02 ·';
+const SPEC_FRAME = 'M2.12-';
+// SPEC_MULTI = true dumps EVERY frame whose name starts with SPEC_FRAME (e.g. a whole stage) in one POST; no canvas text.
+const SPEC_MULTI = true;
 async function buildStageSpec(ctx) {
   const sp = ctx.pages.screens; await figma.setCurrentPageAsync(sp);
   for (const n of [...sp.children]) if (n.name.startsWith('Spec dump')) n.remove();
-  let target = null;
-  for (const s of sp.children) { if (s.type === 'SECTION') { for (const f of s.children) if (f.name.startsWith(SPEC_FRAME)) target = f; } else if (s.name.startsWith(SPEC_FRAME)) target = s; }
-  if (!target) throw new Error('frame not found ' + SPEC_FRAME);
+  const targets = [];
+  for (const s of sp.children) { if (s.type === 'SECTION') { for (const f of s.children) if (f.name.startsWith(SPEC_FRAME)) targets.push(f); } else if (s.name.startsWith(SPEC_FRAME)) targets.push(s); }
+  if (!targets.length) throw new Error('frame not found ' + SPEC_FRAME);
+  if (SPEC_MULTI) {
+    const all = [];
+    for (const t of targets) all.push('FRAME ' + t.name + ' ' + Math.round(t.width) + 'x' + Math.round(t.height) + '\n' + specLines(t).join('\n'));
+    const sentAll = await sendSpecToLocal(all.join('\n\n'));
+    return ['spec frames: ' + targets.length + (sentAll ? ' (sent to localhost)' : ' (local receiver not running)')];
+  }
+  const target = targets[targets.length - 1];
+  const lines = specLines(target);
+  return buildSpecSingle(ctx, sp, target, lines);
+}
+function specLines(target) {
   const hex = (p) => { if (!p || p.type !== 'SOLID') return p ? p.type : ''; const c = p.color; return '#' + [c.r, c.g, c.b].map((x) => Math.round(x * 255).toString(16).padStart(2, '0')).join('').toUpperCase() + (p.opacity !== undefined && p.opacity < 1 ? '@' + p.opacity.toFixed(2) : ''); };
   const lines = []; const fx = target.absoluteTransform[0][2], fy = target.absoluteTransform[1][2];
   const walk = (n, d) => {
@@ -9937,6 +9950,9 @@ async function buildStageSpec(ctx) {
     if ('children' in n && n.type !== 'TEXT') for (const c of n.children) walk(c, d + 1);
   };
   walk(target, 0);
+  return lines;
+}
+async function buildSpecSingle(ctx, sp, target, lines) {
   const cols = 2, per = Math.ceil(lines.length / cols); const made = [];
   for (let i = 0; i < cols; i++) {
     const t = figma.createText(); t.name = 'Spec dump ' + i; await t.setTextStyleIdAsync(ctx.TS['Body/Small'].id);

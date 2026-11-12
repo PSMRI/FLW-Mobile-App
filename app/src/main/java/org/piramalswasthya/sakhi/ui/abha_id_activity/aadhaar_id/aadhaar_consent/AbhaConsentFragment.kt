@@ -21,6 +21,7 @@ import org.piramalswasthya.sakhi.databinding.FragmentAbhaConsentBinding
 import org.piramalswasthya.sakhi.model.AadhaarConsentModel
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel
+import org.piramalswasthya.sakhi.ui.design.AbhaSteps
 
 
 class AbhaConsentFragment : Fragment() {
@@ -47,6 +48,8 @@ class AbhaConsentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController(view)
         setUpAadhaarConsentRvAdapter()
+        // Redesign (Figma M2.10-03): step strip, Consent = step 2
+        AbhaSteps.show(binding.root, 2)
         binding.btnAccept.isEnabled = true
         binding.btnAccept.setOnClickListener {
             parentViewModel.setConsentChecked(true)

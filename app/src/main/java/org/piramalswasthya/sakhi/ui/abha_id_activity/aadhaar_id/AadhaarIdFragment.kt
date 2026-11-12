@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.FragmentAadhaarIdBinding
+import org.piramalswasthya.sakhi.ui.design.dsSegment
 import org.piramalswasthya.sakhi.ui.abha_id_activity.AbhaIdActivity
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewModel.State
 
@@ -61,14 +62,17 @@ class AadhaarIdFragment : Fragment() {
         )
 
         binding.createToggle.setOnClickListener {
-            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
-            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
-            binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            // binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))  // redesign: dsSegment below
+            // binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))  // redesign: dsSegment below
+            // binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)  // redesign: dsSegment below
             binding.tilAadhaarVerifyDropdown.visibility = View.VISIBLE
+            binding.tvVerifyWithLabel.visibility = View.VISIBLE
+            binding.createToggle.dsSegment(true)
+            binding.searchToggle.dsSegment(false)
             binding.actvAadharVerificationDropdown.visibility = View.VISIBLE
-            binding.searchToggle.setBackgroundResource(0)
-            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
-            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            // binding.searchToggle.setBackgroundResource(0)  // redesign: dsSegment below
+            // binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))  // redesign: dsSegment below
+            // binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))  // redesign: dsSegment below
             binding.navHostFragmentFindAbha.visibility = View.GONE
             binding.navHostFragmentAadhaarId.visibility = View.VISIBLE
 
@@ -76,15 +80,18 @@ class AadhaarIdFragment : Fragment() {
 
         }
         binding.searchToggle.setOnClickListener {
-            binding.createToggle.setBackgroundResource(0)
-            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
-            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            // binding.createToggle.setBackgroundResource(0)  // redesign: dsSegment below
+            // binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))  // redesign: dsSegment below
+            // binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))  // redesign: dsSegment below
             binding.tilAadhaarVerifyDropdown.visibility = View.GONE
+            binding.tvVerifyWithLabel.visibility = View.GONE
+            binding.createToggle.dsSegment(false)
+            binding.searchToggle.dsSegment(true)
             binding.actvAadharVerificationDropdown.visibility = View.GONE
 
-            binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
-            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))
-            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            // binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)  // redesign: dsSegment below
+            // binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))  // redesign: dsSegment below
+            // binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))  // redesign: dsSegment below
             binding.navHostFragmentAadhaarId.visibility = View.GONE
             binding.navHostFragmentFindAbha.visibility = View.VISIBLE
             viewModel.selectedNavToggle = "navHostFragmentFindAbha"
@@ -209,28 +216,34 @@ class AadhaarIdFragment : Fragment() {
 
 
         if (viewModel.selectedNavToggle == "navHostFragmentAadhaarId"){
-            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
-            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
-            binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
+            // binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))  // redesign: dsSegment below
+            // binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))  // redesign: dsSegment below
+            // binding.createToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)  // redesign: dsSegment below
             binding.tilAadhaarVerifyDropdown.visibility = View.VISIBLE
+            binding.tvVerifyWithLabel.visibility = View.VISIBLE
+            binding.createToggle.dsSegment(true)
+            binding.searchToggle.dsSegment(false)
             binding.actvAadharVerificationDropdown.visibility = View.VISIBLE
-            binding.searchToggle.setBackgroundResource(0)
-            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
-            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))
+            // binding.searchToggle.setBackgroundResource(0)  // redesign: dsSegment below
+            // binding.createToggle.setTypeface(resources.getFont(R.font.opensans_semibold))  // redesign: dsSegment below
+            // binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_regular))  // redesign: dsSegment below
             binding.navHostFragmentFindAbha.visibility = View.GONE
             binding.navHostFragmentAadhaarId.visibility = View.VISIBLE
 
             viewModel.selectedNavToggle = "navHostFragmentAadhaarId"
         }else{
-            binding.createToggle.setBackgroundResource(0)
-            binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))
-            binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))
+            // binding.createToggle.setBackgroundResource(0)  // redesign: dsSegment below
+            // binding.searchToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onSecondary))  // redesign: dsSegment below
+            // binding.createToggle.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_shadow))  // redesign: dsSegment below
             binding.tilAadhaarVerifyDropdown.visibility = View.GONE
+            binding.tvVerifyWithLabel.visibility = View.GONE
+            binding.createToggle.dsSegment(false)
+            binding.searchToggle.dsSegment(true)
             binding.actvAadharVerificationDropdown.visibility = View.GONE
 
-            binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)
-            binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))
-            binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))
+            // binding.searchToggle.setBackgroundResource(R.drawable.background_rectangle_lightest_grey_20)  // redesign: dsSegment below
+            // binding.createToggle.setTypeface(resources.getFont(R.font.opensans_regular))  // redesign: dsSegment below
+            // binding.searchToggle.setTypeface(resources.getFont(R.font.opensans_semibold))  // redesign: dsSegment below
             binding.navHostFragmentAadhaarId.visibility = View.GONE
             binding.navHostFragmentFindAbha.visibility = View.VISIBLE
             viewModel.selectedNavToggle = "navHostFragmentFindAbha"

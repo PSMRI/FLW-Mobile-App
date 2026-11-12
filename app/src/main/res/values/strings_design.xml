@@ -76,4 +76,22 @@
     <string name="ds_increase">Increase</string>
     <string name="ds_mother_name">Mother: %1$s</string>
     <string name="ds_overdue">Overdue</string>
+    <!-- M2.10 ABHA flow (draft translations need native review) -->
+    <string name="ds_abha_subtitle">Ayushman Bharat Health Account</string>
+    <string name="ds_abha_session_ends">Session ends in</string>
+    <string name="ds_close">Close</string>
+    <string name="ds_abha_connecting">Connecting to ABHA…</string>
+    <string name="ds_abha_connecting_body">Getting secure access. This needs internet.</string>
+    <string name="ds_abha_verify_with">Verify with</string>
+    <string name="ds_abha_consent_tap">Tap to read the consent (opens the consent screen)</string>
+    <string name="ds_abha_step_aadhaar">Aadhaar</string>
+    <string name="ds_abha_step_consent">Consent</string>
+    <string name="ds_abha_step_otp">OTP</string>
+    <string name="ds_abha_step_mobile">Mobile</string>
+    <string name="ds_abha_step_done">Done</string>
+    <string name="ds_abha_number">ABHA number</string>
+    <string name="ds_abha_enter_otp">Enter the 6-digit OTP</string>
+    <string name="ds_abha_server_error">Could not reach the ABHA server</string>
+    <string name="ds_abha_show_aadhaar">Show or hide Aadhaar number</string>
+    <string name="ds_abha_already_linked">ABHA already linked</string>
 </resources>

@@ -1,255 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign: Figma M2.10-09 / -10 "Find ABHA by mobile" — heading 16/24, mobile box + tonal "Search" (48dp, gap 8),
+     "Select ABHA" boxed dropdown + helper, confirmation as a checkbox option row, bottom action bar "Generate OTP".
+     Padding 16, gap 12. Old layout: legacy_fragment_find_abha.xml. All view ids unchanged. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:id="@+id/tvFindOutAbha"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_23sdp"
-                android:fontFamily="@font/roboto_bold"
-                android:gravity="center"
+                android:layout_marginTop="12dp"
                 android:text="@string/str_find_abha"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textSize="@dimen/_14sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface" />
 
             <TextView
                 android:id="@+id/tvGetAbha"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center"
-                android:text="@string/str_get_your_abha"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textSize="@dimen/_14sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvFindOutAbha" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:text="@string/enter_mobile_number"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvGetAbha" />
-
-            <ImageView
-                android:id="@+id/ivValidMobile"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_20sdp"
-                android:src="@drawable/ic_check_circle_grey"
-                app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView4" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_mobile_number"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:hint="@string/mobile_number"
-                android:paddingTop="@dimen/padding_normal"
-                android:paddingBottom="@dimen/padding_normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4">
+                android:layout_marginTop="4dp"
+                android:text="@string/str_get_your_abha"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_mobile_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:digits="0123456789"
-                    android:inputType="number"
-                    android:maxLength="10"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+            <!-- Mobile number + Search -->
+            <TextView
+                android:id="@+id/textView4"
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:layout_marginTop="12dp"
+                android:text="@string/enter_mobile_number" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_search_abha"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="end"
-                android:layout_marginTop="@dimen/margin_small"
-                android:clickable="false"
-                android:enabled="false"
-                android:text="@string/household_search"
-                android:textAllCaps="false"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintEnd_toEndOf="@+id/til_mobile_number"
-                app:layout_constraintTop_toBottomOf="@+id/til_mobile_number" />
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_mobile_number"
+                        style="@style/Widget.Sakhi.TextField.Boxed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tiet_mobile_number"
+                            style="@style/Widget.Sakhi.TextField.Input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/mobile_number"
+                            android:inputType="number"
+                            android:maxLength="10"
+                            android:paddingEnd="44dp"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/ivValidMobile"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginEnd="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_check_circle_grey" />
+                </FrameLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_search_abha"
+                    style="@style/Widget.Sakhi.Button.Tonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:enabled="false"
+                    android:paddingHorizontal="24dp"
+                    android:text="@string/household_search" />
+            </LinearLayout>
+
+            <!-- Select ABHA -->
+            <TextView
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:layout_marginTop="12dp"
+                android:text="@string/select_abha" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_select_abha"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
+                style="@style/Widget.Sakhi.TextField.Dropdown"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
                 android:enabled="false"
-                android:hint="@string/select_abha"
-                android:paddingTop="@dimen/padding_normal"
-                android:paddingBottom="@dimen/padding_normal"
-                android:importantForAccessibility="yes"
-                app:layout_constraintEnd_toEndOf="@+id/til_mobile_number"
-                app:layout_constraintStart_toStartOf="@+id/til_mobile_number"
-                app:layout_constraintTop_toBottomOf="@id/btn_search_abha">
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/abha_dropdown"
+                    style="@style/Widget.Sakhi.TextField.Input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
                     android:enabled="false"
-                    android:contentDescription="select abha"
-                    android:importantForAccessibility="yes"
-                    android:gravity="center_vertical"
+                    android:hint="@string/select_abha"
                     android:inputType="none" />
-
-                <TextView
-                    android:id="@+id/tv_error_text_abha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:text="@string/textview"
-                    android:textColor="@android:color/holo_red_light"
-                    android:visibility="gone" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <TextView
+                android:id="@+id/tv_error_text_abha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/textview"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_error"
+                android:visibility="gone" />
+
+            <!-- Beneficiary name (hidden in the app today) -->
+            <LinearLayout
                 android:id="@+id/clBenName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/til_select_abha">
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/enter_ben_name"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    style="@style/Widget.Sakhi.FieldLabel"
+                    android:text="@string/enter_ben_name" />
 
-                <ImageView
-                    android:id="@+id/ivValidBenName"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_20sdp"
-                    android:src="@drawable/ic_check_circle_grey"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView6" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_ben_name"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:hint="@string/tv_ben_name_ph"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:paddingBottom="@dimen/padding_normal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6">
+                    android:layout_height="wrap_content">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tiet_ben_name"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_ben_name"
+                        style="@style/Widget.Sakhi.TextField.Boxed"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="textCapWords"
-                        android:singleLine="true"
-                        android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/tv_error_text_ben_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:layout_weight="1"
-                        android:text="@string/textview"
-                        android:textColor="@android:color/holo_red_light"
-                        android:visibility="gone" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tiet_ben_name"
+                            style="@style/Widget.Sakhi.TextField.Input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/tv_ben_name_ph"
+                            android:inputType="textCapWords"
+                            android:paddingEnd="44dp"
+                            android:singleLine="true" />
 
-            <CheckBox
+                        <TextView
+                            android:id="@+id/tv_error_text_ben_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/textview"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                            android:textColor="@color/ds_error"
+                            android:visibility="gone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/ivValidBenName"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginEnd="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_check_circle_grey" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- Figma "Consent": checkbox option row -->
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/aadharConsentCheckBox"
+                style="@style/Widget.Sakhi.CheckboxOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
+                android:layout_marginTop="12dp"
                 android:contentDescription="@string/aadhar_consent_text"
-                android:gravity="start|top"
-                android:text="@string/aadhar_consent_text"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/til_select_abha" />
+                android:gravity="start|center_vertical"
+                android:paddingVertical="12dp"
+                android:text="@string/aadhar_consent_text" />
 
+            <!-- "Tap to read the consent" link (invisible in the app today, as before) -->
             <TextView
                 android:id="@+id/aadharDisclaimer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:fontFamily="@font/roboto_bold"
                 android:text="@string/aadhar_disclaimer_consent_disclaimer"
-                android:textColor="?attr/colorPrimary"
-                android:visibility="invisible"
-                app:layout_constraintTop_toBottomOf="@id/clBenName" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_generate_otp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:clickable="false"
-                android:enabled="false"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/generate_otp"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/aadharConsentCheckBox"
-                app:layout_constraintVertical_bias="0.0" />
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_primary"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/pid"
@@ -257,10 +218,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/pid"
                 android:textIsSelectable="true"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_search_abha" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:visibility="gone" />
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_bottom_bar"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_generate_otp"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/generate_otp" />
+    </FrameLayout>
+</LinearLayout>

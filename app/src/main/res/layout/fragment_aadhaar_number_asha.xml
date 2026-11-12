@@ -1,289 +1,273 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign: Figma M2.10-02 / -08 / -20 "Aadhaar number" — "Enter details for <name>", labelled 56dp boxes
+     (Aadhaar with eye toggle, mobile, beneficiary name), checkbox-option consent row + "Tap to read the
+     consent" link, filled 48dp "Generate OTP". Content padding 16, gap 12.
+     Old layout: legacy_fragment_aadhaar_number_asha.xml. All view ids unchanged. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:fillViewport="true">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- "Enter details for Sunita Devi" (14/20 Medium) -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/ben_name_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/margin_narrow"
-                android:layout_marginHorizontal="20dp"
-                android:padding="@dimen/padding_normal"
                 android:text="@string/generating_abha_for"
-                android:visibility="gone"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1" />
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/ben_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/margin_narrow"
-                android:layout_marginHorizontal="20dp"
-                android:padding="@dimen/padding_normal"
-                android:visibility="gone"
-                android:fontFamily="@font/roboto_italic"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ben_name_title"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Aadhaar number: label + valid tick, box with masked blocks + eye -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textView3"
+                style="@style/Widget.Sakhi.FieldLabel"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:text="@string/enter_number_for_abha"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintEnd_toStartOf="@+id/ivValidAadhaar"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ben_name" />
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:text="@string/enter_number_for_abha" />
 
             <ImageView
                 android:id="@+id/ivValidAadhaar"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:src="@drawable/ic_check_circle_grey"
-                android:layout_marginEnd="@dimen/_20sdp"
-                app:layout_constraintTop_toTopOf="@+id/textView3"
-                app:layout_constraintBottom_toBottomOf="@+id/textView3"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_check_circle_grey" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_aadhaar_box"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_ds_field_box">
 
             <org.piramalswasthya.sakhi.helpers.addharEditText.BlockEditText
                 android:id="@+id/tiet_aadhaar_number"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginHorizontal="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="48dp"
                 app:defaultLength="4"
+                app:editTextBackground="@android:color/transparent"
+                app:hintTextAppearance="@style/TextAppearance.Sakhi.BodyLarge"
                 app:inputType="Integer"
                 app:numberOfBlock="3"
                 app:separatorCharacter="-"
-                app:editTextBackground="@drawable/selector_edittext_round_border_line"
-                app:hintTextAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintEnd_toStartOf="@+id/ivShowText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:separatorPadding="2dp"
+                app:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/ivShowText"
-                android:layout_width="@dimen/_22sdp"
-                android:layout_height="@dimen/_22sdp"
-                android:layout_marginEnd="@dimen/_20sdp"
-                app:layout_constraintTop_toTopOf="@+id/tiet_aadhaar_number"
-                app:layout_constraintBottom_toBottomOf="@+id/tiet_aadhaar_number"
-                app:layout_constraintStart_toEndOf="@+id/tiet_aadhaar_number"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/ds_abha_show_aadhaar" />
+        </FrameLayout>
 
-            <TextView
-                android:id="@+id/tv_error_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
-                android:layout_weight="1"
-                android:text="@string/textview"
-                android:textColor="@android:color/holo_red_light"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/tiet_aadhaar_number"
-                app:layout_constraintTop_toBottomOf="@+id/tiet_aadhaar_number"/>
+        <TextView
+            android:id="@+id/tv_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/textview"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_error"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:text="@string/enter_mobile_number"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ivValidMobile"
-                app:layout_constraintTop_toBottomOf="@+id/tv_error_text" />
+        <!-- Mobile number -->
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/enter_mobile_number" />
 
-            <ImageView
-                android:id="@+id/ivValidMobile"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:src="@drawable/ic_check_circle_grey"
-                android:layout_marginEnd="@dimen/_20sdp"
-                app:layout_constraintTop_toTopOf="@+id/textView4"
-                app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                app:layout_constraintEnd_toEndOf="parent"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_mobile_number"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Sakhi.TextField.Boxed"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:hint="@string/mobile_number"
-                android:layout_marginTop="@dimen/_15sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_mobile_number"
+                    style="@style/Widget.Sakhi.TextField.Input"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/mobile_number"
                     android:inputType="number"
                     android:maxLength="10"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
+                    android:paddingEnd="48dp"
+                    android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/clBenName"
+            <ImageView
+                android:id="@+id/ivValidMobile"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_check_circle_grey" />
+        </FrameLayout>
+
+        <!-- Beneficiary name (only when ABHA is opened without a beneficiary, M2.10-20) -->
+        <LinearLayout
+            android:id="@+id/clBenName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView6"
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:text="@string/enter_ben_name" />
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/til_mobile_number">
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:text="@string/enter_ben_name"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/ivValidBenName"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_20sdp"
-                    android:src="@drawable/ic_check_circle_grey"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView6" />
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_ben_name"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Sakhi.TextField.Boxed"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:hint="@string/tv_ben_name_ph"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6">
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tiet_ben_name"
+                        style="@style/Widget.Sakhi.TextField.Input"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/tv_ben_name_ph"
                         android:inputType="textCapWords"
+                        android:paddingEnd="48dp"
                         android:singleLine="true"
-                        android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                        android:textAllCaps="true" />
 
                     <TextView
                         android:id="@+id/tv_error_text_ben_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:layout_weight="1"
+                        android:layout_marginTop="4dp"
                         android:text="@string/textview"
-                        android:textColor="@android:color/holo_red_light"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_error"
                         android:visibility="gone" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <ImageView
+                    android:id="@+id/ivValidBenName"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginEnd="18dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_check_circle_grey" />
+            </FrameLayout>
+        </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Figma "Consent": checkbox option row (ticked only after "I Agree" on the consent screen) + link.
+             The whole block is covered by clickview, which opens the consent screen. -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/aadharDisclaimer"
+                    style="@style/Widget.Sakhi.CheckboxOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:focusableInTouchMode="false"
+                    android:paddingVertical="12dp"
+                    android:text="@string/aadhar_disclaimer_consent_disclaimer" />
+
+                <!-- Kept for its id; the text now sits on the checkbox row -->
+                <TextView
+                    android:id="@+id/aadharDisclaimerText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ds_abha_consent_tap"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                    android:textColor="@color/ds_primary" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/clickview"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="@dimen/margin_normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/clBenName"/>
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground" />
+        </FrameLayout>
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/aadharDisclaimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:visibility="visible"
-                android:enabled="false"
-                android:clickable="false"
-                android:focusableInTouchMode="false"
-                app:buttonTint="@color/color_consent_text"
-                android:fontFamily="@font/roboto_bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/clBenName" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_verify_aadhaar"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:enabled="false"
+            android:text="@string/generate_otp" />
 
-            <TextView
-                android:id="@+id/aadharDisclaimerText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="-10dp"
-                android:text="@string/aadhar_disclaimer_consent_disclaimer"
-                android:fontFamily="@font/roboto_bold"
-                android:textColor="@color/color_consent_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/aadharDisclaimer"
-                app:layout_constraintTop_toTopOf="@+id/aadharDisclaimer"
-                app:layout_constraintBottom_toBottomOf="@+id/aadharDisclaimer"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_verify_aadhaar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/_20sdp"
-                android:clickable="false"
-                android:enabled="false"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/generate_otp"
-                android:textAllCaps="false"
-                android:textSize="@dimen/_14sdp"
-                android:fontFamily="@font/roboto_bold"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintTop_toBottomOf="@+id/aadharDisclaimer" />
-
-            <TextView
-                android:id="@+id/pid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/btn_verify_aadhaar"
-                app:layout_constraintStart_toStartOf="parent"
-                android:textIsSelectable="true"
-                android:visibility="gone"
-                android:text="@string/pid">
-            </TextView>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/pid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pid"
+            android:textIsSelectable="true"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

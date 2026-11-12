@@ -53,6 +53,7 @@
         <activity
             android:name=".ui.abha_id_activity.AbhaIdActivity"
             android:exported="false"
+            android:theme="@style/Theme.Sakhi.Redesign"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"

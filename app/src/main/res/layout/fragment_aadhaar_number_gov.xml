@@ -1,185 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign (form kit, Figma 07 · Register member): Government-official Aadhaar entry (hidden in the app today).
+     Labels above 56dp boxes, gender as segmented options, filled 48dp button. Padding 16, gap 12.
+     Old layout: legacy_fragment_aadhaar_number_gov.xml. All view ids unchanged. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_normal"
-    xmlns:tools="http://schemas.android.com/tools">
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_aadhaar_number"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/aadhaar_number"
-        android:paddingTop="@dimen/padding_normal"
-        android:paddingBottom="@dimen/padding_normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_aadhaar_number"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            android:maxLength="12"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-        <TextView
-            android:id="@+id/tv_error_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_weight="1"
-            android:text="@string/textview"
-            android:textColor="@android:color/holo_red_light"
-            android:visibility="gone" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_full_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/full_name"
-        android:paddingTop="@dimen/padding_normal"
-        android:paddingBottom="@dimen/padding_normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_aadhaar_number">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_full_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="text"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
-        <TextView
-            android:id="@+id/tv_error_text_full_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_weight="1"
-            android:text="@string/textview"
-            android:textColor="@android:color/holo_red_light"
-            android:visibility="gone" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_edit_text"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_full_name"
-        android:hint="@string/d_o_b">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/date_et"
-        android:focusable="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/ic_calendar"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-    </com.google.android.material.textfield.TextInputLayout>
+    android:background="@color/ds_surface"
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/ll_gender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_edit_text"
-        android:orientation="horizontal">
-        <RadioGroup
-            android:id="@+id/rg_gender"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/aadhaar_number" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_aadhaar_number"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_aadhaar_number"
+                style="@style/Widget.Sakhi.TextField.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/aadhaar_number"
+                android:inputType="number"
+                android:maxLength="12" />
+            <TextView
+                android:id="@+id/tv_error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/textview"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_error"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/full_name" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_full_name"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_full_name"
+                style="@style/Widget.Sakhi.TextField.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/full_name"
+                android:inputType="text" />
+            <TextView
+                android:id="@+id/tv_error_text_full_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/textview"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_error"
+                android:visibility="gone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/d_o_b" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_edit_text"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/date_et"
+                style="@style/Widget.Sakhi.TextField.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:focusable="false"
+                android:hint="@string/d_o_b" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_normal">
-            <RadioButton
-                android:id="@+id/rb_male"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:text="@string/tv_gender_ph" />
+
+            <RadioGroup
+                android:id="@+id/rg_gender"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/male">
-            </RadioButton>
-            <RadioButton
-                android:id="@+id/rb_female"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
+                    android:id="@+id/rb_male"
+                    style="@style/Widget.Sakhi.SegmentedOption"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="@string/male" />
+
+                <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
+                    android:id="@+id/rb_female"
+                    style="@style/Widget.Sakhi.SegmentedOption"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/female" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <TextView
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/state" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_state_dn"
+            style="@style/Widget.Sakhi.TextField.Dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_state_dn"
+                style="@style/Widget.Sakhi.TextField.Input"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/female">
-            </RadioButton>
-        </RadioGroup>
+                android:hint="@string/state"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="12dp"
+            android:text="@string/district" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_district_dn"
+            style="@style/Widget.Sakhi.TextField.Dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_district_dn"
+                style="@style/Widget.Sakhi.TextField.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/district"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_generate_abha"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/generate_abha" />
     </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_state_dn"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ll_gender"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/state"
-        android:importantForAccessibility="yes"
-        android:labelFor="@id/actv_state_dn"
-        android:orientation="horizontal">
-
-        <AutoCompleteTextView
-            android:id="@+id/actv_state_dn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:inputType="none"
-            android:importantForAccessibility="yes"
-            android:contentDescription="state dropdown"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_district_dn"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_state_dn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/district"
-        android:labelFor="@id/actv_district_dn"
-        android:orientation="horizontal">
-
-        <AutoCompleteTextView
-            android:id="@+id/actv_district_dn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:inputType="none"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_generate_abha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/generate_abha"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_district_dn"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

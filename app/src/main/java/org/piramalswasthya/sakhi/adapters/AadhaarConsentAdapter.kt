@@ -42,8 +42,12 @@ class AadhaarConsentAdapter(private val clickListener: ConsentClickListener) :
 
             binding.checkBox.setOnCheckedChangeListener(null)
             binding.checkBox.isChecked=item.checked
+            // Redesign (Figma M2.10-03): ticked row = primary-subtle + primary border; whole row toggles the box
+            binding.llConsentRow.isActivated = item.checked
+            binding.llConsentRow.setOnClickListener { binding.checkBox.toggle() }
             binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
                 item.checked=isChecked
+                binding.llConsentRow.isActivated = isChecked
                 if (isChecked){
                     clickListener.onClicked(item.apply {
                         checked = true },position)

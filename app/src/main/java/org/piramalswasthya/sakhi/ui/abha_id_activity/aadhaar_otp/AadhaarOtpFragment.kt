@@ -20,6 +20,7 @@ import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_id.AadhaarIdViewMod
 import org.piramalswasthya.sakhi.ui.abha_id_activity.aadhaar_otp.AadhaarOtpViewModel.State
 import javax.inject.Inject
 import org.piramalswasthya.sakhi.ui.home_activity.all_ben.AllBenFragmentArgs
+import org.piramalswasthya.sakhi.ui.design.AbhaSteps
 
 @AndroidEntryPoint
 class AadhaarOtpFragment : Fragment() {
@@ -93,6 +94,8 @@ class AadhaarOtpFragment : Fragment() {
         if (parentViewModel.abhaMode.value == AadhaarIdViewModel.Abha.SEARCH) {
             binding.textView6.text = "Verify ABHA OTP"
         }
+        // Redesign (Figma M2.10-04): step strip, OTP = step 3; not shown in the find-ABHA flow (M2.10-11)
+        AbhaSteps.show(binding.root, 3, parentViewModel.abhaMode.value != AadhaarIdViewModel.Abha.SEARCH)
 
 
         binding.otpView.addTextChangedListener(object : TextWatcher {

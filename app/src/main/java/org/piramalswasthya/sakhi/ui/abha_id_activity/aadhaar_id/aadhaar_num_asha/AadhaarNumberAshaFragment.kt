@@ -131,7 +131,8 @@ class AadhaarNumberAshaFragment : Fragment() {
                 Toast.makeText(requireContext(),"Please Enter Beneficiary Name",Toast.LENGTH_SHORT).show()
            }
         }
-        binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.selector_edittext_round_border_line))
+        // binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.selector_edittext_round_border_line))
+        // Redesign: one 56dp box (fl_aadhaar_box) around the blocks; red border = activated (invalid)
 
         binding.tietAadhaarNumber.setTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -146,17 +147,20 @@ class AadhaarNumberAshaFragment : Fragment() {
                     binding.tvErrorText.visibility = View.GONE
                     binding.tvErrorText.text = ""
                     binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_grey)
+                    binding.flAadhaarBox.isActivated = false
                 }else if(AadhaarValidationUtils.isValidAadhaar(s.toString())){
                     binding.tvErrorText.visibility = View.GONE
                     binding.tvErrorText.text = ""
                     binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_green)
-                    binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line_green))
+                    // binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line_green))
+                    binding.flAadhaarBox.isActivated = false
 
                 }else{
                     binding.tvErrorText.visibility = View.VISIBLE
                     binding.tvErrorText.text = getString(R.string.str_invalid_aadhaar_no)
                     binding.ivValidAadhaar.setImageResource(R.drawable.ic_check_circle_grey)
-                    binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line))
+                    // binding.tietAadhaarNumber.setEdiTextBackground(ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_round_border_line))
+                    binding.flAadhaarBox.isActivated = true
                 }
 
                 isValidAadhaar = (s != null) && AadhaarValidationUtils.isValidAadhaar(s.toString())
