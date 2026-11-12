@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Draft Bangla — needs native-speaker review. -->
+<resources>
+    <string name="ds_g25_choose_option">একটি বিকল্প বেছে নিন</string>
+    <string name="ds_g25_pick_gallery">গ্যালারি থেকে বেছে নিন</string>
+    <string name="ds_g25_open_camera">ক্যামেরা খুলুন</string>
+    <string name="ds_g25_pick_pdf">PDF বেছে নিন</string>
+    <string name="ds_g25_choose_files">ফাইল বেছে নিন</string>
+    <string name="ds_g25_uploaded_files">আপলোড করা ফাইল</string>
+    <string name="ds_g25_upload_sources">ক্যামেরা, গ্যালারি বা PDF · সর্বোচ্চ 5 MB</string>
+    <string name="ds_g25_check_before_saving">সেভ করার আগে দেখে নিন</string>
+    <string name="ds_g25_delete_file">ফাইল মুছুন</string>
+</resources>

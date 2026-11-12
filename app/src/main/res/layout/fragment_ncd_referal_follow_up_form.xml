@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    NCD referral follow-up form shell (dynamic form engine) · redesign (Figma M2.7 NCD follow-up, shell as
+    fragment_new_form): surface #F5F7FA, ben card, "Referred on" read-only box (#EEF1F5 r12, label 12/16 · value 16/24),
+    fields inside a white section card (r16, 1dp #DCE1E8), follow-up history title 16/24 Medium + history blocks,
+    white bottom action bar with a 48dp filled pill Submit, edit FAB in primary.
+    Ids unchanged; old layout: legacy_fragment_ncd_referal_follow_up_form.xml.
+    Not built: the fields themselves are created in code by FormRendererAdapter.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,20 +33,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="@dimen/ds_space_md">
 
                 <FrameLayout
                     android:id="@+id/infant_card_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="@dimen/ds_space_md" />
 
                 <LinearLayout
                     android:id="@+id/referred_on_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ds_space_md"
+                    android:background="@drawable/bg_ds_readonly_box"
                     android:orientation="vertical"
-                    android:layout_marginBottom="12dp"
+                    android:paddingHorizontal="@dimen/ds_space_md"
+                    android:paddingVertical="@dimen/ds_space_xs"
                     android:visibility="gone"
                     tools:visibility="visible">
 
@@ -45,37 +58,41 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/referred_on"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                        android:textColor="@color/ds_on_surface_variant" />
 
                     <TextView
                         android:id="@+id/tv_referred_on_value"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
+                        android:layout_marginTop="2dp"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                        android:textColor="@color/ds_on_surface"
                         tools:text="29-09-2026" />
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingVertical="@dimen/ds_space_xs" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
         <TextView
             android:id="@+id/followup_heading"
+            style="@style/Sakhi.G25.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ncd_follow_up_hostory"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:textColor="@android:color/black" />
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:text="@string/ncd_follow_up_hostory" />
         <include
             android:id="@+id/include_bottle_table"
             layout="@layout/layout_ncd_followup_table"
@@ -83,18 +100,26 @@
             android:layout_height="wrap_content" />
 
 
-        <Button
-            android:id="@+id/btnSave"
+        <LinearLayout
+            style="@style/Sakhi.G25.BottomBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/submit"
-            android:layout_margin="12dp" />
+            android:layout_marginTop="@dimen/ds_space_md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/ds_space_sm"
+                android:text="@string/submit" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_follow_up_visits"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_huge"
+            android:layout_margin="@dimen/ds_space_md"
             android:visibility="gone"
            />
     </LinearLayout>
@@ -106,9 +131,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/ds_space_md"
         android:layout_marginBottom="80dp"
+        android:contentDescription="@string/edit"
         android:src="@drawable/ic_edit"
         android:visibility="gone"
+        app:backgroundTint="@color/ds_primary"
+        app:tint="@color/ds_on_primary"
         tools:visibility="visible"/>
 </FrameLayout>

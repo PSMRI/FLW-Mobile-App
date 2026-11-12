@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Section headline (old FormInputOld kit) · redesign (Figma 07 · Register member, "Form section header"):
+    1dp #DCE1E8 divider, title 16/24 Medium #191C1F, subtitle 14/20 #42474E. Same look as rv_item_form_headline_v2.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_headline.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -12,29 +17,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingTop="@dimen/ds_space_md"
+        android:paddingBottom="@dimen/ds_space_xs">
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_md"
+            app:dividerColor="@color/ds_outline_variant" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:padding="@dimen/padding_small"
-            tools:text="TextView"
             android:text="@{form.title}"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface"
+            tools:text="Personal details" />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@{form.subtitle}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            tools:text="TextView" />
-
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant"
+            tools:text="Subtitle" />
     </LinearLayout>
 </layout>

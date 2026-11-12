@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Campaign form shell (dynamic form engine) · redesign (Figma 07 · Register member shell, M2.9 meeting / campaign
+    forms): surface #F5F7FA, fields inside a white section card (r16, 1dp #DCE1E8) 16dp from the edges, white bottom
+    action bar with a 48dp filled pill Submit (collapses when Submit is hidden in view mode).
+    Ids unchanged; old layout: legacy_fragment_ors_campaign_form.xml.
+    Not built: the fields themselves are created in code by FormRendererAdapter.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -22,23 +26,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="@dimen/ds_space_md">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingVertical="@dimen/ds_space_xs" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
-        <Button
-            android:id="@+id/btnSave"
+        <LinearLayout
+            style="@style/Sakhi.G25.BottomBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/submit"
-            android:layout_margin="12dp" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/ds_space_sm"
+                android:text="@string/submit" />
+        </LinearLayout>
     </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

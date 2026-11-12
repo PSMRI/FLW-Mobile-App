@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.design.dsFitChipInRow
+import org.piramalswasthya.sakhi.ui.design.dsRefreshChipCheck
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter.SelectUploadImageClickListener
 import org.piramalswasthya.sakhi.adapters.FormInputAdapter.ViewDocumentOnClick
 import org.piramalswasthya.sakhi.configuration.FormEditTextDefaultInputFilter
@@ -93,15 +95,20 @@ class FormInputAdapterOld(
             binding.et.isClickable = isEnabled
             binding.et.isFocusable = isEnabled
             binding.form = item
-            if (item.title.length > Konstants.editTextHintLimit) {
-                binding.tvHint.visibility = View.VISIBLE
-                binding.et.hint = null
-                binding.tilEditText.hint = null
-                binding.tilEditText.isHintEnabled = false
-            } else {
-                binding.tvHint.visibility = View.GONE
-                binding.tilEditText.isHintEnabled = true
-            }
+//            if (item.title.length > Konstants.editTextHintLimit) {
+//                binding.tvHint.visibility = View.VISIBLE
+//                binding.et.hint = null
+//                binding.tilEditText.hint = null
+//                binding.tilEditText.isHintEnabled = false
+//            } else {
+//                binding.tvHint.visibility = View.GONE
+//                binding.tilEditText.isHintEnabled = true
+//            }
+            // Redesign (Figma 07 · Register member): the label is always above the box, never inside it
+            binding.tvHint.visibility = View.VISIBLE
+            binding.et.hint = null
+            binding.tilEditText.hint = null
+            binding.tilEditText.isHintEnabled = false
             if (!isEnabled) {
                 binding.executePendingBindings()
                 return
@@ -409,22 +416,38 @@ class FormInputAdapterOld(
                     orientation = item.orientation ?: LinearLayout.HORIZONTAL
                     weightSum = items.size.toFloat()
                     items.forEach {
-                        val rdBtn = RadioButton(this.context)
-                        rdBtn.layoutParams =
-                            RadioGroup.LayoutParams(
-                                RadioGroup.LayoutParams.WRAP_CONTENT,
-                                RadioGroup.LayoutParams.WRAP_CONTENT,
-                                1.0F
-                            ).apply {
-                                gravity = Gravity.CENTER_HORIZONTAL
-                            }
+//                        val rdBtn = RadioButton(this.context)
+//                        rdBtn.layoutParams =
+//                            RadioGroup.LayoutParams(
+//                                RadioGroup.LayoutParams.WRAP_CONTENT,
+//                                RadioGroup.LayoutParams.WRAP_CONTENT,
+//                                1.0F
+//                            ).apply {
+//                                gravity = Gravity.CENTER_HORIZONTAL
+//                            }
+                        // Redesign (same as FormInputAdapter): each option is a 44dp chip (Widget.Sakhi.RadioChip);
+                        // equal widths in a row, full width when stacked, 8dp apart. Selection behaviour unchanged.
+                        val rdBtn = RadioButton(this.context, null, 0, R.style.Widget_Sakhi_RadioChip)
+                        val gap = (8 * resources.displayMetrics.density).toInt()
+                        val isRow = (item.orientation ?: LinearLayout.HORIZONTAL) == LinearLayout.HORIZONTAL
+                        val isLast = it == items.last()
+                        rdBtn.layoutParams = RadioGroup.LayoutParams(
+                            if (isRow) 0 else RadioGroup.LayoutParams.MATCH_PARENT,
+                            if (isRow) RadioGroup.LayoutParams.MATCH_PARENT else RadioGroup.LayoutParams.WRAP_CONTENT,
+                            if (isRow) 1.0F else 0F
+                        ).apply {
+                            if (isRow) { if (!isLast) marginEnd = gap } else { if (!isLast) bottomMargin = gap }
+                        }
                         rdBtn.id = View.generateViewId()
 
                         rdBtn.text = it
                         addView(rdBtn)
                         if (item.value.value == it)
                             rdBtn.isChecked = true
+                        rdBtn.dsRefreshChipCheck() // Redesign: ✓ on the selected chip
+                        if (isRow) rdBtn.dsFitChipInRow()
                         rdBtn.setOnCheckedChangeListener { _, b ->
+                            rdBtn.dsRefreshChipCheck() // Redesign: ✓ follows the selection
                             if (b) {
                                 // Clear focus from any previously focused EditText to prevent auto-scroll
                                 binding.root.rootView.findFocus()?.clearFocus()

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    CBAC form · redesign (Figma M2.7 CBAC form; shell as fragment_new_form): surface #F5F7FA; summary card in
+    primary-container (r16, text #001E31); every section (risk assessment, early detection, COPD risk factors, PHQ-2)
+    in a white card (r16, 1dp #DCE1E8; COPD risk factors keep their red tone as error-container) 16dp from the edges,
+    8dp apart; boxed text fields / dropdowns r12; notes in warning #9A5B00; 48dp filled pill Submit at the bottom
+    (the list scrolls clear of it). Yes / no questions = fragment_cbac_element_radio (chips).
+    Ids and bindings unchanged; old layout: legacy_fragment_cbac.xml.
+    Kept: green / orange score asterisks (CBAC scoring colours, set by the cbac_name binding adapter).
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -14,7 +23,10 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorOnSecondary">
+            android:background="@color/ds_surface"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/ds_space_xs"
+            android:paddingBottom="80dp">
 
             <LinearLayout
                 android:id="@+id/ll_content"
@@ -22,15 +34,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_patient_information"
+                    style="@style/Widget.Sakhi.Card"
+                    app:cardBackgroundColor="@color/ds_primary_container"
+                    app:strokeWidth="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="?attr/colorPrimary"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal"
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,8 +54,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -56,8 +68,8 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent"
                             tools:text="36 Years | Male" />
 
@@ -66,8 +78,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
@@ -79,26 +91,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_ben_name"
                             />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_date"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Sakhi.TextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:background="@android:color/white"
-                    android:hint="@string/date"
-                    android:padding="@dimen/padding_normal">
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs"
+                    android:hint="@string/date">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_date"
@@ -107,20 +118,18 @@
                         android:drawableEnd="@drawable/ic_calendar"
                         android:focusable="false"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_ra"
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="@color/wood_lightest"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -141,14 +150,14 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="@string/cbac_risk_assessment_tv"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/cbac_score"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                         </LinearLayout>
 
@@ -166,7 +175,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_age_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                style="@style/Widget.Sakhi.TextField"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_age"
@@ -197,7 +206,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -217,7 +226,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_smoke_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_smoke"
@@ -249,7 +258,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -269,7 +278,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_alcohol_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_alcohol"
@@ -301,7 +310,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -321,7 +330,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_waist_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_waist"
@@ -353,7 +362,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -373,7 +382,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_pa_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_pa"
@@ -405,7 +414,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -425,7 +434,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_fh_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_fh"
@@ -457,7 +466,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -469,7 +478,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                            android:textAppearance="@style/TextAppearance.Sakhi.DisplaySmall"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/cbac_rl_fh"
@@ -478,7 +487,7 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
                 <include
                     android:id="@+id/layout_referral_form"
                     layout="@layout/fragment_new_form"
@@ -486,15 +495,13 @@
                     android:layout_height="wrap_content"
                     />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_ed"
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="@color/md_theme_light_inverseOnSurface"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -513,39 +520,39 @@
                                 android:layout_height="match_parent"
                                 android:padding="@dimen/padding_normal"
                                 android:text="@string/cbac_early_detection"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                                android:textColor="@android:color/black" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                                android:textColor="@color/ds_on_surface" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ask_pat_note"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_orange_light" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                android:textColor="@color/ds_warning" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast1"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_orange_light" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                android:textColor="@color/ds_warning" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:padding="@dimen/padding_small"
                                 android:text="@string/cbac_ast2"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@android:color/holo_orange_light" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                android:textColor="@color/ds_warning" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -793,7 +800,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="@string/cbac_early_detection_2"
                                     android:padding="@dimen/padding_normal"
-                                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
 
 
@@ -877,7 +884,7 @@
                                     android:layout_height="wrap_content"
                                     android:padding="@dimen/padding_normal"
                                     android:text="@string/cbac_early_detection_3"
-                                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
 
 
@@ -916,17 +923,17 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_rf_copd"
+                    style="@style/Widget.Sakhi.Card"
+                    app:cardBackgroundColor="@color/ds_error_container"
+                    app:strokeWidth="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="@color/md_theme_light_errorContainer"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs">
 
 
                     <LinearLayout
@@ -941,7 +948,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/cbac_risk_Factors_COPD"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
 
                         <RelativeLayout
@@ -953,11 +960,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/cbac_type_of_fuel"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall" />
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_fuel_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_fuel"
@@ -991,11 +998,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/cbac_occupational_exposure"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall" />
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_exposure_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_exposure"
@@ -1018,7 +1025,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_exposure_other"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                style="@style/Widget.Sakhi.TextField"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/til_exposure_dropdown"
@@ -1036,24 +1043,22 @@
                                     android:contentDescription="exposure_other"
                                     android:inputType="textCapSentences|textMultiLine"
                                     android:maxLength="255"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge" />
                             </com.google.android.material.textfield.TextInputLayout>
 
 
                         </RelativeLayout>
 
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_phq2"
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:backgroundTint="@color/md_theme_dark_onSurfaceVariant"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:layout_marginHorizontal="@dimen/ds_space_md"
+                    android:layout_marginVertical="@dimen/ds_space_xs">
 
                     <LinearLayout
                         android:id="@+id/cbac_ll_phq2"
@@ -1066,14 +1071,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:text="@string/cbac_PHQ2"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:padding="@dimen/padding_normal"
                             android:text="@string/cbac_last_two_weeks"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall" />
 
                         <LinearLayout
                             android:id="@+id/ll_phq2_title"
@@ -1089,7 +1094,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.8"
                                 android:text="@string/cbac_Question"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -1097,7 +1102,7 @@
                                 android:layout_weight="0.2"
                                 android:gravity="center"
                                 android:text="@string/cbac_score"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
                         </LinearLayout>
 
@@ -1116,7 +1121,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_li_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_phq2_tv_little_interest"
@@ -1147,7 +1152,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -1167,7 +1172,7 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_fd_dropdown"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                style="@style/Widget.Sakhi.TextField.Dropdown"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/cbac_tv_fd"
@@ -1198,7 +1203,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:paddingHorizontal="@dimen/padding_wide"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
                                 tools:text="0" />
 
 
@@ -1211,7 +1216,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                            android:textAppearance="@style/TextAppearance.Sakhi.DisplaySmall"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/cbac_rl_fh"
@@ -1219,7 +1224,7 @@
                     </LinearLayout>
 
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <LinearLayout
                     android:id="@+id/casesDisplayLl"
@@ -1232,7 +1237,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/cbac_remarks"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
 
 
                     <!--                <TextView-->
@@ -1494,19 +1499,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminateTint="?attr/colorPrimary"
+            android:indeterminateTint="@color/ds_primary"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save"
+            style="@style/Widget.Sakhi.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
+            android:layout_margin="@dimen/ds_space_md"
             android:text="@string/submit"
             android:layout_gravity="bottom"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="?attr/colorOnPrimary" />
+            android:gravity="center" />
 
     </FrameLayout>
 

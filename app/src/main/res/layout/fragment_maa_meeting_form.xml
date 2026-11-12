@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Maa meeting form shell · redesign (Figma M2.9 meeting forms, shell as fragment_new_form): surface #F5F7FA, form
+    fields inside a white section card (r16, 1dp #DCE1E8; the list scrolls inside it) 16dp from the edges, white bottom
+    action bar with a 48dp filled pill Submit (collapses when Submit is hidden). Ids unchanged;
+    old layout: legacy_fragment_maa_meeting_form.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     android:orientation="vertical"
     tools:context=".ui.home_activity.village_level_forms.maa_meeting.MaaMeetingFormFragment">
 
-    <include
-        android:id="@+id/form"
-        layout="@layout/rv_input_form"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_margin="@dimen/ds_space_md"
+        android:layout_weight="1">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_submit"
+        <include
+            android:id="@+id/form"
+            layout="@layout/rv_input_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        style="@style/Sakhi.G25.BottomBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Submit" />
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/ds_space_sm"
+            android:text="@string/submit" />
+    </LinearLayout>
 
 </LinearLayout>

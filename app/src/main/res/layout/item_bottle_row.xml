@@ -1,38 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Distribution table row · redesign (see layout_bottle_table): 44dp min, 1dp #DCE1E8 top line, cells 14/20 #191C1F.
+    Ids unchanged; old layout: legacy_item_bottle_row.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_g25_top_line"
+    android:gravity="center_vertical"
+    android:minHeight="44dp"
     android:orientation="horizontal"
-    android:weightSum="3"
-    android:paddingVertical="8dp"
-    android:background="@android:color/white">
+    android:paddingVertical="@dimen/ds_space_xs"
+    android:weightSum="3">
 
     <TextView
         android:id="@+id/tvSrNo"
+        style="@style/Sakhi.G25.TableCell"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="1"
-        android:textSize="14sp"
-        android:textColor="@android:color/black" />
+        tools:text="1" />
 
     <TextView
         android:id="@+id/tvBottleNumber"
+        style="@style/Sakhi.G25.TableCell"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="B123"
-        android:textSize="14sp"
-        android:textColor="@android:color/black" />
+        tools:text="B123" />
 
     <TextView
         android:id="@+id/tvDate"
+        style="@style/Sakhi.G25.TableCell"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="03-Nov-2025"
-        android:textSize="14sp"
-        android:textColor="@android:color/black" />
+        tools:text="03-Nov-2025" />
 </LinearLayout>

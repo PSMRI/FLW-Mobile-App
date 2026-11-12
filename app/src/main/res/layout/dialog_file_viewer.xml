@@ -1,42 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- File: res/layout/dialog_file_viewer.xml -->
+<!--
+    Uploaded files sheet (incentive claim files) · redesign (Figma M2.9-20 "file preview" + sheet look of M2.19-43):
+    white sheet, 32x4 handle, title 22/28 Medium, count 14/20 #42474E, file rows, 48dp filled pill "Close" at the end.
+    Ids unchanged; old layout: legacy_dialog_file_viewer.xml. Title / count text are set in FileViewerDialog.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/ds_surface_container"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_ds_pill"
+        android:backgroundTint="@color/ds_outline" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uploaded Files"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:text="@string/ds_g25_uploaded_files"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface" />
 
     <TextView
         android:id="@+id/tv_file_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="0 files"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="@dimen/ds_space_2xs"
+        android:layout_marginBottom="@dimen/ds_space_md"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant"
+        tools:text="2 file(s)" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_files"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ds_space_md"
         android:maxHeight="400dp"
-        android:layout_marginBottom="16dp"/>
+        tools:listitem="@layout/item_file" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_close"
+        style="@style/Widget.Sakhi.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:text="Close"
-        style="@style/Widget.Material3.Button.TextButton"/>
+        android:paddingHorizontal="@dimen/ds_space_xl"
+        android:text="@string/ds_close" />
 
 </LinearLayout>

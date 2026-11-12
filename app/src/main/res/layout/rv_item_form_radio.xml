@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--
+    Radio question (old FormInputOld kit) · redesign (Figma 07 · Register member › "Gender"): label 14/20 Medium
+    #42474E + red *, then the options as 44dp chips 8dp apart (FormInputAdapterOld builds them with Widget.Sakhi.RadioChip).
+    Root stays a ConstraintLayout (binding adapter target). Ids and bindings unchanged; old layout: legacy_rv_item_form_radio.xml.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -10,48 +15,52 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_ri"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cl_ri"
         radioForm="@{form}"
-        android:padding="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_wide">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_2xs"
             android:text="@{form.title}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_on_surface_variant"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@id/tv_nullable"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Hello you@!!" />
-
-        <RadioGroup
-            android:id="@+id/rg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title">
-
-
-        </RadioGroup>
-
-
-
+            tools:text="Gender" />
 
         <TextView
             android:id="@+id/tv_nullable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/rg"
+            android:layout_marginStart="2dp"
             android:text="@string/tv_required_text_asterisk"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/design_default_color_error"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_error"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_title"
             app:layout_constraintTop_toTopOf="@id/tv_title"
             app:required="@{form.required}" />
+
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_2xs"
+            android:baselineAligned="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

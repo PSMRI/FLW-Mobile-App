@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Preview value row · redesign (Figma M2.19-43 "Info row"): 41dp row, 10dp top/bottom, 12dp gap, 1dp #DCE1E8 bottom
+    line; label 14/20 Regular #42474E (left), value 14/20 Medium #191C1F (right); photo values as a 56dp r8 image.
+    Ids unchanged; old layout: legacy_item_preview_row.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_g25_bottom_line"
+    android:gravity="center_vertical"
+    android:minHeight="41dp"
     android:orientation="horizontal"
-    android:paddingVertical="8dp"
-    android:paddingEnd="8dp"
+    android:paddingVertical="10dp"
     tools:ignore="RtlSymmetry">
 
     <TextView
@@ -14,26 +21,28 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
-        android:textSize="@dimen/_12sdp"
-        android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/md_theme_light_shadow"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant"
+        tools:text="Name" />
 
     <TextView
         android:id="@+id/tvValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_sm"
         android:layout_weight="1.2"
-        android:textSize="@dimen/_12sdp"
-        android:fontFamily="@font/roboto_regular"
-        android:textColor="@color/md_theme_light_shadow"
-        android:gravity="end" />
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface"
+        tools:text="Sunita Devi" />
 
     <ImageView
         android:id="@+id/ivPreviewImage"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        android:layout_marginStart="@dimen/ds_space_sm"
+        android:background="@drawable/bg_ds_readonly_box"
+        android:importantForAccessibility="no"
         android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:layout_marginStart="8dp"/>
+        android:visibility="gone" />
 </LinearLayout>

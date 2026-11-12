@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/preview_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvPreviewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_weight="1"
+            android:textColor="@color/md_theme_light_shadow"
+            android:textSize="@dimen/_20sdp"
+            android:text="@string/preview_title" />
+
+        <ImageButton
+            android:id="@+id/btnClosePreview"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/md_theme_light_shadow" />
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:overScrollMode="ifContentScrolls" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/submit"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="@color/md_theme_light_onSecondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/_100sdp"
+            android:text="@string/edit"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="@color/md_theme_light_onSecondary" />
+    </LinearLayout>
+</LinearLayout>

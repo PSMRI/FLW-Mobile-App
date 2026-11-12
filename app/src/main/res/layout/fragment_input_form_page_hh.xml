@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.all_household.new_household_registration.NewHouseholdFragment">
+    <!-- Redesign (Figma 07 · Register member): surface bg, page title 16/24 Medium, fields in a white section card
+         (r16, 1dp #DCE1E8; the list scrolls inside it), white bottom action bar (1dp top border) with the previous /
+         next round buttons in primary-container and a 48dp filled pill Submit. Ids unchanged;
+         old layout: legacy_fragment_input_form_page_hh.xml. Not built: Figma 3-step stepper, "Save draft". -->
 
     <RelativeLayout
         android:id="@+id/rl_saving"
@@ -25,7 +30,8 @@
             android:layout_centerHorizontal="true"
             android:padding="@dimen/padding_normal"
             android:text="@string/saving_form"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface" />
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,40 +45,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_md"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Grotto" />
 
 
-        <include
-            android:id="@+id/input_form"
-            layout="@layout/rv_input_form"
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_form_g25"
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_margin="@dimen/ds_space_md"
             app:layout_constraintBottom_toTopOf="@+id/fl_btns"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/input_form" />
+            <include
+                android:id="@+id/input_form"
+                layout="@layout/rv_input_form"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fl_btns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_ds_bottom_bar"
+            android:paddingHorizontal="@dimen/ds_space_xs"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_form"> <!-- or "space_between", "space_evenly" -->
+            app:layout_constraintStart_toStartOf="parent"> <!-- or "space_between", "space_evenly" -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/padding_normal"
+                android:layout_margin="@dimen/ds_space_xs"
+                app:backgroundTint="@color/ds_primary_container"
+                app:elevation="0dp"
+                app:fabSize="mini"
+                app:tint="@color/ds_on_primary_container"
                 android:contentDescription="@string/previous"
                 android:src="@drawable/ic_arrow_back"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -80,12 +98,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_submit_form"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/ds_space_xs"
+                android:layout_marginVertical="@dimen/ds_space_sm"
                 android:text="@string/submit"
-                android:textColor="?attr/colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_next"
                 app:layout_constraintStart_toEndOf="@+id/btn_prev"
@@ -95,7 +115,11 @@
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/padding_normal"
+                android:layout_margin="@dimen/ds_space_xs"
+                app:backgroundTint="@color/ds_primary_container"
+                app:elevation="0dp"
+                app:fabSize="mini"
+                app:tint="@color/ds_on_primary_container"
                 android:contentDescription="@string/next"
                 android:src="@drawable/ic_arrow_next"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -113,7 +137,9 @@
             android:visibility="gone"
             tools:visibility="visible"
             android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="@+id/input_form"
+            app:backgroundTint="@color/ds_primary"
+            app:tint="@color/ds_on_primary"
+            app:layout_constraintBottom_toBottomOf="@+id/cv_form_g25"
             app:layout_constraintEnd_toEndOf="parent" />
 
 

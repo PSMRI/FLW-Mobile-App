@@ -1,40 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Multi-file upload field · redesign (form kit "upload row" + Figma M2.2-26 photo tiles): 16dp side padding, 8dp
+    above/below; title 14/20 Medium #42474E with a 12/16 hint "Camera, gallery or PDF · max 5 MB", a 40dp tonal pill
+    "Choose files" at the end, then the picked files as a 3-column grid of r12 tiles.
+    Ids unchanged (Button → MaterialButton; only click / enabled / alpha used); old layout: legacy_layout_multi_file_upload.xml.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingVertical="@dimen/ds_space_xs">
 
     <TextView
         android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ds_space_sm"
+        android:text="@string/upload_files"
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface_variant"
+        app:layout_constraintEnd_toStartOf="@id/btnSelectFiles"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_upload_hint_g25"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="@dimen/ds_space_sm"
+        android:text="@string/ds_g25_upload_sources"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+        android:textColor="@color/ds_on_surface_variant"
+        app:layout_constraintEnd_toStartOf="@id/btnSelectFiles"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelectFiles"
+        style="@style/Widget.Sakhi.Button.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Files"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:paddingBottom="4dp"/>
-
-    <Button
-        android:id="@+id/btnSelectFiles"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:minHeight="40dp"
+        android:text="@string/ds_g25_choose_files"
+        app:icon="@drawable/ic_ds_add"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Choose Files"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_upload_g25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_upload_hint_g25,btnSelectFiles" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFiles"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        android:layout_marginTop="@dimen/ds_space_xs"
         android:orientation="vertical"
-        tools:listitem="@layout/layout_file_view"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_upload_g25"
         app:spanCount="3"
-        app:layout_constraintTop_toBottomOf="@+id/btnSelectFiles"
-        android:layout_marginTop="8dp"/>
+        tools:listitem="@layout/layout_file_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

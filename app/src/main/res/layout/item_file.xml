@@ -1,47 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- File: res/layout/item_file.xml -->
-<androidx.constraintlayout.widget.ConstraintLayout 
+<!--
+    Uploaded file row · redesign (form kit "upload row"): bordered row (white, 1dp #DCE1E8, r12), 8dp apart,
+    40dp file icon, name 14/20 Medium #191C1F (middle-ellipsized), delete icon 24dp error colour in a 48dp target.
+    Ids unchanged; old layout: legacy_item_file.xml.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
+    android:layout_marginBottom="@dimen/ds_space_xs"
+    android:background="@drawable/bg_ds_field_row"
+    android:foreground="?attr/selectableItemBackground"
+    android:minHeight="56dp"
+    android:paddingStart="@dimen/ds_space_sm"
+    android:paddingEnd="@dimen/ds_space_2xs">
 
     <ImageView
         android:id="@+id/iv_file_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/ic_doc_upload"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_file_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:layout_marginStart="@dimen/ds_space_sm"
+        android:layout_marginEnd="@dimen/ds_space_xs"
         android:ellipsize="middle"
         android:singleLine="true"
-        tools:text="document_file_name.pdf"
-        app:layout_constraintStart_toEndOf="@id/iv_file_icon"
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_delete"
+        app:layout_constraintStart_toEndOf="@id/iv_file_icon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:text="document_file_name.pdf" />
 
     <ImageButton
         android:id="@+id/btn_delete"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_delete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/ds_g25_delete_file"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:tint="?attr/colorError"/>
+        app:tint="@color/ds_error" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,36 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Preview before save sheet · redesign (Figma M2.19-43 "Register member · preview before save"): white sheet, padding
+    12/16/24/16, title 22/28 Medium "Check before saving" (+ 48dp close kept from the old sheet), value rows,
+    Edit (outlined) · Submit (filled) 48dp pills, equal widths, 8dp apart.
+    Ids unchanged; old layout: legacy_bottomsheet_preview.xml.
+    Not built: drag handle (the sheet is set non-draggable in PreviewBottomsheet).
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preview_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface_container"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvPreviewTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_bold"
             android:layout_weight="1"
-            android:textColor="@color/md_theme_light_shadow"
-            android:textSize="@dimen/_20sdp"
-            android:text="@string/preview_title" />
+            android:text="@string/ds_g25_check_before_saving"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+            android:textColor="@color/ds_on_surface" />
 
         <ImageButton
             android:id="@+id/btnClosePreview"
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:src="@drawable/ic_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="-12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/md_theme_light_shadow" />
+            android:contentDescription="@string/ds_close"
+            android:padding="12dp"
+            android:src="@drawable/ic_ds_close"
+            app:tint="@color/ds_on_surface_variant" />
     </LinearLayout>
 
 
@@ -38,34 +50,33 @@
         android:id="@+id/recyclerPreview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/ds_space_sm"
         android:layout_weight="1"
-        android:overScrollMode="ifContentScrolls" />
+        android:overScrollMode="ifContentScrolls"
+        tools:listitem="@layout/item_preview_row" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_sm"
+        android:divider="@drawable/ds_gap_8"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="12dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSubmitPreview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/submit"
-            android:layout_marginEnd="@dimen/_40sdp"
-            android:minWidth="@dimen/_100sdp"
-            android:backgroundTint="?attr/colorPrimary"
-            android:textColor="@color/md_theme_light_onSecondary" />
+        android:showDividers="middle">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditPreview"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.Button.Outlined"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minWidth="@dimen/_100sdp"
-            android:text="@string/edit"
-            android:backgroundTint="?attr/colorPrimary"
-            android:textColor="@color/md_theme_light_onSecondary" />
+            android:layout_weight="1"
+            android:text="@string/edit" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitPreview"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/submit" />
     </LinearLayout>
 </LinearLayout>

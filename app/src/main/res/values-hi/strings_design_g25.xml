@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Draft Hindi — needs native-speaker review. -->
+<resources>
+    <string name="ds_g25_choose_option">एक विकल्प चुनें</string>
+    <string name="ds_g25_pick_gallery">गैलरी से चुनें</string>
+    <string name="ds_g25_open_camera">कैमरा खोलें</string>
+    <string name="ds_g25_pick_pdf">PDF चुनें</string>
+    <string name="ds_g25_choose_files">फ़ाइलें चुनें</string>
+    <string name="ds_g25_uploaded_files">अपलोड की गई फ़ाइलें</string>
+    <string name="ds_g25_upload_sources">कैमरा, गैलरी या PDF · अधिकतम 5 MB</string>
+    <string name="ds_g25_check_before_saving">सेव करने से पहले जाँचें</string>
+    <string name="ds_g25_delete_file">फ़ाइल हटाएँ</string>
+</resources>

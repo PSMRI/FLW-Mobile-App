@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Eye surgery form shell (dynamic form engine) · redesign (Figma M2.19-39 "Eye surgery form (new)"): surface #F5F7FA,
+    16dp padding, 12dp gap; person card white r16 1dp #DCE1E8, padding 12/16 — name 16/24 Medium, "gender · age"
+    12/16 #42474E; fields inside a white section card; white bottom action bar with a 48dp filled pill Submit; edit FAB
+    in primary. Ids unchanged; old layout: legacy_fragment_eye_surgery_form.xml.
+    Not built: initials avatar and Ben ID in the person card (not passed to this screen); the fields themselves are
+    created in code by FormRendererAdapter.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
 
     <LinearLayout
         android:orientation="vertical"
@@ -19,90 +29,98 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
-                <androidx.cardview.widget.CardView
+                android:padding="@dimen/ds_space_md">
+
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_ben_info"
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:backgroundTint="?attr/colorPrimary"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp"
-                    xmlns:app="http://schemas.android.com/apk/res-auto">
+                    android:layout_marginBottom="@dimen/ds_space_sm">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="12dp">
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/ds_space_md"
+                        android:paddingVertical="@dimen/ds_space_sm">
 
                         <TextView
                             android:id="@+id/tv_ben_name"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
-                            android:drawablePadding="6dp"
-                            android:gravity="center_vertical"
-                            tools:text="" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_surface"
+                            tools:text="Lakshmi Devi" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginHorizontal="8dp"
-                            android:background="#80FFFFFF" />
-
-                        <TextView
-                            android:id="@+id/tv_ben_gender"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
-                            tools:text="" />
+                            android:layout_marginTop="2dp"
+                            android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginHorizontal="8dp"
-                            android:background="#80FFFFFF" />
+                            <TextView
+                                android:id="@+id/tv_ben_gender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                                android:textColor="@color/ds_on_surface_variant"
+                                tools:text="Female" />
 
-                        <TextView
-                            android:id="@+id/tv_ben_age"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
-                            tools:text="" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ds_dot_separator"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                                android:textColor="@color/ds_on_surface_variant" />
+
+                            <TextView
+                                android:id="@+id/tv_ben_age"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                                android:textColor="@color/ds_on_surface_variant"
+                                tools:text="63 yrs" />
+                        </LinearLayout>
 
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <FrameLayout
                     android:id="@+id/infant_card_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="@dimen/ds_space_sm" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingVertical="@dimen/ds_space_xs" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
-        <Button
-            android:id="@+id/btnSave"
+        <LinearLayout
+            style="@style/Sakhi.G25.BottomBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/submit"
-            android:layout_margin="12dp" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/ds_space_sm"
+                android:text="@string/submit" />
+        </LinearLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -110,9 +128,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/margin_huge"
+        android:layout_marginEnd="@dimen/ds_space_md"
         android:layout_marginBottom="80dp"
+        android:contentDescription="@string/edit"
         android:src="@drawable/ic_edit"
         android:visibility="gone"
+        app:backgroundTint="@color/ds_primary"
+        app:tint="@color/ds_on_primary"
         tools:visibility="visible"/>
 </FrameLayout>

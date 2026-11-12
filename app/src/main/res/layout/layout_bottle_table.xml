@@ -1,61 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Distribution table (bottles / IFA visits / nets; included by CUFY, filaria MDA, malaria, HWC, NCD follow-up) ·
+    redesign (Figma M2.4 / M2.8 "history table" pattern): 16dp side padding, section title 16/24 Medium, table in a
+    white card (r16, 1dp #DCE1E8): header row #EEF1F5 12/16 Medium #42474E, body rows 14/20 with 1dp dividers.
+    Ids unchanged (header weightSum still changed from code for 2 columns); old layout: legacy_layout_bottle_table.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_table"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_md">
 
     <TextView
         android:id="@+id/table_heading"
+        style="@style/Sakhi.G25.SectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/bottle_distribution"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:padding="8dp" />
+        android:paddingBottom="@dimen/ds_space_xs"
+        android:text="@string/bottle_distribution" />
 
-    <LinearLayout
-        android:id="@+id/tableHeader"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:background="@color/table_header_background"
-        android:paddingVertical="8dp">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/s_no"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/s_no"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/bottle_num"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/bottle_number"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:id="@+id/tableHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/ds_surface_container_high"
+                android:minHeight="40dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/ds_space_xs"
+                android:weightSum="3">
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/date_of_provision"
-            android:textStyle="bold" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/s_no"
+                    style="@style/Sakhi.G25.TableHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/s_no" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/table_Rv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false" />
+                <TextView
+                    android:id="@+id/bottle_num"
+                    style="@style/Sakhi.G25.TableHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/bottle_number" />
+
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/Sakhi.G25.TableHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/date_of_provision" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/table_Rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_bottle_row" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

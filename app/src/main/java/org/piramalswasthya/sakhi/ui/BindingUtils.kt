@@ -266,14 +266,19 @@ fun ConstraintLayout.setItemsCheckBox(form: FormInputOld?) {
             orientation = form.orientation ?: LinearLayout.VERTICAL
             weightSum = items.size.toFloat()
             items.forEach {
-                val cbx = CheckBox(this.context)
+//                val cbx = CheckBox(this.context)
+//                cbx.layoutParams =
+//                    LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0F)
+                // Redesign (row-12 form kit): each option is a bordered 52dp "Checkbox option" row, 8dp apart
+                val cbx = CheckBox(this.context, null, 0, R.style.Widget_Sakhi_CheckboxOption)
                 cbx.layoutParams =
                     LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0F)
+                        .apply { topMargin = (8 * resources.displayMetrics.density).toInt() }
                 cbx.id = View.generateViewId()
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) cbx.setTextAppearance(
-                    context, android.R.style.TextAppearance_Material_Medium
-                )
-                else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
+//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) cbx.setTextAppearance(
+//                    context, android.R.style.TextAppearance_Material_Medium
+//                )
+//                else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
                 cbx.text = it
                 addView(cbx)
                 if (form.value.value?.contains(it) == true) cbx.isChecked = true

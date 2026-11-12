@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filaria MDA form shell (dynamic form engine; ben + campaign variants) · redesign (Figma M2.8 MDA form, shell as
+    fragment_new_form): surface #F5F7FA, ben card on top, section title 16/24 Medium, fields inside a white section card
+    (r16, 1dp #DCE1E8), 48dp filled pill Submit under the card (it scrolls with the form, as before), bottle table below.
+    Ids unchanged; old layout: legacy_fragment_filaria_m_d_a_form.xml.
+    Not built: the fields themselves are created in code by FormRendererAdapter.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,36 +26,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="@dimen/ds_space_md">
 
                 <FrameLayout
                     android:id="@+id/infant_card_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="@dimen/ds_space_md" />
 
                 <TextView
                     android:id="@+id/mdaTitle"
+                    style="@style/Sakhi.G25.SectionTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    android:textStyle="bold"
-                    android:text="@string/mda_form_campagain_title"/>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                    android:layout_marginBottom="@dimen/ds_space_xs"
+                    android:text="@string/mda_form_campagain_title"
+                    android:visibility="gone" />
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Sakhi.Card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
-                <Button
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingVertical="@dimen/ds_space_xs" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/btn_submit"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_margin="12dp" />
+                    android:layout_marginTop="@dimen/ds_space_md"
+                    android:text="@string/btn_submit" />
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
@@ -56,7 +71,7 @@
             android:id="@+id/include_bottle_table"
             layout="@layout/layout_bottle_table"
             android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

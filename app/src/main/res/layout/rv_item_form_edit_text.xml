@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Text field (old FormInputOld kit).
+    Redesign (Figma 07 · Register member, row-12 form kit): label ABOVE the box (14/20 Medium #42474E, red * when
+    required), 56dp box r12 1dp #72787E (2dp primary focused), value 16/24, 16dp side padding, 8dp above/below.
+    Used by FormInputAdapterOld (household / page forms). Ids and bindings unchanged; old layout: legacy_rv_item_form_edit_text.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -9,56 +15,64 @@
             type="org.piramalswasthya.sakhi.model.FormInputOld" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
-        <TextView
-            android:id="@+id/tv_hint"
-            android:layout_width="0dp"
+        <!-- label row: 14/20 Medium #42474E + red * when required (tv_nullable) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="TextView"
-            android:text="@{form.title}"
-            android:visibility="gone"
-            android:paddingTop="@dimen/padding_normal"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginBottom="@dimen/ds_space_2xs">
+
+            <TextView
+                android:id="@+id/tv_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{form.title}"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface_variant"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@id/tv_nullable"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Field label" />
+
+            <TextView
+                android:id="@+id/tv_nullable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="@string/tv_required_text_asterisk"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_error"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_hint"
+                app:layout_constraintTop_toTopOf="@id/tv_hint"
+                app:required="@{form.required}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@{form.title}"
-            android:paddingBottom="@dimen/padding_normal"
-            app:layout_constraintEnd_toStartOf="@id/tv_nullable"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_hint">
+            android:hint="@{form.title}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="@{form.value}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                tools:text="Sunita" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_nullable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/til_edit_text"
-            android:text="@string/tv_required_text_asterisk"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/design_default_color_error"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/til_edit_text"
-            app:required="@{form.required}" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

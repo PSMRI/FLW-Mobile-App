@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign group 25 (custom forms + upload): extra styles on top of styles_design.xml. -->
+<resources>
+
+    <!-- Figma M2.2-26 / M2.9-19 chooser dialog option: 44dp row, 24dp primary icon, 16dp gap, label 16/24 #191C1F -->
+    <style name="Widget.Sakhi.G25.ChooserOption" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:minHeight">44dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="iconGravity">start</item>
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">16dp</item>
+        <item name="iconTint">@color/ds_primary</item>
+        <item name="rippleColor">@color/ds_primary_subtle</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Small</item>
+    </style>
+
+    <!-- Bottom action bar (Figma "Bottom action bar"): white, 1dp top border, 16dp side padding, 12dp between buttons.
+         The 12dp top/bottom padding sits on the buttons (layout_marginVertical) so the bar collapses when they are hidden. -->
+    <style name="Sakhi.G25.BottomBar" parent="">
+        <item name="android:background">@drawable/bg_ds_bottom_bar</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/ds_space_md</item>
+        <item name="android:paddingEnd">@dimen/ds_space_md</item>
+        <item name="android:divider">@drawable/ds_gap_12</item>
+        <item name="android:showDividers">middle</item>
+    </style>
+
+    <!-- Simple data table inside a card (bottle distribution, follow-up visits, micro birth plan):
+         header row surface-container-high, 12/16 Medium #42474E; body cells 14/20 #191C1F -->
+    <style name="Sakhi.G25.TableHeader" parent="">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/ds_space_2xs</item>
+        <item name="android:paddingEnd">@dimen/ds_space_2xs</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelMedium</item>
+        <item name="android:textColor">@color/ds_on_surface_variant</item>
+    </style>
+    <style name="Sakhi.G25.TableCell" parent="">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/ds_space_2xs</item>
+        <item name="android:paddingEnd">@dimen/ds_space_2xs</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyMedium</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <!-- Section title above a card (Figma "Section header"): 16/24 Medium #191C1F -->
+    <style name="Sakhi.G25.SectionTitle" parent="">
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.TitleMedium</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+</resources>

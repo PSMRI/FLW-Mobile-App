@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Draft Assamese — needs native-speaker review. -->
+<resources>
+    <string name="ds_g25_choose_option">এটা বিকল্প বাছক</string>
+    <string name="ds_g25_pick_gallery">গেলেৰীৰ পৰা বাছক</string>
+    <string name="ds_g25_open_camera">কেমেৰা খোলক</string>
+    <string name="ds_g25_pick_pdf">PDF বাছক</string>
+    <string name="ds_g25_choose_files">ফাইল বাছক</string>
+    <string name="ds_g25_uploaded_files">আপলোড কৰা ফাইল</string>
+    <string name="ds_g25_upload_sources">কেমেৰা, গেলেৰী বা PDF · সৰ্বাধিক 5 MB</string>
+    <string name="ds_g25_check_before_saving">ছেভ কৰাৰ আগতে পৰীক্ষা কৰক</string>
+    <string name="ds_g25_delete_file">ফাইল মচক</string>
+</resources>

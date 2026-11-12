@@ -1,37 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    HBNC days / HBYC months visit grid screen · redesign (Figma M2.4 visit grid): surface #F5F7FA background, 16dp
+    padding around the 2-column grid of visit cards (item_visit_card, already redesigned).
+    Ids unchanged (the hidden name / DOB / RCH texts are kept for their bindings); old layout: legacy_fragment_infant_form.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_md">
 
-    <!-- Infant Info -->
+    <!-- Infant Info (hidden; kept for the bindings) -->
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ds_space_2xs"
         android:text="Baby Name"
-        android:visibility="gone"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:paddingBottom="4dp" />
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+        android:textColor="@color/ds_on_surface"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tvDob"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ds_space_2xs"
         android:text="DOB"
-        android:paddingBottom="4dp" />
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tvRchId"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/ds_space_md"
         android:text="@string/rch_id_ben"
-        android:paddingBottom="16dp" />
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant"
+        android:visibility="gone" />
 
     <!-- Visit Card List -->
     <androidx.recyclerview.widget.RecyclerView
@@ -39,5 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="8dp" />
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/ds_space_md"
+        tools:listitem="@layout/item_visit_card" />
 </LinearLayout>

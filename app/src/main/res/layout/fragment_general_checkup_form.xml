@@ -1,56 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Add check-up (general check-up) · redesign (Figma M2.8-10 "Add check-up", M2.8-46 pointer links, M2.8-47 loading /
+    form not available): surface #F5F7FA; ben summary card in primary-container (r16, name 16/24 Medium, details 14/20);
+    content padding 16, 12dp gap; "Earlier check-ups" as a form section header (#EEF1F5, r12, 56dp, 16/24 Medium + ▼);
+    fields inside a white section card (r16, 1dp #DCE1E8); pointer = info banner (#E6F2FF r12, 12/16 padding, links
+    14/20 Medium primary); "Form not available" text 14/20 + tonal "Try again" pill; white bottom action bar with the
+    48dp filled pill "Refer to facility". Ids unchanged; old layout: legacy_fragment_general_checkup_form.xml.
+    Not built: per-banner "Open" action text + icon (the whole link row is tappable, as before), empty-state illustration.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/ds_surface"
+    android:orientation="vertical">
+
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/ds_space_md">
 
         <!-- Beneficiary summary -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_sm"
+            app:cardBackgroundColor="@color/ds_primary_container"
+            app:strokeWidth="0dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
             android:orientation="vertical"
-            android:padding="@dimen/padding_normal">
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="@dimen/ds_space_sm">
 
             <TextView
                 android:id="@+id/tv_ben_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:textColor="?attr/colorOnPrimary"
-                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_primary_container"
                 tools:text="Ramlal Yadav" />
 
             <TextView
                 android:id="@+id/tv_ben_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorOnPrimary"
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_primary_container"
                 tools:text="67 YEARS | MALE | ID 252090934101" />
         </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_normal">
+            android:orientation="vertical">
 
-            <!-- FR14: earlier check-ups -->
+            <!-- FR14: earlier check-ups (Figma "Form section header": #EEF1F5, r12, 56dp) -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Sakhi.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="@dimen/padding_small"
-                app:strokeColor="?attr/colorPrimary"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/ds_surface_container_high"
+                app:cardCornerRadius="@dimen/ds_radius_md"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -62,19 +87,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="@dimen/padding_small"
-                        android:padding="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                        android:drawablePadding="@dimen/ds_space_sm"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:paddingHorizontal="@dimen/ds_space_md"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
                         app:drawableEndCompat="@drawable/ic_arrow_drop_down"
+                        app:drawableTint="@color/ds_on_surface_variant"
                         tools:text="Earlier check-ups (0)" />
 
                     <TextView
                         android:id="@+id/tv_history_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="@dimen/padding_normal"
-                        android:paddingBottom="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:paddingHorizontal="@dimen/ds_space_md"
+                        android:paddingBottom="@dimen/ds_space_md"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface_variant"
                         android:visibility="gone"
                         tools:text="No earlier check-ups."
                         tools:visibility="visible" />
@@ -84,17 +114,19 @@
             <!-- FR3–FR4: server-driven fields (form general_check_up), drawn by FormRendererAdapter -->
             <ProgressBar
                 android:id="@+id/pb_form"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:indeterminateTint="@color/ds_primary"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/ll_form_unavailable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
@@ -103,19 +135,21 @@
                     android:id="@+id/tv_form_unavailable"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/gc_form_unavailable"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                    android:textColor="@color/ds_on_surface_variant" />
 
                 <TextView
                     android:id="@+id/tv_form_issues"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
-                    android:background="@color/gc_banner_red_bg"
+                    android:layout_marginTop="@dimen/ds_space_xs"
+                    android:background="@drawable/bg_ds_error_box"
                     android:fontFamily="monospace"
-                    android:padding="@dimen/padding_small"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/gc_banner_red_text"
+                    android:padding="@dimen/ds_space_sm"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_error_container"
                     android:textIsSelectable="true"
                     android:visibility="gone"
                     tools:text="Form general_check_up version 2: 1 problem(s)"
@@ -123,61 +157,88 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_retry"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.Sakhi.Button.Tonal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
+                    android:layout_marginTop="@dimen/ds_space_md"
+                    android:paddingHorizontal="@dimen/ds_space_xl"
                     android:text="@string/gc_retry" />
             </LinearLayout>
+
+            <!-- Figma section card: white, r16, 1dp #DCE1E8; field rows carry their own 16dp side padding -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Sakhi.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_small"
                 android:nestedScrollingEnabled="false"
+                android:paddingVertical="@dimen/ds_space_xs"
                 tools:itemCount="2"
                 tools:listitem="@layout/item_form_field" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- FR6: pointer to the CD / NCD tiles, shown until a type is chosen -->
+            <!-- FR6: pointer to the CD / NCD tiles, shown until a type is chosen (Figma info banner, M2.8-46) -->
             <LinearLayout
                 android:id="@+id/ll_pointer"
                 android:visibility="gone"
                 tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/gc_banner_blue_bg"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:background="@drawable/bg_ds_banner_info"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_normal">
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:paddingVertical="@dimen/ds_space_xs">
 
                 <TextView
                     android:id="@+id/tv_pointer_cd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingVertical="@dimen/padding_small"
+                    android:drawablePadding="@dimen/ds_space_sm"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/ds_touch_target"
                     android:text="@string/gc_pointer_cd"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="@color/gc_banner_blue_text" />
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_primary"
+                    app:drawableStartCompat="@drawable/ic_ds_info"
+                    app:drawableTint="@color/ds_primary" />
 
                 <TextView
                     android:id="@+id/tv_pointer_ncd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingVertical="@dimen/padding_small"
+                    android:drawablePadding="@dimen/ds_space_sm"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/ds_touch_target"
                     android:text="@string/gc_pointer_ncd"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="@color/gc_banner_blue_text" />
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_primary"
+                    app:drawableStartCompat="@drawable/ic_ds_info"
+                    app:drawableTint="@color/ds_primary" />
             </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_refer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:text="@string/gc_refer_to_facility" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+
+    <!-- Figma "Bottom action bar": white, 1dp top border, 12/16 padding, 48dp filled pill -->
+    <LinearLayout
+        style="@style/Sakhi.G25.BottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_refer"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/ds_space_sm"
+                android:text="@string/gc_refer_to_facility" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Form page (one page of the paged household / ben forms) · redesign (Figma 07 · Register member):
+    surface #F5F7FA background, fields inside a white section card (r16, 1dp #DCE1E8) 16dp from the edges.
+    The list still scrolls itself (inside the card) so scrollToPosition on validation keeps working.
+    Ids unchanged; old layout: legacy_fragment_input_form_page.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
->
+    android:background="@color/ds_surface">
 
-    <include
-        android:id="@+id/input_form"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        layout="@layout/rv_input_form"
-         />
+        android:layout_margin="@dimen/ds_space_md">
+
+        <include
+            android:id="@+id/input_form"
+            layout="@layout/rv_input_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/rv_item_form_edit_text" />
+
+    </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>

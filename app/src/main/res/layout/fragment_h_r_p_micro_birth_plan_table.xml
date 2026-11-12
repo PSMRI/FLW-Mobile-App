@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Micro birth plan table (shared as an image) · redesign (Figma M2.6 micro birth plan, "history table" pattern):
+    surface #F5F7FA; the table sits in a white card (r16, 1dp #DCE1E8) 16dp from the edges; title cell in
+    primary-container (14/20 Medium #001E31), LMP / EDD cells #EEF1F5, value cells 14/20 #191C1F; 1dp #DCE1E8 row and
+    column lines; 48dp filled pill "Share" with the WhatsApp icon. The table keeps a white background so the shared
+    screenshot is unchanged in content. Ids unchanged; old layout: legacy_fragment_h_r_p_micro_birth_plan_table.xml.
+-->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,22 +17,30 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/ds_surface"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_micro_birth_plan_g25"
+                style="@style/Widget.Sakhi.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/ds_space_md"
+                app:layout_constraintTop_toTopOf="parent">
+
             <TableLayout
                 android:id="@+id/table_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_alignParentTop="true" >
+                android:background="@color/ds_surface_container" >
 
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     >
 
                     <TextView
@@ -33,9 +48,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/micro_birth_plan"
                         android:gravity="center"
-                        android:background="@color/md_theme_dark_error"
+                        android:background="@color/ds_primary_container"
+                        android:textColor="@color/ds_on_primary_container"
                         android:layout_weight="1"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
                         android:padding="8dp"/>
 
                     <TextView
@@ -43,10 +59,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lmp"
-                        android:background="@color/md_theme_dark_onTertiaryContainer"
+                        android:background="@color/ds_surface_container_high"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_on_surface"
                         android:padding="8dp"/>
 
                     <TextView
@@ -54,51 +71,60 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/edd"
-                        android:background="@color/md_theme_dark_onTertiaryContainer"
+                        android:background="@color/ds_surface_container_high"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_on_surface"
                         android:padding="8dp"/>
                 </TableRow>
 
                 <TableRow
                     android:weightSum="4"
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     android:layout_gravity="center_horizontal"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/name_pw"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text=""
                         android:minHeight="80dp"
                         android:layout_weight="1"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/age"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text=""
                         android:layout_weight="1"
                         android:minHeight="80dp"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/contact_no"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text=""
                         android:layout_weight="1"
                         android:minHeight="80dp"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/sc_hwc"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -113,38 +139,46 @@
 
                 <TableRow
                     android:weightSum="4"
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
 
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/husband_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text=""
                         android:layout_weight="1"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/lmp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:layout_weight="1"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/edd"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/bank_acc_no"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -154,17 +188,19 @@
                 </TableRow>
 
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     android:weightSum="4"
                     android:layout_gravity="center_horizontal"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/nr_sc_hwc"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         android:padding="8dp"/>
@@ -172,22 +208,28 @@
 
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/block"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/nr_phc"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:layout_weight="1"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/nr_fru"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -197,39 +239,47 @@
                 </TableRow>
 
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     android:weightSum="4"
                     android:layout_gravity="center_horizontal"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/nr_usg"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:minHeight="80dp"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:layout_weight="1"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/blood_grp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:minHeight="80dp"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/blood_donr"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:minHeight="80dp"
-                        android:background="@drawable/border_line"
+                        android:background="@drawable/bg_ds_g25_end_line"
                         android:padding="8dp"/>
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/birth_comp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -239,10 +289,12 @@
                 </TableRow>
 
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/prson_tk_care"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -252,10 +304,12 @@
                 </TableRow>
 
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/name_of_cont_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -264,10 +318,12 @@
 
                 </TableRow>
                 <TableRow
-                    android:background="@drawable/horizontal_border"
+                    android:background="@drawable/bg_ds_g25_bottom_line"
                     >
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:id="@+id/mode_of_trasp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -277,18 +333,20 @@
 
                 </TableRow>
             </TableLayout>
+            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_share"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableRight="@drawable/icon_whatsapp"
-                android:layout_margin="@dimen/margin_normal"
+                android:layout_marginHorizontal="@dimen/ds_space_md"
+                android:layout_marginBottom="@dimen/ds_space_md"
+                app:icon="@drawable/icon_whatsapp"
+                app:iconGravity="textEnd"
+                app:iconTint="@null"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/table_layout"
-                android:textColor="?attr/colorOnPrimary"
+                app:layout_constraintTop_toBottomOf="@+id/cv_micro_birth_plan_g25"
                 android:text="@string/share" />
 
 

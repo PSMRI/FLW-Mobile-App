@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--
+    Checkbox question (old FormInputOld kit) · redesign (Figma 07 · Register member, "Checkbox option"): label 14/20
+    Medium #42474E + red *, options as bordered 52dp rows 8dp apart (built in BindingUtils.checkBoxesForm).
+    Root stays a ConstraintLayout (binding adapter target). Ids and bindings unchanged; old layout: legacy_rv_item_form_check.xml.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -14,42 +19,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         checkBoxesForm="@{form}"
-        android:paddingTop="@dimen/padding_normal">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_2xs"
             android:text="@{form.title}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintEnd_toStartOf="@+id/tv_nullable"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_on_surface_variant"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@id/tv_nullable"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Hello you@!!" />
-
-
-        <LinearLayout
-            android:id="@+id/ll_checks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
-            android:orientation="vertical"/>
-
-
-
-
+            tools:text="Gender" />
 
         <TextView
             android:id="@+id/tv_nullable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/tv_title"
+            android:layout_marginStart="2dp"
             android:text="@string/tv_required_text_asterisk"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/design_default_color_error"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_error"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_title"
             app:layout_constraintTop_toTopOf="@id/tv_title"
             app:required="@{form.required}" />
+
+        <LinearLayout
+            android:id="@+id/ll_checks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_2xs"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

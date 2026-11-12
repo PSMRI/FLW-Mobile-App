@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    CBAC yes / no question · redesign (Figma M2.7 CBAC form; form kit "Gender" chips): 16dp side padding, 8dp above /
+    below; question 14/20 Medium #42474E (coloured score asterisks still added by the cbac_name binding adapter), 8dp,
+    then Yes / No as two equal 44dp chips 8dp apart (Widget.Sakhi.RadioChip: selected = #CDEFF3).
+    Ids and bindings unchanged; old layout: legacy_fragment_cbac_element_radio.xml.
+    Not built: ✓ on the selected chip (set from code in the form kit; CBAC radios are plain XML here).
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
@@ -20,27 +27,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <TextView
-            style="@style/cbac_ed_hint"
-            cbac_name="@{fieldName}"
             asteriskColor="@{numAsterisk}"
-            asteriskColorAlt="@{numAsteriskAlt}" />
+            asteriskColorAlt="@{numAsteriskAlt}"
+            cbac_name="@{fieldName}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_on_surface_variant" />
 
         <RadioGroup
             android:id="@+id/cbac_ed_rg"
-            style="@style/cbac_ed_rg">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_xs"
+            android:divider="@drawable/ds_gap_8"
+            android:orientation="horizontal"
+            android:showDividers="middle">
 
             <RadioButton
                 android:id="@+id/rb_yes"
-                style="@style/cbac_ed_rb"
+                style="@style/Widget.Sakhi.RadioChip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/cbac_yes" />
 
 
             <RadioButton
                 android:id="@+id/rb_no"
-                style="@style/cbac_ed_rb"
+                style="@style/Widget.Sakhi.RadioChip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/cbac_no" />
         </RadioGroup>
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="form"
+            type="org.piramalswasthya.sakhi.model.FormInputOld" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.FormInputAdapterOld.ImageClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cl_ri"
+        android:paddingTop="@dimen/padding_normal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{form.title}"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            app:layout_constraintBottom_toBottomOf="@+id/iv"
+            app:layout_constraintEnd_toStartOf="@id/iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="ABCDEFG" />
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@drawable/ic_person"
+            android:padding="@dimen/padding_normal"
+            android:background="@drawable/bg_circular"
+            benImage="@{form.value}"
+            android:onClick="@{()->clickListener.onImageClick(form)}" />
+
+        <TextView
+            android:id="@+id/tv_nullable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/iv"
+            android:text="@string/tv_required_text_asterisk"
+            tools:visibility="gone"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/design_default_color_error"
+            app:layout_constraintStart_toEndOf="@id/iv"
+            app:layout_constraintTop_toTopOf="@id/iv"
+            app:required="@{form.required}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign group 25 (custom forms + upload): new screen texts. Translations in values-hi/as/bn are drafts. -->
+<resources>
+    <string name="ds_g25_choose_option">Choose an option</string>
+    <string name="ds_g25_pick_gallery">Pick from gallery</string>
+    <string name="ds_g25_open_camera">Open camera</string>
+    <string name="ds_g25_pick_pdf">Pick a PDF</string>
+    <string name="ds_g25_choose_files">Choose files</string>
+    <string name="ds_g25_uploaded_files">Uploaded files</string>
+    <string name="ds_g25_upload_sources">Camera, gallery or PDF · max 5 MB</string>
+    <string name="ds_g25_check_before_saving">Check before saving</string>
+    <string name="ds_g25_delete_file">Delete file</string>
+</resources>

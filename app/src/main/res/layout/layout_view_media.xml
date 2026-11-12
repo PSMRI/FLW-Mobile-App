@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Uploaded file viewer · redesign (Figma M2.2-27 "Uploaded file viewer"): near-black #0D0D0F background, viewer bar
+    with a 24dp white close icon in a 48dp touch target at the top-start, image 16dp from the sides, r12.
+    Ids unchanged; old layout: legacy_layout_view_media.xml.
+    Not built (needs data): file name in the viewer bar, "Pinch to zoom" hint (image view has no zoom).
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#000000">
+    android:background="#0D0D0F">
 
     <ImageView
         android:id="@+id/btnClose"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="20dp"
-        android:layout_alignParentEnd="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/ds_space_xs"
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/ds_close"
         android:elevation="2dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:tint="@android:color/white"/>
+        android:padding="12dp"
+        android:src="@drawable/ic_ds_close"
+        app:tint="@android:color/white" />
 
     <ImageView
         android:id="@+id/viewImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
         android:layout_centerInParent="true"
-        />
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginVertical="64dp"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no" />
 
 </RelativeLayout>

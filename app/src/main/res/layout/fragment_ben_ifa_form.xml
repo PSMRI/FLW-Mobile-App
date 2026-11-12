@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    IFA distribution screen · redesign (Figma M2.x IFA form, shell as fragment_new_form): surface #F5F7FA; "Add new" as
+    a 48dp tonal pill with + icon; the form inside a white section card (r16, 1dp #DCE1E8) with a 48dp filled pill Submit
+    under it; the distribution history table at the bottom (section title 16/24 Medium, white card, header row #EEF1F5
+    12/16 Medium, rows from item_bottle_row). Ids unchanged; old layout: legacy_fragment_ben_ifa_form.xml.
+    Not built: the fields themselves are created in code by FormRendererAdapter.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:orientation="vertical">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddNew"
+        style="@style/Widget.Sakhi.Button.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/ds_space_md"
         android:text="@string/add_new"
-        android:layout_margin="12dp"
-        android:layout_gravity="center" />
+        app:icon="@drawable/ic_ds_add" />
 
     <LinearLayout
         android:id="@+id/ll_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -31,26 +42,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="0dp">
+                android:padding="@dimen/ds_space_md">
 
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Sakhi.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingVertical="@dimen/ds_space_xs" />
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    style="@style/Widget.Sakhi.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                android:nestedScrollingEnabled="false" />
-
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_md"
                     android:text="@string/submit"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:layout_gravity="center"
                     android:visibility="visible" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -61,58 +74,66 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:elevation="2dp"
-        android:paddingBottom="4dp">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingBottom="@dimen/ds_space_md">
 
         <TextView
+            style="@style/Sakhi.G25.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ifa_distribution"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:padding="8dp" />
+            android:paddingBottom="@dimen/ds_space_xs"
+            android:text="@string/ifa_distribution" />
 
-        <LinearLayout
-            android:id="@+id/tableHeader"
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            android:background="#E0E0E0"
-            android:paddingVertical="8dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/s_no"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/ifa_quantity"
-                android:textStyle="bold" />
+                <LinearLayout
+                    android:id="@+id/tableHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/ds_surface_container_high"
+                    android:gravity="center_vertical"
+                    android:minHeight="40dp"
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/ds_space_xs"
+                    android:weightSum="3">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/date"
-                android:textStyle="bold" />
-        </LinearLayout>
+                    <TextView
+                        style="@style/Sakhi.G25.TableHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/s_no" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/table_Rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+                    <TextView
+                        style="@style/Sakhi.G25.TableHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/ifa_quantity" />
+
+                    <TextView
+                        style="@style/Sakhi.G25.TableHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/date" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/table_Rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,191 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Upload source bottom sheet · redesign (Figma M2.2-26 "Upload chooser", sheet look from M2.19-43): white sheet,
+    padding 12/16/24/16, 32x4 handle, title 22/28 Medium, hint 14/20 #42474E, options as bordered rows (r12, 1dp #DCE1E8)
+    8dp apart with a 40dp primary-subtle icon circle, label 16/24 + 12/16 hint and a chevron; Cancel text button.
+    Ids unchanged; old layout: legacy_dialog_upload_source.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/ds_surface_container"
+    android:divider="@drawable/ds_gap_8"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl"
+    android:showDividers="middle">
+
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_ds_pill"
+        android:backgroundTint="@color/ds_outline" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_xs"
         android:text="@string/upload_files"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ds_space_xs"
         android:text="@string/choose_upload_source"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        android:layout_marginBottom="20dp"/>
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant" />
 
     <LinearLayout
         android:id="@+id/layout_camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_field_row"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_camera"
+            android:background="@drawable/bg_ds_icon_circle"
+            android:backgroundTint="@color/ds_primary_subtle"
             android:contentDescription="@string/camera"
-            app:tint="?attr/colorPrimary"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/ic_camera"
+            app:tint="@color/ds_primary" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_md"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/camera"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/take_photo"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="?attr/colorOnSurfaceVariant"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant" />
 
         </LinearLayout>
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_chevron_right"
             android:contentDescription="@null"
-            app:tint="?attr/colorOnSurfaceVariant"/>
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/ds_on_surface_variant" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorOutlineVariant"
-        android:layout_marginVertical="4dp"/>
 
     <LinearLayout
         android:id="@+id/layout_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_field_row"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_gallery"
+            android:background="@drawable/bg_ds_icon_circle"
+            android:backgroundTint="@color/ds_primary_subtle"
             android:contentDescription="@string/gallery"
-            app:tint="?attr/colorPrimary"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/ic_gallery"
+            app:tint="@color/ds_primary" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_md"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/gallery"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/choose_from_gallery"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="?attr/colorOnSurfaceVariant"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant" />
 
         </LinearLayout>
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_chevron_right"
             android:contentDescription="@null"
-            app:tint="?attr/colorOnSurfaceVariant"/>
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/ds_on_surface_variant" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorOutlineVariant"
-        android:layout_marginVertical="4dp"/>
 
     <LinearLayout
         android:id="@+id/layout_documents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_field_row"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_document_attach"
+            android:background="@drawable/bg_ds_icon_circle"
+            android:backgroundTint="@color/ds_primary_subtle"
             android:contentDescription="@string/documents"
-            app:tint="?attr/colorPrimary"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/ic_document_attach"
+            app:tint="@color/ds_primary" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_md"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/documents"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/choose_pdf_or_doc"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="?attr/colorOnSurfaceVariant"/>
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant" />
 
         </LinearLayout>
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_chevron_right"
             android:contentDescription="@null"
-            app:tint="?attr/colorOnSurfaceVariant"/>
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/ds_on_surface_variant" />
 
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_cancel"
-        android:layout_width="match_parent"
+        style="@style/Widget.Sakhi.Button.Text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        android:layout_marginTop="16dp"
-        style="@style/Widget.Material3.Button.TextButton"/>
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:text="@string/cancel" />
 
 </LinearLayout>

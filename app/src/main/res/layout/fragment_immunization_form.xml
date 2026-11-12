@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Child immunization form shell · redesign (Figma M2.5 immunization form; shell as fragment_new_form): surface
+    #F5F7FA, 16dp padding; summary card in primary-container (r16, text #001E31); "Select all" 14/20 Medium + checkbox;
+    dose title 16/24 Medium; dose rows; form fields inside a white section card (r16, 1dp #DCE1E8); 48dp filled pill
+    Submit full width at the bottom. Ids unchanged; old layout: legacy_fragment_immunization_form.xml.
+    Not built: dose rows (item_child_immunization_dose) are still the old row look (row 26 list).
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
 
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="?attr/colorOnSecondary"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:padding="@dimen/ds_space_md">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cv_patient_information"
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:backgroundTint="?attr/colorPrimary"
-            android:elevation="@dimen/padding_normal"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_normal"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginBottom="@dimen/ds_space_md"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardBackgroundColor="@color/ds_primary_container"
+            app:strokeWidth="0dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_patient_information"
@@ -40,9 +46,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@android:color/white"
+                        android:padding="@dimen/ds_space_sm"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_primary_container"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                         app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +60,9 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:padding="@dimen/padding_normal"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@android:color/white"
+                        android:padding="@dimen/ds_space_sm"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_primary_container"
                         app:layout_constraintEnd_toEndOf="parent" />
                 </LinearLayout>
 
@@ -65,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/padding_normal"
+                    android:padding="@dimen/ds_space_sm"
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/ll_patient_information_1">
 
@@ -88,15 +94,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/husband_s_name"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/husband_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -112,15 +118,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/tv_mob_no_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/mobile_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -146,15 +152,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/beneficiary_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/ben_id"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -170,15 +176,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/tv_rch_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/rch_id"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -203,15 +209,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/pregnancy_weeks"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/weeks_of_preg"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -226,15 +232,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/pmsma_lmp"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/lmp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
 
@@ -249,22 +255,22 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/pmsma_edd"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                android:textColor="@color/ds_on_primary_container" />
 
                             <TextView
                                 android:id="@+id/edd"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                android:textColor="@color/ds_on_primary_container"
                                 tools:text="TextView" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -289,23 +295,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="end"
-                        android:padding="8dp">
+                        android:gravity="end|center_vertical"
+                        android:paddingVertical="@dimen/ds_space_2xs">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/select_all"
-                            android:fontFamily="@font/roboto_medium"
-                            android:textSize="@dimen/_14sdp"
-                            android:textColor="@color/md_theme_light_shadow"
-                            android:paddingEnd="8dp"/>
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                            android:textColor="@color/ds_on_surface"
+                            android:paddingEnd="@dimen/ds_space_2xs"/>
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/checkBox"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:buttonTint="@color/md_theme_light_primary"
+                            app:buttonTint="@color/ds_primary"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </LinearLayout>
@@ -315,10 +320,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/dose_name"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textSize="@dimen/_18sdp"
-                        android:textColor="@color/md_theme_light_shadow"
-                        android:padding="8dp"/>
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
+                        android:paddingBottom="@dimen/ds_space_xs"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_imm_cat"
@@ -329,24 +333,33 @@
                         tools:itemCount="8"
                         tools:listitem="@layout/item_child_immunization_dose" />
 
-                    <include
-                        android:id="@+id/form"
-                        layout="@layout/rv_input_form"
+                    <!-- Figma section card: white, r16, 1dp #DCE1E8; fields carry their own 16dp side padding -->
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.Sakhi.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_marginTop="@dimen/ds_space_md"
+                        android:layout_marginBottom="@dimen/ds_space_md">
+
+                        <include
+                            android:id="@+id/form"
+                            layout="@layout/rv_input_form"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/ds_space_xs" />
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_submit"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|bottom"
-                android:layout_margin="@dimen/margin_small"
+                android:layout_marginTop="@dimen/ds_space_sm"
                 android:text="@string/btn_submit"
-                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
