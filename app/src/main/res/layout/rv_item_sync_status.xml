@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sync status table row · redesign (Figma M2.19-20 · Sync status sheet / M2.11-12 › "Table" row): 32dp row,
+    padding 8/12, all cells 12/16 Regular #191C1F; name column wider (weight 2) so it lines up with the
+    header row in bottom_sheet_sync (weights 2 / 1 / 1 / 1 kept). Data-binding variable and expressions unchanged.
+    Old layout: legacy_rv_item_sync_status.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -12,55 +18,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
         android:orientation="horizontal"
-        android:padding="@dimen/padding_normal">
+        android:paddingHorizontal="@dimen/ds_space_sm"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:padding="@dimen/padding_normal"
             android:text="@{sync.name}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            tools:text="1232354" />
-
-
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
+            tools:text="Beneficiaries" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="@dimen/padding_normal"
             android:text="@{@string/long_to_string(sync.synced)}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-
-            android:textColor="@android:color/holo_green_dark" />
-
-
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
+            tools:text="1,100" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="@dimen/padding_normal"
-
             android:text="@{@string/long_to_string(sync.notSynced)}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="@android:color/holo_red_dark" />
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
+            tools:text="4" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="@dimen/padding_normal"
-
             android:text="@{@string/long_to_string(sync.syncing)}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="@android:color/holo_orange_dark" />
-
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
+            tools:text="0" />
 
     </LinearLayout>
 </layout>

@@ -7,13 +7,19 @@
   reviewer is checking something real rather than ticking a blank box.
 
   Flat by design: the rows live inside a single card owned by fragment_beneficiary_detail.
+
+  Redesign (tokens only — no Figma frame for this reviewer row; text styles from Figma "Info row" / list card):
+  white row, 1dp #DCE1E8 divider; S.No 14/20 Medium; Ben ID 12/16 Medium primary; name 16/24 Medium #191C1F;
+  RCH / ABHA / date 12/16 #42474E; amount 16/24 Medium. Column geometry (icon sizes, paddings, @dimen/mt_row_*) is
+  unchanged so the hand-built header in fragment_beneficiary_detail still lines up. Ids unchanged.
+  Old layout: legacy_layout_mt_inner.xml.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@color/ds_surface_container"
     android:paddingStart="12dp"
     android:paddingTop="12dp"
     android:paddingEnd="16dp"
@@ -52,9 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/mt_row_serial_margin"
         android:gravity="center"
-        android:textColor="#111827"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        android:textColor="@color/ds_on_surface"
         app:layout_constraintBottom_toBottomOf="@id/btnApprove"
         app:layout_constraintStart_toEndOf="@id/btnReject"
         app:layout_constraintTop_toTopOf="@id/btnApprove"
@@ -76,8 +81,8 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#6B7280"
-            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant"
             android:visibility="gone"
             tools:text="Date: 06 Jul 2026"
             tools:visibility="visible" />
@@ -86,28 +91,26 @@
             android:id="@+id/tvBenId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#001B44"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_primary"
             tools:text="Ben ID: 664547959811" />
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#111827"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface"
             tools:text="RAJA SING" />
 
         <TextView
             android:id="@+id/tvRchId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#6B7280"
-            android:textSize="13sp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="RCH ID: 123456789" />
 
         <TextView
@@ -115,8 +118,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="#6B7280"
-            android:textSize="13sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="ABHA Number: 12-3456-7890-1234" />
 
     </LinearLayout>
@@ -126,9 +129,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:textColor="#111827"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+        android:textColor="@color/ds_on_surface"
         app:layout_constraintBottom_toBottomOf="@id/llInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/llInfo"
@@ -139,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
-        android:background="#EEF0F3"
+        android:background="@color/ds_outline_variant"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/llInfo" />
 

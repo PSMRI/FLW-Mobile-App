@@ -1,95 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+    My profile · redesign (Figma M2.11-01 · My profile details, M2.11-26 first time, M2.11-27 loading):
+    surface bg, content padding 16 / gap 12; the profile form (form kit) inside a white section card (r16, 1dp #DCE1E8);
+    48dp pill buttons: "Save" (filled, first time) / "Edit profile" (filled, saved profile — was a pencil FAB, same id);
+    section header "My own family" 16/24; "ASHA Household Registration" outlined pill; ASHA family list = household cards.
+    Ids unchanged (fab_edit is now a MaterialButton: Kotlin only sets visibility + click).
+    Not built (needs data/logic): avatar + name header, read-only info rows grouped as Personal / Work area / Contacts /
+    Bank (the screen is the editable form), top-bar subtitle. Old layout: legacy_fragment_asha_profile.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
-<androidx.core.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:background="@color/ds_surface">
 
-    <LinearLayout
-        android:id="@+id/ll_content"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:backgroundTint="?attr/colorOnSecondary"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/ll_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_md"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-            <include
-                android:id="@+id/form"
-                layout="@layout/rv_input_form"
+            <!-- Profile form in a white section card -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Sakhi.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/ds_space_xs">
+
+                    <include
+                        android:id="@+id/form"
+                        layout="@layout/rv_input_form"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Figma bottom action button: "Edit profile" (saved) / "Save" (first time); only one is visible -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fab_edit"
+                style="@style/Widget.Sakhi.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
-
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:contentDescription="@string/edit"
+                android:text="@string/ds_g27_edit_profile"
                 android:visibility="gone"
-                tools:visibility="visible"
-                app:srcCompat="@drawable/ic_edit"
-                android:layout_marginEnd="@dimen/padding_wide"
-                android:layout_marginBottom="@dimen/padding_wide"
-                android:contentDescription="@string/edit" />
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart"
+                app:iconSize="20dp"
+                tools:visibility="visible" />
 
-        </FrameLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_submit"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:text="@string/save" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_margin="@dimen/margin_small"
-            android:text="@string/save"
+            <!-- ===== My own family ===== -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_xl"
+                android:text="@string/ds_g27_my_own_family"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface" />
 
-            android:textColor="@android:color/white" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_any"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="1"
+                tools:listitem="@layout/rv_item_household" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_household"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_margin="@dimen/margin_small"
-            android:text="@string/add_asha_head"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_household"
+                style="@style/Widget.Sakhi.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:text="@string/add_asha_head" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-            android:textColor="@android:color/white" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_any"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/btn_next_page"
-            app:layout_constraintTop_toBottomOf="@+id/ll_content"
-            tools:itemCount="2"
-            tools:listitem="@layout/rv_item_household" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
-
-
-
-
+    <!-- Figma M2.11-27 loading -->
     <ProgressBar
         android:id="@+id/pb_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="?attr/colorPrimary"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="gone" />
-
 
     <TextView
         android:id="@+id/textError"
@@ -97,11 +114,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textSize="14sp"
-        android:text="Data could not be fetched from server,\nplease try again later."
-        android:textColor="?attr/colorPrimary"
-        android:visibility="gone"/>
-
-
+        android:padding="@dimen/ds_space_2xl"
+        android:text="@string/ds_g27_profile_load_error"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant"
+        android:visibility="gone" />
 
 </FrameLayout>

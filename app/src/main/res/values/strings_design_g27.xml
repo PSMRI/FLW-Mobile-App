@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign texts for row 27 (utility screens and dialogs). Hindi / Assamese / Bangla are drafts: need a native-speaker review. -->
+<resources>
+    <string name="ds_g27_coming_soon">Coming soon</string>
+    <string name="ds_g27_help_coming_soon_body">Help and support options will appear here.</string>
+    <string name="ds_g27_edit_profile">Edit profile</string>
+    <string name="ds_g27_my_own_family">My own family</string>
+    <string name="ds_g27_profile_load_error">Data could not be fetched from server,\nplease try again later.</string>
+    <string name="ds_g27_no_notifications_body">Updates about your incentives and badges will appear here.</string>
+    <string name="ds_g27_enable_dev_mode">Enable developer mode</string>
+    <string name="ds_g27_pin">PIN</string>
+    <string name="ds_g27_enable">Enable</string>
+    <string name="ds_g27_pause">Pause</string>
+    <string name="ds_g27_resume">Resume</string>
+    <string name="ds_g27_pause_resume_cd">Pause or resume the log stream</string>
+    <string name="ds_g27_no_sync_logs">No sync logs yet</string>
+    <string name="ds_g27_no_sync_logs_body">Trigger a sync to see activity.</string>
+    <string name="ds_g27_enter_age">Enter age</string>
+    <string name="ds_g27_select_month">Select month</string>
+    <string name="ds_g27_play_pause">Play or pause</string>
+</resources>

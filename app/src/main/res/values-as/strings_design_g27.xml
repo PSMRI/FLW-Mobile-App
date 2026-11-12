@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Row 27 redesign texts — Assamese DRAFT, needs a native-speaker review. -->
+<resources>
+    <string name="ds_g27_coming_soon">সোনকালে আহিব</string>
+    <string name="ds_g27_help_coming_soon_body">সহায় আৰু সমৰ্থনৰ বিকল্পসমূহ ইয়াত দেখা যাব।</string>
+    <string name="ds_g27_edit_profile">প্ৰফাইল সলনি কৰক</string>
+    <string name="ds_g27_my_own_family">মোৰ নিজৰ পৰিয়াল</string>
+    <string name="ds_g27_profile_load_error">ছাৰ্ভাৰৰ পৰা তথ্য আনিব পৰা নগ’ল,\nঅনুগ্ৰহ কৰি পিছত পুনৰ চেষ্টা কৰক।</string>
+    <string name="ds_g27_no_notifications_body">আপোনাৰ প্ৰোৎসাহন আৰু বেজৰ খবৰ ইয়াত দেখা যাব।</string>
+    <string name="ds_g27_enable_dev_mode">ডেভেলপাৰ মোড অন কৰক</string>
+    <string name="ds_g27_pin">পিন</string>
+    <string name="ds_g27_enable">অন কৰক</string>
+    <string name="ds_g27_pause">ৰখাওক</string>
+    <string name="ds_g27_resume">পুনৰ আৰম্ভ কৰক</string>
+    <string name="ds_g27_pause_resume_cd">লগ ৰখাওক বা পুনৰ আৰম্ভ কৰক</string>
+    <string name="ds_g27_no_sync_logs">এতিয়ালৈকে কোনো ছিংক লগ নাই</string>
+    <string name="ds_g27_no_sync_logs_body">কাৰ্যকলাপ চাবলৈ ছিংক কৰক।</string>
+    <string name="ds_g27_enter_age">বয়স দিয়ক</string>
+    <string name="ds_g27_select_month">মাহ বাছক</string>
+    <string name="ds_g27_play_pause">চলাওক বা ৰখাওক</string>
+</resources>

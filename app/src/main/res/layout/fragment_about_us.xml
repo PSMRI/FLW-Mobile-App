@@ -1,36 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    About us · redesign (Figma M2.11-09 · Help, about & delete account — card pattern: white, 1dp #DCE1E8, r16,
+    padding 16; content padding 16, gap 12). About text 14/20 #191C1F in a card, "Powered by" 12/16 Medium #42474E
+    above the Piramal logo in a second card. Text is unchanged. Old layout: legacy_fragment_about_us.xml.
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:padding="@dimen/ds_space_md">
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/ds_space_md"
+                android:text="@string/about_us"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.5"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/about_us"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+            android:layout_marginTop="@dimen/ds_space_sm">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:gravity="center"
-            android:text="@string/about_us_powered"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/ds_space_md">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_piramal_foundation"
-            android:contentDescription="@string/cd_piramal" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_us_powered"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                    android:textColor="@color/ds_on_surface_variant" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_xs"
+                    android:contentDescription="@string/cd_piramal"
+                    android:src="@drawable/ic_piramal_foundation" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

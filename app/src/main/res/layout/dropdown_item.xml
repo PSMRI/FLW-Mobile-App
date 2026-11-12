@@ -1,11 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dropdown option row · redesign (Figma "Text field · dropdown" menu rows, as in dropdown_item_abha): 48dp min height,
+    padding 16, Body/Large (16/24) #191C1F, up to 2 lines. Root class and id unchanged (ArrayAdapter uses
+    tv_dropdown_item_text). Old layout: legacy_dropdown_item.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_dropdown_item_text"
-        style="?android:attr/spinnerDropDownItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:lines="2" />
+        android:background="?attr/selectableItemBackground"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:minHeight="48dp"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+        android:textColor="@color/ds_on_surface" />
 </LinearLayout>

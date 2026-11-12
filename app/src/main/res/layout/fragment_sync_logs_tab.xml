@@ -1,64 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Sync log · Log tab · redesign (Figma M2.11-07 · Sync log; M2.11-15 · empty & export): surface bg, content padding 16.
+    "Log controls" row on top instead of three floating buttons: Pause / Resume = 48dp tonal pill with a 20dp icon,
+    "Clear logs" = text pill, share = 40dp #EEF1F5 round icon button (export). Rows below (rv_item_sync_log) are
+    separated by 1dp #DCE1E8 lines. Empty state = 96dp primary-subtle circle + 44dp icon, "No sync logs yet" 16/24,
+    "Trigger a sync to see activity." 14/20, padding 32.
+    Ids unchanged: fab_pause / fab_clear are MaterialButtons now, fab_export an ImageButton, tv_empty the empty-state
+    container (Kotlin only sets its visibility). SyncLogsTabFragment: pause icon via setIconResource + label.
+    Not built: Status / Log / Errors count pills on the tabs, "Share log with support" full-width button text, "No log
+    files to export" as a snackbar (still a toast). Old layout: legacy_fragment_sync_logs_tab.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_sync_logs"
-        android:layout_width="0dp"
+    <!-- ===== Log controls (Figma: 48dp buttons, gap 8, 8dp below) ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingTop="@dimen/ds_space_md"
+        android:paddingBottom="@dimen/ds_space_xs">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fab_pause"
+            style="@style/Widget.Sakhi.Button.Tonal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ds_g27_pause_resume_cd"
+            android:text="@string/ds_g27_pause"
+            app:icon="@drawable/ic_pause" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fab_clear"
+            style="@style/Widget.Sakhi.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_xs"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:text="@string/sync_dashboard_clear_logs" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/fab_export"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_ds_icon_circle"
+            android:contentDescription="@string/sync_dashboard_export_logs"
+            android:padding="9dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_ds_share"
+            app:tint="@color/ds_primary" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/rv_item_sync_log" />
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/tv_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sync_dashboard_no_logs"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        android:textColor="?android:attr/textColorSecondary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sync_logs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingBottom="@dimen/ds_space_md"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/rv_item_sync_log" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_export"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/sync_dashboard_export_logs"
-        android:src="@android:drawable/ic_menu_share"
-        app:layout_constraintBottom_toTopOf="@id/fab_pause"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:fabSize="mini" />
+        <!-- Figma "Empty state" -->
+        <LinearLayout
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_2xl"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Pause/resume log stream"
-        android:src="@android:drawable/ic_media_pause"
-        app:layout_constraintBottom_toTopOf="@id/fab_clear"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:fabSize="mini" />
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_ds_empty_illustration">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_clear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/sync_dashboard_clear_logs"
-        android:src="@android:drawable/ic_menu_delete"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_sync"
+                    app:tint="@color/ds_primary" />
+            </FrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:gravity="center"
+                android:text="@string/ds_g27_no_sync_logs"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:gravity="center"
+                android:text="@string/ds_g27_no_sync_logs_body"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

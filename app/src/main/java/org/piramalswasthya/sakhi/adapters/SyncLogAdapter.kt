@@ -4,9 +4,11 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemSyncLogBinding
 import org.piramalswasthya.sakhi.model.LogLevel
 import org.piramalswasthya.sakhi.model.SyncLogEntry
@@ -44,19 +46,39 @@ class SyncLogAdapter :
             }
 
             binding.tvLevel.text = label
-            val bg = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = 4f
-                setColor(bgColor)
-            }
-            binding.tvLevel.background = bg
+//            val bg = GradientDrawable().apply {
+//                shape = GradientDrawable.RECTANGLE
+//                cornerRadius = 4f
+//                setColor(bgColor)
+//            }
+//            binding.tvLevel.background = bg
 
             binding.tvTimestamp.text = "${timeFormat.format(Date(item.timestamp))}  ${item.tag}"
             binding.tvMessage.text = if (item.message.length > MAX_DISPLAY_LENGTH)
                 item.message.substring(0, MAX_DISPLAY_LENGTH) + "…"
             else
                 item.message
-            binding.tvMessage.setTextColor(textColor)
+//            binding.tvMessage.setTextColor(textColor)
+            dsLevelBadge(item.level)
+        }
+
+        /** Redesign (Figma M2.11-07 sync badge): level pill in error / warning / info / neutral tones, message #42474E (error red). */
+        private fun dsLevelBadge(level: LogLevel) {
+            val ctx = binding.root.context
+            val (bgRes, fgRes) = when (level) {
+                LogLevel.ERROR -> R.color.ds_error_container to R.color.ds_error
+                LogLevel.WARN -> R.color.ds_warning_container to R.color.ds_warning
+                LogLevel.INFO -> R.color.ds_primary_container to R.color.ds_primary
+                LogLevel.DEBUG -> R.color.ds_surface_container_high to R.color.ds_on_surface_variant
+            }
+            binding.tvLevel.backgroundTintList = ContextCompat.getColorStateList(ctx, bgRes)
+            binding.tvLevel.setTextColor(ContextCompat.getColor(ctx, fgRes))
+            binding.tvMessage.setTextColor(
+                ContextCompat.getColor(
+                    ctx,
+                    if (level == LogLevel.ERROR) R.color.ds_error else R.color.ds_on_surface_variant
+                )
+            )
         }
     }
 

@@ -1,26 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Language option · redesign (Figma M2.19-04 · Language sheet / M2.11-08 › "Radio option": r12, white + 1dp #DCE1E8,
+    selected = #E6F2FF + 2dp primary, label 16/24). The sheet still lays the options out as a 4-column grid
+    (LanguageBottomSheet, not changed here), so each option is a tile: 44dp letter circle (primary-container when
+    selected, #EEF1F5 otherwise) over the language name 14/20 Medium. Selected state = root isActivated, set by
+    LanguageAdapter. Ids unchanged. Not built: Figma's one-row-per-language list with a radio ring (needs a
+    LinearLayoutManager in LanguageBottomSheet). Old layout: legacy_item_language.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_margin="@dimen/ds_space_2xs"
+    android:background="@drawable/bg_ds_option_activated"
     android:gravity="center"
-    android:padding="@dimen/_8sdp">
+    android:minHeight="96dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/ds_space_2xs"
+    android:paddingVertical="@dimen/ds_space_sm">
 
     <TextView
         android:id="@+id/tv_lang_first_word"
-        android:layout_width="@dimen/_48sdp"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_ds_icon_circle"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="@color/md_theme_light_shadow"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface"
+        tools:text="ह" />
 
     <TextView
         android:id="@+id/tv_lang_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_6sdp"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        android:textColor="@color/md_theme_light_shadow" />
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface"
+        tools:text="Hindi" />
 
 </LinearLayout>

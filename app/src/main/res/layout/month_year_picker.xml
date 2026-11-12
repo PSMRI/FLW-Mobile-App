@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Month / year picker · redesign (Figma M2.11-16 · Incentives · pick month › "Dialog · Select month"): title
+    "Select month" 22/28 Medium, labels "Month" / "Year" 14/20 Medium #42474E above the pickers, padding 24 / gap 16.
+    The dialog shell (white r24, Cancel / OK) comes from the app dialog theme; the NumberPickers are kept
+    (ids unchanged). Not built: Figma's two dropdown boxes and the "Any month from January 2020…" helper.
+    Old layout: legacy_month_year_picker.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/ds_space_xl"
+    android:paddingTop="@dimen/ds_space_xl">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ds_g27_select_month"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:orientation="horizontal">
 
-        <NumberPicker
-            android:id="@+id/picker_month"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp">
+            android:layout_marginEnd="@dimen/ds_space_xl"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-        </NumberPicker>
+            <TextView
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:layout_width="wrap_content"
+                android:text="@string/month" />
 
-        <NumberPicker
-            android:id="@+id/picker_year"
+            <NumberPicker
+                android:id="@+id/picker_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-        </NumberPicker>
+            <TextView
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:layout_width="wrap_content"
+                android:text="@string/year" />
 
+            <NumberPicker
+                android:id="@+id/picker_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Notifications panel · redesign (Figma M2.11-32 · Notifications · swipe, clear all, open; M2.11-34 empty; M2.1-10):
+    light top app bar (64dp, #F5F7FA, 48dp back target with 24dp icon, title 22/28 Medium), surface bg, list padding 16
+    with 10dp between cards; empty state = 96dp primary-subtle circle + 44dp icon, title 16/24, body 14/20, padding 32.
+    "Clear all" text button (still hidden, as before) sits at the top end of the list like Figma's "Today · Clear all" row.
+    Ids unchanged. Not built (needs data/logic): "N unread" subtitle, "Today" / "Yesterday" date groups, refreshing bar.
+    Old layout: legacy_fragment_notification_panel.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/seed"
+    android:background="@color/ds_surface"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical">
@@ -13,12 +21,15 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Sakhi.ActionBar">
+        android:background="@color/ds_surface"
+        android:theme="@style/Theme.Sakhi.ActionBar.Redesign"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="64dp"
+            android:background="@color/ds_surface"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp">
 
@@ -26,26 +37,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/ds_space_xs">
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/notification_close"
+                    android:padding="12dp"
                     android:src="@drawable/ic_arrow_back"
-                    app:tint="@android:color/white" />
+                    app:tint="@color/ds_on_surface" />
 
                 <TextView
                     android:id="@+id/tv_toolbar_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_2xs"
                     android:layout_weight="1"
-                    android:layout_marginStart="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/notifications_title"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                    android:textColor="@color/ds_on_surface" />
+
+                <!-- Figma "Clear all" text button; hidden as before (code never shows it) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClearAll"
+                    style="@style/Widget.Sakhi.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/clear_notifications"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -57,55 +81,59 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#F5F5F5">
+        android:background="@color/ds_surface">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNotifications"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingStart="12dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="12dp"
+            android:padding="@dimen/ds_space_md"
             tools:listitem="@layout/item_notification" />
 
         <LinearLayout
             android:id="@+id/layoutEmpty"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_2xl"
             android:visibility="gone"
             tools:visibility="visible">
 
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:alpha="0.4"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_notifications"
-                app:tint="#9E9E9E" />
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_ds_empty_illustration">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_notifications"
+                    app:tint="@color/ds_primary" />
+            </FrameLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:gravity="center"
                 android:text="@string/no_notifications_yet"
-                android:textColor="#9E9E9E"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:gravity="center"
+                android:text="@string/ds_g27_no_notifications_body"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
         </LinearLayout>
     </FrameLayout>
-
-    <!-- Clear notifications -->
-    <com.google.android.material.button.MaterialButton
-        android:visibility="gone"
-        android:id="@+id/btnClearAll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/clear_notifications"
-        app:cornerRadius="8dp" />
 
 </LinearLayout>

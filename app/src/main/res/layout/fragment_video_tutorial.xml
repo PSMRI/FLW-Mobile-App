@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Video tutorial player · redesign (Figma M2.11-36 · Video tutorial player): dark #191C1F screen, video centred,
+    play / pause = 72dp black@50% circle with a 40dp white icon, seek bar at the bottom (16dp sides) with a 4dp
+    #DCE1E8 track and primary progress. Ids unchanged. Not built (needs logic): title row (the app top bar shows it),
+    "+10 s" double-tap hint chip, elapsed / total time labels. Old layout: legacy_fragment_video_tutorial.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
@@ -6,8 +13,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:background="@color/ds_on_surface">
 
         <View
             android:id="@+id/tapZone"
@@ -18,14 +25,18 @@
         <VideoView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btnPlayPause"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_ds_pill"
+            android:backgroundTint="#80000000"
+            android:contentDescription="@string/ds_g27_play_pause"
+            android:padding="16dp"
             android:src="@drawable/ic_play"
             android:visibility="gone" />
 
@@ -34,9 +45,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="@dimen/ds_space_xl"
             android:max="100"
-            android:padding="10dp"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="10dp"
+            android:progressBackgroundTint="@color/ds_outline_variant"
+            android:progressTint="@color/ds_primary"
+            android:thumbTint="@color/ds_primary"
             android:visibility="visible" />
     </FrameLayout>
 </layout>

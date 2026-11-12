@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Failed sync worker row · redesign (Figma M2.11-14 · Sync log · Status tab › "Failed workers" box: #FFDAD6 r12,
+    padding 12/16, rows "Push · EC tracking" 14/20 Medium + reason 12/16, both #410002). Each row is its own small
+    error-container box (the list sits under the red "Failed: N worker(s)" box in fragment_sync_status_tab), 4dp apart,
+    20dp error icon. Ids unchanged. Old layout: legacy_rv_item_failed_worker.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ds_space_2xs"
+    android:background="@drawable/bg_ds_error_box"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="8dp"
-    android:gravity="center_vertical">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingVertical="@dimen/ds_space_sm">
 
     <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@android:drawable/ic_delete"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:importantForAccessibility="no"
-        android:tint="@android:color/holo_red_dark" />
+        android:src="@drawable/ic_ds_error"
+        app:tint="@color/ds_error" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_sm"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="8dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_worker_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_error_container"
             tools:text="PushToAmritWorker" />
 
         <TextView
             android:id="@+id/tv_error_reason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@android:color/holo_red_dark"
-            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_error_container"
             tools:text="Max retries (5) exceeded" />
 
     </LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Row 27 redesign texts — Hindi DRAFT, needs a native-speaker review. -->
+<resources>
+    <string name="ds_g27_coming_soon">जल्द आ रहा है</string>
+    <string name="ds_g27_help_coming_soon_body">सहायता और सपोर्ट के विकल्प यहाँ दिखेंगे।</string>
+    <string name="ds_g27_edit_profile">प्रोफ़ाइल बदलें</string>
+    <string name="ds_g27_my_own_family">मेरा अपना परिवार</string>
+    <string name="ds_g27_profile_load_error">सर्वर से डेटा नहीं मिल सका,\nकृपया बाद में फिर कोशिश करें।</string>
+    <string name="ds_g27_no_notifications_body">आपके प्रोत्साहन और बैज की जानकारी यहाँ दिखेगी।</string>
+    <string name="ds_g27_enable_dev_mode">डेवलपर मोड चालू करें</string>
+    <string name="ds_g27_pin">पिन</string>
+    <string name="ds_g27_enable">चालू करें</string>
+    <string name="ds_g27_pause">रोकें</string>
+    <string name="ds_g27_resume">फिर शुरू करें</string>
+    <string name="ds_g27_pause_resume_cd">लॉग रोकें या फिर शुरू करें</string>
+    <string name="ds_g27_no_sync_logs">अभी कोई सिंक लॉग नहीं</string>
+    <string name="ds_g27_no_sync_logs_body">गतिविधि देखने के लिए सिंक करें।</string>
+    <string name="ds_g27_enter_age">आयु दर्ज करें</string>
+    <string name="ds_g27_select_month">महीना चुनें</string>
+    <string name="ds_g27_play_pause">चलाएँ या रोकें</string>
+</resources>

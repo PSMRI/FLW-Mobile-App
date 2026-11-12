@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Get beneficiary data · page number · redesign (no page strip in Figma M2.11-06 — styled with its tokens): tonal pill
+    (primary-container #CCE5FF, on-primary-container #001E31), 28dp tall to fit the 60dp strip (16dp padding) in
+    fragment_get_ben, min width 28, Label/Large, 8dp apart. Data-binding variables / expressions unchanged.
+    Old layout: legacy_rv_item_page_num.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -16,19 +21,18 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_page"
-        style="@style/ShapeAppearanceOverlay.Material3.Button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:background="@drawable/bg_circular"
+        android:layout_height="28dp"
+        android:layout_marginEnd="@dimen/ds_space_xs"
+        android:background="@drawable/bg_ds_pill"
+        android:backgroundTint="@color/ds_primary_container"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:minWidth="28dp"
         android:onClick="@{()-> clickListener.onClickedPage(page)}"
-        android:paddingHorizontal="@dimen/padding_normal"
+        android:paddingHorizontal="@dimen/ds_space_sm"
         android:text="@{page.toString()}"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="?attr/colorOnPrimary"
-        app:cornerRadius="@dimen/padding_wide"
-        tools:text="7"
-
-        />
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_primary_container"
+        tools:text="7" />
 </layout>

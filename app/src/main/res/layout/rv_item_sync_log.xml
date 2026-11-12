@@ -1,48 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sync log row · redesign (Figma M2.11-07 · Sync log › "09:02 · Beneficiaries" row): padding 12/0, gap 12, 1dp
+    #DCE1E8 line under the row; "time  tag" 14/20 Medium #191C1F, message 12/16 #42474E (max 5 lines); level badge
+    at the end (24dp pill, 11/16 Medium; colours from SyncLogAdapter: error / warning / info / debug tones).
+    Ids unchanged. Not built (needs data): "Synced / Sync failed / Syncing" wording per row (the log has levels E/W/I/D).
+    Old layout: legacy_rv_item_sync_log.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/padding_normal"
-    android:paddingVertical="@dimen/padding_small">
-
-    <TextView
-        android:id="@+id/tv_level"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginEnd="@dimen/padding_normal"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        tools:background="@android:color/holo_red_dark"
-        tools:text="E" />
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/ds_space_sm">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
+                tools:text="14:32:05.123  PushBenWorker" />
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant"
+                tools:text="Socket timeout, will retry" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="14:32:05.123" />
-
-        <TextView
-            android:id="@+id/tv_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="5"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            tools:text="[PushBenWorker] Socket timeout, will retry" />
-
+            android:id="@+id/tv_level"
+            style="@style/Sakhi.Badge"
+            android:layout_marginStart="@dimen/ds_space_sm"
+            android:gravity="center"
+            android:minWidth="24dp"
+            tools:backgroundTint="@color/ds_error_container"
+            tools:text="E"
+            tools:textColor="@color/ds_error" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/ds_outline_variant" />
 
 </LinearLayout>

@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Help · redesign (Figma "FLW App Redesign" › M2.11-09 · Help, about & delete account; empty state as in M2.11-34).
+    The app has no help items yet (old screen said "COMING SOON!"), so this is the Figma "Empty state":
+    surface bg, 96dp primary-subtle circle with a 44dp icon, title 16/24 SemiBold, body 14/20 #42474E, gap 16, padding 32.
+    Not built (needs logic): the help list (support form, helpline, WhatsApp, videos, report a problem, about) and the
+    "Delete my account" banner. Old layout: legacy_fragment_help.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnSecondary"
+    android:background="@color/ds_surface"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/ds_space_2xl">
 
+    <FrameLayout
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:background="@drawable/bg_ds_empty_illustration">
+
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_help"
+            app:tint="@color/ds_primary" />
+    </FrameLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:text="COMING SOON!"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:gravity="center"
+        android:text="@string/ds_g27_coming_soon"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+        android:textColor="@color/ds_on_surface" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:gravity="center"
+        android:text="@string/ds_g27_help_coming_soon_body"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface_variant" />
 
 </LinearLayout>

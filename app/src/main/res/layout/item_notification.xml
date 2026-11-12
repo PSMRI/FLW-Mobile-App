@@ -1,90 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Row for a single notification in the notification panel.
-  Read/unread styling (bold title, unread dot visibility, background) is applied
-  by the adapter; this file only declares the views.
+    Notification row · redesign (Figma M2.11-32 › "Notification · …" card): r12, 1dp #DCE1E8, padding 12/16, gap 12;
+    unread = #E6F2FF card + 8dp primary dot, read = white (card colour set by NotificationAdapter with
+    setCardBackgroundColor); 36dp round icon (primary-subtle) with a 20dp icon; title 14/20 Medium, message 12/16
+    #42474E (max 2 lines), time 11/16 Medium #42474E; 10dp between cards.
+    Ids unchanged (root was a CardView, now a MaterialCardView — adapter only uses it as itemView).
+    Not built (needs data): per-type icon colours (incentive green / rejected pink / badge amber), "· opens Incentives"
+    hint after the time. Old layout: legacy_item_notification.xml.
 -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Sakhi.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="@dimen/ds_radius_md">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm">
 
-        <!-- Leading event icon -->
-        <ImageView
-            android:id="@+id/ivIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_notifications"
-            app:tint="?attr/colorPrimary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvTitle"
-            app:layout_constraintBottom_toBottomOf="@id/tvTitle" />
+        <!-- Leading event icon in a 36dp circle -->
+        <FrameLayout
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_ds_icon_circle"
+            android:backgroundTint="@color/ds_primary_subtle">
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/ds_primary" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_sm"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
+                tools:text="Your monthly claim was rejected" />
+
+            <!-- Short message (max 2 lines) -->
+            <TextView
+                android:id="@+id/tvMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant"
+                tools:text="October 2026 · Reason: Incomplete documentation. Please correct and resubmit." />
+
+            <TextView
+                android:id="@+id/tvTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                android:textColor="@color/ds_on_surface_variant"
+                tools:text="2 hours ago" />
+        </LinearLayout>
 
         <!-- Unread indicator dot (adapter toggles visibility) -->
         <View
             android:id="@+id/viewUnreadDot"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:background="@drawable/bg_unread_dot"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvTitle"
-            app:layout_constraintBottom_toBottomOf="@id/tvTitle"
-            tools:visibility="visible" />
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="8dp"
-            android:textColor="#222222"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@id/ivIcon"
-            app:layout_constraintEnd_toStartOf="@id/viewUnreadDot"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Your monthly claim was rejected" />
-
-        <!-- Short message (max 2 lines) -->
-        <TextView
-            android:id="@+id/tvMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#666666"
-            android:textSize="13sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintStart_toStartOf="@id/tvTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            tools:text="October 2026 · Reason: Incomplete documentation. Please correct and resubmit." />
-
-        <!-- Timestamp -->
-        <TextView
-            android:id="@+id/tvTimestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="@dimen/ds_space_sm"
             android:layout_marginTop="6dp"
-            android:textColor="#999999"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/tvTitle"
-            app:layout_constraintTop_toBottomOf="@id/tvMessage"
-            tools:text="2 hours ago" />
+            android:background="@drawable/bg_ds_pill"
+            android:backgroundTint="@color/ds_primary"
+            tools:visibility="visible" />
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

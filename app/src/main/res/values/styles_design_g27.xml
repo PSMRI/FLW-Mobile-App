@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign styles for row 27 (utility screens and dialogs). Kept in its own file to avoid merge conflicts. -->
+<resources>
+    <!-- Figma bottom-sheet "Handle": 32x4, #72787E, r2, centred -->
+    <style name="Widget.Sakhi.G27.SheetHandle" parent="">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/bg_ds_pill</item>
+        <item name="android:backgroundTint">@color/ds_outline</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+</resources>

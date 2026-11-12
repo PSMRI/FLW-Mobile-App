@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Row 27 redesign texts — Bangla DRAFT, needs a native-speaker review. -->
+<resources>
+    <string name="ds_g27_coming_soon">শীঘ্রই আসছে</string>
+    <string name="ds_g27_help_coming_soon_body">সাহায্য ও সহায়তার বিকল্পগুলি এখানে দেখা যাবে।</string>
+    <string name="ds_g27_edit_profile">প্রোফাইল সম্পাদনা করুন</string>
+    <string name="ds_g27_my_own_family">আমার নিজের পরিবার</string>
+    <string name="ds_g27_profile_load_error">সার্ভার থেকে তথ্য আনা যায়নি,\nঅনুগ্রহ করে পরে আবার চেষ্টা করুন।</string>
+    <string name="ds_g27_no_notifications_body">আপনার প্রণোদনা ও ব্যাজের খবর এখানে দেখা যাবে।</string>
+    <string name="ds_g27_enable_dev_mode">ডেভেলপার মোড চালু করুন</string>
+    <string name="ds_g27_pin">পিন</string>
+    <string name="ds_g27_enable">চালু করুন</string>
+    <string name="ds_g27_pause">থামান</string>
+    <string name="ds_g27_resume">আবার শুরু করুন</string>
+    <string name="ds_g27_pause_resume_cd">লগ থামান বা আবার শুরু করুন</string>
+    <string name="ds_g27_no_sync_logs">এখনও কোনো সিঙ্ক লগ নেই</string>
+    <string name="ds_g27_no_sync_logs_body">কার্যকলাপ দেখতে সিঙ্ক করুন।</string>
+    <string name="ds_g27_enter_age">বয়স লিখুন</string>
+    <string name="ds_g27_select_month">মাস বাছুন</string>
+    <string name="ds_g27_play_pause">চালান বা থামান</string>
+</resources>

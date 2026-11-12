@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
@@ -57,10 +59,17 @@ class NotificationAdapter(
 
             // Read vs unread styling.
             viewUnreadDot.visibility = if (item.read) View.GONE else View.VISIBLE
-            tvTitle.setTypeface(null, if (item.read) Typeface.NORMAL else Typeface.BOLD)
-            val emphasis = if (item.read) 0.6f else 1.0f
-            tvTitle.alpha = emphasis
-            tvMessage.alpha = emphasis
+//            tvTitle.setTypeface(null, if (item.read) Typeface.NORMAL else Typeface.BOLD)
+//            val emphasis = if (item.read) 0.6f else 1.0f
+//            tvTitle.alpha = emphasis
+//            tvMessage.alpha = emphasis
+            // Redesign (Figma M2.11-32): unread = primary-subtle card + dot, read = white card; title stays Medium
+            (itemView as? MaterialCardView)?.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    itemView.context,
+                    if (item.read) R.color.ds_surface_container else R.color.ds_primary_subtle
+                )
+            )
 
             itemView.setOnClickListener { onItemClick(item) }
         }

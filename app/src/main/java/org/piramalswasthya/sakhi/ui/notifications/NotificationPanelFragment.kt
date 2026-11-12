@@ -51,7 +51,8 @@ class NotificationPanelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        applyToolbarColor(view)
+//        applyToolbarColor(view)
+        // Redesign (Figma M2.11-32): light #F5F7FA top bar from the layout instead of the host's coloured bar
         applyStatusBarInset(view)
 
         val rv = view.findViewById<RecyclerView>(R.id.rvNotifications)

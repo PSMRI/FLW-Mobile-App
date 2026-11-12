@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="page"
+            type="Integer" />
+
+        <variable
+            name="clickListener"
+            type="org.piramalswasthya.sakhi.adapters.GetBenPageNumberAdapter.PageClickListener" />
+    </data>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_page"
+        style="@style/ShapeAppearanceOverlay.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
+        android:background="@drawable/bg_circular"
+        android:onClick="@{()-> clickListener.onClickedPage(page)}"
+        android:paddingHorizontal="@dimen/padding_normal"
+        android:text="@{page.toString()}"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="?attr/colorOnPrimary"
+        app:cornerRadius="@dimen/padding_wide"
+        tools:text="7"
+
+        />
+</layout>

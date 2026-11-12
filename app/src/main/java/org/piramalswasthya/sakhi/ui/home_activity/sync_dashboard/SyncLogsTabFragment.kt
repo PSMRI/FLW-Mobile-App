@@ -46,10 +46,13 @@ class SyncLogsTabFragment : Fragment() {
 
         binding.fabPause.setOnClickListener {
             isPaused = !isPaused
-            binding.fabPause.setImageResource(
-                if (isPaused) android.R.drawable.ic_media_play
-                else android.R.drawable.ic_media_pause
-            )
+//            binding.fabPause.setImageResource(
+//                if (isPaused) android.R.drawable.ic_media_play
+//                else android.R.drawable.ic_media_pause
+//            )
+            // Redesign (Figma M2.11-07 / -15): fab_pause is a tonal pill button "Pause" / "Resume"
+            binding.fabPause.setIconResource(if (isPaused) R.drawable.ic_play else R.drawable.ic_pause)
+            binding.fabPause.setText(if (isPaused) R.string.ds_g27_resume else R.string.ds_g27_pause)
         }
 
         binding.fabExport.setOnClickListener {
