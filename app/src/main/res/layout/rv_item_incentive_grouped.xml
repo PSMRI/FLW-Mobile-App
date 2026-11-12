@@ -9,6 +9,7 @@
 
     <data>
         <import type="android.view.View" />
+        <import type="org.piramalswasthya.sakhi.ui.design.IncentiveBindingKt" />
 
         <variable
             name="serialNo"
@@ -132,7 +133,38 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Verified" />
 
-            <!-- Claims · amount -->
+            <!-- Claims · amount — Figma M2.11-03: one meta line "3 claims · ₹900", 12/16 Regular on-surface-variant
+                 (phone pass 2026-11-12; the old label/value cells stay commented below). -->
+            <LinearLayout
+                android:id="@+id/ll_values"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llActivityColumn">
+
+                <TextView
+                    android:id="@+id/tvCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/claims_count_placeholder(item.count)}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_surface_variant"
+                    tools:text="3 claims" />
+
+                <TextView
+                    android:id="@+id/tvTotalAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{` · ` + IncentiveBindingKt.dsRupees(item.totalAmount)}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_surface_variant"
+                    tools:text=" · ₹900" />
+            </LinearLayout>
+            <!-- Previous redesign version (label/value cells):
+            <!- - Claims · amount - ->
             <LinearLayout
                 android:id="@+id/ll_values"
                 android:layout_width="0dp"
@@ -179,6 +211,7 @@
                         tools:text="900" />
                 </LinearLayout>
             </LinearLayout>
+            -->
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

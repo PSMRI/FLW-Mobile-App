@@ -73,6 +73,8 @@ import java.util.Timer
 import kotlin.math.max
 import org.piramalswasthya.sakhi.utils.safeNavigate
 import org.piramalswasthya.sakhi.ui.design.dsApprovalTag
+import org.piramalswasthya.sakhi.ui.design.dsIncentiveHeaderThreeColumns
+import org.piramalswasthya.sakhi.ui.design.dsStatTile
 
 
 @AndroidEntryPoint
@@ -361,6 +363,9 @@ class IncentivesFragment : Fragment() {
                 }*/
                 binding.tvTotalPending.text = getString(R.string.incentive_pending, pending)
                 binding.tvTotalProcessed.text = getString(R.string.incentive_processed, processed)
+                // Redesign (Figma M2.11-03 stat tiles): big amount + small label; replaces the two lines above on screen
+                binding.tvTotalPending.dsStatTile(pending, getString(R.string.ds_incentive_pending_label))
+                binding.tvTotalProcessed.dsStatTile(processed, getString(R.string.ds_incentive_processed_label))
                 binding.tvLastupdated.text =
                     getString(R.string.incentive_last_updated, viewModel.lastUpdated)
 
@@ -654,6 +659,11 @@ class IncentivesFragment : Fragment() {
             binding.tvHeaderAmount.visibility = View.VISIBLE
             binding.tvHeaderDoc.visibility = View.VISIBLE
 //            binding.guideline75.setGuidelinePercent(0.9f)
+        } else {
+            // Redesign (Figma M2.11-03 table head): S.No · Activity · No. of claims
+            binding.llHeader.dsIncentiveHeaderThreeColumns(
+                binding.tvHeaderActivity, binding.tvHeaderCount, binding.tvHeaderAmount, binding.tvHeaderDoc
+            )
         }
     }
 

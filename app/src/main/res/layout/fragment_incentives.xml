@@ -215,7 +215,8 @@
             android:textColor="@color/ds_success" />
     </LinearLayout>
 
-    <!-- Figma "Table head": 12/16 Medium on-surface-variant -->
+    <!-- Figma "Table head": 12/16 Medium on-surface-variant; 5 columns for Mitanin (old rows);
+         ASHA = 3 columns S.No · Activity · No. of claims, set in code by dsIncentiveHeaderThreeColumns (phone pass 2026-11-12) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
@@ -290,6 +291,7 @@
 
         <TextView
             android:id="@+id/tvHeaderAmount"
+            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -302,6 +304,7 @@
 
         <TextView
             android:id="@+id/tvHeaderDoc"
+            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"

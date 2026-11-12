@@ -99,4 +99,7 @@
     <string name="ds_nav_modules">मॉड्यूल</string>
     <string name="ds_nav_sync">सिंक</string>
     <string name="ds_nav_profile">प्रोफ़ाइल</string>
+    <!-- Incentives stat tiles (Figma M2.11-03) — DRAFT translation, needs native review -->
+    <string name="ds_incentive_pending_label">लंबित (भुगतान बाकी)</string>
+    <string name="ds_incentive_processed_label">संसाधित (भुगतान हो गया)</string>
 </resources>

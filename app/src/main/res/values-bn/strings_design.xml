@@ -99,4 +99,7 @@
     <string name="ds_nav_modules">মডিউল</string>
     <string name="ds_nav_sync">সিঙ্ক</string>
     <string name="ds_nav_profile">প্রোফাইল</string>
+    <!-- Incentives stat tiles (Figma M2.11-03) — DRAFT translation, needs native review -->
+    <string name="ds_incentive_pending_label">মুলতুবি (অপরিশোধিত)</string>
+    <string name="ds_incentive_processed_label">প্রক্রিয়াকৃত (পরিশোধিত)</string>
 </resources>
