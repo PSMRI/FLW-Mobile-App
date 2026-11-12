@@ -31,8 +31,11 @@
                 app:titleTextAppearance="@style/TextAppearance.Sakhi.TitleLarge"
                 app:titleTextColor="@color/ds_on_surface">
 
+                <!-- Phone pass 2026-11-12: match_parent (was wrap_content) — fills the space between the nav icon and the
+                     menu, so the weighted title gets a real width; with wrap_content it kept the width of the previous
+                     (autosized / ellipsized) title and cut short titles like "Tuberculosis (TB)" -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
                     android:gravity="center_vertical"

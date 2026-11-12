@@ -203,21 +203,11 @@
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
+                    <!-- Phone pass 2026-11-12: Gender first — rchId hides its cell (INVISIBLE) for adult males,
+                         so the empty slot now sits on the right instead of a gap before Gender -->
                     <LinearLayout
-                        rchId="@{ben.ben}"
                         style="@style/Sakhi.InfoCell"
                         android:layout_marginEnd="@dimen/ds_space_xs">
-
-                        <TextView
-                            style="@style/Sakhi.InfoLabel"
-                            android:text="@string/rch_id_ben" />
-
-                        <TextView
-                            style="@style/Sakhi.InfoValue"
-                            android:text="@{(ben.ben.rchId == null || ben.ben.rchId.empty) ? @string/ds_empty_value : ben.ben.rchId}" />
-                    </LinearLayout>
-                    <LinearLayout
-                        style="@style/Sakhi.InfoCell">
 
                         <TextView
                             style="@style/Sakhi.InfoLabel"
@@ -226,6 +216,18 @@
                         <TextView
                             style="@style/Sakhi.InfoValue"
                             app:localizedGender="@{ben.ben.gender}" />
+                    </LinearLayout>
+                    <LinearLayout
+                        rchId="@{ben.ben}"
+                        style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/rch_id_ben" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{(ben.ben.rchId == null || ben.ben.rchId.empty) ? @string/ds_empty_value : ben.ben.rchId}" />
                     </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
