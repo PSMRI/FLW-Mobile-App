@@ -43,6 +43,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.design.dsFitChipInRow
+import org.piramalswasthya.sakhi.ui.design.dsRefreshChipCheck
 import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
 import org.piramalswasthya.sakhi.databinding.LayoutUploafFormBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
@@ -355,15 +357,20 @@ class FormInputAdapter(
         }
 
         private fun handleHintLength(item: FormElement) {
-            if (item.title.length > Konstants.editTextHintLimit) {
-                binding.tvHint.visibility = View.VISIBLE
-                binding.et.hint = null
-                binding.tilEditText.hint = null
-                binding.tilEditText.isHintEnabled = false
-            } else {
-                binding.tvHint.visibility = View.GONE
-                binding.tilEditText.isHintEnabled = true
-            }
+//            if (item.title.length > Konstants.editTextHintLimit) {
+//                binding.tvHint.visibility = View.VISIBLE
+//                binding.et.hint = null
+//                binding.tilEditText.hint = null
+//                binding.tilEditText.isHintEnabled = false
+//            } else {
+//                binding.tvHint.visibility = View.GONE
+//                binding.tilEditText.isHintEnabled = true
+//            }
+            // Redesign (Figma 07 · Register member): the label is always above the box, never inside it
+            binding.tvHint.visibility = View.VISIBLE
+            binding.et.hint = null
+            binding.tilEditText.hint = null
+            binding.tilEditText.isHintEnabled = false
         }
     }
 
@@ -475,13 +482,26 @@ class FormInputAdapter(
                     orientation = item.orientation ?: LinearLayout.HORIZONTAL
                     weightSum = items.size.toFloat()
                     items.forEach {
-                        val rdBtn = RadioButton(this.context)
+//                        val rdBtn = RadioButton(this.context)
+//                        rdBtn.layoutParams = RadioGroup.LayoutParams(
+//                            RadioGroup.LayoutParams.WRAP_CONTENT,
+//                            RadioGroup.LayoutParams.WRAP_CONTENT,
+//                            1.0F
+//                        ).apply {
+//                            gravity = Gravity.CENTER_HORIZONTAL
+//                        }
+                        // Redesign: each option is a 44dp filter chip (Widget.Sakhi.RadioChip); equal widths in a row,
+                        // full width when stacked; 8dp between chips. Selection behaviour below is unchanged.
+                        val rdBtn = RadioButton(this.context, null, 0, R.style.Widget_Sakhi_RadioChip)
+                        val gap = (8 * resources.displayMetrics.density).toInt()
+                        val isRow = (item.orientation ?: LinearLayout.HORIZONTAL) == LinearLayout.HORIZONTAL
+                        val isLast = it == items.last()
                         rdBtn.layoutParams = RadioGroup.LayoutParams(
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            1.0F
+                            if (isRow) 0 else RadioGroup.LayoutParams.MATCH_PARENT,
+                            if (isRow) RadioGroup.LayoutParams.MATCH_PARENT else RadioGroup.LayoutParams.WRAP_CONTENT, // same height in a row
+                            if (isRow) 1.0F else 0F
                         ).apply {
-                            gravity = Gravity.CENTER_HORIZONTAL
+                            if (isRow) { if (!isLast) marginEnd = gap } else { if (!isLast) bottomMargin = gap }
                         }
                         rdBtn.id = View.generateViewId()
                         val colorStateList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -520,7 +540,10 @@ class FormInputAdapter(
                         rdBtn.text = it
                         addView(rdBtn)
                         if (item.value == it) rdBtn.isChecked = true
+                        rdBtn.dsRefreshChipCheck() // Redesign: ✓ on the selected chip
+                        if (isRow) rdBtn.dsFitChipInRow()
                         rdBtn.setOnCheckedChangeListener { _, b ->
+                            rdBtn.dsRefreshChipCheck() // Redesign: ✓ follows the selection
                             if (b) {
                                 // Clear focus from any previously focused EditText to prevent auto-scroll
                                 binding.root.rootView.findFocus()?.clearFocus()
@@ -630,7 +653,13 @@ class FormInputAdapter(
 
             item.entries?.forEachIndexed { index, text ->
 
-                val cbx = CheckBox(binding.root.context)
+//                val cbx = CheckBox(binding.root.context)
+                // Redesign: each option is a bordered 52dp "Checkbox option" row, 8dp apart
+                val cbx = CheckBox(binding.root.context, null, 0, R.style.Widget_Sakhi_CheckboxOption)
+                cbx.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = (8 * binding.root.resources.displayMetrics.density).toInt() }
                 cbx.text = text
                 cbx.isEnabled = isEnabled
                 cbx.isChecked = selectedIndexes.contains(index)

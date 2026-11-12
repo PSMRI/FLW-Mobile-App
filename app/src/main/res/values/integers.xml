@@ -2,4 +2,6 @@
 <resources>
     <integer name="icon_grid_span">3</integer>
     <integer name="icon_grid_span_supervisor">2</integer>
+    <!-- Redesign: module tile grids (Figma "Module tile" grid = 2 columns) -->
+    <integer name="ds_icon_grid_span">2</integer>
 </resources>

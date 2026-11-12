@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (Figma "FLW App Redesign") screen texts. Hindi/Assamese/Bangla need a native-speaker review. -->
+<resources>
+    <string name="ds_choose_work_location">कार्य स्थान चुनें</string>
+    <string name="ds_label_facility">सुविधा</string>
+    <string name="ds_assigned_villages_title">केवल आपको सौंपे गए गाँव दिखाए गए हैं</string>
+    <string name="ds_assigned_villages_body">कोई गाँव नहीं दिख रहा हो तो अपने पर्यवेक्षक से पूछें।</string>
+    <string name="ds_login_tagline">सामुदायिक स्वास्थ्य में आपकी साथी</string>
+    <string name="ds_choose_language">भाषा चुनें / Choose language</string>
+    <string name="ds_where_work_today">आज आप कहाँ काम कर रही हैं?</string>
+    <string name="ds_change_later_profile">आप इसे बाद में प्रोफ़ाइल में बदल सकती हैं</string>
+    <string name="ds_auto">स्वतः</string>
+    <string name="ds_village_required">गाँव *</string>
+    <string name="ds_continue_to_app">ऐप पर जारी रखें</string>
+
+    <!-- 04 · Households (draft translations need native review) -->
+    <string name="ds_hh_id_value">HH ID %1$s</string>
+    <plurals name="ds_members_count">
+        <item quantity="one">%1$d सदस्य</item>
+        <item quantity="other">%1$d सदस्य</item>
+    </plurals>
+    <string name="ds_members">सदस्य</string>
+    <string name="ds_search_households">मुखिया का नाम, HH ID या मोबाइल खोजें</string>
+    <string name="ds_add_household">परिवार जोड़ें</string>
+
+    <!-- 05 · Household members / beneficiary card (draft translations need native review) -->
+    <string name="ds_label_head_of_family">परिवार का मुखिया</string>
+    <string name="ds_label_registered_on">पंजीकरण तिथि</string>
+    <string name="ds_label_mobile">मोबाइल</string>
+    <string name="ds_label_abha_number">ABHA नंबर</string>
+    <string name="ds_synced">सिंक हुआ</string>
+    <string name="ds_not_synced">सिंक नहीं हुआ</string>
+    <string name="ds_syncing">सिंक हो रहा है</string>
+    <string name="ds_abha_linked">ABHA जुड़ा</string>
+    <string name="ds_create_abha">ABHA बनाएं</string>
+    <string name="ds_deceased">मृत</string>
+    <string name="ds_non_household">बिना परिवार</string>
+    <string name="ds_members_header">सदस्य (%1$d)</string>
+
+    <!-- 06 · All beneficiaries (draft translations need native review) -->
+    <string name="ds_download_list">सूची डाउनलोड करें</string>
+    <string name="ds_filter">फ़िल्टर</string>
+    <string name="ds_search_beneficiaries">नाम, लाभार्थी ID, मोबाइल या ABHA खोजें</string>
+    <!-- consent dialog (draft translation needs native review) -->
+    <string name="ds_consent_given">परिवार ने सहमति दी है</string>
+
+    <!-- 08 · Sync (draft translations need native review) -->
+    <string name="ds_sync_all_synced">सभी रिकॉर्ड सिंक हो गए</string>
+    <string name="ds_sync_saved_on_phone">इस फ़ोन में सुरक्षित सहेजे गए</string>
+    <string name="ds_sync_now">अभी सिंक करें</string>
+    <string name="ds_sync_by_module">मॉड्यूल अनुसार</string>
+    <string name="ds_sync_records">%1$d रिकॉर्ड</string>
+    <string name="ds_sync_records_waiting">%1$d रिकॉर्ड · %2$d बाकी</string>
+    <plurals name="ds_sync_waiting">
+        <item quantity="one">%1$d रिकॉर्ड बाकी</item>
+        <item quantity="other">%1$d रिकॉर्ड बाकी</item>
+    </plurals>
+
+    <!-- 09 · Profile & more / drawer (draft translations need native review) -->
+    <string name="ds_menu_my_work">मेरा काम</string>
+    <string name="ds_menu_tools">टूल्स</string>
+    <string name="ds_menu_app">ऐप</string>
+    <string name="ds_nav_employee_id">कर्मचारी ID · %1$s</string>
+    <!-- EC card meta (draft translation needs native review) -->
+    <string name="ds_wife_of">%1$s की पत्नी</string>
+    <string name="ds_add">जोड़ें</string>
+    <string name="ds_anc_visits">एएनसी भ्रमण</string>
+    <string name="ds_vaccine_fill">भरें</string>
+    <string name="ds_view">देखें</string>
+    <string name="ds_decrease">घटाएं</string>
+    <string name="ds_increase">बढ़ाएं</string>
+    <string name="ds_mother_name">माँ: %1$s</string>
+    <string name="ds_overdue">समय निकल गया</string>
+</resources>

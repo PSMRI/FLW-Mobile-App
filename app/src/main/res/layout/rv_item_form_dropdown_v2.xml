@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--
+    Form field · redesign (Figma "FLW App Redesign" › 07 · Register member › "Text field"):
+    label ABOVE the box (14/20 Medium #42474E, red * when required), 56dp box, 1dp #72787E border (2dp primary when
+    focused, red on error), r12, 16dp padding, value 16/24. Fields are 16dp apart inside the section card.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_dropdown_v2.xml.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="android.view.View" />
@@ -10,83 +16,65 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/cl_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
+        <TextView
+            android:id="@+id/tv_label"
+            style="@style/Widget.Sakhi.FieldLabel"
+            asteriskRequired="@{form.required}"
+            hintText="@{form.title}"
+            tools:text="First name *" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_rv_dropdown"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
+            style="@style/Widget.Sakhi.TextField.Dropdown"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}"
-            android:labelFor="@id/actv_rv_dropdown"
-            android:orientation="horizontal"
             android:importantForAccessibility="yes"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:labelFor="@id/actv_rv_dropdown"
+            app:hintEnabled="false">
 
             <AutoCompleteTextView
                 android:id="@+id/actv_rv_dropdown"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
+                android:contentDescription="@{form.title}"
+                android:cursorVisible="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:cursorVisible="false"
-                android:paddingLeft="@dimen/_20sdp"
-                android:contentDescription="@{form.title}"
                 android:importantForAccessibility="yes"
+                android:inputType="none"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />
-
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}">
+            android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{form.value}"
-                android:inputType="none"
+                android:cursorVisible="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:cursorVisible="false"
-                android:paddingLeft="@dimen/_20sdp"
+                android:inputType="none"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                android:text="@{form.value}" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!--        <TextView-->
-<!--            android:id="@+id/tv_nullable"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_toEndOf="@id/til_rv_dropdown"-->
-<!--            android:text="@string/tv_required_text_asterisk"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/til_rv_dropdown"-->
-<!--            app:required="@{form.required}" />-->
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </LinearLayout>
 </layout>

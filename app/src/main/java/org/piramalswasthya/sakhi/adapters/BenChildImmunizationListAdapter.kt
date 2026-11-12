@@ -48,7 +48,8 @@ class BenChildImmunizationListAdapter(
 
             var dob = getDateFromLong(item.ben.dob)
             binding.tvDob.text = dob
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsMotherAndAge(binding.root.context, item.ben.motherName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }

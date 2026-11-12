@@ -1,165 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sync · status · redesign (Figma "FLW App Redesign" › 08 · Sync):
+    status card (primary-container #CCE5FF, r24, padding 20, 12 gap): 32dp cloud + "N records waiting" 24/32 +
+    "Saved safely on this phone" 14/20, 8dp progress (white track, primary), "x / y records synced" 12/16,
+    52dp "Sync now"; failed-sync box (#FFDAD6, r12); "By module" 16/24; white module card (r16, 1dp #DCE1E8).
+    Ids unchanged (tv_overall_title kept, hidden). Old layout: legacy_fragment_sync_status_tab.xml.
+-->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     android:scrollbars="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:padding="@dimen/ds_space_md">
 
-        <!-- Overall Progress Card -->
+        <!-- ===== Sync status card ===== -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding_normal"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp">
+            app:cardBackgroundColor="@color/ds_primary_container"
+            app:cardCornerRadius="@dimen/ds_radius_xl"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tv_overall_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_dashboard"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ds_cloud_upload"
+                        app:tint="@color/ds_primary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_sm"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_waiting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Sakhi.HeadlineSmall"
+                            android:textColor="@color/ds_on_primary_container"
+                            tools:text="12 records waiting" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ds_sync_saved_on_phone"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                            android:textColor="@color/ds_on_primary_container" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <ProgressBar
                     android:id="@+id/progress_overall"
                     style="@android:style/Widget.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_normal"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="@dimen/ds_space_sm"
                     android:max="100"
-                    android:progressTint="@android:color/holo_green_dark"
-                    android:progressBackgroundTint="#E0E0E0" />
+                    android:progressDrawable="@drawable/bg_ds_sync_progress" />
 
                 <TextView
                     android:id="@+id/tv_progress_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    tools:text="42 / 100 records synced" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Worker Status Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding_normal"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Worker Status"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                    android:textColor="@color/ds_on_primary_container"
+                    tools:text="1092 / 1104 records synced" />
 
                 <TextView
                     android:id="@+id/tv_worker_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_primary_container"
                     tools:text="Idle" />
 
-                <TextView
-                    android:id="@+id/tv_worker_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:visibility="gone"
-                    tools:text="Failed: 3 worker(s) - tap to expand" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_failed_workers"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_sync_now"
+                    style="@style/Widget.Sakhi.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_small"
-                    android:nestedScrollingEnabled="false"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/rv_item_failed_worker" />
-
+                    android:layout_height="52dp"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:text="@string/ds_sync_now"
+                    app:icon="@drawable/ic_ds_sync"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp" />
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Per-Entity Table Header -->
-        <LinearLayout
+        <!-- ===== Failed sync help (shown by code when workers failed) ===== -->
+        <TextView
+            android:id="@+id/tv_worker_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/padding_normal">
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:background="@drawable/bg_ds_error_box"
+            android:drawablePadding="@dimen/ds_space_sm"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="@dimen/ds_space_sm"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_error_container"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_ds_error"
+            app:drawableTint="@color/ds_error"
+            tools:text="Failed: 3 worker(s) - tap to see details"
+            tools:visibility="visible" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/form_name"
-                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                android:textColor="?attr/colorOnPrimary" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:padding="@dimen/padding_normal"
-                android:src="@drawable/cloud_upload"
-                android:contentDescription="Synced" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:padding="@dimen/padding_normal"
-                android:src="@drawable/cloud_off"
-                android:contentDescription="Unsynced" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:padding="@dimen/padding_normal"
-                android:src="@drawable/cloud_sync"
-                android:contentDescription="Syncing" />
-
-        </LinearLayout>
-
-        <!-- Per-Entity RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_sync_status"
+            android:id="@+id/rv_failed_workers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_xs"
             android:nestedScrollingEnabled="false"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="5"
-            tools:listitem="@layout/rv_item_sync_dashboard_status" />
+            tools:itemCount="3"
+            tools:listitem="@layout/rv_item_failed_worker" />
 
+        <!-- ===== By module ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:text="@string/ds_sync_by_module"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_md">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_sync_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:paddingVertical="4dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/rv_item_sync_dashboard_status" />
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

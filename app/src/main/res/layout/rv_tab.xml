@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+    Filter chip (NCD lists, referral type, birth-dose filter) · redesign: 40dp pill that fills its grid cell, 4dp gap,
+    label 14/20 one line. Colours (selected = filled primary, else outlined) are set by ui/design/FilterChip.kt from the
+    adapters. Ids unchanged. Old layout: legacy_rv_tab.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
 
         <variable
             name="clickListener"
@@ -14,30 +18,30 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cMainLayout"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:background="@drawable/tab_selection"
-       >
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/ds_space_2xs"
+        android:background="@drawable/bg_ds_filter_chip_off"
+        android:foreground="?attr/selectableItemBackground">
 
-            <TextView
-                android:id="@+id/monthText"
-                android:layout_width="100dp"
-                android:gravity="center"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:singleLine="true"
-                android:paddingBottom="10dp"
-                android:textColor="@color/md_theme_light_onError"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                android:text="1 month" />
-
-
-
-
+        <TextView
+            android:id="@+id/monthText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="11sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/ds_space_xs"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_on_surface_variant"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Not Screened" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

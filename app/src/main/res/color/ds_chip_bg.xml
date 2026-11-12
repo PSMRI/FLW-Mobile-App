@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma "Filter chip": selected = secondary-container #CDEFF3, else transparent -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/ds_secondary_container" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>

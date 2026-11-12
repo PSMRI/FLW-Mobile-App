@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Form field · redesign (Figma "FLW App Redesign" › 07 · Register member › "Text field"):
+    label ABOVE the box (14/20 Medium #42474E, red * when required), 56dp box, 1dp #72787E border (2dp primary when
+    focused, red on error), r12, 16dp padding, value 16/24. Fields are 16dp apart inside the section card.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_datepicker_v2.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="android.view.View" />
@@ -9,33 +16,37 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
+        <TextView
+            android:id="@+id/tv_label"
+            style="@style/Widget.Sakhi.FieldLabel"
+            asteriskRequired="@{form.required}"
+            hintText="@{form.title}"
+            tools:text="First name *" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_calendar"
                 android:focusable="false"
+                android:hint="@string/ds_date_placeholder"
                 android:singleLine="true"
-                android:paddingLeft="@dimen/_20sdp"
-                android:text="@{form.value}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                android:text="@{form.value}" />
 
         </com.google.android.material.textfield.TextInputLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

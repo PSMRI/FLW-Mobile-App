@@ -19,57 +19,56 @@
             type="boolean" />
     </data>
 
+    <!-- Vaccine row · redesign: white bordered card r16, state icon 20dp, name 16/24 + due date 12/16 grey,
+         Fill (filled) / View (tonal) via ui/design/VaccineButtonBinding.kt. Ids, bindings, click and enabled rule
+         unchanged. Old layout: legacy_rv_item_imm_vaccine.xml. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingTop="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_5sdp">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingTop="@dimen/ds_space_xs">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_height="wrap_content">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/_45sdp"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="@dimen/padding_normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:minHeight="64dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:paddingVertical="@dimen/ds_space_xs">
 
                 <ImageView
                     android:id="@+id/imageView"
                     vaccineState="@{vaccine.state}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/_5sdp" />
+                    android:importantForAccessibility="no" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_marginEnd="@dimen/ds_space_xs"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="@dimen/_5sdp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        tools:text="Ebababebabisa" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="BCG" />
 
                     <TextView
                         android:id="@+id/tv_due_date"
@@ -77,23 +76,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@{@string/due_date_label(vaccine.dueDate)}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/md_theme_light_outline"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_on_surface_variant"
                         tools:text="Due: 12-01-2024" />
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVaccine"
-                    vaccineState="@{vaccine.state}"
+                    style="@style/Widget.Sakhi.Button"
+                    dsVaccineState="@{vaccine.state}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/kcuf"
-                    android:backgroundTint="@color/btn_vaccine_background"
+                    android:enabled='@{!isDeath || vaccine.state == VaccineState.DONE}'
                     android:onClick="@{()-> clickListener.onClicked(vaccine)}"
-                    android:textColor="?attr/colorOnPrimary"
-                    android:textSize="12sp"
-                    android:enabled='@{!isDeath || vaccine.state == VaccineState.DONE}' />
-
+                    android:text="@string/ds_vaccine_fill" />
             </LinearLayout>
 
             <!--<androidx.constraintlayout.widget.ConstraintLayout
@@ -158,6 +154,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -38,6 +38,27 @@
 
     <style name="Theme.Sakhi.Launch">
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <!-- Redesign: system bars match the launch background, dark bar icons -->
+        <item name="android:statusBarColor">@color/ds_splash_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- light navigation bar (API 27+) is set in values-v31/v33 -->
+    </style>
+
+    <!-- Redesign: Login screen (Figma M2.19-01) – light status bar on the surface background -->
+    <!-- Redesign: Login (Figma 01 · Login): blue hero behind a transparent status bar, white status icons -->
+    <style name="Theme.Sakhi.Login">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/ds_surface</item>
+    </style>
+
+    <!-- Redesign: redesigned full screens (light status bar on the surface background) -->
+    <style name="Theme.Sakhi.Redesign">
+        <item name="android:statusBarColor">@color/ds_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/ds_surface</item>
+        <!-- Redesign: every MaterialAlertDialog in the app gets the Figma dialog look (white, r24, padding 24) -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Sakhi.Dialog</item>
     </style>
 
     <style name="ButtonStyled" parent="Widget.MaterialComponents.Button">

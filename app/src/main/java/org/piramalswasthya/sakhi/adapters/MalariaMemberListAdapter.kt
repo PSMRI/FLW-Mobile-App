@@ -51,7 +51,8 @@ class MalariaMemberListAdapter(
                 binding.cvContent.visibility = View.GONE
             }*/
 
-            binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
+//            binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.tb == null) View.GONE else View.VISIBLE // Redesign: no empty badge slot
             try {
                 if (item.tb == null) {
                     binding.btnFormTb.text = binding.root.resources.getString(R.string.screening)
@@ -90,7 +91,8 @@ class MalariaMemberListAdapter(
                     } else {
 
                         binding.ivMalariaStatus.visibility =  View.INVISIBLE
-                        binding.btnFormTb.text = binding.root.resources.getString(R.string.view)
+//                        binding.btnFormTb.text = binding.root.resources.getString(R.string.view)
+                        binding.btnFormTb.text = binding.root.resources.getString(R.string.ds_view) // Redesign: sentence case
                         binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
 
                     }
@@ -142,6 +144,15 @@ class MalariaMemberListAdapter(
 //            binding.btnFormTb.text = if (item.tb == null) "Screening" else "View"
 //            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
+            // Redesign: case status as design-system states (was red / green / orange / grey / purple)
+            binding.btnFormTb.dsFormState(
+                when (item.tb?.caseStatus) {
+                    null -> if (item.tb == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY
+                    "Confirmed" -> DsFormState.ALERT
+                    "Suspected", "Treatment Started" -> DsFormState.PARTIAL
+                    else -> DsFormState.SECONDARY
+                }
+            )
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 

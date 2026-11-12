@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Redesign design tokens (Figma "FLW App Redesign", Color collection, Light mode).
+    Source of truth: https://www.figma.com/design/omOXvgnOhoVpNZf5NgtHWy  (variables color/* and module/*)
+    Naming: ds_<figma token with "/" and "-" as "_">. Use these in new / redesigned layouts only.
+-->
+<resources>
+    <!-- Brand -->
+    <color name="ds_primary">#006496</color>
+    <color name="ds_on_primary">#FFFFFF</color>
+    <color name="ds_primary_container">#CCE5FF</color>
+    <color name="ds_on_primary_container">#001E31</color>
+    <color name="ds_primary_subtle">#E6F2FF</color>
+    <color name="ds_secondary">#006874</color>
+    <color name="ds_secondary_container">#CDEFF3</color>
+    <color name="ds_accent">#FD5901</color>
+
+    <!-- Surfaces & text -->
+    <color name="ds_surface">#F5F7FA</color>
+    <color name="ds_surface_container">#FFFFFF</color>
+    <color name="ds_surface_container_high">#EEF1F5</color>
+    <color name="ds_on_surface">#191C1F</color>
+    <color name="ds_on_surface_variant">#42474E</color>
+    <color name="ds_outline">#72787E</color>
+    <color name="ds_outline_variant">#DCE1E8</color>
+
+    <!-- Status -->
+    <color name="ds_error">#BA1A1A</color>
+    <color name="ds_error_container">#FFDAD6</color>
+    <color name="ds_on_error_container">#410002</color>
+    <color name="ds_success">#1B7F3B</color>
+    <color name="ds_success_container">#D6F5DD</color>
+    <color name="ds_warning">#9A5B00</color>
+    <color name="ds_warning_container">#FFE8C7</color>
+
+    <!-- Module tones (bg = tile / chip background, fg = icon / text) -->
+    <color name="ds_module_household_bg">#CCE5FF</color>
+    <color name="ds_module_household_fg">#006496</color>
+    <color name="ds_module_people_bg">#E3E7FF</color>
+    <color name="ds_module_people_fg">#3949AB</color>
+    <color name="ds_module_couple_bg">#EDE4FF</color>
+    <color name="ds_module_couple_fg">#6A3FB5</color>
+    <color name="ds_module_maternal_bg">#FCE4EC</color>
+    <color name="ds_module_maternal_fg">#AD1457</color>
+    <color name="ds_module_child_bg">#FFE8C7</color>
+    <color name="ds_module_child_fg">#9A5B00</color>
+    <color name="ds_module_disease_bg">#FFDAD6</color>
+    <color name="ds_module_disease_fg">#BA1A1A</color>
+    <color name="ds_module_care_bg">#D3F2EE</color>
+    <color name="ds_module_care_fg">#00796B</color>
+    <color name="ds_module_immunization_bg">#D6F5DD</color>
+    <color name="ds_module_immunization_fg">#1B7F3B</color>
+    <color name="ds_module_village_bg">#F0EFC4</color>
+    <color name="ds_module_village_fg">#6B6A00</color>
+    <color name="ds_module_records_bg">#E8EAED</color>
+    <color name="ds_module_records_fg">#5F6368</color>
+
+    <!-- Splash / launch window (flavours override ds_splash_* in their own values/splash.xml) -->
+    <color name="ds_splash_background">@color/ds_primary_subtle</color>
+    <color name="ds_splash_icon_background">@color/ds_surface_container</color>
+</resources>

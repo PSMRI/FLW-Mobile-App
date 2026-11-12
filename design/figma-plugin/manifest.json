@@ -1,0 +1,55 @@
+{
+  "name": "FLW Redesign Builder",
+  "id": "flw-redesign-builder-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ],
+    "devAllowedDomains": [
+      "http://localhost:8765"
+    ],
+    "reasoning": "Dev only: sends the spec dump text to a local receiver on the developer's Mac."
+  },
+  "menu": [
+    {
+      "name": "Phase 2: build current stage(s)",
+      "command": "stage-current"
+    },
+    {
+      "name": "Phase 2: show current stage(s)",
+      "command": "stage-review"
+    },
+    {
+      "separator": true
+    },
+    {
+      "name": "Phase 1: rebuild screens 07\u201309",
+      "command": "screens"
+    },
+    {
+      "name": "Phase 1: rebuild Foundations page",
+      "command": "foundations"
+    },
+    {
+      "name": "Phase 1: rebuild both",
+      "command": "all"
+    },
+    {
+      "separator": true
+    },
+    {
+      "name": "Show phase-1 screens 07\u201309",
+      "command": "review-screens"
+    },
+    {
+      "name": "Show all screens",
+      "command": "review-all"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 01 · Login "Hero": primary #006496, rounded bottom corners -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/ds_primary" />
+    <corners android:bottomLeftRadius="@dimen/ds_radius_xl" android:bottomRightRadius="@dimen/ds_radius_xl"
+        android:topLeftRadius="0dp" android:topRightRadius="0dp" />
+</shape>

@@ -164,7 +164,8 @@ class AncVisitListAdapter(
                 binding.btnViewVisitsPmsma.visibility = View.GONE
             }
 
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

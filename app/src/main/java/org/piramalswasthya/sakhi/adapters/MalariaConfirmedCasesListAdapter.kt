@@ -114,6 +114,7 @@ class MalariaConfirmedCasesListAdapter(
             binding.btnFormTb.text = if (item.malariaConfirmed == null) binding.root.resources.getString(R.string.follow_up) else item.malariaConfirmed.day
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.malariaConfirmed == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
+            binding.btnFormTb.dsFormState(if (item.malariaConfirmed == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: to do = filled · view = tonal (was red / green)
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 

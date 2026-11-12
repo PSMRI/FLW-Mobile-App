@@ -55,7 +55,7 @@ class HouseholdFragment : Fragment() {
     private fun setUpHouseholdIconRvAdapter() {
         val rvLayoutManager = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(
@@ -73,7 +73,7 @@ class HouseholdFragment : Fragment() {
     private fun setUpEligibleCouple() {
         val rvLayoutManager = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(

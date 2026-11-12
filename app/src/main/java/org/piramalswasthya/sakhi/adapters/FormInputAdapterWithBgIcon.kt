@@ -33,6 +33,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.button.MaterialButton
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.ui.design.dsFitChipInRow
+import org.piramalswasthya.sakhi.ui.design.dsRefreshChipCheck
 import org.piramalswasthya.sakhi.databinding.LayoutMultiFileUploadBinding
 import org.piramalswasthya.sakhi.databinding.RvItemFormAgePickerViewV2Binding
 import org.piramalswasthya.sakhi.databinding.RvItemFormBtnBinding
@@ -181,15 +183,20 @@ class FormInputAdapterWithBgIcon (
         }
 
         private fun handleHintLength(item: FormElement) {
-            if (item.title.length > Konstants.editTextHintLimit) {
-                binding.tvHint.visibility = View.VISIBLE
-                binding.et.hint = null
-                binding.tilEditText.hint = null
-                binding.tilEditText.isHintEnabled = false
-            } else {
-                binding.tvHint.visibility = View.GONE
-                binding.tilEditText.isHintEnabled = true
-            }
+//            if (item.title.length > Konstants.editTextHintLimit) {
+//                binding.tvHint.visibility = View.VISIBLE
+//                binding.et.hint = null
+//                binding.tilEditText.hint = null
+//                binding.tilEditText.isHintEnabled = false
+//            } else {
+//                binding.tvHint.visibility = View.GONE
+//                binding.tilEditText.isHintEnabled = true
+//            }
+            // Redesign (Figma 07 · Register member): the label is always above the box, never inside it
+            binding.tvHint.visibility = View.VISIBLE
+            binding.et.hint = null
+            binding.tilEditText.hint = null
+            binding.tilEditText.isHintEnabled = false
         }
     }
 
@@ -280,11 +287,17 @@ class FormInputAdapterWithBgIcon (
                     val layoutParamsRg = binding.rg.layoutParams as ViewGroup.MarginLayoutParams
 
                     items.forEach {
-                        val rdBtn = RadioButton(this.context)
+//                        val rdBtn = RadioButton(this.context)
+                        // Redesign: each option is a 44dp filter chip (Widget.Sakhi.RadioChip); equal widths/heights in a
+                        // row, full width when stacked; 8dp between chips. Selection behaviour below is unchanged.
+                        val rdBtn = RadioButton(this.context, null, 0, R.style.Widget_Sakhi_RadioChip)
+                        val isRow = (item.orientation ?: LinearLayout.HORIZONTAL) == LinearLayout.HORIZONTAL
+                        val isLast = it == items.last()
+                        val chipGap = (8 * binding.root.resources.displayMetrics.density).toInt()
                         rdBtn.layoutParams = RadioGroup.LayoutParams(
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            RadioGroup.LayoutParams.WRAP_CONTENT,
-                            1.0F
+                            if (isRow) 0 else RadioGroup.LayoutParams.MATCH_PARENT,
+                            if (isRow) RadioGroup.LayoutParams.MATCH_PARENT else RadioGroup.LayoutParams.WRAP_CONTENT,
+                            if (isRow) 1.0F else 0F
 
                         ).apply {
 
@@ -336,8 +349,14 @@ class FormInputAdapterWithBgIcon (
                         if (!isEnabled) rdBtn.buttonTintList = colorStateList
                         rdBtn.text = it
                         addView(rdBtn)
+                        (rdBtn.layoutParams as RadioGroup.LayoutParams).apply {
+                            if (!isLast) { if (isRow) marginEnd = chipGap else bottomMargin = chipGap }
+                        }
                         if (item.value == it) rdBtn.isChecked = true
+                        rdBtn.dsRefreshChipCheck() // Redesign: ✓ on the selected chip
+                        if (isRow) rdBtn.dsFitChipInRow()
                         rdBtn.setOnCheckedChangeListener { _, b ->
+                            rdBtn.dsRefreshChipCheck() // Redesign: ✓ follows the selection
                             if (b) {
                                 // Clear focus from any previously focused EditText to prevent auto-scroll
                                 binding.root.rootView.findFocus()?.clearFocus()
@@ -424,12 +443,14 @@ class FormInputAdapterWithBgIcon (
                     orientation = item.orientation ?: LinearLayout.VERTICAL
                     weightSum = items.size.toFloat()
                     items.forEachIndexed { index, it ->
-                        val cbx = CheckBox(this.context)
+//                        val cbx = CheckBox(this.context)
+                        // Redesign: each option is a bordered 52dp "Checkbox option" row, 8dp apart
+                        val cbx = CheckBox(this.context, null, 0, R.style.Widget_Sakhi_CheckboxOption)
                         cbx.layoutParams = RadioGroup.LayoutParams(
                             RadioGroup.LayoutParams.MATCH_PARENT,
                             RadioGroup.LayoutParams.WRAP_CONTENT,
                             1.0F
-                        )
+                        ).apply { topMargin = (8 * binding.root.resources.displayMetrics.density).toInt() }
                         if (!isEnabled) {
                             cbx.isClickable = false
                             cbx.isFocusable = false
@@ -438,7 +459,8 @@ class FormInputAdapterWithBgIcon (
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) cbx.setTextAppearance(
                             context, android.R.style.TextAppearance_Material_Medium
                         )
-                        else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
+//else cbx.setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
+                        else cbx.setTextAppearance(R.style.TextAppearance_Sakhi_BodyLarge) // Redesign: option text 16/24
                         cbx.text = it
                         addView(cbx)
                         if (item.value?.contains(it) == true) cbx.isChecked = true

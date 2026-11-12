@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign design tokens (Figma "FLW App Redesign", Dimension collection). -->
+<resources>
+    <!-- spacing -->
+    <dimen name="ds_space_2xs">4dp</dimen>
+    <dimen name="ds_space_xs">8dp</dimen>
+    <dimen name="ds_space_sm">12dp</dimen>
+    <dimen name="ds_space_md">16dp</dimen>
+    <dimen name="ds_space_lg">20dp</dimen>
+    <dimen name="ds_space_xl">24dp</dimen>
+    <dimen name="ds_space_2xl">32dp</dimen>
+    <dimen name="ds_space_3xl">40dp</dimen>
+
+    <!-- corner radius -->
+    <dimen name="ds_radius_sm">8dp</dimen>
+    <dimen name="ds_radius_md">12dp</dimen>
+    <dimen name="ds_radius_lg">16dp</dimen>
+    <dimen name="ds_radius_xl">24dp</dimen>
+
+    <!-- controls -->
+    <dimen name="ds_button_height">48dp</dimen>
+    <dimen name="ds_touch_target">48dp</dimen>
+    <dimen name="ds_splash_logo">160dp</dimen>
+</resources>

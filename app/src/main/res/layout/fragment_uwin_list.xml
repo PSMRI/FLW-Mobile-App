@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="12dp"
-        tools:ignore="UselessParent">
+        tools:ignore="UselessParent"
+        android:background="@color/ds_surface">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerUwinList"
@@ -38,8 +39,10 @@
             android:padding="16dp" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddNew"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_margin="@dimen/ds_space_md"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

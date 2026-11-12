@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Number field · redesign (form kit): label 14/20 above, 56dp outlined box (1dp #72787E, r12, white) with
+    48dp − / + buttons in primary and the value centred 16/24; error text 12/16 red below.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_number_picker.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -10,121 +15,81 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingHorizontal="@dimen/padding_small"
-        android:paddingBottom="8dp">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <TextView
             android:id="@+id/tvLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            style="@style/Widget.Sakhi.FieldLabel"
             android:text="@{form.title}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:textStyle="bold"
-            android:layout_marginStart="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Number Picker Label" />
+            tools:text="No. of IFA tablets given" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/containerNumberPickerCard"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvLabel"
-            android:elevation="@dimen/_10sdp"
-            app:cardCornerRadius="@dimen/_20sdp"
-            app:cardBackgroundColor="@color/md_theme_light_primary"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:cardBackgroundColor="@color/ds_surface_container"
+            app:cardCornerRadius="@dimen/ds_radius_md"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ds_outline"
+            app:strokeWidth="1dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/containerNumberPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvLabel">
+            <LinearLayout
+                android:id="@+id/containerNumberPicker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp">
 
-            <ImageButton
-                android:id="@+id/btnDecrement"
-                style="@style/Widget.Material3.Button.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/decrement"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:background="?attr/selectableItemBackground"
-                app:iconPadding="0dp"
-                app:iconSize="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
-
-
+                <ImageButton
+                    android:id="@+id/btnDecrement"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/ds_decrease"
+                    android:src="@drawable/ic_ds_remove"
+                    app:tint="@color/ds_primary" />
 
                 <EditText
                     android:id="@+id/etNumberInput"
-                    android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
                     android:gravity="center"
+                    android:importantForAutofill="no"
                     android:inputType="number"
                     android:maxLines="1"
-                    android:background="@color/design_default_color_on_primary"
                     android:text="@{form.value}"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    android:textColor="@color/md_theme_light_onSurface"
-                    tools:text="0"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnIncrement"
-                    app:layout_constraintStart_toEndOf="@id/btnDecrement"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="0" />
 
-
-            <ImageButton
-                android:id="@+id/btnIncrement"
-                style="@style/Widget.Material3.Button.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/in_crement"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:background="?attr/selectableItemBackground"
-                android:textStyle="bold"
-                app:iconPadding="0dp"
-                app:iconSize="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
+                <ImageButton
+                    android:id="@+id/btnIncrement"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/ds_increase"
+                    android:src="@drawable/ic_ds_add"
+                    app:tint="@color/ds_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvError"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="@{form.errorText}"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/md_theme_light_error"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="4dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_error"
             android:visibility="@{form.errorText != null ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/containerNumberPickerCard"
             tools:text="Error message" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

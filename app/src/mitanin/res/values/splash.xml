@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="splash_logo" type="drawable">@drawable/logo_circle_green</item>
+    <!-- Redesign: Mitanin brand green (#037E62) at subtle strength for the launch window -->
+    <color name="ds_splash_background">#E2F3EE</color>
 </resources>

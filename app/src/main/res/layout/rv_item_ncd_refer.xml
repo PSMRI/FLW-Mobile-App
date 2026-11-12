@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    NCD referral card · redesign (Figma M2.x list card pattern): initials + name + age (adapter) + Deceased tag;
+    ben ID / mobile, reason (full row), referred from / to, referred date / gender, then father / husband / spouse;
+    Follow up button whose text + colour show the follow-up state (NcdReferListAdapter: pending = filled primary,
+    done = tonal "View"). Deceased = grey card instead of the old grey inner layout.
+    Every id, binding and click is kept. Old layout: legacy_rv_item_ncd_refer.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -26,391 +33,318 @@
 
     </data>
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_content"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_sm">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_content"
+        <LinearLayout
+            android:id="@+id/contstraintLayoutV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:backgroundTint="?attr/colorPrimary"
-            android:elevation="@dimen/padding_normal"
-            android:padding="@dimen/padding_wide"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_normal">
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_sm"
+            android:paddingBottom="@dimen/ds_space_md">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/ll_title_ncd_eligible_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/contstraintLayoutV">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_pill"
+                    android:backgroundTint="@color/ds_primary_container">
+
+                    <TextView
+                        dsInitials="@{benWithCbac.ben.benFullName}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_primary_container" />
+                </FrameLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_title_ncd_eligible_bar"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="?attr/colorOnPrimary"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/padding_tiny"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_hh_ec_id"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:drawablePadding="@dimen/padding_small"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/padding_small"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@{benWithCbac.ben.benFullName}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorPrimaryVariant"
-                        app:drawableLeftCompat="@drawable/ic__hh"
-                        app:drawableTint="?attr/colorPrimary"
-                        tools:text="Hello Meister" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface" />
 
-                    <ImageView
-                        android:id="@+id/iv_isDeath"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginHorizontal="@dimen/padding_small"
-                        android:visibility="@{benWithCbac.ben.isDeath == true ? View.VISIBLE : View.GONE}"
-                        android:contentDescription="@string/iv_death_indicator"
-                        android:src="@drawable/ic_death" />
+                    <LinearLayout
+                        android:id="@+id/ll_ncd_meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/iv_sync_state"
-                        android:layout_width="24dp"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginHorizontal="@dimen/padding_small"
-                        android:contentDescription="@string/iv_sync_state_tv"
-                        tools:src="@drawable/cloud_upload"
-                        app:iconTint="@android:color/holo_green_dark" />
-
+                        <TextView
+                            android:id="@+id/age"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                            android:textColor="@color/ds_on_surface_variant" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/iv_isDeath"
+                    style="@style/Sakhi.Tag"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:backgroundTint="@color/ds_surface_container_high"
+                    android:contentDescription="@string/iv_death_indicator"
+                    android:text="@string/ds_deceased"
+                    android:textColor="@color/ds_on_surface"
+                    android:visibility="@{benWithCbac.ben.isDeath == true ? View.VISIBLE : View.GONE}" />
+
+                <TextView
+                    android:id="@+id/iv_sync_state"
+                    style="@style/Sakhi.Badge"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_ncd_eligible_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/linear_ncd_eligible_Layout"
+                    android:id="@+id/ll_ncd_eligible_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_normal"
-                    app:layout_constraintTop_toBottomOf="@id/ll_title_ncd_eligible_bar">
-
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:id="@+id/ll_ncd_eligible_details"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
 
-                        <LinearLayout
-                            android:id="@+id/ncd_husband_name"
-                            showLayout="@{husband}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/beneficiary_id" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_husband_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.ben.spouseName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ncd_father_name"
-                            showLayout="@{father}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_father_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.ben.fatherName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ncd_spouse_name"
-                            showLayout="@{spouse}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_spouse_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.ben.spouseName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/age"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/age"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-<!--                            android:text="@{benWithCbac.ben.age}"-->
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/gender"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.ben.gender}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Female" />
-                        </LinearLayout>
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            dsBenIdText="@{benWithCbac.ben.benId}" />
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/ll_ncd_eligible_details_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        style="@style/Sakhi.InfoCell">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/mobile_number" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/beneficiary_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                benIdText="@{benWithCbac.ben.benId}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="3546464466" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/mobile_number"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.ben.mobileNo}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="9999999999" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/referral_reason"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.referalCac.referralReason}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="511616166" />
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/ll_ncd_eligible_details_4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/referred_from"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/referred_from"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/refer_to"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithCbac.referalCac.referredToInstituteName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="9999999999" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/referred_date"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                formattedDate="@{benWithCbac.referalCac.revisitDate}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="511616166" />
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/ll_ncd_eligible_details_3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.ben.mobileNo}" />
                     </LinearLayout>
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_ncd_eligible_details_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:visibility="gone"
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/referral_reason" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.referalCac.referralReason}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_ncd_eligible_details_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/referred_from" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:id="@+id/referred_from" />
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/refer_to" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.referalCac.referredToInstituteName}" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_ncd_eligible_details_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/referred_date" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            formattedDate="@{benWithCbac.referalCac.revisitDate}" />
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/gender" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.ben.gender}" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_father_name"
+                        showLayout="@{father}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_father_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.ben.fatherName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_husband_name"
+                        showLayout="@{husband}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_husband_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.ben.spouseName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_spouse_name"
+                        showLayout="@{spouse}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_spouse_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithCbac.ben.spouseName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:divider="@drawable/ds_gap_8"
+                android:orientation="horizontal"
+                android:showDividers="middle">
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFollowUp"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Sakhi.Button"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="5dp"
-                    android:textColor="#ffffff"
-                    android:layout_marginEnd="5dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linear_ncd_eligible_Layout"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:onClick="@{() -> clickListener.onClickedFollowUp(benWithCbac.ben,benWithCbac.referalCac)}"
                     android:text="@string/follow_up"
-                    android:onClick="@{() -> clickListener.onClickedFollowUp(benWithCbac.ben,benWithCbac.referalCac)}"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-    </FrameLayout>
+                    android:layout_weight="1"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

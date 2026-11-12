@@ -45,10 +45,12 @@ class InfantRegistrationAdapter(
         ) {
             binding.item = item
             binding.context = binding.root.context
-            binding.btnFormEc1.text = if (item.savedIr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
+//binding.btnFormEc1.text = if (item.savedIr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
 
-            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.savedIr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
-            binding.age.text = getLocalizedAge(binding.root.context, item.motherBen.dob)
+//binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.savedIr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormEc1.dsRegisterOrView(isView = item.savedIr != null) // Redesign
+//binding.age.text = getLocalizedAge(binding.root.context, item.motherBen.dob)
+            binding.age.text = dsMotherAndAge(binding.root.context, item.motherBen.benFullName, getLocalizedAge(binding.root.context, item.motherBen.dob)) // Redesign meta line
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

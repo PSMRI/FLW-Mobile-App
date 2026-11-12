@@ -12,8 +12,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:background="@color/ds_surface"
+        android:orientation="vertical">
+        <!-- Redesign: surface bg, pill search, FLW-1144 quick-filter cards kept (colours set in code, only shape/type
+             updated), full-width list cards. Old layout: legacy_fragment_child_immunization_list.xml -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cat"
@@ -33,47 +35,53 @@
             <LinearLayout
                 android:id="@+id/ll_search"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/padding_normal"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:background="@drawable/red_border"
-                android:elevation="@dimen/padding_normal"
+                android:layout_height="52dp"
+                android:layout_marginStart="@dimen/ds_space_md"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:layout_marginEnd="@dimen/ds_space_md"
+                android:background="@drawable/bg_ds_search_pill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:paddingStart="@dimen/ds_space_md"
+                android:paddingEnd="@dimen/ds_space_xs"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-<!--                app:layout_constraintEnd_toStartOf="@+id/ivFilter"-->
-
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
                     android:id="@+id/searchView"
-                    style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_search"
-                    android:drawablePadding="@dimen/padding_normal"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_ds_search"
+                    android:drawablePadding="@dimen/ds_space_sm"
+                    android:drawableTint="@color/ds_on_surface_variant"
                     android:hint="@string/household_search"
-                    android:singleLine="true" />
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface"
+                    android:textColorHint="@color/ds_on_surface_variant" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/ib_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/colorPrimary"
-                    tools:visibility="visible">
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
 
                     <ImageView
                         android:id="@+id/ib_search_im"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="?attr/colorPrimary"
-                        android:paddingHorizontal="12dp"
-                        android:src="@drawable/ic_mic"
-                        tools:visibility="visible" />
-
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/household_search"
+                        android:src="@drawable/ic_ds_mic"
+                        app:tint="@color/ds_on_surface_variant" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
@@ -83,7 +91,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -91,35 +100,34 @@
                 android:id="@+id/card_due_this_month"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardCornerRadius="@dimen/ds_radius_md"
                 app:cardElevation="0dp"
-                app:strokeWidth="@dimen/_1sdp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/_8sdp">
+                    android:padding="@dimen/ds_space_sm">
 
                     <TextView
                         android:id="@+id/tv_due_this_month_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
                         android:text="@string/imm_due_this_month"
-                        android:textSize="@dimen/_11sdp" />
+                        />
 
                     <TextView
                         android:id="@+id/tv_due_this_month_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginTop="2dp"
+                        android:textAppearance="@style/TextAppearance.Sakhi.NumberMedium"
                         tools:text="4" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -128,35 +136,34 @@
                 android:id="@+id/card_next_month"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardCornerRadius="@dimen/ds_radius_md"
                 app:cardElevation="0dp"
-                app:strokeWidth="@dimen/_1sdp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/_8sdp">
+                    android:padding="@dimen/ds_space_sm">
 
                     <TextView
                         android:id="@+id/tv_next_month_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_medium"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
                         android:text="@string/imm_scheduled_next_month"
-                        android:textSize="@dimen/_11sdp" />
+                        />
 
                     <TextView
                         android:id="@+id/tv_next_month_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textSize="@dimen/_13sdp"
+                        android:layout_marginTop="2dp"
+                        android:textAppearance="@style/TextAppearance.Sakhi.NumberMedium"
                         tools:text="2" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -165,7 +172,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -173,18 +181,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/roboto_medium"
                 android:text="@string/imm_dose_stage"
-                android:textColor="@color/md_theme_light_shadow" />
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface" />
 
             <TextView
                 android:id="@+id/tvSelectedFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:fontFamily="@font/roboto_medium"
                 android:text="@string/all"
-                android:textColor="@color/md_theme_light_shadow" />
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_primary" />
 
             <ImageView
                 android:id="@+id/ivFilter"
@@ -192,9 +200,10 @@
                 android:layout_height="wrap_content"
                 android:minWidth="@dimen/_25sdp"
                 android:minHeight="@dimen/_25sdp"
-                android:src="@drawable/ic_filter"
-                android:tint="?attr/colorPrimary"
-                android:layout_marginEnd="@dimen/_10sdp"/>
+                android:padding="12dp"
+                android:src="@drawable/ic_ds_filter_list"
+                android:tint="@color/ds_primary"
+                android:layout_marginEnd="4dp"/>
 
         </LinearLayout>
 
@@ -203,16 +212,17 @@
             android:id="@+id/tv_result_meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_6sdp"
-            android:textColor="@color/md_theme_light_shadow"
-            android:textSize="@dimen/_11sdp"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="4 beneficiaries · Due for this month" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/ds_space_md"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
             tools:listitem="@layout/rv_item_immunization_ben" />
@@ -231,7 +241,8 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/padding_normal"
                 android:text="@string/no_records_found"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface_variant" />
         </FrameLayout>
     </LinearLayout>
 </layout>

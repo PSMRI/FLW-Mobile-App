@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Redesign text styles, shapes and widget styles (Figma "FLW App Redesign" text styles, Roboto).
+    Figma SemiBold has no bundled Roboto file, so it maps to roboto_medium.
+-->
+<resources>
+
+    <!-- ===== Text appearances (size / line height from Figma) ===== -->
+    <style name="TextAppearance.Sakhi.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">36sp</item>
+        <item name="lineHeight">44sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">28sp</item>
+        <item name="lineHeight">36sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">24sp</item>
+        <item name="lineHeight">32sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">22sp</item>
+        <item name="lineHeight">28sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">24sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">24sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">11sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.NumberLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="lineHeight">40sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Sakhi.NumberMedium" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="lineHeight">28sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- ===== Shapes ===== -->
+    <style name="ShapeAppearance.Sakhi.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/ds_radius_sm</item>
+    </style>
+    <style name="ShapeAppearance.Sakhi.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/ds_radius_md</item>
+    </style>
+    <style name="ShapeAppearance.Sakhi.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/ds_radius_lg</item>
+    </style>
+    <style name="ShapeAppearance.Sakhi.Full" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- ===== Widgets (Figma components) ===== -->
+    <!-- Button · Filled / Outlined / Text : 48dp, full-round, Label/Large -->
+    <style name="Widget.Sakhi.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/ds_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundTint">@color/ds_filled_bg</item>
+        <item name="android:textColor">@color/ds_filled_fg</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Full</item>
+    </style>
+    <style name="Widget.Sakhi.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/ds_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textColor">@color/ds_primary</item>
+        <item name="strokeColor">@color/ds_outline</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Full</item>
+    </style>
+    <!-- Tonal pill button (Figma "Add member"): #CCE5FF / #001E31, 20dp icon, padding 24 -->
+    <style name="Widget.Sakhi.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:minHeight">@dimen/ds_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="backgroundTint">@color/ds_tonal_bg</item>
+        <item name="android:textColor">@color/ds_tonal_fg</item>
+        <item name="iconTint">@color/ds_tonal_fg</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Full</item>
+    </style>
+    <!-- Extended FAB look on a MaterialButton (Figma "FAB extended"): 56dp, r16, #006496, padding 20, icon 24 + 12 gap -->
+    <style name="Widget.Sakhi.Fab.Extended" parent="Widget.Material3.Button">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="backgroundTint">@color/ds_primary</item>
+        <item name="android:textColor">@color/ds_on_primary</item>
+        <item name="iconTint">@color/ds_on_primary</item>
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">12dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="elevation">6dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+    </style>
+    <style name="Widget.Sakhi.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/ds_touch_target</item>
+        <item name="android:textColor">@color/ds_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+    </style>
+
+    <!-- Text field · outlined, radius sm, Body/Large input -->
+    <style name="Widget.Sakhi.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/ds_radius_md</item>
+        <item name="boxStrokeColor">@color/ds_textfield_stroke</item>
+        <item name="boxBackgroundColor">@color/ds_surface_container</item>
+        <item name="hintTextColor">@color/ds_primary</item>
+        <item name="errorTextColor">@color/ds_error</item>
+        <item name="boxStrokeErrorColor">@color/ds_error</item>
+        <item name="android:textColorHint">@color/ds_on_surface_variant</item>
+    </style>
+
+    <!-- Card · surface-container, 1dp outline-variant, radius lg -->
+    <style name="Widget.Sakhi.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/ds_surface_container</item>
+        <item name="strokeColor">@color/ds_outline_variant</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">@dimen/ds_radius_lg</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+    <!-- Text field · exposed dropdown (select) -->
+    <style name="Widget.Sakhi.TextField.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/ds_radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/ds_radius_md</item>
+        <item name="boxStrokeColor">@color/ds_textfield_stroke</item>
+        <item name="boxBackgroundColor">@color/ds_surface_container</item>
+        <item name="hintTextColor">@color/ds_primary</item>
+        <item name="endIconTint">@color/ds_on_surface_variant</item>
+        <item name="android:textColorHint">@color/ds_on_surface_variant</item>
+    </style>
+
+    <!-- Read-only field (Figma "Read-only field"): label + value + lock, grey box. Apply to a horizontal LinearLayout. -->
+    <style name="Widget.Sakhi.ReadOnlyField" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:background">@drawable/bg_ds_readonly_field</item>
+        <item name="android:paddingStart">@dimen/ds_space_md</item>
+        <item name="android:paddingEnd">@dimen/ds_space_sm</item>
+        <item name="android:paddingTop">@dimen/ds_space_xs</item>
+        <item name="android:paddingBottom">@dimen/ds_space_xs</item>
+    </style>
+    <style name="Widget.Sakhi.ReadOnlyField.Label" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelMedium</item>
+        <item name="android:textColor">@color/ds_on_surface_variant</item>
+    </style>
+    <style name="Widget.Sakhi.ReadOnlyField.Value" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <style name="Widget.Sakhi.ReadOnlyField.Lock" parent="">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_marginStart">@dimen/ds_space_xs</item>
+        <item name="android:src">@drawable/ic_ds_lock</item>
+        <item name="tint">@color/ds_outline</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <!-- Top app bar (Figma "Top app bar" Type=Home/Inner): light surface bar, dark title, grey icons -->
+    <style name="Theme.Sakhi.ActionBar.Redesign" parent="Theme.Material3.Light">
+        <item name="colorSurface">@color/ds_surface</item>
+        <item name="colorOnSurface">@color/ds_on_surface</item>
+        <item name="colorControlNormal">@color/ds_on_surface_variant</item>
+        <item name="android:textColorPrimary">@color/ds_on_surface</item>
+        <item name="android:textColorSecondary">@color/ds_on_surface_variant</item>
+        <item name="colorPrimary">@color/ds_primary</item>
+    </style>
+    <!-- Field label shown ABOVE the box (Figma "Text field": label on top, plain box) -->
+    <style name="Widget.Sakhi.FieldLabel" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/ds_space_2xs</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="android:textColor">@color/ds_on_surface_variant</item>
+    </style>
+    <!-- Box without floating label (label is the TextView above) -->
+    <style name="Widget.Sakhi.TextField.Boxed" parent="Widget.Sakhi.TextField">
+        <item name="hintEnabled">false</item>
+        <item name="boxStrokeColor">@color/ds_textfield_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+    <!-- Figma "Checkbox option": bordered row, 52dp -->
+    <style name="Widget.Sakhi.CheckboxOption" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="android:background">@drawable/bg_ds_option</item>
+        <item name="android:minHeight">52dp</item>
+        <!-- Figma: box 22dp at 18dp from the row edge (16 padding + 2 border), 12dp gap to the label -->
+        <item name="android:button">@null</item>
+        <item name="buttonCompat">@null</item>
+        <item name="buttonIcon">@null</item>
+        <item name="useMaterialThemeColors">false</item>
+        <item name="android:drawableStart">@drawable/ic_ds_checkbox</item>
+        <item name="android:drawablePadding">@dimen/ds_space_sm</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">@dimen/ds_space_md</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <!-- Figma "Filter chip": 36dp, r8, 12dp side padding, ✓ when selected, Label/Large on-surface -->
+    <style name="Widget.Sakhi.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipMinHeight">36dp</item>
+        <!-- Figma chip is exactly 36dp tall: no extra invisible touch margin above/below -->
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="chipCornerRadius">@dimen/ds_radius_sm</item>
+        <item name="chipBackgroundColor">@color/ds_chip_bg</item>
+        <item name="chipStrokeColor">@color/ds_chip_stroke</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStartPadding">@dimen/ds_space_sm</item>
+        <item name="chipEndPadding">@dimen/ds_space_sm</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="iconStartPadding">0dp</item>
+        <item name="iconEndPadding">4dp</item>
+        <item name="checkedIconEnabled">true</item>
+        <item name="checkedIconTint">@color/ds_on_surface</item>
+        <item name="chipIconVisible">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+        <item name="rippleColor">@color/ds_primary_subtle</item>
+    </style>
+    <!-- Figma 01 · Login remember: 20dp box, 8dp gap, Body/Medium label, no row border -->
+    <style name="Widget.Sakhi.CheckboxPlain" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="android:background">@null</item>
+        <item name="android:button">@null</item>
+        <item name="buttonCompat">@null</item>
+        <item name="buttonIcon">@null</item>
+        <item name="useMaterialThemeColors">false</item>
+        <item name="android:drawableStart">@drawable/ic_ds_checkbox_sm</item>
+        <item name="android:drawablePadding">@dimen/ds_space_xs</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:minHeight">20dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyMedium</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <!-- Figma "Auto" pill on read-only fields: primary-subtle r8, 11/16 Medium primary -->
+    <style name="Widget.Sakhi.AutoPill" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_ds_auto_pill</item>
+        <item name="android:paddingStart">@dimen/ds_space_xs</item>
+        <item name="android:paddingEnd">@dimen/ds_space_xs</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelSmall</item>
+        <item name="android:textColor">@color/ds_primary</item>
+    </style>
+
+    <!-- ===== Beneficiary card pieces (Figma 05 · Household members) ===== -->
+    <!-- Tag: 24dp, r8, padding 8, 11/16 Medium; colours via backgroundTint + textColor -->
+    <style name="Sakhi.Tag" parent="">
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@drawable/bg_ds_tag</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelSmall</item>
+    </style>
+    <!-- Sync badge: same as a tag but fully rounded, 14dp icon + 4dp gap -->
+    <style name="Sakhi.Badge" parent="Sakhi.Tag">
+        <item name="android:background">@drawable/bg_ds_pill</item>
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+    <!-- Detail grid: label 11/16 Medium variant · value 14/20 Regular -->
+    <style name="Sakhi.InfoLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelSmall</item>
+        <item name="android:textColor">@color/ds_on_surface_variant</item>
+    </style>
+    <style name="Sakhi.InfoValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyMedium</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <style name="Sakhi.InfoCell" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!-- ===== Form kit (Figma 07 · Register member) ===== -->
+    <!-- Radio option as a filter chip: 44dp, r8, ✓ + label centred; FormInputAdapter builds these in code -->
+    <!-- parent = the platform radio style so the chip stays clickable / focusable / checkable (an empty parent made it untappable) -->
+    <style name="Widget.Sakhi.RadioChip" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="buttonCompat">@null</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/bg_ds_radio_chip</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <!-- Edit box inside Widget.Sakhi.TextField.Boxed: 56dp tall, 16dp padding, Body/Large -->
+    <style name="Widget.Sakhi.TextField.Input" parent="">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+        <item name="android:textColorHint">@color/ds_on_surface_variant</item>
+        <item name="android:drawableTint">@color/ds_on_surface_variant</item>
+    </style>
+
+    <!-- ===== Dialogs (Figma M2.19-26 Add member / M2.19-52 Consent): white, r24, 24dp padding, 22/28 title ===== -->
+    <style name="ThemeOverlay.Sakhi.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/ds_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/ds_surface_container</item>
+        <item name="colorPrimary">@color/ds_primary</item>
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Sakhi</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Sakhi.Title</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.Sakhi.Body</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Sakhi.Button.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Sakhi.Button.Text</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Sakhi.Button.Text</item>
+    </style>
+    <style name="MaterialAlertDialog.Sakhi" parent="MaterialAlertDialog.Material3">
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Dialog</item>
+        <item name="backgroundTint">@color/ds_surface_container</item>
+        <item name="backgroundInsetStart">24dp</item>
+        <item name="backgroundInsetEnd">24dp</item>
+    </style>
+    <style name="ShapeAppearance.Sakhi.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+    <style name="MaterialAlertDialog.Sakhi.Title" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.TitleLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+    <style name="MaterialAlertDialog.Sakhi.Body" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyMedium</item>
+        <item name="android:textColor">@color/ds_on_surface_variant</item>
+    </style>
+    <!-- Figma "Segmented option" (Add member · Gender): 48dp, r12; selected = primary with a white ✓ -->
+    <style name="Widget.Sakhi.SegmentedOption" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="buttonCompat">@null</item>
+        <item name="android:background">@drawable/bg_ds_segmented</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.LabelLarge</item>
+        <item name="android:textColor">@color/ds_segmented_text</item>
+    </style>
+
+    <!-- Redesign switch (SwitchCompat): primary when on, white thumb + grey track when off -->
+    <style name="ThemeOverlay.Sakhi.Switch" parent="">
+        <item name="colorControlActivated">@color/ds_primary</item>
+        <item name="colorSwitchThumbNormal">@color/ds_surface_container</item>
+        <item name="android:colorForeground">@color/ds_outline</item>
+    </style>
+</resources>

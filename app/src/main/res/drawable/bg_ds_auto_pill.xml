@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma "Auto" pill: primary-subtle #E6F2FF, r8 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/ds_primary_subtle" />
+    <corners android:radius="@dimen/ds_radius_sm" />
+</shape>

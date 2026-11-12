@@ -76,7 +76,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Sakhi)
+        // setTheme(R.style.Theme_Sakhi)
+        setTheme(R.style.Theme_Sakhi_Login) // redesign: light status bar for the login screen
         TapjackingProtectionHelper.applyWindowSecurity(this)
         super.onCreate(savedInstanceState)
         if (!NativeLibraryLoader.areRequiredLibrariesAvailable(this)) {

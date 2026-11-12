@@ -44,7 +44,8 @@ class ChildListAdapter(
             if (!showSyncIcon) item.syncState = null
             binding.ben = item
             binding.clickListener = clickListener
-            binding.age.text = getLocalizedAge(binding.root.context, item.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.dob)
+            binding.age.text = dsMotherAndAge(binding.root.context, item.motherName, getLocalizedAge(binding.root.context, item.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }

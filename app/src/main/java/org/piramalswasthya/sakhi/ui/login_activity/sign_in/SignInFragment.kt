@@ -121,12 +121,16 @@ class SignInFragment : Fragment() {
         val initialTop = binding.root.paddingTop
         val initialRight = binding.root.paddingRight
         val initialBottom = binding.root.paddingBottom
+        val heroInitialTop = binding.llLogo?.paddingTop ?: 0
 
         binding.textView12?.text = getString(R.string.pwr_by_text)+BuildConfig.VERSION_NAME
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val systemBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            // Redesign (Figma 01 · Login): the blue hero runs behind the status bar, so only the hero gets the top inset
+            val systemTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            binding.llLogo?.updatePadding(top = heroInitialTop + systemTop)
             v.updatePadding(
                 left = initialLeft,
                 top = initialTop,
@@ -174,6 +178,7 @@ class SignInFragment : Fragment() {
         }*/
 
         updateSelectedLangText(prefDao.getCurrentLanguage())
+        setUpLanguageChips()
         binding.llSelectLang?.setOnClickListener {
             LanguageBottomSheet(prefDao.getCurrentLanguage()) { selectedLang ->
                 prefDao.saveSetLanguage(selectedLang.language)
@@ -289,6 +294,37 @@ class SignInFragment : Fragment() {
         val isNonProdMitanin = isMitanin &&
                 (!BuildConfig.FLAVOR.equals("mitanin", ignoreCase = true) || BuildConfig.DEBUG)
         binding.tvDemo?.visibility = if (isNonProdMitanin) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * Redesign (Figma 01 · Login): language chips under the hero. Same behaviour as the language sheet
+     * (save the language, restart LoginActivity); Mitanin shows English + Hindi only, like the sheet.
+     */
+    private fun setUpLanguageChips() {
+        val group = binding.cgLanguage ?: return
+        val isMitanin = BuildConfig.FLAVOR.contains("mitanin", ignoreCase = true)
+        if (isMitanin) {
+            binding.chipLangAs?.visibility = View.GONE
+            binding.chipLangBn?.visibility = View.GONE
+        }
+        val chipFor = mapOf(
+            Languages.ENGLISH to binding.chipLangEn,
+            Languages.HINDI to binding.chipLangHi,
+            Languages.ASSAMESE to binding.chipLangAs,
+            Languages.BANGLA to binding.chipLangBn,
+        )
+        val current = prefDao.getCurrentLanguage()
+        chipFor[current]?.isChecked = true
+        group.setOnCheckedStateChangeListener { _, checkedIds ->
+            val selected = chipFor.entries.firstOrNull { it.value?.id == checkedIds.firstOrNull() }?.key
+                ?: return@setOnCheckedStateChangeListener
+            if (selected == prefDao.getCurrentLanguage()) return@setOnCheckedStateChangeListener
+            prefDao.saveSetLanguage(selected)
+            val refresh = Intent(requireContext(), LoginActivity::class.java)
+            requireActivity().finish()
+            startActivity(refresh)
+            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
     }
 
     private fun updateSelectedLangText(language: Languages) {

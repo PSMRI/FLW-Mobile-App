@@ -501,6 +501,9 @@ class HouseholdMembersFragment : Fragment() {
                         } else {
                             binding.flEmpty.visibility = View.GONE
                         }
+                        // Redesign (Figma 05 · Household members): "Members (n)" section header above the cards
+                        binding.tvMembersHeader.text = getString(R.string.ds_members_header, it.size)
+                        binding.tvMembersHeader.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
                         benAdapter.submitList(it)
                     }
                 }

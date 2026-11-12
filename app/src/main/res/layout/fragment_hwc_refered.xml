@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@color/ds_surface" xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,45 +14,60 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/ll_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_normal"
-            android:elevation="@dimen/padding_normal"
-            android:orientation="horizontal"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:background="@drawable/red_border"
-            app:layout_constraintTop_toTopOf="parent">
+        <!-- Redesign: 52dp pill search (same as the household / beneficiary lists); ids unchanged -->
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:layout_marginEnd="@dimen/ds_space_md"
+        android:background="@drawable/bg_ds_search_pill"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/ds_space_md"
+        android:paddingEnd="@dimen/ds_space_xs"
+        app:layout_constraintTop_toTopOf="parent">
 
-            <EditText
-                android:id="@+id/searchView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="@dimen/padding_normal"
-                android:hint="@string/household_search"
-                style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
-                android:singleLine="true" />
+        <EditText
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableStart="@drawable/ic_ds_search"
+            android:drawablePadding="@dimen/ds_space_sm"
+            android:drawableTint="@color/ds_on_surface_variant"
+            android:hint="@string/household_search"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+            android:textColor="@color/ds_on_surface"
+            android:textColorHint="@color/ds_on_surface_variant" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/ib_search"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                tools:visibility="visible"
-                android:background="?attr/colorPrimary">
-                <ImageView
-                    android:id="@+id/ib_search_im"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingHorizontal="12dp"
-                    android:src="@drawable/ic_mic"
-                    android:background="?attr/colorPrimary"
-                    tools:visibility="visible" />
-            </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ib_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/ds_space_xs"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            tools:visibility="visible">
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/ib_search_im"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/household_search"
+                android:src="@drawable/ic_ds_mic"
+                app:tint="@color/ds_on_surface_variant"
+                tools:visibility="visible" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchButton"

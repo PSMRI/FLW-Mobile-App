@@ -57,9 +57,13 @@ class BenListAdapterForForm(
             binding.isGeneralForm = isGeneralForm == true
 
             if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
-                binding.btnForm1.visibility = View.INVISIBLE
-                binding.btnForm2.visibility = View.INVISIBLE
-                binding.btnForm3.visibility = View.INVISIBLE
+//                binding.btnForm1.visibility = View.INVISIBLE
+//                binding.btnForm2.visibility = View.INVISIBLE
+//                binding.btnForm3.visibility = View.INVISIBLE
+                // Redesign: GONE so the supervisor card has no empty button strip
+                binding.btnForm1.visibility = View.GONE
+                binding.btnForm2.visibility = View.GONE
+                binding.btnForm3.visibility = View.GONE
             } else {
                 binding.btnForm1.visibility = View.VISIBLE
                 binding.btnForm2.visibility = View.VISIBLE
@@ -95,6 +99,10 @@ class BenListAdapterForForm(
                 for (i in btnText.indices) {
                     setFormButtonColor(i + 1, item, role)
                 }
+            }
+            // Redesign: a button with no label (fewer than 3 texts passed) would show as an empty pill in the new row
+            listOf(binding.btnForm1, binding.btnForm2, binding.btnForm3).forEachIndexed { i, b ->
+                if (i >= btnText.size) b.visibility = View.GONE
             }
             binding.role = role
             binding.hasLmp = !item.lastMenstrualPeriod.isNullOrEmpty()
@@ -138,7 +146,8 @@ class BenListAdapterForForm(
 
                 else -> throw IllegalStateException("FormNumber>3")
             }
-            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
+//            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
+            formButton.visibility = if (formEnabled) View.VISIBLE else View.GONE // Redesign: no empty slots
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (hasForm)
@@ -172,6 +181,8 @@ class BenListAdapterForForm(
                 )
             )
 
+            // Redesign: not filled = filled primary · filled = tonal (was red / green)
+            formButton.dsFormState(if (hasForm) DsFormState.SECONDARY else DsFormState.NOT_STARTED)
         }
     }
 

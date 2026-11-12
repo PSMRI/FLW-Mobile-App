@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (Figma "FLW App Redesign") screen texts. Hindi/Assamese/Bangla need a native-speaker review. -->
+<resources>
+    <string name="ds_empty_value" translatable="false">—</string>
+    <string name="ds_choose_work_location">Choose work location</string>
+    <string name="ds_label_facility">Facility</string>
+    <string name="ds_assigned_villages_title">Only your assigned villages are shown</string>
+    <string name="ds_assigned_villages_body">Ask your supervisor if a village is missing.</string>
+    <string name="ds_login_tagline">Your partner for community health</string>
+    <string name="ds_choose_language">Choose language / भाषा चुनें</string>
+    <string name="ds_where_work_today">Where do you work today?</string>
+    <string name="ds_change_later_profile">You can change this later in Profile</string>
+    <string name="ds_auto">Auto</string>
+    <string name="ds_village_required">Village *</string>
+    <string name="ds_continue_to_app">Continue to app</string>
+
+    <!-- 04 · Households (draft translations need native review) -->
+    <string name="ds_hh_id_value">HH ID %1$s</string>
+    <plurals name="ds_members_count">
+        <item quantity="one">%1$d member</item>
+        <item quantity="other">%1$d members</item>
+    </plurals>
+    <string name="ds_members">Members</string>
+    <string name="ds_search_households">Search HOF name, HH ID or mobile</string>
+    <string name="ds_add_household">Add household</string>
+
+    <!-- 05 · Household members / beneficiary card (draft translations need native review) -->
+    <string name="ds_label_head_of_family">Head of family</string>
+    <string name="ds_label_registered_on">Registered on</string>
+    <string name="ds_label_mobile">Mobile</string>
+    <string name="ds_label_abha_number">ABHA number</string>
+    <string name="ds_synced">Synced</string>
+    <string name="ds_not_synced">Not synced</string>
+    <string name="ds_syncing">Syncing</string>
+    <string name="ds_abha_linked">ABHA linked</string>
+    <string name="ds_create_abha">Create ABHA</string>
+    <string name="ds_deceased">Deceased</string>
+    <string name="ds_non_household">Non-household</string>
+    <string name="ds_members_header">Members (%1$d)</string>
+    <string name="ds_dot_separator" translatable="false">\u0020·\u0020</string>
+
+    <!-- 06 · All beneficiaries (draft translations need native review) -->
+    <string name="ds_download_list">Download list</string>
+    <string name="ds_filter">Filter</string>
+    <string name="ds_search_beneficiaries">Search name, ben ID, mobile or ABHA</string>
+    <!-- form placeholders (format hints, not translated) -->
+    <string name="ds_date_placeholder" translatable="false">DD-MM-YYYY</string>
+    <string name="ds_time_placeholder" translatable="false">HH:MM</string>
+    <!-- consent dialog (draft translation needs native review) -->
+    <string name="ds_consent_given">Family has given consent</string>
+
+    <!-- 08 · Sync (draft translations need native review) -->
+    <string name="ds_sync_all_synced">All records synced</string>
+    <string name="ds_sync_saved_on_phone">Saved safely on this phone</string>
+    <string name="ds_sync_now">Sync now</string>
+    <string name="ds_sync_by_module">By module</string>
+    <string name="ds_sync_records">%1$d records</string>
+    <string name="ds_sync_records_waiting">%1$d records · %2$d waiting</string>
+    <plurals name="ds_sync_waiting">
+        <item quantity="one">%1$d record waiting</item>
+        <item quantity="other">%1$d records waiting</item>
+    </plurals>
+
+    <!-- 09 · Profile & more / drawer (draft translations need native review) -->
+    <string name="ds_menu_my_work">My work</string>
+    <string name="ds_menu_tools">Tools</string>
+    <string name="ds_menu_app">App</string>
+    <string name="ds_nav_employee_id">Employee ID · %1$s</string>
+    <!-- EC card meta (draft translation needs native review) -->
+    <string name="ds_wife_of">W/o %1$s</string>
+    <string name="ds_add">Add</string>
+    <string name="ds_anc_visits">ANC visits</string>
+    <string name="ds_vaccine_fill">Fill</string>
+    <string name="ds_view">View</string>
+    <string name="ds_decrease">Decrease</string>
+    <string name="ds_increase">Increase</string>
+    <string name="ds_mother_name">Mother: %1$s</string>
+    <string name="ds_overdue">Overdue</string>
+</resources>

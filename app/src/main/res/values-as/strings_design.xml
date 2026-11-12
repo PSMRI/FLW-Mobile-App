@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (Figma "FLW App Redesign") screen texts. Hindi/Assamese/Bangla need a native-speaker review. -->
+<resources>
+    <string name="ds_choose_work_location">কৰ্মস্থান বাছনি কৰক</string>
+    <string name="ds_label_facility">সুবিধা</string>
+    <string name="ds_assigned_villages_title">কেৱল আপোনাক দিয়া গাঁওসমূহহে দেখুওৱা হৈছে</string>
+    <string name="ds_assigned_villages_body">কোনো গাঁও নাই যদি আপোনাৰ পৰ্যবেক্ষকক সোধক।</string>
+    <string name="ds_login_tagline">সামূহিক স্বাস্থ্যত আপোনাৰ সংগী</string>
+    <string name="ds_choose_language">ভাষা বাছক / Choose language</string>
+    <string name="ds_where_work_today">আজি আপুনি ক’ত কাম কৰিব?</string>
+    <string name="ds_change_later_profile">আপুনি এইটো পিছত প্ৰফাইলত সলনি কৰিব পাৰে</string>
+    <string name="ds_auto">স্বয়ংক্ৰিয়</string>
+    <string name="ds_village_required">গাঁও *</string>
+    <string name="ds_continue_to_app">এপলৈ আগবাঢ়ক</string>
+
+    <!-- 04 · Households (draft translations need native review) -->
+    <string name="ds_hh_id_value">HH ID %1$s</string>
+    <plurals name="ds_members_count">
+        <item quantity="one">%1$d জন সদস্য</item>
+        <item quantity="other">%1$d জন সদস্য</item>
+    </plurals>
+    <string name="ds_members">সদস্য</string>
+    <string name="ds_search_households">মুখীয়াৰ নাম, HH ID বা ম’বাইল সন্ধান কৰক</string>
+    <string name="ds_add_household">পৰিয়াল যোগ কৰক</string>
+
+    <!-- 05 · Household members / beneficiary card (draft translations need native review) -->
+    <string name="ds_label_head_of_family">পৰিয়ালৰ মুৰব্বী</string>
+    <string name="ds_label_registered_on">পঞ্জীয়নৰ তাৰিখ</string>
+    <string name="ds_label_mobile">ম’বাইল</string>
+    <string name="ds_label_abha_number">ABHA নম্বৰ</string>
+    <string name="ds_synced">ছিংক হ’ল</string>
+    <string name="ds_not_synced">ছিংক হোৱা নাই</string>
+    <string name="ds_syncing">ছিংক হৈ আছে</string>
+    <string name="ds_abha_linked">ABHA সংযুক্ত</string>
+    <string name="ds_create_abha">ABHA সৃষ্টি কৰক</string>
+    <string name="ds_deceased">মৃত</string>
+    <string name="ds_non_household">পৰিয়ালবিহীন</string>
+    <string name="ds_members_header">সদস্য (%1$d)</string>
+
+    <!-- 06 · All beneficiaries (draft translations need native review) -->
+    <string name="ds_download_list">তালিকা ডাউনল’ড কৰক</string>
+    <string name="ds_filter">ফিল্টাৰ</string>
+    <string name="ds_search_beneficiaries">নাম, হিতাধিকাৰী ID, ম’বাইল বা ABHA সন্ধান কৰক</string>
+    <!-- consent dialog (draft translation needs native review) -->
+    <string name="ds_consent_given">পৰিয়ালে সন্মতি দিছে</string>
+
+    <!-- 08 · Sync (draft translations need native review) -->
+    <string name="ds_sync_all_synced">সকলো ৰেকৰ্ড ছিংক হ’ল</string>
+    <string name="ds_sync_saved_on_phone">এই ফোনত সুৰক্ষিতভাৱে সংৰক্ষিত</string>
+    <string name="ds_sync_now">এতিয়া ছিংক কৰক</string>
+    <string name="ds_sync_by_module">মডিউল অনুসৰি</string>
+    <string name="ds_sync_records">%1$d টা ৰেকৰ্ড</string>
+    <string name="ds_sync_records_waiting">%1$d টা ৰেকৰ্ড · %2$d টা বাকী</string>
+    <plurals name="ds_sync_waiting">
+        <item quantity="one">%1$d টা ৰেকৰ্ড বাকী</item>
+        <item quantity="other">%1$d টা ৰেকৰ্ড বাকী</item>
+    </plurals>
+
+    <!-- 09 · Profile & more / drawer (draft translations need native review) -->
+    <string name="ds_menu_my_work">মোৰ কাম</string>
+    <string name="ds_menu_tools">সঁজুলি</string>
+    <string name="ds_menu_app">এপ</string>
+    <string name="ds_nav_employee_id">কৰ্মচাৰী ID · %1$s</string>
+    <!-- EC card meta (draft translation needs native review) -->
+    <string name="ds_wife_of">%1$sৰ পত্নী</string>
+    <string name="ds_add">যোগ কৰক</string>
+    <string name="ds_anc_visits">ANC দৰকাৰি</string>
+    <string name="ds_vaccine_fill">পূৰণ কৰক</string>
+    <string name="ds_view">চাবলৈ</string>
+    <string name="ds_decrease">কমাওক</string>
+    <string name="ds_increase">বঢ়াওক</string>
+    <string name="ds_mother_name">মাতৃ: %1$s</string>
+    <string name="ds_overdue">সময় উকলিল</string>
+</resources>

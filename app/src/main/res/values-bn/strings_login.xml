@@ -21,10 +21,14 @@
     <string name="cb_login_remember_me_text">মনে রাখুন</string>
     <string name="btn_login_forgot_password_text">পাসওয়ার্ড ভুলে গেছেন?</string>
     <string name="btn_login_text">লগইন</string>
-    <string name="pwr_by_text" translatable="false">দ্বারা পরিচালিত\n <b>পিরামল ফাউন্ডেশন</b>\n অ্যাপ সংস্করণ </string>
+    <!-- <string name="pwr_by_text" translatable="false">দ্বারা পরিচালিত\n <b>পিরামল ফাউন্ডেশন</b>\n অ্যাপ সংস্করণ </string> -->
+    <!-- Redesign (Figma M2.19-01): one-line footer -->
+    <string name="pwr_by_text" translatable="false">পিরামল ফাউন্ডেশন দ্বারা পরিচালিত · সংস্করণ\u0020</string>
     <string name="login_diff_user">আপনি পূর্বে @username ব্যবহারকারীর মাধ্যমে @asha হিসেবে লগইন করেছেন। আপনি কি অন্য ব্যবহারকারী দিয়ে লগইন করতে চান?</string>
     <string name="unsync_record_count">হ্যালো! @count টি আনসিঙ্কড রেকর্ড রয়েছে, অনুগ্রহ করে সব রেকর্ড সিঙ্ক হওয়া পর্যন্ত অপেক্ষা করুন।</string>
     <string name="account_deactivated_title">অ্যাকাউন্ট নিষ্ক্রিয় করা হয়েছে</string>
     <string name="session_expired_title">সেশন মেয়াদ শেষ</string>
     <string name="session_expired_message">আপনার সেশন মেয়াদ শেষ হয়েছে। অনুগ্রহ করে আবার লগইন করুন।</string>
+    <!-- Redesign (Figma M2.19-01) -->
+    <string name="login_subtitle">চালিয়ে যেতে লগ ইন করুন</string>
 </resources>

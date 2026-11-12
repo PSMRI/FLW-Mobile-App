@@ -70,7 +70,8 @@ class HRNPTListAdapter(
                     setFormButtonColor(i + 1, item)
                 }
             }
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }
@@ -115,7 +116,8 @@ class HRNPTListAdapter(
 
                 else -> throw IllegalStateException("FormNumber>3")
             }
-            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
+//            formButton.visibility = if (formEnabled) View.VISIBLE else View.INVISIBLE
+            formButton.visibility = if (formEnabled) View.VISIBLE else View.GONE // Redesign: no empty slots in the button row
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (hasForm) {
@@ -152,6 +154,8 @@ class HRNPTListAdapter(
                 )
             )
 
+            // Redesign (Figma M2.6): Follow up = filled primary · History = tonal
+            formButton.dsFormState(if (formNumber == 1) DsFormState.NOT_STARTED else DsFormState.SECONDARY)
         }
 
     }

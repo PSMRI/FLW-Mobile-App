@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Malaria screening list card · redesign (Figma list card pattern, same as TB): initials + name + age (adapter) + case-status icon
+    + Deceased tag + sync badge; ben ID / mobile, RCH ID / gender, father / husband / spouse (adapter picks one);
+    form button whose text + colour show the state (set in the adapter with dsFormState).
+    Every id, binding and click is kept. Old layout: legacy_rv_item_malaria_members_list.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -23,328 +29,272 @@
             type="Boolean"/>
     </data>
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_content"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_sm">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_content"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:backgroundTint="?attr/colorPrimary"
-            android:elevation="@dimen/padding_normal"
-            android:padding="@dimen/padding_wide"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_normal">
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_sm"
+            android:paddingBottom="@dimen/ds_space_md">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/ll_title_tb_screening_list_bar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/ll_title_tb_screening_list_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/colorOnPrimary"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/padding_tiny"
-                    app:layout_constraintTop_toTopOf="parent">
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_pill"
+                    android:backgroundTint="@color/ds_primary_container">
 
                     <TextView
-                        android:layout_width="0dp"
+                        dsInitials="@{benWithMalaria.ben.benFullName}"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:drawablePadding="@dimen/padding_small"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/padding_small"
-                        android:text="@{benWithMalaria.ben.benFullName}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorPrimaryVariant"
-                        app:drawableLeftCompat="@drawable/ic__hh"
-                        app:drawableTint="?attr/colorPrimary"
-                        tools:text="Hello Meister" />
-
-                    <ImageView
-                        android:id="@+id/iv_isDeath"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginHorizontal="@dimen/padding_small"
-                        android:visibility="@{benWithMalaria.ben.isDeath == true ? View.VISIBLE : View.GONE}"
-                        android:contentDescription="@string/iv_death_indicator"
-                        android:src="@drawable/ic_death"
-                        />
-                    <ImageView
-                        android:id="@+id/iv_malaria_status"
-                        android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginHorizontal="@dimen/padding_small"
-                        android:contentDescription="@string/iv_case_status_tv"
-                        tools:src="@drawable/mosquito" />
-
-                    <ImageView
-                        android:id="@+id/iv_sync_state"
-                        android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginHorizontal="@dimen/padding_small"
-                        android:contentDescription="@string/iv_sync_state_tv"
-                        app:syncState="@{benWithMalaria.tb.syncState}"
-                        tools:src="@drawable/cloud_upload"
-                        app:iconTint="@android:color/holo_green_dark" />
-
-                </LinearLayout>
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_primary_container" />
+                </FrameLayout>
 
                 <LinearLayout
-                    android:id="@+id/linear_tb_screening_list_Layout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_normal"
-                    app:layout_constraintTop_toBottomOf="@id/ll_title_tb_screening_list_bar">
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-
-                    <LinearLayout
-                        android:id="@+id/ll_tb_screening_list_details"
+                    <TextView
+                        android:id="@+id/tv_ben_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:id="@+id/ncd_husband_name"
-                            showLayout="@{husband}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_husband_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.spouseName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ncd_father_name"
-                            showLayout="@{father}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_father_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.fatherName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ncd_spouse_name"
-                            showLayout="@{spouse}"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_spouse_name_ph"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.spouseName}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Dummy" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/age"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:id="@+id/age"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="TextView" />
-<!--                            android:text="@{benWithMalaria.ben.age}"-->
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/gender"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.gender}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="Female" />
-                        </LinearLayout>
-                    </LinearLayout>
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{benWithMalaria.ben.benFullName}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface" />
 
                     <LinearLayout
-                        android:id="@+id/ll_tb_screening_list_details_2"
+                        android:id="@+id/ll_ben_meta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:baselineAligned="false"
+                        android:layout_marginTop="2dp"
                         android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/age"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/beneficiary_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                benIdText="@{benWithMalaria.ben.benId}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="3546464466" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/mobile_number"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.mobileNo}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="9999999999" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:padding="@dimen/padding_small">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_rch_id"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                android:textColor="?attr/colorOnPrimary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{benWithMalaria.ben.rchId}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                android:textColor="?attr/colorOnPrimary"
-                                tools:text="511616166" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_tb_screening_list_details_3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                            android:textColor="@color/ds_on_surface_variant" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_malaria_status"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:contentDescription="@string/iv_case_status_tv"
+                    tools:src="@drawable/mosquito" />
+
+                <TextView
+                    android:id="@+id/iv_isDeath"
+                    style="@style/Sakhi.Tag"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:backgroundTint="@color/ds_surface_container_high"
+                    android:contentDescription="@string/iv_death_indicator"
+                    android:text="@string/ds_deceased"
+                    android:textColor="@color/ds_on_surface"
+                    android:visibility="@{benWithMalaria.ben.isDeath == true ? View.VISIBLE : View.GONE}" />
+
+                <TextView
+                    android:id="@+id/iv_sync_state"
+                    style="@style/Sakhi.Badge"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:contentDescription="@string/iv_sync_state_tv"
+                    dsSyncBadge="@{benWithMalaria.tb.syncState}"
+                    tools:text="Synced" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_tb_screening_list_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_tb_screening_list_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/beneficiary_id" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            dsBenIdText="@{benWithMalaria.ben.benId}" />
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/mobile_number" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithMalaria.ben.mobileNo}" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_tb_screening_list_details_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_rch_id" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{(benWithMalaria.ben.rchId == null || benWithMalaria.ben.rchId.empty) ? @string/ds_empty_value : benWithMalaria.ben.rchId}" />
+                    </LinearLayout>
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/gender" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithMalaria.ben.gender}" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_tb_screening_list_details_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_father_name"
+                        showLayout="@{father}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_father_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithMalaria.ben.fatherName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_husband_name"
+                        showLayout="@{husband}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_husband_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithMalaria.ben.spouseName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ncd_spouse_name"
+                        showLayout="@{spouse}"
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_spouse_name_ph" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{benWithMalaria.ben.spouseName}" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:divider="@drawable/ds_gap_8"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_form_tb"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.Sakhi.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_normal"
-                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:onClick="@{()-> clickListener.onClickForm(benWithMalaria)}"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linear_tb_screening_list_Layout"
-                    tools:backgroundTint="@android:color/holo_red_dark" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        </androidx.cardview.widget.CardView>
-
-    </FrameLayout>
+                    android:text="@string/register"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

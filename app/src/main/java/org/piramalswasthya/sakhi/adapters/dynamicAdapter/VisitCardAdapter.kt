@@ -114,8 +114,9 @@ class VisitCardAdapter(
         when {
             visit.isCompleted -> {
                 holder.btnView.visibility = View.VISIBLE
-                holder.btnView.setBackgroundResource(R.color.Quartenary)
-                holder.itemView.setBackgroundResource(R.color.md_theme_dark_inversePrimary)
+//                holder.btnView.setBackgroundResource(R.color.Quartenary)
+//                holder.itemView.setBackgroundResource(R.color.md_theme_dark_inversePrimary)
+                dsVisitCardState(holder, DsVisit.DONE) // Redesign
                 holder.itemView.isEnabled = true
                 holder.btnView.isEnabled = true
             }
@@ -127,21 +128,38 @@ class VisitCardAdapter(
                 holder.btnView.isEnabled = enabled
 
                 holder.btnAddVisit.visibility = if (enabled) View.VISIBLE else View.GONE
-                holder.btnAddVisit.setBackgroundResource(if (enabled) R.color.Quartenary else R.color.read_only)
-                holder.itemView.setBackgroundResource(
-                    if (enabled) R.color.md_theme_dark_inversePrimary else R.color.read_only
-                )
+//                holder.btnAddVisit.setBackgroundResource(if (enabled) R.color.Quartenary else R.color.read_only)
+//                holder.itemView.setBackgroundResource(
+//                    if (enabled) R.color.md_theme_dark_inversePrimary else R.color.read_only
+//                )
+                dsVisitCardState(holder, if (enabled) DsVisit.DUE else DsVisit.LOCKED) // Redesign
             }
 
 
             else -> {
-                holder.itemView.setBackgroundResource(R.color.read_only)
+//                holder.itemView.setBackgroundResource(R.color.read_only)
+                dsVisitCardState(holder, DsVisit.LOCKED) // Redesign
                 holder.itemView.isEnabled = false
                 holder.btnView.isEnabled = false
                 holder.tvVisitOption.visibility= View.GONE
                 holder.btnAddVisit.isEnabled = false
             }
         }
+    }
+
+    // Redesign: card colours by visit state (was solid blue / grey cards with orange buttons)
+    private enum class DsVisit { DONE, DUE, LOCKED }
+    private fun dsVisitCardState(holder: VisitViewHolder, state: DsVisit) {
+        val card = holder.itemView as? com.google.android.material.card.MaterialCardView ?: return
+        val ctx = card.context
+        val (bg, stroke, title) = when (state) {
+            DsVisit.DONE -> Triple(R.color.ds_success_container, R.color.ds_success_container, R.color.ds_success)
+            DsVisit.DUE -> Triple(R.color.ds_surface_container, R.color.ds_primary, R.color.ds_on_surface)
+            DsVisit.LOCKED -> Triple(R.color.ds_surface_container_high, R.color.ds_outline_variant, R.color.ds_on_surface_variant)
+        }
+        card.setCardBackgroundColor(ContextCompat.getColor(ctx, bg))
+        card.strokeColor = ContextCompat.getColor(ctx, stroke)
+        holder.tvVisitDay.setTextColor(ContextCompat.getColor(ctx, title))
     }
 
     override fun getItemCount(): Int = visits.size

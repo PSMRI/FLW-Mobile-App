@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/read_only"
+        android:background="@color/ds_surface"
         >
 
 
@@ -38,18 +38,18 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/padding_normal"
                 android:text="@string/no_records_found"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface_variant" />
         </FrameLayout>
 
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Sakhi.Button"
             android:id="@+id/btn_next_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:padding="@dimen/padding_normal"
+            android:layout_margin="@dimen/ds_space_md"
             android:text="@string/btn_new_maa_meeting"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma component "Read-only field": surface-container-high, radius sm -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/ds_surface_container_high" />
+    <corners android:radius="@dimen/ds_radius_sm" />
+</shape>

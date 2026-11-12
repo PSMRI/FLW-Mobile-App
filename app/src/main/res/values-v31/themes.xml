@@ -2,7 +2,13 @@
 <resources>
     <style name="Theme.Sakhi.Launch">
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <!-- <item name="android:windowSplashScreenBackground">@android:color/white</item> -->
+        <item name="android:windowSplashScreenBackground">@color/ds_splash_background</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/ds_splash_icon_background</item>
+        <item name="android:statusBarColor">@color/ds_splash_background</item>
+        <item name="android:navigationBarColor">@color/ds_splash_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
     </style>
 </resources>

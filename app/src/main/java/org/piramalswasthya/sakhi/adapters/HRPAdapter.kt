@@ -55,9 +55,13 @@ class HRPAdapter(
         ) {
 
             if (pref?.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
-                binding.btnForm3.visibility = View.INVISIBLE
-                binding.btnForm2.visibility = View.INVISIBLE
-                binding.btnForm1.visibility = View.INVISIBLE
+//                binding.btnForm3.visibility = View.INVISIBLE
+//                binding.btnForm2.visibility = View.INVISIBLE
+//                binding.btnForm1.visibility = View.INVISIBLE
+                // Redesign: GONE so the supervisor card doesn't keep an empty button strip
+                binding.btnForm3.visibility = View.GONE
+                binding.btnForm2.visibility = View.GONE
+                binding.btnForm1.visibility = View.GONE
             } else {
                 binding.btnForm3.visibility = View.VISIBLE
                 binding.btnForm2.visibility = View.VISIBLE
@@ -85,14 +89,17 @@ class HRPAdapter(
                     3 -> {
                         binding.btnForm1.text = btnText[0]
                         binding.btnForm2.text = btnText[1]
-                        binding.btnForm3.text = btnText[2]
+//                        binding.btnForm3.text = btnText[2]
+                        // Redesign: Share is an icon-only WhatsApp button; label kept for TalkBack
+                        binding.btnForm3.contentDescription = btnText[2]
                     }
                 }
                 for (i in btnText.indices) {
                     setFormButtonColor(i + 1, item, role)
                 }
             }
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }
@@ -102,7 +109,8 @@ class HRPAdapter(
             var completelyFilled: Boolean = false
             var formEnabled: Boolean = false
             buttonFlexibleWidth()
-            binding.btnForm3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_whatsapp, 0);
+//            binding.btnForm3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_whatsapp, 0);
+            // Redesign: WhatsApp icon comes from app:icon on btn_form3 (icon-only button)
 
 
             val formButton = when (formNumber) {
@@ -143,8 +151,8 @@ class HRPAdapter(
                         } else {
 
                             formEnabled = false
-                            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.8f
-                            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+//                            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.8f
+//                            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=1.2f
 
                         }
 
@@ -206,12 +214,17 @@ class HRPAdapter(
                 )
             )
 
+            // Redesign (Figma M2.6): same form states, design-system colours —
+            // not started = filled primary · partly filled = warning tonal · complete = success tonal; share = outlined
+            formButton.dsFormState(if (!hasForm) DsFormState.NOT_STARTED else if (completelyFilled) DsFormState.COMPLETE else DsFormState.PARTIAL)
+            if (hasForm) binding.btnForm3.dsFormState(DsFormState.SHARE)
         }
 
         private fun buttonFlexibleWidth() {
-            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
-            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.8f
-            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=1.0f
+//            (binding.btnForm2.layoutParams as LinearLayout.LayoutParams).weight=1.2f
+//            (binding.btnForm1.layoutParams as LinearLayout.LayoutParams).weight=0.8f
+//            (binding.btnForm3.layoutParams as LinearLayout.LayoutParams).weight=1.0f
+            // Redesign: the two form buttons share the row equally; the icon-only Share keeps its fixed 48dp
         }
     }
 

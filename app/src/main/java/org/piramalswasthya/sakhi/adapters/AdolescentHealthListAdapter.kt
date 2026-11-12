@@ -50,16 +50,21 @@ class AdolescentHealthListAdapter(
             showRegistrationDate: Boolean,
             showBeneficiaries: Boolean, role: Int?
         ) {
-            binding.ivSyncState.visibility = if (item.adolescent == null) View.INVISIBLE else View.VISIBLE
+//            binding.ivSyncState.visibility = if (item.adolescent == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.adolescent == null) View.GONE else View.VISIBLE // Redesign: no empty badge slot
 
             binding.ben = item
             binding.clickListener = clickListener
             binding.showAbha = showAbha
             binding.showRegistrationDate = showRegistrationDate
+//            binding.registrationDate.visibility =
+//                if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
+//            binding.blankSpace.visibility =
+//                if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
+            // Redesign: GONE instead of INVISIBLE so a hidden registration date leaves no empty row
             binding.registrationDate.visibility =
-                if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
-            binding.blankSpace.visibility =
-                if (showRegistrationDate) View.VISIBLE else View.INVISIBLE
+                if (showRegistrationDate) View.VISIBLE else View.GONE
+            binding.blankSpace.visibility = View.GONE
             binding.hasAbha = !item.ben.abhaId.isNullOrEmpty()
             binding.role = role
 
@@ -104,8 +109,10 @@ class AdolescentHealthListAdapter(
                 binding.husband = false
                 binding.spouse = false
             }
-            binding.btnFormTb.text = if (item.adolescent == null) binding.root.context.getString(R.string.register) else binding.root.context.getString(R.string.view)
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.adolescent == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+//            binding.btnFormTb.text = if (item.adolescent == null) binding.root.context.getString(R.string.register) else binding.root.context.getString(R.string.view)
+            binding.btnFormTb.text = if (item.adolescent == null) binding.root.context.getString(R.string.register) else binding.root.context.getString(R.string.ds_view) // Redesign: sentence case
+//            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.adolescent == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.dsFormState(if (item.adolescent == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: register = filled · view = tonal
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()

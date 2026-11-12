@@ -82,21 +82,24 @@ class HouseHoldListAdapter(private val diseaseType: String, private var isDiseas
 
                 if (item.isDeactivate){
                     //binding.ivSoftDelete.setImageResource(R.drawable.ic_group_on)
-                    binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
+                    //binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.Quartenary))
+                    // Redesign: deactivated card = grey surface (setBackgroundColor would drop the card's border and corners)
+                    binding.parentCard.setCardBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.ds_surface_container_high))
 
                     binding.ivSoftDelete.visibility = View.GONE
                     binding.button4.visibility = View.INVISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.VISIBLE
-                    binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
+                    //binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline))
 
                 } else{
                   //  binding.ivSoftDelete.setImageResource(R.drawable.ic_group_off)
-                    binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
+                    //binding.parentCard.setBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.md_theme_light_primary))
+                    binding.parentCard.setCardBackgroundColor(ContextCompat.getColor(binding.parentCard.context, R.color.ds_surface_container))
 
                     binding.ivSoftDelete.visibility = View.VISIBLE
                     binding.button4.visibility = View.INVISIBLE
                     binding.tvTitleDuplicaterecord.visibility = View.GONE
-                    binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.holo_green_dark))
+                    //binding.button3.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.root.context, R.color.holo_green_dark))
 
                 }
 

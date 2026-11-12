@@ -3,36 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_bottom_sheet_dialog"
+    android:background="@color/ds_surface"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Redesign (Figma 07 · Register member): surface bg; summary card in primary-container tone; the form sits in a
+         white section card (r16, 1dp #DCE1E8); Submit / Link household in a white bottom action bar with 48dp pill
+         buttons. Shared by 38 form screens; ids unchanged. Old layout: legacy_fragment_new_form.xml.
+         Not built (new behaviour): 3-step stepper, photo slot, "Save draft", autosave tip. -->
 
 
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="?attr/colorOnSecondary"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_patient_information"
+                style="@style/Widget.Sakhi.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:backgroundTint="?attr/colorPrimary"
-                android:elevation="@dimen/padding_normal"
-                app:cardCornerRadius="@dimen/padding_normal"
-                app:cardElevation="@dimen/padding_normal"
+                android:layout_marginHorizontal="@dimen/ds_space_md"
+                android:layout_marginTop="@dimen/ds_space_md"
+                app:cardBackgroundColor="@color/ds_primary_container"
+                app:strokeWidth="0dp"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_patient_information"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp">
 
                     <LinearLayout
                         android:id="@+id/ll_patient_information_1"
@@ -44,9 +47,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingTop="@dimen/ds_space_md"
+                            android:paddingBottom="6dp"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
@@ -58,9 +63,10 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent" />
                     </LinearLayout>
 
@@ -74,11 +80,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="@dimen/padding_normal"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
                             android:layout_alignParentStart="true"
                             android:text="@string/ecrdset_no_live_child"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                            android:textColor="@color/ds_on_primary_container"
                            />
 
                         <TextView
@@ -88,9 +95,10 @@
                             android:gravity="center"
                             android:layout_marginEnd="@dimen/_44sdp"
                             android:layout_alignParentEnd="true"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent" />
                     </RelativeLayout>
                     <RelativeLayout
@@ -103,11 +111,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="@dimen/padding_normal"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
                             android:layout_alignParentStart="true"
                             android:text="@string/husband_name"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                            android:textColor="@color/ds_on_primary_container"
                            />
 
                         <TextView
@@ -117,9 +126,10 @@
                             android:gravity="center"
                             android:layout_marginEnd="@dimen/_44sdp"
                             android:layout_alignParentEnd="true"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent" />
                     </RelativeLayout>
                     <RelativeLayout
@@ -132,11 +142,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="@dimen/padding_normal"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
                             android:layout_alignParentStart="true"
                             android:text="@string/marriage_date"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                            android:textColor="@color/ds_on_primary_container"
                            />
 
                         <TextView
@@ -146,9 +157,10 @@
                             android:gravity="center"
                             android:layout_marginEnd="@dimen/_44sdp"
                             android:layout_alignParentEnd="true"
-                            android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
+                            android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent" />
                     </RelativeLayout>
 
@@ -159,7 +171,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:padding="@dimen/padding_normal">
+                        android:paddingHorizontal="@dimen/ds_space_md"
+                            android:paddingVertical="6dp">
                         <LinearLayout
                             android:id="@+id/ll_ben_pwr_tracking_details_1"
                             android:layout_width="match_parent"
@@ -178,15 +191,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/husband_s_name"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/husband_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -201,15 +214,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/tv_mob_no_ph"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/mobile_number"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -234,15 +247,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/beneficiary_id"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/ben_id"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -257,15 +270,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/tv_rch_id"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/rch_id"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -290,15 +303,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pregnancy_weeks"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/weeks_of_preg"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -313,15 +326,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pmsma_lmp"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/lmp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -336,15 +349,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pmsma_edd"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/edd"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
                         </LinearLayout>
@@ -352,7 +365,7 @@
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="0dp"
@@ -360,8 +373,8 @@
                 android:layout_weight="1"
                 android:fillViewport="true"
                 app:layout_constraintBottom_toTopOf="@+id/action_buttons"
-                app:layout_constraintEnd_toEndOf="@+id/cv_patient_information"
-                app:layout_constraintStart_toStartOf="@+id/cv_patient_information"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cv_patient_information">
 
                 <LinearLayout
@@ -369,20 +382,28 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <FrameLayout
+                    <!-- Figma section card: white, r16, 1dp #DCE1E8; fields carry their own 16dp side padding -->
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.Sakhi.Card"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/ds_space_md"
+                        android:layout_marginTop="@dimen/ds_space_md"
+                        android:layout_marginBottom="@dimen/ds_space_md">
 
-                        <include
-                            android:id="@+id/form"
-                            layout="@layout/rv_input_form"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1" />
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="@dimen/ds_space_xs">
 
+                            <include
+                                android:id="@+id/form"
+                                layout="@layout/rv_input_form"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
 
-                    </FrameLayout>
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <TextView
                         android:id="@+id/tvHeading"
@@ -439,31 +460,40 @@
 
 
             </androidx.core.widget.NestedScrollView>
+            <!-- Figma "Bottom action bar": white, padding 12/16, 48dp pill buttons 12dp apart, equal widths -->
             <LinearLayout
                 android:id="@+id/action_buttons"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
+                android:background="@color/ds_surface_container"
+                android:divider="@drawable/ds_gap_12"
+                android:elevation="4dp"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:showDividers="middle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_link_household"
-                    android:layout_width="wrap_content"
+                    android:layout_marginVertical="@dimen/ds_space_sm"
+                    style="@style/Widget.Sakhi.Button.Outlined"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_weight="1"
                     android:text="@string/link_household"
                     android:visibility="gone" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_submit"
-                    android:layout_width="wrap_content"
+                    android:layout_marginVertical="@dimen/ds_space_sm"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/btn_submit"
-                    android:textColor="@android:color/white" />
+                    android:layout_weight="1"
+                    android:text="@string/btn_submit" />
             </LinearLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -477,9 +507,9 @@
                 android:layout_marginBottom="@dimen/padding_wide"
                 android:contentDescription="@string/edit"
                 android:visibility="gone"
-                app:backgroundTint="@color/md_theme_light_primary"
+                app:backgroundTint="@color/ds_primary"
                 app:srcCompat="@drawable/ic_edit"
-                app:tint="@color/md_theme_light_onTertiary"
+                app:tint="@color/ds_on_primary"
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

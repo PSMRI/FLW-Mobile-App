@@ -66,6 +66,10 @@ class SyncStatusTabFragment : Fragment() {
                 )
                 binding.progressOverall.max = if (total > 0) total else 1
                 binding.progressOverall.progress = synced
+                // Redesign (Figma 08 · Sync): headline "N records waiting" / "All records synced"
+                val waiting = (total - synced).coerceAtLeast(0)
+                binding.tvWaiting.text = if (waiting == 0) getString(R.string.ds_sync_all_synced)
+                else resources.getQuantityString(R.plurals.ds_sync_waiting, waiting, waiting)
             }
         }
 
@@ -77,6 +81,13 @@ class SyncStatusTabFragment : Fragment() {
         // Observe failed worker details
         viewModel.failedWorkerDetails.observe(viewLifecycleOwner) { failedList ->
             failedWorkerAdapter.submitList(failedList)
+        }
+
+        // Redesign (Figma 08 · Sync): "Sync now" runs the drawer's "Sync records" action, so it keeps the same
+        // repeat-tap guard and pull step (the push worker uses REPLACE, so it must not be re-triggered directly).
+        binding.btnSyncNow.setOnClickListener {
+            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+                ?.menu?.performIdentifierAction(R.id.sync_pending_records, 0)
         }
 
         // Toggle expand/collapse on tap

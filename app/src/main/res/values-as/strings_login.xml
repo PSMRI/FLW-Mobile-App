@@ -25,6 +25,10 @@
     <string name="session_expired_message">আপোনাৰ চেচন সমাপ্ত হৈছে। অনুগ্ৰহ কৰি পুনৰ লগ ইন কৰক।</string>
     <string name="cd_assam_nhm_logo">অসম NHM ল\'গ\'</string>
     <string name="cd_piramal">পীৰামল ল\'গ\'</string>
-    <string name="pwr_by_text" translatable="false">দ্বাৰা পৰিচালিত\n <b>পীৰামল ফাউণ্ডেচন</b>\n এপ সংস্কৰণ </string>
+    <!-- <string name="pwr_by_text" translatable="false">দ্বাৰা পৰিচালিত\n <b>পীৰামল ফাউণ্ডেচন</b>\n এপ সংস্কৰণ </string> -->
+    <!-- Redesign (Figma M2.19-01): one-line footer -->
+    <string name="pwr_by_text" translatable="false">পীৰামল ফাউণ্ডেচনৰ দ্বাৰা পৰিচালিত · সংস্কৰণ\u0020</string>
 
+    <!-- Redesign (Figma M2.19-01) -->
+    <string name="login_subtitle">আগবাঢ়িবলৈ লগ ইন কৰক</string>
 </resources>

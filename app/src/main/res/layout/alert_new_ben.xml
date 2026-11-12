@@ -1,139 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Add member dialog · redesign (Figma M2.19-26 · Add member · gender + relation): white r24 dialog (theme), 24dp padding;
+    28dp icon, title 22/28, "Gender" 14/20 + three 48dp segmented options (selected = primary with ✓),
+    "Relation with head of family" + boxed dropdown, then Cancel (text) · OK (filled) at the end.
+    The relation stays a dropdown (its options are filtered by gender and family in code; Figma shows a radio list).
+    Ids unchanged; old layout: legacy_alert_new_ben.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/padding_wide">
+    android:orientation="vertical"
+    android:padding="@dimen/ds_space_xl">
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ds_person_add"
+        app:tint="@color/ds_primary" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="@dimen/padding_normal"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:text="@string/str_add_member"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/gender"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:textColor="?attr/colorOnPrimary" />
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginBottom="6dp"
+            android:text="@string/gender" />
 
         <RadioGroup
             android:id="@+id/rg_gender"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:baselineAligned="false"
+            android:divider="@drawable/ds_gap_8"
+            android:orientation="horizontal"
+            android:showDividers="middle">
 
-            <RadioButton
+            <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
                 android:id="@+id/rb_male"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/male"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                style="@style/Widget.Sakhi.SegmentedOption"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/male" />
 
-            <RadioButton
+            <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
                 android:id="@+id/rb_female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/female"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                style="@style/Widget.Sakhi.SegmentedOption"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/female" />
 
-            <RadioButton
+            <org.piramalswasthya.sakhi.ui.design.DsCheckRadioButton
                 android:id="@+id/rb_trans"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Widget.Sakhi.SegmentedOption"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
                 android:text="@string/transgender"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                app:autoSizeMaxTextSize="14sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeTextType="uniform" />
         </RadioGroup>
-
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/tv_rel_to_head"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/nbr_rel_to_head"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:textColor="?attr/colorOnPrimary" />
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:text="@string/nbr_rel_to_head" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_rth"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            style="@style/Widget.Sakhi.TextField.Dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="@string/relation_with_hof"
-            android:labelFor="@id/actv_rv_dropdown"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_normal"
-            android:importantForAccessibility="yes">
+            android:importantForAccessibility="yes"
+            android:labelFor="@id/actv_rth"
+            app:hintEnabled="false">
 
             <AutoCompleteTextView
                 android:id="@+id/actv_rth"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:importantForAccessibility="yes"
                 android:contentDescription="relation with hof"
+                android:hint="@string/relation_with_hof"
+                android:importantForAccessibility="yes"
+                android:inputType="none"
                 tools:ignore="SpeakableTextPresentCheck" />
-
-
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_ok"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/ok"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+        android:layout_marginTop="@dimen/ds_space_xl"
+        android:divider="@drawable/ds_gap_8"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:showDividers="middle">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.Sakhi.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ok"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:minWidth="96dp"
+            android:text="@string/ok" />
+    </LinearLayout>
+</LinearLayout>

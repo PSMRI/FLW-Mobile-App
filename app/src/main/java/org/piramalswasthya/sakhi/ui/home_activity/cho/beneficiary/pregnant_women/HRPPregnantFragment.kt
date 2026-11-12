@@ -52,7 +52,7 @@ class HRPPregnantFragment : Fragment() {
         val binding = _binding ?: return
         val rvLayoutManager = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
         val rvAdapter = IconGridAdapter(

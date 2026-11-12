@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Two read-only values side by side · redesign (Figma field style): each column = label above + grey read-only box,
+    12dp apart. Used by FormInputAdapterWithBgIcon. Ids unchanged; old layout: legacy_rv_item_form_text_view_pair_with_bg_icon.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -10,90 +14,95 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_edit_text"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}"
-            android:labelFor="@id/et"
-            app:boxBackgroundColor="@color/read_only"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/til_secondary"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et"
+            <TextView
+                android:id="@+id/tv_label"
+                style="@style/Widget.Sakhi.FieldLabel"
+                asteriskRequired="@{form.required}"
+                hintText="@{form.title}" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_edit_text"
+                style="@style/Widget.Sakhi.TextField.Boxed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:inputType="none"
-                android:singleLine="true"
-                android:paddingStart="@dimen/_20sdp"
-                android:text="@{form.value}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                tools:text="20" />
+                android:labelFor="@id/et"
+                app:boxBackgroundColor="@color/ds_surface_container_high"
+                app:boxStrokeColor="@color/ds_outline_variant">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et"
+                    style="@style/Widget.Sakhi.TextField.Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:text="@{form.value}" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_secondary"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            asteriskRequired="@{false}"
-            hintText="@{form.secondaryTitle}"
-            android:labelFor="@id/et_secondary"
-            app:boxBackgroundColor="@color/read_only"
-            app:layout_constraintStart_toEndOf="@+id/til_edit_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/til_edit_text">
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/ds_space_sm"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_secondary"
+            <TextView
+                android:id="@+id/tv_label_secondary"
+                style="@style/Widget.Sakhi.FieldLabel"
+                asteriskRequired="@{false}"
+                hintText="@{form.secondaryTitle}" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_secondary"
+                style="@style/Widget.Sakhi.TextField.Boxed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:inputType="none"
-                android:singleLine="true"
-                android:text="@{form.secondaryValue}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                tools:text="140" />
+                android:labelFor="@id/et_secondary"
+                app:boxBackgroundColor="@color/ds_surface_container_high"
+                app:boxStrokeColor="@color/ds_outline_variant">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_secondary"
+                    style="@style/Widget.Sakhi.TextField.Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    android:text="@{form.secondaryValue}" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/ivIconBg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.backgroundDrawable}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
-            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
-            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
-            app:layout_constraintTop_toTopOf="@+id/til_edit_text" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/ivIconTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.iconDrawableRes}"
-            android:visibility="@{form.showDrawable ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg"
-            app:layout_constraintEnd_toEndOf="@+id/ivIconBg"
-            app:layout_constraintStart_toStartOf="@+id/ivIconBg"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
+    </LinearLayout>
 </layout>

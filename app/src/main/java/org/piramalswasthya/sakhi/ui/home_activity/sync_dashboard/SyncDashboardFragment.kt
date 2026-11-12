@@ -40,6 +40,13 @@ class SyncDashboardFragment : Fragment() {
         }.attach()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // Redesign: the top bar shows this screen's name (it kept the previous screen's title before)
+        (activity as? org.piramalswasthya.sakhi.ui.home_activity.HomeActivity)
+            ?.updateActionBar(R.drawable.cloud_sync, getString(R.string.sync_dashboard))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

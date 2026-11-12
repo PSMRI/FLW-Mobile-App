@@ -1,46 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Drawer header · redesign (Figma 09 · Profile & more › "Profile header"): primary card (#006496, r24, padding 20),
+    64dp round photo (tap to change, as before) + name 22/28 white, employee ID 14/20 #CCE5FF, facility 12/16 #CCE5FF.
+    Ids unchanged; old layout: legacy_nav_header_home.xml.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/side_nav_bar"
-    android:padding="@dimen/padding_normal"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/iv_profile_pic"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/bg_circular"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic__menopause2"
-        app:shapeAppearanceOverlay="@style/CircleImage"/>
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_xs">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:layout_toEndOf="@id/iv_profile_pic"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_profile_header"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:orientation="horizontal"
+        android:padding="20dp">
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_profile_pic"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@color/ds_primary_container"
+            android:contentDescription="@string/asha_profile"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_person"
+            app:contentPadding="2dp"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
 
-        <TextView
-            android:id="@+id/tv_nav_name"
-            style="@style/nav_header_item_tv"
-            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_nav_role"
-            style="@style/nav_header_item_tv" />
+            <TextView
+                android:id="@+id/tv_nav_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                android:textColor="@color/ds_on_primary"
+                tools:text="Sunita Kumari" />
 
-        <TextView
-            android:id="@+id/tv_nav_id"
-            style="@style/nav_header_item_tv" />
+            <TextView
+                android:id="@+id/tv_nav_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_primary_container"
+                tools:text="Employee ID · 102345" />
 
+            <TextView
+                android:id="@+id/tv_nav_role"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_primary_container"
+                tools:text="Sirsi sub-centre" />
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</FrameLayout>

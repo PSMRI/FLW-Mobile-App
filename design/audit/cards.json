@@ -1,0 +1,3427 @@
+[
+ {
+  "layout": "rv_item_abortion",
+  "items": [
+   {
+    "kind": "value",
+    "text": "visit.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Weeks Of Pregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.weeksOfPregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.lmpString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "EDD",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.eddString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Abortion Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.abortionDateString",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_adolscent_health_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "ben.ben.benFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Add Beneficiary",
+    "id": "btn_new_ben",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Registration Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.regDate",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": "mob",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_aes_members_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithAes.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben",
+  "items": [
+   {
+    "kind": "value",
+    "text": "ben.benFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "HOF",
+    "id": "head",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "label",
+    "text": "Head of Family:",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.familyHeadName",
+    "id": "tv_hof_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "HOF",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Registration Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.regDate",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": "mob",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Death",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.dateOfDeath",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "ABHA Number :",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.abhaId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Deleted Record",
+    "id": "tvTitleDuplicaterecord",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "button",
+    "text": "Register Children",
+    "id": "btn_add_children",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "button",
+    "text": "Register Wife",
+    "id": "btn_add_spouse",
+    "hidden_by_default": true
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_child_care_child",
+  "items": [
+   {
+    "kind": "value",
+    "text": "ben.benFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Add Beneficiary",
+    "id": "btn_new_ben",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "label",
+    "text": "Mother Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.motherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Birth",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.dobString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "HBYC",
+    "id": "btn_hbyc",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_child_care_infant",
+  "items": [
+   {
+    "kind": "value",
+    "text": "ben.benFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Add Beneficiary",
+    "id": "btn_new_ben",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "label",
+    "text": "Mother Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.motherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Birth",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.dobString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "HBNC",
+    "id": "btnHBNC",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_child_immunization",
+  "items": [
+   {
+    "kind": "value",
+    "text": "temp.benFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Birth",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mother Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.motherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Child RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mother RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_child_reg",
+  "items": [
+   {
+    "kind": "value",
+    "text": "item.infant.babyName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mother Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_cho",
+  "items": [
+   {
+    "kind": "value",
+    "text": "ben.benName + ben.benSurname",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_ec_with_form",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithEcr.ben.benName + ' ' + benWithEcr.ben.benSurname",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithEcr.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithEcr.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithEcr.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Status",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "No of children",
+    "id": "tv_weeks_of_pregnancy_ph",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithEcr.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_element",
+  "items": [
+   {
+    "kind": "value",
+    "text": "fieldTitle",
+    "id": "tv_ph",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "field",
+    "id": "tv_val",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_get_data",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/long_to_string(ben.hhId)",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "SYNC TO LOCAL",
+    "id": "button",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_infant_reg",
+  "items": [
+   {
+    "kind": "value",
+    "text": "item.getCustomName(context)",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mother Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.motherBen.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_pw_registration_list_with_form",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithPwr.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithPwr.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithPwr.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_with_hrnpa_form",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithhrnpa.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrnpa.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrnpa.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrnpa.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ben_with_hrpa_form",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithhrpa.ben.benFullName",
+    "id": "tv_hh_hrpa_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrpa.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrpa.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Weeks Of Pregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrpa.weeksOfPregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrpa.lmpString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Expected Delivery",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithhrpa.eddString",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_children_care_bottom_sheet",
+  "items": [
+   {
+    "kind": "value",
+    "text": "option.title",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "ADD",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ec_track",
+  "items": [
+   {
+    "kind": "value",
+    "text": "visit.filledOnString",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ec_tracking_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "item.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/tv_husband_name_ph",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Total No.of Children",
+    "id": "tv_weeks_of_pregnancy_ph",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.numChildren",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/beneficiary_id",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/tv_mob_no_ph",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/tv_rch_id",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Status",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Last Visit Date",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_eye_surgery_visit",
+  "items": [
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": "btnAction",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_filaria_member_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithFilaria.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_general_checkup",
+  "items": [
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Earlier check-ups",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Add Check-up",
+    "id": "btn_add_checkup",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_household",
+  "items": [
+   {
+    "kind": "value",
+    "text": "household.headFullName",
+    "id": "tv_hh_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Household ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/long_to_string(household.hhId)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Contact Number",
+    "id": "contactNumber",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "household.contactNumber",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Verify OTP",
+    "id": "verification_pending",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "label",
+    "text": "Deleted Record",
+    "id": "tvTitleDuplicaterecord",
+    "hidden_by_default": true
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": "button5",
+    "hidden_by_default": true
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_hrnp_tracking_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "item.ben.benFullName",
+    "id": "tv_hh_hrnp_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_hrp_track_ben",
+  "items": [
+   {
+    "kind": "value",
+    "text": "track.filledOnString",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_hrp_tracking_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "item.ben.benFullName",
+    "id": "tv_hh_hrp_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Weeks Of Pregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.weeksOfPregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.lmpString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Expected Delivery",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.eddString",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_icon_grid",
+  "items": [
+   {
+    "kind": "value",
+    "text": "homeIcon.title",
+    "id": "textView2",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_icon_hbnc",
+  "items": [
+   {
+    "kind": "value",
+    "text": "hbncIcon.title",
+    "id": "textView",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_icon_hbyc",
+  "items": [
+   {
+    "kind": "value",
+    "text": "hbycIcom.title",
+    "id": "textView",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_imm_vaccine",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/due_date_label(vaccine.dueDate)",
+    "id": "tv_due_date",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "KCUF",
+    "id": "btnVaccine",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/due_date_label(vaccine.dueDate)",
+    "id": "tv_due_date",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "KCUF",
+    "id": "btnVaccine",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_imm_vaccine_cat",
+  "items": [
+   {
+    "kind": "value",
+    "text": "category.categoryString",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_immunization_ben",
+  "items": [
+   {
+    "kind": "value",
+    "text": "temp.benName",
+    "id": "textView9",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "temp.age",
+    "id": "textView10",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_incentive",
+  "items": [
+   {
+    "kind": "value",
+    "text": "String.valueOf(serialNo)",
+    "id": "tvSerialNo",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/incentive_ben_details(item.record.benId, item.record.name)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/incentive_activity_details(item.activity.description)",
+    "id": null,
+    "hidden_by_default": true
+   },
+   {
+    "kind": "value",
+    "text": "@string/incentive_rch_id_details(item.ben.rchId)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/incentive_abha_id_details(item.ben.abhaId)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/incentive_amount(item.activity.rate)",
+    "id": "tv_amount",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_incentive_grouped",
+  "items": [
+   {
+    "kind": "value",
+    "text": "String.valueOf(serialNo)",
+    "id": "tvSerialNo",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.groupName",
+    "id": "tvGroupName",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "item.description",
+    "id": "tvActivityName",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "String.valueOf(item.count)",
+    "id": "tvCount",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "String.valueOf(item.totalAmount)",
+    "id": "tvTotalAmount",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_irs_round",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/sr_no(position + 1)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/round_no(irs.rounds)",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_kala_azar_member_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithKalaAzar.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_leprosy_member_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithLeprosy.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_malaria_cases_confirmed_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalariaConfirmed.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Diagnosis",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_malaria_members_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithMalaria.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ncd_cbac",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ncd_cbac_element",
+  "items": [
+   {
+    "kind": "value",
+    "text": "cbac.date",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_ncd_refer",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Reason for Referral",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.referalCac.referralReason",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Referred From",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Referred To",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithCbac.referalCac.referredToInstituteName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Referral Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Follow Up",
+    "id": "btnFollowUp",
+    "hidden_by_default": true
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_pnc_bottomsheet",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/pnc_visit_number(visit.visitNumber)",
+    "id": "tv_name",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_pnc_visit",
+  "items": [
+   {
+    "kind": "value",
+    "text": "visit.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Date of Delivery",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.deliveryDate",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Last Visit Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Status",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Last Visit Date",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_pregnancy_anc",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/anc_visit_number(visit.visitNumber)",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": "btn_view",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_pregnancy_anc_pmsma",
+  "items": [
+   {
+    "kind": "value",
+    "text": "@string/anc_visit_number(visit.visitNumber)",
+    "id": "tv_name",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "VIEW",
+    "id": "btnView",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_pregnancy_visit",
+  "items": [
+   {
+    "kind": "value",
+    "text": "visit.ben.benFullName",
+    "id": "tv_hh_ec_id",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Weeks Of Pregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.weeksOfPregnancy",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "LMP",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.lmpString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "EDD",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "visit.eddString",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Last Visit Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Status",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Last Visit Date",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Delivery Status",
+    "id": "tvDeliveryStatus",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_risk_factor",
+  "items": [
+   {
+    "kind": "value",
+    "text": "riskFactor",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_sync_status",
+  "items": [
+   {
+    "kind": "value",
+    "text": "sync.name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/long_to_string(sync.synced)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/long_to_string(sync.notSynced)",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "@string/long_to_string(sync.syncing)",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_tb_confirmed_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Nikshay ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.tbSuspected.nikshayId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Family Members",
+    "id": "btn_family_members",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "Follow Up",
+    "id": "btn_form_tb",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_tb_screening_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Nikshay ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.tbSuspected.nikshayId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_tb_suspected_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Nikshay ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.tbSuspected.nikshayId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_tpt_followup_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Nikshay ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.tbSuspected.nikshayId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "button",
+    "text": "START TPT",
+    "id": "btn_form_tb",
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_velunaribility_list",
+  "items": [
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.benFullName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Husband Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Father Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.fatherName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Spouse Name",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.spouseName",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Age",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.gender",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Beneficiary ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Mobile Number",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.mobileNo",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "RCH ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.ben.rchId",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Nikshay ID",
+    "id": null,
+    "hidden_by_default": false
+   },
+   {
+    "kind": "value",
+    "text": "benWithTb.tbSuspected.nikshayId",
+    "id": null,
+    "hidden_by_default": false
+   }
+  ]
+ },
+ {
+  "layout": "rv_item_visits",
+  "items": [
+   {
+    "kind": "label",
+    "text": "Visit 1",
+    "id": "tv_visit_number",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "2023-11-15",
+    "id": "tv_follow_up_date",
+    "hidden_by_default": false
+   },
+   {
+    "kind": "label",
+    "text": "Treatment Status",
+    "id": "tv_treatment_status",
+    "hidden_by_default": false
+   }
+  ]
+ }
+]

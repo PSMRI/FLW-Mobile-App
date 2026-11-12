@@ -61,7 +61,8 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
             binding.nikshayLayout.visibility = View.VISIBLE
             binding.RCHlayout.visibility = View.GONE
 
-            binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.INVISIBLE else View.VISIBLE
+//            binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.tbConfirmedList == null) View.GONE else View.VISIBLE // Redesign: no empty badge slot
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -92,9 +93,10 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
             }
 
             if (item.ben.isDeath) {
-                binding.contstraintLayoutV.setBackgroundColor(
-                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
-                )
+//                binding.contstraintLayoutV.setBackgroundColor(
+//                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container_high)) // Redesign: deceased = grey card
                 if (item.tbConfirmedList.isEmpty()) {
                     binding.btnFormTb.visibility = View.GONE
                 } else {
@@ -102,13 +104,15 @@ ListAdapter<BenWithTbSuspectedDomain, TbConfirmedListAdapter.BenViewHolder>
 
                 }
             } else {
-                binding.contstraintLayoutV.setBackgroundColor(
-                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
-                )
+//                binding.contstraintLayoutV.setBackgroundColor(
+//                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container)) // Redesign: default card colour
             }
 
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
-            binding.btnFamilyMembers.setBackgroundColor(binding.root.resources.getColor(R.color.pending_orange))
+//            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.dsFormState(if (item.tbConfirmedList == null || item.tbConfirmedList.isEmpty()) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: pending = filled · done = tonal (was red / green)
+//            binding.btnFamilyMembers.setBackgroundColor(binding.root.resources.getColor(R.color.pending_orange)) // Redesign: outlined secondary button from the layout
             binding.clickListener = clickListener
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()

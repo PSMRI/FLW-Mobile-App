@@ -41,7 +41,7 @@ class CommunicableDiseasesGridFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.rvIconGrid.layoutManager = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         val iconAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {

@@ -44,7 +44,8 @@ class CUFYAdapter(
             binding.ben =  item.ben
             binding.clickListener = clickListener
             binding.samStatus = item.samStatus
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsMotherAndAge(binding.root.context, item.ben.motherName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }

@@ -31,9 +31,11 @@ class ImmunizationBirthDoseCategoryAdapter(
 
         }
         if (viewModel.selectedPosition == position) {
-            holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_selection)
+            //holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_selection)
+            org.piramalswasthya.sakhi.ui.design.dsFilterChip(holder.binding.cMainLayout, holder.binding.monthText, true) // Redesign filter chip
         } else {
-            holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_unselection)
+            //holder.binding.cMainLayout.setBackgroundResource(R.drawable.tab_unselection)
+            org.piramalswasthya.sakhi.ui.design.dsFilterChip(holder.binding.cMainLayout, holder.binding.monthText, false) // Redesign filter chip
         }
 
     }

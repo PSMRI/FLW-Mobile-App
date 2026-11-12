@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Leprosy follow-up visit row · redesign: white bordered card (r12) — visit number 14/20 medium + date, treatment
+     status 12/16 grey below. Ids unchanged. Old layout: legacy_rv_item_visits.xml. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/ds_space_md"
+    android:layout_marginTop="@dimen/ds_space_xs"
+    android:background="@drawable/bg_ds_field_row"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="@drawable/item_background"
-    android:layout_margin="4dp">
+    android:padding="@dimen/ds_space_sm">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,23 +21,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:text="Visit 1" />
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_surface"
+            tools:text="Visit 1" />
 
         <TextView
             android:id="@+id/tv_follow_up_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:text="2023-11-15" />
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
+            tools:text="15-11-2026" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_treatment_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-        android:text="Treatment Status"
-        android:layout_marginTop="4dp" />
-
+        android:layout_marginTop="@dimen/ds_space_2xs"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+        android:textColor="@color/ds_on_surface_variant"
+        tools:text="Treatment status" />
 </LinearLayout>

@@ -90,9 +90,11 @@ class FilariaMemberListAdapter(
             } else {
                 binding.btnFormTb.visibility = View.INVISIBLE
             }
-            binding.btnFormTb.text = if (item.filaria == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
+//            binding.btnFormTb.text = if (item.filaria == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
+            binding.btnFormTb.text = if (item.filaria == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.ds_view) // Redesign: sentence case
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.filaria == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
+            binding.btnFormTb.dsFormState(if (item.filaria == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: to do = filled · view = tonal (was red / green)
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 

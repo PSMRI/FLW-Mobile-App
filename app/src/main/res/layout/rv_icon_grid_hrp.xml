@@ -1,69 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<!--
+    High Risk Assessment hub · redesign: same surface / grid spacing as the other module hubs (rv_icon_grid.xml);
+    the solid primary section bars become section titles (TitleSmall, on-surface-variant) above each tile grid.
+    Ids unchanged. Old layout: legacy_rv_icon_grid_hrp.xml.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="@color/ds_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/ds_space_2xl">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:textColor="?attr/colorOnPrimary"
-            android:layout_gravity="bottom|center_horizontal"
-            android:padding="@dimen/padding_normal"
+            android:accessibilityHeading="true"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_md"
+            android:paddingBottom="@dimen/ds_space_xs"
             android:text="@string/non_pregnant_women_eligible_couple_section"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium">
-        </TextView>
-    </LinearLayout>
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_surface_variant" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_icon_grid_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:splitMotionEvents="false"
-        android:background="?attr/colorOnSecondary"
-        android:padding="@dimen/padding_small"
-        android:clipToPadding="false"
-        tools:itemCount="1"
-        tools:listitem="@layout/rv_item_icon_grid" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_icon_grid_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingHorizontal="@dimen/ds_space_xs"
+            android:splitMotionEvents="false"
+            tools:itemCount="2"
+            tools:listitem="@layout/rv_item_icon_grid" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:textColor="?attr/colorOnPrimary"
-            android:layout_gravity="bottom|center_horizontal"
-            android:padding="@dimen/padding_normal"
+            android:accessibilityHeading="true"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_lg"
+            android:paddingBottom="@dimen/ds_space_xs"
             android:text="@string/pregnant_women_pw_section"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium">
-        </TextView>
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_surface_variant" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_icon_grid_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingHorizontal="@dimen/ds_space_xs"
+            android:splitMotionEvents="false"
+            tools:itemCount="2"
+            tools:listitem="@layout/rv_item_icon_grid" />
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_icon_grid_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:splitMotionEvents="false"
-        android:background="?attr/colorOnSecondary"
-        android:padding="@dimen/padding_small"
-        android:clipToPadding="false"
-        tools:itemCount="1"
-        tools:listitem="@layout/rv_item_icon_grid" />
-
-</LinearLayout>
-
 </ScrollView>

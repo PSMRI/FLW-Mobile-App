@@ -104,10 +104,18 @@ class BenListAdapter(
             val isMatched = benIdList.contains(item.benId)
             binding.isMatched = isMatched
 
+//            binding.btnAbove30.backgroundTintList = ContextCompat.getColorStateList(
+//                binding.root.context,
+//                if (isMatched) android.R.color.holo_orange_dark
+//                else android.R.color.holo_green_dark
+//            )
+            // Redesign: outlined button; once the eye-surgery form exists it turns amber (was orange vs green)
             binding.btnAbove30.backgroundTintList = ContextCompat.getColorStateList(
                 binding.root.context,
-                if (isMatched) android.R.color.holo_orange_dark
-                else android.R.color.holo_green_dark
+                if (isMatched) R.color.ds_warning_container else android.R.color.transparent
+            )
+            binding.btnAbove30.setTextColor(
+                ContextCompat.getColor(binding.root.context, if (isMatched) R.color.ds_warning else R.color.ds_primary)
             )
             binding.btnAbove30.text = binding.root.context.getString(R.string.cataract_surgery)
 
@@ -188,7 +196,8 @@ class BenListAdapter(
             when {
                 item.gender == "MALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
-                    binding.btnAddChildren.visibility = View.INVISIBLE
+                    //binding.btnAddChildren.visibility = View.INVISIBLE
+                    binding.btnAddChildren.visibility = View.GONE // Redesign: lone button takes the full width
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
                     binding.btnAddSpouse.text = context.getString(R.string.add_wife)
                     binding.btnAddSpouse.setOnClickListener {
@@ -199,7 +208,8 @@ class BenListAdapter(
                 // FEMALE + married + no spouse: show Add Husband only
                 item.gender == "FEMALE" && !item.isSpouseAdded && item.isMarried -> {
                     binding.btnAddSpouse.visibility = View.VISIBLE
-                    binding.btnAddChildren.visibility = View.INVISIBLE
+                    //binding.btnAddChildren.visibility = View.INVISIBLE
+                    binding.btnAddChildren.visibility = View.GONE // Redesign: lone button takes the full width
                     binding.llAddSpouseBtn.visibility = View.VISIBLE
                     binding.btnAddSpouse.text = context.getString(R.string.add_husband)
                     binding.btnAddSpouse.setOnClickListener {
@@ -240,7 +250,8 @@ class BenListAdapter(
 
                 else -> {
                     binding.btnAddSpouse.visibility = View.GONE
-                    binding.btnAddChildren.visibility = View.INVISIBLE
+                    //binding.btnAddChildren.visibility = View.INVISIBLE
+                    binding.btnAddChildren.visibility = View.GONE // Redesign: lone button takes the full width
                     binding.llAddSpouseBtn.visibility = View.GONE
                 }
             }
@@ -286,36 +297,42 @@ class BenListAdapter(
                 binding.spouse = false
             }
             if (item.isDeath) {
-                binding.contentLayout.setBackgroundColor(
-                    ContextCompat.getColor(
-                        binding.contentLayout.context,
-                        R.color.md_theme_dark_outline
-                    )
-                )
+                //binding.contentLayout.setBackgroundColor(
+                //ContextCompat.getColor(
+                //binding.contentLayout.context,
+                //R.color.md_theme_dark_outline
+                //)
+                //)
+                // Redesign: card colour on the MaterialCardView (white; grey when deceased / deleted)
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.cvContent.context, R.color.ds_surface_container_high))
                 binding.ivCall.visibility = View.GONE
                 binding.ivSyncState.visibility = View.GONE
                 binding.llAddSpouseBtn.visibility = View.GONE
                 binding.btnAbha.visibility = View.GONE
                 binding.ivSoftDelete.visibility = View.GONE
             } else {
-                binding.contentLayout.setBackgroundColor(
-                    ContextCompat.getColor(
-                        binding.contentLayout.context,
-                        R.color.md_theme_light_primary
-                    )
-                )
+                //binding.contentLayout.setBackgroundColor(
+                //ContextCompat.getColor(
+                //binding.contentLayout.context,
+                //R.color.md_theme_light_primary
+                //)
+                //)
+                // Redesign: card colour on the MaterialCardView (white; grey when deceased / deleted)
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.cvContent.context, R.color.ds_surface_container))
             }
 
             if (isSoftDeleteEnabled) {
                 binding.ivSoftDelete.visibility = View.VISIBLE
 
                 if (item.isDeactivate) {
-                    binding.contentLayout.setBackgroundColor(
-                        ContextCompat.getColor(
-                            binding.contentLayout.context,
-                            R.color.Quartenary
-                        )
-                    )
+                    //binding.contentLayout.setBackgroundColor(
+                    //ContextCompat.getColor(
+                    //binding.contentLayout.context,
+                    //R.color.Quartenary
+                    //)
+                    //)
+                    // Redesign: card colour on the MaterialCardView (white; grey when deceased / deleted)
+                    binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.cvContent.context, R.color.ds_surface_container_high))
                     binding.ivSoftDelete.visibility = View.GONE
 
                     binding.btnAbha.visibility = View.INVISIBLE
@@ -329,18 +346,22 @@ class BenListAdapter(
                 } else {
 
                     if (!item.isDeath) {
-                        binding.contentLayout.setBackgroundColor(
-                            ContextCompat.getColor(
-                                binding.contentLayout.context,
-                                R.color.md_theme_light_primary
-                            )
-                        )
+                        //binding.contentLayout.setBackgroundColor(
+                        //ContextCompat.getColor(
+                        //binding.contentLayout.context,
+                        //R.color.md_theme_light_primary
+                        //)
+                        //)
+                        // Redesign: card colour on the MaterialCardView (white; grey when deceased / deleted)
+                        binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.cvContent.context, R.color.ds_surface_container))
 
                         binding.btnAbha.visibility = View.VISIBLE
                         binding.tvTitleDuplicaterecord.visibility = View.GONE
                         binding.llBenDetails4.visibility = View.VISIBLE
                         binding.ivCall.visibility = View.VISIBLE
-                        binding.ivSyncState.visibility = View.VISIBLE
+//binding.ivSyncState.visibility = View.VISIBLE
+                        // Redesign: the sync badge is a text pill — keep it hidden when the screen hides sync state
+                        binding.ivSyncState.visibility = if (item.syncState != null) View.VISIBLE else View.GONE
                         binding.llAddSpouseBtn.visibility = View.VISIBLE
 
                     } else {

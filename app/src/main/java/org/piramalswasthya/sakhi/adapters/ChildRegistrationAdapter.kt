@@ -44,11 +44,13 @@ class ChildRegistrationAdapter(
             clickListener: ClickListener?,
         ) {
             binding.item = item
-            binding.btnForm.text = if (item.childBen == null) binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
+//binding.btnForm.text = if (item.childBen == null) binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
 
-            binding.btnForm.setBackgroundColor(binding.root.resources.getColor(if (item.childBen == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+//binding.btnForm.setBackgroundColor(binding.root.resources.getColor(if (item.childBen == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnForm.dsRegisterOrView(isView = item.childBen != null) // Redesign
             binding.clickListener = clickListener
-            binding.age.text = getLocalizedAge(binding.root.context, item.motherBen.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.motherBen.dob)
+            binding.age.text = dsMotherAndAge(binding.root.context, item.motherBen.benFullName, getLocalizedAge(binding.root.context, item.motherBen.dob)) // Redesign meta line
             binding.executePendingBindings()
 
         }

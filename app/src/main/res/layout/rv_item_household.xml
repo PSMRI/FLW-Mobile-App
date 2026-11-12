@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Household card · redesign, matched to Figma "FLW App Redesign" › 04 · Households › "Household card":
+    white card 328w, 1dp #DCE1E8 border, r16, padding 16, 12dp gap between rows;
+    header = 44dp icon tile (r12, #CCE5FF, 24dp icon #006496) + 12 + HOF name 16/24 + HH ID 12/16;
+    stats = 18dp icon + 6 + 14/20 text, 16dp apart; actions = two 48dp pill buttons 8dp apart
+    (Members: outlined #72787E / text #006496 · Add member: tonal #CCE5FF / #001E31 with 20dp icon).
+    Every id, click and binding used by HouseHoldListAdapter is kept. Old layout: legacy_rv_item_household.xml.
+    Not in the app yet (needs data, so left out): the Synced / Not synced badge.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.home_activity.all_household.AllHouseholdFragment">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="household"
@@ -15,219 +26,204 @@
             type="org.piramalswasthya.sakhi.adapters.HouseHoldListAdapter.HouseholdClickListener" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/parentCard"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        backgroundTintBasedOnNumMembers="@{household.numMembers}"
-        tools:backgroundTint="?attr/colorPrimary"
-        android:elevation="@dimen/padding_normal"
-        android:onClick="@{()->clickListener.onClickedForHHDetails(household)}"
-        app:cardCornerRadius="@dimen/padding_normal"
-        app:cardElevation="@dimen/padding_normal">
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_sm"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="@{()->clickListener.onClickedForHHDetails(household)}">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_md">
 
-            <TextView
-                android:id="@+id/tv_hh_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorOnPrimary"
-                android:drawablePadding="@dimen/padding_small"
-                android:gravity="center_vertical"
-                android:padding="@dimen/padding_normal"
-                android:text="@{household.headFullName}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorPrimaryVariant"
-                app:drawableLeftCompat="@drawable/ic__hh"
-                app:drawableTint="?attr/colorPrimary"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Hello Meister" />
-
-            <ImageView
-                android:id="@+id/ivSoftDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_delete"
-                android:onClick="@{()->clickListener.onClickSoftDeleteHh(household)}"
-                android:visibility="gone"
-                android:contentDescription="@string/str_duplicate_record"
-                android:layout_marginEnd="@dimen/_10sdp"
-                app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
+            <!-- Header: icon tile · name block · (delete) -->
             <LinearLayout
-                android:id="@+id/ll_ben_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:padding="@dimen/padding_normal"
-                app:layout_constraintTop_toBottomOf="@id/tv_hh_id">
+                android:gravity="center_vertical"
+                android:minHeight="44dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_module_icon"
+                    android:backgroundTint="@color/ds_module_household_bg"
+                    android:importantForAccessibility="no"
+                    android:padding="10dp"
+                    android:src="@drawable/ic__hh"
+                    app:tint="@color/ds_module_household_fg" />
 
                 <LinearLayout
+                    android:id="@+id/ll_ben_details"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_sm"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_small">
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_hh_id"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/household_id"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        android:textColor="?attr/colorOnPrimary" />
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{household.headFullName}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="Ramesh Kumar" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{@string/long_to_string(household.hhId)}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="8095730593874" />
+                        android:layout_marginTop="2dp"
+                        android:maxLines="1"
+                        android:text="@{@string/ds_hh_id_value(String.valueOf(household.hhId))}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_on_surface_variant"
+                        tools:text="HH ID 701233450012" />
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_small">
+                <ImageView
+                    android:id="@+id/ivSoftDelete"
+                    android:layout_width="@dimen/ds_touch_target"
+                    android:layout_height="@dimen/ds_touch_target"
+                    android:layout_marginStart="@dimen/ds_space_xs"
+                    android:layout_marginEnd="-12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/str_duplicate_record"
+                    android:onClick="@{()->clickListener.onClickSoftDeleteHh(household)}"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_delete"
+                    android:visibility="gone"
+                    app:tint="@color/ds_on_surface_variant"
+                    tools:visibility="visible" />
 
-                    <TextView
-                        android:id="@+id/contactNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/contact_number"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        android:textColor="?attr/colorOnPrimary" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{household.contactNumber}"
-                        android:layout_below="@+id/contactNumber"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="65987506978" />
-                </RelativeLayout>
-
+                <!-- unused today (always gone); kept for its id -->
                 <Button
                     android:id="@+id/verification_pending"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:layout_height="wrap_content"
                     android:text="@string/verify_otp"
-                    android:visibility="gone"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:backgroundTint="@android:color/holo_orange_dark"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:drawableTint="@color/md_theme_light_onPrimary"
-                    />
+                    android:visibility="gone" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button4"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                textBasedOnNumMembers="@{household.numMembers}"
-                android:layout_width="0dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
+            <!-- Stats: members · phone -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/person_add"
-                app:drawableTint="@color/md_theme_light_onPrimary"
-                android:onClick="@{()->clickListener.onClickedForNewBen(household)}"
-                android:text="@string/btn_rv_item_hh_add_ben"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:textColor="?attr/colorOnPrimary"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
-                app:layout_constraintStart_toEndOf="@+id/button3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1" />
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvTitleDuplicaterecord"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_group"
+                    app:tint="@color/ds_on_surface_variant" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="@{@plurals/ds_members_count(household.numMembers, household.numMembers)}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="5 members" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_call"
+                    android:visibility="@{household.contactNumber.empty ? View.GONE : View.VISIBLE}"
+                    app:tint="@color/ds_on_surface_variant" />
+
+                <TextView
+                    android:id="@+id/contactNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:maxLines="1"
+                    android:text="@{household.contactNumber}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="98765 43210" />
+            </LinearLayout>
+
+            <!-- Actions: Members · Add member (Add MDA / duplicate label share the second slot, as before) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:fontFamily="@font/roboto_bold"
-                android:textSize="@dimen/_12sdp"
-                android:visibility="gone"
-                android:textColor="@color/md_theme_light_onTertiary"
-                android:text="@string/str_duplicate_record"
-                app:layout_constraintBottom_toBottomOf="@+id/button3"
-                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
-                app:layout_constraintStart_toEndOf="@+id/button3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"/>
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMda"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:onClick="@{()->clickListener.onClickedAddMDA(household)}"
-                android:text="@string/add_mda"
-                android:elevation="10dp"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
-                app:layout_constraintStart_toEndOf="@+id/button3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button3"
+                    style="@style/Widget.Sakhi.Button.Outlined"
+                    showBasedOnNumMembers="@{household.numMembers}"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/ds_space_xs"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:onClick="@{()->clickListener.onClickedForMembers(household)}"
+                    android:text="@string/ds_members" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button5"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_big"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:text="@string/view"
-                android:visibility="gone"
-                android:onClick="@{()->clickListener.onClickedForMembers(household)}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:textColor="?attr/colorOnPrimary"
-                app:drawableTint="@color/md_theme_light_onPrimary"
-                app:layout_constraintBottom_toBottomOf="@id/button3"
-                app:layout_constraintTop_toTopOf="@+id/button3"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="7dp"
-                 />
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button3"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                showBasedOnNumMembers="@{household.numMembers}"
-                android:layout_width="0dp"
-                android:layout_marginEnd="3dp"
-                android:layout_marginStart="3dp"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic__ben"
-                android:onClick="@{()->clickListener.onClickedForMembers(household)}"
-                android:text="@{@string/hh_members_text(household.numMembers)}"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:textColor="?attr/colorOnPrimary"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:layout_constraintTop_toBottomOf="@+id/ll_ben_details"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button4"
-                app:layout_constraintHorizontal_weight="1"
-                />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button4"
+                        style="@style/Widget.Sakhi.Button.Tonal"
+                        textBasedOnNumMembers="@{household.numMembers}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{()->clickListener.onClickedForNewBen(household)}"
+                        android:text="@string/btn_rv_item_hh_add_ben"
+                        app:icon="@drawable/ic_ds_person_add" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnMda"
+                        style="@style/Widget.Sakhi.Button.Tonal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{()->clickListener.onClickedAddMDA(household)}"
+                        android:text="@string/add_mda"
+                        android:visibility="gone" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tvTitleDuplicaterecord"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/ds_button_height"
+                        android:gravity="center"
+                        android:text="@string/str_duplicate_record"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_error"
+                        android:visibility="gone" />
+                </FrameLayout>
 
-    </androidx.cardview.widget.CardView>
+                <!-- unused today (always gone); kept for its id -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()->clickListener.onClickedForMembers(household)}"
+                    android:text="@string/view"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 </layout>

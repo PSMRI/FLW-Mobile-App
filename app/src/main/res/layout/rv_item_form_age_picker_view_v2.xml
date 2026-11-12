@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Form field · redesign (Figma "FLW App Redesign" › 07 · Register member › "Text field"):
+    label ABOVE the box (14/20 Medium #42474E, red * when required), 56dp box, 1dp #72787E border (2dp primary when
+    focused, red on error), r12, 16dp padding, value 16/24. Fields are 16dp apart inside the section card.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_age_picker_view_v2.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -14,68 +20,62 @@
             type="org.piramalswasthya.sakhi.adapters.FormInputAdapter.AgeClickListener" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
+        <TextView
+            android:id="@+id/tv_label_date"
+            style="@style/Widget.Sakhi.FieldLabel"
+            asteriskRequired="@{form.required}"
+            hintText="@{form.subtitle}"
+            tools:text="First name *" />
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_edit_text_date"
+            style="@style/Widget.Sakhi.TextField.Boxed"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent">
-            <LinearLayout
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_date"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_edit_text_date"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    asteriskRequired="@{form.required}"
-                    hintText="@{form.subtitle}"
-                    android:layout_marginBottom="@dimen/margin_big"
-                    >
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:focusable="false"
+                android:hint="@string/ds_date_placeholder"
+                android:singleLine="true"
+                android:text="@{form.value}" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_date"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_calendar"
-                        android:focusable="false"
-                        android:singleLine="true"
-                        android:text="@{form.value}"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/tv_label_num"
+            style="@style/Widget.Sakhi.FieldLabel"
+            android:layout_marginTop="@dimen/ds_space_md"
+            asteriskRequired="@{form.required}"
+            hintText="@{form.title}"
+            tools:text="Age *" />
 
-            </LinearLayout>
-            <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_edit_text_num"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_num"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_edit_text_num"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    asteriskRequired="@{form.required}"
-                    hintText="@{form.title}">
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:singleLine="true"
+                tools:text="26 years" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_num"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        tools:text="lsdkfnsld" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 </layout>

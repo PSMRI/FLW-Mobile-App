@@ -67,21 +67,24 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             when (tptFollowUpAction(item.followUpHistory)) {
                 TPTFollowUpAction.VIEW_DETAILS -> {
                     binding.btnFormTb.text = binding.root.context.getString(R.string.view_details)
-                    binding.btnFormTb.setBackgroundColor(
-                        ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
-                    )
+//                    binding.btnFormTb.setBackgroundColor(
+//                        ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
+//                    )
+                    binding.btnFormTb.dsFormState(DsFormState.SECONDARY) // Redesign
                 }
                 TPTFollowUpAction.ADD_FOLLOW_UP -> {
                     binding.btnFormTb.text = binding.root.context.getString(R.string.add_follow_up)
-                    binding.btnFormTb.setBackgroundColor(
-                        ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_dark)
-                    )
+//                    binding.btnFormTb.setBackgroundColor(
+//                        ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_dark)
+//                    )
+                    binding.btnFormTb.dsFormState(DsFormState.PARTIAL) // Redesign
                 }
                 TPTFollowUpAction.START_TREATMENT -> {
                     binding.btnFormTb.text = binding.root.context.getString(R.string.start_tpt)
-                    binding.btnFormTb.setBackgroundColor(
-                        ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
-                    )
+//                    binding.btnFormTb.setBackgroundColor(
+//                        ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
+//                    )
+                    binding.btnFormTb.dsFormState(DsFormState.NOT_STARTED) // Redesign
                 }
             }
 
@@ -109,13 +112,15 @@ class TPTListAdapter : ListAdapter<TPTListItem, TPTListAdapter.BenViewHolder>(Di
             }
 
             if (item.ben.isDeath) {
-                binding.contstraintLayoutV.setBackgroundColor(
-                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
-                )
+//                binding.contstraintLayoutV.setBackgroundColor(
+//                    ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container_high)) // Redesign: deceased = grey card
             } else {
-                binding.contstraintLayoutV.setBackgroundColor(
-                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
-                )
+//                binding.contstraintLayoutV.setBackgroundColor(
+//                    ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container)) // Redesign: default card colour
             }
             binding.executePendingBindings()
         }

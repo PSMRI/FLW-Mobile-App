@@ -58,11 +58,12 @@ class VulnerableListAdapter(
             }
 
             riskFactorAdapter.submitList(getRiskFactor(item, viewModel))
-            val params = binding.btnFormTb.layoutParams as ConstraintLayout.LayoutParams
-
-            params.topToBottom = ConstraintLayout.LayoutParams.UNSET
-
-            binding.btnFormTb.layoutParams = params
+//            val params = binding.btnFormTb.layoutParams as ConstraintLayout.LayoutParams
+//
+//            params.topToBottom = ConstraintLayout.LayoutParams.UNSET
+//
+//            binding.btnFormTb.layoutParams = params
+            // Redesign: the button now sits in the card's button row (LinearLayout) below the risk factors — no constraint tweak needed
 
             binding.nikshayLayout.visibility = View.VISIBLE
             binding.RCHlayout.visibility = View.GONE
@@ -70,7 +71,8 @@ class VulnerableListAdapter(
                   binding.cvContent.visibility = View.GONE
               } */
 
-            binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
+//            binding.ivSyncState.visibility = if (item.tb == null) View.INVISIBLE else View.VISIBLE
+            binding.ivSyncState.visibility = if (item.tb == null) View.GONE else View.VISIBLE // Redesign: no empty badge slot
 
             if (item.ben.spouseName == "Not Available" && item.ben.fatherName == "Not Available") {
                 binding.father = true
@@ -108,26 +110,29 @@ class VulnerableListAdapter(
 
             binding.btnFormTb.text = if (item.tb == null) binding.root.context.getString(R.string.screen) else binding.root.context.getString(R.string.view_screen)
 
-            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+//            binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.tb == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            binding.btnFormTb.dsFormState(if (item.tb == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: pending = filled · done = tonal
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
 
 
             if (item.ben.isDeath) {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
-                    ContextCompat.getColor(
-                        binding.linearTbScreeningListLayout.context,
-                        R.color.md_theme_dark_outline
-                    )
-                )
+//                binding.linearTbScreeningListLayout.setBackgroundColor(
+//                    ContextCompat.getColor(
+//                        binding.linearTbScreeningListLayout.context,
+//                        R.color.md_theme_dark_outline
+//                    )
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container_high)) // Redesign: deceased = grey card
                 binding.ivSyncState.visibility = View.GONE
                 binding.btnFormTb.visibility = View.GONE
             } else {
-                binding.linearTbScreeningListLayout.setBackgroundColor(
-                    ContextCompat.getColor(
-                        binding.linearTbScreeningListLayout.context,
-                        R.color.md_theme_light_primary
-                    )
-                )
+//                binding.linearTbScreeningListLayout.setBackgroundColor(
+//                    ContextCompat.getColor(
+//                        binding.linearTbScreeningListLayout.context,
+//                        R.color.md_theme_light_primary
+//                    )
+//                )
+                binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container)) // Redesign: default card colour
             }
             binding.executePendingBindings()
 

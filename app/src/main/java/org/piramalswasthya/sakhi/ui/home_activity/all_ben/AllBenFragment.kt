@@ -138,6 +138,9 @@ class AllBenFragment : Fragment() {
         if (isNonHousehold) {
             binding.btnNextPage.text = getString(R.string.add_beneficiary)
         }
+        // Redesign (Figma 06 · All beneficiaries): search hint and extended-FAB icon
+        binding.searchView.hint = getString(R.string.ds_search_beneficiaries)
+        binding.btnNextPage.setIconResource(R.drawable.ic_ds_person_add)
 
         viewModelEyeSurgery.loadAllBenIds()
 

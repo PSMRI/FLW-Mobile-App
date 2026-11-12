@@ -50,8 +50,10 @@ class ECRegistrationAdapter(
 
             binding.noOfchild.text= item.childCount.toString()
             if (item.ecr == null) {
-                binding.llLmpDate.visibility = View.INVISIBLE
-                binding.llBenStatus.visibility = View.INVISIBLE
+                //binding.llLmpDate.visibility = View.INVISIBLE
+                binding.llLmpDate.visibility = View.GONE // Redesign: no blank grid row
+                //binding.llBenStatus.visibility = View.INVISIBLE
+                binding.llBenStatus.visibility = View.GONE // Redesign: no blank grid row
             } else {
                 binding.llLmpDate.visibility = View.VISIBLE
                 binding.llBenStatus.visibility = View.VISIBLE
@@ -68,21 +70,34 @@ class ECRegistrationAdapter(
                 }
             } else {
                 binding.ivMissState.visibility = View.GONE
-                binding.llLmpDate.visibility = View.INVISIBLE
-                binding.llBenStatus.visibility = View.INVISIBLE
+                //binding.llLmpDate.visibility = View.INVISIBLE
+                binding.llLmpDate.visibility = View.GONE // Redesign: no blank grid row
+                //binding.llBenStatus.visibility = View.INVISIBLE
+                binding.llBenStatus.visibility = View.GONE // Redesign: no blank grid row
             }
 
             binding.ivSyncState.visibility = if (item.ecr == null) View.INVISIBLE else View.VISIBLE
             binding.btnFormEc1.text =
                 if (item.ecr != null && item.ecr.lmpDate != 0L) {
-                    binding.root.resources.getString(R.string.view)
+                    //binding.root.resources.getString(R.string.view)
+                    binding.root.resources.getString(R.string.ds_view) // Redesign: sentence case "View"
                 } else {
                     binding.root.resources.getString(R.string.register)
                 }
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
 
 
-            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
+//binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.ecr != null && item.ecr.lmpDate != 0L) android.R.color.holo_green_dark else android.R.color.holo_red_dark))
+            // Redesign (Figma M2.3-02): "Register" = filled primary, "View" = tonal (was red / green)
+            val isView = item.ecr != null && item.ecr.lmpDate != 0L
+            val ctx = binding.root.context
+            binding.btnFormEc1.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(
+                ctx, if (isView) R.color.ds_tonal_bg else R.color.ds_filled_bg
+            )
+            binding.btnFormEc1.setTextColor(
+                androidx.core.content.ContextCompat.getColorStateList(ctx, if (isView) R.color.ds_tonal_fg else R.color.ds_filled_fg)
+            )
             binding.clickListener = clickListener
 
             binding.executePendingBindings()
@@ -114,4 +129,46 @@ class ECRegistrationAdapter(
             clickedForm?.let { it(item.ben.hhId, item.ben.benId) }
     }
 
+}
+
+/** Redesign card meta: "W/o husband · age" (husband left out when unknown). */
+internal fun dsWifeOfAndAge(context: android.content.Context, spouseName: String?, age: String): String {
+    val husband = spouseName?.takeIf { it.isNotBlank() && !it.equals("Not Available", true) }
+    return if (husband == null) age.trim() else context.getString(R.string.ds_wife_of, husband) + " · " + age.trim()
+}
+
+/** Redesign card button: "Register" = filled primary, "View" = tonal (replaces the old red / green). */
+internal fun com.google.android.material.button.MaterialButton.dsRegisterOrView(isView: Boolean) {
+    text = context.getString(if (isView) R.string.ds_view else R.string.register)
+    backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(context, if (isView) R.color.ds_tonal_bg else R.color.ds_filled_bg)
+    setTextColor(androidx.core.content.ContextCompat.getColorStateList(context, if (isView) R.color.ds_tonal_fg else R.color.ds_filled_fg))
+}
+
+/** Redesign card meta for a baby: "Mother: name · mother's age". */
+internal fun dsMotherAndAge(context: android.content.Context, motherName: String?, age: String): String =
+    if (motherName.isNullOrBlank()) age.trim() else context.getString(R.string.ds_mother_name, motherName) + " · " + age.trim()
+
+/** Redesign: form-state colours for list-card form buttons (HRP etc.), replacing red / orange / green / purple. */
+internal enum class DsFormState { NOT_STARTED, PARTIAL, COMPLETE, SHARE, SECONDARY, ALERT }
+
+internal fun com.google.android.material.button.MaterialButton.dsFormState(state: DsFormState) {
+    val (bg, fg) = when (state) {
+        DsFormState.NOT_STARTED -> R.color.ds_filled_bg to R.color.ds_filled_fg
+        DsFormState.PARTIAL -> R.color.ds_warning_container to R.color.ds_warning
+        DsFormState.COMPLETE -> R.color.ds_success_container to R.color.ds_success
+        DsFormState.SHARE -> android.R.color.transparent to R.color.ds_primary
+        DsFormState.SECONDARY -> R.color.ds_tonal_bg to R.color.ds_tonal_fg // e.g. History / View past visits
+        DsFormState.ALERT -> R.color.ds_error_container to R.color.ds_error // e.g. confirmed case
+    }
+    // Reset first: MaterialButton skips setBackgroundTintList when the list equals the current one, so a red
+    // setBackgroundColor() left by legacy code would otherwise survive (cached ds_filled_bg == style tint).
+    backgroundTintList = null
+    backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(context, bg)
+    val text = androidx.core.content.ContextCompat.getColorStateList(context, fg)
+    setTextColor(text)
+    // Share keeps its brand-coloured WhatsApp icon
+    iconTint = if (state == DsFormState.SHARE) null else text
+    strokeColor = if (state == DsFormState.SHARE)
+        androidx.core.content.ContextCompat.getColorStateList(context, R.color.ds_outline) else null
+    strokeWidth = if (state == DsFormState.SHARE) (1 * resources.displayMetrics.density).toInt() else 0
 }

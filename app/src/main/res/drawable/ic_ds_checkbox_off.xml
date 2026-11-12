@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma "Checkbox option" box, unchecked: 22dp, r5, 2dp outline -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp" android:height="22dp" android:viewportWidth="22" android:viewportHeight="22">
+    <path android:fillColor="@color/ds_outline"
+        android:pathData="M5,0h12a5,5 0,0 1,5 5v12a5,5 0,0 1,-5 5h-12a5,5 0,0 1,-5 -5v-12a5,5 0,0 1,5 -5zM5,2a3,3 0,0 0,-3 3v12a3,3 0,0 0,3 3h12a3,3 0,0 0,3 -3v-12a3,3 0,0 0,-3 -3z" />
+</vector>

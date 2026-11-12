@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+    Visit tile (month / day grid) · redesign: square card r16 with 1dp outline; label 16/24 medium centred, sync icon top-end.
+    Colour by state is set in the adapter (ui/design/VisitTile.kt): done = success container, not done = white + primary.
+    Ids, click and bindings unchanged. Old layout: legacy_rv_item_icon_hbyc.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -16,67 +20,53 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_icon"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_small"
-        android:padding="@dimen/padding_normal"
-        android:background="?attr/selectableItemBackground"
-
+        android:layout_margin="@dimen/ds_space_2xs"
         android:clickable="true"
-        android:elevation="@dimen/padding_normal"
         android:focusable="true"
-        android:onClick="@{()-> clickListener.onClicked(hbycIcom)}"
-        app:cardCornerRadius="@dimen/padding_normal"
-        app:cardElevation="@dimen/padding_normal">
+        android:onClick="@{()-> clickListener.onClicked(hbycIcom)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:orientation="vertical"
-                tools:background="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-
                 <ImageButton
                     android:id="@+id/imageButton"
                     syncState="@{hbycIcom.syncState}"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:scaleType="centerInside"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:background="?attr/selectableItemBackground"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="top|end"
-                    tools:src="@drawable/cloud_upload"
-                    app:iconTint="@android:color/holo_green_dark" />
-
+                    android:layout_margin="@dimen/ds_space_xs"
+                    android:background="@null"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerInside"
+                    tools:src="@drawable/cloud_upload" />
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@{hbycIcom.title}"
-
                     android:layout_gravity="center"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:textColor="@android:color/white"
-                    tools:text="asdfsdfsdf 1" />
-            </LinearLayout>
-
-
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/ds_space_2xs"
+                    android:text="@{hbycIcom.title}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_primary"
+                    tools:text="Month 3" />
+            </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

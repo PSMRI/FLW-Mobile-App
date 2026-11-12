@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Photo field · redesign (Figma 07 · Register member › "Photo"): 64dp circular slot (#EEF1F5, 1dp #72787E), 16dp,
+    then the title 14/20 Medium in primary (red * when required) and the hint 12/16 #42474E with a camera icon.
+    Ids and bindings unchanged; old layout: legacy_rv_item_form_image_view_v2.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -13,65 +18,71 @@
             type="org.piramalswasthya.sakhi.adapters.FormInputAdapter.ImageClickListener" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/cl_ri"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:layout_marginHorizontal="@dimen/_20sdp">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{form.title}"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            app:layout_constraintBottom_toTopOf="@+id/tv_sub_title"
-            app:layout_constraintEnd_toStartOf="@id/iv"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            tools:text="ABCDEFG" />
-
-        <TextView
-            android:id="@+id/tv_sub_title"
-            required="@{form.value==null}"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@{form.subtitle}"
-            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-            app:drawableStartCompat="@drawable/ic_menu_camera"
-            android:drawablePadding="@dimen/_5sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            tools:text="Tap to take photo" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
 
         <ImageView
             android:id="@+id/iv"
             benImage="@{form.value}"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/bg_circular"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_ds_photo_slot"
+            android:contentDescription="@{form.title}"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()->clickListener.onImageClick(form)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_title"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="1dp" />
 
-        <TextView
-            android:id="@+id/tv_nullable"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/iv"
-            android:text="@string/tv_required_text_asterisk"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/design_default_color_error"
-            app:layout_constraintStart_toEndOf="@id/iv"
-            app:layout_constraintTop_toTopOf="@id/iv"
-            app:required="@{form.required}" />
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{form.title}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_primary"
+                    tools:text="Photo" />
+
+                <TextView
+                    android:id="@+id/tv_nullable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_required_text_asterisk"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_error"
+                    app:required="@{form.required}" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_sub_title"
+                required="@{form.value==null}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:text="@{form.subtitle}"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant"
+                app:drawableStartCompat="@drawable/ic_menu_camera"
+                app:drawableTint="@color/ds_on_surface_variant"
+                tools:text="Tap to use camera" />
+        </LinearLayout>
+    </LinearLayout>
 </layout>

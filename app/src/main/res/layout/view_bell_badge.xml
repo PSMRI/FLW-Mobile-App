@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:contentDescription="@string/notifications_title"
         android:src="@drawable/ic_notifications"
-        android:tint="@android:color/white" />
+        android:tint="@color/ds_on_surface_variant" />
 
     <TextView
         android:id="@+id/tvBadge"

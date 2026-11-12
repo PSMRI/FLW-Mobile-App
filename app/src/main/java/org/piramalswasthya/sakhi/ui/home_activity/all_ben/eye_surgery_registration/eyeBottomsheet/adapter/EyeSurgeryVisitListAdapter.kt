@@ -37,7 +37,12 @@ class EyeSurgeryVisitListAdapter(
         holder.binding.apply {
             tvVisitTitle.text = item.title
             tvVisitDate.text = item.visitDate
-            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.add) else holder.binding.root.context.getString(R.string.view_edit_eye_surgery)
+//            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.add) else holder.binding.root.context.getString(R.string.view_edit_eye_surgery)
+            btnAction.text = if (item.isAddNew)  holder.binding.root.context.getString(R.string.ds_add) else holder.binding.root.context.getString(R.string.view_edit_eye_surgery) // Redesign: sentence case
+            // Redesign: add = filled primary, view/edit = tonal
+            btnAction.backgroundTintList = null
+            btnAction.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(btnAction.context, if (item.isAddNew) R.color.ds_filled_bg else R.color.ds_tonal_bg)
+            btnAction.setTextColor(androidx.core.content.ContextCompat.getColorStateList(btnAction.context, if (item.isAddNew) R.color.ds_filled_fg else R.color.ds_tonal_fg))
             btnAction.setOnClickListener { clickListener.onClick(item) }
         }
     }

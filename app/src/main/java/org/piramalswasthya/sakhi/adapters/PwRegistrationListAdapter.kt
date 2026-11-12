@@ -60,9 +60,20 @@ class PwRegistrationListAdapter(
 
             binding.benWithPwr = item
             binding.ivSyncState.visibility = if (item.pwr == null) View.INVISIBLE else View.VISIBLE
-            binding.btnFormEc1.text = if (item.pwr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
-            binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.pwr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+//binding.btnFormEc1.text = if (item.pwr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.view)
+            binding.btnFormEc1.text = if (item.pwr == null) binding.root.resources.getString(R.string.register) else binding.root.resources.getString(R.string.ds_view) // Redesign: "View"
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
+//binding.btnFormEc1.setBackgroundColor(binding.root.resources.getColor(if (item.pwr == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
+            // Redesign (Figma M2.2-02): "Register" = filled primary, "View" = tonal (was red / green)
+            val ctx = binding.root.context
+            val isView = item.pwr != null
+            binding.btnFormEc1.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(
+                ctx, if (isView) R.color.ds_tonal_bg else R.color.ds_filled_bg
+            )
+            binding.btnFormEc1.setTextColor(
+                androidx.core.content.ContextCompat.getColorStateList(ctx, if (isView) R.color.ds_tonal_fg else R.color.ds_filled_fg)
+            )
             binding.clickListener = clickListener
 
             binding.executePendingBindings()

@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.all_household.household_members.HouseholdMembersFragment">
+    <!-- Redesign (Figma 05 · Household members): surface bg, "Members (n)" section header, white beneficiary cards,
+         extended "Add member" button bottom-end. Ids unchanged; old layout: legacy_fragment_household_members.xml.
+         Not built (needs household data): the summary card (members / eligible couples / children under 5 / address). -->
 
 <!--    <com.google.android.material.button.MaterialButton-->
 <!--        android:id="@+id/btn_household_details"-->
@@ -33,15 +37,30 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/switchButton" />
 
+    <!-- Figma "Section header": 16/24, 16dp from the edges -->
+    <TextView
+        android:id="@+id/tv_members_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:layout_marginEnd="@dimen/ds_space_md"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+        android:textColor="@color/ds_on_surface"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ll_search"
+        tools:text="Members (5)"
+        tools:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_any"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingBottom="72dp"
+        android:paddingBottom="96dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
-        app:layout_constraintTop_toBottomOf="@+id/ll_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_members_header"
         tools:itemCount="2"
         tools:listitem="@layout/rv_item_ben" />
 
@@ -69,17 +88,18 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- Figma "FAB extended": 56dp, r16, primary, 16dp from the end, 24dp from the bottom -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/fab_add_member"
+        style="@style/Widget.Sakhi.Fab.Extended"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/add"
+        android:layout_marginEnd="@dimen/ds_space_md"
+        android:layout_marginBottom="@dimen/ds_space_xl"
+        android:contentDescription="@string/str_add_member"
+        android:text="@string/str_add_member"
+        app:icon="@drawable/ic_ds_person_add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/person_add"
-        app:backgroundTint="@android:color/holo_green_dark"
-        app:tint="@android:color/white" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

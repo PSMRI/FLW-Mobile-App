@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Beneficiary-with-form card (death reports: general / CDR / MDSR / NMDSR, and other BenListAdapterForForm lists) ·
+    redesign (Figma list card pattern): initials + name + sync icon; 2-col grid of ben ID / mobile, gender / age,
+    father / date of death, RCH ID / family head, reg date (name / surname cells kept GONE: the name is the title);
+    up to three form buttons coloured by state in BenListAdapterForForm (not filled = filled primary, filled = tonal).
+    Cells use rv_item_ben_element_ds (same field / fieldTitle variables). Every id, binding and click is kept.
+    Old layout: legacy_rv_item_ben_with_form.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -26,262 +34,265 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_content"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:backgroundTint="?attr/colorPrimary"
-        android:elevation="@dimen/padding_normal"
-        app:cardCornerRadius="@dimen/padding_normal"
-        app:cardElevation="@dimen/padding_normal">
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_sm">
 
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:onClick="@{()-> clickListener.onClickedBen(ben)}"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_sm"
+            android:paddingBottom="@dimen/ds_space_md">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/ll_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorOnPrimary"
-                android:paddingHorizontal="@dimen/padding_normal"
-                app:layout_constraintTop_toTopOf="parent">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <ImageView
+                <FrameLayout
                     android:id="@+id/iv_hh_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="@dimen/padding_normal"
-                    android:src="@drawable/ic__hh"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="?attr/colorPrimary" />
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_pill"
+                    android:backgroundTint="@color/ds_primary_container">
 
+                    <TextView
+                        dsInitials='@{ben.benName + " " + ben.benSurname}'
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_primary_container" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tv_hh_id"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:paddingHorizontal="@dimen/padding_small"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:text='@{ben.benName + " " + ben.benSurname}'
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?attr/colorPrimaryVariant"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="Ramlal Yadav" />
 
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_sync_state"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toEndOf="@id/iv_hh_logo"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="0104185765164225" />
-
-
-                <!--                android:onClick="@{()-> clickListener.onClickSync(ben)}"-->
                 <ImageView
                     android:id="@+id/iv_sync_state"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/tv_hh_id"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/ds_space_xs"
                     android:contentDescription="@string/iv_sync_state_tv"
                     android:visibility="@{isGeneralForm ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_hh_id"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintTop_toTopOf="@+id/tv_hh_id"
                     app:syncStateForBen="@{ben.syncState}"
-                    tools:src="@drawable/cloud_upload"
-                    app:iconTint="@android:color/holo_green_dark" />
+                    tools:src="@drawable/cloud_upload" />
+            </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/ll_row_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{()-> clickListener.onClickedBen(ben)}"
-                android:padding="@dimen/padding_small"
-                app:layout_constraintTop_toBottomOf="@id/ll_title_bar">
+                android:baselineAligned="false"
+                android:divider="@drawable/ds_gap_12"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-                <LinearLayout
-                    android:id="@+id/ll_row_1"
-                    android:layout_width="match_parent"
+                <include
+                    android:id="@+id/rl_ben_id"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
-
-                    <include
-                        android:id="@+id/rl_reg_date"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.regDate}"
-                        app:fieldTitle="@{@string/tv_reg_date_ph}" />
-
-                    <include
-                        android:id="@+id/rl_ben_name"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.benName}"
-                        app:fieldTitle="@{@string/tv_ben_name_ph}" />
-
-                    <include
-                        android:id="@+id/rl_ben_surname"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.benSurname}"
-                        app:fieldTitle="@{@string/tv_ben_surname}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_row_2"
-                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{@string/long_to_string(ben.benId)}"
+                    app:fieldTitle="@{@string/tv_ben_id_ph}" />
+                <include
+                    android:id="@+id/rl_ben_mobile_no"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_row_1"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.mobileNo}"
+                    app:fieldTitle="@{@string/tv_mob_no_ph}" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_row_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:divider="@drawable/ds_gap_12"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-                    <include
-                        android:id="@+id/rl_ben_id"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{@string/long_to_string(ben.benId)}"
-                        app:fieldTitle="@{@string/tv_ben_id_ph}" />
-
-                    <include
-                        android:id="@+id/rl_ben_gender"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.gender}"
-                        app:fieldTitle="@{@string/tv_gender_ph}" />
-
-
-
-                    <include
-                        android:id="@+id/rl_ben_mobile_no"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.mobileNo}"
-                        app:fieldTitle="@{@string/tv_mob_no_ph}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_row_3"
-                    android:layout_width="match_parent"
+                <include
+                    android:id="@+id/rl_ben_gender"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_row_2"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
-
-                    <include
-                        android:id="@+id/rl_father_name"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.fatherName}"
-                        app:fieldTitle="@{@string/tv_father_name_ph}" />
-
-                    <include
-                        android:id="@+id/rl_age"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:fieldTitle="@{@string/tv_age_ph}" />
-<!--                    app:field="@{ben.age}"-->
-
-                    <include
-                        android:id="@+id/rl_death"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.dateOfDeath}"
-                        app:fieldTitle="@{@string/date_of_death}"
-                        />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_row_4"
-                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.gender}"
+                    app:fieldTitle="@{@string/tv_gender_ph}" />
+                <include
+                    android:id="@+id/rl_age"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:layout_below="@id/ll_row_3">
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:fieldTitle="@{@string/tv_age_ph}" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_row_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:divider="@drawable/ds_gap_12"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-                    <include
-                        android:id="@+id/rl_rch_id"
-                        style="@style/rv_item_ben_fields"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.rchId}"
-                        app:fieldTitle="@{@string/tv_rch_id}" />
-
-                    <include
-                        android:id="@+id/rl_family_head_name"
-                        style="@style/rv_item_ben_fields"
-                        android:layout_weight="2"
-                        layout="@layout/rv_item_ben_element"
-                        app:field="@{ben.familyHeadName}"
-                        app:fieldTitle="@{@string/tv_family_head_name_ph}"
-                        tools:ignore="IncludeLayoutParam" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_btn_row"
-                    android:layout_width="match_parent"
+                <include
+                    android:id="@+id/rl_father_name"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ll_row_4"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.fatherName}"
+                    app:fieldTitle="@{@string/tv_father_name_ph}" />
+                <include
+                    android:id="@+id/rl_death"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.dateOfDeath}"
+                    app:fieldTitle="@{@string/date_of_death}" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_row_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:divider="@drawable/ds_gap_12"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_form3"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="@dimen/margin_small"
-                        android:visibility="invisible"
-                        android:onClick="@{()-> clickListener.onClickForm3(ben)}"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="CBAC Form" />
+                <include
+                    android:id="@+id/rl_rch_id"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.rchId}"
+                    app:fieldTitle="@{@string/tv_rch_id}" />
+                <include
+                    android:id="@+id/rl_family_head_name"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.familyHeadName}"
+                    app:fieldTitle="@{@string/tv_family_head_name_ph}" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_row_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:divider="@drawable/ds_gap_12"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_form2"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="@dimen/margin_small"
-                        android:visibility="invisible"
-                        android:onClick="@{()-> clickListener.onClickForm2(ben)}"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="CBAC Form" />
+                <include
+                    android:id="@+id/rl_reg_date"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    app:field="@{ben.regDate}"
+                    app:fieldTitle="@{@string/tv_reg_date_ph}" />
+                <include
+                    android:id="@+id/rl_ben_name"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    app:field="@{ben.benName}"
+                    app:fieldTitle="@{@string/tv_ben_name_ph}" />
+                <include
+                    android:id="@+id/rl_ben_surname"
+                    layout="@layout/rv_item_ben_element_ds"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    app:field="@{ben.benSurname}"
+                    app:fieldTitle="@{@string/tv_ben_surname}" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_btn_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:divider="@drawable/ds_gap_8"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_form1"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:onClick="@{()-> clickListener.onClickForm1(ben)}"
-                        android:layout_margin="@dimen/margin_small"
-                        android:visibility="invisible"
-                        android:textColor="?attr/colorOnPrimary"
-                        tools:text="CBAC Form" />
-
-
-                </LinearLayout>
-            </RelativeLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_form3"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:onClick="@{()-> clickListener.onClickForm3(ben)}"
+                    android:visibility="gone"
+                    tools:text="CBAC Form" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_form2"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:onClick="@{()-> clickListener.onClickForm2(ben)}"
+                    android:visibility="gone"
+                    tools:text="CBAC Form" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_form1"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:onClick="@{()-> clickListener.onClickForm1(ben)}"
+                    android:visibility="gone"
+                    tools:text="CBAC Form" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

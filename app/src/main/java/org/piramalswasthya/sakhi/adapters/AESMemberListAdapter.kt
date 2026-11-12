@@ -75,9 +75,11 @@ class AESMemberListAdapter(
             }
 
             binding.btnFormTb.visibility = if (item.aes == null && item.ben.isDeath) View.INVISIBLE else View.VISIBLE
-            binding.btnFormTb.text = if (item.aes == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
+//            binding.btnFormTb.text = if (item.aes == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.view)
+            binding.btnFormTb.text = if (item.aes == null)  binding.root.resources.getString(R.string.register) else  binding.root.resources.getString(R.string.ds_view) // Redesign: sentence case
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.aes == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
             binding.clickListener = clickListener
+            binding.btnFormTb.dsFormState(if (item.aes == null) DsFormState.NOT_STARTED else DsFormState.SECONDARY) // Redesign: to do = filled · view = tonal (was red / green)
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 

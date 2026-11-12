@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--
+    Same redesign as rv_item_form_dropdown_v2.xml (Figma 07 · Register member field style), used by FormInputAdapterWithBgIcon
+    (EC registration, ANC visit, abortion). Ids unchanged; old layout: legacy_rv_item_form_dropdown_with_bg_icon.xml.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="android.view.View" />
@@ -10,87 +14,80 @@
             type="org.piramalswasthya.sakhi.model.FormElement" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/cl_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_xs">
+        <TextView
+            android:id="@+id/tv_label"
+            style="@style/Widget.Sakhi.FieldLabel"
+            asteriskRequired="@{form.required}"
+            hintText="@{form.title}"
+            tools:text="First name *" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_rv_dropdown"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
+            style="@style/Widget.Sakhi.TextField.Dropdown"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
             android:importantForAccessibility="yes"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}"
             android:labelFor="@id/actv_rv_dropdown"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:hintEnabled="false">
 
             <AutoCompleteTextView
                 android:id="@+id/actv_rv_dropdown"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:paddingStart="@dimen/_20sdp"
                 android:contentDescription="@{form.title}"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:importantForAccessibility="yes"
+                android:inputType="none"
                 android:text="@{form.value}"
                 app:listItems="@{form.entries}"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_edit_text"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            style="@style/Widget.Sakhi.TextField.Boxed"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginStart="@dimen/_15sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            asteriskRequired="@{form.required}"
-            hintText="@{form.title}">
+            android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et"
+                style="@style/Widget.Sakhi.TextField.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{form.value}"
-                android:paddingStart="@dimen/_20sdp"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                android:text="@{form.value}" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- the old round field icons: kept for their ids, zero size (Figma has no field icons) -->
         <ImageView
             android:id="@+id/ivIconBg1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_bg_circular"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/til_edit_text"
-            app:layout_constraintEnd_toStartOf="@+id/til_edit_text"
-            app:layout_constraintStart_toStartOf="@+id/til_edit_text"
-            app:layout_constraintTop_toTopOf="@+id/til_edit_text"
-            app:tint="@color/md_theme_light_primary" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/ivIconTemperature1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:imageResource="@{form.iconDrawableRes}"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/ivIconBg1"
-            app:layout_constraintEnd_toEndOf="@+id/ivIconBg1"
-            app:layout_constraintStart_toStartOf="@+id/ivIconBg1"
-            app:layout_constraintTop_toTopOf="@+id/ivIconBg1" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
+    </LinearLayout>
 </layout>

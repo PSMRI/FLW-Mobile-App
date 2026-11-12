@@ -50,7 +50,8 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
 
             if (item.ectDate == 0L) {
                 binding.ivFollowState.visibility = View.GONE
-                binding.llVisitDate.visibility = View.INVISIBLE
+                //binding.llVisitDate.visibility = View.INVISIBLE
+                binding.llVisitDate.visibility = View.GONE // Redesign: no blank grid row
             } else if (item.ectDate < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90) &&
                 item.ectDate > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)) {
                 binding.ivFollowState.visibility = View.VISIBLE
@@ -76,7 +77,8 @@ class ECTrackingListAdapter(private val clickListener: ECTrackListClickListener)
                 binding.llEcTrackingDetails3.visibility = View.GONE
             }
 
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
 
             binding.item = item
             binding.clickListener = clickListener

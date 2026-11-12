@@ -317,6 +317,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         binding.navView.menu.findItem(R.id.sync_pending_records)?.isVisible = true
         binding.navView.menu.findItem(R.id.ChatFragment)?.isVisible = false
         binding.navView.menu.findItem(R.id.menu_report_crash)?.isVisible = false
+        // Redesign (Figma 09 · Profile & more): "Delete my account" and "Log out" in the error colour
+        listOf(R.id.menu_delete_account, R.id.menu_logout).forEach { id ->
+            binding.navView.menu.findItem(id)?.let { item ->
+                item.title = android.text.SpannableString(item.title).apply {
+                    setSpan(
+                        android.text.style.ForegroundColorSpan(androidx.core.content.ContextCompat.getColor(this@HomeActivity, R.color.ds_error)),
+                        0, length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+        }
      //   binding.navView.menu.findItem(R.id.menu_support)?.isVisible = false
 
         setContentView(binding.root)
@@ -416,6 +427,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             }
         }
         binding.versionName.text = "${BuildConfig.VERSION_NAME}"//"APK Version 2.2.3"
+        // Redesign: the version is the last (non-tappable) line of the drawer menu, so it scrolls with the list
+        // instead of floating over the bottom rows of the longer, sectioned menu
+        binding.navView.menu.findItem(R.id.menu_app_version)?.title = BuildConfig.VERSION_NAME
+        binding.versionName.visibility = View.GONE
 
         inAppUpdateHelper = InAppUpdateHelper(this)
         inAppUpdateHelper.checkForUpdate()
@@ -838,10 +853,17 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         val headerView = binding.navView.getHeaderView(0)
 
         viewModel.currentUser?.let {
-            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
-                resources.getString(R.string.nav_item_1_text, it.name)
-            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
-                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
+//            headerView.findViewById<TextView>(R.id.tv_nav_name).text =
+//                resources.getString(R.string.nav_item_1_text, it.name)
+//            headerView.findViewById<TextView>(R.id.tv_nav_role).text =
+//                resources.getString(R.string.nav_item_facility_text, pref.getSupervisorSubcenter())
+            // Redesign (Figma 09 · Profile header): plain name, facility on its own line (hidden when empty)
+            headerView.findViewById<TextView>(R.id.tv_nav_name).text = it.name
+            val facility = pref.getSupervisorSubcenter()
+            headerView.findViewById<TextView>(R.id.tv_nav_role).apply {
+                text = facility
+                visibility = if (facility.isNullOrBlank()) View.GONE else View.VISIBLE
+            }
 
 
            // val englishId = String.format(Locale.ENGLISH, "%s", pref.getEmployeeId())
@@ -852,11 +874,12 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 Locale.ENGLISH, "%s",
                 if (empId.isNullOrBlank()) it.userId.toString() else empId
             )
-            val formatted = HtmlCompat.fromHtml(
-                getString(R.string.nav_item_emp_text, englishId),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+//            val formatted = HtmlCompat.fromHtml(
+//                getString(R.string.nav_item_emp_text, englishId),
+//                HtmlCompat.FROM_HTML_MODE_LEGACY
+//            )
+//            headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+            headerView.findViewById<TextView>(R.id.tv_nav_id).text = getString(R.string.ds_nav_employee_id, englishId)
 
 //            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
 //                resources.getString(R.string.nav_item_3_text, it.userId)
@@ -1011,9 +1034,24 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 //        binding.toolbar.setLogo(logoResource)
         title?.let {
             binding.toolbar.title = null
-            binding.tvToolbar.text = it
+//            binding.tvToolbar.text = it
+            // Redesign: the one-line top bar title flows on one line (module titles carry "\n" for the old tiles)
+            binding.tvToolbar.text = it.replace('\n', ' ')
+        }
+        // Redesign: autosize ran before the toolbar menu icons took their space and never re-ran when only the width
+        // changed (title cut at 22sp: "Children u…"). Re-apply the autosize config whenever the title width changes.
+        if (!toolbarTitleAutosizeHooked) {
+            toolbarTitleAutosizeHooked = true
+            binding.tvToolbar.addOnLayoutChangeListener { v, l, _, r, _, ol, _, or, _ ->
+                if (r - l != or - ol) (v as android.widget.TextView).post {
+                    androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                        v, 16, 22, 1, android.util.TypedValue.COMPLEX_UNIT_SP
+                    )
+                }
+            }
         }
     }
+    private var toolbarTitleAutosizeHooked = false
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {

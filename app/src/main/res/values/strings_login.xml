@@ -20,11 +20,15 @@
     <string name="cb_login_remember_me_text">Remember me</string>
     <string name="btn_login_forgot_password_text">Forgot Password?</string>
     <string name="btn_login_text">Login</string>
-    <string name="pwr_by_text" translatable="false">Powered by\n <b>Piramal Foundation</b>\n App Version </string>
+    <!-- <string name="pwr_by_text" translatable="false">Powered by\n <b>Piramal Foundation</b>\n App Version </string> -->
+    <!-- Redesign (Figma M2.19-01): one-line footer; code appends the version name -->
+    <string name="pwr_by_text" translatable="false">Powered by Piramal Foundation · Version\u0020</string>
     <string name="login_diff_user">You are previously logged in with Username: @username as @asha, Do you want to Log in with another User?</string>
     <string name="unsync_record_count">Hello! there are @count un-sync records, please wait till all records are synced.</string>
     <string name="account_deactivated_title">Account Deactivated</string>
     <string name="session_expired_title">Session Expired</string>
     <string name="session_expired_message">Your session has expired. Please log in again.</string>
 
+    <!-- Redesign (Figma M2.19-01) -->
+    <string name="login_subtitle">Log in to continue</string>
 </resources>

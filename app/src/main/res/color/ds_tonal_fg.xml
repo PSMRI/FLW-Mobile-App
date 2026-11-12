@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tonal button text / icon: on-primary-container; disabled = on-surface at 38% -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:alpha="0.38" android:color="@color/ds_on_surface" android:state_enabled="false" />
+    <item android:color="@color/ds_on_primary_container" />
+</selector>

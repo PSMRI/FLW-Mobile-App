@@ -75,7 +75,7 @@ class LeprosyMemberListAdapter(
                     binding.root.context,
                     android.R.color.holo_green_dark
                 )
-                binding.btnVisits.setBackgroundColor(green)
+//                binding.btnVisits.setBackgroundColor(green) // Redesign: tonal from the layout
             }
             else
             {
@@ -129,7 +129,8 @@ class LeprosyMemberListAdapter(
                 it.labelResId to it.colorResId
             }
 
-            binding.btnFormTb.text = binding.root.context.getString(text)
+//            binding.btnFormTb.text = binding.root.context.getString(text)
+            binding.btnFormTb.text = binding.root.context.getString(if (text == R.string.view) R.string.ds_view else text) // Redesign: sentence case
             binding.btnFormTb.setBackgroundColor(
                 binding.root.resources.getColor(colorRes, binding.root.context.theme)
             )
@@ -137,6 +138,14 @@ class LeprosyMemberListAdapter(
             item.leprosy.leprosySymptomsPosition
             binding.btnFormTb.setBackgroundColor(binding.root.resources.getColor(if (item.leprosy == null) android.R.color.holo_red_dark else android.R.color.holo_green_dark))*/
             binding.clickListener = clickListener
+            // Redesign: same states in design-system colours (red = to do · orange = suspected · green = view)
+            binding.btnFormTb.dsFormState(
+                when (colorRes) {
+                    android.R.color.holo_red_dark -> DsFormState.NOT_STARTED
+                    android.R.color.holo_orange_dark -> DsFormState.PARTIAL
+                    else -> DsFormState.SECONDARY
+                }
+            )
             binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
             binding.executePendingBindings()
 

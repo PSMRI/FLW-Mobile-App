@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemGeneralCheckupBinding
+import org.piramalswasthya.sakhi.ui.design.setDsBenIdText
+import org.piramalswasthya.sakhi.ui.design.setDsInitials
 import org.piramalswasthya.sakhi.helpers.getLocalizedAge
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 
@@ -37,7 +39,9 @@ class GeneralCheckupListAdapter(
                 (if (showHusband) ben.spouseName else ben.fatherName)?.uppercase()
             binding.tvAge.text = getLocalizedAge(context, ben.dob)
             binding.tvGender.text = ben.gender
-            binding.tvBenId.text = ben.benId.toString()
+//            binding.tvBenId.text = ben.benId.toString()
+            binding.tvBenId.setDsBenIdText(ben.benId) // Redesign: same ben-ID format as the other cards
+            binding.tvDsInitials.setDsInitials(binding.tvBenName.text.toString()) // Redesign: initials avatar
             binding.tvMobile.text = ben.mobileNo
             binding.tvCheckupCount.text = item.checkupCount.toString()
             binding.btnAddCheckup.setOnClickListener { onAddCheckup(ben) }

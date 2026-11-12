@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    EC tracking card · redesign (Figma "FLW App Redesign" › M2.3-04 · EC tracking list), same card pattern as the
+    EC registration card: initials avatar + name 16/24 + "W/o husband · age" (built in the adapter) + sync badge;
+    tags "Missed period" (error) / "No visit in last 3 months" (warning), same rules as the old icons;
+    2-column values; Add visit (filled) + View visit (tonal, shown when visits exist).
+    Every id, binding and click is kept. Old layout: legacy_rv_item_ec_tracking_list.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -15,169 +22,128 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_content"
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:backgroundTint="?attr/colorPrimary"
-        android:elevation="@dimen/padding_normal"
-        android:padding="@dimen/padding_wide"
-        app:cardCornerRadius="@dimen/padding_normal"
-        app:cardElevation="@dimen/padding_normal">
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:layout_marginTop="@dimen/ds_space_sm">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingTop="@dimen/ds_space_sm"
+            android:paddingBottom="@dimen/ds_space_md">
 
+            <!-- ===== Header ===== -->
             <LinearLayout
                 android:id="@+id/ll_title_ec_tracking_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorOnPrimary"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/padding_tiny"
-                app:layout_constraintTop_toTopOf="parent">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tv_hh_ec_id"
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_pill"
+                    android:backgroundTint="@color/ds_primary_container">
+
+                    <TextView
+                        dsInitials="@{item.ben.benFullName}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_primary_container"
+                        tools:text="ND" />
+                </FrameLayout>
+
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/ds_space_sm"
                     android:layout_weight="1"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/padding_small"
-                    android:text="@{item.ben.benFullName}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="?attr/colorPrimaryVariant"
-                    app:drawableLeftCompat="@drawable/ic__hh"
-                    app:drawableTint="?attr/colorPrimary"
-                    tools:text="Hello Meister" />
+                    android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/iv_miss_state"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    app:tint="@android:color/holo_red_dark"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginHorizontal="@dimen/padding_small"
-                    android:contentDescription="@string/iv_sync_state_tv"
-                    android:src="@drawable/ic_women" />
+                    <TextView
+                        android:id="@+id/tv_hh_ec_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{item.ben.benFullName}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="Neha Devi" />
 
-                <ImageView
-                    android:id="@+id/iv_follow_state"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginHorizontal="@dimen/padding_small"
-                    android:contentDescription="@string/iv_sync_state_tv"
-                    android:src="@drawable/ic_non_follow_up" />
+                    <LinearLayout
+                        android:id="@+id/ll_ec_tracking_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:orientation="horizontal">
 
-                <ImageView
+                        <TextView
+                            android:id="@+id/age"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                            android:textColor="@color/ds_on_surface_variant"
+                            tools:text="W/o Rahul Reddy · 36 Years 5 Months" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
                     android:id="@+id/iv_sync_state"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginHorizontal="@dimen/padding_small"
+                    style="@style/Sakhi.Badge"
+                    android:layout_marginStart="@dimen/ds_space_xs"
                     android:contentDescription="@string/iv_sync_state_tv"
-                    app:syncState="@{item.allSynced}"
-                    tools:src="@drawable/cloud_upload"
-                    app:iconTint="@android:color/holo_green_dark" />
-
+                    dsSyncBadge="@{item.allSynced}"
+                    tools:text="Synced" />
             </LinearLayout>
 
+            <!-- ===== Tags ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/ds_gap_8"
+                android:orientation="horizontal"
+                android:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/iv_miss_state"
+                    style="@style/Sakhi.Tag"
+                    android:layout_marginTop="@dimen/ds_space_xs"
+                    android:backgroundTint="@color/ds_error_container"
+                    android:text="@string/missed_period"
+                    android:textColor="@color/ds_error"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/iv_follow_state"
+                    style="@style/Sakhi.Tag"
+                    android:layout_marginTop="@dimen/ds_space_xs"
+                    android:backgroundTint="@color/ds_warning_container"
+                    android:text="@string/icon_title_no_follow_up"
+                    android:textColor="@color/ds_warning"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- ===== Values ===== -->
             <LinearLayout
                 android:id="@+id/linear_ec_tracking_Layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_normal"
-                app:layout_constraintTop_toBottomOf="@id/ll_title_ec_tracking_bar">
-
-
-                <LinearLayout
-                    android:id="@+id/ll_ec_tracking_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{@string/tv_husband_name_ph}"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{item.ben.spouseName}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="Dummy" />
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/age"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:id="@+id/age"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="TextView" />
-<!--                        android:text="@{item.ben.age}"-->
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
-
-                        <TextView
-                            android:id="@+id/tv_weeks_of_pregnancy_ph"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/no_of_children"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{item.numChildren}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="TextView" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/ll_ec_tracking_details_2"
@@ -187,76 +153,67 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{@string/beneficiary_id}"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/beneficiary_id" />
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            benIdText="@{item.ben.benId}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="3546464466" />
+                            style="@style/Sakhi.InfoValue"
+                            dsBenIdText="@{item.ben.benId}"
+                            tools:text="318468053606" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
+                    <LinearLayout style="@style/Sakhi.InfoCell">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{@string/tv_mob_no_ph}"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_mob_no_ph" />
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/Sakhi.InfoValue"
                             android:text="@{item.ben.mobileNo}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="9999999999" />
+                            tools:text="9391345768" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{@string/tv_rch_id}"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{item.ben.rchId}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="511616166" />
-                    </LinearLayout>
-
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
+
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/tv_rch_id" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{(item.ben.rchId == null || item.ben.rchId.empty) ? @string/ds_empty_value : item.ben.rchId}"
+                            tools:text="123456789012" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Sakhi.InfoCell">
+
+                        <TextView
+                            android:id="@+id/tv_weeks_of_pregnancy_ph"
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/no_of_children" />
+
+                        <TextView
+                            style="@style/Sakhi.InfoValue"
+                            android:text="@{item.numChildren}"
+                            tools:text="0" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- LMP · status · last visit (only when they apply; the adapter hides them otherwise) -->
                 <LinearLayout
                     android:id="@+id/ll_ec_tracking_details_3"
                     android:layout_width="match_parent"
@@ -266,122 +223,82 @@
 
                     <LinearLayout
                         android:id="@+id/llLmpDate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
+                        style="@style/Sakhi.InfoCell"
+                        android:layout_marginEnd="@dimen/ds_space_xs">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lmp_date"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/lmp_date" />
 
                         <TextView
                             android:id="@+id/benLmpDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="22-08-2025" />
+                            style="@style/Sakhi.InfoValue"
+                            tools:text="22-08-2026" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/llBenStatus"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
+                        style="@style/Sakhi.InfoCell">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/status"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/status" />
 
                         <TextView
                             android:id="@+id/benStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
+                            style="@style/Sakhi.InfoValue"
                             tools:text="Missed Period" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/llVisitDate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_small">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/last_visit_date"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:id="@+id/benVisitDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="22-08-2025" />
-                    </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_ec_tracking_details_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false"
                     android:orientation="horizontal">
 
+                    <LinearLayout
+                        android:id="@+id/llVisitDate"
+                        style="@style/Sakhi.InfoCell">
 
+                        <TextView
+                            style="@style/Sakhi.InfoLabel"
+                            android:text="@string/last_visit_date" />
 
+                        <TextView
+                            android:id="@+id/benVisitDate"
+                            style="@style/Sakhi.InfoValue"
+                            tools:text="12-10-2026" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_view_all_tracks"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                list_avail="@{item.savedECTRecords}"
-                android:layout_width="wrap_content"
+            <!-- ===== Actions ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_normal"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:onClick="@{() -> clickListener.onClickedShowAllTracks(item)}"
-                android:text="@string/view_visit"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linear_ec_tracking_Layout" />
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:divider="@drawable/ds_gap_8"
+                android:orientation="horizontal"
+                android:showDividers="middle">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_normal"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:backgroundTint="@android:color/holo_green_dark"
-                android:onClick="@{() -> clickListener.onClickedAdd(item)}"
-                android:text="@string/add_visit"
-                android:textColor="?attr/colorOnPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linear_ec_tracking_Layout" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> clickListener.onClickedAdd(item)}"
+                    android:text="@string/add_visit" />
 
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_all_tracks"
+                    style="@style/Widget.Sakhi.Button.Tonal"
+                    list_avail="@{item.savedECTRecords}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> clickListener.onClickedShowAllTracks(item)}"
+                    android:text="@string/view_visit" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Saved-record row in a bottom sheet · redesign (same as rv_item_hrp_track_ben): date (title) + sync badge + View (tonal),
+    hairline between rows. Ids, bindings and click unchanged. Old layout: legacy_rv_item_ec_track.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -15,48 +19,51 @@
 
     </data>
 
-
     <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_normal"
-        android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="250dp"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:layout_weight="2"
-            android:text="@{visit.filledOnString}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            tools:text="EC Track" />
+            android:gravity="center_vertical"
+            android:minHeight="64dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="@dimen/ds_space_xs">
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="?attr/colorPrimary"
-            android:layout_weight="1"
-            android:text="@string/view"
-            android:textColor="?attr/colorOnPrimary"
-            android:onClick="@{()-> clickListener.onClickedVisit(visit)}" />
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{visit.filledOnString}"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface"
+                tools:text="12-10-2026" />
 
-        <ImageView
-            android:id="@+id/iv_sync_state"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="@dimen/padding_small"
-            android:contentDescription="@string/iv_sync_state_tv"
-            app:syncState="@{visit.syncState}"
-            tools:src="@drawable/cloud_upload"
-            app:iconTint="@android:color/holo_green_dark" />
+            <TextView
+                android:id="@+id/iv_sync_state"
+                style="@style/Sakhi.Badge"
+                android:layout_marginHorizontal="@dimen/ds_space_xs"
+                android:contentDescription="@string/iv_sync_state_tv"
+                dsSyncBadge="@{visit.syncState}"
+                tools:text="Synced" />
 
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Sakhi.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()-> clickListener.onClickedVisit(visit)}"
+                android:text="@string/ds_view" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:background="@color/ds_outline_variant" />
     </LinearLayout>
-
 </layout>

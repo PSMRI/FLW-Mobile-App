@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Launch window for Android 7–11 (API < 31). Redesign: brand-subtle background (flavour colour via
+     @color/ds_splash_background) + centred logo. API 31+ uses windowSplashScreen* in values-v31/v33. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+    <!-- <item android:drawable="@android:color/white" /> -->
+    <item android:drawable="@color/ds_splash_background" />
     <item
-        android:width="160dp"
-        android:height="160dp"
+        android:width="@dimen/ds_splash_logo"
+        android:height="@dimen/ds_splash_logo"
         android:drawable="@drawable/splash_logo"
         android:gravity="center" />
 </layer-list>

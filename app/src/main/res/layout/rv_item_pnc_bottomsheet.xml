@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Saved-visit row in a bottom sheet · redesign (same as rv_item_hrp_track_ben): title + sync badge + action button(s)
+    (tonal, sentence case), hairline between rows. Ids, bindings and clicks unchanged. Old layout: legacy_rv_item_pnc_bottomsheet.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -13,53 +17,51 @@
             type="org.piramalswasthya.sakhi.adapters.PncVisitAdapter.PncVisitClickListener" />
     </data>
 
-
     <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_normal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:text="@{@string/pnc_visit_number(visit.visitNumber)}"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            tools:text="ANc VISIT 4" />
+            android:gravity="center_vertical"
+            android:minHeight="64dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="@dimen/ds_space_xs">
 
-        <androidx.legacy.widget.Space
-            android:layout_width="30dp"
-            android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{@string/pnc_visit_number(visit.visitNumber)}"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface"
+                tools:text="ANC visit 1" />
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="?attr/colorPrimary"
-            android:onClick="@{()-> clickListener.onClickedVisit(visit)}"
-            android:text="@string/view"
-            android:textColor="?attr/colorOnPrimary" />
+            <TextView
+                android:id="@+id/iv_sync_state"
+                style="@style/Sakhi.Badge"
+                android:layout_marginHorizontal="@dimen/ds_space_xs"
+                android:contentDescription="@string/iv_sync_state_tv"
+                dsSyncBadge="@{visit.syncState}"
+                tools:text="Synced" />
 
-        <androidx.legacy.widget.Space
-            android:layout_width="30dp"
-            android:layout_height="match_parent" />
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Sakhi.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()-> clickListener.onClickedVisit(visit)}"
+                android:text="@string/ds_view" />
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_sync_state"
-            syncState="@{visit.syncState}"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginHorizontal="@dimen/padding_small"
-            android:contentDescription="@string/iv_sync_state_tv"
-            tools:src="@drawable/cloud_upload"
-            app:iconTint="@android:color/holo_green_dark" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:background="@color/ds_outline_variant" />
     </LinearLayout>
-
 </layout>

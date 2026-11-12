@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (Figma "FLW App Redesign") screen texts. Hindi/Assamese/Bangla need a native-speaker review. -->
+<resources>
+    <string name="ds_choose_work_location">কাজের জায়গা বেছে নিন</string>
+    <string name="ds_label_facility">সুবিধা</string>
+    <string name="ds_assigned_villages_title">শুধু আপনাকে দেওয়া গ্রামগুলি দেখানো হচ্ছে</string>
+    <string name="ds_assigned_villages_body">কোনো গ্রাম না থাকলে আপনার সুপারভাইজারকে জিজ্ঞাসা করুন।</string>
+    <string name="ds_login_tagline">সম্প্রদায়ের স্বাস্থ্যে আপনার সঙ্গী</string>
+    <string name="ds_choose_language">ভাষা বেছে নিন / Choose language</string>
+    <string name="ds_where_work_today">আজ আপনি কোথায় কাজ করবেন?</string>
+    <string name="ds_change_later_profile">আপনি এটি পরে প্রোফাইলে বদলাতে পারবেন</string>
+    <string name="ds_auto">স্বয়ংক্রিয়</string>
+    <string name="ds_village_required">গ্রাম *</string>
+    <string name="ds_continue_to_app">অ্যাপে চালিয়ে যান</string>
+
+    <!-- 04 · Households (draft translations need native review) -->
+    <string name="ds_hh_id_value">HH ID %1$s</string>
+    <plurals name="ds_members_count">
+        <item quantity="one">%1$d জন সদস্য</item>
+        <item quantity="other">%1$d জন সদস্য</item>
+    </plurals>
+    <string name="ds_members">সদস্য</string>
+    <string name="ds_search_households">প্রধানের নাম, HH ID বা মোবাইল খুঁজুন</string>
+    <string name="ds_add_household">পরিবার যোগ করুন</string>
+
+    <!-- 05 · Household members / beneficiary card (draft translations need native review) -->
+    <string name="ds_label_head_of_family">পরিবারের প্রধান</string>
+    <string name="ds_label_registered_on">নিবন্ধনের তারিখ</string>
+    <string name="ds_label_mobile">মোবাইল</string>
+    <string name="ds_label_abha_number">ABHA নম্বর</string>
+    <string name="ds_synced">সিঙ্ক হয়েছে</string>
+    <string name="ds_not_synced">সিঙ্ক হয়নি</string>
+    <string name="ds_syncing">সিঙ্ক হচ্ছে</string>
+    <string name="ds_abha_linked">ABHA যুক্ত</string>
+    <string name="ds_create_abha">ABHA তৈরি করুন</string>
+    <string name="ds_deceased">মৃত</string>
+    <string name="ds_non_household">পরিবারহীন</string>
+    <string name="ds_members_header">সদস্য (%1$d)</string>
+
+    <!-- 06 · All beneficiaries (draft translations need native review) -->
+    <string name="ds_download_list">তালিকা ডাউনলোড করুন</string>
+    <string name="ds_filter">ফিল্টার</string>
+    <string name="ds_search_beneficiaries">নাম, সুবিধাভোগী ID, মোবাইল বা ABHA খুঁজুন</string>
+    <!-- consent dialog (draft translation needs native review) -->
+    <string name="ds_consent_given">পরিবার সম্মতি দিয়েছে</string>
+
+    <!-- 08 · Sync (draft translations need native review) -->
+    <string name="ds_sync_all_synced">সব রেকর্ড সিঙ্ক হয়েছে</string>
+    <string name="ds_sync_saved_on_phone">এই ফোনে নিরাপদে সংরক্ষিত</string>
+    <string name="ds_sync_now">এখনই সিঙ্ক করুন</string>
+    <string name="ds_sync_by_module">মডিউল অনুযায়ী</string>
+    <string name="ds_sync_records">%1$d টি রেকর্ড</string>
+    <string name="ds_sync_records_waiting">%1$d টি রেকর্ড · %2$d টি বাকি</string>
+    <plurals name="ds_sync_waiting">
+        <item quantity="one">%1$d টি রেকর্ড বাকি</item>
+        <item quantity="other">%1$d টি রেকর্ড বাকি</item>
+    </plurals>
+
+    <!-- 09 · Profile & more / drawer (draft translations need native review) -->
+    <string name="ds_menu_my_work">আমার কাজ</string>
+    <string name="ds_menu_tools">টুলস</string>
+    <string name="ds_menu_app">অ্যাপ</string>
+    <string name="ds_nav_employee_id">কর্মচারী ID · %1$s</string>
+    <!-- EC card meta (draft translation needs native review) -->
+    <string name="ds_wife_of">%1$s-এর স্ত্রী</string>
+    <string name="ds_add">যোগ করুন</string>
+    <string name="ds_anc_visits">ANC পরিদর্শন</string>
+    <string name="ds_vaccine_fill">পূরণ করুন</string>
+    <string name="ds_view">দেখুন</string>
+    <string name="ds_decrease">কমান</string>
+    <string name="ds_increase">বাড়ান</string>
+    <string name="ds_mother_name">মা: %1$s</string>
+    <string name="ds_overdue">সময় পেরিয়েছে</string>
+</resources>

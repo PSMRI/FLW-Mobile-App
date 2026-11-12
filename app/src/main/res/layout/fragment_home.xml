@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/ds_surface">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,8 +24,16 @@
                 android:id="@+id/tl_home_viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/ds_surface"
                 app:tabGravity="fill"
-                app:tabMaxWidth="0dp" />
+                app:tabIndicatorColor="@color/ds_primary"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="3dp"
+                app:tabMaxWidth="0dp"
+                app:tabRippleColor="@color/ds_primary_subtle"
+                app:tabSelectedTextColor="@color/ds_primary"
+                app:tabTextAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                app:tabTextColor="@color/ds_on_surface_variant" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/vp2_home"
@@ -34,11 +43,15 @@
 
         </LinearLayout>
 
+        <!-- First download strip (Figma M2.19-13 "Downloading… 62%") -->
         <LinearLayout
             android:id="@+id/ll_full_load_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/ds_space_md"
+            android:background="@drawable/bg_ds_card"
             android:orientation="vertical"
+            android:padding="@dimen/ds_space_md"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:visibility="visible">
@@ -47,9 +60,9 @@
                 android:id="@+id/tv_load_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_small"
                 android:text="@string/home_fragment_percent_download_text"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
                 tools:visibility="visible" />
 
             <ProgressBar
@@ -57,7 +70,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:indeterminate="true" />
+                android:layout_marginTop="@dimen/ds_space_xs"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/ds_primary"
+                android:progressBackgroundTint="@color/ds_outline_variant"
+                android:progressTint="@color/ds_primary" />
 
         </LinearLayout>
 

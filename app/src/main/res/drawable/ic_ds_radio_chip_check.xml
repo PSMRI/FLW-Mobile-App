@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ✓ only on the selected chip -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_ds_check" android:state_checked="true" />
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <size android:width="0dp" android:height="18dp" />
+        </shape>
+    </item>
+</selector>

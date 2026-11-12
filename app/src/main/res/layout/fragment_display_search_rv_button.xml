@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/read_only"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.all_household.AllHouseholdFragment">
+    <!-- Redesign (Figma 04 · Households): surface bg, pill search bar, cards scroll under an extended-FAB style
+         bottom-end button. Ids unchanged; old layout: legacy_fragment_display_search_rv_button.xml. -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topLayout"
@@ -12,53 +14,75 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Search bar · Figma 04 · Households › "Search bar": 52dp pill #EEF1F5, padding 16, 24dp icons, 12 gap, 16/24 text -->
         <LinearLayout
             android:id="@+id/ll_search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_normal"
-            android:elevation="@dimen/padding_normal"
+            android:layout_height="52dp"
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:layout_marginEnd="@dimen/ds_space_md"
+            android:background="@drawable/bg_ds_search_pill"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:background="@drawable/red_border"
+            android:paddingStart="@dimen/ds_space_md"
+            android:paddingEnd="@dimen/ds_space_xs"
             app:layout_constraintTop_toTopOf="parent">
 
             <EditText
                 android:id="@+id/searchView"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="@dimen/padding_normal"
+                android:background="@null"
+                android:drawableStart="@drawable/ic_ds_search"
+                android:drawablePadding="@dimen/ds_space_sm"
+                android:drawableTint="@color/ds_on_surface_variant"
                 android:hint="@string/household_search"
-                style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
-                android:singleLine="true" />
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface"
+                android:textColorHint="@color/ds_on_surface_variant" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/ib_search"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                tools:visibility="visible"
-                android:background="?attr/colorPrimary">
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/ds_space_xs"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                tools:visibility="visible">
+
                 <ImageView
                     android:id="@+id/ib_search_im"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingHorizontal="12dp"
-                    android:src="@drawable/ic_mic"
-                    android:background="?attr/colorPrimary"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/household_search"
+                    android:src="@drawable/ic_ds_mic"
+                    app:tint="@color/ds_on_surface_variant"
                     tools:visibility="visible" />
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
+        <!-- Redesign: ds switch colours (CustomSwitchStyle as style= never applied its colours) -->
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            style="@style/CustomSwitchStyle"
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_marginEnd="@dimen/ds_space_md"
+            android:minHeight="56dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+            android:textColor="@color/ds_on_surface"
+            android:theme="@style/ThemeOverlay.Sakhi.Switch"
+            app:thumbTint="@color/ds_switch_thumb"
+            app:trackTint="@color/ds_switch_track"
             android:text="@string/irs_off"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/ll_search"
@@ -153,14 +177,20 @@
             </RadioGroup>
         </LinearLayout>
 
+        <!-- Redesign: ds switch colours (CustomSwitchStyle as style= never applied its colours) -->
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchBtnMosquito"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/ds_space_md"
+            android:layout_marginEnd="@dimen/ds_space_md"
             android:visibility="gone"
-            style="@style/CustomSwitchStyle"
+            android:minHeight="56dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+            android:textColor="@color/ds_on_surface"
+            android:theme="@style/ThemeOverlay.Sakhi.Switch"
+            app:thumbTint="@color/ds_switch_thumb"
+            app:trackTint="@color/ds_switch_track"
             android:text="@string/mosquito_net_off"
             app:layout_constraintTop_toBottomOf="@id/ll_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -244,10 +274,11 @@
         android:id="@+id/rv_any"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/margin_small"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/filterText"
-        app:layout_constraintBottom_toTopOf="@id/btn_next_page"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:itemCount="2"
         tools:listitem="@layout/rv_item_household" />
 
@@ -256,7 +287,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/topLayout"
-        app:layout_constraintBottom_toTopOf="@id/btn_next_page">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/tv_empty_content"
@@ -268,14 +299,20 @@
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
     </FrameLayout>
 
+    <!-- Figma "FAB extended": 56dp, r16, primary, 16dp from the end, 24dp from the bottom -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next_page"
-        android:layout_width="match_parent"
+        style="@style/Widget.Sakhi.Fab.Extended"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:padding="@dimen/padding_normal"
+        android:layout_marginStart="@dimen/ds_space_md"
+        android:layout_marginEnd="@dimen/ds_space_md"
+        android:layout_marginBottom="@dimen/ds_space_xl"
         android:text="@string/btn_text_frag_home_nhhr"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

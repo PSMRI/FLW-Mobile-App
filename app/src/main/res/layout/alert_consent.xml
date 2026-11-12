@@ -1,38 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Consent dialog · redesign (Figma M2.19-52 · Registration consent): white r24 dialog (theme), 24dp padding;
+    28dp shield icon, title 22/28 (set in code), consent text 14/20 #42474E (scrolls if long), the checkbox as a
+    bordered "Checkbox option" row, then Disagree (text) · Agree (filled) at the end.
+    Ids unchanged; old layout: legacy_alert_consent.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_wide">
+    android:padding="@dimen/ds_space_xl">
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ds_verified_user"
+        app:tint="@color/ds_primary" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:padding="@dimen/padding_normal"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="?attr/colorOnPrimary" />
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface"
+        tools:text="Consent" />
 
     <LinearLayout
         android:id="@+id/consentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/checkBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top|start" />
+        android:orientation="vertical">
 
         <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:fillViewport="true"
             tools:ignore="NestedWeights">
@@ -42,38 +49,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:text="@string/consent_text"
-                android:paddingStart="@dimen/margin_normal"
-                android:paddingEnd="@dimen/margin_normal" />
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
         </ScrollView>
 
+        <CheckBox
+            android:id="@+id/checkBox"
+            style="@style/Widget.Sakhi.CheckboxOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:text="@string/ds_consent_given" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:divider="@drawable/ds_gap_8"
+        android:gravity="end"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="15dp">
+        android:showDividers="middle">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_negative"
-            android:layout_width="0dp"
-            android:layout_marginEnd="3dp"
+            style="@style/Widget.Sakhi.Button.Text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/disagree" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_positive"
-            android:layout_width="0dp"
-            android:layout_marginStart="3dp"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:minWidth="96dp"
             android:text="@string/agree" />
     </LinearLayout>
 </LinearLayout>

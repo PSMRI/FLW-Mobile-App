@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign switch track: light primary when on, outline grey when off -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/ds_primary_container" android:state_checked="true" />
+    <item android:color="@color/ds_outline_variant" />
+</selector>

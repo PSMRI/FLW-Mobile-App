@@ -33,18 +33,23 @@ class AncAbortionListAdapter(
             binding.visit = item
             binding.clickListener = clickListener
 
-            binding.btnPmsma.text = if (item.isAbortionFormFilled) binding.root.resources.getString(
-                R.string.view) else binding.root.resources.getString(
-                R.string.add)
-            binding.btnPmsma.setBackgroundColor(
-                binding.root.resources.getColor(
-                    if (item.isAbortionFormFilled) android.R.color.holo_green_dark
-                    else android.R.color.holo_red_dark
-                )
-            )
-
-            binding.btnViewVisits.visibility =View.INVISIBLE
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//            binding.btnPmsma.text = if (item.isAbortionFormFilled) binding.root.resources.getString(
+//                R.string.view) else binding.root.resources.getString(
+//                R.string.add)
+            binding.btnPmsma.text = binding.root.resources.getString(if (item.isAbortionFormFilled) R.string.ds_view else R.string.ds_add) // Redesign: sentence case
+//            binding.btnPmsma.setBackgroundColor(
+//                binding.root.resources.getColor(
+//                    if (item.isAbortionFormFilled) android.R.color.holo_green_dark
+//                    else android.R.color.holo_red_dark
+//                )
+//            )
+//
+//            binding.btnViewVisits.visibility =View.INVISIBLE
+//            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            // Redesign: add = filled primary · view = tonal (was red / green); hidden buttons GONE; meta "W/o husband · age"
+            binding.btnPmsma.dsFormState(if (item.isAbortionFormFilled) DsFormState.SECONDARY else DsFormState.NOT_STARTED)
+            binding.btnViewVisits.visibility = View.GONE
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob))
             binding.executePendingBindings()
         }
 

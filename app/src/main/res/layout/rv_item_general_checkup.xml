@@ -1,162 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    General check-up list card · redesign (Figma list card pattern): initials + name + age (adapter); relation / gender,
+    ben ID / mobile, earlier check-ups; Add check-up (filled). GcCardLabel/Value styles replaced by Sakhi.Info*.
+    Ids unchanged (+ tv_ds_initials). Old layout: legacy_rv_item_general_checkup.xml.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Sakhi.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_normal"
-    android:backgroundTint="?attr/colorPrimary"
-    app:cardCornerRadius="@dimen/padding_normal"
-    app:cardElevation="@dimen/padding_normal">
+    android:layout_marginHorizontal="@dimen/ds_space_md"
+    android:layout_marginTop="@dimen/ds_space_sm">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_ben_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorOnPrimary"
-            android:drawablePadding="@dimen/padding_small"
-            android:gravity="center_vertical"
-            android:padding="@dimen/padding_small"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?attr/colorPrimaryVariant"
-            app:drawableLeftCompat="@drawable/ic__hh"
-            app:drawableTint="?attr/colorPrimary"
-            tools:text="Ramlal Yadav" />
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingTop="@dimen/ds_space_sm"
+        android:paddingBottom="@dimen/ds_space_md">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/padding_normal"
-            android:paddingTop="@dimen/padding_normal">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_ds_pill"
+                android:backgroundTint="@color/ds_primary_container">
+
+                <TextView
+                    android:id="@+id/tv_ds_initials"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                    android:textColor="@color/ds_on_primary_container"
+                    tools:text="RY" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_sm"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_relation_label"
-                    style="@style/GcCardLabel"
-                    tools:text="Father Name" />
-
-                <TextView
-                    android:id="@+id/tv_relation_name"
-                    style="@style/GcCardValue"
-                    tools:text="DHANIRAM YADAV" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
-
-                <TextView
-                    style="@style/GcCardLabel"
-                    android:text="@string/age" />
+                    android:id="@+id/tv_ben_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="Ramlal Yadav" />
 
                 <TextView
                     android:id="@+id/tv_age"
-                    style="@style/GcCardValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_surface_variant"
                     tools:text="67 Years 3 Months" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
-
-                <TextView
-                    style="@style/GcCardLabel"
-                    android:text="@string/gender" />
-
-                <TextView
-                    android:id="@+id/tv_gender"
-                    style="@style/GcCardValue"
-                    tools:text="MALE" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/padding_normal">
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/GcCardLabel"
-                    android:text="@string/beneficiary_id" />
+                <LinearLayout
+                    style="@style/Sakhi.InfoCell"
+                    android:layout_marginEnd="@dimen/ds_space_xs">
 
-                <TextView
-                    android:id="@+id/tv_ben_id"
-                    style="@style/GcCardValue"
-                    tools:text="252090934101" />
+                    <TextView
+                        android:id="@+id/tv_relation_label"
+                        tools:text="Father Name"
+                        style="@style/Sakhi.InfoLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_relation_name"
+                        style="@style/Sakhi.InfoValue" />
+                </LinearLayout>
+                <LinearLayout
+                    style="@style/Sakhi.InfoCell">
+
+                    <TextView
+                        android:text="@string/gender"
+                        style="@style/Sakhi.InfoLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_gender"
+                        style="@style/Sakhi.InfoValue" />
+                </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/GcCardLabel"
-                    android:text="@string/mobile_number" />
+                <LinearLayout
+                    style="@style/Sakhi.InfoCell"
+                    android:layout_marginEnd="@dimen/ds_space_xs">
 
-                <TextView
-                    android:id="@+id/tv_mobile"
-                    style="@style/GcCardValue"
-                    tools:text="9340011122" />
+                    <TextView
+                        android:text="@string/beneficiary_id"
+                        style="@style/Sakhi.InfoLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_ben_id"
+                        style="@style/Sakhi.InfoValue" />
+                </LinearLayout>
+                <LinearLayout
+                    style="@style/Sakhi.InfoCell">
+
+                    <TextView
+                        android:text="@string/mobile_number"
+                        style="@style/Sakhi.InfoLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_mobile"
+                        style="@style/Sakhi.InfoValue" />
+                </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/GcCardLabel"
-                    android:text="@string/gc_earlier_checkups" />
+                <LinearLayout
+                    style="@style/Sakhi.InfoCell"
+                    android:layout_marginEnd="@dimen/ds_space_xs">
 
-                <TextView
-                    android:id="@+id/tv_checkup_count"
-                    style="@style/GcCardValue"
-                    tools:text="0" />
+                    <TextView
+                        android:text="@string/gc_earlier_checkups"
+                        style="@style/Sakhi.InfoLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_checkup_count"
+                        style="@style/Sakhi.InfoValue" />
+                </LinearLayout>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_checkup"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:backgroundTint="@android:color/holo_green_dark"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:text="@string/gc_add_checkup"
-            android:textColor="@android:color/white" />
+            app:icon="@drawable/ic_ds_add"
+            app:iconGravity="textStart" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

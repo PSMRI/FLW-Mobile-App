@@ -201,7 +201,11 @@ class AllHouseholdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buildAddBenDialog()
-        binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
+//        binding.btnNextPage.text = resources.getString(R.string.btn_text_frag_home_nhhr)
+        // Redesign (Figma 04 · Households): extended FAB "+ Add household" and the household search hint.
+        binding.btnNextPage.text = resources.getString(R.string.ds_add_household)
+        binding.btnNextPage.setIconResource(R.drawable.ic_ds_add)
+        binding.searchView.hint = resources.getString(R.string.ds_search_households)
         if (prefDao.getLoggedInUser()?.role.equals(RoleConstants.ROLE_ASHA_SUPERVISOR, true)) {
             binding.btnNextPage.visibility = View.GONE
         } else {

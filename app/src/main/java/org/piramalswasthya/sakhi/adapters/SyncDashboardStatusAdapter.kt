@@ -5,6 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.database.room.SyncState
+import org.piramalswasthya.sakhi.ui.design.setDsSyncBadge
 import org.piramalswasthya.sakhi.databinding.RvItemSyncDashboardStatusBinding
 import org.piramalswasthya.sakhi.model.SyncStatusDomain
 
@@ -28,6 +31,18 @@ class SyncDashboardStatusAdapter :
             binding.tvSynced.text = item.synced.toString()
             binding.tvUnsynced.text = item.notSynced.toString()
             binding.tvSyncing.text = item.syncing.toString()
+            // Redesign (Figma 08 · Sync row): "N records · M waiting" + sync badge
+            val ctx = binding.root.context
+            val waiting = item.notSynced + item.syncing
+            binding.tvRecords.text = if (waiting == 0) ctx.getString(R.string.ds_sync_records, item.totalCount)
+            else ctx.getString(R.string.ds_sync_records_waiting, item.totalCount, waiting)
+            binding.tvStatusBadge.setDsSyncBadge(
+                when {
+                    item.syncing > 0 -> SyncState.SYNCING
+                    item.notSynced > 0 -> SyncState.UNSYNCED
+                    else -> SyncState.SYNCED
+                }
+            )
         }
     }
 

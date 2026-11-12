@@ -45,7 +45,7 @@ class HrpCasesFragment : Fragment() {
         val binding = _binding ?: return
         val rvLayoutManager1 = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         binding.rvIconGrid1.layoutManager = rvLayoutManager1
         val rvAdapter1 = IconGridAdapter(
@@ -59,7 +59,7 @@ class HrpCasesFragment : Fragment() {
 
         val rvLayoutManager2 = GridLayoutManager(
             context,
-            requireContext().resources.getInteger(R.integer.icon_grid_span)
+            requireContext().resources.getInteger(R.integer.ds_icon_grid_span) // redesign: was icon_grid_span
         )
         binding.rvIconGrid2.layoutManager = rvLayoutManager2
         val rvAdapter2 = IconGridAdapter(

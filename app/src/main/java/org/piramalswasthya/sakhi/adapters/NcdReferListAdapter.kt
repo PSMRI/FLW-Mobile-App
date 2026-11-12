@@ -89,15 +89,19 @@ import org.piramalswasthya.sakhi.R
                 }
 
                 if (item.ben.isDeath) {
-                    binding.contstraintLayoutV.setBackgroundColor(
-                        ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
-                    )
-                        binding.btnFollowUp.visibility = View.INVISIBLE
+//                    binding.contstraintLayoutV.setBackgroundColor(
+//                        ContextCompat.getColor(binding.root.context, R.color.md_theme_dark_outline)
+//                    )
+//                        binding.btnFollowUp.visibility = View.INVISIBLE
+                    // Redesign: deceased = grey card (same as the beneficiary list), no empty button slot
+                    binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container_high))
+                    binding.btnFollowUp.visibility = View.GONE
 
                 } else {
-                    binding.contstraintLayoutV.setBackgroundColor(
-                        ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
-                    )
+//                    binding.contstraintLayoutV.setBackgroundColor(
+//                        ContextCompat.getColor(binding.root.context, R.color.md_theme_light_primary)
+//                    )
+                    binding.cvContent.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.ds_surface_container)) // Redesign: default card colour (Widget.Sakhi.Card)
                     binding.btnFollowUp.visibility = if (visible) View.VISIBLE else View.GONE
 //                    binding.btnFollowUp.setBackgroundColor(binding.root.resources.getColor(if (item.tbrefferalFollowUp == null || item.tbrefferalFollowUp.isEmpty()) android.R.color.holo_red_dark else android.R.color.holo_green_dark))
 
@@ -118,12 +122,14 @@ import org.piramalswasthya.sakhi.R
                                 else -> R.string.view_follow_up
                             }
                         )
-                        setBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                if (isFollowUpPending) android.R.color.holo_red_dark else android.R.color.holo_green_dark
-                            )
-                        )
+//                        setBackgroundColor(
+//                            ContextCompat.getColor(
+//                                context,
+//                                if (isFollowUpPending) android.R.color.holo_red_dark else android.R.color.holo_green_dark
+//                            )
+//                        )
+                        // Redesign: pending = filled primary · done = tonal (was red / green)
+                        dsFormState(if (isFollowUpPending) DsFormState.NOT_STARTED else DsFormState.SECONDARY)
                     }
 
                 }

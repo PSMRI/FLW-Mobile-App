@@ -13,15 +13,23 @@
         android:layout_height="match_parent"
         tools:context=".ui.home_activity.HomeActivity">
 
+        <!-- Redesign (Figma "Top app bar"): light surface bar; was android:theme="@style/Theme.Sakhi.ActionBar" -->
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.Sakhi.ActionBar">
+            android:background="@color/ds_surface"
+            android:theme="@style/Theme.Sakhi.ActionBar.Redesign"
+            app:liftOnScroll="false">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/ds_surface"
+                app:subtitleTextAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                app:subtitleTextColor="@color/ds_on_surface_variant"
+                app:titleTextAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                app:titleTextColor="@color/ds_on_surface">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -32,18 +40,30 @@
 
                     <ImageView
                         android:id="@+id/iv_toolbar"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:tint="#ffffff"
-                        android:padding="@dimen/padding_normal"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="@dimen/ds_space_sm"
+                        android:background="@drawable/bg_ds_icon_circle"
+                        android:backgroundTint="@color/ds_primary_subtle"
+                        android:padding="@dimen/ds_space_xs"
+                        android:tint="@color/ds_primary"
+                        android:visibility="gone"
+                        tools:ignore="UseAppTint" />
 
                     <TextView
                         android:id="@+id/tv_toolbar"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        tools:text="!"/>
+                        android:layout_height="28dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="16sp"
+                        app:autoSizeMaxTextSize="22sp"
+                        app:autoSizeStepGranularity="1sp"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="Sirsi · Ward 4"/>
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
@@ -75,8 +95,24 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/ds_surface"
         app:headerLayout="@layout/nav_header_home"
+        app:itemHorizontalPadding="@dimen/ds_space_md"
+        app:itemIconPadding="@dimen/ds_space_sm"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/ds_on_surface_variant"
+        app:itemShapeAppearance="@style/ShapeAppearance.Sakhi.Full"
+        app:itemShapeFillColor="@color/ds_chip_bg"
+        app:itemShapeInsetEnd="@dimen/ds_space_xs"
+        app:itemShapeInsetStart="@dimen/ds_space_xs"
+        app:itemTextAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        app:itemTextColor="@color/ds_on_surface"
+        app:itemVerticalPadding="16dp"
+        app:subheaderTextAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        app:subheaderColor="@color/ds_on_surface_variant"
         app:menu="@menu/activity_home_drawer">
+        <!-- Redesign (Figma 09 · Profile & more): surface drawer, pill rows 56dp, 24dp grey icons, 14/20 labels,
+             section titles in #42474E, checked row = secondary-container -->
 
         <TextView
             android:id="@+id/versionName"
@@ -85,6 +121,8 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_margin="@dimen/margin_normal"
             android:padding="@dimen/padding_normal"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="v2.0.0"/>
 
     </com.google.android.material.navigation.NavigationView>

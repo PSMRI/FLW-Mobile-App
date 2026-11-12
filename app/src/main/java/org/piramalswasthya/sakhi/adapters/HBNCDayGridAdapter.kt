@@ -36,26 +36,28 @@ class HBNCDayGridAdapter(private val clickListener: HbncIconClickListener) :
         fun bind(item: HbncIcon, clickListener: HbncIconClickListener) {
             binding.hbncIcon = item
             binding.clickListener = clickListener
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (item.isFilled)
-                    binding.cvIcon.setBackgroundColor(
-                        binding.root.resources.getColor(
-                            android.R.color.holo_green_dark,
-                            binding.root.context.theme
-                        )
-                    )
-                else
-                    binding.cvIcon.setBackgroundColor(
-                        binding.root.resources.getColor(
-                            android.R.color.holo_red_light,
-                            binding.root.context.theme
-                        )
-                    )
-            } else
-                if (item.isFilled)
-                    binding.cvIcon.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
-                else
-                    binding.cvIcon.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_light))
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                if (item.isFilled)
+//                    binding.cvIcon.setBackgroundColor(
+//                        binding.root.resources.getColor(
+//                            android.R.color.holo_green_dark,
+//                            binding.root.context.theme
+//                        )
+//                    )
+//                else
+//                    binding.cvIcon.setBackgroundColor(
+//                        binding.root.resources.getColor(
+//                            android.R.color.holo_red_light,
+//                            binding.root.context.theme
+//                        )
+//                    )
+//            } else
+//                if (item.isFilled)
+//                    binding.cvIcon.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_green_dark))
+//                else
+//                    binding.cvIcon.setBackgroundColor(binding.root.resources.getColor(android.R.color.holo_red_light))
+            // Redesign: state colours on the MaterialCardView (done = success, not done = outlined white)
+            org.piramalswasthya.sakhi.ui.design.dsVisitTile(binding.cvIcon, binding.textView, item.isFilled)
             binding.executePendingBindings()
         }
 

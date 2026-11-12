@@ -63,7 +63,8 @@ class PncVisitListAdapter(private val clickListener: PncVisitClickListener? = nu
             binding.btnAddPnc.visibility =
                 if (item.allowFill) View.VISIBLE else View.INVISIBLE
 
-            binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+//binding.age.text = getLocalizedAge(binding.root.context, item.ben.dob)
+            binding.age.text = dsWifeOfAndAge(binding.root.context, item.ben.spouseName, getLocalizedAge(binding.root.context, item.ben.dob)) // Redesign meta line
 
             binding.clickListener = clickListener
             binding.executePendingBindings()
