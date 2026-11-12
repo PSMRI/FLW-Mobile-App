@@ -1,6 +1,6 @@
 # Redesign implementation — progress & restart point
 
-> **Read this first when resuming.** Last updated: 2026-11-12 (rows 22–29 implemented and compiled; none of them checked on the phone yet).
+> **Read this first when resuming.** Last updated: 2026-11-12 late (rows 22–29 implemented and compiled; unit tests pass; none of rows 22–29 checked on the phone yet).
 > Branch: `naf_revamp_flw` · phase 1 + module lists committed in 9f44aea2e; rows 22+ committed one group at a time (2026-11-12).
 
 ## 0. Overall status (2026-11-12, after rows 22–29)
@@ -86,7 +86,14 @@ Legend: ✅ done + verified on phone · 🟡 partly done · ⬜ not started.
 Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragment_eligible_couple`, `fragment_pregnancy_list`, `fragment_pnc_mother_list` are not edited but wrap already-redesigned shared layouts / cards — only a quick check needed.
 
 ### Resume checklist (next session)
-0. **RESUME HERE (2026-11-12):** phone pass of rows 22–29 (ABHA first), fix what the screenshots show, then unit tests on niramay + mitaninUat.
+0. **RESUME HERE (2026-11-12, after Studio freeze):** branch clean at 03dbb795a, nothing lost, not pushed.
+   Targeted unit tests (46 adapter/binding test classes, 343 tests) PASS on niramayDebug + mitaninUatDebug (both compile).
+   Layout audit: 250/293 active layouts use ds_* tokens; 43 untouched = 18 never inflated + 25 inflated (mostly thin shells around
+   redesigned lists — `fragment_all_ben`, `fragment_child_list`, `fragment_eligible_couple`, NCD lists …; real leftovers:
+   `rv_item_immunization_status(_header)`, `rv_item_immunization_base`, `fragment_survey_register`, `fragment_pw_anc_form`, `mitanin_item_layout`).
+   NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
+   Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
+   Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.
 1. (2026-11-06) Today + Modules verified on phone — done.
 2. (2026-11-06) `04 · Households`, `05 · Household members`, `06 · All beneficiaries` done + verified.
 3. (2026-11-06) `07 · Register member` form kit done + verified (row 12).
