@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma 02/03/08/09 bottom navigation (Today · Modules · Sync · Profile). Shown only when UiFlags.BOTTOM_NAV. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_nav_today"
+        android:icon="@drawable/ic_ds_nav_today"
+        android:title="@string/ds_nav_today" />
+    <item
+        android:id="@+id/bottom_nav_modules"
+        android:icon="@drawable/ic_ds_nav_modules"
+        android:title="@string/ds_nav_modules" />
+    <item
+        android:id="@+id/bottom_nav_sync"
+        android:icon="@drawable/ic_ds_nav_sync"
+        android:title="@string/ds_nav_sync" />
+    <item
+        android:id="@+id/bottom_nav_profile"
+        android:icon="@drawable/ic_ds_nav_profile"
+        android:title="@string/ds_nav_profile" />
+</menu>

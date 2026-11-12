@@ -103,6 +103,8 @@ import org.piramalswasthya.sakhi.work.WorkerUtils
 import java.net.URI
 import java.util.Locale
 import javax.inject.Inject
+import org.piramalswasthya.sakhi.ui.design.UiFlags
+import org.piramalswasthya.sakhi.ui.home_activity.home.HomeFragment
 
 
 private const val CELEBRATION_MS = 3_500L
@@ -332,6 +334,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         setContentView(binding.root)
         setUpActionBar()
+        if (UiFlags.BOTTOM_NAV) setUpBottomNav()
         setUpNavHeader()
         viewModel.restoredProfilePicUri.observe(this) { uri ->
             uri?.let {
@@ -898,6 +901,47 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
             .setOnClickListener {
                 imagePickerActivityResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
+    }
+
+    /**
+     * Redesign (Figma 02 / 03 / 08 / 09, plan step 8) — only when UiFlags.BOTTOM_NAV.
+     * Today / Modules = the two Home pages, Sync = sync dashboard, Profile = the existing drawer ("Profile & more").
+     * No destination or action changes; the bar is shown on top-level screens only.
+     */
+    private fun setUpBottomNav() {
+        val bottomNav = binding.bottomNav
+        val barHeight = (80 * resources.displayMetrics.density).toInt()
+        val navHostView = findViewById<View>(R.id.nav_host_fragment_home)
+        fun showHomeTab(position: Int) {
+            if (navController.currentDestination?.id != R.id.homeFragment)
+                navController.popBackStack(R.id.homeFragment, false)
+            navHostView.post {
+                val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_home)
+                (host?.childFragmentManager?.primaryNavigationFragment as? HomeFragment)?.selectTab(position)
+            }
+        }
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.bottom_nav_today -> { showHomeTab(0); true }
+                R.id.bottom_nav_modules -> { showHomeTab(1); true }
+                R.id.bottom_nav_sync -> {
+                    if (navController.currentDestination?.id != R.id.syncDashboardFragment)
+                        navController.navigate(R.id.syncDashboardFragment)
+                    true
+                }
+                R.id.bottom_nav_profile -> { binding.drawerLayout.open(); false }
+                else -> false
+            }
+        }
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val topLevel = destination.id == R.id.homeFragment || destination.id == R.id.syncDashboardFragment
+            bottomNav.visibility = if (topLevel) View.VISIBLE else View.GONE
+            navHostView.setPadding(
+                navHostView.paddingLeft, navHostView.paddingTop, navHostView.paddingRight,
+                if (topLevel) barHeight else 0
+            )
+            if (destination.id == R.id.syncDashboardFragment) bottomNav.menu.findItem(R.id.bottom_nav_sync).isChecked = true
+        }
     }
 
     private fun setUpActionBar() {

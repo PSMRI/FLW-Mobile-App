@@ -94,4 +94,9 @@
     <string name="ds_no_of_claims">দাবীৰ সংখ্যা</string>
     <string name="ds_amount_rs">ধন (₹)</string>
     <string name="ds_upload">আপলোড কৰক</string>
+    <!-- Bottom navigation (draft translations need native review) -->
+    <string name="ds_nav_today">আজি</string>
+    <string name="ds_nav_modules">মডিউল</string>
+    <string name="ds_nav_sync">ছিংক</string>
+    <string name="ds_nav_profile">প্ৰফাইল</string>
 </resources>

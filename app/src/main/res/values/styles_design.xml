@@ -465,4 +465,11 @@
         <item name="colorSwitchThumbNormal">@color/ds_surface_container</item>
         <item name="android:colorForeground">@color/ds_outline</item>
     </style>
+    <!-- Bottom navigation active indicator (Figma: 64×32 pill, secondary-container #CDEFF3) -->
+    <style name="Widget.Sakhi.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">64dp</item>
+        <item name="android:height">32dp</item>
+        <item name="android:color">@color/ds_secondary_container</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Sakhi.Full</item>
+    </style>
 </resources>

@@ -87,6 +87,24 @@
             android:layout_margin="20dp"
             android:layout_gravity="bottom|end"
             android:src="@drawable/baseline_chat_24"/>
+
+        <!-- Redesign: Figma bottom navigation (80dp, white, indicator secondary-container, labels 12/16).
+             GONE unless UiFlags.BOTTOM_NAV; HomeActivity.setUpBottomNav shows it on top-level screens only. -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="bottom"
+            android:background="@color/ds_surface_container"
+            android:visibility="gone"
+            app:elevation="3dp"
+            app:itemActiveIndicatorStyle="@style/Widget.Sakhi.BottomNav.Indicator"
+            app:itemIconTint="@color/ds_bottom_nav_item"
+            app:itemTextAppearanceActive="@style/TextAppearance.Sakhi.LabelMedium"
+            app:itemTextAppearanceInactive="@style/TextAppearance.Sakhi.LabelMedium"
+            app:itemTextColor="@color/ds_bottom_nav_item"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/home_bottom_nav" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

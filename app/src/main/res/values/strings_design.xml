@@ -99,4 +99,9 @@
     <string name="ds_no_of_claims">No. of claims</string>
     <string name="ds_amount_rs">Amount (₹)</string>
     <string name="ds_upload">Upload</string>
+    <!-- Bottom navigation (draft translations need native review) -->
+    <string name="ds_nav_today">Today</string>
+    <string name="ds_nav_modules">Modules</string>
+    <string name="ds_nav_sync">Sync</string>
+    <string name="ds_nav_profile">Profile</string>
 </resources>

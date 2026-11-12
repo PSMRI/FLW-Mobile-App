@@ -196,6 +196,11 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /** Redesign (bottom navigation, UiFlags.BOTTOM_NAV): Today = page 0, Modules = page 1. */
+    fun selectTab(position: Int) {
+        _binding?.vp2Home?.setCurrentItem(position, false)
+    }
+
     override fun onStop() {
         super.onStop()
         (activity as HomeActivity?)?.let {

@@ -94,4 +94,9 @@
     <string name="ds_no_of_claims">দাবির সংখ্যা</string>
     <string name="ds_amount_rs">পরিমাণ (₹)</string>
     <string name="ds_upload">আপলোড করুন</string>
+    <!-- Bottom navigation (draft translations need native review) -->
+    <string name="ds_nav_today">আজ</string>
+    <string name="ds_nav_modules">মডিউল</string>
+    <string name="ds_nav_sync">সিঙ্ক</string>
+    <string name="ds_nav_profile">প্রোফাইল</string>
 </resources>
