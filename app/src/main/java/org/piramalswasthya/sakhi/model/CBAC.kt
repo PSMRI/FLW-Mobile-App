@@ -15,6 +15,7 @@ import org.piramalswasthya.sakhi.database.room.SyncState
 import org.piramalswasthya.sakhi.helpers.Konstants
 import org.piramalswasthya.sakhi.model.dynamicEntity.TBReferralFollowUpEntity
 import org.piramalswasthya.sakhi.model.dynamicEntity.GCReferralFollowUpEntity
+import org.piramalswasthya.sakhi.model.dynamicEntity.NCDReferalFormResponseJsonEntity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -695,7 +696,12 @@ data class BenWithCbacAndReferalCache(
         parentColumn = "benId",
         entityColumn = "benId"
     )
-    val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList()
+    val gcFollowUp : List<GCReferralFollowUpEntity> = emptyList(),
+    @Relation(
+        parentColumn = "benId",
+        entityColumn = "benId"
+    )
+    val ncdFollowUpForms: List<NCDReferalFormResponseJsonEntity> = emptyList()
 
 ) {
     fun asDomainModel(): BenWithCbacReferDomain {
@@ -704,7 +710,8 @@ data class BenWithCbacAndReferalCache(
             // The relation is per beneficiary; keep only this card's referral (same reason, same month).
             gcReferralFollowUp = gcFollowUp.filter {
                 it.referralReason == referral.referralReason && it.referralMonth == monthKey(referral.revisitDate)
-            }
+            },
+            ncdFollowUpForms = ncdFollowUpForms
         )
     }
 }
@@ -718,7 +725,8 @@ data class BenWithCbacReferDomain(
     val allSynced: SyncState? = if (savedCbacRecords.isEmpty()) null else
         if (savedCbacRecords.map { it.syncState }
                 .all { it == SyncState.SYNCED }) SyncState.SYNCED else SyncState.UNSYNCED,
-    val gcReferralFollowUp : List<GCReferralFollowUpEntity> = emptyList()
+    val gcReferralFollowUp : List<GCReferralFollowUpEntity> = emptyList(),
+    val ncdFollowUpForms: List<NCDReferalFormResponseJsonEntity> = emptyList()
 )
 
 data class BenWithCbacDomain(

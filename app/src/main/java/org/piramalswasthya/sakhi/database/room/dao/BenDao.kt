@@ -1014,8 +1014,8 @@ GROUP BY b.benId
             (t.benId IS NOT NULL AND b.tbsnFilled = 1
              AND (t.bloodInSputum = 1 OR t.coughMoreThan2Weeks = 1 OR t.feverMoreThan2Weeks = 1
                   OR t.nightSweats = 1 OR t.lossOfWeight = 1 OR t.historyOfTb = 1)
-             AND (ts.benId IS NULL OR (IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)))
-            OR (ts.benId IS NOT NULL AND IFNULL(ts.isConfirmed, 0) = 0 AND IFNULL(ts.isRecommendedForTpt, 0) = 0)
+             AND (ts.benId IS NULL
+                  OR (ts.isTBConfirmed IS NULL AND ts.isRecommendedForTpt IS NULL)))
           )
         """ + BenListOrder.LIFO_B)
     fun getTbScreeningList(villageId: Int): Flow<List<BenWithTbSuspectedCache>>
