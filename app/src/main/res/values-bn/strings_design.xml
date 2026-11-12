@@ -89,4 +89,9 @@
     <string name="ds_abha_server_error">ABHA সার্ভারে পৌঁছানো যায়নি</string>
     <string name="ds_abha_show_aadhaar">আধার নম্বর দেখান বা লুকান</string>
     <string name="ds_abha_already_linked">ABHA আগেই লিঙ্ক করা আছে</string>
+    <!-- M2.11 incentives (draft translations need native review) -->
+    <string name="ds_month_year">মাস ও বছর</string>
+    <string name="ds_no_of_claims">দাবির সংখ্যা</string>
+    <string name="ds_amount_rs">পরিমাণ (₹)</string>
+    <string name="ds_upload">আপলোড করুন</string>
 </resources>

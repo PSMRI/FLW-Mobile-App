@@ -94,4 +94,9 @@
     <string name="ds_abha_server_error">Could not reach the ABHA server</string>
     <string name="ds_abha_show_aadhaar">Show or hide Aadhaar number</string>
     <string name="ds_abha_already_linked">ABHA already linked</string>
+    <!-- M2.11 incentives (draft translations need native review) -->
+    <string name="ds_month_year">Month &amp; year</string>
+    <string name="ds_no_of_claims">No. of claims</string>
+    <string name="ds_amount_rs">Amount (₹)</string>
+    <string name="ds_upload">Upload</string>
 </resources>

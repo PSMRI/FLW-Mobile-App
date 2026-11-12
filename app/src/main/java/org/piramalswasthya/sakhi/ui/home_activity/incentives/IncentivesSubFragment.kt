@@ -171,9 +171,10 @@ class IncentivesSubFragment : Fragment() {
         )
 
         binding.rvSubIncentive.adapter = adapter
-        binding.rvSubIncentive.addItemDecoration(
-            DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
-        )
+        // Redesign: records are separate cards with a 12dp gap — no divider line
+        // binding.rvSubIncentive.addItemDecoration(
+        //     DividerItemDecoration(requireContext(), LinearLayout.VERTICAL)
+        // )
     }
 
     private fun setupFragmentResultListener() {

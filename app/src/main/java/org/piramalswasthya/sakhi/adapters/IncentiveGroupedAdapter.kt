@@ -9,6 +9,7 @@ import org.piramalswasthya.sakhi.BuildConfig
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.databinding.RvItemIncentiveGroupedBinding
 import org.piramalswasthya.sakhi.model.IncentiveGrouped
+import org.piramalswasthya.sakhi.ui.design.dsApprovalTag
 
 class IncentiveGroupedAdapter(
     private val onItemClick: (Long, String) -> Unit
@@ -47,7 +48,8 @@ class IncentiveGroupedAdapter(
                 else -> R.string.pending to R.drawable.bg_status_pending
             }
             binding.tvApprovalStatus.text = itemView.context.getString(statusText)
-            binding.tvApprovalStatus.setBackgroundResource(statusBg)
+            // binding.tvApprovalStatus.setBackgroundResource(statusBg)
+            binding.tvApprovalStatus.dsApprovalTag(item.approvalStatus) // redesign: Figma "Tag" (statusBg unused now)
 
             binding.executePendingBindings()
 

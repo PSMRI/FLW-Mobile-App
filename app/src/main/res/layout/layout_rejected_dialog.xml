@@ -1,198 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign: Figma M2.11-18 "Dialog · Incentive claim status" — padding 24, gap 16: icon 28, title 22/28, status tag,
+     info rows (label 14/20 variant · value 14/20 Medium, 10dp vertical padding, 1dp divider).
+     Old layout: legacy_layout_rejected_dialog.xml. Ids unchanged. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="?android:attr/colorBackground">
+    android:layout_height="wrap_content"
+    android:background="@color/ds_surface_container">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
-        <!-- Header -->
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ds_info"
+            app:tint="@color/ds_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Claim Details"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+            android:textColor="@color/ds_on_surface" />
+
+        <TextView
+            android:id="@+id/cliamStatusTV"
+            style="@style/Sakhi.Tag"
+            android:layout_marginTop="16dp"
+            android:text="REJECTED"
+            tools:text="Rejected" />
+
+        <!-- Info row: rejected / verified by -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_ds_divider_bottom"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="REJECTED BY"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
+            <TextView
+                android:id="@+id/tvRejectedBy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1.6"
+                android:gravity="end"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
+                tools:text="Anju Sharma · ASHA Supervisor" />
+        </LinearLayout>
+
+        <!-- Info row: rejection reason -->
+        <LinearLayout
+            android:id="@+id/rejectedTitleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_ds_divider_bottom"
+            android:orientation="vertical"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/rejectedTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="REJECTION REASON"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
+            <TextView
+                android:id="@+id/tvRejectedReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
+                tools:text="MCP card photo missing for Riya Kumari" />
+        </LinearLayout>
+
+        <!-- Info row: claim date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_ds_divider_bottom"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Claim Details"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:text="CLAIM DATE"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
 
             <TextView
-                android:id="@+id/cliamStatusTV"
+                android:id="@+id/tvClaimDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="REJECTED"
-                android:textSize="12sp"
-                android:textColor="#A32D2D"
-                android:textStyle="bold"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp" />
-
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
+                tools:text="01 Nov 2026" />
         </LinearLayout>
 
-        <!-- Rejected By -->
-        <androidx.cardview.widget.CardView
+        <!-- Info row: rejected / verified date -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            app:contentPadding="16dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_weight="1"
+                android:text="REJECTED DATE"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
 
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="REJECTED BY"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.07"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/tvRejectedBy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:textSize="15sp"
-                    android:textColor="?android:attr/textColorPrimary" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Rejection Reason -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/rejectedTitleView"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
-            app:contentPadding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvRejectedDate"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/rejectedTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="REJECTION REASON"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.07"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/tvRejectedReason"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:textSize="15sp"
-                    android:lineSpacingMultiplier="1.4"
-                    android:textColor="?android:attr/textColorPrimary" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Dates (grouped card) -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="2dp"
-            app:contentPadding="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CLAIM DATE"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.07"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:id="@+id/tvClaimDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:textSize="15sp"
-                        android:textColor="?android:attr/textColorPrimary" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="?android:attr/listDivider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="REJECTED DATE"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.07"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:id="@+id/tvRejectedDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:textSize="15sp"
-                        android:textColor="?android:attr/textColorPrimary" />
-
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
+                tools:text="03 Nov 2026" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

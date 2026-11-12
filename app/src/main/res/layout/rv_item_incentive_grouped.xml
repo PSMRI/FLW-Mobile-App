@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.11-03 activity card — white (default incentive = warning tone, no beneficiary = grey) r12,
+     1dp outline-variant, padding 12/16, gap 8: "1. Activity" 14/20 Medium + eligibility icon 20 + status tag;
+     claims / amount as label-value cells. Guidelines kept for their ids.
+     Old layout: legacy_rv_item_incentive_grouped.xml. Ids and bindings unchanged. -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-
     <data>
-
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="serialNo"
@@ -24,149 +25,160 @@
         <variable
             name="isMitanin"
             type="Boolean" />
-
-
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@{item.defaultIncentive ? @color/default_incentive_background : (item.hasZeroBen ? @color/default_incentive_no_ben_background : @color/md_theme_light_onPrimary)}"
-        android:onClick="@{() -> clickListener.invoke(item.activity.id, item.activityName)}">
+        android:layout_marginTop="12dp"
+        android:onClick="@{() -> clickListener.invoke(item.activity.id, item.activityName)}"
+        app:cardBackgroundColor="@{item.defaultIncentive ? @color/ds_warning_container : (item.hasZeroBen ? @color/ds_surface_container_high : @color/ds_surface_container)}"
+        app:cardCornerRadius="@dimen/ds_radius_md">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline10"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.1" />
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline50"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.45" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline75"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.6" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline90"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.9" />
-
-
-        <ImageView
-            android:id="@+id/ivStatusIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@{item.eligible ? @drawable/ic_check_circle : @drawable/ic_cancel}"
-            android:tint="@{item.eligible ? @color/holo_green_dark : @color/md_theme_dark_onError}"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="@{isMitanin ? View.VISIBLE : (item.defaultIncentive ? View.INVISIBLE : View.VISIBLE)}"
-            tools:tint="@color/holo_green_dark" />
-
-        <TextView
-            android:id="@+id/tvSerialNo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{String.valueOf(serialNo)}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline10"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="1" />
-
-
-        <LinearLayout
-            android:id="@+id/llActivityColumn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@id/guideline10"
-            app:layout_constraintEnd_toStartOf="@id/guideline50"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <TextView
-                android:id="@+id/tvGroupName"
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{item.groupName}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textStyle="bold"
-                android:ellipsize="end"
-                android:singleLine="true"
-                tools:text="Maternal Health" />
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
 
-            <TextView
-                android:id="@+id/tvActivityName"
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline50"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{item.description}"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:ellipsize="end"
-                tools:text="ANC Checkup" />
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline75"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline90"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9" />
+
+            <!-- Title row: "1." + activity name · eligibility icon · status tag -->
+            <TextView
+                android:id="@+id/tvSerialNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(serialNo) + `.`}"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1." />
+
+            <LinearLayout
+                android:id="@+id/llActivityColumn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="12dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/ivStatusIcon"
+                app:layout_constraintStart_toEndOf="@id/tvSerialNo"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Group name is the section header above; kept for its id -->
+                <TextView
+                    android:id="@+id/tvGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.groupName}"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvActivityName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.description}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_surface"
+                    tools:text="ANC registration in 1st trimester" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivStatusIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="12dp"
+                android:importantForAccessibility="no"
+                android:src="@{item.eligible ? @drawable/ic_ds_check_circle : @drawable/ic_ds_error}"
+                android:tint="@{item.eligible ? @color/ds_success : @color/ds_error}"
+                android:visibility="@{isMitanin ? View.VISIBLE : (item.defaultIncentive ? View.INVISIBLE : View.VISIBLE)}"
+                app:layout_constraintEnd_toStartOf="@id/tvApprovalStatus"
+                app:layout_constraintTop_toTopOf="@id/tvApprovalStatus"
+                app:layout_constraintBottom_toBottomOf="@id/tvApprovalStatus"
+                tools:src="@drawable/ic_ds_check_circle" />
 
             <TextView
                 android:id="@+id/tvApprovalStatus"
-                android:layout_width="wrap_content"
+                style="@style/Sakhi.Tag"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Verified" />
+
+            <!-- Claims · amount -->
+            <LinearLayout
+                android:id="@+id/ll_values"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:textColor="@android:color/white"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                tools:text="Rejected"
-                tools:background="@drawable/bg_status_rejected" />
-        </LinearLayout>
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llActivityColumn">
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvCount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{String.valueOf(item.count)}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="@id/guideline50"
-            app:layout_constraintEnd_toStartOf="@id/guideline75"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="12" />
+                    <TextView
+                        style="@style/Sakhi.InfoLabel"
+                        android:text="@string/ds_no_of_claims" />
 
-        <TextView
-            android:id="@+id/tvTotalAmount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@{String.valueOf(item.totalAmount)}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:textStyle="bold"
-            android:gravity="end"
-            android:paddingEnd="@dimen/_5sdp"
-            android:paddingStart="@dimen/_5sdp"
-            app:layout_constraintStart_toStartOf="@id/guideline75"
-            app:layout_constraintEnd_toStartOf="@id/ivStatusIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="₹240"
-            android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}" />
+                    <TextView
+                        android:id="@+id/tvCount"
+                        style="@style/Sakhi.InfoValue"
+                        android:text="@{String.valueOf(item.count)}"
+                        tools:text="3" />
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        style="@style/Sakhi.InfoLabel"
+                        android:text="@string/ds_amount_rs" />
+
+                    <TextView
+                        android:id="@+id/tvTotalAmount"
+                        style="@style/Sakhi.InfoValue"
+                        android:text="@{String.valueOf(item.totalAmount)}"
+                        tools:text="900" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

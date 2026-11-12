@@ -89,4 +89,9 @@
     <string name="ds_abha_server_error">ABHA सर्वर से संपर्क नहीं हो सका</string>
     <string name="ds_abha_show_aadhaar">आधार नंबर दिखाएँ या छिपाएँ</string>
     <string name="ds_abha_already_linked">ABHA पहले से जुड़ा है</string>
+    <!-- M2.11 incentives (draft translations need native review) -->
+    <string name="ds_month_year">महीना और वर्ष</string>
+    <string name="ds_no_of_claims">दावों की संख्या</string>
+    <string name="ds_amount_rs">राशि (₹)</string>
+    <string name="ds_upload">अपलोड करें</string>
 </resources>

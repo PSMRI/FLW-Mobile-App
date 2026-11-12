@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (light touch, Figma M2.11-37 "Monthly recap · controls"): the illustrated story player is kept as built
+     (character, speech bubble, segment progress, controls are code-driven); scene text uses Title/Large 22/28 and
+     "Replay" is the filled 48dp pill. Old layout: legacy_fragment_monthly_recap_playback.xml. Ids unchanged. -->
 <!--
   Monthly Recap playback (Phase 7): auto-playing personalised story.
 
@@ -78,29 +81,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:lineSpacingExtra="7dp"
-            android:paddingHorizontal="26dp"
-            android:paddingVertical="26dp"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="24dp"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
             android:textColor="@color/recap_playback_text"
-            android:textSize="20sp"
             tools:text="इस महीने आपने 12 CBAC स्वास्थ्य स्क्रीनिंग पूरी कीं।" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/recapReplayButton"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/Widget.Sakhi.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@color/recap_playback_progress_active"
-        android:elevation="10dp"
-        android:paddingStart="28dp"
-        android:paddingEnd="28dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:text="@string/monthly_recap_playback_replay"
-        android:textAllCaps="false"
-        android:textSize="16sp"
         android:visibility="gone"
-        app:cornerRadius="26dp"
         app:layout_constraintBottom_toTopOf="@id/recapControlsRow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

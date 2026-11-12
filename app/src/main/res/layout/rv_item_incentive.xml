@@ -1,178 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.11-04 "Records in this claim" card — white r16, 1dp outline-variant, padding 12/16, gap 8:
+     44dp avatar (serial no.) + beneficiary 14/20, RCH / ABHA lines 14/20, amount 16/24, icon actions (40dp grey circle
+     + 11/16 label: upload, view files with count) and tonal Submit.
+     Old layout: legacy_rv_item_incentive.xml. Ids and bindings unchanged. -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="serialNo"
             type="Integer" />
+
         <variable
             name="item"
             type="org.piramalswasthya.sakhi.model.IncentiveDomain" />
+
         <variable
             name="clickListener"
             type="org.piramalswasthya.sakhi.adapters.IncentiveListAdapter.FileClickListener" />
+
         <variable
             name="isMitanin"
             type="Boolean" />
-
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Sakhi.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       >
-
-
-        <TextView
-            android:id="@+id/tvSerialNo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{String.valueOf(serialNo)}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/ll_details"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintWidth_percent="0.12"
-            tools:text="1"/>
-
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp">
 
         <LinearLayout
-            android:id="@+id/ll_details"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/tv_amount"
-            app:layout_constraintStart_toEndOf="@id/tvSerialNo"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.6">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
 
-            <TextView
+            <!-- Header: avatar + beneficiary -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_small"
-                android:text="@{@string/incentive_ben_details(item.record.benId, item.record.name)}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                tools:text="HEllo" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_small"
-                android:text="@{@string/incentive_activity_details(item.activity.description)}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:visibility="gone"
-                tools:text="HEllo" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_small"
-                android:text="@{@string/incentive_rch_id_details(item.ben.rchId)}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_small"
-                android:text="@{@string/incentive_abha_id_details(item.ben.abhaId)}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-
-                />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_amount"
-            android:layout_width="100dp"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:text="@{@string/incentive_amount(item.activity.rate)}"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintBottom_toBottomOf="@id/ll_details"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ll_details"
-            app:layout_constraintWidth_percent="0.28"
-            android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}"
-            tools:text="odfnk" />
-
-        <LinearLayout
-            android:id="@+id/ll_file_actions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_details"
-            android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}"
-            >
-            <ImageButton
-                android:id="@+id/btn_upload_files"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginEnd="18dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{() -> clickListener.onUploadClick(item)}"
-                android:padding="8dp"
-                android:src="@drawable/ic_doc_upload"
-                android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
-                app:tint="?attr/colorPrimary" />
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageButton
-                    android:id="@+id/btn_view_files"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{() -> clickListener.onViewClick(item)}"
-                    android:src="@drawable/ic_icon_view"
-                    android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
-                    app:tint="?attr/colorPrimary" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_file_count"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_gravity="top|end"
+                    android:id="@+id/tvSerialNo"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_ds_icon_circle"
+                    android:backgroundTint="@color/ds_primary_container"
                     android:gravity="center"
-                    android:text="@{item.fileCount > 0 ? String.valueOf(item.fileCount) : ``}"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/_10sdp"
-                    android:visibility="@{item.fileCount > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
-                    tools:text="3"
-                    tools:visibility="visible" />
+                    android:text="@{String.valueOf(serialNo)}"
+                    android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                    android:textColor="@color/ds_on_primary_container"
+                    tools:text="1" />
 
-            </FrameLayout>
+                <LinearLayout
+                    android:id="@+id/ll_details"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/incentive_ben_details(item.record.benId, item.record.name)}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                        android:textColor="@color/ds_on_surface"
+                        tools:text="Ben ID: 701233450021\nName: Aarav Kumar" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{@string/incentive_activity_details(item.activity.description)}"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_on_surface_variant"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- IDs -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{@string/incentive_rch_id_details(item.ben.rchId)}"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface"
+                tools:text="RCH ID: 1023 4455 6677" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{@string/incentive_abha_id_details(item.ben.abhaId)}"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface"
+                tools:text="ABHA Number: 91-4521-7788-0102" />
+
+            <TextView
+                android:id="@+id/tv_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{@string/incentive_amount(item.activity.rate)}"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                android:textColor="@color/ds_on_surface"
+                android:visibility="@{isMitanin ? View.VISIBLE : View.VISIBLE}"
+                tools:text="₹ 300" />
+
+            <!-- Figma "Actions": icon actions + tonal Submit, gap 8 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_file_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="@{isMitanin ? View.GONE : View.VISIBLE}">
+
+                    <ImageButton
+                        android:id="@+id/btn_upload_files"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_ds_icon_circle"
+                        android:backgroundTint="@color/ds_surface_container_high"
+                        android:contentDescription="@string/ds_upload"
+                        android:onClick="@{() -> clickListener.onUploadClick(item)}"
+                        android:padding="9dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_ds_cloud_upload"
+                        android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+                        app:tint="@color/ds_primary" />
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="8dp">
+
+                        <ImageButton
+                            android:id="@+id/btn_view_files"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="bottom|start"
+                            android:background="@drawable/bg_ds_icon_circle"
+                            android:backgroundTint="@color/ds_surface_container_high"
+                            android:contentDescription="@string/view"
+                            android:onClick="@{() -> clickListener.onViewClick(item)}"
+                            android:padding="9dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_icon_view"
+                            android:visibility="@{item.record.eligible? View.GONE : View.VISIBLE}"
+                            app:tint="@color/ds_primary" />
+
+                        <TextView
+                            android:id="@+id/tv_file_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="18dp"
+                            android:layout_gravity="top|end"
+                            android:background="@drawable/bg_ds_pill"
+                            android:backgroundTint="@color/ds_error"
+                            android:gravity="center"
+                            android:minWidth="18dp"
+                            android:paddingHorizontal="4dp"
+                            android:text="@{item.fileCount > 0 ? String.valueOf(item.fileCount) : ``}"
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary"
+                            android:visibility="@{item.fileCount > 0 ? android.view.View.VISIBLE : android.view.View.GONE}"
+                            tools:text="3"
+                            tools:visibility="visible" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_submit"
+                    style="@style/Widget.Sakhi.Button.Tonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{!item.isSubmitted &amp;&amp; item.fileCount > 0}"
+                    android:onClick="@{() -> clickListener.onSubmitClick(item)}"
+                    android:paddingHorizontal="24dp"
+                    android:text="@{item.isSubmitted ? @string/submitted : @string/submit}"
+                    android:visibility="@{isMitanin ? View.GONE : (item.record.eligible ? View.GONE : View.VISIBLE)}"
+                    tools:text="Submit" />
+            </LinearLayout>
         </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_submit"
-            android:layout_width="0dp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_height="wrap_content"
-            android:enabled="@{!item.isSubmitted &amp;&amp; item.fileCount > 0}"
-            android:onClick="@{() -> clickListener.onSubmitClick(item)}"
-            android:text="@{item.isSubmitted ? @string/submitted : @string/submit}"
-            android:textColor="@color/incentive_button_text_selector"
-            app:backgroundTint="@color/incentive_button_background_selector"
-            app:iconSize="18dp"
-            android:visibility="@{isMitanin ? View.GONE : (item.record.eligible ? View.GONE : View.VISIBLE)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_file_actions"
-            app:layout_constraintWidth_percent="0.30" />
-
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

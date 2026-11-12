@@ -1,229 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Redesign: Figma M2.11-03 "Incentives · month" — month picker (label "Month & year" + 56dp box + filled Submit),
+     claim status row with a status tag, summary stat tiles (pending purple · processed green, r16), table head 12/16,
+     activity groups list, bottom action bar "Claim". Padding 16, gap 12.
+     Old layout: legacy_fragment_incentives.xml. All view ids unchanged. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:orientation="vertical"
     tools:context=".ui.home_activity.incentives.IncentivesFragment">
 
+    <!-- "Last updated on …" as a neutral banner -->
     <TextView
         android:id="@+id/tv_lastupdated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_orange_light"
-        android:padding="@dimen/padding_normal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_ds_banner_neutral"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+        android:textColor="@color/ds_on_surface_variant"
         android:visibility="gone"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
         tools:text="Last Updated on 23-43-1234" />
 
+    <!-- Old from/to range (hidden in the app today) -->
     <LinearLayout
         android:id="@+id/ll_date_range"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:padding="@dimen/padding_normal"
-        app:layout_constraintTop_toBottomOf="@id/tv_lastupdated"
-        tools:context=".ui.home_activity.incentives.IncentivesFragment">
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_normal">
+        <LinearLayout
+            android:id="@+id/from_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/from_ll"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:orientation="horizontal">
-                    <Spinner
-                        android:id="@+id/from_months_spinner"
-                        android:layout_width="0dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_normal"
-                        android:layout_marginHorizontal="@dimen/margin_normal"/>
-                    <Spinner
-                        android:id="@+id/from_years_spinner"
-                        android:layout_width="0dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+            <Spinner
+                android:id="@+id/from_months_spinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="to">
-                    </TextView>
-                </LinearLayout>
+            <Spinner
+                android:id="@+id/from_years_spinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/margin_normal">
-                    <Spinner
-                        android:id="@+id/to_months_spinner"
-                        android:layout_width="0dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-                    <Spinner
-                        android:id="@+id/to_years_spinner"
-                        android:layout_width="0dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="to"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/margin_normal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/to_months_spinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-            </LinearLayout>
+            <Spinner
+                android:id="@+id/to_years_spinner"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Figma "Month picker": text field (227) + Submit (gap 8) -->
+    <LinearLayout
         android:id="@+id/from_to_date_range"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/ll_date_range"
-        android:padding="@dimen/padding_normal"
-        >
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
         <LinearLayout
             android:id="@+id/from_date_ll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/fetch_data_ll"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Widget.Sakhi.FieldLabel"
+                android:text="@string/ds_month_year" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_edit_text1"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Sakhi.TextField.Boxed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_normal"
-                android:hint="Select Month">
+                app:endIconDrawable="@drawable/ic_arrow_drop_down"
+                app:endIconMode="custom"
+                app:endIconTint="@color/ds_on_surface_variant">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et1"
+                    style="@style/Widget.Sakhi.TextField.Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Select Month"
                     android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-
+                    android:text="Select Month" />
             </com.google.android.material.textfield.TextInputLayout>
-
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/fetch_data_ll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/padding_normal"
-            app:layout_constraintHorizontal_weight="1.5"
-            app:layout_constraintStart_toEndOf="@id/from_date_ll"
-            app:layout_constraintEnd_toStartOf="@id/claimlayout"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fetch_data"
-                android:layout_width="match_parent"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_height="wrap_content"
-                android:text="Submit"
-                >
-            </com.google.android.material.button.MaterialButton>
+                android:paddingHorizontal="24dp"
+                android:text="Submit" />
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/claimlayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/padding_normal"
-            android:layout_marginStart="5dp"
-            android:visibility="gone"
-            app:layout_constraintHorizontal_weight="1.5"
-            app:layout_constraintStart_toEndOf="@id/fetch_data_ll"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/claimbtn"
-                android:layout_width="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_height="wrap_content"
-                android:text="@string/claim"
-                >
-            </com.google.android.material.button.MaterialButton>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    </LinearLayout>
+
+    <!-- Figma "Claim status": label + status tag (tap = rejection details) -->
+    <LinearLayout
         android:id="@+id/claimStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_small"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/from_to_date_range"
-        >
+        tools:visibility="visible">
+
         <TextView
             android:id="@+id/claimedStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Incentive claim status"
-            android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="@+id/approved"
-            app:layout_constraintBottom_toBottomOf="@+id/approved"
-            android:textStyle="bold"/>
-        <com.google.android.material.button.MaterialButton
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+            android:textColor="@color/ds_on_surface_variant" />
+
+        <TextView
             android:id="@+id/approved"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text=''
-            android:textColor="@color/md_theme_light_onPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            style="@style/Sakhi.Tag"
+            android:layout_marginStart="8dp"
+            android:drawableEnd="@drawable/ic_ds_info"
+            android:drawablePadding="4dp"
+            android:text=""
+            app:drawableTint="@color/ds_on_surface_variant"
+            tools:text="Pending" />
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Figma "Summary": two stat tiles, r16, padding 12, gap 8 (pending first) -->
+    <LinearLayout
+        android:id="@+id/ll_sum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/tv_total_pending"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_ds_stat"
+            android:backgroundTint="@color/ds_module_couple_bg"
+            android:drawableEnd="@drawable/ic_download"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:text="@string/incentive_pending"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_module_couple_fg"
+            app:drawableTint="@color/ds_module_couple_fg" />
+
+        <TextView
+            android:id="@+id/tv_total_processed"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_ds_stat"
+            android:backgroundTint="@color/ds_success_container"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:text="@string/incentive_processed"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_success" />
+    </LinearLayout>
+
+    <!-- Figma "Table head": 12/16 Medium on-surface-variant -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_orange_light"
-        android:padding="@dimen/padding_small"
-        app:layout_constraintTop_toBottomOf="@+id/claimStatus">
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
@@ -258,54 +256,46 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="S.No"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant"
             app:layout_constraintEnd_toStartOf="@id/guideline10"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvHeaderActivity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Activity"
-            android:textStyle="bold"
+            android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toEndOf="@id/guideline10"
+            android:text="Activity"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant"
             app:layout_constraintEnd_toStartOf="@id/guideline50"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="@id/guideline10"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvHeaderCount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="No of Claims"
-            android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toStartOf="@id/guideline50"
+            android:text="No of Claims"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant"
             app:layout_constraintEnd_toStartOf="@id/guideline75"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="@id/guideline50"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvHeaderAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="@dimen/_5sdp"
             android:text="Amount claimed (Rs.)"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant"
             app:layout_constraintEnd_toStartOf="@id/guideline90"
             app:layout_constraintStart_toStartOf="@id/guideline75"
             app:layout_constraintTop_toTopOf="parent" />
@@ -314,65 +304,47 @@
             android:id="@+id/tvHeaderDoc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Doc"
-            android:textStyle="bold"
             android:gravity="center"
-
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            app:layout_constraintStart_toEndOf="@id/guideline90"
+            android:text="Doc"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
+            app:layout_constraintStart_toStartOf="@id/guideline90"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_incentive"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
         android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/ll_sum"
-        app:layout_constraintTop_toBottomOf="@id/ll_header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:itemCount="23"
-        tools:listitem="@layout/rv_item_incentive" >
+        tools:itemCount="5"
+        tools:listitem="@layout/item_activity_group" />
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <LinearLayout
-        android:id="@+id/ll_sum"
+    <!-- Figma "Bottom action bar": Claim (shown only for a claimable month) -->
+    <FrameLayout
+        android:id="@+id/claimlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:background="@drawable/bg_ds_bottom_bar"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-        <TextView
-            android:id="@+id/tv_total_processed"
-            android:layout_width="0dp"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/claimbtn"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/padding_normal"
-            android:background="@android:color/holo_green_light"
-            android:text="@string/incentive_processed"
-
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-        <TextView
-            android:id="@+id/tv_total_pending"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/incentive_pending"
-            android:drawableEnd="@drawable/ic_download"
-            android:background="@android:color/holo_red_light"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/claim" />
+    </FrameLayout>
+</LinearLayout>

@@ -4,28 +4,27 @@
   stacked version spent most of the first screen on a single badge. Artwork on the
   left, then name, where she stands ("3 of 6", streak, level) and the bar showing
   how much of the next milestone is done.
+  Redesign: Figma M2.1-01 "Badge progress row" — 44dp medal, gap 12, name 14/20 Medium, 6dp progress bar (r3),
+  detail 12/16; on a white r16 card. Old layout: legacy_item_badge_carousel.xml. Ids unchanged.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Sakhi.Card"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:cardBackgroundColor="#F2F9F7"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/padding_normal"
-        android:paddingVertical="@dimen/padding_small">
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp">
 
         <ImageView
             android:id="@+id/iv_carousel_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:contentDescription="@string/badge_shelf_title"
             android:scaleType="centerInside"
             tools:src="@drawable/badge_steady_syncer_t1" />
@@ -33,7 +32,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_normal"
+            android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -43,30 +42,29 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="15sp"
-                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+                android:textColor="@color/ds_on_surface"
                 tools:text="Steady Syncer" />
-
-            <TextView
-                android:id="@+id/tv_carousel_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                tools:text="🏅 Level 2 · 3 of 6 · 2 week streak" />
 
             <ProgressBar
                 android:id="@+id/pb_carousel_progress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="6dp"
                 android:layout_marginTop="4dp"
+                android:progressDrawable="@drawable/bg_ds_progress_track"
                 tools:progress="50" />
 
+            <TextView
+                android:id="@+id/tv_carousel_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                android:textColor="@color/ds_on_surface_variant"
+                tools:text="Level 2 · 3 of 6 · 2 week streak" />
         </LinearLayout>
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

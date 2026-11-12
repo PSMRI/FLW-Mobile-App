@@ -72,6 +72,7 @@ import java.util.Objects
 import java.util.Timer
 import kotlin.math.max
 import org.piramalswasthya.sakhi.utils.safeNavigate
+import org.piramalswasthya.sakhi.ui.design.dsApprovalTag
 
 
 @AndroidEntryPoint
@@ -130,7 +131,8 @@ class IncentivesFragment : Fragment() {
                 binding.tvTitle.text = "Verified By"
                 binding.date.text = "Verified Date"
                 binding.cliamStatusTV.text = "Verified"
-                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+                // binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+                binding.cliamStatusTV.dsApprovalTag(101) // redesign: Figma "Tag"
                 binding.tvRejectedReason.visibility = View.GONE
                 binding.rejectedTitle.visibility = View.GONE
                 binding.rejectedTitleView.visibility = View.GONE
@@ -142,7 +144,8 @@ class IncentivesFragment : Fragment() {
                 binding.cliamStatusTV.text = "Pending"
                 binding.tvRejectedBy.text = "Pending"
 
-                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_orange_dark))
+                // binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_orange_dark))
+                binding.cliamStatusTV.dsApprovalTag(102) // redesign: Figma "Tag"
 
                 binding.tvRejectedReason.visibility = View.GONE
                 binding.rejectedTitle.visibility = View.GONE
@@ -154,7 +157,8 @@ class IncentivesFragment : Fragment() {
                 binding.date.text = "Rejected Date"
                 binding.tvRejectedReason.text = rejectedReason
                 binding.cliamStatusTV.text = "Rejected"
-                binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+                // binding.cliamStatusTV.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+                binding.cliamStatusTV.dsApprovalTag(103) // redesign: Figma "Tag"
 
                 binding.tvRejectedReason.visibility = View.VISIBLE
                 binding.rejectedTitle.visibility = View.VISIBLE
@@ -279,7 +283,8 @@ class IncentivesFragment : Fragment() {
 
 
         val divider = DividerItemDecoration(context, LinearLayout.VERTICAL)
-        binding.rvIncentive.addItemDecoration(divider)
+        // Redesign: activity groups / cards have their own gaps — no divider line
+        // binding.rvIncentive.addItemDecoration(divider)
         binding.rvIncentive.adapter = groupedAdapter
         val dateRangePicker =
             MaterialDatePicker.Builder.dateRangePicker()
@@ -481,25 +486,28 @@ class IncentivesFragment : Fragment() {
                     when (incentiveRecordList.get(0).record.approvalStatus) {
                         101 -> {
                             binding.approved.text = "Verified"
-                            binding.approved.setBackgroundColor(
-                                ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
-                            )
+                            binding.approved.dsApprovalTag(101) // redesign: Figma "Tag"
+                            // binding.approved.setBackgroundColor(
+                            // ContextCompat.getColor(binding.root.context, android.R.color.holo_green_dark)
+                            // )
                         }
                         102 -> {
                             binding.approved.text = "Pending"
-                            binding.approved.setBackgroundColor(
-                                ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
-                            )
+                            binding.approved.dsApprovalTag(102) // redesign: Figma "Tag"
+                            // binding.approved.setBackgroundColor(
+                            // ContextCompat.getColor(binding.root.context, android.R.color.holo_orange_light)
+                            // )
                         }
                         103 -> {
                             binding.approved.text = "Rejected"
+                            binding.approved.dsApprovalTag(103) // redesign: Figma "Tag"
                             binding.claimbtn.text = "Claim"
                             binding.claimbtn.isEnabled = true
 
                             binding.claimbtn.isClickable = true
-                            binding.approved.setBackgroundColor(
-                                ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
-                            )
+                            // binding.approved.setBackgroundColor(
+                            // ContextCompat.getColor(binding.root.context, android.R.color.holo_red_dark)
+                            // )
                         }
                     }
                 } else {
@@ -568,36 +576,39 @@ class IncentivesFragment : Fragment() {
                             when (incentiveRecordList.get(0).record.approvalStatus) {
                                 101 ->  {
                                     binding.approved.text = "Verified"
+                                    binding.approved.dsApprovalTag(101) // redesign: Figma "Tag"
 
-                                    binding.approved.backgroundTintList =
-                                        ColorStateList.valueOf(
-                                            ContextCompat.getColor(
-                                                binding.root.context,
-                                                android.R.color.holo_green_dark
-                                            )
-                                        )
+                                    // binding.approved.backgroundTintList =
+                                    // ColorStateList.valueOf(
+                                    // ContextCompat.getColor(
+                                    // binding.root.context,
+                                    // android.R.color.holo_green_dark
+                                    // )
+                                    // )
                                 }
                                 102 ->  {
                                     binding.approved.text = "Pending"
+                                    binding.approved.dsApprovalTag(102) // redesign: Figma "Tag"
 
-                                    binding.approved.backgroundTintList =
-                                        ColorStateList.valueOf(
-                                            ContextCompat.getColor(
-                                                binding.root.context,
-                                                android.R.color.holo_orange_light
-                                            )
-                                        )
+                                    // binding.approved.backgroundTintList =
+                                    // ColorStateList.valueOf(
+                                    // ContextCompat.getColor(
+                                    // binding.root.context,
+                                    // android.R.color.holo_orange_light
+                                    // )
+                                    // )
                                 }
                                 103 -> {
                                     binding.approved.text = "Rejected"
+                                    binding.approved.dsApprovalTag(103) // redesign: Figma "Tag"
 
-                                    binding.approved.backgroundTintList =
-                                        ColorStateList.valueOf(
-                                            ContextCompat.getColor(
-                                                binding.root.context,
-                                                android.R.color.holo_red_dark
-                                            )
-                                        )
+                                    // binding.approved.backgroundTintList =
+                                    // ColorStateList.valueOf(
+                                    // ContextCompat.getColor(
+                                    // binding.root.context,
+                                    // android.R.color.holo_red_dark
+                                    // )
+                                    // )
                                 }
 
                             }

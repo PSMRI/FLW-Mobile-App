@@ -89,4 +89,9 @@
     <string name="ds_abha_server_error">ABHA ছাৰ্ভাৰৰ সৈতে সংযোগ কৰিব পৰা নগ\'ল</string>
     <string name="ds_abha_show_aadhaar">আধাৰ নম্বৰ দেখুৱাওক বা লুকুৱাওক</string>
     <string name="ds_abha_already_linked">ABHA ইতিমধ্যে সংযোগ কৰা হৈছে</string>
+    <!-- M2.11 incentives (draft translations need native review) -->
+    <string name="ds_month_year">মাহ আৰু বছৰ</string>
+    <string name="ds_no_of_claims">দাবীৰ সংখ্যা</string>
+    <string name="ds_amount_rs">ধন (₹)</string>
+    <string name="ds_upload">আপলোড কৰক</string>
 </resources>

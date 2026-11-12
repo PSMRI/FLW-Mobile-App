@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.1-02 "My badges" — surface bg, content padding 16, cards 12 apart.
+     Old layout: legacy_fragment_badge_shelf.xml. Id unchanged. -->
 <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rv_badge_shelf"
-    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnSecondary"
+    android:background="@color/ds_surface"
     android:clipToPadding="false"
-    android:padding="@dimen/padding_small"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="16dp"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     tools:listitem="@layout/item_badge" />

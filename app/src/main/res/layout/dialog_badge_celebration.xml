@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign: Figma M2.11-40 "Badge celebration · as built" — card 280 wide, white r24, padding 24, gap 16, centred:
+     "Congratulations!" 28/36, badge art 104, badge name 22/28, level tag; confetti on top.
+     Old layout: legacy_dialog_badge_celebration.xml. Ids unchanged. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,40 +10,36 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_celebration"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp">
+        app:cardBackgroundColor="@color/ds_surface_container"
+        app:cardCornerRadius="@dimen/ds_radius_xl"
+        app:cardElevation="6dp"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="@dimen/padding_wide">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎉"
-                android:textSize="34sp" />
+            android:padding="24dp">
 
             <TextView
                 android:id="@+id/tv_celebration_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/badge_celebration_title"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.Sakhi.HeadlineLarge"
+                android:textColor="@color/ds_on_surface" />
 
             <ImageView
                 android:id="@+id/iv_celebration_badge"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="@dimen/padding_small"
-                android:contentDescription="@string/badge_celebration_title"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:layout_marginTop="16dp"
+                android:importantForAccessibility="no"
                 android:scaleType="centerInside"
                 tools:src="@drawable/badge_steady_syncer_t1" />
 
@@ -48,18 +47,18 @@
                 android:id="@+id/tv_celebration_badge_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_small"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                android:textColor="@color/ds_on_surface"
                 tools:text="Steady Syncer" />
 
             <TextView
                 android:id="@+id/tv_celebration_level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                style="@style/Sakhi.Tag"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/ds_primary_subtle"
+                android:textColor="@color/ds_primary"
                 android:visibility="gone"
                 tools:text="Level 2"
                 tools:visibility="visible" />
@@ -67,10 +66,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
                 android:text="@string/badge_celebration_body"
-                android:textSize="14sp" />
-
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -78,5 +78,4 @@
         android:id="@+id/confetti_celebration"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 </FrameLayout>
