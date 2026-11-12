@@ -39,6 +39,7 @@
     import java.io.FileOutputStream
     import java.text.SimpleDateFormat
     import java.util.*
+    import org.piramalswasthya.sakhi.ui.design.dsStyleDynamicInputs
 
     class FormRendererAdapter(
         private val fields: MutableList<FormField>,
@@ -1272,6 +1273,8 @@
                         })
                     }
                 }
+                // Redesign: code-built fields get the XML form-kit look (colours / corners / text styles only)
+                inputContainer.dsStyleDynamicInputs()
             }
         }
 

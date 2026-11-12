@@ -119,6 +119,10 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
      layouts are fine: activity_login (nav host), fragment_monthly_recap_playback (light touch on purpose),
      item_rejection_reason (uses Widget.Sakhi.CheckboxOption), rv_item_ben_get_data / rv_item_ben_cho + rv_item_ben_element
      (no Kotlin uses them), plus the stubs listed above. → **All reachable layouts now carry the redesign.**
+   - Dynamic (server-driven) form fields built in code by FormRendererAdapter now get the form-kit look via
+     `ui/design/DynamicFormStyle.kt` → `inputContainer.dsStyleDynamicInputs()` at the end of bind(): r12 boxes (was 12px),
+     outline #72787E → primary 2dp focused, white box, on-surface text, ds_error error text, primary check/radio tint.
+     Only colours/corners/text styles; purposeful colours (gc_emergency highlight) kept. Needs a phone look.
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.
