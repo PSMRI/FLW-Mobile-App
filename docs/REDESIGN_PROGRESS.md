@@ -97,6 +97,8 @@ Shells `fragment_all_ben`, `fragment_child_list`, `fragment_infant_list`, `fragm
    - Incentives (M2.11-03) ✅ fixed 1175c0590: stat tiles amount 22 bold + label, ASHA table head 3 columns, card meta "1 claims · ₹1,000".
    - My badges ✅ list fallback OK (Figma grid/tier stars = not built, needs data). Profile ✅. Sync dashboard ✅ (title cut = known).
    - e-PMSMA / ANC visit cards: meta line may wrap to 3 lines (was cut). Form shell header name/age aligned (fragment_new_form).
+   - Notifications (empty) ✅, language sheet ✅, Child Care hub ✅, HWC referred list ✅.
+   - Module tiles: "Non-Communicable Diseases" was split mid-word → break allowed after "-" (setDsTileTitle) + tile title maxLines 3.
    NEXT: phone pass of rows 22–29 (ABHA first) → check the 25 shells → fold g25/26/27 strings/styles + merge the 3 sheet backgrounds.
    Worktrees ../FrontLineWorker-revamp-g25/26/27 are fully cherry-picked, waiting for Nikhil to remove them.
    Studio freeze cause: 16 GB Mac, Gradle -Xmx8g + Studio 4g; a CLI build starts a 2nd daemon → don't build in terminal while Studio syncs.

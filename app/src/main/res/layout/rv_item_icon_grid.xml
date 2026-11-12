@@ -82,7 +82,7 @@
                 android:layout_marginTop="@dimen/ds_space_sm"
                 android:ellipsize="end"
                 android:labelFor="@id/imageView2"
-                android:maxLines="2"
+                android:maxLines="3"
                 dsTileTitle="@{homeIcon.title}"
                 android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
                 android:textColor="@color/ds_on_surface"

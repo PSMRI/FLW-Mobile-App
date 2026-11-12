@@ -66,5 +66,7 @@ fun TextView.setDsModuleToneText(@DrawableRes icon: Int) {
 /** Module tile title on one flowing line: the old centred tiles used "\n" inside titles ("All\nHousehold"). */
 @BindingAdapter("dsTileTitle")
 fun TextView.setDsTileTitle(title: String?) {
-    text = title?.replace('\n', ' ')
+    // text = title?.replace('\n', ' ')
+    // Phone pass 2026-11-12: a long hyphenated word ("Non-Communicable") was split mid-word — allow a break after "-"
+    text = title?.replace('\n', ' ')?.replace("-", "-\u200B")
 }
