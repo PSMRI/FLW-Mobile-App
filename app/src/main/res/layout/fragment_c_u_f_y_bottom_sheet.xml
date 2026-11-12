@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Children under 5 visits sheet (SAM / ORS / IFA) · redesign (row 26), Figma bottom sheet pattern (M2.18-P3 / M2.4-20): white sheet with 28dp top corners, padding 12 top / 24 bottom,
+    32×4 drag handle, title 22/28, rows full width (the rows already carry 16dp side padding). Ids unchanged.
+    Old layout: legacy_fragment_c_u_f_y_bottom_sheet.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_ds_sheet_g26"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View style="@style/Sakhi.G26.SheetHandle" />
+
+    <TextView
+        style="@style/Sakhi.G26.SheetTitle"
+        android:text="@string/ds_g26_visits" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_anc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/ds_space_sm"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="4"
-        tools:listitem="@layout/rv_item_children_care_bottom_sheet"/>
-
+        tools:listitem="@layout/rv_item_children_care_bottom_sheet" />
 
 </LinearLayout>

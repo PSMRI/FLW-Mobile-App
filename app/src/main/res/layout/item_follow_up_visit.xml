@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Follow-up table row (children under 5 form · follow-up visits) · redesign (row 26), Figma table "Row": white, padding 8/12,
+    values 14/20 (S.No in Medium), 1dp #DCE1E8 hairline below. Bindings unchanged. Old layout: legacy_item_follow_up_visit.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -12,21 +15,20 @@
             type="String" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_small"
-        android:layout_marginVertical="@dimen/margin_narrow"
-        app:cardCornerRadius="@dimen/padding_small"
-        app:cardElevation="@dimen/padding_tiny">
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:background="@color/ds_surface_container"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_normal"
             android:gravity="center_vertical"
-            android:background="?attr/colorSurfaceVariant">
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/ds_space_sm"
+            android:paddingVertical="@dimen/ds_space_xs">
 
             <!-- Serial Number -->
             <TextView
@@ -35,8 +37,8 @@
                 android:layout_weight="1"
                 android:text="@{sno}"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                android:textColor="@color/ds_on_surface"
                 tools:text="1" />
 
             <!-- Follow Up Date -->
@@ -46,10 +48,15 @@
                 android:layout_weight="2"
                 android:text="@{visitDate}"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface"
                 tools:text="29-09-2025" />
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/ds_outline_variant" />
+    </LinearLayout>
 </layout>

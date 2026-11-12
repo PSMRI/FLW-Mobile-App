@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Visit row in the leprosy "Select visit" sheet · redesign (row 26), Figma M2.18-P3 visit row: bordered row (white here, Figma #F5F7FA), 1dp #DCE1E8,
+    r12, padding 12/16, title 14/20 Medium, chevron at the end; 8dp between rows. Ids unchanged (VisitsAdapter finds them by id).
+    Old layout: legacy_item_visit.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ds_space_xs"
+    android:background="@drawable/bg_ds_field_row"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="52dp"
     android:orientation="horizontal"
-    android:padding="16dp"
-    android:background="@drawable/item_background">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingVertical="@dimen/ds_space_sm">
 
     <TextView
         android:id="@+id/tvVisitNumber"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="normal"
-        android:textColor="@android:color/black" />
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        android:textColor="@color/ds_on_surface" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="@dimen/ds_space_sm"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="@color/ds_on_surface_variant" />
 
 </LinearLayout>

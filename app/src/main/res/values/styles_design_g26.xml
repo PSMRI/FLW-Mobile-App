@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign row 26 (remaining lists / hubs / sheets): bottom-sheet shell pieces and the radio-option row. -->
+<resources>
+
+    <!-- Figma sheet "Handle": 32×4, #72787E, r2, centred -->
+    <style name="Sakhi.G26.SheetHandle" parent="">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/bg_ds_pill</item>
+        <item name="android:backgroundTint">@color/ds_outline</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <!-- Figma sheet title: 22/28 Medium on-surface, 16dp side padding, 12dp below the handle -->
+    <style name="Sakhi.G26.SheetTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/ds_space_sm</item>
+        <item name="android:paddingStart">@dimen/ds_space_md</item>
+        <item name="android:paddingEnd">@dimen/ds_space_md</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.TitleLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+
+    <!-- Figma "Radio option": 52dp bordered row (r12), 22dp ring, 12dp gap, label 16/24; selected = primary-subtle + 2dp primary -->
+    <!-- parent = the platform radio style so the row stays clickable / checkable -->
+    <style name="Widget.Sakhi.G26.RadioOption" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="buttonCompat">@null</item>
+        <item name="android:background">@drawable/bg_ds_option</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:drawableStart">@drawable/ic_ds_radio_g26</item>
+        <item name="android:drawablePadding">@dimen/ds_space_sm</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">@dimen/ds_space_md</item>
+        <item name="android:paddingTop">@dimen/ds_space_sm</item>
+        <item name="android:paddingBottom">@dimen/ds_space_sm</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.BodyLarge</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+
+    <!-- Count card number (Figma M2.19-15/16): 22/28 Bold, colour per card -->
+    <style name="Sakhi.G26.CountNumber" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.NumberMedium</item>
+    </style>
+
+    <!-- Section card title inside a form screen (Figma section header 16/24 SemiBold) -->
+    <style name="Sakhi.G26.SectionTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Sakhi.TitleMedium</item>
+        <item name="android:textColor">@color/ds_on_surface</item>
+    </style>
+</resources>

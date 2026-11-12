@@ -1,56 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    EC sort sheet · redesign (row 26), Figma M2.3-10 "EC sort sheet" / M2.18-P5 "Sort sheet": white sheet, padding 12/16/24/16,
+    32×4 handle, title 22/28, 52dp radio-option rows 12dp apart (selected = primary-subtle + 2dp primary), actions right-aligned:
+    Cancel text button · Apply filled, 48dp, 8dp apart. Ids unchanged. Old layout: legacy_bottom_sheet_ec_filter.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_sheet_g26"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingEnd="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View style="@style/Sakhi.G26.SheetHandle" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_sort_by"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-        android:paddingBottom="12dp" />
+        style="@style/Sakhi.G26.SheetTitle"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="@string/filter_sort_by" />
 
     <RadioGroup
         android:id="@+id/rg_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_sm"
         android:orientation="vertical">
 
         <RadioButton
             android:id="@+id/rb_newest"
+            style="@style/Widget.Sakhi.G26.RadioOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:text="@string/filter_newest_first" />
 
         <RadioButton
             android:id="@+id/rb_oldest"
+            style="@style/Widget.Sakhi.G26.RadioOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:text="@string/filter_oldest_first" />
 
         <RadioButton
             android:id="@+id/rb_age"
+            style="@style/Widget.Sakhi.G26.RadioOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:text="@string/filter_age_wise" />
 
         <RadioButton
             android:id="@+id/rb_syncing"
+            style="@style/Widget.Sakhi.G26.RadioOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:text="@string/filter_syncing_first" />
 
         <RadioButton
             android:id="@+id/rb_unsynced"
+            style="@style/Widget.Sakhi.G26.RadioOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginTop="@dimen/ds_space_sm"
             android:text="@string/filter_unsynced_first" />
 
     </RadioGroup>
@@ -58,20 +73,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/ds_space_sm"
         android:gravity="end"
-        android:paddingTop="12dp">
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cancel"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.Sakhi.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/ds_space_xs"
             android:text="@string/btn_cancel" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply"
+            style="@style/Widget.Sakhi.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_apply" />

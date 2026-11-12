@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Leprosy visit (view) · redesign (row 26), shell of fragment_new_form (Figma M2.8-44 "Leprosy past visit"): surface bg, beneficiary
+    summary card in primary-container (r16), the form in a white section card, then "Follow-up history" 16/24 and the follow-up rows
+    (item_follow_up_date). Ids unchanged. Old layout: legacy_fragment_leprosy_visit.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
@@ -14,21 +20,19 @@
             android:id="@+id/ll_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="?attr/colorOnSecondary"
             android:orientation="vertical"
-            android:padding="@dimen/padding_normal">
+            android:paddingBottom="@dimen/ds_space_xl">
 
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_patient_information"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:backgroundTint="?attr/colorPrimary"
-                android:elevation="@dimen/padding_normal"
-                app:cardCornerRadius="@dimen/padding_normal"
-                app:cardElevation="@dimen/padding_normal"
-                app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_patient_information"
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:layout_marginTop="@dimen/ds_space_md"
+            app:cardBackgroundColor="@color/ds_primary_container"
+            app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_patient_information"
@@ -46,8 +50,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_age_gender"
                             app:layout_constraintStart_toStartOf="parent"
@@ -60,8 +64,8 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:padding="@dimen/padding_normal"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white"
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container"
                             app:layout_constraintEnd_toEndOf="parent" />
                     </LinearLayout>
 
@@ -92,15 +96,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/husband_s_name"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/husband_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -115,15 +119,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/tv_mob_no_ph"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/mobile_number"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -148,15 +152,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/beneficiary_id"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/ben_id"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -171,15 +175,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/tv_rch_id"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/rch_id"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -204,15 +208,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pregnancy_weeks"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/weeks_of_preg"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -227,15 +231,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pmsma_lmp"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/lmp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
 
@@ -250,55 +254,55 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pmsma_edd"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                                    android:textColor="?attr/colorOnPrimary" />
+                                    android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                                    android:textColor="@color/ds_on_primary_container" />
 
                                 <TextView
                                     android:id="@+id/edd"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                                    android:textColor="?attr/colorOnPrimary"
+                                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                                    android:textColor="@color/ds_on_primary_container"
                                     tools:text="TextView" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <include
-                    android:id="@+id/form"
-                    layout="@layout/rv_input_form"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-
-
-
-            </FrameLayout>
-
-
-
-            <TextView
+            <!-- Figma section card: white, r16, 1dp #DCE1E8; fields carry their own 16dp side padding -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Sakhi.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/follow_up_history"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:layout_marginBottom="@dimen/margin_small" />
+                android:layout_margin="@dimen/ds_space_md">
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/ds_space_xs">
+
+                    <include
+                        android:id="@+id/form"
+                        layout="@layout/rv_input_form"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/Sakhi.G26.SectionTitle"
+                android:layout_marginHorizontal="@dimen/ds_space_md"
+                android:text="@string/follow_up_history" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_follow_up_dates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginHorizontal="@dimen/ds_space_md"
+                android:layout_marginTop="@dimen/ds_space_xs"
+                android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_follow_up_date" />
 
         </LinearLayout>
@@ -310,7 +314,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="?attr/colorPrimary"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="gone" />
 
 

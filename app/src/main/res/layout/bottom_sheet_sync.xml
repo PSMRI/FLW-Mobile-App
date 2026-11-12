@@ -1,130 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sync status sheet · redesign (row 26), Figma M2.19-20 "Sheet · Sync status": white sheet, padding 12/16/24/16, 32×4 handle,
+    centred title 22/28, then a table in a 1dp #DCE1E8 r12 frame: grey head row (#EEF1F5, padding 8/12, 12/16 Medium variant labels)
+    and the record rows (rv_item_sync_status, restyled with the utility screens). Old header icons (cloud upload / off / sync) are
+    replaced by the Figma text labels; column weights 2·1·1·1 unchanged so rows still line up. Ids unchanged.
+    Old layout: legacy_bottom_sheet_sync.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/bg_ds_sheet_g26"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingEnd="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View style="@style/Sakhi.G26.SheetHandle" />
+
+    <TextView
+        style="@style/Sakhi.G26.SheetTitle"
+        android:gravity="center_horizontal"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="@string/ds_g26_sync_status" />
+
+    <!-- Table frame: 1dp #DCE1E8, r12 -->
     <LinearLayout
-        android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/padding_normal">
+        android:layout_marginTop="@dimen/ds_space_sm"
+        android:background="@drawable/bg_ds_card"
+        android:orientation="vertical"
+        android:padding="1dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="2"
-            android:gravity="start"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/form_name"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="?attr/colorOnPrimary" />
-
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:src="@drawable/cloud_upload" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:src="@drawable/cloud_off" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:src="@drawable/cloud_sync" />
-
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ll_header_sub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:paddingBottom="@dimen/padding_small"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:gravity="start"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Badge"
-            android:textColor="?attr/colorOnPrimary" />
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Synced"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Badge"
-            android:textColor="?attr/colorOnPrimary" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Un-Synced"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Badge"
-            android:textColor="?attr/colorOnPrimary" />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Syncing"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Badge"
-            android:textColor="?attr/colorOnPrimary" />
-
-
-
-    </LinearLayout>
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nsv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-        android:scrollbars="vertical"
-        >
-
+        <!-- Head row: #EEF1F5, padding 8/12, 6dp gap -->
         <LinearLayout
+            android:id="@+id/ll_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@drawable/bg_ds_table_head_g26"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/ds_space_sm"
+            android:paddingVertical="@dimen/ds_space_xs">
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_sync"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="5"
-                tools:listitem="@layout/rv_item_sync_status" />
+                android:layout_weight="2"
+                android:gravity="start"
+                android:text="@string/ds_g26_records"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@string/ds_synced"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@string/ds_not_synced"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@string/ds_syncing"
+                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                android:textColor="@color/ds_on_surface_variant" />
+
         </LinearLayout>
 
+        <!-- old second header row (labels under the icons); the labels now sit in the head row above -->
+        <LinearLayout
+            android:id="@+id/ll_header_sub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone" />
 
-    </androidx.core.widget.NestedScrollView>
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_sync"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/rv_item_sync_status" />
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 </LinearLayout>

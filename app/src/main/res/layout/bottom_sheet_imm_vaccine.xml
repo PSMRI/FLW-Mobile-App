@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Vaccine sheet (child + mother immunization) · redesign (row 26), Figma bottom sheet pattern (M2.18-P3 / M2.5-09): white sheet with 28dp top corners, padding 12 top / 24 bottom,
+    32×4 drag handle, rows full width (the rows already carry 16dp side padding). Ids unchanged.
+    Old layout: legacy_bottom_sheet_imm_vaccine.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_gravity="bottom"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_ds_sheet_g26"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View style="@style/Sakhi.G26.SheetHandle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_imm_cat"
         android:layout_width="match_parent"
         android:layout_height="500dp"
+        android:layout_marginTop="@dimen/ds_space_sm"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="4"
         tools:listitem="@layout/rv_item_imm_vaccine_cat" />
-
 
 </LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign row 26 texts. Draft Hindi - needs a native-speaker review. -->
+<resources>
+    <string name="ds_g26_tracking_history">ट्रैकिंग इतिहास</string>
+    <string name="ds_g26_follow_up_history">फॉलो-अप इतिहास</string>
+    <string name="ds_g26_cbac_history">CBAC इतिहास</string>
+    <string name="ds_g26_anc_home_visits">ANC गृह भ्रमण</string>
+    <string name="ds_g26_sync_status">सिंक स्थिति</string>
+    <string name="ds_g26_records">रिकॉर्ड</string>
+    <string name="ds_g26_visits">भ्रमण</string>
+</resources>

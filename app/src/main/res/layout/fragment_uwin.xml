@@ -1,49 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    U-WIN session form · redesign (row 26), same shell as fragment_new_form (Figma 07 · Register member / M2.9-10 simple meeting):
+    surface bg, the form in a white section card (r16, 1dp #DCE1E8, 16dp margins), Submit = 48dp pill in a white bottom action bar
+    (padding on the button so the bar collapses when Submit is hidden in view mode). Ids unchanged. Old layout: legacy_fragment_uwin.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.village_level_forms.u_win_forms.UwinFragment">
 
 
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:padding="@dimen/_8sdp">
-
-
+       android:layout_height="match_parent">
 
        <androidx.core.widget.NestedScrollView
            android:layout_width="0dp"
            android:layout_height="0dp"
+           android:fillViewport="true"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintBottom_toTopOf="@+id/btn_submit">
+           app:layout_constraintBottom_toTopOf="@+id/action_buttons">
 
-
-           <include
-               android:id="@+id/form"
-               layout="@layout/rv_input_form"
+           <!-- Figma section card: white, r16, 1dp #DCE1E8; fields carry their own 16dp side padding -->
+           <com.google.android.material.card.MaterialCardView
+               style="@style/Widget.Sakhi.Card"
                android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               />
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/ds_space_md">
+
+               <FrameLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:paddingVertical="@dimen/ds_space_xs">
+
+                   <include
+                       android:id="@+id/form"
+                       layout="@layout/rv_input_form"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content" />
+               </FrameLayout>
+           </com.google.android.material.card.MaterialCardView>
 
        </androidx.core.widget.NestedScrollView>
 
-       <com.google.android.material.button.MaterialButton
-           android:id="@+id/btn_submit"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           android:layout_width="wrap_content"
+       <!-- Figma "Bottom action bar": white, padding 12/16, 48dp pill -->
+       <FrameLayout
+           android:id="@+id/action_buttons"
+           android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:layout_gravity="center_horizontal|bottom"
-           android:layout_margin="@dimen/margin_small"
-           android:text="@string/btn_submit"
-           android:textColor="@android:color/white" />
+           android:background="@drawable/bg_ds_bottom_bar"
+           android:paddingHorizontal="@dimen/ds_space_md"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent">
 
+           <com.google.android.material.button.MaterialButton
+               android:id="@+id/btn_submit"
+               style="@style/Widget.Sakhi.Button"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginVertical="@dimen/ds_space_sm"
+               android:text="@string/btn_submit" />
+       </FrameLayout>
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -52,7 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="?attr/colorPrimary"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="gone" />
 
 </FrameLayout>

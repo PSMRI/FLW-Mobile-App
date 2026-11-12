@@ -1,9 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Follow-up line inside a follow-up history row (NCD referral / TPT) · redesign (row 26): Body/Medium 14/20 in on-surface-variant,
+     16dp start, 4dp vertical. Id unchanged. Old layout: legacy_item_followup.xml. -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_followup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingStart="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_2xs"
+    android:paddingEnd="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_2xs"
     android:text="• Follow-up 1 | 01-Aug-2025"
-    android:paddingStart="16dp"
-    android:paddingTop="2dp"
-    android:paddingBottom="2dp"
-    android:textSize="14sp"/>
+    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+    android:textColor="@color/ds_on_surface_variant" />

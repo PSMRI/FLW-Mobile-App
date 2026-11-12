@@ -4,27 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.maternal_health.pregnant_woment_anc_visits.homeVisit.AntenatalCounsellingFragment">
+    <!-- Antenatal counselling (ANC home visit) · redesign (row 26), shell of fragment_new_form (Figma M2.2-06 "ANC home visit &
+         counselling"): surface bg, summary card in primary-container (r16; labels 11/16, values 14/20), the questionnaire in a white
+         section card, Submit = 48dp pill in a white bottom action bar (collapses when hidden), edit FAB in primary.
+         Ids unchanged. Old layout: legacy_fragment_antenatal_counselling.xml. -->
 
     <LinearLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="?attr/colorOnSecondary"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical">
 
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cv_patient_information"
+            style="@style/Widget.Sakhi.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:backgroundTint="?attr/colorPrimary"
-            android:elevation="@dimen/padding_normal"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_normal"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:layout_marginTop="@dimen/ds_space_md"
+            app:cardBackgroundColor="@color/ds_primary_container"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,16 +52,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/name_of_pregnant_woman"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvPregnantWomanValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -74,16 +76,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/husband_name"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvHusbandValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -98,16 +100,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/age"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvAgeValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -130,16 +132,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/reg_date"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvRegDateValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -154,16 +156,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/pmsma_lmp"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvLmpValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -178,16 +180,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/pregnancy_weeks"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvWeeksValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -210,16 +212,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/string_edd"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvEddValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -234,16 +236,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/phone_no"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvPhoneValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -258,22 +260,22 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/last_home_visit_date"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelSmall"
+                            android:textColor="@color/ds_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvLastVisitValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@android:color/white" />
+                            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                            android:textColor="@color/ds_on_primary_container" />
                     </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -281,46 +283,60 @@
             android:layout_weight="1"
             android:fillViewport="true">
 
-            <LinearLayout
+            <!-- Figma section card: white, r16, 1dp #DCE1E8 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Sakhi.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_margin="@dimen/ds_space_md">
 
-                <FrameLayout
-                    android:id="@+id/mother_questionnaire_form"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" />
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/ds_space_xs">
 
-                <CheckBox
-                    android:id="@+id/cbSelectAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_all"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvEddValue" />
+                    <FrameLayout
+                        android:id="@+id/mother_questionnaire_form"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
-            </LinearLayout>
+                    <CheckBox
+                        android:id="@+id/cbSelectAll"
+                        style="@style/Widget.Sakhi.CheckboxOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_md"
+                        android:layout_marginTop="@dimen/ds_space_xs"
+                        android:layout_marginEnd="@dimen/ds_space_md"
+                        android:text="@string/select_all"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.core.widget.NestedScrollView>
 
-
-        <Button
-            android:id="@+id/btnSave"
+        <!-- Figma "Bottom action bar": white, padding 12/16, 48dp pill (padding on the button so the bar collapses when it is hidden) -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/submit"
-            android:layout_margin="12dp" />
+            android:background="@drawable/bg_ds_bottom_bar"
+            android:paddingHorizontal="@dimen/ds_space_md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.Sakhi.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/ds_space_sm"
+                android:text="@string/submit" />
+        </FrameLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -328,13 +344,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/padding_wide"
-        android:layout_marginBottom="@dimen/padding_wide"
+        android:layout_marginEnd="@dimen/ds_space_md"
+        android:layout_marginBottom="88dp"
         android:contentDescription="@string/edit"
         android:visibility="gone"
-        app:backgroundTint="@color/md_theme_light_primary"
+        app:backgroundTint="@color/ds_primary"
         app:srcCompat="@drawable/ic_edit"
-        app:tint="@color/md_theme_light_onTertiary"
+        app:tint="@color/ds_on_primary"
         tools:visibility="visible" />
 
 </FrameLayout>

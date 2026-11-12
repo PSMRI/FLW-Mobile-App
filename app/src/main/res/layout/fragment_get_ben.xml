@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Get beneficiary data · redesign (row 26), Figma M2.19-53 "Get beneficiary data": surface bg, beneficiary cards (rv_item_ben via
+    BenListAdapter, already redesigned) with 96dp list end padding, page numbers in a 48dp row at the bottom (rows restyled with the
+    utility screens), error = empty state (96dp primary-subtle circle with a 44dp icon, text 16/24, 32dp side padding).
+    The old SearchView had no id and no listener (it never searched) — hidden, kept in place. Ids unchanged.
+    Not built: top-bar subtitle "From server · page 2 of 14", "Go to households" button on the error state.
+    Old layout: legacy_fragment_get_ben.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.get_ben_data.GetBenFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,9 +25,8 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="-16dp">
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.SearchView
                 android:layout_width="wrap_content"
@@ -34,18 +42,23 @@
             android:layout_gravity="bottom"
             android:clipToPadding="false"
             android:orientation="vertical"
-            android:paddingVertical="@dimen/padding_normal"
+            android:paddingTop="@dimen/ds_space_xs"
+            android:paddingBottom="@dimen/ds_space_md"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/rv_page"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            tools:listitem="@layout/rv_item_ben_get_data" />
+            tools:listitem="@layout/rv_item_ben" />
 
+        <!-- Figma "Pages": 48dp row, 16dp side padding, white bar with a top hairline -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_page"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_ds_bottom_bar"
+            android:clipToPadding="false"
             android:orientation="horizontal"
-            android:padding="@dimen/padding_normal"
+            android:paddingHorizontal="@dimen/ds_space_md"
+            android:paddingVertical="@dimen/ds_space_sm"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="2"
@@ -61,10 +74,12 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/ds_primary" />
     </FrameLayout>
 
 
+    <!-- Figma "Empty state": 96dp illustration circle (primary-subtle) + 44dp icon, 16dp gap, text 16/24, 32dp side padding -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_error"
         android:layout_width="match_parent"
@@ -73,29 +88,33 @@
 
         <ImageView
             android:id="@+id/iv_offline"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/ic_offline"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginBottom="@dimen/ds_space_md"
+            android:background="@drawable/bg_ds_empty_illustration"
+            android:contentDescription="@string/offline"
+            android:padding="26dp"
+            android:src="@drawable/ic_ds_wifi_off"
             app:layout_constraintBottom_toTopOf="@+id/textView5"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@+id/textView5"
-            app:layout_constraintStart_toStartOf="@+id/textView5"
-            android:contentDescription="@string/offline" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/ds_primary" />
 
         <TextView
             android:id="@+id/textView5"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="@dimen/padding_normal"
+            android:paddingHorizontal="@dimen/ds_space_2xl"
             android:text="@string/something_went_wrong_nunable_to_connect_to_server_ntry_again_later"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_offline" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

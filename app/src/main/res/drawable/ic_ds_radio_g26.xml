@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (row 26) · Figma "Radio option" ring (22dp) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_ds_radio_g26_on" android:state_checked="true" />
+    <item android:drawable="@drawable/ic_ds_radio_g26_off" />
+</selector>

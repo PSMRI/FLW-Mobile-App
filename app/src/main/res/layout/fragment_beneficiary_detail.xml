@@ -4,12 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/ds_surface">
+    <!-- Trainer / ANM claim review (Mitanin incentive verification) · redesign (row 26), ds tokens on the existing structure:
+         surface bg, info banner = Figma banner (primary-subtle r12, padding 12/16, 20dp info icon, 14/20 text), claims card =
+         white r16 1dp #DCE1E8 without shadow, table head in #EEF1F5 with 12/16 Medium labels, summary / empty text in the variant
+         colour, rejection sheet = white r24 card, title 22/28, 56dp reason box (r12), 48dp error-coloured pill to confirm.
+         Ids unchanged. Old layout: legacy_fragment_beneficiary_detail.xml. -->
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,48 +38,47 @@
                 android:id="@+id/infoBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/bg_info_banner"
+                android:layout_marginStart="@dimen/ds_space_md"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:layout_marginEnd="@dimen/ds_space_md"
+                android:background="@drawable/bg_ds_banner_info"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="12dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="10dp"
+                android:paddingStart="@dimen/ds_space_md"
+                android:paddingTop="@dimen/ds_space_sm"
+                android:paddingEnd="@dimen/ds_space_md"
+                android:paddingBottom="@dimen/ds_space_sm"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_info" />
+                    android:src="@drawable/ic_ds_info"
+                    app:tint="@color/ds_primary" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/ds_space_sm"
                     android:layout_weight="1"
                     android:text="@string/approve_or_reject_row_hint"
-                    android:textColor="#33409E"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                    android:textColor="@color/ds_on_surface" />
 
             </LinearLayout>
 
             <!-- Activity header + its claimed records, as one card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardClaims"
+                style="@style/Widget.Sakhi.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                android:layout_marginStart="@dimen/ds_space_md"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:layout_marginEnd="@dimen/ds_space_md"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/infoBanner">
@@ -92,7 +97,7 @@
                         android:id="@+id/llHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#FBF3C7"
+                        android:background="@color/ds_surface_container_high"
                         android:paddingStart="12dp"
                         android:paddingTop="12dp"
                         android:paddingEnd="16dp"
@@ -115,9 +120,8 @@
                             android:layout_marginStart="@dimen/mt_row_serial_margin"
                             android:gravity="center"
                             android:text="@string/s_no"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="#111827"
-                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                            android:textColor="@color/ds_on_surface_variant"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/spaceHeaderActions"
                             app:layout_constraintTop_toTopOf="parent"
@@ -128,8 +132,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/mt_row_info_margin"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="#111827"
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                            android:textColor="@color/ds_on_surface_variant"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tvHeaderAmount"
                             app:layout_constraintStart_toEndOf="@id/tvHeaderSerialNo"
@@ -141,9 +145,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="#111827"
-                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                            android:textColor="@color/ds_on_surface_variant"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -171,8 +174,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:textColor="#9AA3AF"
-                android:textSize="15sp"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_on_surface_variant"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -187,8 +190,8 @@
                 android:layout_marginTop="32dp"
                 android:gravity="center"
                 android:text="@string/no_beneficiaries_found"
-                android:textColor="#999999"
-                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                android:textColor="@color/ds_on_surface_variant"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +204,7 @@
         android:id="@+id/bottomSheetContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="#730F141A"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
@@ -212,14 +215,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
+            app:cardBackgroundColor="@color/ds_surface_container"
+            app:cardCornerRadius="@dimen/ds_radius_xl"
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="@dimen/ds_space_xl">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -231,9 +235,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/reason_for_rejection"
-                        android:textColor="#333333"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                        android:textColor="@color/ds_on_surface" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imgCancel"
@@ -264,27 +267,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_edit_text"
+                        android:background="@drawable/bg_ds_field_box"
                         android:hint="Please provide the reason"
-                        android:minHeight="48dp"
+                        android:minHeight="56dp"
                         android:maxLength="250"
-                        android:padding="12dp"
-                        android:textColor="#333333"
-                        android:textColorHint="#999999"
-                        android:textSize="14sp" />
+                        android:paddingHorizontal="@dimen/ds_space_md"
+                        android:paddingVertical="@dimen/ds_space_sm"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                        android:textColor="@color/ds_on_surface"
+                        android:textColorHint="@color/ds_on_surface_variant" />
 
                 </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnConfirmRejection"
+                    style="@style/Widget.Sakhi.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_button_confirm"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_xl"
                     android:text="@string/confirm_rejection"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    app:backgroundTint="@color/ds_error" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

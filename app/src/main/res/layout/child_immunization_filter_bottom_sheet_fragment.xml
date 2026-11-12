@@ -1,27 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filter sheet (child immunization dose stage, vulnerable risk factors, NCD referral type) · redesign (row 26),
+    Figma M2.5-03 "Filter by age stage" / M2.7-23: white sheet, padding 12/16/24/16, 32×4 handle, head = title 16/24 + 24dp close
+    icon (8dp gap), filter chips below (rv_tab / rv_risk_factor_filter, 4dp around each chip). Ids unchanged.
+    Old layout: legacy_child_immunization_filter_bottom_sheet_fragment.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_sheet_g26"
     android:minHeight="@dimen/_200sdp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingStart="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingEnd="@dimen/ds_space_md"
+    android:paddingBottom="@dimen/ds_space_xl">
 
-    <ImageView
-        android:id="@+id/ivClose"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:src="@drawable/ic_close"
-        android:layout_gravity="end"
-        app:tint="@color/box_stroke_color" />
+    <View style="@style/Sakhi.G26.SheetHandle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_sm"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ds_filter"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+            android:textColor="@color/ds_on_surface" />
+
+        <!-- 24dp close icon inside a 40dp touch area (Figma head is 24 tall) -->
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/ds_space_xs"
+            android:layout_marginEnd="-8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/ds_close"
+            android:padding="8dp"
+            android:src="@drawable/ic_ds_close"
+            app:tint="@color/ds_on_surface_variant" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:orientation="horizontal"/>
+        android:layout_marginStart="-4dp"
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:layout_marginEnd="-4dp"
+        android:orientation="horizontal" />
  <!--   android:orientation="horizontal"-->
 
 </LinearLayout>

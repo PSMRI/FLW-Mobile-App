@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (row 26) · Figma "Radio option" ring, selected: 22dp, 2dp primary ring + 10dp primary dot -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:width="22dp" android:height="22dp" />
+            <stroke android:width="2dp" android:color="@color/ds_primary" />
+        </shape>
+    </item>
+    <item android:bottom="6dp" android:left="6dp" android:right="6dp" android:top="6dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/ds_primary" />
+        </shape>
+    </item>
+</layer-list>

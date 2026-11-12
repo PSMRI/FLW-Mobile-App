@@ -1,89 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Member living elsewhere · redesign (row 26), Figma M2.13-03 "Member living elsewhere": surface bg, content padding 16, 12dp gaps;
+    info banner (primary-subtle r12, padding 12/16, 20dp info icon, title 14/20 Medium + body 12/16), 56dp boxed fields (r12),
+    Continue = 48dp pill in a white bottom action bar. The fields keep their floating hint (the code shows / hides whole fields).
+    Ids unchanged (the fragment finds them by id). Old layout: legacy_fragment_non_household_living.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ds_surface"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_md">
+
+            <!-- Banner: primary-subtle, r12, padding 12/16, icon 20 + 12 gap -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_ds_banner_info"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:paddingVertical="@dimen/ds_space_sm">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ds_info"
+                    app:tint="@color/ds_primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/non_household_living_title"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+                        android:textColor="@color/ds_on_surface" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/non_household_living_description"
+                        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                        android:textColor="@color/ds_on_surface" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_place"
+                style="@style/Widget.Sakhi.TextField.Dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:hint="@string/place_of_current_living">
+
+                <AutoCompleteTextView
+                    android:id="@+id/act_place"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_other"
+                style="@style/Widget.Sakhi.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:hint="@string/other_places"
+                android:visibility="gone"
+                app:counterEnabled="true"
+                app:counterMaxLength="200">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_other"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|textNoSuggestions"
+                    android:maxLength="200"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_institution"
+                style="@style/Widget.Sakhi.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_sm"
+                android:hint="@string/name_of_institution"
+                android:visibility="gone"
+                app:counterEnabled="true"
+                app:counterMaxLength="100">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_institution"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|textNoSuggestions"
+                    android:maxLength="100"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Figma "Bottom action bar": white, 1dp top border, padding 12/16, 48dp pill -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/non_household_living_title"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/non_household_living_description" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_place"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:hint="@string/place_of_current_living">
-
-            <AutoCompleteTextView
-                android:id="@+id/act_place"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_other"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/other_places"
-            android:visibility="gone"
-            app:counterEnabled="true"
-            app:counterMaxLength="200">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_other"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapSentences|textNoSuggestions"
-                android:maxLength="200"
-                android:maxLines="1"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_institution"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/name_of_institution"
-            android:visibility="gone"
-            app:counterEnabled="true"
-            app:counterMaxLength="100">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_institution"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapSentences|textNoSuggestions"
-                android:maxLength="100"
-                android:maxLines="1"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+        android:background="@drawable/bg_ds_bottom_bar"
+        android:paddingHorizontal="@dimen/ds_space_md">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_continue"
+            style="@style/Widget.Sakhi.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginVertical="@dimen/ds_space_sm"
             android:text="@string/btn_continue_text" />
-    </LinearLayout>
-</ScrollView>
+    </FrameLayout>
+
+</LinearLayout>

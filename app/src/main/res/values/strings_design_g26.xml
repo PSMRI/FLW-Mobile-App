@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign row 26 (remaining lists / hubs / sheets) texts. -->
+<resources>
+    <string name="ds_g26_tracking_history">Tracking history</string>
+    <string name="ds_g26_follow_up_history">Follow-up history</string>
+    <string name="ds_g26_cbac_history">CBAC history</string>
+    <string name="ds_g26_anc_home_visits">ANC home visits</string>
+    <string name="ds_g26_sync_status">Sync status</string>
+    <string name="ds_g26_records">Records</string>
+    <string name="ds_g26_visits">Visits</string>
+</resources>

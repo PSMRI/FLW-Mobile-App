@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Redesign (row 26) · Figma "Radio option" ring, not selected: 22dp, 2dp #72787E -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <size android:width="22dp" android:height="22dp" />
+    <stroke android:width="2dp" android:color="@color/ds_outline" />
+</shape>

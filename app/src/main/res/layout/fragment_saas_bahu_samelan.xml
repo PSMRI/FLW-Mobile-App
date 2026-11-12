@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
+    Saas-Bahu Sammelan form · redesign (row 26), Figma M2.9-35 "Saas Bahu Sammelan" form + the fragment_new_form shell:
+    surface bg, the form in a white section card (r16, 1dp #DCE1E8), Submit = 48dp pill in a white bottom action bar (collapses when
+    Submit is hidden), edit FAB in primary. The unused ANTRA heading / table of the copied layout stay hidden for their ids.
+    Ids unchanged. Old layout: legacy_fragment_saas_bahu_samelan.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     xmlns:tools="http://schemas.android.com/tools">
 
 
@@ -11,9 +17,7 @@
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="?attr/colorOnSecondary"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,9 +26,8 @@
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:fillViewport="true"
-                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintBottom_toTopOf="@+id/action_buttons"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -34,44 +37,47 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <FrameLayout
+                    <!-- Figma section card: white, r16, 1dp #DCE1E8; fields carry their own 16dp side padding -->
+                    <com.google.android.material.card.MaterialCardView
+                        style="@style/Widget.Sakhi.Card"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/ds_space_md">
 
-                        <include
-                            android:id="@+id/form"
-                            layout="@layout/rv_input_form"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1" />
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="@dimen/ds_space_xs">
 
-
-                    </FrameLayout>
+                            <include
+                                android:id="@+id/form"
+                                layout="@layout/rv_input_form"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <TextView
                         android:id="@+id/tvHeading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#E0E0E0"
-                        android:gravity="center"
-                        android:padding="8dp"
+                        android:layout_marginHorizontal="@dimen/ds_space_md"
                         android:text="@string/antra_injection_details"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                        android:textColor="@color/ds_on_surface"
                         android:visibility="gone" />
 
                     <TableLayout
                         android:id="@+id/tableAntra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="8dp"
+                        android:padding="@dimen/ds_space_md"
                         android:stretchColumns="0,1,2"
                         android:visibility="gone">
 
                         <TableRow
-                            android:background="#FFF5F5F5"
-                            android:padding="8dp">
+                            android:background="@color/ds_surface_container_high"
+                            android:padding="@dimen/ds_space_xs">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -79,7 +85,8 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="@string/dose"
-                                android:textStyle="bold" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                                android:textColor="@color/ds_on_surface_variant" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -87,7 +94,8 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="@string/date"
-                                android:textStyle="bold" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                                android:textColor="@color/ds_on_surface_variant" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -95,62 +103,60 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="@string/next_due_date"
-                                android:textStyle="bold" />
+                                android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+                                android:textColor="@color/ds_on_surface_variant" />
                         </TableRow>
                     </TableLayout>
 
-
                 </LinearLayout>
 
-
             </androidx.core.widget.NestedScrollView>
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_submit"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_width="wrap_content"
+
+            <!-- Figma "Bottom action bar": white, padding 12/16, 48dp pill -->
+            <FrameLayout
+                android:id="@+id/action_buttons"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_margin="@dimen/margin_small"
-                android:text="@string/btn_submit"
-                android:textColor="@android:color/white" />
+                android:background="@drawable/bg_ds_bottom_bar"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_submit"
+                    style="@style/Widget.Sakhi.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/ds_space_sm"
+                    android:text="@string/btn_submit" />
+            </FrameLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
                 android:layout_marginEnd="@dimen/padding_wide"
                 android:layout_marginBottom="@dimen/padding_wide"
                 android:contentDescription="@string/edit"
                 android:visibility="gone"
-                app:backgroundTint="@color/md_theme_light_primary"
+                app:backgroundTint="@color/ds_primary"
+                app:layout_constraintBottom_toTopOf="@+id/action_buttons"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_edit"
-                app:tint="@color/md_theme_light_onTertiary"
+                app:tint="@color/ds_on_primary"
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-
-
     </LinearLayout>
-
-
 
     <ProgressBar
         android:id="@+id/pb_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="?attr/colorPrimary"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="gone" />
-
-
 
 </FrameLayout>

@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Follow-up date row (TB treatment / leprosy follow-up history) · redesign (row 26), Figma M2.8-45 / M2.18-P3 history rows:
+    bordered row (white, 1dp #DCE1E8, r12), padding 12/16, label 14/20 variant · date 14/20 Medium at the end; 8dp between rows.
+    Ids unchanged. Old layout: legacy_item_follow_up_date.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ds_space_xs"
+    android:background="@drawable/bg_ds_field_row"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="@drawable/item_background"
-    android:layout_margin="4dp">
+    android:paddingHorizontal="@dimen/ds_space_md"
+    android:paddingVertical="@dimen/ds_space_sm">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
 
@@ -19,27 +25,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:text="@string/treatment_status"
-           />
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant" />
+
         <TextView
             android:id="@+id/tv_last_follow_up_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:visibility="gone"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:text="@string/last_follow_up_date"
-            />
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_follow_up_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:text="2023-11-15" />
+            android:layout_marginStart="@dimen/ds_space_sm"
+            android:text="2023-11-15"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_surface" />
     </LinearLayout>
-
-
 
 </LinearLayout>

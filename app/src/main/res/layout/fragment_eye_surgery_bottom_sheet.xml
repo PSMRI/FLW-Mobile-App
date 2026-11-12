@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Eye surgery visits sheet · redesign (row 26), Figma M2.19-36 "Sheet · Eye surgery visits": white sheet, padding 12/16/24/16,
+    32×4 handle, head = title 22/28 + beneficiary name 12/16 (2dp gap), rows below. Ids unchanged.
+    Old layout: legacy_fragment_eye_surgery_bottom_sheet.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_sheet_g26"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
+
+    <View style="@style/Sakhi.G26.SheetHandle" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cataract_surgery_visits"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:padding="8dp"/>
+        style="@style/Sakhi.G26.SheetTitle"
+        android:text="@string/cataract_surgery_visits" />
+
     <TextView
         android:id="@+id/txtName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:paddingHorizontal="@dimen/ds_space_md"
         android:text="@string/cataract_surgery_visits"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:padding="8dp"/>
+        android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+        android:textColor="@color/ds_on_surface_variant" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEyeVisits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"/>
+        android:layout_marginTop="@dimen/ds_space_sm"
+        android:nestedScrollingEnabled="false" />
 
 </LinearLayout>

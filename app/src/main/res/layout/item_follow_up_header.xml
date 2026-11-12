@@ -1,47 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<!--
+    Follow-up table head (children under 5 form · follow-up visits) · redesign (row 26), Figma table "Head" (M2.19-20 / M2.18-P4):
+    #EEF1F5 row with rounded top, padding 8/12, labels 12/16 Medium on-surface-variant. Old layout: legacy_item_follow_up_header.xml.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small"
-        app:cardCornerRadius="@dimen/padding_small"
-        app:cardElevation="@dimen/padding_tiny"
-        tools:ignore="MissingConstraints">
+        android:layout_marginHorizontal="@dimen/ds_space_md"
+        android:background="@drawable/bg_ds_table_head_g26"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/ds_space_sm"
+        android:paddingVertical="@dimen/ds_space_xs">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_normal"
-            android:gravity="center_vertical"
-            android:background="?attr/colorPrimary">
+            android:layout_weight="1"
+            android:text="@string/s_no"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/s_no"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorOnPrimary"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/follow_up_date"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Sakhi.LabelMedium"
+            android:textColor="@color/ds_on_surface_variant" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="@string/follow_up_date"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="?attr/colorOnPrimary"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
 </layout>

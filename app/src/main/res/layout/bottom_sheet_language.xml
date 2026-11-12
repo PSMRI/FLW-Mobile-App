@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Language sheet · redesign (row 26), Figma M2.19-04 "Language sheet": white sheet, 12dp top padding, 32×4 handle (#72787E),
+    title 22/28, 24dp bottom padding. Language tiles (item_language) are restyled with the utility screens.
+    Ids unchanged. Old layout: legacy_bottom_sheet_language.xml.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_ds_sheet_g26"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/_24sdp">
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_xl">
 
     <!-- Drag Handle -->
-    <View
-        android:layout_width="@dimen/_32sdp"
-        android:layout_height="@dimen/_4sdp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:background="@drawable/bg_drag_handle" />
+    <View style="@style/Sakhi.G26.SheetHandle" />
 
     <!-- Title -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_16sdp"
-        android:paddingTop="@dimen/_16sdp"
-        android:paddingBottom="@dimen/_12sdp"
-        android:text="@string/tv_text_select_language"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+        style="@style/Sakhi.G26.SheetTitle"
+        android:text="@string/tv_text_select_language" />
 
     <!-- Grid RecyclerView — 3 columns -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_languages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/ds_space_sm"
         android:clipToPadding="false"
-        android:nestedScrollingEnabled="false" />
+        android:nestedScrollingEnabled="false"
+        android:paddingHorizontal="@dimen/ds_space_xs" />
 
 </LinearLayout>

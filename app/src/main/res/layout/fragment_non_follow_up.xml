@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    No follow-up cases · redesign (row 26), Figma M2.19-16 · No follow-up cases: surface bg, content padding 16, count cards 12dp apart
+    (white, 1dp #DCE1E8, r16, padding 16; 52dp module-tone icon tile, title 16/24, count 22/28 Bold in the tone colour, chevron).
+    The old orange / red tiles become these cards; click + count ids unchanged. Spinner while loading as before.
+    Not built: Figma card subtitles (they only describe where the card opens) and the top-bar subtitle.
+    Old layout: legacy_fragment_non_follow_up.xml.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     tools:context=".ui.home_activity.home.SchedulerFragment">
 
     <ScrollView
@@ -15,288 +23,205 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/padding_normal">
+            android:padding="@dimen/ds_space_md">
 
-
-            <CalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/to_do_list"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        <!-- Count card: white, 1dp #DCE1E8, r16, padding 16, 16dp gap; 52dp icon tile (r16, module tone) · title 16/24 · count 22/28 Bold · chevron 20 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_anc"
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_sm"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/padding_wide"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:minHeight="86dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/ds_space_md">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_anc1"
+                <ImageView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_ds_card_r16"
+                    android:backgroundTint="@color/ds_module_maternal_bg"
+                    android:importantForAccessibility="no"
+                    android:padding="12dp"
+                    android:src="@drawable/ic__anc_visit"
+                    app:tint="@color/ds_module_maternal_fg" />
+
+                <TextView
+                    android:id="@+id/tv_ph_anc"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/margin_small"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_md"
                     android:layout_weight="1"
-                    android:backgroundTint="?attr/colorPrimary"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:text="@string/anc"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_on_surface" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
+                <TextView
+                    android:id="@+id/tv_anc"
+                    style="@style/Sakhi.G26.CountNumber"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:textColor="@color/ds_module_maternal_fg"
+                    tools:text="5" />
 
-                        <TextView
-                            android:id="@+id/tv_ph_anc1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/beneficiaries_due_for_anc"
-                            android:layout_alignParentTop="true"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:id="@+id/tv_anc1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_anc1"
-                            android:layout_alignParentBottom="true"
-
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="45" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_imm"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="?attr/colorPrimary"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
-
-                        <TextView
-                            android:id="@+id/tv_ph_imm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:maxWidth="151dp"
-                            android:text="@string/beneficiaries_due_for_immunization"
-                            android:layout_alignParentTop="true"
-
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                            android:textColor="?attr/colorOnPrimary" />
-
-                        <TextView
-                            android:id="@+id/tv_imm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_imm"
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-                            android:layout_alignParentBottom="true"
-
-                            android:text="@string/_0"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                            android:textColor="?attr/colorOnPrimary" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/ds_on_surface_variant" />
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/high_risk_cases"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        <!-- Count card: white, 1dp #DCE1E8, r16, padding 16, 16dp gap; 52dp icon tile (r16, module tone) · title 16/24 · count 22/28 Bold · chevron 20 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_non_pnc"
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ds_space_sm"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingVertical="@dimen/padding_wide"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:minHeight="86dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/ds_space_md">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_lwb"
+                <ImageView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_ds_card_r16"
+                    android:backgroundTint="@color/ds_warning_container"
+                    android:importantForAccessibility="no"
+                    android:padding="12dp"
+                    android:src="@drawable/ic__pnc"
+                    app:tint="@color/ds_warning" />
+
+                <TextView
+                    android:id="@+id/tv_hr_pnc"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
+                    android:layout_marginStart="@dimen/ds_space_md"
                     android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_red_light"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
+                    android:text="@string/pnc"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_on_surface" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
+                <TextView
+                    android:id="@+id/tv_hr_ec_pnc"
+                    style="@style/Sakhi.G26.CountNumber"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:textColor="@color/ds_warning"
+                    tools:text="3" />
 
-                        <TextView
-                            android:id="@+id/tv_ph_lbwb"
-                            android:lines="3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="?attr/colorOnPrimary"
-                            android:text="@string/ec"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_lbwb"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_lbwb"
-                            android:layout_alignParentEnd="false"
-                            android:textColor="?attr/colorOnPrimary"
-                            android:layout_centerHorizontal="true"
-                            tools:text="7"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_ec"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_orange_light"
-                    android:elevation="@dimen/padding_normal"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="@dimen/padding_wide"
-                        android:textColor="?attr/colorOnPrimary">
-
-                        <TextView
-                            android:id="@+id/tv_ph_ec"
-                            android:lines="3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/high_risk_babies"
-
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_ec"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_ec"
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-
-                            android:text="@string/_0"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_anc"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_orange_light"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
-
-                        <TextView
-                            android:id="@+id/tv_ph_anc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:lines="3"
-                            android:text="@string/anc"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_anc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_ph_anc"
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                            tools:text="2" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_non_pnc"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:backgroundTint="@android:color/holo_red_light"
-                    android:elevation="@dimen/padding_normal"
-                    app:cardCornerRadius="@dimen/padding_normal"
-                    app:cardElevation="@dimen/padding_normal">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_wide">
-
-                        <TextView
-                            android:id="@+id/tv_hr_pnc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:lines="3"
-                            android:textColor="?attr/colorOnPrimary"
-                            android:text="@string/pnc"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                        <TextView
-                            android:id="@+id/tv_hr_ec_pnc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_hr_pnc"
-                            android:layout_alignParentEnd="false"
-                            android:layout_centerHorizontal="true"
-                            android:textColor="?attr/colorOnPrimary"
-                            tools:text="@string/_0"
-                            android:textAppearance="@style/TextAppearance.Material3.DisplayMedium" />
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/ds_on_surface_variant" />
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
+        <!-- Count card: white, 1dp #DCE1E8, r16, padding 16, 16dp gap; 52dp icon tile (r16, module tone) · title 16/24 · count 22/28 Bold · chevron 20 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_lwb"
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="86dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/ds_space_md">
+
+                <ImageView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_ds_card_r16"
+                    android:backgroundTint="@color/ds_module_couple_bg"
+                    android:importantForAccessibility="no"
+                    android:padding="12dp"
+                    android:src="@drawable/ic__eligible_couple"
+                    app:tint="@color/ds_module_couple_fg" />
+
+                <TextView
+                    android:id="@+id/tv_ph_lbwb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:layout_weight="1"
+                    android:text="@string/ec"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium"
+                    android:textColor="@color/ds_on_surface" />
+
+                <TextView
+                    android:id="@+id/tv_lbwb"
+                    style="@style/Sakhi.G26.CountNumber"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:textColor="@color/ds_module_couple_fg"
+                    tools:text="1" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/ds_space_md"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/ds_on_surface_variant" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Unused cards of the old screen (always hidden), kept for their ids -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="@dimen/padding_wide"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:visibility="gone">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_ec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_ph_ec"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/high_risk_babies" />
+
+                    <TextView
+                        android:id="@+id/tv_ec"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_0" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            
         </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
@@ -305,6 +230,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/ds_primary"
         android:visibility="gone"
         tools:visibility="visible" />
 

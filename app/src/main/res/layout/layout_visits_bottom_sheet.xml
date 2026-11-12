@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Leprosy "Select visit" sheet · redesign (row 26), Figma M2.18-P3 / M2.8-44 sheet pattern: white sheet, padding 12/16/24/16,
+    32×4 handle, title 22/28, empty text 14/20 variant, visit rows below. Ids unchanged.
+    Old layout: legacy_layout_visits_bottom_sheet.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_sheet_g26"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingTop="@dimen/ds_space_sm"
+        android:paddingBottom="@dimen/ds_space_xl">
+
+        <View style="@style/Sakhi.G26.SheetHandle" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/select_visit"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            style="@style/Sakhi.G26.SheetTitle"
+            android:text="@string/select_visit" />
 
         <TextView
             android:id="@+id/tvEmptyMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_previous_visits_available"
-            android:textSize="16sp"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="@dimen/ds_space_md"
+            android:text="@string/no_previous_visits_available"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvVisits"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="200dp" />
+            android:layout_marginTop="@dimen/ds_space_sm"
+            android:clipToPadding="false"
+            android:minHeight="200dp"
+            android:paddingHorizontal="@dimen/ds_space_md" />
 
     </LinearLayout>
 </layout>

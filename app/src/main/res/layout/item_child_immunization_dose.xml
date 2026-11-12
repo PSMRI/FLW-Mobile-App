@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Vaccine dose row in "Record vaccines" (child immunization form) · redesign (row 26), Figma M2.5-05 "Record vaccines" option rows:
+    bordered row (white, 1dp #DCE1E8, r12), padding 12/16, 12dp gap, 20dp state icon, vaccine name 16/24, due date 12/16 variant,
+    ds switch at the end (the app keeps its switch; Figma shows checkbox rows). Rows 12dp apart. Ids and bindings unchanged.
+    Old layout: legacy_item_child_immunization_dose.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -22,29 +28,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Sakhi.Card"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
+            android:layout_marginHorizontal="@dimen/ds_space_md"
+            android:layout_marginVertical="6dp"
+            app:cardCornerRadius="@dimen/ds_radius_md"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:cardCornerRadius="@dimen/padding_normal"
-            app:cardElevation="@dimen/padding_small">
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingHorizontal="@dimen/ds_space_md"
+                android:paddingVertical="@dimen/ds_space_sm">
 
                 <ImageView
                     android:id="@+id/imageView"
                     vaccineState="@{vaccine.state}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:importantForAccessibility="no"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -53,40 +61,47 @@
                     android:id="@+id/tvVaccineName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_marginEnd="@dimen/ds_space_sm"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodyLarge"
+                    android:textColor="@color/ds_on_surface"
+                    app:layout_constraintBottom_toTopOf="@+id/tvVaccineDueDate"
+                    app:layout_constraintEnd_toStartOf="@+id/idSwitch"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/idSwitch"/>
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="OPV-2" />
 
                 <TextView
                     android:id="@+id/tvVaccineDueDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_space_sm"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="@dimen/ds_space_sm"
                     android:text="@{@string/due_date_label(vaccine.dueDate)}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_light_outline"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginBottom="8dp"
+                    android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+                    android:textColor="@color/ds_on_surface_variant"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/idSwitch"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
-                    app:layout_constraintTop_toBottomOf="@id/tvVaccineName"
-                    app:layout_constraintEnd_toStartOf="@+id/idSwitch"/>
+                    app:layout_constraintTop_toBottomOf="@id/tvVaccineName" />
 
+                <!-- Redesign: ds switch colours (primary when on, white thumb + grey track when off) -->
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/idSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    app:trackTint="@color/switch_track_selector"
-                    app:thumbTint="@color/switch_thumb_selector"
+                    android:theme="@style/ThemeOverlay.Sakhi.Switch"
+                    app:thumbTint="@color/ds_switch_thumb"
+                    app:trackTint="@color/ds_switch_track"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 <!--                android:theme="@style/SCBSwitch"-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

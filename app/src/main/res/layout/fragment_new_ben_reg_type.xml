@@ -1,68 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--
+    Add member · choose type · redesign (row 26), Figma M2.13-02 "Add member · choose type": surface bg, content padding 16,
+    question 22/28, two option rows 16dp apart (bordered r12, ring + label 16/24; selected = primary-subtle + 2dp primary),
+    ID warning text in the error colour, Continue = 48dp pill in a white bottom action bar (padding 12/16).
+    Ids unchanged. Not built: option icons + descriptions ("Newborn, infant, child or adolescent…") and the amber
+    warning banner (the warning text is set / cleared from code, so it stays a plain text line).
+    Old layout: legacy_fragment_new_ben_reg_type.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ds_surface"
     android:orientation="vertical"
-    android:padding="@dimen/padding_normal"
     tools:context=".ui.home_activity.all_ben.new_ben_registration.NewBenRegTypeFragment">
 
-    <TextView
-        android:id="@+id/tv_type_title_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/frag_new_ben_type_select_text"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <RadioGroup
-        android:id="@+id/rg_ben_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_type_title_text"
-        android:padding="@dimen/padding_normal">
-
-        <RadioButton
-            android:id="@+id/rb_kid_path"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/frag_new_ben_type_kid_text"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:buttonTint="?attr/colorPrimary" />
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_md">
 
-        <RadioButton
-            android:id="@+id/rb_adult_path"
+            <TextView
+                android:id="@+id/tv_type_title_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/frag_new_ben_type_select_text"
+                android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+                android:textColor="@color/ds_on_surface" />
+
+            <RadioGroup
+                android:id="@+id/rg_ben_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_md">
+
+                <RadioButton
+                    android:id="@+id/rb_kid_path"
+                    style="@style/Widget.Sakhi.G26.RadioOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="64dp"
+                    android:text="@string/frag_new_ben_type_kid_text"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
+
+                <RadioButton
+                    android:id="@+id/rb_adult_path"
+                    style="@style/Widget.Sakhi.G26.RadioOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_md"
+                    android:minHeight="64dp"
+                    android:text="@string/frag_new_ben_type_adult_text"
+                    android:textAppearance="@style/TextAppearance.Sakhi.TitleMedium" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/error_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_md"
+                android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+                android:textColor="@color/ds_error"
+                tools:text="Warning : Poor Internet Connectivity" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Figma "Bottom action bar": white, 1dp top border, padding 12/16, 48dp pill (padding on the button so the bar collapses when it is hidden) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_bottom_bar"
+        android:paddingHorizontal="@dimen/ds_space_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_continue"
+            style="@style/Widget.Sakhi.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/frag_new_ben_type_adult_text"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:buttonTint="?attr/colorPrimary" />
-    </RadioGroup>
+            android:layout_marginVertical="@dimen/ds_space_sm"
+            android:text="@string/btn_continue_text" />
+    </FrameLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_continue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/rg_ben_type"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/margin_normal"
-        android:text="@string/btn_continue_text"
-        android:textColor="?attr/colorOnPrimary" />
-
-    <TextView
-        android:id="@+id/error_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="@android:color/holo_red_light"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rg_ben_type"
-        tools:text="Warning : Poor Internet Connectivity" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

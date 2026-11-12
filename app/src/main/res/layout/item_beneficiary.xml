@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Claimed-record row in the claim review card (non-Mitanin flavours) · redesign (row 26), Figma table "Row" (M2.18-P4 history table):
+    white, padding 12/16, S.No 14/20, name / IDs 12/16 (name in on-surface, IDs in variant), amount 14/20 Medium, 1dp #DCE1E8 hairline.
+    Ids unchanged. Old layout: legacy_item_beneficiary.xml.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:background="@color/ds_surface_container"
+    android:paddingStart="@dimen/ds_space_xs"
+    android:paddingEnd="@dimen/ds_space_md"
+    android:paddingTop="@dimen/ds_space_sm"
+    android:paddingBottom="@dimen/ds_space_sm">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_08"
@@ -29,8 +34,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#333333"
-        android:textSize="13sp"
+        android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+        android:textColor="@color/ds_on_surface"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gl_08"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,32 +58,32 @@
             android:id="@+id/tvBenId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#333333"
-            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
             tools:text="Ben ID: 664547959811" />
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#333333"
-            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface"
             tools:text="Name: RAJA SING" />
 
         <TextView
             android:id="@+id/tvRchId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#666666"
-            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="RCH ID: null" />
 
         <TextView
             android:id="@+id/tvAbhaNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#666666"
-            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodySmall"
+            android:textColor="@color/ds_on_surface_variant"
             tools:text="ABHA Number: null" />
 
     </LinearLayout>
@@ -88,9 +93,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#333333"
-        android:textSize="13sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+        android:textColor="@color/ds_on_surface"
         app:layout_constraintStart_toStartOf="@id/gl_85"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -100,7 +104,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
+        android:background="@color/ds_outline_variant"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

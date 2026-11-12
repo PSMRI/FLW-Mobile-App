@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    IRS round row (malaria household · IRS rounds) · redesign (row 26), Figma M2.8-24 "Malaria · IRS rounds" history row:
+    bordered row (white, 1dp #DCE1E8, r12), padding 12/16, three columns 14/20 (S.No · date · round in Medium), 8dp between rows.
+    Bindings unchanged. Old layout: legacy_rv_item_irs_round.xml.
+-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
@@ -27,34 +32,38 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@drawable/blue_border"
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:background="@drawable/bg_ds_field_row"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/padding_normal"
-        android:layout_marginTop="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingHorizontal="@dimen/ds_space_md"
+        android:paddingVertical="@dimen/ds_space_sm">
 
-
-        <TableLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:stretchColumns="*"
-           >
+            android:layout_weight="1"
+            android:text="@{@string/sr_no(position + 1)}"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface_variant" />
 
-            <TableRow>
-                <TextView
-                    android:text="@{@string/sr_no(position + 1)}"
-                    android:padding="8dp" />
-                <TextView
-                    app:formattedDate="@{irs.date}"
-                    android:padding="8dp" />
-                <TextView
-                    android:text="@{@string/round_no(irs.rounds)}"
-                    android:padding="8dp" />
-            </TableRow>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:formattedDate="@{irs.date}"
+            android:textAppearance="@style/TextAppearance.Sakhi.BodyMedium"
+            android:textColor="@color/ds_on_surface" />
 
-        </TableLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@{@string/round_no(irs.rounds)}"
+            android:textAppearance="@style/TextAppearance.Sakhi.TitleSmall"
+            android:textColor="@color/ds_on_surface" />
 
     </LinearLayout>
 

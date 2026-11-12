@@ -1,128 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Filter dialog (All beneficiaries / ABHA list / child, infant, PW registration lists) · redesign (row 26), Figma M2.19-32
+    "Dialog · Filter": white r24 dialog (theme), padding 24, 16dp between parts: 28dp filter icon, title 22/28, section label
+    14/20, checkbox-option / 52dp radio-option rows (selected = primary-subtle + 2dp primary), actions right-aligned
+    Cancel (text) · Apply (filled). Ids unchanged; screens still hide the RCH or ABHA part as before.
+    Old layout: legacy_alert_filter.xml.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/padding_wide">
+    android:orientation="vertical"
+    android:padding="@dimen/ds_space_xl">
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ds_filter_list"
+        app:tint="@color/ds_primary" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:gravity="center"
-        android:padding="@dimen/padding_normal"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:text="@string/filter_list"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAppearance="@style/TextAppearance.Sakhi.TitleLarge"
+        android:textColor="@color/ds_on_surface" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_rch"
-        android:layout_width="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:text="@string/ben_with_rch_id"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface_variant" />
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/cb_rch"
-        android:layout_width="0dp"
+        style="@style/Widget.Sakhi.CheckboxOption"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/rch_id"
+        android:layout_marginTop="@dimen/ds_space_xs"
         android:contentDescription="@string/rch_id"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_rch" />
+        android:text="@string/rch_id" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_abha"
-        android:layout_width="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginTop="@dimen/ds_space_md"
         android:text="@string/abha_id"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cb_rch"
-        />
+        android:textAppearance="@style/TextAppearance.Sakhi.LabelLarge"
+        android:textColor="@color/ds_on_surface_variant" />
 
     <RadioGroup
         android:id="@+id/rgAbha"
-        android:layout_width="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_abha">
+        android:layout_marginTop="@dimen/ds_space_xs"
+        android:orientation="vertical">
 
         <RadioButton
             android:id="@+id/rbAll"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.G26.RadioOption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/all"
-            android:checked="true"/>
+            android:checked="true"
+            android:text="@string/all" />
 
         <RadioButton
             android:id="@+id/rbWith"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.G26.RadioOption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/with_abha"/>
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:text="@string/with_abha" />
 
         <RadioButton
             android:id="@+id/rbWithout"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.G26.RadioOption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/without_abha"/>
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:text="@string/without_abha" />
 
         <RadioButton
             android:id="@+id/rbAgeAboveThirty"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Sakhi.G26.RadioOption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/age_above_30_years"/>
+            android:layout_marginTop="@dimen/ds_space_md"
+            android:text="@string/age_above_30_years" />
 
     </RadioGroup>
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_ok"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/btn_apply"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginStart="18dp"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
-        app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
+        android:layout_marginTop="@dimen/ds_space_md"
+        android:gravity="end"
+        android:orientation="horizontal">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.Sakhi.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ds_space_xs"
+            android:text="@string/cancel" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="18dp"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rgAbha" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ok"
+            style="@style/Widget.Sakhi.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_apply" />
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
