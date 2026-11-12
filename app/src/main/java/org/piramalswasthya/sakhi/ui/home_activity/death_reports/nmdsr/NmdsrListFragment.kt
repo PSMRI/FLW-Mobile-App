@@ -20,7 +20,7 @@ class NmdsrListFragment : BaseListFragment<FragmentNmdsrListBinding>() {
     override lateinit var prefDao: PreferenceDao
     override val viewModel: NmdsrListViewModel by viewModels()
     override val navFragmentId = R.id.nmdsrListFragment
-    override val iconResId = R.drawable.ic__death
+    override val iconResId = R.drawable.non_maternal_death_s1
     override val titleResId = R.string.non_maternal_deaths
     override val isGeneralForm = true
 

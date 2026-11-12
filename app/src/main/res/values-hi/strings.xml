@@ -51,8 +51,8 @@
     <string name="verification_by_anm_of_the_respective_sub_center_that_death_of_women_occurred_during_pregnancy_or_within_42_days_of_delivery_abortion">संबंधित उप स्वास्थ्य केंद्र की एएनएम द्वारा सत्यापन कि महिला की मृत्यु गर्भावस्था के दौरान या प्रसव/गर्भपात के 42 दिनों के भीतर हुई:</string>
     <string name="name_of_anm">एएनएम का नाम</string>
     <string name="name_of_the_sub_center">उप स्वास्थ्य केंद्र का नाम</string>
-    <string name="mdsr_form_from_anm_1">एएनएम 1 से एमडीएसआर फॉर्म</string>
-    <string name="mdsr_form_from_anm_2">एएनएम 2 से एमडीएसआर फॉर्म</string>
+    <string name="mdsr_form_from_anm_1">आशा अधिसूचना फॉर्म 1</string>
+    <string name="mdsr_form_from_anm_2">आशा अधिसूचना फॉर्म 2</string>
     <string name="father_name">पिता का नाम</string>
     <string name="age_of_woman">महिला की आयु</string>
     <string name="select_time">समय चुनें</string>
@@ -136,8 +136,8 @@
     <string name="name_of_the_child">बच्चे का नाम</string>
     <string name="pincode">Pincode</string>
     <string name="signature_name_of_asha">आशा का हस्ताक्षर/नाम</string>
-    <string name="cdr_form_from_anm_1">एएनएम 1 से सीडीआर फॉर्म</string>
-    <string name="cdr_form_from_anm_2">एएनएम 2 से सीडीआर फॉर्म</string>
+    <string name="cdr_form_from_anm_1">आशा अधिसूचना फॉर्म 1</string>
+    <string name="cdr_form_from_anm_2">आशा अधिसूचना फॉर्म 2</string>
     <string name="leprosy_suspected">कुष्ठ रोग संदिग्ध</string>
     <string name="leprosy_confirmed">पुष्टि किए गए कुष्ठ रोग </string>
     <string name="after_the_abortion_the_woman_opted_for_permanent_sterilization_tubectomy">गर्भपात के बाद महिला ने स्थायी नसबंदी (ट्यूबेक्टॉमी) अपनाई</string>
