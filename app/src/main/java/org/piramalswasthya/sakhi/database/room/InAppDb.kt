@@ -217,7 +217,7 @@ import org.piramalswasthya.sakhi.model.dynamicEntity.mosquitonetEntity.MosquitoN
         GCReferralFollowUpEntity::class
     ],
     views = [BenBasicCache::class],
-    version = 77, exportSchema = true
+    version = 78, exportSchema = true
 )
 
 @TypeConverters(
