@@ -100,10 +100,8 @@ data class TBScreeningCache(
 data class BenWithTbScreeningCache(
     @Embedded
     val ben: BenBasicCache,
-    @Relation(
-        parentColumn = "benId", entityColumn = "benId"
-    )
-    val tb: TBScreeningCache?,
+    @Relation(parentColumn = "benId", entityColumn = "benId")
+    val tbRecords: List<TBScreeningCache>,
 
     @Relation(
         parentColumn = "benId",
@@ -130,7 +128,8 @@ data class BenWithTbScreeningCache(
     fun asTbScreeningDomainModel(): BenWithTbScreeningDomain {
         return BenWithTbScreeningDomain(
             ben = ben.asBasicDomainModel(),
-            tb = tb,
+            tb = tbRecords.maxByOrNull { it.visitDate },
+            tbRecords = tbRecords,
             tbSuspected = tbSuspected,
             ncdReferralVisits = ncdReferralVisits,
             cbac = cbacRecords.maxByOrNull { it.fillDate },
@@ -142,6 +141,7 @@ data class BenWithTbScreeningCache(
 data class BenWithTbScreeningDomain(
     val ben: BenBasicDomain,
     val tb: TBScreeningCache?,
+    val tbRecords: List<TBScreeningCache> = listOfNotNull(tb),
     val tbSuspected: TBSuspectedCache?,
     val ncdReferralVisits: List<NCDReferalFormResponseJsonEntity> = emptyList(),
     val cbac: CbacCache? = null,

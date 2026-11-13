@@ -1435,6 +1435,8 @@
 
     <string name="mda_form_campagain_title">Lymphatic Filariasis (LF) Mass Drug Administration (MDA) campaign</string>
     <string name="screening">Screening</string>
+    <string name="add_screening">Add screening</string>
+    <string name="view_screenings">View screenings</string>
     <string name="suspected">Suspected</string>
     <string name="malaria_confirmed">Confirmed</string>
     <string name="malaria_not_confirmed">Not Confirmed</string>

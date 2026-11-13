@@ -1186,6 +1186,8 @@
         <argument
             android:name="benId"
             app:argType="long" />
+        <argument android:name="screeningId" app:argType="integer" android:defaultValue="-1" />
+        <argument android:name="readOnly" app:argType="boolean" android:defaultValue="false" />
         <action
             android:id="@+id/action_TBScreeningFormFragment_to_ncdReferForm"
             app:destination="@id/NCDReferalForm" />

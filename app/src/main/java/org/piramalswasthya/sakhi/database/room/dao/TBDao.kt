@@ -13,8 +13,14 @@ import org.piramalswasthya.sakhi.model.TBSuspectedCache
 @Dao
 interface TBDao {
 
-    @Query("SELECT * FROM TB_SCREENING WHERE benId =:benId limit 1")
+    @Query("SELECT * FROM TB_SCREENING WHERE benId =:benId ORDER BY visitDate DESC limit 1")
     suspend fun getTbScreening(benId: Long): TBScreeningCache?
+
+    @Query("SELECT * FROM TB_SCREENING WHERE benId = :benId ORDER BY visitDate DESC")
+    suspend fun getAllTbScreenings(benId: Long): List<TBScreeningCache>
+
+    @Query("SELECT * FROM TB_SCREENING WHERE id = :id LIMIT 1")
+    suspend fun getTbScreeningById(id: Int): TBScreeningCache?
 
     @Query("SELECT * FROM TB_SCREENING WHERE benId =:benId and (visitDate = :visitDate or visitDate = :visitDateGMT) limit 1")
     suspend fun getTbScreening(benId: Long, visitDate: Long, visitDateGMT: Long): TBScreeningCache?

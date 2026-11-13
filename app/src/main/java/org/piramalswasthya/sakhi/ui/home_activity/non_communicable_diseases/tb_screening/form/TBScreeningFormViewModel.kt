@@ -37,6 +37,7 @@ class TBScreeningFormViewModel @Inject constructor(
 ) : ViewModel() {
     val benId =
         TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).benId
+    private val screeningId = TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).screeningId
 
     enum class ReferralType {
         NCD,
@@ -100,12 +101,13 @@ class TBScreeningFormViewModel @Inject constructor(
                 )
             }
 
-            tbRepo.getTBScreening(benId)?.let {
+            val selectedRecord = if (screeningId >= 0) tbRepo.getTBScreeningById(screeningId)
+                else if (TBScreeningFormFragmentArgs.fromSavedStateHandle(savedStateHandle).readOnly) tbRepo.getTBScreening(benId)
+                else null
+            selectedRecord?.let {
                 tbScreeningCache = it
                 _recordExists.value = true
-            } ?: run {
-                _recordExists.value = false
-            }
+            } ?: run { _recordExists.value = false }
 
             val ncdDiagnoses = referalRepo.getNcdFollowUpVisits(benId)
                 .mapNotNull { it.diagnosisCodes }
