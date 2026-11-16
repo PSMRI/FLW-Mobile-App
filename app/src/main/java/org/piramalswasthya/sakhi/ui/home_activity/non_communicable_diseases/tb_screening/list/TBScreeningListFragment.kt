@@ -1,5 +1,6 @@
 package org.piramalswasthya.sakhi.ui.home_activity.non_communicable_diseases.tb_screening.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -57,7 +58,17 @@ class TBScreeningListFragment : Fragment() {
             TbScreeningListAdapter.ClickListener { item, addNew ->
                 if (findNavController().currentDestination?.id == R.id.TBScreeningListFragment) {
                     if (addNew) {
-                        findNavController().navigate(TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(item.ben.benId, -1, false))
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val blockMessage = viewModel.addScreeningBlockMessage(item)
+                            if (blockMessage != null) {
+                                AlertDialog.Builder(requireContext())
+                                    .setMessage(blockMessage)
+                                    .setPositiveButton(R.string.ok, null)
+                                    .show()
+                            } else if (findNavController().currentDestination?.id == R.id.TBScreeningListFragment) {
+                                findNavController().navigate(TBScreeningListFragmentDirections.actionTBScreeningListFragmentToTBScreeningFormFragment(item.ben.benId, -1, false))
+                            }
+                        }
                     } else showScreeningHistory(item)
                 }
             }
