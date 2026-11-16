@@ -76,6 +76,8 @@ import org.piramalswasthya.sakhi.helpers.AccountDeactivationManager
 import org.piramalswasthya.sakhi.helpers.TokenExpiryManager
 import org.piramalswasthya.sakhi.databinding.ActivityHomeBinding
 import org.piramalswasthya.sakhi.helpers.AnalyticsHelper
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
+import org.piramalswasthya.sakhi.helpers.GamificationRuntime
 import org.piramalswasthya.sakhi.helpers.ImageUtils
 import org.piramalswasthya.sakhi.helpers.InAppUpdateHelper
 import org.piramalswasthya.sakhi.helpers.Languages
@@ -151,6 +153,13 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     @Inject
     lateinit var badgeCelebrations: BadgeCelebrations
+
+    @Inject
+    lateinit var gamificationConfigProvider: GamificationConfigProvider
+
+    /** Starts/stops badge work and the evening alarm with the server flag (FLW-1251). */
+    @Inject
+    lateinit var gamificationRuntime: GamificationRuntime
 
     private var _binding: ActivityHomeBinding? = null
 
@@ -365,7 +374,11 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
         askForPermissions()
 
-        eveningNotificationScheduler.schedule()
+        // FLW-1251: the evening alarm (and the badge workers) now start/stop with the
+        // server flag — see observeGamificationState().
+        // eveningNotificationScheduler.schedule()
+        gamificationConfigProvider.refresh()
+        observeGamificationState()
         routeToJourneyIfRequested(intent)
         observeBadgeCelebrations()
 
@@ -764,7 +777,10 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 badgeCelebrations.awards.collect { (badgeId, level) ->
-                    showBadgeCelebration(badgeId, level)
+                    // FLW-1251: drop anything still queued after badges were switched off
+                    if (gamificationConfigProvider.state.value.badges) {
+                        showBadgeCelebration(badgeId, level)
+                    }
                 }
             }
         }
@@ -807,10 +823,48 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
         }
     }
 
+    /**
+     * FLW-1251: gamification is switched per ASHA by the server. Applies the current
+     * switches now and again whenever they change (login, app open, debug override).
+     */
+    private fun observeGamificationState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                gamificationConfigProvider.state.collect { applyGamificationState(it) }
+            }
+        }
+    }
+
+    private fun applyGamificationState(state: GamificationConfigProvider.State) {
+        // badge workers + table watcher, and the 21:00 alarm (see GamificationRuntime)
+        gamificationRuntime.apply(state)
+        binding.navView.menu.findItem(R.id.badgeShelfFragment)?.isVisible = state.badges
+    }
+
+    /**
+     * FLW-1251: debug/UAT builds only — long-press the employee id in the drawer header to
+     * cycle gamification between following the server, forced ON and forced OFF.
+     */
+    private fun setUpGamificationDebugOverride(idView: TextView) {
+        if (!gamificationConfigProvider.isDebugOverrideAllowed) return
+        idView.setOnLongClickListener {
+            val next = when (gamificationConfigProvider.debugOverride) {
+                GamificationConfigProvider.DebugOverride.SERVER -> GamificationConfigProvider.DebugOverride.ON
+                GamificationConfigProvider.DebugOverride.ON -> GamificationConfigProvider.DebugOverride.OFF
+                GamificationConfigProvider.DebugOverride.OFF -> GamificationConfigProvider.DebugOverride.SERVER
+            }
+            gamificationConfigProvider.debugOverride = next
+            Toast.makeText(this, "Gamification (debug): $next", Toast.LENGTH_SHORT).show()
+            true
+        }
+    }
+
     /** Evening notification tap → Journey screen (Notification LLD §1). */
     private fun routeToJourneyIfRequested(intent: Intent?) {
         if (intent?.getBooleanExtra(NotificationEngine.EXTRA_OPEN_JOURNEY, false) == true) {
             intent.removeExtra(NotificationEngine.EXTRA_OPEN_JOURNEY)
+            // FLW-1251: an older notification tapped after the server switched it off
+            if (!gamificationConfigProvider.state.value.notifications) return
             // post: nav back-stack restore runs after onCreate and would wipe
             // an immediate navigate; after first layout the graph is settled
             binding.root.post {
@@ -825,8 +879,9 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
 
     private fun setUpFirstTimePullWorker() {
         WorkerUtils.triggerPeriodicPncEcUpdateWorker(this)
-        WorkerUtils.triggerBadgeWorkers(this)
-        taskCompletionBus.start()
+        // FLW-1251: started/stopped with the server flag in applyGamificationState()
+        // WorkerUtils.triggerBadgeWorkers(this)
+        // taskCompletionBus.start()
 //        WorkerUtils.triggerMaaMeetingWorker(this)
 //        WorkerUtils.triggerSaasBahuSammelanWorker(this)
         if (!pref.isFullPullComplete)
@@ -857,6 +912,7 @@ class HomeActivity : AppCompatActivity(), MessageUpdate {
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             headerView.findViewById<TextView>(R.id.tv_nav_id).text = formatted
+            setUpGamificationDebugOverride(headerView.findViewById(R.id.tv_nav_id))
 
 //            headerView.findViewById<TextView>(R.id.tv_nav_id).text =
 //                resources.getString(R.string.nav_item_3_text, it.userId)

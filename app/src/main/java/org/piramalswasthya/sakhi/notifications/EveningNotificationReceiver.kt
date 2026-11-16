@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 
 /**
  * Dependencies fetched via @EntryPoint instead of @AndroidEntryPoint:
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 interface EveningNotifEntryPoint {
     fun engine(): NotificationEngine
     fun scheduler(): NotificationScheduler
+    fun gamificationConfig(): GamificationConfigProvider
 }
 
 /** Fired by AlarmManager at the district's evening time. Assembles offline. */
@@ -33,8 +35,17 @@ class EveningNotificationReceiver : BroadcastReceiver() {
         val result = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                entryPoint.engine().deliverEveningNotification()
-                entryPoint.scheduler().schedule() // re-arm for tomorrow
+                // FLW-1251: switched off by the server for this ASHA → no notification,
+                // and the alarm is not re-armed.
+                if (entryPoint.gamificationConfig().isEnabledForLoggedInUser(
+                        GamificationConfigProvider.Mechanic.NOTIFICATIONS
+                    )
+                ) {
+                    entryPoint.engine().deliverEveningNotification()
+                    entryPoint.scheduler().schedule() // re-arm for tomorrow
+                } else {
+                    entryPoint.scheduler().cancel()
+                }
             } finally {
                 result.finish()
             }

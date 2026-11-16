@@ -84,7 +84,9 @@ class SakhiApplication : Application(), Configuration.Provider {
         // Config gate and schedule the recap's own trigger. Both are inert
         // until a user is logged in and the mechanic is enabled server-side —
         // see GamificationConfigProvider's own doc for the full design.
-        gamificationConfigProvider.primeAsync()
+        // FLW-1251: gamification is now switched per ASHA by the server (getUserDetail);
+        // Remote Config is no longer fetched for it.
+        // gamificationConfigProvider.primeAsync()
         MonthlyRecapReminderWorker.schedule(this)
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext))

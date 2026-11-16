@@ -28,6 +28,7 @@ import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.ImmunizationDao
 import org.piramalswasthya.sakhi.database.room.dao.SyncDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.helpers.NetworkResponse
 import org.piramalswasthya.sakhi.model.Facility
 import org.piramalswasthya.sakhi.model.FacilityData
@@ -52,6 +53,7 @@ class UserRepoTest : BaseRepositoryTest() {
     @MockK private lateinit var preferenceDao: PreferenceDao
     @MockK private lateinit var syncDao: SyncDao
     @MockK private lateinit var amritApiService: AmritApiService
+    @MockK private lateinit var gamificationConfigProvider: GamificationConfigProvider
 
     private lateinit var userRepo: UserRepo
 
@@ -65,7 +67,7 @@ class UserRepoTest : BaseRepositoryTest() {
         every { TokenInsertTmcInterceptor.setJwt(any()) } returns Unit
         mockkConstructor(CryptoUtil::class)
         every { anyConstructed<CryptoUtil>().encrypt(any()) } returns "encryptedPassword"
-        userRepo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService)
+        userRepo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService, gamificationConfigProvider)
     }
 
     private fun jsonBody(json: String) = json.toResponseBody(jsonMediaType)
@@ -157,7 +159,7 @@ class UserRepoTest : BaseRepositoryTest() {
     fun `unProcessedRecordCount exposes syncDao flow`() {
         val flow: Flow<List<SyncStatusCache>> = flowOf(emptyList())
         every { syncDao.getSyncStatus() } returns flow
-        val repo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService)
+        val repo = UserRepo(benDao, db, vaccineDao, preferenceDao, syncDao, amritApiService, gamificationConfigProvider)
         assertEquals(flow, repo.unProcessedRecordCount)
     }
 
@@ -288,6 +290,71 @@ class UserRepoTest : BaseRepositoryTest() {
         verify { preferenceDao.saveSupervisorContact("888") }
         verify { preferenceDao.saveChoList(any()) }
         verify { preferenceDao.saveAnmList(any()) }
+    }
+
+    // ---------------- FLW-1251: gamification flag from getUserDetail ----------------
+
+    @Test
+    fun `setFacilityData hands the raw gamification object to the provider`() = runTest {
+        val raw = mapOf("enabled" to true, "mechanics" to mapOf("badges" to true))
+        coEvery { amritApiService.getUserDetailsById(any()) } returns UserNetworkResponse(
+            success = true, message = null,
+            data = userDetailsWithFacilityData(null).copy(gamification = raw)
+        )
+
+        userRepo.setFacilityData(5)
+
+        verify { gamificationConfigProvider.onUserDetail(5, raw) }
+    }
+
+    @Test
+    fun `refreshUserDetailIfDue skips the server call when not due`() = runTest {
+        every { gamificationConfigProvider.claimFlagRefresh(any()) } returns false
+
+        userRepo.refreshUserDetailIfDue(5)
+
+        coVerify(exactly = 0) { amritApiService.getUserDetailsById(any()) }
+    }
+
+    @Test
+    fun `refreshUserDetailIfDue fetches the user detail when due`() = runTest {
+        every { gamificationConfigProvider.claimFlagRefresh(any()) } returns true
+        val raw = mapOf("enabled" to false)
+        coEvery { amritApiService.getUserDetailsById(any()) } returns UserNetworkResponse(
+            success = true, message = null,
+            data = userDetailsWithFacilityData(null).copy(gamification = raw)
+        )
+
+        userRepo.refreshUserDetailIfDue(5)
+
+        coVerify { amritApiService.getUserDetailsById(5) }
+        verify { gamificationConfigProvider.onUserDetail(5, raw) }
+    }
+
+    @Test
+    fun `setFacilityData counts as a flag refresh`() = runTest {
+        coEvery { amritApiService.getUserDetailsById(any()) } throws RuntimeException("offline")
+
+        userRepo.setFacilityData(5)
+
+        verify { gamificationConfigProvider.markFlagRefreshed(any()) }
+    }
+
+    @Test
+    fun `setFacilityData still saves facility data when the gamification flag fails`() = runTest {
+        every { gamificationConfigProvider.onUserDetail(any(), any()) } throws RuntimeException("boom")
+        val facilityData = FacilityData(
+            location = FacilityLocation(district = "D", blockOrUlb = "B", locationType = "L", state = "S"),
+            facility = null, supervisor = null
+        )
+        coEvery { amritApiService.getUserDetailsById(any()) } returns UserNetworkResponse(
+            success = true, message = null, data = userDetailsWithFacilityData(facilityData)
+        )
+
+        userRepo.setFacilityData(5)
+
+        verify { preferenceDao.saveLocationType("L") }
+        verify { preferenceDao.saveChoList(any()) }
     }
 
     @Test

@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.database.room.dao.BadgeDao
 import org.piramalswasthya.sakhi.database.shared_preferences.PreferenceDao
+import org.piramalswasthya.sakhi.helpers.GamificationConfigProvider
 import org.piramalswasthya.sakhi.model.BadgeEarnedCache
 import org.piramalswasthya.sakhi.work.WorkerUtils
 import org.piramalswasthya.sakhi.model.BadgeStateCache
@@ -39,7 +40,8 @@ class BadgeEvaluator @Inject constructor(
     private val streakEngine: StreakEngine,
     private val pref: PreferenceDao,
     private val celebrations: BadgeCelebrations,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val gamificationConfigProvider: GamificationConfigProvider
 ) {
 
     private val mutex = Mutex()
@@ -77,6 +79,16 @@ class BadgeEvaluator @Inject constructor(
             }
             if (userId == null) {
                 Timber.w("Badges: evaluation skipped — no logged-in user")
+                return@withLock
+            }
+            // FLW-1251: badges switched off by the server for this ASHA — no evaluation,
+            // no awards, no celebrations, no uploads. Covers every trigger (table watcher,
+            // daily worker, post-sync one-shot) at one point.
+            if (!gamificationConfigProvider.isMechanicEnabled(
+                    GamificationConfigProvider.Mechanic.BADGES, userId
+                )
+            ) {
+                Timber.d("Badges: evaluation skipped — switched off for this ASHA")
                 return@withLock
             }
 

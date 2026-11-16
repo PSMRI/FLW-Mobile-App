@@ -4,6 +4,7 @@ import androidx.room.InvalidationTracker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,20 +43,28 @@ class TaskCompletionBus @Inject constructor(
         events.tryEmit(Unit)
     }
 
+    /** Room observer while started; kept so [stop] can remove it (FLW-1251). */
+    private var observer: InvalidationTracker.Observer? = null
+
+    /** Evaluation collector while started; kept so [stop] can cancel it (FLW-1251). */
+    private var collectJob: Job? = null
+
     /** Idempotent; call once from the home entry point. */
     @OptIn(FlowPreview::class)
+    @Synchronized
     fun start() {
         if (!started.compareAndSet(false, true)) return
         try {
-            db.invalidationTracker.addObserver(
+            val newObserver =
                 object : InvalidationTracker.Observer(BadgeFactsReader.MAPPED_TABLES) {
                     override fun onInvalidated(tables: Set<String>) = publish()
                 }
-            )
+            db.invalidationTracker.addObserver(newObserver)
+            observer = newObserver
         } catch (e: Exception) {
             Timber.e(e, "Badges: could not observe health tables")
         }
-        scope.launch {
+        collectJob = scope.launch {
             events.debounce(DEBOUNCE_MS).collect {
                 try {
                     evaluator.evaluateAll()
@@ -65,6 +74,25 @@ class TaskCompletionBus @Inject constructor(
             }
         }
         publish() // evaluate once on startup so UI is fresh
+    }
+
+    /**
+     * FLW-1251: badges switched off by the server — stop watching the health tables.
+     * Idempotent; [start] can be called again when badges are switched back on.
+     */
+    @Synchronized
+    fun stop() {
+        if (!started.compareAndSet(true, false)) return
+        observer?.let {
+            try {
+                db.invalidationTracker.removeObserver(it)
+            } catch (e: Exception) {
+                Timber.w(e, "Badges: could not stop observing health tables")
+            }
+        }
+        observer = null
+        collectJob?.cancel()
+        collectJob = null
     }
 
     companion object {

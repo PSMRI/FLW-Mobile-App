@@ -65,40 +65,43 @@ class LocalMonthlyRecapAvailability @Inject constructor(
     private val pref: PreferenceDao,
 ) : MonthlyRecapAvailabilityProvider {
 
+    // FLW-1251: debug builds no longer skip the switch — they follow the server flag
+    // (or the developer override in GamificationConfigProvider), so QA can test it.
+    // The old debug-only branches are kept below, commented out.
     override suspend fun isAvailable(): Boolean {
         val userId = pref.getLoggedInUser()?.userId
         val windowOpen =
             configProvider.isTestCohortUser(userId) || isMonthlyRecapWindowOpen(clock.now())
-        return if (BuildConfig.DEBUG) {
-            MonthlyRecapGates(
-                emergencySwitchOn = true,
-                moduleEnabled = true,
-                userEligible = true,
-                activeWindowOpen = windowOpen,
-                configFresh = true,
-            ).available()
-        } else {
-            val recapOn = configProvider.isMechanicEnabled(
-                GamificationConfigProvider.Mechanic.MONTHLY_RECAP, userId
-            )
-            MonthlyRecapGates(
-                emergencySwitchOn = recapOn,
-                moduleEnabled = recapOn,
-                userEligible = recapOn,
-                activeWindowOpen = windowOpen,
-                configFresh = userId != null,
-            ).available()
-        }
+        // return if (BuildConfig.DEBUG) {
+        //     MonthlyRecapGates(
+        //         emergencySwitchOn = true,
+        //         moduleEnabled = true,
+        //         userEligible = true,
+        //         activeWindowOpen = windowOpen,
+        //         configFresh = true,
+        //     ).available()
+        // } else {
+        val recapOn = configProvider.isMechanicEnabled(
+            GamificationConfigProvider.Mechanic.MONTHLY_RECAP, userId
+        )
+        return MonthlyRecapGates(
+            emergencySwitchOn = recapOn,
+            moduleEnabled = recapOn,
+            userEligible = recapOn,
+            activeWindowOpen = windowOpen,
+            configFresh = userId != null,
+        ).available()
+        // }
     }
 
     override suspend fun isReplayAvailable(): Boolean {
         val userId = pref.getLoggedInUser()?.userId
-        return if (BuildConfig.DEBUG) {
-            userId != null
-        } else {
-            configProvider.isMechanicEnabled(
-                GamificationConfigProvider.Mechanic.MONTHLY_RECAP, userId
-            )
-        }
+        // return if (BuildConfig.DEBUG) {
+        //     userId != null
+        // } else {
+        return configProvider.isMechanicEnabled(
+            GamificationConfigProvider.Mechanic.MONTHLY_RECAP, userId
+        )
+        // }
     }
 }
